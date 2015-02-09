@@ -163,9 +163,10 @@ class Admin extends CI_Controller {
 	
 	public function update_incidencia()
 	{
-		$id_pds = $this->uri->segment(3);
-		$id_inc = $this->uri->segment(4);
-		$status = $this->uri->segment(5);
+		$id_pds     = $this->uri->segment(3);
+		$id_inc     = $this->uri->segment(4);
+		$status_pds = $this->uri->segment(5);
+		$status     = $this->uri->segment(6);
 			
 		$xcrud = xcrud_get_instance();
 		$this->load->model('tienda_model');
@@ -183,7 +184,7 @@ class Admin extends CI_Controller {
 		$data['id_pds_ulr']     = $id_pds;
 		$data['id_inc_ulr']     = $id_inc;
 	
-		$this->tienda_model->incidencia_update($id_inc,$status);
+		$this->tienda_model->incidencia_update($id_inc,$status_pds,$status);
 		
 	
 		$data['title']   = 'Operativa incidencias';
@@ -691,22 +692,19 @@ class Admin extends CI_Controller {
 					'id_pds'            => $id_pds,
 					'id_displays_pds' 	=> $id_dis,
 					'id_devices_pds' 	=> $id_dev,
-					'alarm_display'     => 0,
-					'alarm_device'      => 0,
-					//'description'  	    => $this->input->post('description'),
-					'description'  	    => '',
+					'tipo_averia' 	    => $this->input->post('tipo_averia'),
+					'alarm_display'     => $this->input->post('alarm_display'),
+					'alarm_device'      => $this->input->post('alarm_device'),
+					'description'  	    => $this->input->post('description'),
 					'parte_pdf'  	    => '',
 					'denuncia'  	    => '',
 					'foto_url'  	    => '',
-					'contacto'  	    => '',
-					'phone'  	        => '',
-					'email'  	        => '',
-					/*
 					'contacto'  	    => $this->input->post('contacto'),
 					'phone'  	        => $this->input->post('phone'),
 					'email'  	        => $this->input->post('email'),
-					*/
-					'id_operador'  	    => 1,
+					'id_operador'  	    => NULL,
+					'intervencion'  	=> NULL,
+					'status_pds'	    => 1,
 					'status'	        => 1,
 			);
 			

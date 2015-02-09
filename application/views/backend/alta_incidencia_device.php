@@ -25,7 +25,7 @@
  					<br clear="all" />
  				</div>	
             </div>
-            <form action="<?=site_url('admin/alta_incidencia_add');?>" method="post" class="content_auto form_login">
+            <form action="<?=site_url('admin/insert_incidencia/'.$id_pds_url.'/'.$id_dis_url.'/'.$id_dev_url)?>" method="post" class="content_auto form_login">
             <div class="row">
                 <div class="col-lg-12">
  					<div class="panel panel-default">
@@ -54,17 +54,27 @@
 	                                            <p>
 	                                            <strong>Modelo</strong><br>
 	                                            <pre><?php echo $device ?></pre>
-	                                            <strong>Modelo fabricante</strong><br>
-	                                            </p>
-	                                            <label>¿La alarma que soporta el telefono está afectada?</label>
+	                                            <label>¿La alarma central del mueble está afectada?</label>
 	                                            <div class="radio">
 	                                                <label>
-	                                                    <input type="radio" name="estado_alarma" id="estado_alarma" value="1">Sí
+	                                                    <input type="radio" name="alarm_display" id="alarm_display" value="1">Sí
 	                                                </label>
 	                                            </div>
 	                                            <div class="radio">
 	                                                <label>
-	                                                    <input type="radio" name="estado_alarma" id="estado_alarma" value="0" checked>No
+	                                                    <input type="radio" name="alarm_display" id="alarm_display" value="0" checked>No
+	                                                </label>
+	                                            </div>	                                            
+	                                            
+	                                            <label>¿La alarma que soporta el telefono está afectada?</label>
+	                                            <div class="radio">
+	                                                <label>
+	                                                    <input type="radio" name="alarm_device" id="alarm_device" value="1">Sí
+	                                                </label>
+	                                            </div>
+	                                            <div class="radio">
+	                                                <label>
+	                                                    <input type="radio" name="alarm_device" id="alarm_device" value="0" checked>No
 	                                                </label>
 	                                            </div>
 		                                        <div class="form-group">
@@ -73,18 +83,17 @@
 		                                        </div>
 		                                        <div class="form-group">
 		                                            <label>Persona de contacto</label>
-		                                            <input class="form-control" name="" id="" placeholder="Nombre y apellidos">
+		                                            <input class="form-control" name="contacto" id="contacto" placeholder="Nombre y apellidos">
 		                                        </div>	
 		                                        <div class="form-group">
 		                                            <label>Teléfono de contacto</label>
-		                                            <input class="form-control" name="" id="" placeholder="Teléfono">
+		                                            <input class="form-control" name="phone" id="phone" placeholder="Teléfono">
 		                                        </div>			                                        
 		                                        <div class="form-group">
 		                                            <label>Email de contacto</label>
-		                                            <input class="form-control" name="" id="" placeholder="Email">
+		                                            <input class="form-control" name="email" id="email" placeholder="Email">
 		                                        </div>
-		                                        <!--<input type="submit" class="submit" value="añadir" />-->
-		                                        <a href="<?=site_url('admin/insert_incidencia/'.$id_pds_url.'/'.$id_dis_url.'/'.$id_dev_url)?>" class="btn btn-lg btn-success btn-block">Envíar</a>
+		                                        <input type="submit" class="submit" value="Envíar"  class="btn btn-lg btn-success btn-block" />
 		                                        <a href="<?=site_url('admin/dashboard')?>" class="btn btn-lg btn-danger btn-block">Cancelar</a>			                                                                                    
                                         	</td>
                                         	<?php 

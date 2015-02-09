@@ -154,9 +154,10 @@ class Tienda_model extends CI_Model {
 		}
 	}	
 	
-	public function incidencia_update($id,$data)
+	public function incidencia_update($id,$status_pds,$status)
 	{
-		$this->db->set('status', $data, FALSE);
+		$this->db->set('status_pds', $status_pds, FALSE);
+		$this->db->set('status', $status, FALSE);
 		$this->db->where('id_incidencia',$id);
 		$this->db->update('incidencias');
 	}	

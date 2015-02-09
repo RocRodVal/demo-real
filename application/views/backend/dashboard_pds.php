@@ -66,7 +66,7 @@
     										<td><?php echo $incidencia->contacto ?></td>
     										<td><?php echo $incidencia->phone ?></td>
     										<td><?php echo $incidencia->email ?></td>
-    										<td><?php echo $incidencia->status ?></td>
+    										<td><?php echo $incidencia->status_pds ?></td>
     									</tr>
 					    				<?php
 					    				}
