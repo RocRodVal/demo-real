@@ -550,6 +550,49 @@ class Admin extends CI_Controller {
 	}
 		
 	
+	public function almacen()
+	{
+		$xcrud_1 = xcrud_get_instance();
+		$xcrud_1->table('alarms_almacen');
+		$xcrud_1->table_name('Inventario alarmas almacén');
+		$xcrud_1->relation('id_alarm','alarm','id_alarm','alarm');
+		$xcrud_1->label('id_alarm','Alarma')->label('description','Comentarios')->label('status','Estado');
+		$xcrud_1->columns('id_alarm,status');
+		$xcrud_1->fields('id_alarm,description,status');
+		$xcrud_1->order_by('id_alarm','asc');
+		$xcrud_1->order_by('status','asc');
+	
+		$xcrud_2 = xcrud_get_instance();
+		$xcrud_2->table('devices_almacen');
+		$xcrud_2->table_name('Inventario dispositivos almacén');
+		$xcrud_2->relation('id_device','device','id_device','device');
+		$xcrud_2->relation('id_color_device','color_device','id_color_device','color_device');
+		$xcrud_2->relation('id_complement_device','complement_device','id_complement_device','complement_device');
+		$xcrud_2->relation('id_status_device','status_device','id_status_device','status_device');
+		$xcrud_2->relation('id_status_packaging_device','status_packaging_device','id_status_packaging_device','status_packaging_device');
+		$xcrud_2->change_type('picture_url_1', 'image');
+		$xcrud_2->change_type('picture_url_2', 'image');
+		$xcrud_2->change_type('picture_url_3', 'image');
+		$xcrud_2->modal('picture_url_1');
+		$xcrud_2->modal('picture_url_2');
+		$xcrud_2->modal('picture_url_3');
+		$xcrud_2->label('id_device','Dispositivo')->label('IMEI','IMEI')->label('mac','MAC')->label('id_color_device','Color')->label('id_complement_device','Complementos')->label('id_status_device','Estado dispositivo')->label('id_status_packaging_device','Estado packaging')->label('picture_url_1','Foto #1')->label('picture_url_2','Foto #2')->label('picture_url_3','Foto #3')->label('description','Comentarios')->label('status','Estado');
+		$xcrud_2->columns('id_device,IMEI,mac,status');
+		$xcrud_2->fields('id_device,IMEI,mac,id_color_device,id_complement_device,id_status_device,id_status_packaging_device,picture_url_1,picture_url_2,picture_url_3,description,status');
+		$xcrud_2->order_by('id_device','asc');
+		$xcrud_2->order_by('status','asc');
+	
+		$data['title']   = 'Almacén';
+		$data['content'] = $xcrud_1->render();
+		$data['content'] = $data['content'].$xcrud_2->render();
+	
+		$this->load->view('backend/header', $data);
+		$this->load->view('backend/navbar', $data);
+		$this->load->view('backend/content', $data);
+		$this->load->view('backend/footer');
+	}
+		
+	
 	public function listado_incidencias()
 	{
 		$xcrud = xcrud_get_instance();
