@@ -556,9 +556,10 @@ class Admin extends CI_Controller {
 		$xcrud_1->table('alarms_almacen');
 		$xcrud_1->table_name('Inventario alarmas almacén');
 		$xcrud_1->relation('id_alarm','alarm','id_alarm','alarm');
-		$xcrud_1->label('id_alarm','Alarma')->label('description','Comentarios')->label('status','Estado');
-		$xcrud_1->columns('id_alarm,status');
-		$xcrud_1->fields('id_alarm,description,status');
+		$xcrud_1->label('id_alarms_almacen','Ref.')->label('id_alarm','Alarma')->label('barcode','Código de barras')->label('description','Comentarios')->label('status','Estado');
+		$xcrud_1->columns('id_alarms_almacen,id_alarm,barcode,status');
+		$xcrud_1->fields('id_alarms_almacen,id_alarm,barcode,description,status');
+		$xcrud_1->order_by('id_alarms_almacen','asc');
 		$xcrud_1->order_by('id_alarm','asc');
 		$xcrud_1->order_by('status','asc');
 	
@@ -576,9 +577,10 @@ class Admin extends CI_Controller {
 		$xcrud_2->modal('picture_url_1');
 		$xcrud_2->modal('picture_url_2');
 		$xcrud_2->modal('picture_url_3');
-		$xcrud_2->label('id_device','Dispositivo')->label('IMEI','IMEI')->label('mac','MAC')->label('id_color_device','Color')->label('id_complement_device','Complementos')->label('id_status_device','Estado dispositivo')->label('id_status_packaging_device','Estado packaging')->label('picture_url_1','Foto #1')->label('picture_url_2','Foto #2')->label('picture_url_3','Foto #3')->label('description','Comentarios')->label('status','Estado');
-		$xcrud_2->columns('id_device,IMEI,mac,status');
-		$xcrud_2->fields('id_device,IMEI,mac,id_color_device,id_complement_device,id_status_device,id_status_packaging_device,picture_url_1,picture_url_2,picture_url_3,description,status');
+		$xcrud_2->label('id_devices_almacen','Ref.')->label('id_device','Dispositivo')->label('IMEI','IMEI')->label('mac','MAC')->label('barcode','Código de barras')->label('id_color_device','Color')->label('id_complement_device','Complementos')->label('id_status_device','Estado dispositivo')->label('id_status_packaging_device','Estado packaging')->label('picture_url_1','Foto #1')->label('picture_url_2','Foto #2')->label('picture_url_3','Foto #3')->label('description','Comentarios')->label('status','Estado');
+		$xcrud_2->columns('id_devices_almacen,id_device,IMEI,mac,barcode,status');
+		$xcrud_2->fields('id_devices_almacen,id_device,IMEI,mac,barcode,id_color_device,id_complement_device,id_status_device,id_status_packaging_device,picture_url_1,picture_url_2,picture_url_3,description,status');
+		$xcrud_2->order_by('id_devices_almacen','asc');
 		$xcrud_2->order_by('id_device','asc');
 		$xcrud_2->order_by('status','asc');
 	
