@@ -480,7 +480,7 @@ class Admin extends CI_Controller {
 		$xcrud_1->relation('id_type_pds','type_pds','id_type_pds','pds');
 		$xcrud_1->relation('id_panelado','panelado','id_panelado','panelado');
 		$xcrud_1->relation('id_display','display','id_display','display');
-		$xcrud_1->label('client_type_pds','Cliente')->label('id_displays_pds','REF.')->label('id_type_pds','Tipo')->label('id_pds','SFID')->label('id_panelado','Panelado Orange')->label('id_display','Mueble')->label('position','Posición Orange')->label('position_abx','Posición ABX')->label('description','Comentarios')->label('status','Estado');
+		$xcrud_1->label('client_type_pds','Cliente')->label('id_displays_pds','REF.')->label('id_type_pds','Tipo')->label('id_pds','SFID')->label('id_panelado','Panelado Orange')->label('id_display','Mueble')->label('position','Posición Orange')->label('description','Comentarios')->label('status','Estado');
 		$xcrud_1->columns('client_type_pds,id_displays_pds,id_type_pds,id_pds,id_panelado,id_display,position,status');
 		$xcrud_1->fields('client_type_pds,id_displays_pds,id_type_pds,id_pds,id_panelado,id_display,position,description,status');
 		$xcrud_1->order_by('id_pds','asc');
@@ -505,6 +505,7 @@ class Admin extends CI_Controller {
 		$xcrud_3->relation('client_type_pds','client','id_client','client');
 		$xcrud_3->relation('id_pds','pds','id_pds','reference');
 		$xcrud_3->relation('id_displays_pds','displays_pds','id_displays_pds','id_displays_pds');
+		$xcrud_3->relation('id_display','display','id_display','display');
 		$xcrud_3->relation('id_device','device','id_device','device');
 		$xcrud_3->relation('id_color_device','color_device','id_color_device','color_device');
 		$xcrud_3->relation('id_complement_device','complement_device','id_complement_device','complement_device');
@@ -516,11 +517,12 @@ class Admin extends CI_Controller {
 		$xcrud_3->modal('picture_url_1');
 		$xcrud_3->modal('picture_url_2');
 		$xcrud_3->modal('picture_url_3');
-		$xcrud_3->label('client_type_pds','Cliente')->label('id_devices_pds','REF.')->label('id_pds','SFID')->label('id_displays_pds','Cod. mueble')->label('position','Posición')->label('id_device','Dispositivo')->label('IMEI','IMEI')->label('mac','MAC')->label('id_color_device','Color')->label('id_complement_device','Complementos')->label('id_status_device','Estado dispositivo')->label('id_status_packaging_device','Estado packaging')->label('picture_url_1','Foto #1')->label('picture_url_2','Foto #2')->label('picture_url_3','Foto #3')->label('description','Comentarios')->label('status','Estado');
-		$xcrud_3->columns('client_type_pds,id_devices_pds,id_pds,id_displays_pds,position,id_device,IMEI,mac,status');
-		$xcrud_3->fields('client_type_pds,id_devices_pds,id_pds,id_displays_pds,position,id_device,IMEI,mac,id_color_device,id_complement_device,id_status_device,id_status_packaging_device,picture_url_1,picture_url_2,picture_url_3,description,status');
+		$xcrud_3->label('client_type_pds','Cliente')->label('id_devices_pds','REF.')->label('id_pds','SFID')->label('id_displays_pds','Cod. mueble')->label('id_display','Mueble')->label('position','Posición')->label('id_device','Dispositivo')->label('IMEI','IMEI')->label('mac','MAC')->label('serial','Nº de serie')->label('barcode','Código de barras')->label('id_color_device','Color')->label('id_complement_device','Complementos')->label('id_status_device','Estado dispositivo')->label('id_status_packaging_device','Estado packaging')->label('picture_url_1','Foto #1')->label('picture_url_2','Foto #2')->label('picture_url_3','Foto #3')->label('description','Comentarios')->label('status','Estado');
+		$xcrud_3->columns('client_type_pds,id_devices_pds,id_pds,id_displays_pds,id_display,id_device,position,IMEI,mac,status');
+		$xcrud_3->fields('client_type_pds,id_devices_pds,id_pds,id_displays_pds,id_display,id_device,position,serial,IMEI,mac,barcode,id_color_device,id_complement_device,id_status_device,id_status_packaging_device,picture_url_1,picture_url_2,picture_url_3,description,status');
 		$xcrud_3->order_by('id_pds','asc');
 		$xcrud_3->order_by('id_displays_pds','asc');
+		$xcrud_3->order_by('position','asc');
 
 		$xcrud_4 = xcrud_get_instance();
 		$xcrud_4->table('alarms_device_pds');
@@ -578,9 +580,9 @@ class Admin extends CI_Controller {
 		$xcrud_2->modal('picture_url_1');
 		$xcrud_2->modal('picture_url_2');
 		$xcrud_2->modal('picture_url_3');
-		$xcrud_2->label('id_devices_almacen','Ref.')->label('id_device','Dispositivo')->label('IMEI','IMEI')->label('mac','MAC')->label('barcode','Código de barras')->label('id_color_device','Color')->label('id_complement_device','Complementos')->label('id_status_device','Estado dispositivo')->label('id_status_packaging_device','Estado packaging')->label('picture_url_1','Foto #1')->label('picture_url_2','Foto #2')->label('picture_url_3','Foto #3')->label('description','Comentarios')->label('status','Estado');
+		$xcrud_2->label('id_devices_almacen','Ref.')->label('id_device','Dispositivo')->label('serial','Nº de serie')->label('IMEI','IMEI')->label('mac','MAC')->label('barcode','Código de barras')->label('id_color_device','Color')->label('id_complement_device','Complementos')->label('id_status_device','Estado dispositivo')->label('id_status_packaging_device','Estado packaging')->label('picture_url_1','Foto #1')->label('picture_url_2','Foto #2')->label('picture_url_3','Foto #3')->label('description','Comentarios')->label('status','Estado');
 		$xcrud_2->columns('id_devices_almacen,id_device,IMEI,mac,barcode,status');
-		$xcrud_2->fields('id_devices_almacen,id_device,IMEI,mac,barcode,id_color_device,id_complement_device,id_status_device,id_status_packaging_device,picture_url_1,picture_url_2,picture_url_3,description,status');
+		$xcrud_2->fields('id_devices_almacen,id_device,serial,IMEI,mac,barcode,id_color_device,id_complement_device,id_status_device,id_status_packaging_device,picture_url_1,picture_url_2,picture_url_3,description,status');
 		$xcrud_2->order_by('id_device','asc');
 		$xcrud_2->order_by('status','asc');
 		$xcrud_2->order_by('id_devices_almacen','asc');
