@@ -31,7 +31,7 @@ function getIntervenciones() {
         console.log(json);
         intervenciones_array = new Array();
         $.each(json,function(key,intervencion){
-            actionsBtn=actionsIntervencion(intervencion.id_intervencion);
+            actionsBtn=actionsIntervencion(intervencion.id_intervencion,intervencion.status);
             intervenciones_array.push(new Array(
                 "<a onClick='viewIntervencion("+intervencion.id_intervencion+")'>#"+intervencion.id_intervencion+"</a>",
                 intervencion.fecha,
@@ -83,6 +83,7 @@ function viewIntervencion(intervencion_id){
              "bProcessing": true,
              "bDestroy": true
          });
+         //
          //añadimos los datos de la intervencion
          $("#fecha_ver_intervencion").html(intervencion.fecha);
          $("#status_ver_intervencion").html(intervencion.status);
@@ -98,10 +99,20 @@ function viewIntervencion(intervencion_id){
      });
 }
 
-function actionsIntervencion(id_intervencion){
-    btnResolve="<div class='btn btn-success'><i class='fa fa-check-square-o'></i></div>";
-    btnDelete="<div class='btn btn-danger'><i class='fa fa-trash'></i></div>";
-    return btnResolve+btnDelete
+function actionsIntervencion(id_intervencion,status){
+    disableResolve = '';
+    disableDocu = '';
+    disableRemove = '';
+    switch (status){
+        case 'Nueva': disableResolve='disabled';break;
+        case 'Comunicada': disableDocu='disabled';break;
+        case 'Cerrada': disableResolve='disabled';disableDocu='disabled';break;
+        case 'Cancelada':disableResolve='disabled';disableDocu='disabled';disableRemove='disabled';break;
+    }
+    btnResolve="<button class='btn btn-success' "+disableResolve+"><i class='fa fa-check-square-o'></i></button>";
+    btnDocu="<button class='btn btn-default' "+disableDocu+"><i class='fa fa-files-o'></i></button>";
+    btnDelete="<button class='btn btn-danger' "+disableRemove+"><i class='fa fa-trash'></i></button>";
+    return btnResolve+btnDocu+btnDelete
 }
 
 function actionsIncidencia(id_incidencia){
