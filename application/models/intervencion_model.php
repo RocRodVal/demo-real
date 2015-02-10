@@ -26,6 +26,7 @@ class Intervencion_model extends MY_Model
         $this->db->from('intervenciones');
         $this->db->join('contact', 'intervenciones.id_operador=contact.id_contact');
         $this->db->join('pds', 'intervenciones.id_pds = pds.id_pds');
+
         $query = $this->db->get();
         $intervenciones = array();
         foreach ($query->result_array() as $row) {
@@ -45,6 +46,7 @@ class Intervencion_model extends MY_Model
             $pds->__set('reference', $row['reference']);
             $pds->__set('address', $row['address']);
             $i->__set('pds', $pds);
+            $i->__set('incidencias',$this->get_incidencias_by_intervencion($i));
 
             $intervenciones[] = $i;
         }

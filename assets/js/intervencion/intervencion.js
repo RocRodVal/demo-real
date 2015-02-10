@@ -39,6 +39,7 @@ function getIntervenciones() {
                 intervencion.pds.reference,
                 intervencion.pds.address,
                 intervencion.operador.contact,
+                intervencion.incidencias.length,
                 intervencion.status,
                 actionsBtn
             ));

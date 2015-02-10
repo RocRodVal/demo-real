@@ -38,6 +38,7 @@
                 <th>SFID</th>
                 <th>NOMBRE TIENDA</th>
                 <th>TECNICO</th>
+                <th>COUNT</th>
                 <th>STATUS</th>
                 <th>ACCIONES</th>
             </tr>
