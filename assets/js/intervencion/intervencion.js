@@ -150,7 +150,6 @@ function setIntervencionSession(intervencion){
 }
 
 function cancelIntervencion(){
-    alert(id_intervencion_session);
     $.ajax({
         type:"POST",
         url:base_url+url_intervencion+"cancelIntervencion",
