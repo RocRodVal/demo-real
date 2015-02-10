@@ -14,6 +14,8 @@
 <!-- Scripts específicos de la parte de intervenciones-->
 <script src="<?php echo base_url();?>assets/js/plugins/dataTables/jquery.dataTables.js" type="text/javascript"></script>
 <script src="<?php echo base_url();?>assets/js/plugins/dataTables/dataTables.bootstrap.js" type="text/javascript"></script>
+<script src="<?php echo base_url();?>assets/js/bootstrap-tooltip.js" type="text/javascript"></script>
+<script src="<?php echo base_url();?>assets/js/bootstrap-confirmation.js" type="text/javascript"></script>
 <script src="<?php echo base_url();?>assets/js/intervencion/intervencion.js" type="text/javascript"></script>
 
 <div id="page-wrapper">

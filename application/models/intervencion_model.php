@@ -117,6 +117,7 @@ class Intervencion_model extends MY_Model
     public function get_incidencias_by_intervencion($intervencion)
     {
         $this->load->model('VO/IncidenciaVO');
+        $this->load->model('VO/PdsVO');
         $this->db->select('incidencias.*,pds.id_pds, pds.reference, pds.address');
         $this->db->from('intervenciones_incidencias');
         $this->db->join('incidencias', 'incidencias.id_incidencia=intervenciones_incidencias.id_incidencia');
@@ -206,5 +207,21 @@ class Intervencion_model extends MY_Model
             return true;
         else
             return false;
+    }
+
+    public function change_status_intervencion($intervencion_id, $status)
+    {
+        $data = array("status" => $status);
+        $this->db->where('id_intervencion', $intervencion_id);
+        $this->db->update('intervenciones', $data);
+        if ($this->db->affected_rows() > 0)
+            return true;
+        else
+            return false;
+    }
+
+    public function delete_incidencias_intervencion($intervencion_id){
+        $this->db->where('id_intervencion', $intervencion_id);
+        $this->db->delete('intervenciones_incidencias');
     }
 }

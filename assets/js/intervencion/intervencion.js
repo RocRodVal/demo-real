@@ -5,6 +5,7 @@ var pathname = window.location.href;
 var base_url = pathname.split("intervencion")[0];
 var url_intervencion = "intervencion/";
 var intervencion_session=null;
+var id_intervencion_session=0;
 
 $(document).ready(function () {
     initComponents();
@@ -49,7 +50,11 @@ function getIntervenciones() {
             "bProcessing": true,
             "bDestroy": true
         });
-
+        options ={
+            onConfirm: cancelIntervencion,
+            placement: "left"
+        }
+        $('[data-toggle="confirmation"]').confirmation(options);
     }).error(function (msg) {
 
     });
@@ -83,7 +88,7 @@ function viewIntervencion(intervencion_id){
              "bProcessing": true,
              "bDestroy": true
          });
-         //
+
          //añadimos los datos de la intervencion
          $("#fecha_ver_intervencion").html(intervencion.fecha);
          $("#status_ver_intervencion").html(intervencion.status);
@@ -94,6 +99,7 @@ function viewIntervencion(intervencion_id){
          $("#email_contacto_ver_intervencion").html(intervencion.operador.email);
          //mostramos el modal con la información obtenida
          $("#modal_ver_intervencion").modal();
+
      }).error(function (msg) {
 
      });
@@ -109,9 +115,10 @@ function actionsIntervencion(id_intervencion,status){
         case 'Cerrada': disableResolve='disabled';disableDocu='disabled';break;
         case 'Cancelada':disableResolve='disabled';disableDocu='disabled';disableRemove='disabled';break;
     }
-    btnResolve="<button class='btn btn-success' "+disableResolve+"><i class='fa fa-check-square-o'></i></button>";
-    btnDocu="<button class='btn btn-default' "+disableDocu+"><i class='fa fa-files-o'></i></button>";
-    btnDelete="<button class='btn btn-danger' "+disableRemove+"><i class='fa fa-trash'></i></button>";
+    btnResolve="<button class='btn btn-success' "+disableResolve+" onClick='cerrarIntervencion("+id_intervencion+");'><i class='fa fa-check-square-o'></i></button>";
+    btnDocu="<button class='btn btn-default' "+disableDocu+" onClick='generateDoc("+id_intervencion+");'><i class='fa fa-files-o'></i></button>";
+    btnDelete="<button class='delete btn btn-danger' "+disableRemove+ "data-toggle='confirmation' onClick='setIntervencionSession("+id_intervencion+");'>" +
+                "<i class='fa fa-trash'></i></button>"
     return btnResolve+btnDocu+btnDelete
 }
 
@@ -137,6 +144,63 @@ function showDataIncidencia(incidencia){
     $("#modal_ver_incidencia").modal();
 }
 
-function refreshTablaIncidencias() {
+function setIntervencionSession(intervencion){
+    id_intervencion_session=intervencion;
+}
 
+function cancelIntervencion(){
+    alert(id_intervencion_session);
+    $.ajax({
+        type:"POST",
+        url:base_url+url_intervencion+"cancelIntervencion",
+        data:"intervencion_id="+id_intervencion_session
+    }).done(function (msg) {
+        json=JSON.parse(msg);
+        if(json==true)
+            refreshTablaIncidencias();
+        else
+            alert("Se ha producido un error");
+        $('.delete').confirmation('hide');
+
+    }).error(function (msg) {
+
+    });
+}
+
+function generateDoc(intervencion_id){
+    id_intervencion_session=intervencion_id;
+    $.ajax({
+        type:"POST",
+        url:base_url+url_intervencion+"generateDocIntervencion",
+        data:"intervencion_id="+id_intervencion_session
+    }).done(function (msg) {
+        json=JSON.parse(msg);
+        if(json==true)
+            refreshTablaIncidencias();
+        else
+            alert("Se ha producido un error");
+    }).error(function (msg) {
+
+    });
+}
+
+function cerrarIntervencion(intervencion_id){
+    id_intervencion_session=intervencion_id;
+    $.ajax({
+        type:"POST",
+        url:base_url+url_intervencion+"cerrarIntervencion",
+        data:"intervencion_id="+id_intervencion_session
+    }).done(function (msg) {
+        json=JSON.parse(msg);
+        if(json==true)
+            refreshTablaIncidencias();
+        else
+            alert("Se ha producido un error");
+    }).error(function (msg) {
+
+    });
+}
+
+function refreshTablaIncidencias() {
+    getIntervenciones();
 }
