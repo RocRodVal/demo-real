@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost:3306
--- Generation Time: Feb 10, 2015 at 03:29 PM
+-- Generation Time: Feb 10, 2015 at 03:43 PM
 -- Server version: 5.5.40
 -- PHP Version: 5.4.35
 
@@ -11065,6 +11065,7 @@ INSERT INTO `incidencias` (`id_incidencia`, `fecha`, `id_pds`, `id_displays_pds`
 
 CREATE TABLE IF NOT EXISTS `intervenciones` (
 `id_intervencion` int(10) unsigned NOT NULL,
+  `id_pds` smallint(5) unsigned NOT NULL,
   `fecha` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `id_operador` smallint(5) unsigned DEFAULT NULL,
   `description` text,
