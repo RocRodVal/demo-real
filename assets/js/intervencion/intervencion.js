@@ -83,6 +83,15 @@ function viewIntervencion(intervencion_id){
              "bProcessing": true,
              "bDestroy": true
          });
+         //añadimos los datos de la intervencion
+         $("#fecha_ver_intervencion").html(intervencion.fecha);
+         $("#status_ver_intervencion").html(intervencion.status);
+         $("#description_ver_intervencion").html(intervencion.description);
+         //añadimos los datos del contacto-
+         $("#nombre_contacto_ver_intervencion").html(intervencion.operador.contact);
+         $("#telefono_contacto_ver_intervencion").html(intervencion.operador.phone);
+         $("#email_contacto_ver_intervencion").html(intervencion.operador.email);
+         //mostramos el modal con la información obtenida
          $("#modal_ver_intervencion").modal();
      }).error(function (msg) {
 
