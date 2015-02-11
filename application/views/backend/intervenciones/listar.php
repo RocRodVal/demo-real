@@ -9,7 +9,7 @@
 ?>
 
 <!-- CSS específicos de la parte de intervenciones -->
-<link rel="stylesheet" type="text/css" href="<? echo base_url();?>assets/css/intervencion/intervencion.css">
+<link rel="stylesheet" type="text/css" href="<?php echo base_url();?>assets/css/intervencion/intervencion.css">
 
 <!-- Scripts específicos de la parte de intervenciones-->
 <script src="<?php echo base_url();?>assets/js/plugins/dataTables/jquery.dataTables.js" type="text/javascript"></script>
@@ -23,9 +23,6 @@
         <div class="col-lg-12">
             <h1 class="page-header"><?php echo $title ?></h1>
         </div>
-    </div>
-    <div class="row">
-        <div id="btn_nueva_intervencion" class="col-lg-2 btn btn-default">Nueva intervencion</div>
     </div>
 
     <div class="row">

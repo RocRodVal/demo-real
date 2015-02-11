@@ -1,0 +1,21 @@
+/*
+Estilos del formulario superior
+*/
+.form-sfid{
+    margin-bottom:20px;
+}
+
+
+/*
+Estilos de las tabla
+*/
+.table>thead>tr>th {
+    vertical-align: bottom;
+    border-bottom: 2px solid #ddd;
+    font-size: 10pt;
+}
+
+.table>tbody>tr>td {
+    font-size: 10pt;
+}
+

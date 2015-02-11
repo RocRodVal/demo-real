@@ -1,0 +1,23 @@
+.labelText {
+    padding: 10px 0;
+    padding-left: 15px;
+}
+.labelBtn{
+    padding:5.6px 0;
+}
+
+.grey {
+    background-color: #f3f3f3;
+}
+
+.white{
+    background-color: #fff;
+}
+
+.incidenciaEstado{
+    padding:0 15px;
+}
+
+.modal-dialog {
+    width: 80%;
+}
