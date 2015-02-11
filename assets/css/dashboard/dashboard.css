@@ -5,15 +5,6 @@ Estilos del formulario superior
     margin-bottom:20px;
 }
 
-/*
-Estilos de los paneles
-*/
-.panel-heading {
-    font-size: 13pt;
-    color: #fff !important;
-    background-color: #FF6600 !important;
-    text-align: center;
-}
 
 /*
 Estilos de las tabla

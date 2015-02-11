@@ -1,37 +1,59 @@
 html,body,#nav-bar,h1,h2,h3,h4,h5,#page-wrapper{
     font-family: HelveticaNeueLight,HelveticaNeueLight2,Arial;
 }
+/*
+ESTILOS DEL navbar
+*/
+nav.navbar {
+    box-shadow: 10px 4px 10px;
+}
+
+nav.a, nav.a:hover, nav.a:focus, nav.a:active{
+    color: #FF6600;
+}
 
 nav.navbar.navbar-default.navbar-static-top, .navbar-default.sidebar, div#wrapper-login{
     background: url('/orange/assets/images/bgnoise2.png');
 }
-
-.sidebar ul li {
-    border-bottom: 0px solid #e7e7e7;
-}
-
 .navbar-default {
     background-color: #f8f8f8;
     border: 0px;
 }
-
+/*
+ESTILOS DEL sidebar
+*/
+.sidebar ul li {
+    border-bottom: 0px solid #e7e7e7;
+}
 .sidebar ul li a.active{
     background-color: #FF6600 !important;
     color: #fff;
     box-shadow: -7px 0px 29px #000;
 }
-
 .sidebar ul li a:focus {
     background-color: #000 !important;
     color: #FF6600;
 }
-
 .sidebar ul li a:hover {
     background-color: #000 !important;
     color: #fff;
     box-shadow: -7px 0px 29px #000;
 }
 
-a, a:hover, a:focus, a:active, a:visited {
-    color: #FF6600;
+/*
+Estilos de los paneles
+*/
+.panel{
+    border:0px;
+}
+.panel-default{
+    box-shadow: 1px 1px 10px #222;
+    boder: 1px solid #333;
+}
+
+.panel-heading {
+    font-size: 13pt;
+    color: #ff6600 !important;
+    background-color: #333 !important;
+    text-align: center;
 }

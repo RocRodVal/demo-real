@@ -22,9 +22,15 @@
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
 	<link rel="shortcut icon" href="<?=site_url('favicon.ico')?>">
-    <!-- Carga de los CSS dependiendo de donde estemos-->
+    <!-- Carga de los JS/CSS dependiendo de donde estemos-->
     <?php if($this->uri->segment(2)==="dashboard"){?>
         <link href="<?=site_url('assets/css/dashboard/dashboard.css')?>" rel="stylesheet">
+    <?php }?>
+    <?php if($this->uri->segment(2)==="operar_incidencia"){?>
+        <script type="text/javascript" src="<?php echo base_url();?>assets/js/intervencion/addIntervencion.js"></script>
+        <link href="<?=site_url('assets/css/incidencia/operar_incidencia.css')?>" rel="stylesheet">
+        <script src="<?php echo base_url();?>assets/js/plugins/dataTables/jquery.dataTables.js" type="text/javascript"></script>
+        <script src="<?php echo base_url();?>assets/js/plugins/dataTables/dataTables.bootstrap.js" type="text/javascript"></script>
     <?php }?>
 </head>  
 

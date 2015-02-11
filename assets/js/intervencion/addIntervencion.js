@@ -109,5 +109,50 @@ function saveIntervencion() {
         }).error(function (msg) {
         });
     }
-
 }
+
+function showModalViewIntervencion(id_intervencion){
+
+    $.ajax({
+        type: "POST",
+        data: "intervencion_id=" + id_intervencion,
+        url: base_url + url_intervencion + "getInfoIntervercion"
+    }).done(function (msg) {
+        intervencion = JSON.parse(msg);
+        console.log(intervencion);
+        intervencion_session = intervencion;
+        incidencias_array = new Array();
+        $.each(intervencion.incidencias, function (key, incidencia) {
+            btnDelete = "<div class='btn btn-danger' disabled onClick='deleteIncidenciaIntervencion(" + incidencia.id_incidencia + ");'><i class='fa fa-trash'></i></div>";
+            incidencias_array.push(new Array(
+                "#" + incidencia.id_incidencia,
+                incidencia.fecha,
+                incidencia.pds.reference,
+                incidencia.pds.address,
+                "-------",
+                incidencia.status,
+                btnDelete
+            ));
+
+        });
+        $('#table_incidencias').dataTable({
+            "data": incidencias_array,
+            "autoWidth": false,
+            "bProcessing": true,
+            "bDestroy": true
+        });
+        //añadimos los datos de la intervencion
+        $("#fecha_ver_intervencion").html(intervencion.fecha);
+        $("#status_ver_intervencion").html(intervencion.status);
+        $("#description_ver_intervencion").html(intervencion.description);
+        //añadimos los datos del contacto-
+        $("#nombre_contacto_ver_intervencion").html(intervencion.operador.contact);
+        $("#telefono_contacto_ver_intervencion").html(intervencion.operador.phone);
+        $("#email_contacto_ver_intervencion").html(intervencion.operador.email);
+        //si el estado no es nueva, le deshabilitamos el botón de añadir incidencias
+        $("#bnt_add_incidencia_to_intervencion").attr('disabled',true);
+        $("#modal_ver_intervencion").modal();
+    }).error(function (msg) {
+    });
+}
+

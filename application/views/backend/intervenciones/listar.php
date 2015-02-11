@@ -24,9 +24,6 @@
             <h1 class="page-header"><?php echo $title ?></h1>
         </div>
     </div>
-    <div class="row">
-        <div id="btn_nueva_intervencion" class="col-lg-2 btn btn-default">Nueva intervencion</div>
-    </div>
 
     <div class="row">
         <table id="table_intervenciones" class="display compact table"

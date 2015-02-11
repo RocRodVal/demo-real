@@ -91,6 +91,19 @@ class Intervencion_model extends MY_Model
 
     }
 
+    public function get_intervencion_incidencia($id_incidencia){
+        $this->db->select('id_intervencion');
+        $this->db->from('intervenciones_incidencias');
+        $this->db->where('id_incidencia',$id_incidencia);
+        $query=$this->db->get();
+        if ($query->num_rows > 0) {
+            $row = $query->row();
+            return $row->id_intervencion;
+        }
+        else
+            return 0;
+    }
+
     public function get_intervenciones_pds_nuevas($id_pds)
     {
         $this->load->model('VO/ContactVO');

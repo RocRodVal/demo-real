@@ -137,6 +137,7 @@ class Admin extends CI_Controller {
 			
 		$xcrud = xcrud_get_instance();
 		$this->load->model('tienda_model');
+		$this->load->model('intervencion_model');
 		
 		$sfid = $this->tienda_model->get_pds($id_pds);
 		
@@ -151,7 +152,9 @@ class Admin extends CI_Controller {
 		$data['id_pds_url']     = $id_pds;
 		$data['id_inc_url']     = $id_inc;		
 		
-		$data['incidencia'] = $this->tienda_model->get_incidencia($id_inc);
+		$incidencia = $this->tienda_model->get_incidencia($id_inc);
+		$incidencia['intervencion']=$this->intervencion_model->get_intervencion_incidencia($id_inc);
+		$data['incidencia'] = $incidencia;
 		
 		$data['title']   = 'Operativa incidencias';
 	
