@@ -64,7 +64,7 @@ class Intervencion extends CI_Controller
     function getIntervencionesPDS(){
         if(isset($_POST['id_pds'])){
             $id_pds=$_POST['id_pds'];
-            $intervenciones = $this->intervencion_model->get_intervenciones_pds($id_pds);
+            $intervenciones = $this->intervencion_model->get_intervenciones_pds_nuevas($id_pds);
             $this->data['data']=$intervenciones;
         }
         else{
@@ -102,18 +102,15 @@ class Intervencion extends CI_Controller
                 $this->data['data']="Incidencia ya asignada a una intervencion";
             } else {
                 $i->__set('id_intervencion',$this->intervencion_model->create_intervencion($i));
-                $result=$this->intervencion_model->add_incidencia_to_intervencion($incidencia->id_incidencia,$i->id_intervencion);
-                if($result==true) {
-                    //cambiamos el estado de la incidencia a asignada
-                    $status = 4;
-                    $result = $this->intervencion_model->change_status_incidencia($incidencia_id, $status);
-                    $this->data['data'] = $result;
-                }
-                $this->data['data']=false;
+                $this->intervencion_model->add_incidencia_to_intervencion($incidencia->id_incidencia, $i->id_intervencion);
+                //cambiamos el estado de la incidencia a asignada
+                $status = 4;
+                $result = $this->intervencion_model->change_status_incidencia($incidencia_id, $status);
+                $this->data['data'] = $result;
             }
         }
         else{
-            $this->data['data']=false;
+            $this->data['data']=0;
         }
         $this->load->view('backend/dataJSON', $this->data);
     }
@@ -218,6 +215,61 @@ class Intervencion extends CI_Controller
             $status=3;
             $result=$this->intervencion_model->change_status_intervencion($intervencion_id,$status);
             $this->data['data']=$result;
+        }
+        else
+            $this->data['data']=false;
+        $this->load->view('backend/dataJSON', $this->data);
+    }
+
+    function deleteIncidenciaIntervencion(){
+        if (isset($_POST['incidencia_id']) && isset($_POST['intervencion_id'])) {
+            $incidencia_id=$_POST['incidencia_id'];
+            $intervencion_id=$_POST['intervencion_id'];
+            //sacamos la incidencia de la intervención
+            $result=$this->intervencion_model->delete_incidencia_intervencion($incidencia_id);
+            if($result){
+                //comprobamos el numero de incidencias para la intervencion y si es 0, la pasamos a cancelada
+                $count=$this->intervencion_model->get_count_incidencias_in_intervencion($intervencion_id);
+                if($count==0){
+                    $status=4;
+                    $this->intervencion_model->change_status_intervencion($intervencion_id,$status);
+                }
+                //cambiamos el estado de la incidencia a asiganado material
+                $status=3;
+                $result=$this->intervencion_model->change_status_incidencia($incidencia_id,$status);
+                $this->data['data']=$result;
+            }
+            else
+                $this->data['data']=$result;
+
+        }
+        else
+            $this->data['data']=false;
+        $this->load->view('backend/dataJSON', $this->data);
+    }
+
+    function getIncidenciasTiendaSinIntervencion(){
+        $incidencias=array();
+        if (isset($_POST['id_pds'])) {
+            $id_pds=$_POST['id_pds'];
+            $incidencias=$this->intervencion_model->get_incidencias_material_asignado_pds_sin_intervencion($id_pds);
+        }
+        $this->data['data']=$incidencias;
+        $this->load->view('backend/dataJSON', $this->data);
+    }
+
+    function addIncidenciasIntervencion(){
+        if(isset($_POST['incidencias']) && isset($_POST['id_intervencion'])){
+            $incidencias = json_decode(stripslashes($_POST['incidencias']));
+            $intervencion_id=$_POST['id_intervencion'];
+            foreach($incidencias as $incidencia_id){
+                if($this->intervencion_model->add_incidencia_to_intervencion($incidencia_id, $intervencion_id)){
+                    //cambiamos el estado de la incidencia a asignada
+                    $status=4;
+                    $this->intervencion_model->change_status_incidencia($incidencia_id,$status);
+                }
+            }
+            $this->data['data']=true;
         }
         else
             $this->data['data']=false;
