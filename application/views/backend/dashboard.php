@@ -96,7 +96,8 @@
                                             <th>Contacto</th>
                                             <th>Teléfono</th>
                                             <th>Email</th>
-                                            <th>Estado</th>
+                                            <th>Estado SAT</th>
+                                            <th>Estado tienda</th>
                                         </tr>
                                     </thead>                                
                                     <tbody>
@@ -113,6 +114,7 @@
     										<td><?php echo $incidencia->phone ?></td>
     										<td><?php echo $incidencia->email ?></td>
     										<td><?php echo $incidencia->status ?></td>
+    										<td><?php echo $incidencia->status_pds ?></td>
     									</tr>
 					    				<?php
 					    				}
