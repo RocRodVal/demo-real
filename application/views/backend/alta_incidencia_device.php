@@ -93,13 +93,14 @@
 		                                            <label>Email de contacto</label>
 		                                            <input class="form-control" name="email" id="email" placeholder="Email">
 		                                        </div>
-		                                        <input type="submit" class="submit" value="Envíar"  class="btn btn-lg btn-success btn-block" />
-		                                        <a href="<?=site_url('admin/dashboard')?>" class="btn btn-lg btn-danger btn-block">Cancelar</a>			                                                                                    
+		                                        <input type="submit" value="Envíar"  class="btn btn-lg btn-success btn-block" />
+		                                        <input type="button" value="Cancelar" class="btn btn-lg btn-danger btn-block" onclick="window.location='<?=site_url('admin/dashboard')?>'" />                                                                                    
                                         	</td>
                                         	<?php 
                                         	if ($picture_url_dev <> '') {
                                         	?>
-                                        	<td><img src="../../../orange/application/uploads/<?php echo $picture_url_dev ?>" width="600" title="<?php echo $device ?>"/></td>
+                                        	<?=site_url('application/uploads/'.$display->picture_url.'')?>
+                                        	<td><img src="<?=site_url('application/uploads/'.$display->picture_url_dev.'')?>" width="600" title="<?php echo $device ?>" /></td>
                                         	<?php 
                                         	}
                                         	?>

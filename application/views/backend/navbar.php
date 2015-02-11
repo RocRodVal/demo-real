@@ -11,14 +11,7 @@
             </div>
 
             <ul class="nav navbar-top-links navbar-right">
-                <li class="dropdown">
-                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                        <i class="fa fa-user fa-fw"></i>  <i class="fa fa-caret-down"></i>
-                    </a>
-                    <ul class="dropdown-menu dropdown-user">
-                        <li><a href="<?=site_url('admin/logout')?>"><i class="fa fa-sign-out fa-fw"></i> Logout</a></li>
-                    </ul>
-                </li>
+            	<li><a href="<?=site_url('admin/logout')?>"><i class="fa fa-sign-out fa-fw"></i></a></li>
             </ul>
             <div class="navbar-default sidebar" role="navigation">
                 <div class="sidebar-nav navbar-collapse">
@@ -56,7 +49,7 @@
                         </li>
                         <li><a <?=($this->uri->segment(2)==='auditorias')?'class="active"':''?> href="<?=site_url('admin/auditorias')?>"><i class="fa fa-list-alt fa-fw"></i> Auditorías</a> </li>
                         <li><a <?=($this->uri->segment(1)==='intervencion')?'class="active"':''?> href="<?=site_url('intervencion/')?>"><i class="fa fa-cog fa-fw"></i> Intervenciones</a> </li>
-                        <li><a <?=($this->uri->segment(2)==='incidencias')?'class="active"':''?> href="<?=site_url('admin/incidencias')?>"><i class="fa fa-list-ul fa-fw"></i> Incidencias</a> </li>
+                        <!--<li><a <?=($this->uri->segment(2)==='incidencias')?'class="active"':''?> href="<?=site_url('admin/incidencias')?>"><i class="fa fa-list-ul fa-fw"></i> Incidencias</a> </li>-->
                         <li><a <?=($this->uri->segment(2)==='almacen')?'class="active"':''?> href="<?=site_url('admin/almacen')?>"><i class="fa  fa-table fa-fw"></i> Almacén</a> </li>
                         <li><a <?=($this->uri->segment(2)==='inventarios')?'class="active"':''?> href="<?=site_url('admin/inventarios')?>"><i class="fa  fa-table fa-fw"></i> Inventarios</a> </li>
                         <li><a <?=($this->uri->segment(2)==='facturacion')?'class="active"':''?> href="<?=site_url('admin/facturacion')?>"><i class="fa fa-money fa-fw"></i> Facturación</a> </li>
