@@ -45,6 +45,7 @@ $route['default_controller']  = 'admin';
 // CMS
 $route['admin/(:any)']        = 'admin/$1';
 $route['intervencion/(:any)'] = 'intervencion/$1';
+$route['master/(:any)']       = 'master/$1';
 
 // Frontend
 // $route['home']                = 'home';
