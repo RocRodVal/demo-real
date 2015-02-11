@@ -25,7 +25,7 @@
  					<br clear="all" />
  				</div>	
             </div>
-            <form action="<?=site_url('admin/insert_incidencia/'.$id_pds_url.'/'.$id_dis_url.'/'.$id_dev_url)?>" method="post" class="content_auto form_login">
+            <form action="<?=site_url('admin/insert_incidencia/'.$id_pds_url.'/'.$denuncia.'/'.$id_dis_url.'/'.$id_dev_url)?>" method="post" class="content_auto form_login">
             <div class="row">
                 <div class="col-lg-12">
  					<div class="panel panel-default">

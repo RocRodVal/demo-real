@@ -186,13 +186,15 @@ class Admin extends CI_Controller {
 	
 		$this->tienda_model->incidencia_update($id_inc,$status_pds,$status);
 		
-	
+		redirect('admin/dashboard','refresh');
+		/*
 		$data['title']   = 'Operativa incidencias';
 	
 		$this->load->view('backend/header', $data);
 		$this->load->view('backend/navbar', $data);
 		$this->load->view('backend/dashboard', $data);
 		$this->load->view('backend/footer');
+		*/
 	}	
 	
 
@@ -614,7 +616,8 @@ class Admin extends CI_Controller {
 	
 	public function alta_incidencia()
 	{
-		$id_pds = $this->uri->segment(3);
+		$id_pds   = $this->uri->segment(3);
+		$denuncia = $this->uri->segment(4);
 		
 		$xcrud = xcrud_get_instance();
 		$this->load->model('tienda_model');
@@ -628,6 +631,7 @@ class Admin extends CI_Controller {
 		$data['address']    = $sfid['address'];
 		$data['zip']        = $sfid['zip'];
 		$data['city']       = $sfid['city'];
+		$data['denuncia']       = $this->uri->segment(4);
 		
 		$data['displays'] = $this->tienda_model->get_displays_panelado($id_pds);
 		
@@ -639,10 +643,9 @@ class Admin extends CI_Controller {
 		$this->load->view('backend/footer');		
 	}	
 	
-	public function alta_incidencia_mueble()
+	public function alta_incidencia_robo()
 	{
 		$id_pds = $this->uri->segment(3);
-		$id_dis = $this->uri->segment(4);
 	
 		$xcrud = xcrud_get_instance();
 		$this->load->model('tienda_model');
@@ -656,6 +659,76 @@ class Admin extends CI_Controller {
 		$data['address']    = $sfid['address'];
 		$data['zip']        = $sfid['zip'];
 		$data['city']       = $sfid['city'];
+	
+		$data['displays'] = $this->tienda_model->get_displays_panelado($id_pds);
+		
+		$data['id_pds_url']  = $id_pds;
+	
+		$data['title'] = 'Alta incidencia';
+	
+		$this->load->view('backend/header', $data);
+		$this->load->view('backend/navbar', $data);
+		$this->load->view('backend/alta_incidencia_robo', $data);
+		$this->load->view('backend/footer');
+	}
+		
+	public function subir_denuncia()
+	{
+		$id_pds = $this->uri->segment(3);
+	
+		$xcrud = xcrud_get_instance();
+		$this->load->model('tienda_model');
+	
+		$sfid = $this->tienda_model->get_pds($id_pds);
+	
+		$data['id_pds']     = 'ABX/PDS-'.$sfid['id_pds'];
+		$data['commercial'] = $sfid['commercial'];
+		$data['territory']  = $sfid['territory'];
+		$data['reference']  = $sfid['reference'];
+		$data['address']    = $sfid['address'];
+		$data['zip']        = $sfid['zip'];
+		$data['city']       = $sfid['city'];
+	
+		$config['upload_path']   = dirname($_SERVER["SCRIPT_FILENAME"]).'/uploads/';
+		$config['upload_url']    = base_url().'/uploads/';
+		$config['allowed_types'] = 'doc|docx|pdf|jpg|png';
+		$new_name                = $sfid['reference'].'-'.time().'-'.$_FILES["userfile"]['name'];
+		$config['file_name']     = $new_name;
+		$config['overwrite']     = TRUE;
+		$config['max_size']      = '1000KB';
+
+		$this->load->library('upload', $config);
+
+		if($this->upload->do_upload())
+		{
+			redirect('admin/alta_incidencia/'.$id_pds.'/'.$new_name,'refresh');
+		} 
+		else
+		{
+			echo "File upload failed";		
+		}
+	}
+	
+	
+	public function alta_incidencia_mueble()
+	{
+		$id_pds   = $this->uri->segment(3);
+		$denuncia = $this->uri->segment(4);
+		$id_dis   = $this->uri->segment(5);
+	
+		$xcrud = xcrud_get_instance();
+		$this->load->model('tienda_model');
+	
+		$sfid = $this->tienda_model->get_pds($id_pds);
+	
+		$data['id_pds']     = 'ABX/PDS-'.$sfid['id_pds'];
+		$data['commercial'] = $sfid['commercial'];
+		$data['territory']  = $sfid['territory'];
+		$data['reference']  = $sfid['reference'];
+		$data['address']    = $sfid['address'];
+		$data['zip']        = $sfid['zip'];
+		$data['city']       = $sfid['city'];
+		$data['denuncia']       = $this->uri->segment(4);
 	
 		$display = $this->tienda_model->get_display($id_dis);
 		
@@ -679,9 +752,10 @@ class Admin extends CI_Controller {
 
 	public function alta_incidencia_device()
 	{
-		$id_pds = $this->uri->segment(3);
-		$id_dis = $this->uri->segment(4);
-		$id_dev = $this->uri->segment(5);
+		$id_pds   = $this->uri->segment(3);
+		$denuncia = $this->uri->segment(4);
+		$id_dis   = $this->uri->segment(5);
+		$id_dev   = $this->uri->segment(6);
 	
 		$xcrud = xcrud_get_instance();
 		$this->load->model('tienda_model');
@@ -695,6 +769,7 @@ class Admin extends CI_Controller {
 		$data['address']    = $sfid['address'];
 		$data['zip']        = $sfid['zip'];
 		$data['city']       = $sfid['city'];
+		$data['denuncia']       = $this->uri->segment(4);
 	
 		$display = $this->tienda_model->get_display($id_dis);
 	
@@ -724,9 +799,10 @@ class Admin extends CI_Controller {
 	public function insert_incidencia()
 	{
 	
-		$id_pds = $this->uri->segment(3);
-		$id_dis = $this->uri->segment(4);
-		$id_dev = $this->uri->segment(5);
+		$id_pds   = $this->uri->segment(3);
+		$denuncia = $this->uri->segment(4);
+		$id_dis   = $this->uri->segment(5);
+		$id_dev   = $this->uri->segment(6);
 		
 		$xcrud = xcrud_get_instance();
 		$this->load->model('tienda_model');		
@@ -745,7 +821,7 @@ class Admin extends CI_Controller {
 					'alarm_device'      => $this->input->post('alarm_device'),
 					'description'  	    => $this->input->post('description'),
 					'parte_pdf'  	    => '',
-					'denuncia'  	    => '',
+					'denuncia'  	    => $denuncia,
 					'foto_url'  	    => '',
 					'contacto'  	    => $this->input->post('contacto'),
 					'phone'  	        => $this->input->post('phone'),

@@ -40,7 +40,7 @@
 					   							foreach($devices as $device)
 					    						{
 					    						?>
-					    						<li><a href="<?=site_url('admin/alta_incidencia_device/'.$id_pds_url.'/'.$id_dis_url.'/'.$device->id_device)?>"><?php echo $device->device ?></a></li>
+					    						<li><a href="<?=site_url('admin/alta_incidencia_device/'.$id_pds_url.'/'.$denuncia.'/'.$id_dis_url.'/'.$device->id_device)?>"><?php echo $device->device ?></a></li>
 										    	<?php
 										    	}
 										    	?>

@@ -52,7 +52,7 @@
    										if (($this->tienda_model->count_devices_display($display->id_display)) != 0)
    										{		
     									?>
-                                        	<td><a href="<?=site_url('admin/alta_incidencia_mueble')?>/<?php echo $display->id_pds.'/'.$display->id_display ?>"><?php echo $display->display ?></a><br clear="all" /><a href="<?=site_url('admin/alta_incidencia')?>/<?php echo $display->id_pds.'/'.$display->id_display ?>"><img src="<?=site_url('application/uploads/'.$display->picture_url.'')?>" title="<?php echo $display->display ?>" width="200" /></a></td>
+                                        	<td><a href="<?=site_url('admin/alta_incidencia_mueble')?>/<?php echo $display->id_pds.'/'.$denuncia.'/'.$display->id_display ?>"><?php echo $display->display ?></a><br clear="all" /><a href="<?=site_url('admin/alta_incidencia')?>/<?php echo $display->id_pds.'/'.$display->id_display ?>"><img src="<?=site_url('application/uploads/'.$display->picture_url.'')?>" title="<?php echo $display->display ?>" width="200" /></a></td>
 					    				<?php
 					    				++$i;
    										}

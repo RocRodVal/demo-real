@@ -19,11 +19,9 @@
                 <div class="col-lg-3 col-md-6">
                 	<p><a href="<?=site_url('admin/alta_incidencia/'.$id_pds_url)?>"><button type="button" class="btn btn-primary btn-lg" style="width:200px;">Incidencia</button></a></p>
                 </div>
-                <!-- 
                 <div class="col-lg-3 col-md-6">		
-                	<p><a href="<?=site_url('admin/alta_incidencia_sfid_robo')?>"><button type="button" class="btn btn-danger btn-lg" style="width:200px;">Robo</button></a></p>
+                	<p><a href="<?=site_url('admin/alta_incidencia_robo/'.$id_pds_url)?>"><button type="button" class="btn btn-danger btn-lg" style="width:200px;">Robo</button></a></p>
                 </div>
-                -->
             </div> 
             <div class="row">
                 <div class="col-lg-12">
