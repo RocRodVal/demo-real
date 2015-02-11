@@ -1,0 +1,37 @@
+html,body,#nav-bar,h1,h2,h3,h4,h5,#page-wrapper{
+    font-family: HelveticaNeueLight,HelveticaNeueLight2,Arial;
+}
+
+nav.navbar.navbar-default.navbar-static-top, .navbar-default.sidebar, div#wrapper-login{
+    background: url('/orange/assets/images/bgnoise2.png');
+}
+
+.sidebar ul li {
+    border-bottom: 0px solid #e7e7e7;
+}
+
+.navbar-default {
+    background-color: #f8f8f8;
+    border: 0px;
+}
+
+.sidebar ul li a.active{
+    background-color: #FF6600 !important;
+    color: #fff;
+    box-shadow: -7px 0px 29px #000;
+}
+
+.sidebar ul li a:focus {
+    background-color: #000 !important;
+    color: #FF6600;
+}
+
+.sidebar ul li a:hover {
+    background-color: #000 !important;
+    color: #fff;
+    box-shadow: -7px 0px 29px #000;
+}
+
+a, a:hover, a:focus, a:active, a:visited {
+    color: #FF6600;
+}

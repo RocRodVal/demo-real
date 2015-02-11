@@ -6,11 +6,13 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-lg-3">
-                	<form action="<?=site_url('admin/dashboard');?>" method="post">
-                	<label>SFID</label>
-		            <p><input class="form-control" placeholder="SFID" name="sfid" id="sfid"></p>
-                    <p class="botonera"><input type="submit" class="submit" value="Buscar" /></p>                 
+                <div class="col-lg-6">
+                	<form action="<?=site_url('admin/dashboard');?>" method="post" class="form-inline form-sfid">
+                        <div class="form-group">
+                            <label>SFID</label>
+                            <input class="form-control" placeholder="SFID" name="sfid" id="sfid">
+                            <button type="submit" class="btn btn-default">Buscar</button>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -89,7 +91,7 @@
                                 <table class="table table-striped table-bordered table-hover" id="dataTables-example">
                                     <thead>
                                         <tr>
-                                            <th>Referencia</th>
+                                            <th>Ref.</th>
                                             <th>Fecha</th>
                                             <th>SFID</th>
                                             <th>Incidencia</th>
@@ -101,13 +103,13 @@
                                         </tr>
                                     </thead>                                
                                     <tbody>
-                                        <?php 
+                                        <?php
    										foreach($incidencias as $incidencia)
     									{
     									?>
     									<tr>
-    										<td><a href="<?=site_url('admin/operar_incidencia/'.$incidencia->id_pds.'/'.$incidencia->id_incidencia)?>"><?php echo $incidencia->id_incidencia?></a></td>
-    										<td><?php echo $incidencia->fecha ?></td>
+    										<td><a href="<?=site_url('admin/operar_incidencia/'.$incidencia->id_pds.'/'.$incidencia->id_incidencia)?>">#<?php echo $incidencia->id_incidencia?></a></td>
+    										<td><?php echo date_format(date_create($incidencia->fecha),'d-m-Y H:i:s') ?></td>
     										<td><?php echo $incidencia->reference ?></td>
     										<td><?php echo $incidencia->description ?></td>
     										<td><?php echo $incidencia->contacto ?></td>
