@@ -51,7 +51,7 @@
         <div class="col-lg-12">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    Rellene todos los datos de la incidencia
+                    Cambiar el estado de la incidencia
                 </div>
                 <div class="panel-body incidenciaEstado">
 
