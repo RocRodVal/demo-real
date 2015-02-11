@@ -17,4 +17,5 @@ class IncidenciaVO extends VO
     var $operador;
     var $status;
     var $pds;
+    var $tipo_averia;
 }

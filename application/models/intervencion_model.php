@@ -58,7 +58,9 @@ class Intervencion_model extends MY_Model
     {
         $this->load->model('VO/ContactVO');
         $this->load->model('VO/PdsVO');
-        $this->db->select('*');
+        $this->db->select('intervenciones.*,
+                contact.id_contact,contact.email,contact.contact,contact.phone,
+                pds.id_pds,pds.reference, pds.address');
         $this->db->from('intervenciones');
         $this->db->join('contact', 'intervenciones.id_operador=contact.id_contact');
         $this->db->join('pds', 'intervenciones.id_pds = pds.id_pds');
@@ -89,7 +91,7 @@ class Intervencion_model extends MY_Model
 
     }
 
-    public function get_intervenciones_pds($id_pds)
+    public function get_intervenciones_pds_nuevas($id_pds)
     {
         $this->load->model('VO/ContactVO');
         $this->db->select('*');
@@ -180,10 +182,7 @@ class Intervencion_model extends MY_Model
                 "id_incidencia" => $incidencia_id
             );
             $this->db->insert('intervenciones_incidencias', $data);
-            if ($this->db->affected_rows() > 0)
-                return true;
-            else
-                return false;
+            return true;
         }
     }
 
@@ -224,6 +223,35 @@ class Intervencion_model extends MY_Model
 
     public function delete_incidencias_intervencion($intervencion_id){
         $this->db->where('id_intervencion', $intervencion_id);
-        $this->db->delete('intervenciones_incidencias');
+        return $this->db->delete('intervenciones_incidencias');
+    }
+
+    public function delete_incidencia_intervencion($incidencia_id){
+        $this->db->where('id_incidencia', $incidencia_id);
+        return $this->db->delete('intervenciones_incidencias');
+    }
+
+    public function get_count_incidencias_in_intervencion($intervencion_id){
+        $query=$this->db->get_where('intervenciones_incidencias',array("id_intervencion"=>$intervencion_id));
+        return $query->num_rows();
+    }
+
+    public function get_incidencias_material_asignado_pds_sin_intervencion($id_pds){
+        $this->load->model('VO/IncidenciaVO');
+        $consulta="select * from incidencias where id_pds = $id_pds and status=3 and incidencias.id_incidencia
+                  NOT IN (select id_incidencia from intervenciones_incidencias)";
+        $query=$this->db->query($consulta);
+        $incidencias=array();
+        foreach ($query->result_array() as $row) {
+            $incidencia = new IncidenciaVO();
+            $incidencia->__set('id_incidencia', $row['id_incidencia']);
+            $incidencia->__set('fecha', $row['fecha']);
+            $incidencia->__set('tipo_averia', $row['tipo_averia']);
+            $incidencia->__set('description', $row['description']);
+
+            $incidencias[] = $incidencia;
+        }
+        return $incidencias;
+
     }
 }
