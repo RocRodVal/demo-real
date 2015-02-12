@@ -75,7 +75,6 @@ function saveIntervencion() {
             else {
                 alert(json);
             }
-            location.reload();
         }).error(function (msg) {
         });
     }
@@ -109,6 +108,7 @@ function saveIntervencion() {
         }).error(function (msg) {
         });
     }
+    location.reload();
 }
 
 function showModalViewIntervencion(id_intervencion){
