@@ -32,6 +32,14 @@
         <script src="<?php echo base_url();?>assets/js/plugins/dataTables/jquery.dataTables.js" type="text/javascript"></script>
         <script src="<?php echo base_url();?>assets/js/plugins/dataTables/dataTables.bootstrap.js" type="text/javascript"></script>
     <?php }?>
+    <?php if($this->uri->segment(1)==="intervencion"){?>
+        <link href="<?=site_url('assets/css/intervencion/intervencion.css')?>" rel="stylesheet">
+        <script src="<?php echo base_url();?>assets/js/plugins/dataTables/jquery.dataTables.js" type="text/javascript"></script>
+        <script src="<?php echo base_url();?>assets/js/plugins/dataTables/dataTables.bootstrap.js" type="text/javascript"></script>
+        <script src="<?php echo base_url();?>assets/js/bootstrap-tooltip.js" type="text/javascript"></script>
+        <script src="<?php echo base_url();?>assets/js/bootstrap-confirmation.js" type="text/javascript"></script>
+        <script src="<?php echo base_url();?>assets/js/intervencion/intervencion.js" type="text/javascript"></script>
+    <?php }?>
 </head>  
 
 <body>
