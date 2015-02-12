@@ -46,7 +46,17 @@
 										    	?>
                                         	</ol>
                                         	</td>
-                                           	<td><strong><?php echo $display ?><br clear="all" /><img src="../../../orange/application/uploads/<?php echo $picture_url ?>" title="<?php echo $display ?>"/></td>
+                                           	<td>
+                                           		<strong><?php echo $display ?><br clear="all" />
+                                           		<?php 
+                                        		if ($picture_url != '')
+                                        		{	
+                                        		?>
+                                           		<img src="<?=site_url('application/uploads/'.$picture_url.'')?>" title="<?php echo $display ?>" />
+                                           		<?php 
+                                        		}
+                                           		?>
+                                           	</td>
                                         </tr>                                    
                                     </tbody>
                                 </table>

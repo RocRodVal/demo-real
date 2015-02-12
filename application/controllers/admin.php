@@ -62,7 +62,27 @@ class Admin extends CI_Controller {
 			$data['tiendas']     =  $this->tienda_model->search_pds($this->input->post('sfid'));
 			$data['incidencias'] =  $this->tienda_model->get_incidencias();
 	
+			$xcrud->show_primary_ai_column(true);
+			$xcrud->unset_numbers();
+			$xcrud->start_minimized(true);
+			
+			$xcrud->table('incidencias');
+			$xcrud->table_name('Incidencias');
+			$xcrud->relation('id_pds','pds','id_pds','reference');
+			//$xcrud->relation('id_displays_pds','displays_pds','id_displays_pds','id_displays_pds');
+			//$xcrud->relation('id_devices_pds','devices_pds','id_devices_pds','id_devices_pds');
+			$xcrud->relation('id_displays_pds','display','id_display','display');
+			$xcrud->relation('id_devices_pds','device','id_device','device');
+			$xcrud->relation('id_operador','contact','id_contact','contact');
+			$xcrud->change_type('denuncia', 'file');
+			$xcrud->change_type('parte_pdf', 'file');
+			$xcrud->change_type('foto_url', 'image');
+			$xcrud->label('id_incidencia','REF.')->label('fecha','Fecha')->label('id_pds','SFID')->label('denuncia','Denuncia')->label('parte_pdf','Parte PDF')->label('foto_url','Foto')->label('id_displays_pds','Cod. mueble')->label('id_devices_pds','Cod. dispositivo')->label('alarm_display','Fallo alarma mueble')->label('alarm_device','Fallo alarma dispositivo')->label('description','Comentarios')->label('contact','Contacto')->label('email','E-mail')->label('phone','Teléfono')->label('id_operador','Instalador')->label('status','Estado SAT')->label('status_pds','Estado');
+			$xcrud->columns('id_incidencia,fecha,id_pds,description,contacto,phone,email,status,status_pds');
+			//$xcrud->fields('client,type_profile_client,picture_url,description,status');	
+
 			$data['title']   = 'Información general';
+			$data['content'] = $xcrud->render();
 	
 			if ($this->session->userdata('type') == 9)
 			{			
@@ -222,29 +242,7 @@ class Admin extends CI_Controller {
 	
 	public function incidencias()
 	{
-		$xcrud = xcrud_get_instance();
-		$xcrud->table('incidencias');
-		$xcrud->table_name('Incidencias');
-		$xcrud->relation('id_pds','pds','id_pds','reference');
-		//$xcrud->relation('id_displays_pds','displays_pds','id_displays_pds','id_displays_pds');
-		//$xcrud->relation('id_devices_pds','devices_pds','id_devices_pds','id_devices_pds');
-		$xcrud->relation('id_displays_pds','display','id_display','display');
-		$xcrud->relation('id_devices_pds','device','id_device','device');		
-		$xcrud->relation('id_operador','contact','id_contact','contact');
-		$xcrud->change_type('denuncia', 'file');
-		$xcrud->change_type('parte_pdf', 'file');
-		$xcrud->change_type('foto_url', 'image');
-		$xcrud->label('id_incidencia','REF.')->label('fecha','Fecha')->label('id_pds','SFID')->label('denuncia','Denuncia')->label('parte_pdf','Parte PDF')->label('foto_url','Foto')->label('id_displays_pds','Cod. mueble')->label('id_devices_pds','Cod. dispositivo')->label('alarm_display','Fallo alarma mueble')->label('alarm_device','Fallo alarma dispositivo')->label('description','Comentarios')->label('contact','Contacto')->label('email','E-mail')->label('phone','Teléfono')->label('id_operador','Instalador')->label('status','Estado');
-		$xcrud->columns('id_incidencia,fecha,id_pds,contacto,phone,email,status');
-		//$xcrud->fields('client,type_profile_client,picture_url,description,status');
-
-		$data['title']   = 'Operativa incidencias';
-		$data['content'] = $xcrud->render();
-	
-		$this->load->view('backend/header', $data);
-		$this->load->view('backend/navbar', $data);
-		$this->load->view('backend/content', $data);
-		$this->load->view('backend/footer');
+		redirect('admin/dashboard','refresh');
 	}	
 	
 	public function contactos()
@@ -617,8 +615,14 @@ class Admin extends CI_Controller {
 	public function alta_incidencia()
 	{
 		$id_pds   = $this->uri->segment(3);
-		$denuncia = $this->uri->segment(4);
-		
+		if ($this->uri->segment(4) != '')
+		{ 
+			$denuncia = $this->uri->segment(4);
+		}
+		else
+		{
+			$denuncia = 'no-robo';
+		}	
 		$xcrud = xcrud_get_instance();
 		$this->load->model('tienda_model');
 		
@@ -631,7 +635,7 @@ class Admin extends CI_Controller {
 		$data['address']    = $sfid['address'];
 		$data['zip']        = $sfid['zip'];
 		$data['city']       = $sfid['city'];
-		$data['denuncia']       = $this->uri->segment(4);
+		$data['denuncia']   = $denuncia;
 		
 		$data['displays'] = $this->tienda_model->get_displays_panelado($id_pds);
 		
@@ -769,7 +773,7 @@ class Admin extends CI_Controller {
 		$data['address']    = $sfid['address'];
 		$data['zip']        = $sfid['zip'];
 		$data['city']       = $sfid['city'];
-		$data['denuncia']       = $this->uri->segment(4);
+		$data['denuncia']   = $this->uri->segment(4);
 	
 		$display = $this->tienda_model->get_display($id_dis);
 	
@@ -811,6 +815,12 @@ class Admin extends CI_Controller {
 		if ($this->form_validation->run() == true)
 		{
 			*/
+			if ($denuncia == 'no-robo')
+			{
+				$denuncia = '';
+			}	
+	
+		
 			$data = array(
 					'fecha'    	        => date('Y-m-d H:i:s'),
 					'id_pds'            => $id_pds,
@@ -847,7 +857,7 @@ class Admin extends CI_Controller {
 			$this->email->clear();
 				
 			/*
-				$message  = 'Gracias por registrarse en nuestra web.'."\r\n\r\n";
+			$message  = 'Gracias por registrarse en nuestra web.'."\r\n\r\n";
 			$message .= 'Como Agente Registrado podrá añadir oportunidades de compraventa de unidades productivas, ya sea usted administrador concursal de la misma u otro gestor vinculado a empresas en proceso de venta.'."\r\n\r\n";
 			$message .= 'En breve recibirá un correo validando su inscripción para que pueda comenzar a subir a la web unidades productivas en venta. Si durante el proceso tuviera cualquier problema, no dude en ponerse en contacto con nosotros.'."\r\n\r\n";
 			$message .= 'Atentamente,'."\r\n";

@@ -29,7 +29,7 @@
 
                 <div class="row">
                     <div class="form-group">
-                        <label class="col-sm-2 control-label">Selecciona operador</label>
+                        <label class="col-sm-2 control-label">Selecciona instalador</label>
 
                         <div class="col-sm-10">
                             <select class="form-control" id="nueva_intervencion_select_operador"></select>

@@ -98,13 +98,12 @@
                         </div>
                         <div class="col-lg-7 labelText grey">Material recogido</div><div class="col-lg-5 labelBtn grey">
                             <a href="<?= site_url('admin/update_incidencia/' . $id_pds_url . '/' . $id_inc_url . '/4/8') ?>"
-                               class="btn btn-success" <?php if ($incidencia['status'] != 'Resuelta') {
+                               class="btn btn-success" <?php if ($incidencia['status'] != 'Pendiente recogida') {
                                 echo 'disabled';
                             } ?>>Cerrar</a>
                         </div>
 
                     </div>
-
                     <!--
                     <div class="table-responsive">
                         <table class="table table-striped table-bordered table-hover" id="dataTables-example">
