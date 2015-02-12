@@ -105,6 +105,7 @@ class Admin extends CI_Controller {
 			redirect('admin','refresh');
 		}	
 	}
+
 	
 	public function dashboard_pds()
 	{
@@ -638,9 +639,17 @@ class Admin extends CI_Controller {
 		$data['address']    = $sfid['address'];
 		$data['zip']        = $sfid['zip'];
 		$data['city']       = $sfid['city'];
+		$data['id_pds_url']       = $id_pds;
 		$data['denuncia']   = $denuncia;
-		
-		$data['displays'] = $this->tienda_model->get_displays_panelado($id_pds);
+
+		$displays = $this->tienda_model->get_displays_panelado($id_pds);
+
+		foreach($displays as $key=>$display) {
+			$num_devices = $this->tienda_model->count_devices_display($display->id_display);
+			$display->devices_count = $num_devices;
+		}
+
+		$data['displays']=$displays;
 		
 		$data['title'] = 'Alta incidencia';
 		
@@ -783,12 +792,14 @@ class Admin extends CI_Controller {
 		$data['id_display']      = $display['id_display'];
 		$data['display']         = $display['display'];
 		$data['picture_url_dis'] = $display['picture_url'];
+
 	
 		$device = $this->tienda_model->get_device($id_dev);
 	
 		$data['id_device']       = $device['id_device'];
 		$data['device']          = $device['device'];
 		$data['picture_url_dev'] = $device['picture_url'];
+		$data['device_'] = $device;
 	
 		$data['id_pds_url']  = $id_pds;
 		$data['id_dis_url']  = $id_dis;
@@ -891,6 +902,10 @@ class Admin extends CI_Controller {
 	
 		$data['title']   = 'Alta incidencia';
 		$data['content'] = 'Muchas gracias.';
+		$this->load->model('tienda_model');
+		$sfid     = $this->session->userdata('sfid');
+		$id_pds = $this->tienda_model->get_id($sfid);
+		$data['id_pds_url']       = $id_pds['id_pds'];
 	
 		$this->load->view('backend/header', $data);
 		$this->load->view('backend/navbar', $data);

@@ -97,7 +97,8 @@ class Tienda_model extends CI_Model {
 			
 	public function get_device($id) {
 		if($id != FALSE) {
-			$query = $this->db->select('*')
+			$query = $this->db->select('device.*, brand_device.brand as "brand_name"')
+			->join('brand_device','brand_device.id_brand_device = device.brand_device')
 			->where('id_device',$id)
 			->get('device');
 	
