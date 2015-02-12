@@ -8,26 +8,6 @@ class Master_model extends CI_Model {
 	}
 
 	
-	public function get_all_displays($id)
-	{
-			$query = $this->db->select('*')
-				   ->where('id_pds',$id)
-				   ->get('displays_pds');
-			
-			return $query->num_rows();
-	}	
-
-	
-	public function get_all_devices($id)
-	{
-			$query = $this->db->select('*')
-				   ->where('id_pds',$id)
-				   ->get('devices_pds');
-				
-			return $query->num_rows();
-	}
-
-	
 	public function login($data)
 	{
 		$sfid     = $data['sfid'];
@@ -37,7 +17,7 @@ class Master_model extends CI_Model {
 		$this->db->from('agent');
 		$this->db->where('sfid',$sfid);
 		$this->db->where('password',$password);
-		$this->db->where('type',9);
+		$this->db->where('type','9');
 		$this->db->limit(1);
 		$query=$this->db->get();
 	
@@ -57,8 +37,28 @@ class Master_model extends CI_Model {
 		{
 			return FALSE;
 		}
-	}	
+	}
 	
+	
+	public function get_all_displays($id)
+	{
+		$query = $this->db->select('*')
+			   ->where('id_pds',$id)
+		       ->get('displays_pds');
+			
+		return $query->num_rows();
+	}
+	
+	
+	public function get_all_devices($id)
+	{
+		$query = $this->db->select('*')
+			   ->where('id_pds',$id)
+		       ->get('devices_pds');
+	
+		return $query->num_rows();
+	}	
+
 }
 
 ?>

@@ -6,7 +6,7 @@ class Master extends CI_Controller {
 	{
 		parent::__construct();
 		$this->load->database();
-		$this->load->helper('xcrud','text');
+		$this->load->helper(array('text','xcrud'));
 		$this->load->library(array('encrypt','form_validation','session'));
 	}
 	
@@ -34,9 +34,8 @@ class Master extends CI_Controller {
 		{
 			$this->data['message'] = (validation_errors() ? validation_errors() : ($this->session->flashdata('message')));
 		
-			$xcrud = xcrud_get_instance();
-		
-			$data['title']   = 'Login';
+			$xcrud         = xcrud_get_instance();
+			$data['title'] = 'Login';
 			
 			$this->load->view('master/header', $data);
 			$this->load->view('master/login', $this->data);

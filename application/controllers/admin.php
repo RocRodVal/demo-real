@@ -5,10 +5,9 @@ class Admin extends CI_Controller {
 	function __construct()
 	{
 		parent::__construct();
-		$this->load->helper('xcrud','text');
-		$this->load->library(array('email','form_validation','ion_auth','encrypt','form_validation','session'));
-		$this->load->helper('text');
 		$this->load->database();
+		$this->load->helper(array('email','text','xcrud'));
+		$this->load->library(array('email','form_validation','ion_auth','encrypt','form_validation','session'));
 	}
 	
 	
@@ -846,34 +845,48 @@ class Admin extends CI_Controller {
 			);
 			
 		//}
-		if ($this->tienda_model->insert_incidencia($data))
-		{
-			$message_admin  = 'Se ha registrado una nueva incidencia.'."\r\n\r\n";
+		
+		$incidencia = $this->tienda_model->insert_incidencia($data);
+			
 
+		//if ($this->tienda_model->insert_incidencia($data))
+		if ($incidencia['add'])
+	    {
+
+			$pds = $this->tienda_model->get_pds($id_pds);
+			
+			
+			$message_admin  = 'Se ha registrado una nueva incidencia.'."\r\n\r\n";
+			$message_admin .= 'La tienda con SFID '.$pds['reference'].' ha creado una incidencia. En http://demoreal.focusonemotions.com/ podrás revisar la misma.'."\r\n\r\n";
+			$message_admin .= 'Atentamente,'."\r\n\r\n";
+			$message_admin .= 'Demo Real'."\r\n";
+			$message_admin .= 'http://demoreal.focusonemotions.com/'."\r\n";
 				
 			$this->email->from('no-reply@altabox.net', 'Demo Real');
 			$this->email->to('gzapico@altabox.net');
-			$this->email->subject('Demo Real');
+			//$this->email->cc('gzapico@altabox.net');
+			//$this->email->bcc('gzapico@altabox.net');
+			$this->email->subject('Demo Real - Registro de incidencia #'.$incidencia['id']);
 			$this->email->message($message_admin);
 			$this->email->send();
 				
 			$this->email->clear();
 				
-			/*
-			$message  = 'Gracias por registrarse en nuestra web.'."\r\n\r\n";
-			$message .= 'Como Agente Registrado podrá añadir oportunidades de compraventa de unidades productivas, ya sea usted administrador concursal de la misma u otro gestor vinculado a empresas en proceso de venta.'."\r\n\r\n";
-			$message .= 'En breve recibirá un correo validando su inscripción para que pueda comenzar a subir a la web unidades productivas en venta. Si durante el proceso tuviera cualquier problema, no dude en ponerse en contacto con nosotros.'."\r\n\r\n";
-			$message .= 'Atentamente,'."\r\n";
-			$message .= 'Portal de Unidades Productivas'."\r\n\r\n";
-			$message .= 'http://www.investinaragon.com/buscador/'."\r\n";
-				
-			$this->email->from('no-reply@aragonexterior.es', 'Aragón Exterior – AREX');
-			$this->email->to(strtolower($this->input->post('email')));
-			$this->email->cc('gustavo.zapico@bittia.com');
-			$this->email->subject('Portal de venta de unidades productivas');
-			$this->email->message($message);
+			
+			$message_pds  = 'Se ha registrado una nueva incidencia.'."\r\n\r\n";
+			$message_pds .= 'En breve recibirá más información de la evolución de la misma.'."\r\n\r\n";
+			$message_pds .= 'Atentamente,'."\r\n\r\n";
+			$message_pds .= 'Demo Real'."\r\n";
+			$message_pds .= 'http://demoreal.focusonemotions.com/'."\r\n";
+			
+			$this->email->from('no-reply@altabox.net', 'Demo Real');
+			//$this->email->to(strtolower($this->input->post('email')));
+			$this->email->to('gzapico@altabox.net');
+			//$this->email->cc('gzapico@altabox.net');
+			//$this->email->bcc('gzapico@altabox.net');
+			$this->email->subject('Demo Real - Registro de incidencia #'.$incidencia['id']);
+			$this->email->message($message_pds);
 			$this->email->send();
-			*/
 				
 			redirect('admin/alta_incidencia_gracias');
 		}

@@ -53,7 +53,7 @@
                         <li><a <?=($this->uri->segment(2)==='almacen')?'class="active"':''?> href="<?=site_url('admin/almacen')?>"><i class="fa  fa-table fa-fw"></i> Almacén</a> </li>
                         <li><a <?=($this->uri->segment(2)==='inventarios')?'class="active"':''?> href="<?=site_url('admin/inventarios')?>"><i class="fa  fa-table fa-fw"></i> Inventarios</a> </li>
                         <li><a <?=($this->uri->segment(2)==='facturacion')?'class="active"':''?> href="<?=site_url('admin/facturacion')?>"><i class="fa fa-money fa-fw"></i> Facturación</a> </li>
-                        <li><a <?=($this->uri->segment(2)==='operaciones')?'class="active"':''?> href="<?=site_url('admin/operaciones')?>"><i class="fa fa-wrench fa-fw"></i> Operaciones</a> </li>
+                        <li><a <?=($this->uri->segment(2)==='operacion')?'class="active"':''?> href="<?=site_url('operacion')?>"><i class="fa fa-wrench fa-fw"></i> Operaciones</a> </li>
                         <?php 
                         }
                         else 
