@@ -1,0 +1,38 @@
+a, a:hover, a:focus, a:active{
+    color:#f60; !important;
+}
+.textoColumna{
+    text-align: center;
+}
+
+a.list-group-item:hover, a.list-group-item:focus{
+    background:#f60;
+    color: #fff;
+}
+
+.caption {
+    padding: 0;
+    width: 100%;
+    position: relative;
+}
+.caption img {
+    width: 100%;
+    height: auto;
+    display: block;
+    padding: 0;
+    border: 0;
+}
+.caption::before {
+    content: attr(title);
+    position: absolute;
+    background: #000; /* Color de fondo */
+    background: rgba(0, 0, 0, 0.6); /* Color de fondo en RGBA */
+    color: #F60; /* Color del texto */
+    font-size: 20px; /* Tamaño del texto */
+    padding: 5px;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    text-align: center;
+    z-index: 1;
+}

@@ -1,17 +1,8 @@
-.modal-dialog {
-    width: 80%;
-    margin: 30px auto;
-}
-
-.data{
-    background:#fff;
-}
-
 table.dataTable{
     font-size: 10pt;
 }
 
-#table_intervenciones thead th{
+#table_incidencias thead th {
     background: #000;
     color: #ff6600;
     font-size: 10pt;
@@ -26,7 +17,7 @@ table.dataTable thead .sorting_asc:after, .sorting_desc:after, .sorting:after {
     display: none;
 }
 
-#table_intervenciones td{
+#table_incidencias td{
     padding:0;
     vertical-align: middle;
     text-align: center;

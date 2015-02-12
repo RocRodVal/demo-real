@@ -9,11 +9,17 @@ Estilos de las tabla
 */
 .table>thead>tr>th {
     vertical-align: bottom;
+    border:0px;
     border-bottom: 2px solid #ddd;
     font-size: 10pt;
+    background:#f60;
+    color:#fff;
+    text-align: center;
 }
 
 .table>tbody>tr>td {
     font-size: 10pt;
+    border:0px;
+    text-align: center;
 }
 
