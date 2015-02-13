@@ -7,34 +7,7 @@
             </h1>
         </div>
     </div>
-    <div class="row">
-        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    DATOS DEL PUNTO DE VENTA
-                </div>
-                <div class="panel-body">
-                    <strong>SFID:</strong> <?php echo $reference ?> [<?php echo $id_pds ?>]<br/>
-                    <strong>Nombre comercial:</strong> <?php echo $commercial ?><br/>
-                    <strong>Dirección:</strong> <?php echo $address ?>, <?php echo $zip ?> -  <?php echo $city ?><br/>
-                    <strong>Zona:</strong> <?php echo $territory ?>
-                </div>
-            </div>
-        </div>
 
-
-        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-            <div class="panel panel-alert-orange">
-                <div class="panel-body">
-                    <strong>RECUERDE</strong></br>
-                    si el mueble ha sido dañado o roto póngase en contacto primero con el equipo de mantenimiento del
-                    mismo en <strong>+XX XXX YY ZZ</strong> y una vez
-                    realizada la intervención proceda a crear la incidencia.
-                </div>
-
-            </div>
-        </div>
-    </div>
     <form
         action="<?= site_url('admin/insert_incidencia/' . $id_pds_url . '/' . $denuncia . '/' . $id_dis_url . '/' . $id_dev_url) ?>"
         method="post" class="content_auto form_login">
@@ -52,11 +25,9 @@
                                 <div class="row">
                                     <div class="col-lg-12">
                                         <label>Tipo de incidencia</label>
-
                                         <div class="radio">
                                             <label>
-                                                <input type="radio" name="tipo_averia" id="tipo_averia" value="Rotura"
-                                                       checked>Rotura
+                                                <input type="radio" name="tipo_averia" id="tipo_averia" value="Rotura">Rotura
                                             </label>
                                         </div>
                                         <div class="radio">
@@ -66,7 +37,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row">
+                                <div class="row" hidden id="alarmaDisplay">
                                     <div class="col-lg-12">
                                         <label>¿La alarma central del mueble está afectada?</label>
 
@@ -77,13 +48,12 @@
                                         </div>
                                         <div class="radio">
                                             <label>
-                                                <input type="radio" name="alarm_display" id="alarm_display" value="0"
-                                                       checked>No
+                                                <input type="radio" name="alarm_display" id="alarm_display" value="0">No
                                             </label>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row">
+                                <div class="row" hidden id="alarmaDevice">
                                     <div class="col-lg-12">
                                         <label>¿La alarma que soporta el telefono está afectada?</label>
 
@@ -94,16 +64,15 @@
                                         </div>
                                         <div class="radio">
                                             <label>
-                                                <input type="radio" name="alarm_device" id="alarm_device" value="0"
-                                                       checked>No
+                                                <input type="radio" name="alarm_device" id="alarm_device" value="0">No
                                             </label>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row">
+                                <div class="row" hidden id="description_textArea">
                                     <div class="col-lg-12">
                                         <div class="form-group">
-                                            <label>Describe brevemente el problema</label>
+                                            <label>Describe brevemente el problema <small>(Mín. 20 caracteres)</small></label>
                                             <textarea class="form-control" rows="5" name="description"
                                                       id="description"></textarea>
                                         </div>
@@ -119,7 +88,7 @@
                                             <div class="input-group">
                                                 <div class="input-group-addon"><i class="fa fa-user"></i></div>
                                                 <input class="form-control" name="contacto" id="contacto"
-                                                       placeholder="Nombre y apellidos">
+                                                       placeholder="Nombre y apellidos" disabled>
                                             </div>
                                         </div>
                                     </div>
@@ -130,7 +99,7 @@
                                             <div class="input-group">
                                                 <div class="input-group-addon"><i class="fa fa-phone"></i></div>
                                                 <input type="phone" class="form-control" name="phone" id="phone"
-                                                       placeholder="Teléfono">
+                                                       placeholder="Teléfono" disabled>
                                             </div>
                                         </div>
                                     </div>
@@ -143,7 +112,7 @@
                                             <div class="input-group">
                                                 <div class="input-group-addon"><i class="fa fa-at"></i></div>
                                                 <input type="email" class="form-control" name="email" id="email"
-                                                       placeholder="Email">
+                                                       placeholder="Email" disabled>
                                             </div>
                                         </div>
                                     </div>
@@ -176,7 +145,7 @@
                             <div class="col-lg-12">
                                 <input type="button" value="Cancelar" class="btn btn-danger"
                                        onclick="window.location='<?= site_url('admin/dashboard') ?>'"/>
-                                <input type="submit" value="Envíar" class="btn btn-success"/>
+                                <input type="submit" value="Envíar" name="submit" class="btn btn-success" disabled/>
                             </div>
                         </div>
                         <!--

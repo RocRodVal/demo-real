@@ -68,3 +68,44 @@ Estilos de los paneles
     background: -moz-linear-gradient(#555, #000); /* For Firefox 3.6 to 15 */
     background: linear-gradient(#555, #000); /* Standard syntax (must be last) */
 }
+
+#dropdownInfoTienda{
+    background: url('/orange/assets/images/bgnoise2.png');
+    border: 0px;
+    color: #f60;
+    min-height:50px;
+}
+#dropdownInfoTienda:focus{
+    border: 0px;
+}
+
+/*
+Estilos de botones
+*/
+a[classBtn="status"]{
+    width:165px;
+}
+a[classBtn="status_1/2"]{
+    width:80px;
+}
+
+/*
+Estilos de los datos de la tienda
+*/
+
+.data_tienda{
+    font-size:12pt;
+}
+
+/*
+Estilos de las dataTables
+*/
+.table-responsive{
+    font-size:10pt;
+}
+.pagination{
+    font-size:10pt;
+}
+.paging_simple_numbers {
+    float: right;
+}

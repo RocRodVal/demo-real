@@ -17,3 +17,6 @@ Estilos de las tabla
     font-size: 10pt;
 }
 
+.modal-dialog {
+    width: 80%;
+}

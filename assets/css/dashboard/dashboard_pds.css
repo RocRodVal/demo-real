@@ -1,25 +1,33 @@
 /*
-Estilos del formulario superior
-*/
-.form-sfid{
-    margin-bottom:20px;
-}
-/*
 Estilos de las tabla
 */
 .table>thead>tr>th {
     vertical-align: bottom;
     border:0px;
     border-bottom: 2px solid #ddd;
-    font-size: 10pt;
+    font-size: 11pt;
     background:#f60;
     color:#fff;
     text-align: center;
 }
 
 .table>tbody>tr>td {
-    font-size: 10pt;
+    font-size: 11pt;
     border:0px;
     text-align: center;
 }
 
+
+.btn-accion{
+    height: 100px;
+    width: 70%;
+}
+
+.botonera_up{
+    margin-bottom: 30px;
+}
+
+.tooltip_image{
+    width: 100px;
+    text-align: center;
+}

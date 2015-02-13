@@ -4,7 +4,7 @@
 $(document).ready(function() {
     $("#test-upload").fileinput({
         'showPreview' : false,
-        'allowedFileExtensions' : ['jpg', 'png','gif'],
+        'allowedFileExtensions' : ['jpg','png','gif','pdf'],
         'elErrorContainer': '#errorBlock'
     });
     /*

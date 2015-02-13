@@ -57,10 +57,14 @@ class Admin extends CI_Controller {
 			$xcrud = xcrud_get_instance();
 	
 			$this->load->model('tienda_model');
+			$this->load->model('intervencion_model');
 			
 			$data['tiendas']     =  $this->tienda_model->search_pds($this->input->post('sfid'));
-			$data['incidencias'] =  $this->tienda_model->get_incidencias();
-	
+			$incidencias =  $this->tienda_model->get_incidencias();
+			foreach($incidencias as $incidencia){
+				$incidencia->intervencion = $this->intervencion_model->get_intervencion_incidencia($incidencia->id_incidencia);
+			}
+			$data['incidencias']=$incidencias;
 			$xcrud->show_primary_ai_column(true);
 			$xcrud->unset_numbers();
 			$xcrud->start_minimized(true);
@@ -122,7 +126,14 @@ class Admin extends CI_Controller {
 			$id_pds = $this->tienda_model->get_id($data['sfid']);
 			$data['id_pds'] = $id_pds['id_pds'];
 			
-			$data['incidencias'] =  $this->tienda_model->get_incidencias_pds($data['id_pds']);
+
+			$incidencias = $this->tienda_model->get_incidencias_pds($data['id_pds']);
+			foreach($incidencias as $incidencia){
+				$incidencia->device= $this->tienda_model->get_device($incidencia->id_devices_pds);
+				$incidencia->display= $this->tienda_model->get_display($incidencia->id_displays_pds);
+
+			}
+			$data['incidencias'] =  $incidencias;
 			$sfid = $this->tienda_model->get_pds($data['id_pds']);
 			
 			$data['id_pds']     = 'ABX/PDS-'.$sfid['id_pds'];
@@ -174,6 +185,8 @@ class Admin extends CI_Controller {
 
 		$incidencia = $this->tienda_model->get_incidencia($id_inc);
 		$incidencia['intervencion'] = $this->intervencion_model->get_intervencion_incidencia($id_inc);
+		$incidencia['device']= $this->tienda_model->get_device($incidencia['id_devices_pds']);
+		$incidencia['display']= $this->tienda_model->get_display($incidencia['id_displays_pds']);
 		$data['incidencia'] = $incidencia;
 		
 		$data['title']   = 'Operativa incidencias';
@@ -946,7 +959,7 @@ class Admin extends CI_Controller {
 		$xcrud = xcrud_get_instance();
 	
 		$data['title']   = 'Auditorías';
-		$data['content'] = 'En construcción.';
+		$data['content'] = 'Aún no ha sido asignada ningua auditoría';
 	
 		$this->load->view('backend/header', $data);
 		$this->load->view('backend/navbar', $data);
