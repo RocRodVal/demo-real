@@ -935,9 +935,17 @@ class Admin extends CI_Controller {
 		$data['title']   = 'Alta incidencia';
 		$data['content'] = 'Muchas gracias.';
 		$this->load->model('tienda_model');
-		//$sfid     = $this->session->userdata('sfid');
-		//$id_pds = $this->tienda_model->get_id($sfid);
-		//$data['id_pds_url']       = $id_pds['id_pds'];
+		$sfid     = $this->session->userdata('sfid');
+		$id_pds = $this->tienda_model->get_id($sfid);
+		$data['id_pds_url']       = $id_pds['id_pds'];
+		$data['id_pds']       = $id_pds['id_pds'];
+		$sfid = $this->tienda_model->get_pds($id_pds['id_pds']);
+		$data['commercial'] = $sfid['commercial'];
+		$data['territory']  = $sfid['territory'];
+		$data['reference']  = $sfid['reference'];
+		$data['address']    = $sfid['address'];
+		$data['zip']        = $sfid['zip'];
+		$data['city']       = $sfid['city'];
 	
 		$this->load->view('backend/header', $data);
 		$this->load->view('backend/navbar', $data);
