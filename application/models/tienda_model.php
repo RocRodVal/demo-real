@@ -214,8 +214,8 @@ class Tienda_model extends CI_Model {
 	{
 		$this->db->insert('incidencias',$data);
 		$id=$this->db->insert_id();
-		//return array('add' => (isset($id)) ? $id : FALSE, 'id' => $id);
-		return (isset($id)) ? $id : FALSE;
+		return array('add' => (isset($id)) ? $id : FALSE, 'id' => $id);
+		//return (isset($id)) ? $id : FALSE;
 	}	
 	
 	
