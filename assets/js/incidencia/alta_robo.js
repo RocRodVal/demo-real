@@ -12,4 +12,10 @@ $(document).ready(function() {
      alert('i = ' + index + ', id = ' + previewId + ', file = ' + file.name);
      });
      */
+    $.growl({
+        icon: "fa fa-exclamation-triangle",
+        title: " RECUERDA ",
+        message: "Si tu incidencia está relacionada con el mobiliario, debes gestionarla con CROMA.<br/>¡Muchas gracias!",
+        type: "warning"
+    });
 });
