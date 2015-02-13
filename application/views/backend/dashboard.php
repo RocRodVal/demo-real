@@ -88,18 +88,18 @@
                         </div>
                         <div class="panel-body">
                             <div class="table-responsive">
-                                <table class="table table-striped table-bordered table-hover" id="dataTables-example">
+                                <table class="table table-striped table-bordered table-hover" id="table_incidencias_dashboard">
                                     <thead>
                                         <tr>
                                             <th>Ref.</th>
                                             <th>Fecha</th>
                                             <th>SFID</th>
-                                            <th>Incidencia</th>
+                                            <th>Descripción</th>
                                             <th>Contacto</th>
                                             <th>Teléfono</th>
-                                            <th>Email</th>
-                                            <th>Estado SAT</th>
-                                            <th>Estado tienda</th>
+                                            <th>Tipo</th>
+                                            <th>Interv.</th>
+                                            <th>Estado</th>
                                         </tr>
                                     </thead>                                
                                     <tbody>
@@ -109,14 +109,37 @@
     									?>
     									<tr>
     										<td><a href="<?=site_url('admin/operar_incidencia/'.$incidencia->id_pds.'/'.$incidencia->id_incidencia)?>">#<?php echo $incidencia->id_incidencia?></a></td>
-    										<td><?php echo date_format(date_create($incidencia->fecha),'d-m-Y H:i:s') ?></td>
+    										<td><?php echo date_format(date_create($incidencia->fecha),'d-m-Y') ?></td>
     										<td><?php echo $incidencia->reference ?></td>
-    										<td><?php echo $incidencia->description ?></td>
+    										<td>
+
+                                                <?php
+
+
+                                                if(strlen($incidencia->description)>30){?>
+                                                    <span  data-toggle="tooltip" title="<?php echo $incidencia->description; ?>">
+                                                <?php
+                                                    echo  substr($incidencia->description, 0, 30).'...';
+                                                }
+                                                else{
+                                                    echo $incidencia->description;
+                                                }
+                                                ?>
+                                                </span>
+                                            </td>
     										<td><?php echo $incidencia->contacto ?></td>
     										<td><?php echo $incidencia->phone ?></td>
-    										<td><?php echo $incidencia->email ?></td>
+                                            <td><?php echo $incidencia->tipo_averia ?></td>
+                                            <td>
+                                                <?php if($incidencia->intervencion !=0){?>
+                                                <i onClick="showModalViewIntervencion(<?php echo $incidencia->intervencion ?>);" class="fa fa-eye"></i>
+                                                <?php }
+                                                else{
+                                                    echo "-";
+                                                }
+                                                ?>
+                                            </td>
     										<td><?php echo $incidencia->status ?></td>
-    										<td><?php echo $incidencia->status_pds ?></td>
     									</tr>
 					    				<?php
 					    				}
@@ -138,4 +161,6 @@
             </div>                                    
         </div>
         <!-- /#page-wrapper -->
+
+        <?php $this->load->view('backend/intervenciones/ver_intervencion');?>
 
