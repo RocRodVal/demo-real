@@ -7,6 +7,7 @@
 					</h1>
 				</div>
 			</div>
+			<!--
 			<div class="row">
 				<div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
 					<div class="panel panel-default">
@@ -35,6 +36,7 @@
 					</div>
 				</div>
 			</div>
+			-->
             <div class="row">
                 <div class="col-lg-12">
                 	<form action="<?=site_url('admin/subir_denuncia/'.$id_pds_url)?>" method="post" class="content_auto form_login" enctype="multipart/form-data">

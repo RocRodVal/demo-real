@@ -122,7 +122,14 @@ class Admin extends CI_Controller {
 			$id_pds = $this->tienda_model->get_id($data['sfid']);
 			$data['id_pds'] = $id_pds['id_pds'];
 			
-			$data['incidencias'] =  $this->tienda_model->get_incidencias_pds($data['id_pds']);
+
+			$incidencias = $this->tienda_model->get_incidencias_pds($data['id_pds']);
+			foreach($incidencias as $incidencia){
+				$incidencia->device= $this->tienda_model->get_device($incidencia->id_devices_pds);
+				$incidencia->display= $this->tienda_model->get_display($incidencia->id_displays_pds);
+
+			}
+			$data['incidencias'] =  $incidencias;
 			$sfid = $this->tienda_model->get_pds($data['id_pds']);
 			
 			$data['id_pds']     = 'ABX/PDS-'.$sfid['id_pds'];
