@@ -34,9 +34,9 @@ function checkDescription(){
 
 function checkUserData(){
     value= $('input[name="contacto"]').val().length>0 &&
-            $('input[name="phone"]').val().length>0 &&
-            $('input[name="email"]').val().length>0 &&
-            $('textarea[name="description"]').val().length>0;
+            /*$('input[name="phone"]').val().length>0 &&
+            $('input[name="email"]').val().length>0 &&*/
+            $('textarea[name="description"]').val().length>20;
     $('input[name="submit"]').attr('disabled',!value);
 
 }

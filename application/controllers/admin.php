@@ -80,7 +80,9 @@ class Admin extends CI_Controller {
 			$xcrud->change_type('denuncia', 'file');
 			$xcrud->change_type('parte_pdf', 'file');
 			$xcrud->change_type('foto_url', 'image');
-			$xcrud->label('id_incidencia','REF.')->label('fecha','Fecha')->label('id_pds','SFID')->label('denuncia','Denuncia')->label('parte_pdf','Parte PDF')->label('foto_url','Foto')->label('id_displays_pds','Cod. mueble')->label('id_devices_pds','Cod. dispositivo')->label('alarm_display','Fallo alarma mueble')->label('alarm_device','Fallo alarma dispositivo')->label('description','Comentarios')->label('contact','Contacto')->label('email','E-mail')->label('phone','Teléfono')->label('id_operador','Instalador')->label('status','Estado SAT')->label('status_pds','Estado');
+			$xcrud->change_type('foto_url_2', 'image');
+			$xcrud->change_type('foto_url_3', 'image');
+			$xcrud->label('id_incidencia','REF.')->label('fecha','Fecha')->label('id_pds','SFID')->label('denuncia','Denuncia')->label('parte_pdf','Parte PDF')->label('foto_url','Foto #1')->label('foto_url_2','Foto #2')->label('foto_url_3','Foto #3')->label('id_displays_pds','Cod. mueble')->label('id_devices_pds','Cod. dispositivo')->label('alarm_display','Fallo alarma mueble')->label('alarm_device','Fallo alarma dispositivo')->label('description','Comentarios')->label('contact','Contacto')->label('email','E-mail')->label('phone','Teléfono')->label('id_operador','Instalador')->label('status','Estado SAT')->label('status_pds','Estado');
 			$xcrud->columns('id_incidencia,fecha,id_pds,description,contacto,phone,email,status,status_pds');
 			//$xcrud->fields('client,type_profile_client,picture_url,description,status');	
 
@@ -859,6 +861,8 @@ class Admin extends CI_Controller {
 					'parte_pdf'  	    => '',
 					'denuncia'  	    => $denuncia,
 					'foto_url'  	    => '',
+					'foto_url_2'  	    => '',
+					'foto_url_3'  	    => '',
 					'contacto'  	    => $this->input->post('contacto'),
 					'phone'  	        => $this->input->post('phone'),
 					'email'  	        => $this->input->post('email'),
@@ -890,7 +894,8 @@ class Admin extends CI_Controller {
 			$this->email->to('gzapico@altabox.net');
 			//$this->email->cc('gzapico@altabox.net');
 			//$this->email->bcc('gzapico@altabox.net');
-			$this->email->subject('Demo Real - Registro de incidencia #'.$incidencia['id']);
+			//$this->email->subject('Demo Real - Registro de incidencia #'.$incidencia['id']);
+			$this->email->subject('Demo Real - Registro de incidencia');
 			$this->email->message($message_admin);
 			$this->email->send();
 				
@@ -908,7 +913,8 @@ class Admin extends CI_Controller {
 			$this->email->to('gzapico@altabox.net');
 			//$this->email->cc('gzapico@altabox.net');
 			//$this->email->bcc('gzapico@altabox.net');
-			$this->email->subject('Demo Real - Registro de incidencia #'.$incidencia['id']);
+			//$this->email->subject('Demo Real - Registro de incidencia #'.$incidencia['id']);
+			$this->email->subject('Demo Real - Registro de incidencia');
 			$this->email->message($message_pds);
 			$this->email->send();
 				
@@ -928,10 +934,7 @@ class Admin extends CI_Controller {
 	
 		$data['title']   = 'Alta incidencia';
 		$data['content'] = 'Muchas gracias.';
-		$this->load->model('tienda_model');
-		$sfid     = $this->session->userdata('sfid');
-		$id_pds = $this->tienda_model->get_id($sfid);
-		$data['id_pds_url']       = $id_pds['id_pds'];
+
 	
 		$this->load->view('backend/header', $data);
 		$this->load->view('backend/navbar', $data);
