@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
-    <title><?=lang('comun.titulo')?> &gt; <?php if (isset($title)): ?><?=$title?><?php else: ?>CMS<?php endif; ?></title>
+    <title><?=lang('comun.titulo')?> &gt; <?php if (isset($title)): ?>Maestros &gt;<?=$title?><?php else: ?>Maestros<?php endif; ?></title>
     <link href="<?=site_url('assets/css/bootstrap.min.css')?>" rel="stylesheet">
     <link href="<?=site_url('assets/css/plugins/metisMenu/metisMenu.min.css')?>" rel="stylesheet">
     <link href="<?=site_url('assets/css/plugins/timeline.css')?>" rel="stylesheet">

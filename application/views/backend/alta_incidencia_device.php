@@ -55,13 +55,12 @@
 
                                         <div class="radio">
                                             <label>
-                                                <input type="radio" name="tipo_averia" id="tipo_averia" value="Rotura"
-                                                       checked>Rotura
+                                                <input type="radio" name="tipo_averia" id="tipo_averia" value="Robo">Robo
                                             </label>
                                         </div>
                                         <div class="radio">
                                             <label>
-                                                <input type="radio" name="tipo_averia" id="tipo_averia" value="Avería">Avería
+                                                <input type="radio" name="tipo_averia" id="tipo_averia" value="Incidencia" checked>Incidencia
                                             </label>
                                         </div>
                                     </div>

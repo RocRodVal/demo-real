@@ -28,7 +28,7 @@ class Master extends CI_Controller {
 		
 		if ($this->form_validation->run() == true && $this->master_model->login($data))
 		{
-			redirect('master/dashboard');
+			redirect('master/incidencias');
 		}
 		else
 		{
@@ -126,10 +126,10 @@ class Master extends CI_Controller {
 		$data['title']   = 'Operativa incidencias';
 		$data['content'] = $xcrud->render();
 	
-		$this->load->view('backend/header', $data);
-		$this->load->view('backend/navbar', $data);
-		$this->load->view('backend/content', $data);
-		$this->load->view('backend/footer');
+		$this->load->view('master/header', $data);
+		$this->load->view('master/navbar', $data);
+		$this->load->view('master/content', $data);
+		$this->load->view('master/footer');
 	}	
 	
 	
