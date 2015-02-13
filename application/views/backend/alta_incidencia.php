@@ -7,6 +7,7 @@
 					</h1>
                 </div>
             </div>
+			<!--
             <div class="row">
 				<div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
 					<div class="panel panel-default">
@@ -34,6 +35,7 @@
 					</div>
  				</div>	
             </div>
+			-->
             <div class="row">
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
  					
@@ -54,18 +56,21 @@
 							foreach($displays as $display){
 								if($display->devices_count != 0){
 									?>
-									<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 textoColumna">
+									<div class="col-lg-2 col-md-3 col-sm-6 col-xs-12 textoColumna">
 									
 									<?php
 									if ($display->picture_url != '')
 									{
 										?>
+
 										<a href="<?=site_url('admin/alta_incidencia_mueble')?>/
 										<?php echo $display->id_pds.'/'.$denuncia.'/'.$display->id_display ?>">
 											<div class='caption' title='<?php echo $display->display; ?>'>
-											<img src="<?=site_url('application/uploads/'.$display->picture_url.'')?>
-											" title="<?php echo $display->display ?>" style="width:100%;" /></a>
+											<img
+												src="<?=site_url('application/uploads/'.$display->picture_url.'')?>"
+												title="<a href='<?=site_url('admin/alta_incidencia_mueble/'. $display->id_pds.'/'.$denuncia.'/'.$display->id_display)?>'><?php echo $display->display ?></a>"/>
 											</div>
+										</a>
 									<?php
 									}
 									else{

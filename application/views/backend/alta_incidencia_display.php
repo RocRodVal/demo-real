@@ -85,19 +85,6 @@
                     }
                     ?>
             	</div>
-				<div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-					<div class="panel panel-default">
-						<div class="panel-heading">
-							DATOS DEL PUNTO DE VENTA
-						</div>
-						<div class="panel-body">
-							<strong>SFID:</strong> <?php echo $reference ?> [<?php echo $id_pds ?>]<br/>
-							<strong>Nombre comercial:</strong> <?php echo $commercial ?><br/>
-							<strong>Dirección:</strong> <?php echo $address ?>, <?php echo $zip ?> -  <?php echo $city ?><br/>
-							<strong>Zona:</strong> <?php echo $territory ?>
-						</div>
-					</div>
-				</div>
             </div>     	            
         </div>
         <!-- /#page-wrapper -->

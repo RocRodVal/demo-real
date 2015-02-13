@@ -21,17 +21,22 @@ a.list-group-item:hover, a.list-group-item:focus{
     display: block;
     padding: 0;
     border: 0;
+    padding-top:25px;
+}
+
+.caption img a {
+    font-size: 8px;
 }
 .caption::before {
     content: attr(title);
     position: absolute;
     background: #000; /* Color de fondo */
-    background: rgba(0, 0, 0, 0.6); /* Color de fondo en RGBA */
     color: #F60; /* Color del texto */
-    font-size: 20px; /* Tamaño del texto */
+    font-size: 15px; /* Tamaño del texto */
     padding: 5px;
     right: 0;
-    bottom: 0;
+    height:35px;
+    top: -10px;
     left: 0;
     text-align: center;
     z-index: 1;

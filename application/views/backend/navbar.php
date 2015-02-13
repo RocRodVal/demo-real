@@ -51,8 +51,8 @@
                         <li><a <?=($this->uri->segment(2)==='auditorias')?'class="active"':''?> href="<?=site_url('admin/auditorias')?>"><i class="fa fa-list-alt fa-fw"></i> Auditorías</a> </li>
                         <li><a <?=($this->uri->segment(1)==='intervencion')?'class="active"':''?> href="<?=site_url('intervencion/')?>"><i class="fa fa-cog fa-fw"></i> Intervenciones</a> </li>
                         <!--<li><a <?=($this->uri->segment(2)==='incidencias')?'class="active"':''?> href="<?=site_url('admin/incidencias')?>"><i class="fa fa-list-ul fa-fw"></i> Incidencias</a> </li>-->
-                        <li><a <?=($this->uri->segment(2)==='almacen')?'class="active"':''?> href="<?=site_url('admin/almacen')?>"><i class="fa  fa-table fa-fw"></i> Almacén</a> </li>
-                        <li><a <?=($this->uri->segment(2)==='inventarios')?'class="active"':''?> href="<?=site_url('admin/inventarios')?>"><i class="fa  fa-table fa-fw"></i> Inventarios</a> </li>
+                        <li><a <?=($this->uri->segment(2)==='almacen')?'class="active"':''?> href="<?=site_url('admin/almacen')?>"><i class="fa  fa-table fa-fw"></i> Depósito</a> </li>
+                        <li><a <?=($this->uri->segment(2)==='inventarios')?'class="active"':''?> href="<?=site_url('admin/inventarios')?>"><i class="fa  fa-table fa-fw"></i> Exposición</a> </li>
                         <li><a <?=($this->uri->segment(2)==='facturacion')?'class="active"':''?> href="<?=site_url('admin/facturacion')?>"><i class="fa fa-money fa-fw"></i> Facturación</a> </li>
                         <li><a <?=($this->uri->segment(2)==='operacion')?'class="active"':''?> href="<?=site_url('operacion')?>"><i class="fa fa-wrench fa-fw"></i> Operaciones</a> </li>
                         <?php 

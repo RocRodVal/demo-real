@@ -7,7 +7,7 @@
  */
 
 ?>
-<?php if(isset($id_pds)) { ?>
+<?php if($this->session->userdata('type') != 9) { ?>
     <div class="dropdown">
         <button class="btn btn-default dropdown-toggle" type="button" id="dropdownInfoTienda" data-toggle="dropdown"
                 aria-expanded="true">

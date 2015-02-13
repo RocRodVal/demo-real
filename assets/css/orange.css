@@ -78,3 +78,34 @@ Estilos de los paneles
 #dropdownInfoTienda:focus{
     border: 0px;
 }
+
+/*
+Estilos de botones
+*/
+a[classBtn="status"]{
+    width:165px;
+}
+a[classBtn="status_1/2"]{
+    width:80px;
+}
+
+/*
+Estilos de los datos de la tienda
+*/
+
+.data_tienda{
+    font-size:12pt;
+}
+
+/*
+Estilos de las dataTables
+*/
+.table-responsive{
+    font-size:10pt;
+}
+.pagination{
+    font-size:10pt;
+}
+.paging_simple_numbers {
+    float: right;
+}
