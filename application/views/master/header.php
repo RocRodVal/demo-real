@@ -23,7 +23,12 @@
 	<link rel="shortcut icon" href="<?=site_url('favicon.ico')?>"> 
 </head>  
 
-<body>
+<?php
+$login = $this->uri->segment(2);
+if (empty($login)) {echo '<body class="login">';}
+else {echo '<body>';}
+?>
+
 <!-- /#header -->
 
 	<!-- #wrapper -->
