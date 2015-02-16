@@ -5,9 +5,12 @@
  */
 
 body {
-    background-color: #f8f8f8;
 	font-family: 'Roboto Slab', serif;
 	font-size: 16px;
+}
+
+.login {
+    background-color: #696969;
 }
 
 /* Tweaks */
