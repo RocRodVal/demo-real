@@ -75,8 +75,17 @@
     <?php }?>
 </head>  
 
-<body>
+<?php
+$login = $this->uri->segment(2);
+if (empty($login)) {echo '<body class="login">';}
+else {echo '<body>';}
+?>
+
 <!-- /#header -->
 
 	<!-- #wrapper -->
-	<div id="wrapper-login">
+	<?php
+	$login = $this->uri->segment(2);
+	if (empty($login)) {echo '<div id="login">';}
+	else {echo '<div id="wrapper">';}
+	?>

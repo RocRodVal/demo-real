@@ -11,8 +11,19 @@
             </div>
 
             <ul class="nav navbar-top-links navbar-right">
-                <li><?php $this->load->view('backend/infoTienda');?> </li>
-
+               <?php
+               if ($this->session->userdata('type') == 9)
+               {
+               ?>
+               <li><a href="<?=site_url('admin/logout')?>"><i class="fa fa-sign-out fa-fw"></i> Logout</a></li>	            
+			   <?php 
+               }
+               else {
+			   ?>		            
+               <li><?php $this->load->view('backend/infoTienda');?> </li>
+			   <?php 
+			   }
+			   ?>		
             </ul>
             <div class="navbar-default sidebar" role="navigation">
                 <div class="sidebar-nav navbar-collapse">

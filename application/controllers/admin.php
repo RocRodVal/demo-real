@@ -929,24 +929,58 @@ class Admin extends CI_Controller {
 	
 	public function alta_incidencia_gracias()
 	{
-	
 		$xcrud = xcrud_get_instance();
 	
-		$data['title']   = 'Alta incidencia';
-		$data['content'] = 'Muchas gracias.';
-
-	
-		$this->load->view('backend/header', $data);
-		$this->load->view('backend/navbar', $data);
-		$this->load->view('backend/content', $data);
-		$this->load->view('backend/footer');
+		if ($this->session->userdata('type') == 1)
+		{
+	   	$this->load->model('tienda_model');
+	   	
+	   	$sfid   = $this->session->userdata('sfid');
+	   	$id_pds = $this->tienda_model->get_id($sfid);
+	   	$data['id_pds_url'] = $id_pds['id_pds'];
+	   	$data['id_pds']     = $id_pds['id_pds'];
+	   	
+	   	$sfid = $this->tienda_model->get_pds($id_pds['id_pds']);
+	   	$data['commercial'] = $sfid['commercial'];
+	   	$data['territory']  = $sfid['territory'];
+	   	$data['reference']  = $sfid['reference'];
+	   	$data['address']    = $sfid['address'];
+	   	$data['zip']        = $sfid['zip'];
+	   	$data['city']       = $sfid['city'];
+		}
+	   	
+	   	$data['title']   = 'Alta incidencia';
+	   	$data['content'] = 'Muchas gracias.';
+	   	
+	   	$this->load->view('backend/header', $data);
+	   	$this->load->view('backend/navbar', $data);
+	   	$this->load->view('backend/content', $data);
+	   	$this->load->view('backend/footer');
 	}
 		
 	
 	public function ayuda()
 	{
 		$xcrud = xcrud_get_instance();
-		
+	   	
+	   	if ($this->session->userdata('type') == 1)
+	   	{
+	   	$this->load->model('tienda_model');
+	   		
+	   	$sfid   = $this->session->userdata('sfid');
+	   	$id_pds = $this->tienda_model->get_id($sfid);
+	   	$data['id_pds_url'] = $id_pds['id_pds'];
+	   	$data['id_pds']     = $id_pds['id_pds'];
+	   	
+	   	$sfid = $this->tienda_model->get_pds($id_pds['id_pds']);
+	   	$data['commercial'] = $sfid['commercial'];
+	   	$data['territory']  = $sfid['territory'];
+	   	$data['reference']  = $sfid['reference'];
+	   	$data['address']    = $sfid['address'];
+	   	$data['zip']        = $sfid['zip'];
+	   	$data['city']       = $sfid['city'];
+	   	}
+	   	
 		$data['title']   = 'Ayuda';
 		$data['content'] = 'En construcción.';
 	
