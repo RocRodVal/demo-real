@@ -1,6 +1,9 @@
 html,body,#nav-bar,h1,h2,h3,h4,h5,#page-wrapper{
     font-family: HelveticaNeueLight,HelveticaNeueLight2,Arial;
 }
+body{
+    background: url('/orange/assets/images/bgnoise2.png');
+}
 
 .right{
     float:right;
@@ -87,6 +90,11 @@ a[classBtn="status"]{
 }
 a[classBtn="status_1/2"]{
     width:80px;
+}
+
+.btnTable{
+    padding: 0px 5px;
+    margin: 0px 5px;
 }
 
 /*

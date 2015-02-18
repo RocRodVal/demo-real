@@ -68,7 +68,7 @@
                 </div>
                 <div class="row">
                     <div class="col-lg-12">
-                        <table id="table_incidencias" class="display compact table"
+                        <table id="table_incidencias" class="table table-striped table-bordered table-hover"
                                cellspacing="0" width="100%">
                             <thead>
                             <tr>

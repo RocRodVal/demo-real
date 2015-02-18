@@ -2,15 +2,19 @@
 Estilos del formulario superior
 */
 .form-sfid{
-    margin-bottom:20px;
-}
+     margin-bottom:20px;
+ }
 /*
 Estilos de las tabla
 */
+.table-responsive {
+    font-size: 10pt;
+}
 .table>thead>tr>th {
     vertical-align: bottom;
     border-bottom: 2px solid #ddd;
     font-size: 10pt;
+    color: #000;
 }
 
 .table>tbody>tr>td {

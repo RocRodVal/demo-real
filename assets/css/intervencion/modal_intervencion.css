@@ -1,7 +1,5 @@
-table.dataTable{
-    font-size: 10pt;
-}
 
+/*
 #table_incidencias thead th {
     background: #000;
     color: #ff6600;
@@ -21,4 +19,10 @@ table.dataTable thead .sorting_asc:after, .sorting_desc:after, .sorting:after {
     padding:0;
     vertical-align: middle;
     text-align: center;
+}
+
+*/
+
+#table_incidencias_length, #table_incidencias_filter, #table_incidencias_info {
+    font-size: 10pt;
 }

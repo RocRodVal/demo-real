@@ -16,7 +16,7 @@
     </div>
 
     <div class="row">
-        <table id="table_intervenciones" class="display compact table"
+        <table id="table_intervenciones" class="table table-striped table-bordered table-hover"
                cellspacing="0" width="100%">
             <thead>
             <tr>

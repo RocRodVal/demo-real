@@ -133,15 +133,15 @@ function actionsIntervencion(id_intervencion, status) {
             disableRemove = 'disabled';
             break;
     }
-    btnResolve = "<button class='btn btn-success' " + disableResolve + " onClick='cerrarIntervencion(" + id_intervencion + ");'><i class='fa fa-check-square-o'></i></button>";
-    btnDocu = "<button class='btn btn-default' " + disableDocu + " onClick='generateDoc(" + id_intervencion + ");'><i class='fa fa-files-o'></i></button>";
-    btnDelete = "<button class='delete btn btn-danger' " + disableRemove + "data-toggle='confirmation' onClick='setIntervencionSession(" + id_intervencion + ");'>" +
+    btnResolve = "<button class='btn btnTable btn-success' " + disableResolve + " onClick='cerrarIntervencion(" + id_intervencion + ");'><i class='fa fa-check-square-o'></i></button>";
+    btnDocu = "<button class='btn btnTable btn-default' " + disableDocu + " onClick='generateDoc(" + id_intervencion + ");'><i class='fa fa-files-o'></i></button>";
+    btnDelete = "<button class='delete btn btnTable btn-danger' " + disableRemove + "data-toggle='confirmation' onClick='setIntervencionSession(" + id_intervencion + ");'>" +
     "<i class='fa fa-trash'></i></button>"
     return btnResolve + btnDocu + btnDelete
 }
 
 function actionsIncidencia(id_incidencia) {
-    btnDelete = "<div class='btn btn-danger' onClick='deleteIncidenciaIntervencion(" + id_incidencia + ");'><i class='fa fa-trash'></i></div>";
+    btnDelete = "<div class='btn btn-danger btnTable' onClick='deleteIncidenciaIntervencion(" + id_incidencia + ");'><i class='fa fa-trash'></i></div>";
     return btnDelete
 }
 
