@@ -27,12 +27,14 @@
                                         <label>Tipo de incidencia</label>
                                         <div class="radio">
                                             <label>
-                                                <input type="radio" name="tipo_averia" id="tipo_averia" value="Robo">Robo
+                                                <input type="radio" name="tipo_averia" id="tipo_averia" value="Robo"
+                                                 <?php if($denuncia!="no-robo") echo "checked";?>>Robo
                                             </label>
                                         </div>
                                         <div class="radio">
                                             <label>
-                                                <input type="radio" name="tipo_averia" id="tipo_averia" value="Incidencia">Incidencia
+                                                <input type="radio" name="tipo_averia" id="tipo_averia" value="Incidencia"
+                                                       <?php if($denuncia=="no-robo") echo "checked";?>>Incidencia
                                             </label>
                                         </div>
                                     </div>
