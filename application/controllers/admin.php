@@ -779,6 +779,34 @@ class Admin extends CI_Controller {
 		$this->load->view('backend/footer');
 	}	
 	
+	public function inventario_tienda()
+	{
+		$id_pds   = $this->uri->segment(3);
+	
+		$xcrud = xcrud_get_instance();
+		$this->load->model('tienda_model');
+	
+		$sfid = $this->tienda_model->get_pds($id_pds);
+	
+		$data['id_pds']     = 'ABX/PDS-'.$sfid['id_pds'];
+		$data['commercial'] = $sfid['commercial'];
+		$data['territory']  = $sfid['territory'];
+		$data['reference']  = $sfid['reference'];
+		$data['address']    = $sfid['address'];
+		$data['zip']        = $sfid['zip'];
+		$data['city']       = $sfid['city'];
+		$data['id_pds_url'] = $id_pds;
+	
+		$data['devices']=$this->tienda_model->get_devices_pds($id_pds);
+	
+		$data['title'] = 'Dispositivos';
+	
+		$this->load->view('backend/header', $data);
+		$this->load->view('backend/navbar', $data);
+		$this->load->view('backend/devices_pds', $data);
+		$this->load->view('backend/footer');
+	}	
+	
 	public function planograma()
 	{
 		$id_pds   = $this->uri->segment(3);

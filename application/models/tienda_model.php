@@ -40,6 +40,23 @@ class Tienda_model extends CI_Model {
 		}
 	}	
 	
+	public function get_devices_pds($id) {
+
+		if($id != FALSE) {
+			$query = $this->db->select('devices_pds.*,device.*, COUNT(devices_pds.id_device) AS unidades')
+			->join('device','devices_pds.id_device = device.id_device')
+			->where('devices_pds.id_pds',$id)
+			->where('devices_pds.status','Alta')
+			->group_by('devices_pds.id_device')
+			->order_by('device')
+			->get('devices_pds');
+				
+			return $query->result();
+		}
+		else {
+			return FALSE;
+		}
+	}	
 	
 	public function get_devices_display($id) {
 		if($id != FALSE) {
