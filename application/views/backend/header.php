@@ -47,7 +47,7 @@
         <script src="<?php echo base_url();?>assets/js/incidencia/alerta.js" type="text/javascript"></script>
         <link href="<?=site_url('assets/css/plugins/fileInput/fileinput.css"')?>" rel="stylesheet">
         <link href="<?=site_url('assets/css/incidencia/alta_robo.css"')?>" rel="stylesheet">
-        <script src="<?php echo base_url();?>assets/js/plugins/fileInput/fileInput.js" type="text/javascript"></script>
+        <script src="<?php echo base_url();?>assets/js/plugins/fileInput/fileinput.js" type="text/javascript"></script>
         <script src="<?php echo base_url();?>assets/js/incidencia/alta_robo.js" type="text/javascript"></script>
         <script src="<?php echo base_url();?>assets/js/incidencia/formulario_incidencia.js" type="text/javascript"></script>
         <link href="<?=site_url('assets/css/intervencion/intervencion.css')?>" rel="stylesheet">
