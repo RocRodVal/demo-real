@@ -34,21 +34,18 @@
 									{
 										?>
 
-										<a href="<?=site_url('admin/planograma_mueble')?>/
-										<?php echo $display->id_pds.'/'.$display->id_display ?>">
-											<div class='caption' title='<?php echo $display->display; ?>'>
+										<a href="<?=site_url('admin/planograma_mueble')?>/<?php echo $display->id_pds.'/'.$display->id_display ?>">
+											<div class="caption" title="<?php echo $display->display; ?>">
 											<img
 												src="<?=site_url('application/uploads/'.$display->picture_url.'')?>"
-												title="<a href='<?=site_url('admin/planograma_mueble/'. $display->id_pds.'/'.$display->id_display)?>'><?php echo $display->display ?></a>"/>
+												title="<?php echo $display->display ?>"/>
 											</div>
 										</a>
 									<?php
 									}
 									else{
 										?>
-										<a href="<?=site_url('admin/planograma_mueble')?>/
-									<?php echo $display->id_pds.'/'.$display->id_display ?>">
-											<?php echo $display->display ?></a><br clear="all" />
+										<a href="<?=site_url('admin/planograma_mueble')?>/<?php echo $display->id_pds.'/'.$display->id_display ?>"><?php echo $display->display ?></a><br clear="all" />
 									<?php
 									}
 									?>
