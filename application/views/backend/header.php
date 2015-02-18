@@ -47,7 +47,7 @@
         <script src="<?php echo base_url();?>assets/js/plugins/dataTables/jquery.dataTables.js" type="text/javascript"></script>
         <script src="<?php echo base_url();?>assets/js/plugins/dataTables/dataTables.bootstrap.js" type="text/javascript"></script>
     <?php }?>
-    <?php if($this->uri->segment(2)==="planograma"){?>
+    <?php if($this->uri->segment(2)==="planograma" || $this->uri->segment(2)==="planograma_mueble"){?>
         <link href="<?=site_url('assets/css/incidencia/alta_incidencia.css')?>" rel="stylesheet">
     <?php }?>    
     <?php if($this->uri->segment(2)==="alta_incidencia" || $this->uri->segment(2)==="alta_incidencia_mueble" ||
