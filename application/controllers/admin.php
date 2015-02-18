@@ -779,6 +779,79 @@ class Admin extends CI_Controller {
 		$this->load->view('backend/footer');
 	}	
 	
+	public function planograma()
+	{
+		$id_pds   = $this->uri->segment(3);
+
+		$xcrud = xcrud_get_instance();
+		$this->load->model('tienda_model');
+		
+		$sfid = $this->tienda_model->get_pds($id_pds);
+		
+		$data['id_pds']     = 'ABX/PDS-'.$sfid['id_pds'];
+		$data['commercial'] = $sfid['commercial'];
+		$data['territory']  = $sfid['territory'];
+		$data['reference']  = $sfid['reference'];
+		$data['address']    = $sfid['address'];
+		$data['zip']        = $sfid['zip'];
+		$data['city']       = $sfid['city'];
+		$data['id_pds_url'] = $id_pds;
+
+		$displays = $this->tienda_model->get_displays_panelado($id_pds);
+
+		foreach($displays as $key=>$display) {
+			$num_devices = $this->tienda_model->count_devices_display($display->id_display);
+			$display->devices_count = $num_devices;
+		}
+
+		$data['displays']=$displays;
+		
+		$data['title'] = 'Planograma';
+		
+		$this->load->view('backend/header', $data);
+		$this->load->view('backend/navbar', $data);
+		$this->load->view('backend/planograma', $data);
+		$this->load->view('backend/footer');	
+	}	
+	
+	
+	public function planograma_mueble()
+	{
+		$id_pds   = $this->uri->segment(3);
+		$id_dis   = $this->uri->segment(4);
+	
+		$xcrud = xcrud_get_instance();
+		$this->load->model('tienda_model');
+	
+		$sfid = $this->tienda_model->get_pds($id_pds);
+	
+		$data['id_pds']     = 'ABX/PDS-'.$sfid['id_pds'];
+		$data['commercial'] = $sfid['commercial'];
+		$data['territory']  = $sfid['territory'];
+		$data['reference']  = $sfid['reference'];
+		$data['address']    = $sfid['address'];
+		$data['zip']        = $sfid['zip'];
+		$data['city']       = $sfid['city'];
+	
+		$display = $this->tienda_model->get_display($id_dis);
+	
+		$data['id_display']  = $display['id_display'];
+		$data['display']     = $display['display'];
+		$data['picture_url'] = $display['picture_url'];
+	
+		$data['devices'] = $this->tienda_model->get_devices_display($id_dis);
+	
+		$data['id_pds_url']  = $id_pds;
+		$data['id_dis_url']  = $id_dis;
+	
+		$data['title'] = 'Planograma';
+	
+		$this->load->view('backend/header', $data);
+		$this->load->view('backend/navbar', $data);
+		$this->load->view('backend/planograma_display', $data);
+		$this->load->view('backend/footer');
+	}
+		
 
 	public function alta_incidencia_device()
 	{
