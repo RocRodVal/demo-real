@@ -490,8 +490,6 @@ class Admin extends CI_Controller {
 	
 	public function inventarios()
 	{
-
-		$xcrud = xcrud_get_instance();
 		$this->load->model('tienda_model');
 	
 		$data['displays']=$this->tienda_model->get_displays_total();
@@ -591,6 +589,11 @@ class Admin extends CI_Controller {
 	
 	public function almacen()
 	{
+		$this->load->model('tienda_model');
+		
+		$data['alarms']=$this->tienda_model->get_alarms_almacen();
+		$data['devices']=$this->tienda_model->get_devices_almacen();		
+		
 		$xcrud_1 = xcrud_get_instance();
 		$xcrud_1->table('alarms_almacen');
 		$xcrud_1->table_name('Inventario alarmas almacén');
@@ -601,7 +604,9 @@ class Admin extends CI_Controller {
 		$xcrud_1->order_by('id_alarm','asc');
 		$xcrud_1->order_by('status','asc');
 		$xcrud_1->order_by('id_alarms_almacen','asc');
-
+		$xcrud_1->show_primary_ai_column(true);
+		$xcrud_1->unset_numbers();
+		$xcrud_1->start_minimized(true);
 	
 		$xcrud_2 = xcrud_get_instance();
 		$xcrud_2->table('devices_almacen');
@@ -623,14 +628,17 @@ class Admin extends CI_Controller {
 		$xcrud_2->order_by('id_device','asc');
 		$xcrud_2->order_by('status','asc');
 		$xcrud_2->order_by('id_devices_almacen','asc');
+		$xcrud_2->show_primary_ai_column(true);
+		$xcrud_2->unset_numbers();
+		$xcrud_2->start_minimized(true);		
 
-		$data['title']   = 'Almacén';
+		$data['title']   = 'Depósito';
 		$data['content'] = $xcrud_1->render();
 		$data['content'] = $data['content'].$xcrud_2->render();
 	
 		$this->load->view('backend/header', $data);
 		$this->load->view('backend/navbar', $data);
-		$this->load->view('backend/content', $data);
+		$this->load->view('backend/almacen', $data);
 		$this->load->view('backend/footer');
 	}
 		
@@ -1116,7 +1124,7 @@ class Admin extends CI_Controller {
 		$xcrud = xcrud_get_instance();
 	
 		$data['title']   = 'Auditorías';
-		$data['content'] = 'Aún no ha sido asignada ningua auditoría';
+		$data['content'] = 'Aún no ha sido asignada ninguna auditoría';
 	
 		$this->load->view('backend/header', $data);
 		$this->load->view('backend/navbar', $data);

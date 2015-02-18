@@ -82,6 +82,30 @@ class Tienda_model extends CI_Model {
 		return $query->result();
 	}	
 	
+	public function get_devices_almacen() {
+	
+		$query = $this->db->select('devices_almacen.*,device.*, COUNT(devices_almacen.id_device) AS unidades')
+		->join('device','devices_almacen.id_device = device.id_device')
+		->where('devices_almacen.status','En stock')
+		->group_by('devices_almacen.id_device')
+		->order_by('device')
+		->get('devices_almacen');
+	
+		return $query->result();
+	}
+	
+	public function get_alarms_almacen() {
+	
+		$query = $this->db->select('alarms_almacen.*,alarm.*, COUNT(alarms_almacen.id_alarm) AS unidades')
+		->join('alarm','alarms_almacen.id_alarm = alarm.id_alarm')
+		->where('alarms_almacen.status','En stock')
+		->group_by('alarms_almacen.id_alarm')
+		->order_by('alarm')
+		->get('alarms_almacen');
+	
+		return $query->result();
+	}	
+	
 	public function get_devices_display($id) {
 		if($id != FALSE) {
 			$query = $this->db->select('devices_display.*,device.*')
