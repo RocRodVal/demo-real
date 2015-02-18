@@ -6,12 +6,14 @@ $(document).ready(function(){
     controller = pathname.split("/")[5];
     if(controller=="alta_incidencia_device") {
         $('input[name="tipo_averia"]').change(showAlarmaMueble);
+        $('input[name="tipo_averia"]').attr('disabled',true);
         $('input[name="alarm_display"]').change(showAlarmaMovil);
         $('input[name="alarm_device"]').change(showDescription);
         $('textarea[name="description"]').blur(checkDescription);
         $('input[name="email"]').blur(checkUserData);
         $('input[name="contacto"]').blur(checkUserData);
         $('input[name="phone"]').blur(checkUserData);
+        $("#alarmaDisplay").show();
     }
 });
 

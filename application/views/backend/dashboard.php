@@ -108,7 +108,7 @@
     									{
     									?>
     									<tr>
-    										<td><a href="<?=site_url('admin/operar_incidencia/'.$incidencia->id_pds.'/'.$incidencia->id_incidencia)?>">#<?php echo $incidencia->id_incidencia?></a></td>
+    										<td><a href="<?=site_url('admin/operar_incidencia/'.$incidencia->id_pds.'/'.$incidencia->id_incidencia)?>"><?php echo $incidencia->id_incidencia?></a></td>
     										<td><?php echo date_format(date_create($incidencia->fecha),'d-m-Y') ?></td>
     										<td><?php echo $incidencia->reference ?></td>
     										<td>

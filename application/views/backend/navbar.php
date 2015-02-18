@@ -27,8 +27,8 @@
             </ul>
             <div class="navbar-default sidebar" role="navigation">
                 <div class="sidebar-nav navbar-collapse">
-                    <ul class="nav" id="side-menu">
-
+                    <ul class="nav" id="side-menu" style="margin-top:20px;">
+                        <!--
                         <li class="sidebar-search">
                             <div class="input-group custom-search-form">
                                 <input type="text" class="form-control" placeholder="Buscar...">
@@ -39,7 +39,7 @@
                             </span>
                             </div>
                         </li>
-
+                        -->
                         <?php
                         if ($this->session->userdata('type') == 9)
                         {
