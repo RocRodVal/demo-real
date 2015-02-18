@@ -9,6 +9,8 @@ id_incidencia_session = null;
 
 function showModalNewIntervencion(id_pds, id_incidencia) {
     $("#nueva_intervencion_description").html('');
+    base_url = pathname.split("admin")[0];
+    url_intervencion = "intervencion/";
     id_pds_session = id_pds;
     id_incidencia_session = id_incidencia;
     $("#nueva_intervencion_select_intervencion").html("<option value='0'>Selecciona una intervencion</option>");
@@ -75,6 +77,7 @@ function saveIntervencion() {
             else {
                 alert(json);
             }
+            localtion.reload();
         }).error(function (msg) {
         });
     }
@@ -104,7 +107,6 @@ function saveIntervencion() {
             else {
                 alert(json);
             }
-
         }).error(function (msg) {
         });
     }
@@ -112,7 +114,7 @@ function saveIntervencion() {
 }
 
 function showModalViewIntervencion(id_intervencion){
-
+    var base_url = pathname.split("admin")[0];
     $.ajax({
         type: "POST",
         data: "intervencion_id=" + id_intervencion,
