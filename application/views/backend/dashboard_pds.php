@@ -19,7 +19,7 @@
         </div>
         <div class="col-lg-3 col-md-3 col-sm-6 col-xs-6" style="text-align:center;">
             <a href="<?=site_url('admin/inventario_tienda/'.$id_pds_url)?>">
-                <button type="button" class="btn btn-success btn-accion">Ver MÓVILES<br/>de la tienda</button>
+                <button type="button" class="btn btn-success btn-accion">Ver DISPOSITIVOS<br/>de la tienda</button>
             </a>
         </div>
         <div class="col-lg-3 col-md-3 col-sm-6 col-xs-6" style="text-align:center;">

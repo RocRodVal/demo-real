@@ -77,7 +77,10 @@ function saveIntervencion() {
             else {
                 alert(json);
             }
-            localtion.reload();
+            setInterval(function(){
+                location.reload();
+            },500);
+
         }).error(function (msg) {
         });
     }
@@ -107,10 +110,13 @@ function saveIntervencion() {
             else {
                 alert(json);
             }
+            setInterval(function(){
+                location.reload();
+            },500);
         }).error(function (msg) {
         });
+
     }
-    location.reload();
 }
 
 function showModalViewIntervencion(id_intervencion){
