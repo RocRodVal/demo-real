@@ -74,6 +74,7 @@
                         <li><a <?=($this->uri->segment(2)==='dashboard_pds')?'class="active"':''?> href="<?=site_url('admin/dashboard_pds')?>"><i class="fa fa-dashboard fa-fw"></i> Información general</a></li>
                         <li><a <?=($this->uri->segment(2)==='alta_incidencia')?'class="active"':''?> href="<?=site_url('admin/alta_incidencia/' . $id_pds_url)?>"><i class="fa fa-ticket fa-fw"></i> Alta nueva incidencia</a></li>
                         <li><a <?=($this->uri->segment(2)==='alta_incidencia_robo')?'class="active"':''?> href="<?=site_url('admin/alta_incidencia_robo/' . $id_pds_url)?>"><i class="fa fa-exclamation-triangle fa-fw"></i> Alta nuevo robo</a></li>
+                        <li><a <?=($this->uri->segment(2)==='planograma')?'class="active"':''?> href="<?=site_url('admin/planograma/' . $id_pds_url)?>"><i class="fa fa-table fa-fw"></i> Planograma</a></li>
                         <?php
                         }	
                         ?>
