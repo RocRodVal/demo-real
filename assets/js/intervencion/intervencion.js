@@ -8,8 +8,12 @@ var intervencion_session = null;
 var id_intervencion_session = 0;
 
 $(document).ready(function () {
-    initComponents();
-    initData();
+    pathname = window.location.href;
+    controller = pathname.split("/")[4];
+    if(controller=="intervencion") {
+        initComponents();
+        initData();
+    }
 });
 
 function initComponents() {
