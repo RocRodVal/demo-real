@@ -58,6 +58,30 @@ class Tienda_model extends CI_Model {
 		}
 	}	
 	
+	public function get_devices_total() {
+
+			$query = $this->db->select('devices_pds.*,device.*, COUNT(devices_pds.id_device) AS unidades')
+			->join('device','devices_pds.id_device = device.id_device')
+			->where('devices_pds.status','Alta')
+			->group_by('devices_pds.id_device')
+			->order_by('device')
+			->get('devices_pds');
+	
+			return $query->result();
+	}	
+	
+	public function get_displays_total() {
+	
+		$query = $this->db->select('displays_pds.*,display.*, COUNT(displays_pds.id_display) AS unidades')
+		->join('display','displays_pds.id_display = display.id_display')
+		->where('displays_pds.status','Alta')
+		->group_by('displays_pds.id_display')
+		->order_by('display')
+		->get('displays_pds');
+	
+		return $query->result();
+	}	
+	
 	public function get_devices_display($id) {
 		if($id != FALSE) {
 			$query = $this->db->select('devices_display.*,device.*')

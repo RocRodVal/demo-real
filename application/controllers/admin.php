@@ -490,6 +490,13 @@ class Admin extends CI_Controller {
 	
 	public function inventarios()
 	{
+
+		$xcrud = xcrud_get_instance();
+		$this->load->model('tienda_model');
+	
+		$data['displays']=$this->tienda_model->get_displays_total();
+		$data['devices']=$this->tienda_model->get_devices_total();
+		
 		$xcrud_1 = xcrud_get_instance();
 		$xcrud_1->table('displays_pds');
 		$xcrud_1->table_name('Inventario muebles');
@@ -503,7 +510,10 @@ class Admin extends CI_Controller {
 		$xcrud_1->fields('client_type_pds,id_displays_pds,id_type_pds,id_pds,id_panelado,id_display,position,description,status');
 		$xcrud_1->order_by('id_pds','asc');
 		$xcrud_1->order_by('position','asc');
-	
+		$xcrud_1->show_primary_ai_column(true);
+		$xcrud_1->unset_numbers();
+		$xcrud_1->start_minimized(true);		
+		
 		$xcrud_2 = xcrud_get_instance();
 		$xcrud_2->table('alarms_display_pds');
 		$xcrud_2->table_name('Inventario alarmas mueble');
@@ -516,6 +526,9 @@ class Admin extends CI_Controller {
 		$xcrud_2->fields('client_type_pds,id_alarms_display_pds,id_pds,id_displays_pds,id_alarm,description,status');
 		$xcrud_2->order_by('id_pds','asc');
 		$xcrud_2->order_by('id_displays_pds','asc');
+		$xcrud_2->show_primary_ai_column(true);
+		$xcrud_2->unset_numbers();
+		$xcrud_2->start_minimized(true);		
 
 		$xcrud_3 = xcrud_get_instance();
 		$xcrud_3->table('devices_pds');
@@ -541,6 +554,9 @@ class Admin extends CI_Controller {
 		$xcrud_3->order_by('id_pds','asc');
 		$xcrud_3->order_by('id_displays_pds','asc');
 		$xcrud_3->order_by('position','asc');
+		$xcrud_3->show_primary_ai_column(true);
+		$xcrud_3->unset_numbers();
+		$xcrud_3->start_minimized(true);		
 
 		$xcrud_4 = xcrud_get_instance();
 		$xcrud_4->table('alarms_device_pds');
@@ -556,6 +572,9 @@ class Admin extends CI_Controller {
 		$xcrud_4->order_by('id_pds','asc');
 		$xcrud_4->order_by('id_displays_pds','asc');
 		$xcrud_4->order_by('id_devices_pds','asc');
+		$xcrud_4->show_primary_ai_column(true);
+		$xcrud_4->unset_numbers();
+		$xcrud_4->start_minimized(true);
 		
 		$data['title']   = 'Inventarios';
 		$data['content'] = $xcrud_1->render();
@@ -565,7 +584,7 @@ class Admin extends CI_Controller {
 	
 		$this->load->view('backend/header', $data);
 		$this->load->view('backend/navbar', $data);
-		$this->load->view('backend/content', $data);
+		$this->load->view('backend/inventario', $data);
 		$this->load->view('backend/footer');
 	}
 		
