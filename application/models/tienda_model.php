@@ -7,6 +7,31 @@ class Tienda_model extends CI_Model {
 	}
 
 	
+	public function get_stock() {
+	
+		$query = $this->db->select('devices_pds.id_device, device.device, COUNT(devices_pds.id_device) AS unidades_pds, (ROUND((COUNT(devices_pds.id_device)*0.05))+1) AS stock_necesario,
+									(
+									SELECT  COUNT(*)
+									FROM    devices_almacen
+									WHERE   devices_almacen.id_device = devices_pds.id_device
+									) AS deposito_almacen,
+									(
+									SELECT  COUNT(*)
+									FROM    devices_almacen
+									WHERE   devices_almacen.id_device = devices_pds.id_device
+									) -
+									(ROUND((COUNT(devices_pds.id_device)*0.05))+1) AS balance')
+			   	 ->join('device','devices_pds.id_device = device.id_device')
+		         //->where('devices_pds.status','Alta')
+		         ->group_by('devices_pds.id_device')
+		         ->order_by('device')
+		         ->get('devices_pds');
+	
+		return $query->result();
+	}
+		
+	
+	
 	public function search_pds($id) {
 		if($id != FALSE) {
 			$query = $this->db->select('pds.*,type_pds.pds,panelado.panelado,territory.territory')

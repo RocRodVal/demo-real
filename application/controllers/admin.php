@@ -497,14 +497,11 @@ class Admin extends CI_Controller {
 			$data['type']     = $this->session->userdata('type');
 				
 			$xcrud = xcrud_get_instance();
-	
 			$this->load->model('tienda_model');
 				
 			$data['tiendas'] =  $this->tienda_model->search_pds($this->input->post('sfid'));
 
-			
-			$data['title']   = 'Descripción tiendas';
-			//$data['content'] = $xcrud->render();
+			$data['title']   = 'Planograma tiendas';
 	
 			$this->load->view('backend/header', $data);
 			$this->load->view('backend/navbar', $data);
@@ -716,7 +713,7 @@ class Admin extends CI_Controller {
 		$xcrud_2->unset_numbers();
 		$xcrud_2->start_minimized(true);		
 	
-		$data['title']   = 'Planogramas muebles';
+		$data['title']   = 'Planograma genérico';
 		$data['content'] = $xcrud_1->render();
 		$data['content'] = $data['content'].$xcrud_2->render();
 	
