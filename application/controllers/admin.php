@@ -486,7 +486,37 @@ class Admin extends CI_Controller {
 		$this->load->view('backend/content', $data);
 		$this->load->view('backend/footer');
 	}
-		
+
+	public function descripcion()
+	{
+		if($this->session->userdata('logged_in'))
+		{
+			$session_data     = $this->session->userdata('logged_in');
+			$data['sfid']     = $this->session->userdata('sfid');
+			$data['agent_id'] = $this->session->userdata('agent_id');
+			$data['type']     = $this->session->userdata('type');
+				
+			$xcrud = xcrud_get_instance();
+	
+			$this->load->model('tienda_model');
+				
+			$data['tiendas'] =  $this->tienda_model->search_pds($this->input->post('sfid'));
+
+			
+			$data['title']   = 'Descripción tiendas';
+			//$data['content'] = $xcrud->render();
+	
+			$this->load->view('backend/header', $data);
+			$this->load->view('backend/navbar', $data);
+			$this->load->view('backend/descripcion', $data);
+			$this->load->view('backend/footer');
+		}
+		else
+		{
+			redirect('admin','refresh');
+		}
+	}	
+	
 	
 	public function inventarios()
 	{
@@ -574,7 +604,7 @@ class Admin extends CI_Controller {
 		$xcrud_4->unset_numbers();
 		$xcrud_4->start_minimized(true);
 		
-		$data['title']   = 'Inventarios';
+		$data['title']   = 'Inventarios tiendas';
 		$data['content'] = $xcrud_1->render();
 		$data['content'] = $data['content'].$xcrud_2->render();
 		$data['content'] = $data['content'].$xcrud_3->render();
@@ -586,6 +616,116 @@ class Admin extends CI_Controller {
 		$this->load->view('backend/footer');
 	}
 		
+	public function inventarios_panelados()
+	{
+		$this->load->model('tienda_model');
+
+		$id_panelado = $this->input->post('id_panelado');
+		$displays    = $this->tienda_model->get_inventario_panelado($id_panelado);
+		
+		
+		if ($id_panelado != '')
+		{	
+		foreach($displays as $key=>$display) {
+			$num_devices = $this->tienda_model->count_devices_display($display->id_display);
+			$display->devices_count = $num_devices;
+		}
+		}
+
+		$data['panelados'] = $this->tienda_model->get_panelados();
+		$data['displays']  = $displays;
+	
+		$xcrud_1 = xcrud_get_instance();
+		$xcrud_1->table('panelado');
+		$xcrud_1->table_name('Panelado');
+		$xcrud_1->relation('client_panelado','client','id_client','client');
+		$xcrud_1->relation('type_pds','type_pds','id_type_pds','pds');
+		$xcrud_1->change_type('picture_url', 'image');
+		$xcrud_1->label('client_panelado','Cliente')->label('type_pds','Tipo punto de venta')->label('panelado','Panelado Orange')->label('panelado_abx','REF.')->label('picture_url','Foto')->label('description','Comentarios')->label('status','Estado');
+		$xcrud_1->columns('client_panelado,type_pds,panelado,panelado_abx,status');
+		$xcrud_1->fields('client_panelado,type_pds,panelado,panelado_abx,picture_url,description,status');
+		$xcrud_1->show_primary_ai_column(true);
+		$xcrud_1->unset_numbers();
+		$xcrud_1->start_minimized(true);
+				
+		$xcrud_2 = xcrud_get_instance();
+		$xcrud_2->table('displays_panelado');
+		$xcrud_2->table_name('Muebles panelado');
+		$xcrud_2->relation('client_panelado','client','id_client','client');
+		$xcrud_2->relation('id_panelado','panelado','id_panelado','panelado_abx');
+		$xcrud_2->relation('id_display','display','id_display','display');
+		$xcrud_2->label('client_panelado','Cliente')->label('id_panelado','REF.')->label('id_display','Modelo')->label('position','Posición')->label('description','Comentarios')->label('status','Estado');
+		$xcrud_2->columns('client_panelado,id_panelado,id_display,position,status');
+		$xcrud_2->fields('client_panelado,id_panelado,id_display,position,description,status');
+		$xcrud_2->show_primary_ai_column(true);
+		$xcrud_2->unset_numbers();
+		$xcrud_2->start_minimized(true);
+
+		$data['title']   = 'Panelados tiendas';
+		$data['content'] = $xcrud_1->render();
+		$data['content'] = $data['content'].$xcrud_2->render();
+
+	
+		$this->load->view('backend/header', $data);
+		$this->load->view('backend/navbar', $data);
+		$this->load->view('backend/inventario_panelados', $data);
+		$this->load->view('backend/footer');
+	}	
+	
+	
+	public function inventarios_planogramas()
+	{
+		$this->load->model('tienda_model');
+
+		$id_display = $this->input->post('id_display');
+		$devices    = $this->tienda_model->get_devices_display($id_display);
+
+		$data['displays'] = $this->tienda_model->get_displays();
+		$data['devices']  = $devices;
+
+		if ($id_display != '')
+		{		
+			$display = $this->tienda_model->get_display($id_display);
+			$data['picture_url'] = $display['picture_url'];		
+		}
+		
+		$xcrud_1 = xcrud_get_instance();
+		$xcrud_1->table('display');
+		$xcrud_1->table_name('Modelo');
+		$xcrud_1->relation('client_display','client','id_client','client');
+		$xcrud_1->change_type('picture_url', 'image');
+		$xcrud_1->change_type('canvas_url', 'file');
+		$xcrud_1->modal('picture_url');
+		$xcrud_1->label('client_display','Cliente')->label('display','Modelo')->label('picture_url','Foto')->label('canvas_url','SVG')->label('description','Comentarios')->label('positions','Posiciones')->label('status','Estado');
+		$xcrud_1->columns('client_display,display,picture_url,positions,status');
+		$xcrud_1->fields('client_display,display,picture_url,canvas_url,description,positions,status');
+		$xcrud_1->show_primary_ai_column(true);
+		$xcrud_1->unset_numbers();
+		$xcrud_1->start_minimized(true);		
+		
+		$xcrud_2 = xcrud_get_instance();
+		$xcrud_2->table('devices_display');
+		$xcrud_2->table_name('Dispositivos mueble');
+		$xcrud_2->relation('client_panelado','client','id_client','client');
+		$xcrud_2->relation('id_display','display','id_display','display');
+		$xcrud_2->relation('id_device','device','id_device','device');
+		$xcrud_2->label('client_panelado','Cliente')->label('id_panelado','REF.')->label('id_display','Mueble')->label('id_device','Dispositivo')->label('position','Posición')->label('description','Comentarios')->label('status','Estado');
+		$xcrud_2->columns('client_panelado,id_display,id_device,position,status');
+		$xcrud_2->fields('client_panelado,id_display,id_device,position,description,status');		
+		$xcrud_2->show_primary_ai_column(true);
+		$xcrud_2->unset_numbers();
+		$xcrud_2->start_minimized(true);		
+	
+		$data['title']   = 'Planogramas muebles';
+		$data['content'] = $xcrud_1->render();
+		$data['content'] = $data['content'].$xcrud_2->render();
+	
+	
+		$this->load->view('backend/header', $data);
+		$this->load->view('backend/navbar', $data);
+		$this->load->view('backend/inventario_planogramas', $data);
+		$this->load->view('backend/footer');
+	}	
 	
 	public function almacen()
 	{
@@ -699,6 +839,124 @@ class Admin extends CI_Controller {
 		$this->load->view('backend/alta_incidencia', $data);
 		$this->load->view('backend/footer');		
 	}	
+	
+	public function exp_alta_incidencia()
+	{
+		$id_pds   = $this->uri->segment(3);
+
+		$xcrud = xcrud_get_instance();
+		$this->load->model('tienda_model');
+	
+		$sfid = $this->tienda_model->get_pds($id_pds);
+	
+		$data['id_pds']     = 'ABX/PDS-'.$sfid['id_pds'];
+		$data['commercial'] = $sfid['commercial'];
+		$data['territory']  = $sfid['territory'];
+		$data['reference']  = $sfid['reference'];
+		$data['address']    = $sfid['address'];
+		$data['zip']        = $sfid['zip'];
+		$data['city']       = $sfid['city'];
+		$data['id_pds_url'] = $id_pds;
+	
+		$displays = $this->tienda_model->get_displays_panelado($id_pds);
+	
+		foreach($displays as $key=>$display) {
+			$num_devices = $this->tienda_model->count_devices_display($display->id_display);
+			$display->devices_count = $num_devices;
+		}
+	
+		$data['displays']=$displays;
+	
+		$data['title'] = 'Panelado tienda';
+	
+		$this->load->view('backend/header', $data);
+		$this->load->view('backend/navbar', $data);
+		$this->load->view('backend/exp_alta_incidencia', $data);
+		$this->load->view('backend/footer');
+	}	
+	
+	public function exp_alta_incidencia_mueble()
+	{
+		$id_pds   = $this->uri->segment(3);
+		$id_dis   = $this->uri->segment(4);
+	
+		$xcrud = xcrud_get_instance();
+		$this->load->model('tienda_model');
+	
+		$sfid = $this->tienda_model->get_pds($id_pds);
+	
+		$data['id_pds']     = 'ABX/PDS-'.$sfid['id_pds'];
+		$data['commercial'] = $sfid['commercial'];
+		$data['territory']  = $sfid['territory'];
+		$data['reference']  = $sfid['reference'];
+		$data['address']    = $sfid['address'];
+		$data['zip']        = $sfid['zip'];
+		$data['city']       = $sfid['city'];
+	
+		$display = $this->tienda_model->get_display($id_dis);
+	
+		$data['id_display']  = $display['id_display'];
+		$data['display']     = $display['display'];
+		$data['picture_url'] = $display['picture_url'];
+	
+		$data['devices'] = $this->tienda_model->get_devices_display($id_dis);
+	
+		$data['id_pds_url']  = $id_pds;
+		$data['id_dis_url']  = $id_dis;
+	
+		$data['title'] = 'Planograma mueble';
+	
+		$this->load->view('backend/header', $data);
+		$this->load->view('backend/navbar', $data);
+		$this->load->view('backend/exp_alta_incidencia_display', $data);
+		$this->load->view('backend/footer');
+	}	
+	
+	public function exp_alta_incidencia_device()
+	{
+		$id_pds   = $this->uri->segment(3);
+		$id_dis   = $this->uri->segment(4);
+		$id_dev   = $this->uri->segment(5);
+	
+		$xcrud = xcrud_get_instance();
+		$this->load->model('tienda_model');
+	
+		$sfid = $this->tienda_model->get_pds($id_pds);
+	
+		$data['id_pds']     = 'ABX/PDS-'.$sfid['id_pds'];
+		$data['commercial'] = $sfid['commercial'];
+		$data['territory']  = $sfid['territory'];
+		$data['reference']  = $sfid['reference'];
+		$data['address']    = $sfid['address'];
+		$data['zip']        = $sfid['zip'];
+		$data['city']       = $sfid['city'];
+	
+		$display = $this->tienda_model->get_display($id_dis);
+	
+		$data['id_display']      = $display['id_display'];
+		$data['display']         = $display['display'];
+		$data['picture_url_dis'] = $display['picture_url'];
+	
+	
+		$device = $this->tienda_model->get_device($id_dev);
+	
+		$data['id_device']       = $device['id_device'];
+		$data['device']          = $device['device'];
+		$data['picture_url_dev'] = $device['picture_url'];
+		$data['device_'] = $device;
+	
+		$data['id_pds_url']  = $id_pds;
+		$data['id_dis_url']  = $id_dis;
+		$data['id_dev_url']  = $id_dev;
+	
+		$data['title'] = 'Detalle dispositivo';
+	
+		$this->load->view('backend/header', $data);
+		$this->load->view('backend/navbar', $data);
+		$this->load->view('backend/exp_alta_incidencia_device', $data);
+		$this->load->view('backend/footer');
+	}
+		
 	
 	public function alta_incidencia_robo()
 	{
@@ -1128,8 +1386,8 @@ class Admin extends CI_Controller {
 	
 		$this->load->view('backend/header', $data);
 		$this->load->view('backend/navbar', $data);
-		$this->load->view('backend/content', $data);
-		//$this->load->view('backend/auditorias', $data);
+		//$this->load->view('backend/content', $data);
+		$this->load->view('backend/auditorias', $data);
 		$this->load->view('backend/footer');
 	}
 	

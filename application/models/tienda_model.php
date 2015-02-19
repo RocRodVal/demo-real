@@ -40,6 +40,38 @@ class Tienda_model extends CI_Model {
 		}
 	}	
 	
+	public function get_inventario_panelado($id) {
+		if($id != FALSE) {		
+			$query = $this->db->select('displays_panelado.*,display.*')
+			->join('display','displays_panelado.id_display = display.id_display')
+			->where('displays_panelado.id_panelado', $id)
+			->order_by('position')
+			->get('displays_panelado');
+	
+			return $query->result();
+		}
+		else {
+			return FALSE;
+		}
+	}
+
+	
+	public function get_panelados() {
+		$query = $this->db->select('*')
+		->order_by('panelado_abx')
+		->get('panelado');
+	
+		return $query->result();
+	}	
+
+	public function get_displays() {
+		$query = $this->db->select('*')
+		->order_by('display')
+		->get('display');
+	
+		return $query->result();
+	}	
+	
 	public function get_devices_pds($id) {
 
 		if($id != FALSE) {
