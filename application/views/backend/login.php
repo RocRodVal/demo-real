@@ -1,11 +1,14 @@
 		<!-- #container -->
-
+		<div id="bg">
+  			<img src="<?=site_url('assets/images/bg-oficina.jpg')?>" alt="">
+		</div>
+		
 	    <div class="container">
 	        <div class="row">
 	            <div class="col-md-4 col-md-offset-4">
 	                <div class="login-panel panel panel-default">
 	                    <div class="panel-heading">
-	                        <img src="<?=site_url('assets/images/logo-orange_big.png')?>" title="<?=lang('comun.titulo')?>" width="100%" />
+	                        <center><img src="<?=site_url('assets/images/logo-orange_big.png')?>" title="<?=lang('comun.titulo')?>" width="50%" /></center>
 	                    </div>
 	                    <div class="panel-body">
 	                        <form action="<?=site_url('admin/');?>" method="post" class="content_auto form_login">
