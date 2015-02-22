@@ -13,7 +13,14 @@
 	                    </div>
 	                    <div class="panel-body">
 	                        <form action="<?=site_url('tienda');?>" method="post" class="content_auto form_login">
+	                        	<?php 
+	                        	if (isset($message)) 
+								{ 
+	                        	?>
 	                        	<div id="infoMessage"><?php echo $message;?></div>
+	                            <?php 
+								}
+	                            ?>
 	                            <fieldset>
 	                                <div class="form-group">
 	                                    <input class="form-control" placeholder="SFID" name="sfid" type="text" value="<?=$this->form_validation->set_value('sfid')?>">

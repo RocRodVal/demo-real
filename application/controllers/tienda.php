@@ -7,12 +7,14 @@ class Tienda extends CI_Controller {
 		parent::__construct();
 		$this->load->database();
 		$this->load->helper(array('email','text','xcrud'));
-		$this->load->library(array('email','form_validation','ion_auth','encrypt','form_validation','session'));
+		$this->load->library(array('email','encrypt','form_validation','session'));
 	}
 	
 	
 	public function index()
 	{
+		$xcrud = xcrud_get_instance();
+		$this->load->model('user_model');
 		$this->load->model('tienda_model');
 		
 		$this->form_validation->set_rules('sfid','SFID','required|xss_clean');
@@ -26,20 +28,18 @@ class Tienda extends CI_Controller {
 			);
 		}
 		
-		if ($this->form_validation->run() == true && $this->tienda_model->login($data))
+		if ($this->form_validation->run() == true && $this->user_model->login($data))
 		{
 			redirect('tienda/dashboard');
 		}
 		else
 		{
 			$this->data['message'] = (validation_errors() ? validation_errors() : ($this->session->flashdata('message')));
-		
-			$xcrud = xcrud_get_instance();
-		
+						
 			$data['title']   = 'Login tienda';
 			
-			$this->load->view('tienda/header', $data);
-			$this->load->view('tienda/login', $this->data);
+			$this->load->view('tienda/header',$data);
+			$this->load->view('tienda/login',$data);
 			$this->load->view('tienda/footer');
 		}		
 	}
@@ -49,42 +49,37 @@ class Tienda extends CI_Controller {
 	{
 		if($this->session->userdata('logged_in'))
 		{
-			$session_data     = $this->session->userdata('logged_in');
-			$data['sfid']     = $this->session->userdata('sfid');
-			$data['agent_id'] = $this->session->userdata('agent_id');
-			$data['type']     = $this->session->userdata('type');
-			
+			$data['id_pds'] = $this->session->userdata('id_pds');
+			$data['sfid']   = $this->session->userdata('sfid');
+				
 			$xcrud = xcrud_get_instance();
-	
-			$this->load->model('tienda_model');
-			
-			$id_pds = $this->tienda_model->get_id($data['sfid']);
-			$data['id_pds'] = $id_pds['id_pds'];
+			$this->load->model('tienda_model');			
 
 			$incidencias = $this->tienda_model->get_incidencias_pds($data['id_pds']);
+			
 			foreach($incidencias as $incidencia)
 			{
 				$incidencia->device= $this->tienda_model->get_device($incidencia->id_devices_pds);
 				$incidencia->display= $this->tienda_model->get_display($incidencia->id_displays_pds);
 
-			}
+			}			
 			$data['incidencias'] =  $incidencias;
+			
 			$sfid = $this->tienda_model->get_pds($data['id_pds']);
 			
-			$data['id_pds']     = 'ABX/PDS-'.$sfid['id_pds'];
+			$data['id_pds']     = $sfid['id_pds'];
 			$data['commercial'] = $sfid['commercial'];
 			$data['territory']  = $sfid['territory'];
 			$data['reference']  = $sfid['reference'];
 			$data['address']    = $sfid['address'];
 			$data['zip']        = $sfid['zip'];
 			$data['city']       = $sfid['city'];
-			$data['id_pds_url'] = $sfid['id_pds'];
 	
 			$data['title']   = 'Mis solicitudes';
 			
-			$this->load->view('tienda/header', $data);
-			$this->load->view('tienda/navbar', $data);
-			$this->load->view('tienda/dashboard', $data);
+			$this->load->view('tienda/header',$data);
+			$this->load->view('tienda/navbar',$data);
+			$this->load->view('tienda/dashboard',$data);
 			$this->load->view('tienda/footer');
 		}
 		else
@@ -96,229 +91,249 @@ class Tienda extends CI_Controller {
 	
 	public function alta_incidencia()
 	{
-		$id_pds   = $this->uri->segment(3);
-		if ($this->uri->segment(4) != '')
-		{ 
-			$denuncia = $this->uri->segment(4);
+		if($this->session->userdata('logged_in'))
+		{
+			$data['id_pds'] = $this->session->userdata('id_pds');
+			$data['sfid']   = $this->session->userdata('sfid');
+		
+			$xcrud = xcrud_get_instance();
+			$this->load->model('tienda_model');		
+			
+			if ($this->uri->segment(3) != '') {$denuncia = $this->uri->segment(3);}
+			else {$denuncia = 'no-robo';}	
+			
+			$sfid = $this->tienda_model->get_pds($data['id_pds']);
+			
+			$data['id_pds']     = $sfid['id_pds'];
+			$data['commercial'] = $sfid['commercial'];
+			$data['territory']  = $sfid['territory'];
+			$data['reference']  = $sfid['reference'];
+			$data['address']    = $sfid['address'];
+			$data['zip']        = $sfid['zip'];
+			$data['city']       = $sfid['city'];
+			$data['denuncia']   = $denuncia;
+
+			$displays = $this->tienda_model->get_displays_panelado($data['id_pds']);
+			
+			foreach($displays as $key=>$display) 
+			{
+				$num_devices = $this->tienda_model->count_devices_display($display->id_display);
+				$display->devices_count = $num_devices;
+			}
+			$data['displays'] = $displays;
+
+			$data['title']    = 'Alta incidencia';
+		
+			$this->load->view('tienda/header',$data);
+			$this->load->view('tienda/navbar',$data);
+			$this->load->view('tienda/alta_incidencia',$data);
+			$this->load->view('tienda/footer');		
 		}
 		else
 		{
-			$denuncia = 'no-robo';
+			redirect('tienda','refresh');
 		}	
-		$xcrud = xcrud_get_instance();
-		$this->load->model('tienda_model');
-		
-		$sfid = $this->tienda_model->get_pds($id_pds);
-		
-		$data['id_pds']     = 'ABX/PDS-'.$sfid['id_pds'];
-		$data['commercial'] = $sfid['commercial'];
-		$data['territory']  = $sfid['territory'];
-		$data['reference']  = $sfid['reference'];
-		$data['address']    = $sfid['address'];
-		$data['zip']        = $sfid['zip'];
-		$data['city']       = $sfid['city'];
-		$data['id_pds_url']       = $id_pds;
-		$data['denuncia']   = $denuncia;
-
-		$displays = $this->tienda_model->get_displays_panelado($id_pds);
-
-		foreach($displays as $key=>$display) {
-			$num_devices = $this->tienda_model->count_devices_display($display->id_display);
-			$display->devices_count = $num_devices;
-		}
-
-		$data['displays']=$displays;
-		
-		$data['title'] = 'Alta incidencia';
-		
-		$this->load->view('tienda/header', $data);
-		$this->load->view('tienda/navbar', $data);
-		$this->load->view('tienda/alta_incidencia', $data);
-		$this->load->view('tienda/footer');		
 	}	
 	
 	
 	public function alta_incidencia_robo()
 	{
-		$id_pds = $this->uri->segment(3);
-	
-		$xcrud = xcrud_get_instance();
-		$this->load->model('tienda_model');
-	
-		$sfid = $this->tienda_model->get_pds($id_pds);
-	
-		$data['id_pds']     = 'ABX/PDS-'.$sfid['id_pds'];
-		$data['commercial'] = $sfid['commercial'];
-		$data['territory']  = $sfid['territory'];
-		$data['reference']  = $sfid['reference'];
-		$data['address']    = $sfid['address'];
-		$data['zip']        = $sfid['zip'];
-		$data['city']       = $sfid['city'];
-	
-		$data['displays'] = $this->tienda_model->get_displays_panelado($id_pds);
-		
-		$data['id_pds_url']  = $id_pds;
-	
-		$data['title'] = 'Alta incidencia';
-	
-		$this->load->view('tienda/header', $data);
-		$this->load->view('tienda/navbar', $data);
-		$this->load->view('tienda/alta_incidencia_robo', $data);
-		$this->load->view('tienda/footer');
-	}
-		
-	public function subir_denuncia()
-	{
-		$id_pds = $this->uri->segment(3);
-	
-		$xcrud = xcrud_get_instance();
-		$this->load->model('tienda_model');
-	
-		$sfid = $this->tienda_model->get_pds($id_pds);
-	
-		$data['id_pds']     = 'ABX/PDS-'.$sfid['id_pds'];
-		$data['commercial'] = $sfid['commercial'];
-		$data['territory']  = $sfid['territory'];
-		$data['reference']  = $sfid['reference'];
-		$data['address']    = $sfid['address'];
-		$data['zip']        = $sfid['zip'];
-		$data['city']       = $sfid['city'];
-	
-		$config['upload_path']   = dirname($_SERVER["SCRIPT_FILENAME"]).'/uploads/';
-		$config['upload_url']    = base_url().'/uploads/';
-		$config['allowed_types'] = 'doc|docx|pdf|jpg|png';
-		$new_name                = $sfid['reference'].'-'.time().'-'.$_FILES["userfile"]['name'];
-		$config['file_name']     = $new_name;
-		$config['overwrite']     = TRUE;
-		$config['max_size']      = '1000KB';
-
-		$this->load->library('upload', $config);
-
-		if($this->upload->do_upload())
+		if($this->session->userdata('logged_in'))
 		{
-			redirect('admin/alta_incidencia/'.$id_pds.'/'.$new_name,'refresh');
-		} 
+			$data['id_pds'] = $this->session->userdata('id_pds');
+			$data['sfid']   = $this->session->userdata('sfid');
+		
+			$xcrud = xcrud_get_instance();
+			$this->load->model('tienda_model');
+				
+			$sfid = $this->tienda_model->get_pds($data['id_pds']);
+				
+			$data['id_pds']     = $sfid['id_pds'];
+			$data['commercial'] = $sfid['commercial'];
+			$data['territory']  = $sfid['territory'];
+			$data['reference']  = $sfid['reference'];
+			$data['address']    = $sfid['address'];
+			$data['zip']        = $sfid['zip'];
+			$data['city']       = $sfid['city'];
+		
+			$data['title'] = 'Alta incidencia';
+		
+			$this->load->view('tienda/header',$data);
+			$this->load->view('tienda/navbar',$data);
+			$this->load->view('tienda/alta_incidencia_robo',$data);
+			$this->load->view('tienda/footer');
+		}
 		else
 		{
-			echo "File upload failed";		
-		}
+			redirect('tienda','refresh');
+		}		
 	}
+		
+
+	public function subir_denuncia()
+	{
+		if($this->session->userdata('logged_in'))
+		{
+			$data['id_pds'] = $this->session->userdata('id_pds');
+			$data['sfid']   = $this->session->userdata('sfid');
+		
+			$xcrud = xcrud_get_instance();
+			$this->load->model('tienda_model');
+		
+			$sfid = $this->tienda_model->get_pds($data['id_pds']);
+		
+			$data['id_pds']     = $sfid['id_pds'];
+			$data['commercial'] = $sfid['commercial'];
+			$data['territory']  = $sfid['territory'];
+			$data['reference']  = $sfid['reference'];
+			$data['address']    = $sfid['address'];
+			$data['zip']        = $sfid['zip'];
+			$data['city']       = $sfid['city'];		
+	
+			$config['upload_path']   = dirname($_SERVER["SCRIPT_FILENAME"]).'/uploads/';
+			$config['upload_url']    = base_url().'/uploads/';
+			$config['allowed_types'] = 'doc|docx|pdf|jpg|png';
+			$new_name                = $data['sfid'].'-'.time().'-'.$_FILES["userfile"]['name'];
+			$config['file_name']     = $new_name;
+			$config['overwrite']     = TRUE;
+			$config['max_size']      = '1000KB';
+
+			$this->load->library('upload', $config);
+
+			if($this->upload->do_upload())
+			{
+				redirect('tienda/alta_incidencia/'.$new_name,'refresh');
+			} 
+			else
+			{
+				echo "Ha fallado la carga de la denuncia.";		
+			}
+		}
+		else
+		{
+			redirect('tienda','refresh');
+		}		
+	}
+	
 	
 	public function alta_incidencia_mueble()
 	{
-		$id_pds   = $this->uri->segment(3);
-		$denuncia = $this->uri->segment(4);
-		$id_dis   = $this->uri->segment(5);
-	
-		$xcrud = xcrud_get_instance();
-		$this->load->model('tienda_model');
-	
-		$sfid = $this->tienda_model->get_pds($id_pds);
-	
-		$data['id_pds']     = 'ABX/PDS-'.$sfid['id_pds'];
-		$data['commercial'] = $sfid['commercial'];
-		$data['territory']  = $sfid['territory'];
-		$data['reference']  = $sfid['reference'];
-		$data['address']    = $sfid['address'];
-		$data['zip']        = $sfid['zip'];
-		$data['city']       = $sfid['city'];
-		$data['denuncia']       = $this->uri->segment(4);
-	
-		$display = $this->tienda_model->get_display($id_dis);
+		if($this->session->userdata('logged_in'))
+		{
+			$data['id_pds'] = $this->session->userdata('id_pds');
+			$data['sfid']   = $this->session->userdata('sfid');
 		
-		$data['id_display']  = $display['id_display'];
-		$data['display']     = $display['display'];
-		$data['picture_url'] = $display['picture_url'];		
+			$xcrud = xcrud_get_instance();
+			$this->load->model('tienda_model');
 		
-		$data['devices'] = $this->tienda_model->get_devices_display($id_dis);
+			$sfid = $this->tienda_model->get_pds($data['id_pds']);
 		
-		$data['id_pds_url']  = $id_pds;
-		$data['id_dis_url']  = $id_dis;
+			$data['id_pds']     = $sfid['id_pds'];
+			$data['commercial'] = $sfid['commercial'];
+			$data['territory']  = $sfid['territory'];
+			$data['reference']  = $sfid['reference'];
+			$data['address']    = $sfid['address'];
+			$data['zip']        = $sfid['zip'];
+			$data['city']       = $sfid['city'];
+			
+			$data['denuncia']   = $this->uri->segment(3);
+			$display = $this->tienda_model->get_display($this->uri->segment(4));
 	
-		$data['title'] = 'Alta incidencia';
+			$data['id_display']  = $display['id_display'];
+			$data['display']     = $display['display'];
+			$data['picture_url'] = $display['picture_url'];		
+		
+			$data['devices'] = $this->tienda_model->get_devices_display($this->uri->segment(4));
+		
+			$data['title'] = 'Alta incidencia';
 	
-		$this->load->view('tienda/header', $data);
-		$this->load->view('tienda/navbar', $data);
-		$this->load->view('tienda/alta_incidencia_display', $data);
-		$this->load->view('tienda/footer');
+			$this->load->view('tienda/header',$data);
+			$this->load->view('tienda/navbar',$data);
+			$this->load->view('tienda/alta_incidencia_mueble',$data);
+			$this->load->view('tienda/footer');
+		}
+		else
+		{
+			redirect('tienda','refresh');
+		}		
 	}	
 	
-	public function alta_incidencia_device()
+	public function alta_incidencia_dispositivo()
 	{
-		$id_pds   = $this->uri->segment(3);
-		$denuncia = $this->uri->segment(4);
-		$id_dis   = $this->uri->segment(5);
-		$id_dev   = $this->uri->segment(6);
+		if($this->session->userdata('logged_in'))
+		{
+			$data['id_pds'] = $this->session->userdata('id_pds');
+			$data['sfid']   = $this->session->userdata('sfid');
+		
+			$xcrud = xcrud_get_instance();
+			$this->load->model('tienda_model');
+		
+			$sfid = $this->tienda_model->get_pds($data['id_pds']);
+		
+			$data['id_pds']     = $sfid['id_pds'];
+			$data['commercial'] = $sfid['commercial'];
+			$data['territory']  = $sfid['territory'];
+			$data['reference']  = $sfid['reference'];
+			$data['address']    = $sfid['address'];
+			$data['zip']        = $sfid['zip'];
+			$data['city']       = $sfid['city'];
+			
+			$data['denuncia']   = $this->uri->segment(3);
+			$display = $this->tienda_model->get_display($this->uri->segment(4));	
+		
+			$data['id_display']      = $display['id_display'];
+			$data['display']         = $display['display'];
+			$data['picture_url_dis'] = $display['picture_url'];
+			
+			$device = $this->tienda_model->get_device($this->uri->segment(5));
 	
-		$xcrud = xcrud_get_instance();
-		$this->load->model('tienda_model');
+			$data['id_device']       = $device['id_device'];
+			$data['device']          = $device['device'];
+			$data['picture_url_dev'] = $device['picture_url'];
+			$data['device_'] = $device;
+
+			$data['title'] = 'Alta incidencia';
 	
-		$sfid = $this->tienda_model->get_pds($id_pds);
-	
-		$data['id_pds']     = 'ABX/PDS-'.$sfid['id_pds'];
-		$data['commercial'] = $sfid['commercial'];
-		$data['territory']  = $sfid['territory'];
-		$data['reference']  = $sfid['reference'];
-		$data['address']    = $sfid['address'];
-		$data['zip']        = $sfid['zip'];
-		$data['city']       = $sfid['city'];
-		$data['denuncia']   = $this->uri->segment(4);
-	
-		$display = $this->tienda_model->get_display($id_dis);
-	
-		$data['id_display']      = $display['id_display'];
-		$data['display']         = $display['display'];
-		$data['picture_url_dis'] = $display['picture_url'];
-	
-	
-		$device = $this->tienda_model->get_device($id_dev);
-	
-		$data['id_device']       = $device['id_device'];
-		$data['device']          = $device['device'];
-		$data['picture_url_dev'] = $device['picture_url'];
-		$data['device_'] = $device;
-	
-		$data['id_pds_url']  = $id_pds;
-		$data['id_dis_url']  = $id_dis;
-		$data['id_dev_url']  = $id_dev;
-	
-		$data['title'] = 'Alta incidencia';
-	
-		$this->load->view('tienda/header', $data);
-		$this->load->view('tienda/navbar', $data);
-		$this->load->view('tienda/alta_incidencia_device', $data);
-		$this->load->view('tienda/footer');
+			$this->load->view('tienda/header',$data);
+			$this->load->view('tienda/navbar',$data);
+			$this->load->view('tienda/alta_incidencia_dispositivo',$data);
+			$this->load->view('tienda/footer');
+		}
+		else
+		{
+			redirect('tienda','refresh');
+		}		
 	}	
 	
 
 	
 	public function insert_incidencia()
 	{
-	
-		$id_pds   = $this->uri->segment(3);
-		$denuncia = $this->uri->segment(4);
-		$id_dis   = $this->uri->segment(5);
-		$id_dev   = $this->uri->segment(6);
+		$id_pds   = $this->session->userdata('id_pds');
+		$denuncia = $this->uri->segment(3);
+		$id_dis   = $this->uri->segment(4);
+		$id_dev   = $this->uri->segment(5);
 	
 		$xcrud = xcrud_get_instance();
 		$this->load->model('tienda_model');
 	
-		/*
-			if ($this->form_validation->run() == true)
-			{
-		*/
-		if ($denuncia == 'no-robo')
-		{
-			$denuncia = '';
+		if ($denuncia == 'no-robo') { $denuncia = ''; };
+		
+		if ($this->input->post('tipo_averia') == 1)
+		{ 
+			$tipo_averia = 'Robo'; 
 		}
-	
+		else
+		{
+			$tipo_averia = 'Avería';
+		}	
 	
 		$data = array(
 				'fecha'    	        => date('Y-m-d H:i:s'),
 				'id_pds'            => $id_pds,
 				'id_displays_pds' 	=> $id_dis,
 				'id_devices_pds' 	=> $id_dev,
-				'tipo_averia' 	    => $this->input->post('tipo_averia'),
+				'tipo_averia' 	    => $tipo_averia,
 				'alarm_display'     => $this->input->post('alarm_display'),
 				'alarm_device'      => $this->input->post('alarm_device'),
 				'description'  	    => $this->input->post('description'),
@@ -336,12 +351,8 @@ class Tienda extends CI_Controller {
 				'status'	        => 1,
 		);
 			
-		//}
-	
 		$incidencia = $this->tienda_model->insert_incidencia($data);
 			
-	
-		//if ($this->tienda_model->insert_incidencia($data))
 		if ($incidencia['add'])
 		{
 	
@@ -356,16 +367,12 @@ class Tienda extends CI_Controller {
 	
 			$this->email->from('no-reply@altabox.net', 'Demo Real');
 			$this->email->to('gzapico@altabox.net');
-			//$this->email->cc('gzapico@altabox.net');
-			//$this->email->bcc('gzapico@altabox.net');
-			//$this->email->subject('Demo Real - Registro de incidencia #'.$incidencia['id']);
 			$this->email->subject('Demo Real - Registro de incidencia');
 			$this->email->message($message_admin);
 			$this->email->send();
-	
+
 			$this->email->clear();
 	
-				
 			$message_pds  = 'Se ha registrado una nueva incidencia.'."\r\n\r\n";
 			$message_pds .= 'En breve recibirá más información de la evolución de la misma.'."\r\n\r\n";
 			$message_pds .= 'Atentamente,'."\r\n\r\n";
@@ -373,16 +380,12 @@ class Tienda extends CI_Controller {
 			$message_pds .= 'http://demoreal.focusonemotions.com/'."\r\n";
 				
 			$this->email->from('no-reply@altabox.net', 'Demo Real');
-			//$this->email->to(strtolower($this->input->post('email')));
 			$this->email->to('gzapico@altabox.net');
-			//$this->email->cc('gzapico@altabox.net');
-			//$this->email->bcc('gzapico@altabox.net');
-			//$this->email->subject('Demo Real - Registro de incidencia #'.$incidencia['id']);
 			$this->email->subject('Demo Real - Registro de incidencia');
 			$this->email->message($message_pds);
 			$this->email->send();
 	
-			redirect('admin/alta_incidencia_gracias');
+			redirect('tienda/alta_incidencia_gracias');
 		}
 		else
 		{
@@ -394,33 +397,34 @@ class Tienda extends CI_Controller {
 	
 	public function alta_incidencia_gracias()
 	{
-		$xcrud = xcrud_get_instance();
-	
-		if ($this->session->userdata('type') == 1)
+		if($this->session->userdata('logged_in'))
 		{
+			$data['id_pds'] = $this->session->userdata('id_pds');
+			$data['sfid']   = $this->session->userdata('sfid');
+			
+			$xcrud = xcrud_get_instance();
 			$this->load->model('tienda_model');
-		  
-			$sfid   = $this->session->userdata('sfid');
-			$id_pds = $this->tienda_model->get_id($sfid);
-			$data['id_pds_url'] = $id_pds['id_pds'];
-			$data['id_pds']     = $id_pds['id_pds'];
-		  
-			$sfid = $this->tienda_model->get_pds($id_pds['id_pds']);
+			
+			$sfid               = $this->tienda_model->get_pds($data['id_pds']);			
+			$data['id_pds']     = $sfid['id_pds'];
 			$data['commercial'] = $sfid['commercial'];
-			$data['territory']  = $sfid['territory'];
 			$data['reference']  = $sfid['reference'];
 			$data['address']    = $sfid['address'];
 			$data['zip']        = $sfid['zip'];
 			$data['city']       = $sfid['city'];
+		 
+			$data['title']   = 'Alta incidencia';
+			$data['content'] = 'Muchas gracias.';
+		 
+			$this->load->view('tienda/header',$data);
+			$this->load->view('tienda/navbar',$data);
+			$this->load->view('tienda/content',$data);
+			$this->load->view('tienda/footer');
 		}
-		 
-		$data['title']   = 'Alta incidencia';
-		$data['content'] = 'Muchas gracias.';
-		 
-		$this->load->view('tienda/header', $data);
-		$this->load->view('tienda/navbar', $data);
-		$this->load->view('tienda/content', $data);
-		$this->load->view('tienda/footer');
+		else
+		{
+			redirect('tienda','refresh');
+		}		
 	}
 	
 
@@ -428,22 +432,21 @@ class Tienda extends CI_Controller {
 	{
 		if($this->session->userdata('logged_in'))
 		{
+			$data['id_pds'] = $this->session->userdata('id_pds');
+			$data['sfid']   = $this->session->userdata('sfid');
+			
 			$xcrud = xcrud_get_instance();
 			$this->load->model('tienda_model');
 			
-			$data['sfid']       = $this->session->userdata('sfid');
-			$id_pds             = $this->tienda_model->get_id($data['sfid']);
-			$data['id_pds']     = $id_pds['id_pds'];
-			
 			$sfid               = $this->tienda_model->get_pds($data['id_pds']);			
-			$data['id_pds']     = 'ABX/PDS-'.$sfid['id_pds'];
+			$data['id_pds']     = $sfid['id_pds'];
 			$data['commercial'] = $sfid['commercial'];
 			$data['reference']  = $sfid['reference'];
 			$data['address']    = $sfid['address'];
 			$data['zip']        = $sfid['zip'];
 			$data['city']       = $sfid['city'];
-			$data['id_pds_url'] = $sfid['id_pds'];
-			$displays           = $this->tienda_model->get_displays_panelado($id_pds['id_pds']);
+
+			$displays           = $this->tienda_model->get_displays_panelado($data['id_pds']);
 			foreach($displays as $key=>$display) {
 				$num_devices = $this->tienda_model->count_devices_display($display->id_display);
 				$display->devices_count = $num_devices;
@@ -452,9 +455,9 @@ class Tienda extends CI_Controller {
 			$data['displays']   = $displays;
 			$data['title']      = 'Mi tienda';
 	
-			$this->load->view('tienda/header', $data);
-			$this->load->view('tienda/navbar', $data);
-			$this->load->view('tienda/planograma', $data);
+			$this->load->view('tienda/header',$data);
+			$this->load->view('tienda/navbar',$data);
+			$this->load->view('tienda/planograma',$data);
 			$this->load->view('tienda/footer');
 		}
 		else
@@ -468,33 +471,31 @@ class Tienda extends CI_Controller {
 	{
 		if($this->session->userdata('logged_in'))
 		{
+			$data['id_pds'] = $this->session->userdata('id_pds');
+			$data['sfid']   = $this->session->userdata('sfid');
+			
 			$xcrud = xcrud_get_instance();
 			$this->load->model('tienda_model');
 				
-			$data['sfid']       = $this->session->userdata('sfid');
-			$id_pds             = $this->tienda_model->get_id($data['sfid']);
-			$data['id_pds']     = $id_pds['id_pds'];
-			$id_dis             = $this->uri->segment(4);
-				
-			$sfid                = $this->tienda_model->get_pds($data['id_pds']);
-			$data['id_pds']      = 'ABX/PDS-'.$sfid['id_pds'];
+			$sfid               = $this->tienda_model->get_pds($data['id_pds']);
+			$data['id_pds']     = $sfid['id_pds'];
 			$data['commercial'] = $sfid['commercial'];
 			$data['reference']  = $sfid['reference'];
 			$data['address']    = $sfid['address'];
 			$data['zip']        = $sfid['zip'];
-			$data['city']       = $sfid['city'];
-			$display            = $this->tienda_model->get_display($id_dis);
+			$data['city']       = $sfid['city'];			
+
+			$display             = $this->tienda_model->get_display($this->uri->segment(3));
 			$data['id_display']  = $display['id_display'];
 			$data['display']     = $display['display'];
 			$data['picture_url'] = $display['picture_url'];
-			$data['devices']     = $this->tienda_model->get_devices_display($id_dis);
-			$data['id_pds_url']  = $sfid['id_pds'];
-			$data['id_dis_url']  = $id_dis;
+			
+			$data['devices']     = $this->tienda_model->get_devices_display($this->uri->segment(3));
 			$data['title']       = 'Mi tienda';
 	
-			$this->load->view('tienda/header', $data);
-			$this->load->view('tienda/navbar', $data);
-			$this->load->view('tienda/planograma_mueble', $data);
+			$this->load->view('tienda/header',$data);
+			$this->load->view('tienda/navbar',$data);
+			$this->load->view('tienda/planograma_mueble',$data);
 			$this->load->view('tienda/footer');
 		}
 		else
@@ -508,15 +509,14 @@ class Tienda extends CI_Controller {
 	{
 		if($this->session->userdata('logged_in'))
 		{
+			$data['id_pds'] = $this->session->userdata('id_pds');
+			$data['sfid']   = $this->session->userdata('sfid');
+			
 			$xcrud = xcrud_get_instance();
 			$this->load->model('tienda_model');			
-			
-			$data['sfid']       = $this->session->userdata('sfid');
-			$id_pds             = $this->tienda_model->get_id($data['sfid']);
-			$data['id_pds']     = $id_pds['id_pds'];
-			
+						
 			$sfid               = $this->tienda_model->get_pds($data['id_pds']);
-			$data['id_pds']     = 'ABX/PDS-'.$sfid['id_pds'];
+			$data['id_pds']     = $sfid['id_pds'];
 			$data['commercial'] = $sfid['commercial'];
 			$data['reference']  = $sfid['reference'];
 			$data['address']    = $sfid['address'];
@@ -541,7 +541,10 @@ class Tienda extends CI_Controller {
 
 	public function logout()
 	{
-		$this->session->unset_userdata('logged_in');
+		if($this->session->userdata('logged_in'))
+		{		
+			$this->session->unset_userdata('logged_in');
+		}	
 		redirect('tienda','refresh');
 	}		
 }

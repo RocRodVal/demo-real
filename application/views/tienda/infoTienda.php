@@ -14,7 +14,7 @@
         </button>
         <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownInfoTienda">
             <li role="presentation"><a role="menuitem" tabindex="-1" href="#">
-            	<?php echo $reference ?> [<?php echo $id_pds ?>]<br/>
+            	<?php echo $reference ?> [ABX/PDS-<?php echo $id_pds ?>]<br/>
             	<?php echo $commercial ?><br />
                 <?php echo $address ?>, <?php echo $zip ?> -  <?php echo $city ?></a>
             </li>

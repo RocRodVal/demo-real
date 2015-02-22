@@ -4,7 +4,7 @@
 $(document).ready(function(){
     pathname = window.location.href;
     controller = pathname.split("/")[5];
-    if(controller=="alta_incidencia_device") {
+    if(controller=="alta_incidencia_dispositivo") {
         $('input[name="tipo_averia"]').change(showAlarmaMueble);
         $('input[name="tipo_averia"]').attr('disabled',true);
         $('input[name="alarm_display"]').change(showAlarmaMovil);

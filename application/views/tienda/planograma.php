@@ -31,7 +31,7 @@
 									if ($display->picture_url != '')
 									{
 									?>
-									<a href="<?=site_url('tienda/planograma_mueble')?>/<?php echo $display->id_pds.'/'.$display->id_display ?>">
+									<a href="<?=site_url('tienda/planograma_mueble/'.$display->id_display) ?>">
 										<div class="caption">
 											<img src="<?=site_url('application/uploads/'.$display->picture_url.'')?>" title="<?php echo $display->display ?>"/>
 										</div>
@@ -40,7 +40,7 @@
 									}
 									else{
 									?>
-									<a href="<?=site_url('tienda/planograma_mueble')?>/<?php echo $display->id_pds.'/'.$display->id_display ?>">
+									<a href="<?=site_url('tienda/planograma_mueble/'.$display->id_display) ?>">
 										<div class="caption" title="<?php echo $display->display; ?>"></div>
 									</a>	
 									<?php

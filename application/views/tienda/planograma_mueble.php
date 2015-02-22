@@ -29,9 +29,9 @@
 										{
 										?>
 										<a class="list-group-item" href="#" data-toggle="modal" data-target="#myModal-<?php echo $device->position;?>" >
-											<?php echo $device->position.'. '.$device->device ?></a>
-											
-			                            <!-- Modal -->
+											<?php echo $device->position.'. '.$device->device ?>
+										</a>
+			                            <!-- modal -->
 			                            <div class="modal fade" id="myModal-<?php echo $device->position;?>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 			                                <div class="modal-dialog">
 			                                    <div class="modal-content">
@@ -40,7 +40,6 @@
 			                                            <h4 class="modal-title" id="myModalLabel"><?php echo $device->position.'. '.$device->device ?></a></h4>
 			                                        </div>
 			                                        <div class="modal-body">
-			                                            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 			                                        </div>
 			                                        <div class="modal-footer">
 			                                            <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>

@@ -9,12 +9,12 @@
             </div>
     		<div class="row botonera_up">
         		<div class="col-lg-6 col-md-3 col-sm-6 col-xs-6" style="text-align:center;">
-            		<a href="<?=site_url('tienda/alta_incidencia/'.$id_pds_url)?>">
+            		<a href="<?=site_url('tienda/alta_incidencia_robo')?>">
                 	<button type="button" class="btn btn-primary btn-accion">Nueva ALTA INCIDENCIA</button>
            			</a>
         		</div>
         		<div class="col-lg-6 col-md-3 col-sm-6 col-xs-6" style="text-align:center;">
-            		<a href="<?=site_url('tienda/planograma/'.$id_pds_url)?>">
+            		<a href="<?=site_url('tienda/planograma')?>">
                 		<button type="button" class="btn btn-default btn-accion">Mi  tienda</button>
             		</a>
         		</div>
@@ -31,9 +31,9 @@
 		                        <thead>
 		                        <tr>
 		                            <th>Ref.</th>
-		                            <th>Fecha</th>
+		                            <th>SFID</th>
+		                            <th>Fecha alta</th>
 		                            <th>Descripción</th>
-		                            <th>Introducida por</th>
 		                            <th>Dispositivo</th>
 		                            <th>Mueble</th>
 		                            <th>Tipo</th>
@@ -47,9 +47,9 @@
 		                            ?>
 		                            <tr>
 		                                <td>#<?php echo $incidencia->id_incidencia ?></td>
+		                                <td><?php echo $sfid ?></td>
 		                                <td><?php echo date_format(date_create($incidencia->fecha), 'd-m-Y'); ?></td>
 		                                <td><?php echo $incidencia->description ?></td>
-		                                <td><?php echo $incidencia->contacto ?></td>
 		                                <td><i class="fa fa-eye" data-toggle="tooltip" data-placement="top"
 		                                       title="<img class='tooltip_image' src='<?php echo base_url().'application/uploads/'.
 		                                           $incidencia->device['picture_url']; ?>'/><br/>
