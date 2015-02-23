@@ -13,7 +13,6 @@ $(document).ready(function () {
 
 });
 
-
 function createDataTable(){
     $("#table_incidencias_dashboard").dataTable();
 }
