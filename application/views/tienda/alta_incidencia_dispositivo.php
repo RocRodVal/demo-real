@@ -12,11 +12,11 @@
         action="<?= site_url('tienda/insert_incidencia/'. $denuncia . '/' . $id_display . '/' . $id_device) ?>"
         method="post" class="content_auto form_login" enctype="multipart/form-data">
         <div class="row">
-            <div class="col-lg-12">
+            <div class="col-lg-offset-1 col-lg-8">
                 <div class="panel panel-default">
                     <div class="panel-body">
                         <div class="row">
-                            <div class="col-lg-5">
+                            <div class="col-lg-7">
                                 <div class="row">
                                     <div class="col-lg-12">
                                         <label>Tipo de incidencia</label>
@@ -35,8 +35,8 @@
                                     </div>
                                 </div>
                            		<p>Suba una copia de la denuncia por robo:</p>
-								<input id="file-0" class="file" type="file" multiple=false name="userfile">
-                                <div class="row" hidden id="alarmaDisplay">
+								<input id="denuncia" class="file" type="file" multiple=false name="denuncia">
+                                <div class="row" id="alarmaDisplay">
                                     <div class="col-lg-12">
                                         <label>¿La alarma central del mueble está afectada?</label>
 
@@ -52,7 +52,7 @@
                                         </div>
                                     </div>
                                 </div>  
-                                <div class="row" hidden id="description_textArea_alarma">
+                                <div class="row" id="description_textArea_alarma">
                                     <div class="col-lg-12">
                                         <div class="form-group">
                                             <label>Describe brevemente el problema <small>(Mín. 20 caracteres)</small></label>
@@ -61,7 +61,7 @@
                                         </div>
                                     </div>
                                 </div>                                                               
-                                <div class="row" hidden id="alarmaDevice">
+                                <div class="row" id="alarmaDevice">
                                     <div class="col-lg-12">
                                         <label>¿La alarma que soporta el telefono está afectada?</label>
 
@@ -77,7 +77,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row" hidden id="description_textArea_device">
+                                <div class="row" id="description_textArea_device">
                                     <div class="col-lg-12">
                                         <div class="form-group">
                                             <label>Describe brevemente el problema <small>(Mín. 20 caracteres)</small></label>
@@ -87,13 +87,13 @@
                                     </div>
                                 </div>
                            		<p>Suba una foto de la incidencia #1:</p>
-								<input id="file-0" class="file" type="file" multiple=false name="userfile">       
+								<input id="photo_1" class="file" type="file" multiple=false name="photo_1">
                            		<p>Suba una foto de la incidencia #2:</p>
-								<input id="file-0" class="file" type="file" multiple=false name="userfile">   								                         
+								<input id="photo_2" class="file" type="file" multiple=false name="photo_2">
                            		<p>Suba una foto de la incidencia #3:</p>
-								<input id="file-0" class="file" type="file" multiple=false name="userfile">                                   
+								<input id="photo_3" class="file" type="file" multiple=false name="photo_3">
                             </div>
-                            <div class="col-lg-4">
+                            <div class="col-lg-5">
                                 <div class="row">
                                     <div class="col-lg-12">
                                         <div class="form-group">
@@ -118,32 +118,33 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-lg-3">
-                                <div class="panel panel-default">
-                                    <div class="panel-heading">
-                                        <?php echo $device; ?>
-                                    </div>
-                                    <div class="panel-body">
+                                <div class="col-lg-12">
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading">
+                                            <?php echo $device; ?>
+                                        </div>
+                                        <div class="panel-body">
 
-                                        <div class="col-lg-12">
-                                            <?php
-                                            if ($picture_url_dev <> '') {
+                                            <div class="col-lg-12">
+                                                <?php
+                                                if ($picture_url_dev <> '') {
+                                                    ?>
+                                                    <img
+                                                        src="<?= site_url('application/uploads/' . $picture_url_dev . '') ?>"
+                                                        style="width:100%;" title="<?php echo $device ?>"/>
+                                                <?php
+                                                }
                                                 ?>
-                                                <img
-                                                    src="<?= site_url('application/uploads/' . $picture_url_dev . '') ?>"
-                                                    style="width:100%;" title="<?php echo $device ?>"/>
-                                            <?php
-                                            }
-                                            ?>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
+
                         </div>
-                        <div class="row right">
-                            <div class="col-lg-12">
+                        <div class="row">
+                            <div class="col-lg-offset-8 col-lg-4">
                                 <input type="button" value="Cancelar" class="btn btn-danger"
                                        onclick="window.location='<?= site_url('tienda/dashboard') ?>'"/>
                                 <input type="submit" value="Envíar" name="submit" class="btn btn-success" disabled/>

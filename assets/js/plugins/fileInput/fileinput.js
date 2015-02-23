@@ -1648,7 +1648,8 @@
                 status = ' disabled ';
             }
             if (!self.isUploadable || self.isDisabled) {
-                content = '<button type="submit" title="' + self.uploadTitle + '"class="' + css + '"' + status + '>' + self.uploadIcon + self.uploadLabel + '</button>';
+                //TODO texto comentado para evitar el submit del pluging y mantener el del formulario
+                //content = '<button type="submit" title="' + self.uploadTitle + '"class="' + css + '"' + status + '>' + self.uploadIcon + self.uploadLabel + '</button>';
             } else {
                 content = '<a href="' + self.uploadUrl + '" title="' + self.uploadTitle + '" class="' + css + '"' + status + '>' + self.uploadIcon + self.uploadLabel + '</a>';
             }
