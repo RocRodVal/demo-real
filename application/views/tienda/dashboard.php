@@ -49,7 +49,7 @@
 		                                <td>#<?php echo $incidencia->id_incidencia ?></td>
 		                                <td><?php echo $sfid ?></td>
 		                                <td><?php echo date_format(date_create($incidencia->fecha), 'd-m-Y'); ?></td>
-		                                <td><?php echo $incidencia->description ?></td>
+		                                <td><?php echo $incidencia->description_1 ?></td>
 		                                <td><i class="fa fa-eye" data-toggle="tooltip" data-placement="top"
 		                                       title="<img class='tooltip_image' src='<?php echo base_url().'application/uploads/'.
 		                                           $incidencia->device['picture_url']; ?>'/><br/>
