@@ -10,7 +10,7 @@
 
     <form
         action="<?= site_url('admin/insert_incidencia/' . $id_pds_url . '/' . $denuncia . '/' . $id_dis_url . '/' . $id_dev_url) ?>"
-        method="post" class="content_auto form_login">
+        method="post" class="content_auto form_login" enctype="multipart/form-data">
         <div class="row">
             <div class="col-lg-12">
                 <div class="panel panel-default">
@@ -27,18 +27,20 @@
                                         <label>Tipo de incidencia</label>
                                         <div class="radio">
                                             <label>
-                                                <input type="radio" name="tipo_averia" id="tipo_averia" value="Robo"
+                                                <input type="radio" name="tipo_averia" id="tipo_averia" value="1"
                                                  <?php if($denuncia!="no-robo") echo "checked";?>>Robo
                                             </label>
                                         </div>
                                         <div class="radio">
                                             <label>
-                                                <input type="radio" name="tipo_averia" id="tipo_averia" value="Incidencia"
-                                                       <?php if($denuncia=="no-robo") echo "checked";?>>Incidencia
+                                                <input type="radio" name="tipo_averia" id="tipo_averia" value="0"
+                                                 <?php if($denuncia=="no-robo") echo "checked";?>>Avería
                                             </label>
                                         </div>
                                     </div>
                                 </div>
+                           		<p>Suba una copia de la denuncia por robo:</p>
+								<input id="file-0" class="file" type="file" multiple=false name="userfile">                                
                                 <div class="row" hidden id="alarmaDisplay">
                                     <div class="col-lg-12">
                                         <label>¿La alarma central del mueble está afectada?</label>
@@ -55,6 +57,15 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="row" hidden id="description_textArea_alarma">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <label>Describe brevemente el problema <small>(Mín. 20 caracteres)</small></label>
+                                            <textarea class="form-control" rows="5" name="description_1"
+                                                      id="description_1"></textarea>
+                                        </div>
+                                    </div>
+                                </div>                                
                                 <div class="row" hidden id="alarmaDevice">
                                     <div class="col-lg-12">
                                         <label>¿La alarma que soporta el telefono está afectada?</label>
@@ -71,15 +82,21 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row" hidden id="description_textArea">
+                                <div class="row" hidden id="description_textArea_device">
                                     <div class="col-lg-12">
                                         <div class="form-group">
                                             <label>Describe brevemente el problema <small>(Mín. 20 caracteres)</small></label>
-                                            <textarea class="form-control" rows="5" name="description"
-                                                      id="description"></textarea>
+                                            <textarea class="form-control" rows="5" name="description_2"
+                                                      id="description_2"></textarea>
                                         </div>
                                     </div>
                                 </div>
+                           		<p>Suba una foto de la incidencia #1:</p>
+								<input id="file-0" class="file" type="file" multiple=false name="userfile">       
+                           		<p>Suba una foto de la incidencia #2:</p>
+								<input id="file-0" class="file" type="file" multiple=false name="userfile">   								                         
+                           		<p>Suba una foto de la incidencia #3:</p>
+								<input id="file-0" class="file" type="file" multiple=false name="userfile">                                         
                             </div>
                             <div class="col-lg-4">
                                 <div class="row">
@@ -106,24 +123,11 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row">
-                                    <div class="col-lg-12">
-                                        <div class="form-group">
-                                            <label>Email de contacto</label>
-
-                                            <div class="input-group">
-                                                <div class="input-group-addon"><i class="fa fa-at"></i></div>
-                                                <input type="email" class="form-control" name="email" id="email"
-                                                       placeholder="Email" disabled>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
                             <div class="col-lg-3">
                                 <div class="panel panel-default">
                                     <div class="panel-heading">
-                                        <?php echo $device_['brand_name'] . " - " . $device; ?>
+                                        <?php echo $device; ?>
                                     </div>
                                     <div class="panel-body">
 

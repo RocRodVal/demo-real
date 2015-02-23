@@ -10,7 +10,7 @@
 
     <form
         action="<?= site_url('tienda/insert_incidencia/'. $denuncia . '/' . $id_display . '/' . $id_device) ?>"
-        method="post" class="content_auto form_login">
+        method="post" class="content_auto form_login" enctype="multipart/form-data">
         <div class="row">
             <div class="col-lg-12">
                 <div class="panel panel-default">
@@ -34,6 +34,8 @@
                                         </div>
                                     </div>
                                 </div>
+                           		<p>Suba una copia de la denuncia por robo:</p>
+								<input id="file-0" class="file" type="file" multiple=false name="userfile">
                                 <div class="row" hidden id="alarmaDisplay">
                                     <div class="col-lg-12">
                                         <label>¿La alarma central del mueble está afectada?</label>
@@ -49,7 +51,16 @@
                                             </label>
                                         </div>
                                     </div>
-                                </div>                             
+                                </div>  
+                                <div class="row" hidden id="description_textArea_alarma">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <label>Describe brevemente el problema <small>(Mín. 20 caracteres)</small></label>
+                                            <textarea class="form-control" rows="5" name="description_1"
+                                                      id="description_1"></textarea>
+                                        </div>
+                                    </div>
+                                </div>                                                               
                                 <div class="row" hidden id="alarmaDevice">
                                     <div class="col-lg-12">
                                         <label>¿La alarma que soporta el telefono está afectada?</label>
@@ -66,15 +77,21 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row" hidden id="description_textArea">
+                                <div class="row" hidden id="description_textArea_device">
                                     <div class="col-lg-12">
                                         <div class="form-group">
                                             <label>Describe brevemente el problema <small>(Mín. 20 caracteres)</small></label>
-                                            <textarea class="form-control" rows="5" name="description"
-                                                      id="description"></textarea>
+                                            <textarea class="form-control" rows="5" name="description_2"
+                                                      id="description_2"></textarea>
                                         </div>
                                     </div>
                                 </div>
+                           		<p>Suba una foto de la incidencia #1:</p>
+								<input id="file-0" class="file" type="file" multiple=false name="userfile">       
+                           		<p>Suba una foto de la incidencia #2:</p>
+								<input id="file-0" class="file" type="file" multiple=false name="userfile">   								                         
+                           		<p>Suba una foto de la incidencia #3:</p>
+								<input id="file-0" class="file" type="file" multiple=false name="userfile">                                   
                             </div>
                             <div class="col-lg-4">
                                 <div class="row">

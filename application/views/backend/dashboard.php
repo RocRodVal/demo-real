@@ -116,13 +116,13 @@
                                                 <?php
 
 
-                                                if(strlen($incidencia->description)>30){?>
-                                                    <span  data-toggle="tooltip" title="<?php echo $incidencia->description; ?>">
+                                                if(strlen($incidencia->description_1)>30){?>
+                                                    <span  data-toggle="tooltip" title="<?php echo $incidencia->description_1; ?>">
                                                 <?php
-                                                    echo  substr($incidencia->description, 0, 30).'...';
+                                                    echo  substr($incidencia->description_1, 0, 30).'...';
                                                 }
                                                 else{
-                                                    echo $incidencia->description;
+                                                    echo $incidencia->description_1;
                                                 }
                                                 ?>
                                                 </span>
