@@ -3,11 +3,15 @@
  */
 $(document).ready(function () {
     pathname = window.location.href;
-    controller = pathname.split("/")[5];
+    dataURL = pathname.split("/");
+    controller = dataURL[5];
     if(controller=="dashboard") {
-        $('[data-toggle="tooltip"]').tooltip();
+        $('[data-toggle="tooltip"]').tooltipster({
+            contentAsHTML: true
+        });
         createDataTable();
     }
+
 });
 
 

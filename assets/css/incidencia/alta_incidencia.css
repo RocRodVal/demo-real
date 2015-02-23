@@ -41,3 +41,9 @@ a.list-group-item:hover, a.list-group-item:focus{
     text-align: center;
     z-index: 1;
 }
+
+#modal_alert>.modal-dialog {
+    margin-top: 10%;
+    width: 60%;
+    text-align: center;
+}
