@@ -4,11 +4,10 @@
 $(document).ready(function () {
     pathname = window.location.href;
     dataURL = pathname.split("/");
-    controller = dataURL[5];
-    if(controller=="dashboard") {
-        $('[data-toggle="tooltip"]').tooltipster({
-            contentAsHTML: true
-        });
+    view = dataURL[5];
+    controller = dataURL[4]
+    if(view=="dashboard" && controller!="tienda") {
+        $('[data-toggle="tooltip"]').tooltip();
         createDataTable();
     }
 

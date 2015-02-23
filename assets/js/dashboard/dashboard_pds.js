@@ -3,8 +3,8 @@
  */
 $(document).ready(function () {
     pathname = window.location.href;
-    controller = pathname.split("/")[5];
-    if(controller=="dashboard_pds") {
+    dataURL = pathname.split("/");
+    if(dataURL[4]=="tienda" && dataURL[5]=="dashboard") {
         $('[data-toggle="tooltip"]').tooltipster({
             contentAsHTML: true,
             position: "top"
