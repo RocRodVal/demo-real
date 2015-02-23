@@ -27,12 +27,11 @@
 								if($display->devices_count != 0){
 									?>
 									<div class="col-lg-2 col-md-3 col-sm-6 col-xs-12 textoColumna">
-									
 									<?php
 									if ($display->picture_url != '')
 									{
 									?>
-									<a href="<?=site_url('tienda/alta_incidencia_mueble'.'/'.$denuncia.'/'.$display->id_display) ?>">
+									<a href="<?=site_url('tienda/alta_incidencia_mueble'.'/'.$display->id_display) ?>">
 										<div class="caption">
 											<img src="<?=site_url('application/uploads/'.$display->picture_url.'')?>" title="<?php echo $display->display ?>"/>
 										</div>
@@ -41,7 +40,7 @@
 									}
 									else{
 									?>
-									<a href="<?=site_url('tienda/alta_incidencia_mueble'.'/'.$denuncia.'/'.$display->id_display) ?>">
+									<a href="<?=site_url('tienda/alta_incidencia_mueble'.'/'.$display->id_display) ?>">
 										<div class="caption" title="<?php echo $display->display; ?>"></div>
 									</a>	
 									<?php

@@ -9,7 +9,7 @@
             </div>
     		<div class="row botonera_up">
         		<div class="col-lg-6 col-md-3 col-sm-6 col-xs-6" style="text-align:center;">
-            		<a href="<?=site_url('tienda/alta_incidencia_robo')?>">
+            		<a href="<?=site_url('tienda/alta_incidencia')?>">
                 	<button type="button" class="btn btn-primary btn-accion">Nueva ALTA INCIDENCIA</button>
            			</a>
         		</div>
@@ -33,12 +33,14 @@
 		                            <th>Ref.</th>
 		                            <th>SFID</th>
 		                            <th>Fecha alta</th>
-		                            <th>Descripción</th>
+		                            <th>Elemento afectado</th>
+		                            <th>Sistema general alarma</th>
 		                            <th>Dispositivo</th>
-		                            <th>Mueble</th>
-		                            <th>Tipo</th>
+		                        	<th>Alarma dispositivo cableado</th>
+		                            <th>Soporte sujección</th>
+
+		                            <th>Tipo incidencia</th>
 		                            <th>Estado</th>
-		                            <th>Acciones</th>
 		                        </tr>
 		                        </thead>
 		                        <tbody>
@@ -46,21 +48,18 @@
 		                        foreach ($incidencias as $incidencia) {
 		                            ?>
 		                            <tr>
+		                                <!--//<td><a href="<?=site_url('tienda/detalle_incidencia/'.$incidencia->id_incidencia)?>">#<?php echo $incidencia->id_incidencia ?></a></td>//-->
 		                                <td>#<?php echo $incidencia->id_incidencia ?></td>
 		                                <td><?php echo $sfid ?></td>
-		                                <td><?php echo date_format(date_create($incidencia->fecha), 'd-m-Y'); ?></td>
-		                                <td><?php echo $incidencia->description_1 ?></td>
-		                                <td><i class="fa fa-eye" data-toggle="tooltip" data-placement="top"
-		                                       title="<img class='tooltip_image' src='<?php echo base_url().'application/uploads/'.
-		                                           $incidencia->device['picture_url']; ?>'/><br/>
-		                                           <?php echo $incidencia->device['device'];?>"></i></td>
-		                                <td><i class="fa fa-eye" data-toggle="tooltip" data-placement="top"
-		                                       title="<img class='tooltip_image' src='<?php echo base_url().'application/uploads/'.
-		                                           $incidencia->display['picture_url']; ?>'/><br/>
-		                                           <?php echo $incidencia->display['display'];?>"></i></td></td>
+		                                <td><?php echo date_format(date_create($incidencia->fecha), 'd/m/Y'); ?></td>
+		                                <td><?=($incidencia->alarm_display==1)?'Mueble: '.$incidencia->display['display']:'Dispositivo: '.$incidencia->device['device']?>
+		                                </td>
+		                                <td><?=($incidencia->alarm_display==1)?'&#x25cf;':''?></td>
+		                                <td><?=($incidencia->id_devices_pds!=NULL)?'&#x25cf;':''?></td>
+		                                <td><?=($incidencia->alarm_device==1)?'&#x25cf;':''?></td>
+		                                <td><?=($incidencia->alarm_garra==1)?'&#x25cf;':''?></td>
 		                                <td><?php echo $incidencia->tipo_averia ?></td>
 		                                <td><strong><?php echo $incidencia->status_pds ?></strong></td>
-		                                <td><i class="fa fa-whatsapp"></i></td>
 		                            </tr>
 		                        <?php
 		                        }

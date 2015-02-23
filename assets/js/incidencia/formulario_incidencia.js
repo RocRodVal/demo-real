@@ -1,6 +1,8 @@
 /**
  * Created by dani on 13/2/15.
  */
+
+/**
 $(document).ready(function(){
     pathname = window.location.href;
     controller = pathname.split("/")[5];
@@ -40,9 +42,10 @@ function checkDescription(){
 
 function checkUserData(){
     value= $('input[name="contacto"]').val().length>0 &&
-            /*$('input[name="phone"]').val().length>0 &&
+            $('input[name="phone"]').val().length>0 &&
             $('input[name="email"]').val().length>0 &&*/
             $('textarea[name="description_2"]').val().length>20;
     $('input[name="submit"]').attr('disabled',!value);
 
 }
+**/

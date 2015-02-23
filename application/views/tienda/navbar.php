@@ -17,13 +17,7 @@
                 <div class="sidebar-nav navbar-collapse">
                     <ul class="nav" id="side-menu" style="margin-top:20px;">
                         <li><a <?=($this->uri->segment(2)==='dashboard')?'class="active"':''?> href="<?=site_url('tienda/dashboard')?>"><i class="fa fa-dashboard fa-fw"></i> Mis solicitudes</a></li>
-                        <li <?=($this->uri->segment(2)==='alta_incidencia' || $this->uri->segment(2)==='alta_incidencia_robo')?'class="active"':''?>>
-                            <a href="#"><i class="fa fa-sitemap fa-fw"></i> Alta incidencia<span class="fa arrow"></span></a>
-                            <ul class="nav nav-second-level">
-                        		<li><a <?=($this->uri->segment(2)==='alta_incidencia')?'class="active"':''?> href="<?=site_url('tienda/alta_incidencia/')?>"><i class="fa fa-ticket fa-fw"></i> Avería &raquo;</a></li>
-                        		<li><a <?=($this->uri->segment(2)==='alta_incidencia_robo')?'class="active"':''?> href="<?=site_url('tienda/alta_incidencia_robo/')?>"><i class="fa fa-exclamation-triangle fa-fw"></i> Robo &raquo;</a></li>
-                            </ul>
-                        </li>                        
+                        <li><a <?=($this->uri->segment(2)==='alta_incidencia')?'class="active"':''?> href="<?=site_url('tienda/alta_incidencia')?>"><i class="fa fa-ticket fa-fw"></i></i> Alta incidencia</a> </li>   
                         <li><a <?=($this->uri->segment(2)==='planograma' || $this->uri->segment(2)==='planograma_mueble')?'class="active"':''?> href="<?=site_url('tienda/planograma/')?>"><i class="fa fa-table fa-fw"></i> Mi tienda</a></li>
                         <li><a <?=($this->uri->segment(2)==='ayuda')?'class="active"':''?> href="<?=site_url('tienda/ayuda')?>"><i class="fa fa-question-circle fa-fw"></i> Ayuda</a> </li>   
                     </ul>

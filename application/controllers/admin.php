@@ -82,7 +82,7 @@ class Admin extends CI_Controller {
 			$xcrud->change_type('foto_url', 'image');
 			$xcrud->change_type('foto_url_2', 'image');
 			$xcrud->change_type('foto_url_3', 'image');
-			$xcrud->label('id_incidencia','REF.')->label('fecha','Fecha')->label('id_pds','SFID')->label('denuncia','Denuncia')->label('parte_pdf','Parte PDF')->label('foto_url','Foto #1')->label('foto_url_2','Foto #2')->label('foto_url_3','Foto #3')->label('id_displays_pds','Cod. mueble')->label('id_devices_pds','Cod. dispositivo')->label('alarm_display','Fallo alarma mueble')->label('alarm_device','Fallo alarma dispositivo')->label('description_1','Comentarios')->label('description_2','Comentarios')->label('contact','Contacto')->label('email','E-mail')->label('phone','Teléfono')->label('id_operador','Instalador')->label('status','Estado SAT')->label('status_pds','Estado');
+			$xcrud->label('id_incidencia','REF.')->label('fecha','Fecha')->label('id_pds','SFID')->label('denuncia','Denuncia')->label('parte_pdf','Parte PDF')->label('foto_url','Foto #1')->label('foto_url_2','Foto #2')->label('foto_url_3','Foto #3')->label('id_displays_pds','Cod. mueble')->label('id_devices_pds','Cod. dispositivo')->label('alarm_display','Fallo alarma mueble')->label('alarm_device','Fallo alarma dispositivo')->label('alarm_garra','Fallo anclaje dispositivo')->label('description_1','Comentarios')->label('description_2','Comentarios')->label('contact','Contacto')->label('email','E-mail')->label('phone','Teléfono')->label('id_operador','Instalador')->label('status','Estado SAT')->label('status_pds','Estado');
 			$xcrud->columns('id_incidencia,fecha,id_pds,description_1,contacto,phone,email,status,status_pds');
 			//$xcrud->fields('client,type_profile_client,picture_url,description,status');	
 
@@ -1245,6 +1245,7 @@ class Admin extends CI_Controller {
 					'tipo_averia' 	    => $this->input->post('tipo_averia'),
 					'alarm_display'     => $this->input->post('alarm_display'),
 					'alarm_device'      => $this->input->post('alarm_device'),
+					'alarm_garra'       => $this->input->post('alarm_garra'),
 					'description_1'  	=> $this->input->post('description_1'),
 					'description_2'  	=> '',
 					'parte_pdf'  	    => '',

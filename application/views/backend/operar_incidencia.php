@@ -107,7 +107,7 @@
                     }
 
                     ?><br/>
-                    <strong>Comentario:</strong> <?php echo $incidencia['description'] ?><br/>
+                    <strong>Comentario:</strong> <?php echo $incidencia['description_1'] ?><br/>
                 </div>
             </div>
         </div>

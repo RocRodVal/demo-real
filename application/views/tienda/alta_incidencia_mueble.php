@@ -22,21 +22,22 @@
                         </div>
                         <div class="panel-body">
 							<div class="row">
-								<div class="col-lg-6">
+								<div class="col-lg-8">
 									<div class="list-group">
 										<?php
 										foreach($devices as $device)
 										{
 										?>
-										<a class="list-group-item" href="<?=site_url('tienda/alta_incidencia_dispositivo/'.$denuncia.'/'.$id_display.'/'.$device->id_device)?>">
+										<a class="list-group-item" href="<?=site_url('tienda/alta_incidencia_dispositivo/'.$id_display.'/'.$device->id_device)?>">
 											<?php echo $device->position.'. '.$device->device ?>
 										</a>
 										<?php
 										}
 										?>
+										<a class="list-group-item" href="<?=site_url('tienda/alta_incidencia_alarma/'.$id_display)?>"> &gt; Afecta al sistema de alarma central &lt; </a>
 									</div>
 								</div>
-								<div class="col-lg-6">
+								<div class="col-lg-4">
 									<?php
 									if ($picture_url != '')
 									{
