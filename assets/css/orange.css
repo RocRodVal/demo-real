@@ -117,3 +117,91 @@ Estilos de las dataTables
 .paging_simple_numbers {
     float: right;
 }
+
+/*
+ESTILO DEL TIMELINE
+*/
+.timeline > li > .timeline-panel{
+    width: 42%;
+}
+
+.state_pasado{
+    background: #999;
+    color: #fff;
+}
+
+.state_actual{
+    background: #ff6600;
+    color: #000;
+}
+
+.timeline-panel {
+    padding: 10px 20px;
+    top: 15px;
+    text-align: center;
+}
+
+.timeline > li > .timeline-panel.state_pasado:after, .timeline > li > .timeline-panel.state_pasado:before {
+    content: " ";
+    display: inline-block;
+    position: absolute;
+    top: 6px;
+    right: -14px;
+    border-top: 14px solid transparent;
+    border-right: 0 solid #999;
+    border-bottom: 14px solid transparent;
+    border-left: 14px solid #999;
+}
+.timeline > li > .timeline-panel.state_actual:after, .timeline > li > .timeline-panel.state_actual:before {
+    content: " ";
+    display: inline-block;
+    position: absolute;
+    top: 6px;
+    right: -14px;
+    border-top: 14px solid transparent;
+    border-right: 0 solid #ff6600;
+    border-bottom: 14px solid transparent;
+    border-left: 14px solid #ff6600;
+}
+.timeline > li > .timeline-panel:before {
+    position: absolute;
+    top: 6px;
+    right: -14px;
+    display: inline-block;
+    border-top: 15px solid transparent;
+    border-left: 15px solid #ccc;
+    border-right: 0 solid #ccc;
+    border-bottom: 15px solid transparent;
+    content: " ";
+}
+
+.timeline > li > .timeline-panel:after {
+    position: absolute;
+    top: 6px;
+    right: -13px;
+    display: inline-block;
+    border-top: 14px solid transparent;
+    border-left: 14px solid #fff;
+    border-right: 0 solid #fff;
+    border-bottom: 14px solid transparent;
+    content: " ";
+}
+
+.timeline > li.timeline-inverted > .timeline-panel:before {
+    border-left-width: 0;
+    border-right-width: 14px;
+    left: -14px;
+    right: auto;
+}
+
+.timeline > li.timeline-inverted > .timeline-panel:after {
+    border-left-width: 0;
+    border-right-width: 14px;
+    left: -14px;
+    right: auto;
+}
+
+.timeline > li > .timeline-badge{
+    background-color: #000;
+}
+

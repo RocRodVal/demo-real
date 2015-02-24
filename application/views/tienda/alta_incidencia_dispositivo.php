@@ -20,34 +20,43 @@
                                 <div class="row">
                                     <div class="col-lg-12">
                                         <label>Tipo de incidencia</label>
+
                                         <div class="radio">
                                             <label>
-                                                <input type="radio" name="tipo_averia" id="tipo_averia" value="1"> Robo
+                                                <input type="radio" name="tipo_averia" id="tipo_averia_robo" value="1"> Robo
                                             </label>
-                                            <p>Suba una copia de la denuncia por robo:</p>
-											<input id="file-0" class="file" type="file" multiple=false name="userfile">
+                                            <label>
+                                                <input type="radio" name="tipo_averia" id="tipo_averia_averia" value="0">Avería
+                                            </label>
+
+                                            <div id="denuncia" hidden>
+                                                <p>Suba una copia de la denuncia por robo:</p>
+                                                <input id="denuncia" class="file" type="file" multiple=false
+                                                       name="userfile">
+                                            </div>
                                         </div>
                                         <div class="radio">
-                                            <label>
-                                                <input type="radio" name="tipo_averia" id="tipo_averia" value="0">Avería
-                                            </label>
+
                                         </div>
                                     </div>
                                 </div>
                                 <div class="row" id="alarmaDisplay">
                                     <div class="col-lg-12">
                                         <label>Indica los elementos que están afectados</label>
+
                                         <p>
-                                        	<input type="checkbox" name="device" value="1">Dispositivo
-                                        	<input type="checkbox" name="alarm_garra" value="1">Soporte/Anclaje
-											<input type="checkbox" name="alarm_device" value="1">Alarma/Cableado
-										</p>	
+                                            <input type="checkbox" name="device" value=0>Dispositivo
+                                            <input type="checkbox" name="alarm_garra" value=0>Soporte/Anclaje
+                                            <input type="checkbox" name="alarm_device" value=0>Alarma/Cableado
+                                        </p>
                                     </div>
-                                </div>  
+                                </div>
                                 <div class="row" id="description_textArea_device">
                                     <div class="col-lg-12">
                                         <div class="form-group">
-                                            <label>Describe brevemente el problema <small>(Mín. 20 caracteres)</small></label>
+                                            <label>Describe brevemente el problema
+                                                <small>(Mín. 20 caracteres)</small>
+                                            </label>
                                             <textarea class="form-control" rows="5" name="description_1"
                                                       id="description_1"></textarea>
                                         </div>
@@ -82,7 +91,7 @@
                                             <div class="input-group">
                                                 <div class="input-group-addon"><i class="fa fa-phone"></i></div>
                                                 <input type="phone" class="form-control" name="phone" id="phone"
-                                                       placeholder="Teléfono" >
+                                                       placeholder="Teléfono">
                                             </div>
                                         </div>
                                     </div>
@@ -112,11 +121,11 @@
 
 
                         </div>
-                        <div class="row">
-                            <div class="col-lg-offset-8 col-lg-4">
+                        <div class="row right">
+                            <div class="right col-lg-12">
                                 <input type="button" value="Cancelar" class="btn btn-danger"
                                        onclick="window.location='<?= site_url('tienda/dashboard') ?>'"/>
-                                <input type="submit" value="Envíar" name="submit" class="btn btn-success" />
+                                <input type="submit" value="Envíar" name="submit" class="btn btn-success"/>
                             </div>
                         </div>
                     </div>
