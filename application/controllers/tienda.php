@@ -220,6 +220,46 @@ class Tienda extends CI_Controller {
 	}	
 	
 	
+	public function alta_incidencia_mueble_alarma()
+	{
+		if($this->session->userdata('logged_in'))
+		{
+			$data['id_pds'] = $this->session->userdata('id_pds');
+			$data['sfid']   = $this->session->userdata('sfid');
+	
+			$xcrud = xcrud_get_instance();
+			$this->load->model('tienda_model');
+	
+			$sfid = $this->tienda_model->get_pds($data['id_pds']);
+	
+			$data['id_pds']     = $sfid['id_pds'];
+			$data['commercial'] = $sfid['commercial'];
+			$data['territory']  = $sfid['territory'];
+			$data['reference']  = $sfid['reference'];
+			$data['address']    = $sfid['address'];
+			$data['zip']        = $sfid['zip'];
+			$data['city']       = $sfid['city'];
+				
+			$display = $this->tienda_model->get_display($this->uri->segment(3));
+	
+			$data['id_display']      = $display['id_display'];
+			$data['display']         = $display['display'];
+			$data['picture_url_dis'] = $display['picture_url'];
+
+			$data['title'] = 'Alta incidencia';
+	
+			$this->load->view('tienda/header',$data);
+			$this->load->view('tienda/navbar',$data);
+			$this->load->view('tienda/alta_incidencia_mueble_alarma',$data);
+			$this->load->view('tienda/footer');
+		}
+		else
+		{
+			redirect('tienda','refresh');
+		}
+	}
+		
+	
 	public function detalle_incidencia($id_incidencia)
 	{
 		if($this->session->userdata('logged_in'))
@@ -250,6 +290,7 @@ class Tienda extends CI_Controller {
 			$data['tipo_averia']     = $incindencia['tipo_averia'];
 			$data['alarm_display']   = $incindencia['alarm_display'];
 			$data['alarm_device']    = $incindencia['alarm_device'];
+			$data['alarm_garra']     = $incindencia['alarm_garra'];
 			$data['description_1']   = $incindencia['description_1'];
 			$data['description_2']   = $incindencia['description_2'];
 			$data['denuncia']        = $incindencia['denuncia'];
@@ -269,7 +310,7 @@ class Tienda extends CI_Controller {
 			$data['device']          = $device['device'];
 			$data['picture_url_dev'] = $device['picture_url'];
 	
-			$data['title'] = 'Estado incidencia';
+			$data['title'] = 'Estado de solicitud #'.$id_incidencia;
 	
 			$this->load->view('tienda/header',$data);
 			$this->load->view('tienda/navbar',$data);
@@ -393,6 +434,86 @@ class Tienda extends CI_Controller {
 	
 	}
 	
+	
+	public function insert_incidencia_mueble_alarma()
+	{
+		$data['id_pds'] = $this->session->userdata('id_pds');
+		$data['sfid']   = $this->session->userdata('sfid');
+	
+		$id_pds   = $this->session->userdata('id_pds');
+		$id_dis   = $this->uri->segment(3);
+		$id_dev   = NULL;
+	
+		$xcrud = xcrud_get_instance();
+		$this->load->model('tienda_model');
+	
+		$data = array(
+				'fecha'    	        => date('Y-m-d H:i:s'),
+				'id_pds'            => $id_pds,
+				'id_displays_pds' 	=> $id_dis,
+				'id_devices_pds' 	=> NULL,
+				'tipo_averia' 	    => 'Avería',
+				'alarm_display'     => 1,
+				'alarm_device'      => 0,
+				'alarm_garra'       => 0,
+				'description_1'  	=> $this->input->post('description_1'),
+				'description_2'  	=> '',
+				'parte_pdf'  	    => '',
+				'denuncia'  	    => '',
+				'foto_url'  	    => '',
+				'foto_url_2'  	    => '',
+				'foto_url_3'  	    => '',
+				'contacto'  	    => $this->input->post('contacto'),
+				'phone'  	        => $this->input->post('phone'),
+				'email'  	        => $this->input->post('email'),
+				'id_operador'  	    => NULL,
+				'intervencion'  	=> NULL,
+				'status_pds'	    => 1,
+				'status'	        => 1,
+		);
+			
+		$incidencia = $this->tienda_model->insert_incidencia($data);
+			
+		if ($incidencia['add'])
+		{
+	
+			$pds = $this->tienda_model->get_pds($id_pds);
+	
+	
+			$message_admin  = 'Se ha registrado una nueva incidencia.'."\r\n\r\n";
+			$message_admin .= 'La tienda con SFID '.$pds['reference'].' ha creado una incidencia. En http://demoreal.focusonemotions.com/ podrás revisar la misma.'."\r\n\r\n";
+			$message_admin .= 'Atentamente,'."\r\n\r\n";
+			$message_admin .= 'Demo Real'."\r\n";
+			$message_admin .= 'http://demoreal.focusonemotions.com/'."\r\n";
+	
+			$this->email->from('no-reply@altabox.net', 'Demo Real');
+			$this->email->to('gzapico@altabox.net');
+			$this->email->subject('Demo Real - Registro de incidencia');
+			$this->email->message($message_admin);
+			$this->email->send();
+	
+			$this->email->clear();
+	
+			$message_pds  = 'Se ha registrado una nueva incidencia.'."\r\n\r\n";
+			$message_pds .= 'En breve recibirá más información de la evolución de la misma.'."\r\n\r\n";
+			$message_pds .= 'Atentamente,'."\r\n\r\n";
+			$message_pds .= 'Demo Real'."\r\n";
+			$message_pds .= 'http://demoreal.focusonemotions.com/'."\r\n";
+	
+			$this->email->from('no-reply@altabox.net', 'Demo Real');
+			$this->email->to('gzapico@altabox.net');
+			$this->email->subject('Demo Real - Registro de incidencia');
+			$this->email->message($message_pds);
+			$this->email->send();
+	
+			redirect('tienda/alta_incidencia_gracias');
+		}
+		else
+		{
+			$this->data['message'] = (validation_errors() ? validation_errors() : ($this->session->flashdata('message')));
+		}
+	
+	}	
 	
 	public function alta_incidencia_gracias()
 	{

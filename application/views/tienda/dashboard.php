@@ -38,9 +38,9 @@
 		                            <th>Dispositivo</th>
 		                        	<th>Alarma dispositivo cableado</th>
 		                            <th>Soporte sujección</th>
-
 		                            <th>Tipo incidencia</th>
 		                            <th>Estado</th>
+		                            <th>Más info.</th>
 		                        </tr>
 		                        </thead>
 		                        <tbody>
@@ -48,8 +48,7 @@
 		                        foreach ($incidencias as $incidencia) {
 		                            ?>
 		                            <tr>
-		                                <!--//<td><a href="<?=site_url('tienda/detalle_incidencia/'.$incidencia->id_incidencia)?>">#<?php echo $incidencia->id_incidencia ?></a></td>//-->
-		                                <td>#<?php echo $incidencia->id_incidencia ?></td>
+		                                <td><a href="<?=site_url('tienda/detalle_incidencia/'.$incidencia->id_incidencia)?>">#<?php echo $incidencia->id_incidencia ?></a></td>
 		                                <td><?php echo $sfid ?></td>
 		                                <td><?php echo date_format(date_create($incidencia->fecha), 'd/m/Y'); ?></td>
 		                                <td><?=($incidencia->alarm_display==1)?'Mueble: '.$incidencia->display['display']:'Dispositivo: '.$incidencia->device['device']?>
@@ -60,6 +59,7 @@
 		                                <td><?=($incidencia->alarm_garra==1)?'&#x25cf;':''?></td>
 		                                <td><?php echo $incidencia->tipo_averia ?></td>
 		                                <td><strong><?php echo $incidencia->status_pds ?></strong></td>
+		                                <td><a href="<?=site_url('tienda/detalle_incidencia/'.$incidencia->id_incidencia)?>"><strong>+</strong></a></td>
 		                            </tr>
 		                        <?php
 		                        }
