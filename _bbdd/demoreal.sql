@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.2.12
+-- version 4.2.9.1
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost:3306
--- Generation Time: Feb 23, 2015 at 06:25 PM
+-- Generation Time: Feb 24, 2015 at 07:01 AM
 -- Server version: 5.5.40
--- PHP Version: 5.4.35
+-- PHP Version: 5.4.34
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS `agent` (
   `sfid` varchar(100) NOT NULL,
   `password` varchar(100) NOT NULL,
   `type` tinyint(3) NOT NULL DEFAULT '1'
-) ENGINE=InnoDB AUTO_INCREMENT=1547 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1549 DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `agent`
@@ -1580,7 +1580,9 @@ INSERT INTO `agent` (`agent_id`, `sfid`, `password`, `type`) VALUES
 (1543, '76000046', 'demoreal', 1),
 (1544, '76000050', 'demoreal', 1),
 (1545, '79990007', 'demoreal', 1),
-(1546, 'orange', 'demoreal', 1);
+(1546, 'orange', 'demoreal', 1),
+(1547, 'direccion', 'demoreal', 9),
+(1548, 'direccion', 'demoreal', 9);
 
 -- --------------------------------------------------------
 
@@ -2016,8 +2018,17 @@ CREATE TABLE IF NOT EXISTS `ci_sessions` (
 --
 
 INSERT INTO `ci_sessions` (`session_id`, `ip_address`, `user_agent`, `last_activity`, `user_data`) VALUES
-('909fcad4a0d4f0d9a8d3d7a18f350feb', '212.89.16.245', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_6_8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/40.0.2214.115 Safari/537.36', 1424704404, 'a:6:{s:9:"user_data";s:0:"";s:8:"agent_id";s:1:"2";s:4:"sfid";s:7:"altabox";s:4:"type";s:1:"9";s:9:"logged_in";b:1;s:10:"xcrud_sess";a:1:{s:40:"2ada2602bbc83bc3ca444177bfe2ed4afe6e6807";a:130:{s:3:"key";s:40:"3cb380ce145ca84e0272246dd23a771583ca647a";s:4:"time";i:1424704458;s:5:"table";s:11:"incidencias";s:10:"table_name";s:11:"Incidencias";s:5:"where";a:0:{}s:8:"order_by";a:0:{}s:8:"relation";a:4:{s:18:"incidencias.id_pds";a:13:{s:7:"rel_tbl";s:3:"pds";s:9:"rel_alias";s:15:"alias1608842764";s:9:"rel_field";s:6:"id_pds";s:8:"rel_name";s:9:"reference";s:9:"rel_where";a:0:{}s:13:"rel_separator";s:1:" ";s:8:"order_by";b:0;s:5:"multi";b:0;s:5:"table";s:11:"incidencias";s:5:"field";s:6:"id_pds";s:4:"tree";b:0;s:12:"depend_field";s:0:"";s:9:"depend_on";s:0:"";}s:27:"incidencias.id_displays_pds";a:13:{s:7:"rel_tbl";s:7:"display";s:9:"rel_alias";s:14:"alias583368729";s:9:"rel_field";s:10:"id_display";s:8:"rel_name";s:7:"display";s:9:"rel_where";a:0:{}s:13:"rel_separator";s:1:" ";s:8:"order_by";b:0;s:5:"multi";b:0;s:5:"table";s:11:"incidencias";s:5:"field";s:15:"id_displays_pds";s:4:"tree";b:0;s:12:"depend_field";s:0:"";s:9:"depend_on";s:0:"";}s:26:"incidencias.id_devices_pds";a:13:{s:7:"rel_tbl";s:6:"device";s:9:"rel_alias";s:15:"alias1027379333";s:9:"rel_field";s:9:"id_device";s:8:"rel_name";s:6:"device";s:9:"rel_where";a:0:{}s:13:"rel_separator";s:1:" ";s:8:"order_by";b:0;s:5:"multi";b:0;s:5:"table";s:11:"incidencias";s:5:"field";s:14:"id_devices_pds";s:4:"tree";b:0;s:12:"depend_field";s:0:"";s:9:"depend_on";s:0:"";}s:23:"incidencias.id_operador";a:13:{s:7:"rel_tbl";s:7:"contact";s:9:"rel_alias";s:14:"alias424801502";s:9:"rel_field";s:10:"id_contact";s:8:"rel_name";s:7:"contact";s:9:"rel_where";a:0:{}s:13:"rel_separator";s:1:" ";s:8:"order_by";b:0;s:5:"multi";b:0;s:5:"table";s:11:"incidencias";s:5:"field";s:11:"id_operador";s:4:"tree";b:0;s:12:"depend_field";s:0:"";s:9:"depend_on";s:0:"";}}s:13:"fields_create";a:0:{}s:11:"fields_edit";a:0:{}s:11:"fields_view";a:0:{}s:11:"fields_list";a:9:{s:25:"incidencias.id_incidencia";a:2:{s:5:"table";s:11:"incidencias";s:5:"field";s:13:"id_incidencia";}s:17:"incidencias.fecha";a:2:{s:5:"table";s:11:"incidencias";s:5:"field";s:5:"fecha";}s:18:"incidencias.id_pds";a:2:{s:5:"table";s:11:"incidencias";s:5:"field";s:6:"id_pds";}s:25:"incidencias.description_1";a:2:{s:5:"table";s:11:"incidencias";s:5:"field";s:13:"description_1";}s:20:"incidencias.contacto";a:2:{s:5:"table";s:11:"incidencias";s:5:"field";s:8:"contacto";}s:17:"incidencias.phone";a:2:{s:5:"table";s:11:"incidencias";s:5:"field";s:5:"phone";}s:17:"incidencias.email";a:2:{s:5:"table";s:11:"incidencias";s:5:"field";s:5:"email";}s:18:"incidencias.status";a:2:{s:5:"table";s:11:"incidencias";s:5:"field";s:6:"status";}s:22:"incidencias.status_pds";a:2:{s:5:"table";s:11:"incidencias";s:5:"field";s:10:"status_pds";}}s:6:"labels";a:21:{s:25:"incidencias.id_incidencia";s:4:"REF.";s:17:"incidencias.fecha";s:5:"Fecha";s:18:"incidencias.id_pds";s:4:"SFID";s:20:"incidencias.denuncia";s:8:"Denuncia";s:21:"incidencias.parte_pdf";s:9:"Parte PDF";s:20:"incidencias.foto_url";s:7:"Foto #1";s:22:"incidencias.foto_url_2";s:7:"Foto #2";s:22:"incidencias.foto_url_3";s:7:"Foto #3";s:27:"incidencias.id_displays_pds";s:11:"Cod. mueble";s:26:"incidencias.id_devices_pds";s:16:"Cod. dispositivo";s:25:"incidencias.alarm_display";s:19:"Fallo alarma mueble";s:24:"incidencias.alarm_device";s:24:"Fallo alarma dispositivo";s:23:"incidencias.alarm_garra";s:25:"Fallo anclaje dispositivo";s:25:"incidencias.description_1";s:11:"Comentarios";s:25:"incidencias.description_2";s:11:"Comentarios";s:19:"incidencias.contact";s:8:"Contacto";s:17:"incidencias.email";s:6:"E-mail";s:17:"incidencias.phone";s:9:"Teléfono";s:23:"incidencias.id_operador";s:10:"Instalador";s:18:"incidencias.status";s:10:"Estado SAT";s:22:"incidencias.status_pds";s:6:"Estado";}s:13:"columns_names";a:9:{s:25:"incidencias.id_incidencia";s:4:"REF.";s:17:"incidencias.fecha";s:5:"Fecha";s:18:"incidencias.id_pds";s:4:"SFID";s:25:"incidencias.description_1";s:11:"Comentarios";s:20:"incidencias.contacto";s:8:"Contacto";s:17:"incidencias.phone";s:9:"Teléfono";s:17:"incidencias.email";s:6:"E-mail";s:18:"incidencias.status";s:10:"Estado SAT";s:22:"incidencias.status_pds";s:6:"Estado";}s:9:"is_create";b:1;s:7:"is_edit";b:1;s:9:"is_remove";b:1;s:6:"is_csv";b:1;s:7:"buttons";a:0:{}s:19:"validation_required";a:6:{s:25:"incidencias.id_incidencia";i:1;s:18:"incidencias.id_pds";i:1;s:27:"incidencias.id_displays_pds";i:1;s:23:"incidencias.tipo_averia";i:1;s:22:"incidencias.status_pds";i:1;s:18:"incidencias.status";i:1;}s:18:"validation_pattern";a:0:{}s:13:"before_insert";a:0:{}s:13:"before_update";a:0:{}s:13:"before_remove";a:0:{}s:12:"after_insert";a:0:{}s:12:"after_update";a:0:{}s:12:"after_remove";a:0:{}s:10:"field_type";a:23:{s:20:"incidencias.denuncia";s:4:"file";s:21:"incidencias.parte_pdf";s:4:"file";s:20:"incidencias.foto_url";s:5:"image";s:22:"incidencias.foto_url_2";s:5:"image";s:22:"incidencias.foto_url_3";s:5:"image";s:25:"incidencias.id_incidencia";s:3:"int";s:17:"incidencias.fecha";s:8:"datetime";s:18:"incidencias.id_pds";s:8:"relation";s:27:"incidencias.id_displays_pds";s:8:"relation";s:26:"incidencias.id_devices_pds";s:8:"relation";s:23:"incidencias.tipo_averia";s:4:"text";s:25:"incidencias.alarm_display";s:4:"bool";s:24:"incidencias.alarm_device";s:4:"bool";s:23:"incidencias.alarm_garra";s:4:"bool";s:25:"incidencias.description_1";s:10:"texteditor";s:25:"incidencias.description_2";s:10:"texteditor";s:20:"incidencias.contacto";s:4:"text";s:17:"incidencias.phone";s:4:"text";s:17:"incidencias.email";s:4:"text";s:23:"incidencias.id_operador";s:8:"relation";s:24:"incidencias.intervencion";s:3:"int";s:22:"incidencias.status_pds";s:6:"select";s:18:"incidencias.status";s:6:"select";}s:10:"field_attr";a:23:{s:25:"incidencias.id_incidencia";a:1:{s:9:"maxlength";i:10;}s:17:"incidencias.fecha";a:0:{}s:18:"incidencias.id_pds";a:1:{s:9:"maxlength";i:5;}s:27:"incidencias.id_displays_pds";a:1:{s:9:"maxlength";i:5;}s:26:"incidencias.id_devices_pds";a:1:{s:9:"maxlength";i:8;}s:23:"incidencias.tipo_averia";a:1:{s:9:"maxlength";i:45;}s:25:"incidencias.alarm_display";a:1:{s:9:"maxlength";i:1;}s:24:"incidencias.alarm_device";a:1:{s:9:"maxlength";i:1;}s:23:"incidencias.alarm_garra";a:1:{s:9:"maxlength";i:1;}s:25:"incidencias.description_1";a:0:{}s:25:"incidencias.description_2";a:0:{}s:21:"incidencias.parte_pdf";a:1:{s:9:"maxlength";i:100;}s:20:"incidencias.denuncia";a:1:{s:9:"maxlength";i:100;}s:20:"incidencias.foto_url";a:1:{s:9:"maxlength";i:100;}s:22:"incidencias.foto_url_2";a:1:{s:9:"maxlength";i:100;}s:22:"incidencias.foto_url_3";a:1:{s:9:"maxlength";i:100;}s:20:"incidencias.contacto";a:1:{s:9:"maxlength";i:50;}s:17:"incidencias.phone";a:1:{s:9:"maxlength";i:50;}s:17:"incidencias.email";a:1:{s:9:"maxlength";i:50;}s:23:"incidencias.id_operador";a:1:{s:9:"maxlength";i:5;}s:24:"incidencias.intervencion";a:1:{s:9:"maxlength";i:10;}s:22:"incidencias.status_pds";a:2:{s:9:"maxlength";i:0;s:6:"values";s:72:"''Alta realizada'',''En proceso'',''Visita prevista'',''Finalizada'',''Cancelada''";}s:18:"incidencias.status";a:2:{s:9:"maxlength";i:0;s:6:"values";s:127:"''Nueva'',''Revisada'',''Material asignado'',''Instalador asignado'',''Comunicada'',''Resuelta'',''Pendiente recogida'',''Cerrada'',''Cancelada''";}}s:5:"limit";i:10;s:10:"limit_list";a:5:{i:0;i:10;i:1;s:2:"25";i:2;s:2:"50";i:3;s:3:"100";i:4;s:3:"all";}s:10:"column_cut";i:50;s:15:"column_cut_list";a:0:{}s:9:"no_editor";a:0:{}s:21:"show_primary_ai_field";b:0;s:22:"show_primary_ai_column";b:1;s:8:"disabled";a:1:{s:25:"incidencias.id_incidencia";a:4:{s:4:"list";i:1;s:6:"create";i:1;s:4:"edit";i:1;s:4:"view";i:1;}}s:8:"readonly";a:0:{}s:9:"benchmark";b:0;s:14:"search_pattern";a:2:{i:0;s:1:"%";i:1;s:1:"%";}s:10:"connection";b:0;s:14:"remove_confirm";b:1;s:13:"upload_folder";a:0:{}s:13:"upload_config";a:5:{s:20:"incidencias.denuncia";a:0:{}s:21:"incidencias.parte_pdf";a:0:{}s:20:"incidencias.foto_url";a:0:{}s:22:"incidencias.foto_url_2";a:0:{}s:22:"incidencias.foto_url_3";a:0:{}}s:8:"pass_var";a:0:{}s:14:"reverse_fields";a:1:{s:4:"list";b:0;}s:9:"no_quotes";a:0:{}s:20:"inner_table_instance";a:0:{}s:11:"inner_where";a:0:{}s:6:"unique";a:1:{s:25:"incidencias.id_incidencia";b:1;}s:5:"theme";s:9:"bootstrap";s:12:"is_duplicate";b:0;s:11:"links_label";a:0:{}s:12:"emails_label";a:0:{}s:3:"sum";a:0:{}s:12:"alert_create";N;s:10:"alert_edit";N;s:9:"is_search";b:1;s:8:"is_print";b:1;s:13:"is_pagination";b:1;s:12:"is_limitlist";b:1;s:11:"is_sortable";b:1;s:7:"is_list";b:1;s:9:"subselect";a:0:{}s:16:"subselect_before";a:0:{}s:9:"highlight";a:0:{}s:13:"highlight_row";a:0:{}s:5:"modal";a:0:{}s:12:"column_class";a:0:{}s:9:"no_select";a:0:{}s:8:"is_inner";b:0;s:4:"join";a:0:{}s:11:"fk_relation";a:0:{}s:8:"is_title";b:1;s:10:"is_numbers";b:0;s:8:"language";s:2:"es";s:12:"field_params";a:0:{}s:17:"mass_alert_create";a:0:{}s:15:"mass_alert_edit";a:0:{}s:15:"column_callback";a:0:{}s:14:"field_callback";a:0:{}s:14:"replace_insert";a:0:{}s:14:"replace_update";a:0:{}s:14:"replace_remove";a:0:{}s:20:"send_external_create";a:0:{}s:18:"send_external_edit";a:0:{}s:14:"column_pattern";a:0:{}s:10:"field_tabs";a:0:{}s:12:"field_marker";a:0:{}s:7:"is_view";b:1;s:13:"field_tooltip";a:0:{}s:13:"table_tooltip";a:0:{}s:14:"column_tooltip";a:0:{}s:14:"search_columns";a:0:{}s:14:"search_default";N;s:12:"column_width";a:0:{}s:6:"before";s:4:"list";s:13:"before_upload";a:0:{}s:12:"after_upload";a:0:{}s:12:"after_resize";a:0:{}s:11:"custom_vars";a:0:{}s:7:"tabdesc";a:0:{}s:11:"column_name";a:0:{}s:14:"upload_to_save";a:0:{}s:16:"upload_to_remove";a:0:{}s:8:"defaults";a:23:{s:20:"incidencias.denuncia";b:0;s:21:"incidencias.parte_pdf";b:0;s:20:"incidencias.foto_url";b:0;s:22:"incidencias.foto_url_2";b:0;s:22:"incidencias.foto_url_3";b:0;s:25:"incidencias.id_incidencia";N;s:17:"incidencias.fecha";s:19:"2015-02-23 15:14:18";s:18:"incidencias.id_pds";N;s:27:"incidencias.id_displays_pds";N;s:26:"incidencias.id_devices_pds";N;s:23:"incidencias.tipo_averia";N;s:25:"incidencias.alarm_display";N;s:24:"incidencias.alarm_device";N;s:23:"incidencias.alarm_garra";N;s:25:"incidencias.description_1";N;s:25:"incidencias.description_2";N;s:20:"incidencias.contacto";N;s:17:"incidencias.phone";N;s:17:"incidencias.email";N;s:23:"incidencias.id_operador";N;s:24:"incidencias.intervencion";N;s:22:"incidencias.status_pds";s:14:"Alta realizada";s:18:"incidencias.status";s:5:"Nueva";}s:6:"search";i:0;s:11:"inner_value";b:0;s:9:"bit_field";a:0:{}s:11:"point_field";a:0:{}s:16:"buttons_position";s:5:"right";s:14:"grid_condition";a:0:{}s:9:"condition";a:0:{}s:11:"hide_button";a:0:{}s:8:"set_lang";a:0:{}s:8:"table_ro";b:0;s:17:"grid_restrictions";a:0:{}s:9:"load_view";a:4:{s:4:"list";s:19:"xcrud_list_view.php";s:6:"create";s:21:"xcrud_detail_view.php";s:4:"edit";s:21:"xcrud_detail_view.php";s:4:"view";s:21:"xcrud_detail_view.php";}s:6:"action";a:0:{}s:6:"prefix";s:0:"";s:5:"query";s:0:"";s:11:"default_tab";b:0;s:10:"strip_tags";b:1;s:11:"safe_output";b:0;s:11:"before_list";a:0:{}s:13:"before_create";a:0:{}s:11:"before_edit";a:0:{}s:11:"before_view";a:0:{}s:14:"lists_null_opt";b:1;s:13:"custom_fields";a:0:{}s:11:"date_format";a:2:{s:5:"php_d";s:5:"d.m.Y";s:5:"php_t";s:5:"H:i:s";}}}}'),
-('1427127c647d29e38d12f9d37839fed5', '::1', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/40.0.2214.115 Safari/537.36', 1424711525, 'a:5:{s:9:"user_data";s:0:"";s:4:"sfid";s:8:"29993166";s:6:"id_pds";s:4:"2897";s:4:"type";s:1:"1";s:9:"logged_in";b:1;}');
+('8c5ba504e4a973e4dfe3da45e3d30cfe', '212.89.16.245', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/40.0.2214.115 Safari/537.36', 1424788996, ''),
+('b44cb2b77c7fffea911d82a646f80836', '212.89.16.245', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/40.0.2214.115 Safari/537.36', 1424789664, 'a:6:{s:9:"user_data";s:0:"";s:4:"sfid";s:9:"direccion";s:6:"id_pds";s:4:"2897";s:4:"type";s:1:"9";s:9:"logged_in";b:1;s:10:"xcrud_sess";a:1:{s:40:"85b3aa9db1a733cf7185fb42c371f3796afdb422";a:130:{s:3:"key";s:40:"d7717b1a6e3241ae6a0b4c1e3646492f56d23100";s:4:"time";i:1424789788;s:5:"table";s:11:"incidencias";s:10:"table_name";s:11:"Incidencias";s:5:"where";a:0:{}s:8:"order_by";a:0:{}s:8:"relation";a:4:{s:18:"incidencias.id_pds";a:13:{s:7:"rel_tbl";s:3:"pds";s:9:"rel_alias";s:14:"alias435618370";s:9:"rel_field";s:6:"id_pds";s:8:"rel_name";s:9:"reference";s:9:"rel_where";a:0:{}s:13:"rel_separator";s:1:" ";s:8:"order_by";b:0;s:5:"multi";b:0;s:5:"table";s:11:"incidencias";s:5:"field";s:6:"id_pds";s:4:"tree";b:0;s:12:"depend_field";s:0:"";s:9:"depend_on";s:0:"";}s:27:"incidencias.id_displays_pds";a:13:{s:7:"rel_tbl";s:7:"display";s:9:"rel_alias";s:14:"alias224418456";s:9:"rel_field";s:10:"id_display";s:8:"rel_name";s:7:"display";s:9:"rel_where";a:0:{}s:13:"rel_separator";s:1:" ";s:8:"order_by";b:0;s:5:"multi";b:0;s:5:"table";s:11:"incidencias";s:5:"field";s:15:"id_displays_pds";s:4:"tree";b:0;s:12:"depend_field";s:0:"";s:9:"depend_on";s:0:"";}s:26:"incidencias.id_devices_pds";a:13:{s:7:"rel_tbl";s:6:"device";s:9:"rel_alias";s:14:"alias351298415";s:9:"rel_field";s:9:"id_device";s:8:"rel_name";s:6:"device";s:9:"rel_where";a:0:{}s:13:"rel_separator";s:1:" ";s:8:"order_by";b:0;s:5:"multi";b:0;s:5:"table";s:11:"incidencias";s:5:"field";s:14:"id_devices_pds";s:4:"tree";b:0;s:12:"depend_field";s:0:"";s:9:"depend_on";s:0:"";}s:23:"incidencias.id_operador";a:13:{s:7:"rel_tbl";s:7:"contact";s:9:"rel_alias";s:15:"alias1445803745";s:9:"rel_field";s:10:"id_contact";s:8:"rel_name";s:7:"contact";s:9:"rel_where";a:0:{}s:13:"rel_separator";s:1:" ";s:8:"order_by";b:0;s:5:"multi";b:0;s:5:"table";s:11:"incidencias";s:5:"field";s:11:"id_operador";s:4:"tree";b:0;s:12:"depend_field";s:0:"";s:9:"depend_on";s:0:"";}}s:13:"fields_create";a:0:{}s:11:"fields_edit";a:0:{}s:11:"fields_view";a:0:{}s:11:"fields_list";a:9:{s:25:"incidencias.id_incidencia";a:2:{s:5:"table";s:11:"incidencias";s:5:"field";s:13:"id_incidencia";}s:17:"incidencias.fecha";a:2:{s:5:"table";s:11:"incidencias";s:5:"field";s:5:"fecha";}s:18:"incidencias.id_pds";a:2:{s:5:"table";s:11:"incidencias";s:5:"field";s:6:"id_pds";}s:25:"incidencias.description_1";a:2:{s:5:"table";s:11:"incidencias";s:5:"field";s:13:"description_1";}s:20:"incidencias.contacto";a:2:{s:5:"table";s:11:"incidencias";s:5:"field";s:8:"contacto";}s:17:"incidencias.phone";a:2:{s:5:"table";s:11:"incidencias";s:5:"field";s:5:"phone";}s:17:"incidencias.email";a:2:{s:5:"table";s:11:"incidencias";s:5:"field";s:5:"email";}s:18:"incidencias.status";a:2:{s:5:"table";s:11:"incidencias";s:5:"field";s:6:"status";}s:22:"incidencias.status_pds";a:2:{s:5:"table";s:11:"incidencias";s:5:"field";s:10:"status_pds";}}s:6:"labels";a:21:{s:25:"incidencias.id_incidencia";s:4:"REF.";s:17:"incidencias.fecha";s:5:"Fecha";s:18:"incidencias.id_pds";s:4:"SFID";s:20:"incidencias.denuncia";s:8:"Denuncia";s:21:"incidencias.parte_pdf";s:9:"Parte PDF";s:20:"incidencias.foto_url";s:7:"Foto #1";s:22:"incidencias.foto_url_2";s:7:"Foto #2";s:22:"incidencias.foto_url_3";s:7:"Foto #3";s:27:"incidencias.id_displays_pds";s:11:"Cod. mueble";s:26:"incidencias.id_devices_pds";s:16:"Cod. dispositivo";s:25:"incidencias.alarm_display";s:19:"Fallo alarma mueble";s:24:"incidencias.alarm_device";s:24:"Fallo alarma dispositivo";s:23:"incidencias.alarm_garra";s:25:"Fallo anclaje dispositivo";s:25:"incidencias.description_1";s:11:"Comentarios";s:25:"incidencias.description_2";s:11:"Comentarios";s:19:"incidencias.contact";s:8:"Contacto";s:17:"incidencias.email";s:6:"E-mail";s:17:"incidencias.phone";s:9:"Teléfono";s:23:"incidencias.id_operador";s:10:"Instalador";s:18:"incidencias.status";s:10:"Estado SAT";s:22:"incidencias.status_pds";s:6:"Estado";}s:13:"columns_names";a:9:{s:25:"incidencias.id_incidencia";s:4:"REF.";s:17:"incidencias.fecha";s:5:"Fecha";s:18:"incidencias.id_pds";s:4:"SFID";s:25:"incidencias.description_1";s:11:"Comentarios";s:20:"incidencias.contacto";s:8:"Contacto";s:17:"incidencias.phone";s:9:"Teléfono";s:17:"incidencias.email";s:6:"E-mail";s:18:"incidencias.status";s:10:"Estado SAT";s:22:"incidencias.status_pds";s:6:"Estado";}s:9:"is_create";b:1;s:7:"is_edit";b:1;s:9:"is_remove";b:1;s:6:"is_csv";b:1;s:7:"buttons";a:0:{}s:19:"validation_required";a:6:{s:25:"incidencias.id_incidencia";i:1;s:18:"incidencias.id_pds";i:1;s:27:"incidencias.id_displays_pds";i:1;s:23:"incidencias.tipo_averia";i:1;s:22:"incidencias.status_pds";i:1;s:18:"incidencias.status";i:1;}s:18:"validation_pattern";a:0:{}s:13:"before_insert";a:0:{}s:13:"before_update";a:0:{}s:13:"before_remove";a:0:{}s:12:"after_insert";a:0:{}s:12:"after_update";a:0:{}s:12:"after_remove";a:0:{}s:10:"field_type";a:23:{s:20:"incidencias.denuncia";s:4:"file";s:21:"incidencias.parte_pdf";s:4:"file";s:20:"incidencias.foto_url";s:5:"image";s:22:"incidencias.foto_url_2";s:5:"image";s:22:"incidencias.foto_url_3";s:5:"image";s:25:"incidencias.id_incidencia";s:3:"int";s:17:"incidencias.fecha";s:8:"datetime";s:18:"incidencias.id_pds";s:8:"relation";s:27:"incidencias.id_displays_pds";s:8:"relation";s:26:"incidencias.id_devices_pds";s:8:"relation";s:23:"incidencias.tipo_averia";s:4:"text";s:25:"incidencias.alarm_display";s:4:"bool";s:24:"incidencias.alarm_device";s:4:"bool";s:23:"incidencias.alarm_garra";s:4:"bool";s:25:"incidencias.description_1";s:10:"texteditor";s:25:"incidencias.description_2";s:10:"texteditor";s:20:"incidencias.contacto";s:4:"text";s:17:"incidencias.phone";s:4:"text";s:17:"incidencias.email";s:4:"text";s:23:"incidencias.id_operador";s:8:"relation";s:24:"incidencias.intervencion";s:3:"int";s:22:"incidencias.status_pds";s:6:"select";s:18:"incidencias.status";s:6:"select";}s:10:"field_attr";a:23:{s:25:"incidencias.id_incidencia";a:1:{s:9:"maxlength";i:10;}s:17:"incidencias.fecha";a:0:{}s:18:"incidencias.id_pds";a:1:{s:9:"maxlength";i:5;}s:27:"incidencias.id_displays_pds";a:1:{s:9:"maxlength";i:5;}s:26:"incidencias.id_devices_pds";a:1:{s:9:"maxlength";i:8;}s:23:"incidencias.tipo_averia";a:1:{s:9:"maxlength";i:45;}s:25:"incidencias.alarm_display";a:1:{s:9:"maxlength";i:1;}s:24:"incidencias.alarm_device";a:1:{s:9:"maxlength";i:1;}s:23:"incidencias.alarm_garra";a:1:{s:9:"maxlength";i:1;}s:25:"incidencias.description_1";a:0:{}s:25:"incidencias.description_2";a:0:{}s:21:"incidencias.parte_pdf";a:1:{s:9:"maxlength";i:100;}s:20:"incidencias.denuncia";a:1:{s:9:"maxlength";i:100;}s:20:"incidencias.foto_url";a:1:{s:9:"maxlength";i:100;}s:22:"incidencias.foto_url_2";a:1:{s:9:"maxlength";i:100;}s:22:"incidencias.foto_url_3";a:1:{s:9:"maxlength";i:100;}s:20:"incidencias.contacto";a:1:{s:9:"maxlength";i:50;}s:17:"incidencias.phone";a:1:{s:9:"maxlength";i:50;}s:17:"incidencias.email";a:1:{s:9:"maxlength";i:50;}s:23:"incidencias.id_operador";a:1:{s:9:"maxlength";i:5;}s:24:"incidencias.intervencion";a:1:{s:9:"maxlength";i:10;}s:22:"incidencias.status_pds";a:2:{s:9:"maxlength";i:0;s:6:"values";s:72:"''Alta realizada'',''En proceso'',''Visita prevista'',''Finalizada'',''Cancelada''";}s:18:"incidencias.status";a:2:{s:9:"maxlength";i:0;s:6:"values";s:127:"''Nueva'',''Revisada'',''Material asignado'',''Instalador asignado'',''Comunicada'',''Resuelta'',''Pendiente recogida'',''Cerrada'',''Cancelada''";}}s:5:"limit";i:10;s:10:"limit_list";a:5:{i:0;i:10;i:1;s:2:"25";i:2;s:2:"50";i:3;s:3:"100";i:4;s:3:"all";}s:10:"column_cut";i:50;s:15:"column_cut_list";a:0:{}s:9:"no_editor";a:0:{}s:21:"show_primary_ai_field";b:0;s:22:"show_primary_ai_column";b:1;s:8:"disabled";a:1:{s:25:"incidencias.id_incidencia";a:4:{s:4:"list";i:1;s:6:"create";i:1;s:4:"edit";i:1;s:4:"view";i:1;}}s:8:"readonly";a:0:{}s:9:"benchmark";b:0;s:14:"search_pattern";a:2:{i:0;s:1:"%";i:1;s:1:"%";}s:10:"connection";b:0;s:14:"remove_confirm";b:1;s:13:"upload_folder";a:0:{}s:13:"upload_config";a:5:{s:20:"incidencias.denuncia";a:0:{}s:21:"incidencias.parte_pdf";a:0:{}s:20:"incidencias.foto_url";a:0:{}s:22:"incidencias.foto_url_2";a:0:{}s:22:"incidencias.foto_url_3";a:0:{}}s:8:"pass_var";a:0:{}s:14:"reverse_fields";a:1:{s:4:"list";b:0;}s:9:"no_quotes";a:0:{}s:20:"inner_table_instance";a:0:{}s:11:"inner_where";a:0:{}s:6:"unique";a:1:{s:25:"incidencias.id_incidencia";b:1;}s:5:"theme";s:9:"bootstrap";s:12:"is_duplicate";b:0;s:11:"links_label";a:0:{}s:12:"emails_label";a:0:{}s:3:"sum";a:0:{}s:12:"alert_create";N;s:10:"alert_edit";N;s:9:"is_search";b:1;s:8:"is_print";b:1;s:13:"is_pagination";b:1;s:12:"is_limitlist";b:1;s:11:"is_sortable";b:1;s:7:"is_list";b:1;s:9:"subselect";a:0:{}s:16:"subselect_before";a:0:{}s:9:"highlight";a:0:{}s:13:"highlight_row";a:0:{}s:5:"modal";a:0:{}s:12:"column_class";a:0:{}s:9:"no_select";a:0:{}s:8:"is_inner";b:0;s:4:"join";a:0:{}s:11:"fk_relation";a:0:{}s:8:"is_title";b:1;s:10:"is_numbers";b:0;s:8:"language";s:2:"es";s:12:"field_params";a:0:{}s:17:"mass_alert_create";a:0:{}s:15:"mass_alert_edit";a:0:{}s:15:"column_callback";a:0:{}s:14:"field_callback";a:0:{}s:14:"replace_insert";a:0:{}s:14:"replace_update";a:0:{}s:14:"replace_remove";a:0:{}s:20:"send_external_create";a:0:{}s:18:"send_external_edit";a:0:{}s:14:"column_pattern";a:0:{}s:10:"field_tabs";a:0:{}s:12:"field_marker";a:0:{}s:7:"is_view";b:1;s:13:"field_tooltip";a:0:{}s:13:"table_tooltip";a:0:{}s:14:"column_tooltip";a:0:{}s:14:"search_columns";a:0:{}s:14:"search_default";N;s:12:"column_width";a:0:{}s:6:"before";s:4:"list";s:13:"before_upload";a:0:{}s:12:"after_upload";a:0:{}s:12:"after_resize";a:0:{}s:11:"custom_vars";a:0:{}s:7:"tabdesc";a:0:{}s:11:"column_name";a:0:{}s:14:"upload_to_save";a:0:{}s:16:"upload_to_remove";a:0:{}s:8:"defaults";a:23:{s:20:"incidencias.denuncia";b:0;s:21:"incidencias.parte_pdf";b:0;s:20:"incidencias.foto_url";b:0;s:22:"incidencias.foto_url_2";b:0;s:22:"incidencias.foto_url_3";b:0;s:25:"incidencias.id_incidencia";N;s:17:"incidencias.fecha";s:19:"2015-02-24 14:56:28";s:18:"incidencias.id_pds";N;s:27:"incidencias.id_displays_pds";N;s:26:"incidencias.id_devices_pds";N;s:23:"incidencias.tipo_averia";N;s:25:"incidencias.alarm_display";N;s:24:"incidencias.alarm_device";N;s:23:"incidencias.alarm_garra";N;s:25:"incidencias.description_1";N;s:25:"incidencias.description_2";N;s:20:"incidencias.contacto";N;s:17:"incidencias.phone";N;s:17:"incidencias.email";N;s:23:"incidencias.id_operador";N;s:24:"incidencias.intervencion";N;s:22:"incidencias.status_pds";s:14:"Alta realizada";s:18:"incidencias.status";s:5:"Nueva";}s:6:"search";i:0;s:11:"inner_value";b:0;s:9:"bit_field";a:0:{}s:11:"point_field";a:0:{}s:16:"buttons_position";s:5:"right";s:14:"grid_condition";a:0:{}s:9:"condition";a:0:{}s:11:"hide_button";a:0:{}s:8:"set_lang";a:0:{}s:8:"table_ro";b:0;s:17:"grid_restrictions";a:0:{}s:9:"load_view";a:4:{s:4:"list";s:19:"xcrud_list_view.php";s:6:"create";s:21:"xcrud_detail_view.php";s:4:"edit";s:21:"xcrud_detail_view.php";s:4:"view";s:21:"xcrud_detail_view.php";}s:6:"action";a:0:{}s:6:"prefix";s:0:"";s:5:"query";s:0:"";s:11:"default_tab";b:0;s:10:"strip_tags";b:1;s:11:"safe_output";b:0;s:11:"before_list";a:0:{}s:13:"before_create";a:0:{}s:11:"before_edit";a:0:{}s:11:"before_view";a:0:{}s:14:"lists_null_opt";b:1;s:13:"custom_fields";a:0:{}s:11:"date_format";a:2:{s:5:"php_d";s:5:"d.m.Y";s:5:"php_t";s:5:"H:i:s";}}}}'),
+('719a1b88969224ebf611f86a6d03496a', '172.31.42.143', 'Serf/1.1.0 mod_pagespeed/1.7.30.4-', 1424789626, ''),
+('58f196c38856fea0daccec41e32fd29e', '172.31.42.143', 'Serf/1.1.0 mod_pagespeed/1.7.30.4-', 1424789649, ''),
+('1830a4dc2afe81bcf60a714fd14f5832', '172.31.42.143', 'Serf/1.1.0 mod_pagespeed/1.7.30.4-', 1424789649, ''),
+('702c2a424163bf870aadd79e84b3eaed', '172.31.42.143', 'Serf/1.1.0 mod_pagespeed/1.7.30.4-', 1424789649, ''),
+('8e8da256c58fe52672c087b0499a85b3', '172.31.42.143', 'Serf/1.1.0 mod_pagespeed/1.7.30.4-', 1424789649, ''),
+('afb5467bf4dcbd59eab6e919bb16b01a', '172.31.42.143', 'Serf/1.1.0 mod_pagespeed/1.7.30.4-', 1424789649, ''),
+('5b608e2f937b28b06ff7be9e76139638', '172.31.42.143', 'Serf/1.1.0 mod_pagespeed/1.7.30.4-', 1424789649, ''),
+('6825cf84a061eee89675aa2b3e92d556', '172.31.42.143', 'Serf/1.1.0 mod_pagespeed/1.7.30.4-', 1424789649, ''),
+('c75be7b20536ecab587e7d2ddfa32eac', '172.31.42.143', 'Serf/1.1.0 mod_pagespeed/1.7.30.4-', 1424789653, '');
 
 -- --------------------------------------------------------
 
@@ -18497,26 +18508,6 @@ INSERT INTO `displays_pds` (`id_displays_pds`, `client_type_pds`, `id_type_pds`,
 -- --------------------------------------------------------
 
 --
--- Table structure for table `groups`
---
-
-CREATE TABLE IF NOT EXISTS `groups` (
-`id` mediumint(8) unsigned NOT NULL,
-  `name` varchar(20) NOT NULL,
-  `description` varchar(100) NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
-
---
--- Dumping data for table `groups`
---
-
-INSERT INTO `groups` (`id`, `name`, `description`) VALUES
-(1, 'admin', 'Administrator'),
-(2, 'members', 'General User');
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `incidencias`
 --
 
@@ -18544,7 +18535,7 @@ CREATE TABLE IF NOT EXISTS `incidencias` (
   `intervencion` int(10) unsigned DEFAULT NULL,
   `status_pds` enum('Alta realizada','En proceso','Visita prevista','Finalizada','Cancelada') NOT NULL DEFAULT 'Alta realizada',
   `status` enum('Nueva','Revisada','Material asignado','Instalador asignado','Comunicada','Resuelta','Pendiente recogida','Cerrada','Cancelada') NOT NULL DEFAULT 'Nueva'
-) ENGINE=InnoDB AUTO_INCREMENT=157 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=156 DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `incidencias`
@@ -18561,8 +18552,8 @@ INSERT INTO `incidencias` (`id_incidencia`, `fecha`, `id_pds`, `id_displays_pds`
 (43, '2015-02-13 07:53:10', 2808, 31, 74, 'Avería', 0, 1, NULL, 'NOS HAN QUITADO LOS GANCHOS DE SEGURIDAD DE LA TABLET SAMSUNG DE EXPOSICION.', NULL, NULL, NULL, '15rm4op4g1wgoows48.jpg', NULL, NULL, 'M.SOL-ANGELITA', '678514249', 'torrepacheco2@vilovi.es', NULL, NULL, 'Alta realizada', 'Nueva'),
 (48, '2015-02-13 08:02:47', 2838, 31, 74, 'Avería', 0, 1, NULL, 'soporte roto por intento de robo ', NULL, '', '', '', '', '', 'CORA SANCHEZ', '605914312', 'c.sanchez@garatcalabuig.com', NULL, NULL, 'Alta realizada', 'Nueva'),
 (49, '2015-02-13 08:07:14', 2967, 65, 62, 'Robo', 0, 0, NULL, 'robo', NULL, NULL, '64u8iwlfqfswc0kcwk.pdf', NULL, NULL, NULL, 'CARMONA GALISTEO, Antonio', '656160121', 'antonio.carmona@orange.com', NULL, NULL, 'Alta realizada', 'Nueva'),
-(53, '2015-02-16 00:32:25', 1840, 69, 26, 'Robo', 0, 1, NULL, 'equipo robado', NULL, NULL, 'tt2ai3a15j4wgw8o0w.pdf', NULL, NULL, NULL, 'Jonathan Deamo', '651163096', 'jdeamo@ispgrup.cat', NULL, NULL, 'Alta realizada', 'Nueva'),
-(54, '2015-02-16 00:39:08', 2879, 35, 71, 'Avería', 0, 0, NULL, 'no carga la tablet por tanto no enciende									\n									\n									\n									\n									\n', NULL, '', '', '', '', '', 'CARMEN', '915334583', 'calleorense@franquiciasconexion.com', NULL, NULL, 'Alta realizada', 'Nueva'),
+(53, '2015-02-16 00:32:25', 1840, 69, 26, 'Robo', 0, 1, NULL, 'equipo robado', NULL, NULL, 'tt2ai3a15j4wgw8o0w.pdf', NULL, NULL, NULL, 'Jonathan Deamo', '651163096', 'jdeamo@ispgrup.cat', NULL, NULL, 'En proceso', 'Revisada'),
+(54, '2015-02-16 00:39:08', 2879, 35, 71, 'Avería', 0, 0, NULL, 'no carga la tablet por tanto no enciende									\n									\n									\n									\n									\n', NULL, '', '', '', '', '', 'CARMEN', '915334583', 'calleorense@franquiciasconexion.com', NULL, NULL, 'Visita prevista', 'Comunicada'),
 (55, '2015-02-16 00:45:05', 2831, 36, 26, 'Avería', 1, 0, NULL, 'Buenos días, ayer nos han arrancado un iphone del panel de demos de iphone, y desde entonces hay un pitido en el panel insoportable									\n									\n									\n									\n									\n', NULL, '', '', '', '', '', 'SANDRA', '635685449', 'franquiciavalladolid@tiendascomunicalia.com', NULL, NULL, 'Alta realizada', 'Nueva'),
 (56, '2015-02-16 00:50:44', 2844, 35, 72, 'Avería', 0, 0, NULL, 'No enciende la tablet Huawei 8,0\n', NULL, '', '', '', '', '', 'Rebeca Mingo', '695197265', 'r.mingo@garatcalabuig.com', NULL, NULL, 'Alta realizada', 'Nueva'),
 (57, '2015-02-16 00:56:13', 2088, 36, 26, 'Avería', 1, 1, NULL, 'LA ALARMA DEL IPHONE 6 SE DISPARA CON SOLO MIRARLA CASI, DE HECHO SALTA SOLA. Y ES CONTINUO, INCLUSO PONIENDO LA LLAVE DORADA.								\n								\n								\n								\n								\n', NULL, '', '', '', '', '', 'Jonathan Deamo', '695589515', 'jdeamo@ispgrup.cat', NULL, NULL, 'Alta realizada', 'Nueva'),
@@ -18572,7 +18563,7 @@ INSERT INTO `incidencias` (`id_incidencia`, `fecha`, `id_pds`, `id_displays_pds`
 (62, '2015-02-16 01:25:45', 2616, 40, 26, 'Avería', 1, 1, NULL, 'tienen algun tipo de problema electrico', NULL, '', '', '', '', '', 'ECI CALLAO', '657804774', 'eci.callao@towerphone.es', NULL, NULL, 'Alta realizada', 'Nueva'),
 (63, '2015-02-16 01:30:27', 2860, 31, 62, 'Avería', 1, 1, NULL, 'samsung note 4, no nos funciona el cable de carga y de alarma que es el mismo y al no pillar la carga no enciende el terminal		\n		\n		\n		\n		\n		\n		\n		\n', NULL, '', '', '', '', '', 'natalia.coiras', '956313107', 'natalia.coiras@hablacom.es', NULL, NULL, 'Alta realizada', 'Nueva'),
 (64, '2015-02-16 01:32:05', 2860, 36, 26, 'Avería', 1, 1, NULL, 'iphone 6, no nos funciona el cable de carga y al no pillar la carga no enciende el terminal		\n		\n		\n		\n		\n		\n		\n		\n', NULL, '', '', '', '', '', 'natalia.coiras', '956313107', 'natalia.coiras@hablacom.es', NULL, NULL, 'Alta realizada', 'Nueva'),
-(66, '2015-02-16 01:44:55', 2879, 36, 26, 'Avería', 1, 1, NULL, 'VUELVE A PITARNAOS EL IPHONE									\n									\n									\n									\n									\n', NULL, '', '', '', '', '', 'CARMEN', '915334583', 'frmadrid.orense9@orange.com', NULL, NULL, 'Alta realizada', 'Nueva'),
+(66, '2015-02-16 01:44:55', 2879, 36, 26, 'Avería', 1, 1, NULL, 'VUELVE A PITARNAOS EL IPHONE									\n									\n									\n									\n									\n', NULL, '', '', '', '', '', 'CARMEN', '915334583', 'frmadrid.orense9@orange.com', NULL, NULL, 'Cancelada', 'Cancelada'),
 (67, '2015-02-16 01:52:55', 2838, 35, 73, 'Avería', 0, 0, NULL, 'LA DEMO NO CARGA								\n								\n								\n								\n								\n', NULL, '', '', '', '', '', 'Cora Sanchez ', '605914312', 'c.sanchez@garatcalabuig.com', NULL, NULL, 'Alta realizada', 'Nueva'),
 (68, '2015-02-16 01:58:56', 2838, 36, 26, 'Avería', 0, 0, NULL, 'NO ENCIENDE Y NOS HAN ROBADO EL CABLE DE CARGA DEL EXPOSITOR', NULL, NULL, NULL, NULL, '2tv5d3a0w0o4cko8s4.jpg', NULL, 'Cora Sanchez', '605914312', 'c.sanchez@garatcalabuig.com', NULL, NULL, 'Alta realizada', 'Nueva'),
 (69, '2015-02-16 02:22:09', 2271, 36, 26, 'Avería', 0, 0, NULL, 'emite pitido de continuo', NULL, '', '', '', '', '', 'RODRIGO RAMOS', '954922465', 'afanderivera@promovil.es', NULL, NULL, 'Alta realizada', 'Nueva'),
@@ -18586,7 +18577,7 @@ INSERT INTO `incidencias` (`id_incidencia`, `fecha`, `id_pds`, `id_displays_pds`
 (77, '2015-02-16 02:59:15', 2948, 36, 26, 'Avería', 0, 1, NULL, 'El cargador del Iphone 6 expuesto esta roto.\n', NULL, '', '', '', '', '', 'Sara Moyano', '625044620', 'frgranollers@ispgrup.cat', NULL, NULL, 'Alta realizada', 'Nueva'),
 (78, '2015-02-16 03:00:44', 2948, 36, 25, 'Avería', 0, 0, NULL, 'El Iphone 5S de exposición que tenemos no funciona.\n', NULL, '', '', '', '', '', 'Sara Moyano', '625044620', 'frgranollers@ispgrup.cat', NULL, NULL, 'Alta realizada', 'Nueva'),
 (79, '2015-02-16 03:02:25', 2948, 35, 71, 'Avería', 0, 0, NULL, 'El cargador de la tablet huawei mediapad 10'' esta roto.\n', NULL, '', '', '', '', '', 'Sara Moyano', '625044620', 'frgranollers@ispgrup.cat', NULL, NULL, 'Alta realizada', 'Nueva'),
-(80, '2015-02-16 03:08:40', 2879, 36, 26, 'Avería', 1, 0, NULL, 'pitido continuo en el panel ', NULL, '', '', '', '', '', 'CARMEN', '915334583', 'frmadrid.orense9@orange.com', NULL, NULL, 'Alta realizada', 'Nueva'),
+(80, '2015-02-16 03:08:40', 2879, 36, 26, 'Avería', 1, 0, NULL, 'pitido continuo en el panel ', NULL, '', '', '', '', '', 'CARMEN', '915334583', 'frmadrid.orense9@orange.com', NULL, NULL, 'Visita prevista', 'Comunicada'),
 (81, '2015-02-16 03:21:39', 2385, 68, 26, 'Robo', 1, 1, NULL, 'terminal robado de tienda', NULL, NULL, 'd7tu3lt2o4080kggcs.jpg', '3322uezretgk80s8c8.jpg', NULL, NULL, 'Maria Bolaños', '932004491', 'mbolanos@kiwitel.net', NULL, NULL, 'Alta realizada', 'Nueva'),
 (82, '2015-02-16 03:30:57', 1680, 67, 26, 'Avería', 0, 0, NULL, 'FALTAN CABLES DEL DISPOSITIVO DE CARGA POR LO QUE EL TERMINAL ESTA APAGADO.									\n									\n									\n									\n									\n', NULL, '', '', '', '', '', 'MANUEL ORTIZ', '692569230', 'porfirionarciso.castro@orange.com', NULL, NULL, 'Alta realizada', 'Nueva'),
 (83, '2015-02-16 03:35:58', 2831, 35, 72, 'Avería', 1, 1, NULL, '	Ninguna de las tablets encienden, no es problema de las tomas, puesto que han sido revisadas por mantenimiento de Orange\n	\n', NULL, '', '', '', '', '', 'SANDRA', '635685449', 'rtvalladolid@tiendascomunicalia.com', NULL, NULL, 'Alta realizada', 'Nueva'),
@@ -18617,15 +18608,8 @@ INSERT INTO `incidencias` (`id_incidencia`, `fecha`, `id_pds`, `id_displays_pds`
 (111, '2015-02-18 01:13:55', 2762, 36, 25, 'Avería', 0, 1, NULL, 'no funciona el cable del terminal', NULL, '', '', '', '', '', 'Cristina Fernández Galea', ' 605 770 808', 'Cristina.fernandez@orange.com', NULL, NULL, 'Alta realizada', 'Nueva'),
 (112, '2015-02-18 01:24:29', 1679, 67, 26, 'Avería', 0, 0, NULL, 'el terminal no enciende', NULL, NULL, NULL, '1b7vtk7dxzb40gwc48.jpg', NULL, NULL, 'CRISTINA /AFRICA', '658193630', 'porfirionarciso.castro@orange.com', NULL, NULL, 'Alta realizada', 'Nueva'),
 (113, '2015-02-18 01:28:39', 2625, 45, 26, 'Avería', 1, 1, NULL, 'La pantalla no funciona correctamente, se queda en negro y aparte los cargadores tanto del Iphone 6 como del Iphone 6 Plus no funcionan.									\n									\n									\n									\n									\n', NULL, '', '', '', '', '', 'Jorge', '652573082', 'eci.castellana@towerphone.es', NULL, NULL, 'Alta realizada', 'Nueva'),
-(115, '2015-02-18 01:52:44', 2879, 35, 71, 'Avería', 0, 0, NULL, 'LA TABLET NO ENCIENDE', NULL, '', '', '', '', '', 'CARMEN', '915334583', 'frmadrid.orense9@orange.com', NULL, NULL, 'Alta realizada', 'Nueva'),
-(116, '2015-02-18 01:55:40', 2951, 35, 73, 'Avería', 0, 0, NULL, 'LA TABLET NO ENCIENDE', NULL, '', '', '', '', '', 'MARC BAIGET ', '', 'marc.baiget@ondalibre.net', NULL, NULL, 'Alta realizada', 'Nueva'),
-(118, '2015-02-18 09:01:03', 2897, 38, 35, 'Avería', 0, 0, NULL, 'Incidencia de prueba digodigo diooooooo', NULL, '', '', '', '', '', 'juanra.posada', '661759247', 'juanra.posada@gmail.com', NULL, NULL, 'En proceso', 'Material asignado'),
-(145, '2015-02-18 13:38:45', 2897, 35, 73, 'Robo', 0, 0, NULL, 'Robo de terminal, nos hemos quedado con la caja', NULL, '', '', '', '', '', 'juanra posada', '667502637', 'juanra.posada@gmail.com', NULL, NULL, 'Alta realizada', 'Nueva'),
-(146, '2015-02-19 03:12:44', 2897, 36, 27, 'Avería', 1, 0, NULL, 'Esta la pantalla rota porque un cliente ', NULL, '', '', '', '', '', 'Juanra Posada', '661759247', 'juanra.posada@gmail.com', NULL, NULL, 'Alta realizada', 'Nueva'),
-(153, '2015-02-23 05:13:13', 2678, 60, 73, 'Avería', 1, 1, 0, '', '', '', '0', '', '', '', 'JuanraPosadaPrueba', 'Prueba', '0', NULL, NULL, 'Alta realizada', 'Nueva'),
-(154, '2015-02-23 16:49:45', 2897, 38, 35, 'Robo', 1, 1, 1, 'sdfgds gfsdfgsdfgsfgsdgsd', '', '', '29993166-1424710185-denuncia.pdf', '', '', '', 'sdfdsfdsf', 'dsfdsfdsfdsf', '0', NULL, NULL, 'Alta realizada', 'Nueva'),
-(155, '2015-02-23 17:08:49', 2897, 38, 66, 'Avería', 0, 0, 1, 'Le pasa de todo un poco.', '', '', '', '', '', '', 'Gustavo Zapico', '666 888 999', '0', NULL, NULL, 'Alta realizada', 'Nueva'),
-(156, '2015-02-23 17:11:43', 2897, 38, 24, 'Avería', 0, 1, 1, 'Describe brevemente el problema', '', '', '', '', '', '', 'Pepe', '888999777', '0', NULL, NULL, 'Alta realizada', 'Nueva');
+(115, '2015-02-18 01:52:44', 2879, 35, 71, 'Avería', 0, 0, NULL, 'LA TABLET NO ENCIENDE', NULL, '', '', '', '', '', 'CARMEN', '915334583', 'frmadrid.orense9@orange.com', NULL, NULL, 'Cancelada', 'Cancelada'),
+(116, '2015-02-18 01:55:40', 2951, 35, 73, 'Avería', 0, 0, NULL, 'LA TABLET NO ENCIENDE', NULL, '', '', '', '', '', 'MARC BAIGET ', '', 'marc.baiget@ondalibre.net', NULL, NULL, 'Alta realizada', 'Nueva');
 
 -- --------------------------------------------------------
 
@@ -18640,7 +18624,14 @@ CREATE TABLE IF NOT EXISTS `intervenciones` (
   `id_operador` smallint(5) unsigned DEFAULT NULL,
   `description` text,
   `status` enum('Nueva','Comunicada','Cerrada','Cancelada') NOT NULL DEFAULT 'Nueva'
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `intervenciones`
+--
+
+INSERT INTO `intervenciones` (`id_intervencion`, `id_pds`, `fecha`, `id_operador`, `description`, `status`) VALUES
+(5, 2879, '2015-02-24 13:39:17', 4, '', 'Nueva');
 
 -- --------------------------------------------------------
 
@@ -18652,6 +18643,14 @@ CREATE TABLE IF NOT EXISTS `intervenciones_incidencias` (
   `id_intervencion` int(10) unsigned NOT NULL,
   `id_incidencia` int(10) unsigned NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `intervenciones_incidencias`
+--
+
+INSERT INTO `intervenciones_incidencias` (`id_intervencion`, `id_incidencia`) VALUES
+(5, 80),
+(5, 54);
 
 -- --------------------------------------------------------
 
@@ -20649,59 +20648,6 @@ INSERT INTO `type_via` (`id_type_via`, `via`) VALUES
 (25, 'Urbanización'),
 (26, 'Vía');
 
--- --------------------------------------------------------
-
---
--- Table structure for table `users`
---
-
-CREATE TABLE IF NOT EXISTS `users` (
-`id` int(11) unsigned NOT NULL,
-  `ip_address` varchar(15) NOT NULL,
-  `username` varchar(100) NOT NULL,
-  `password` varchar(255) NOT NULL,
-  `salt` varchar(255) DEFAULT NULL,
-  `email` varchar(100) NOT NULL,
-  `activation_code` varchar(40) DEFAULT NULL,
-  `forgotten_password_code` varchar(40) DEFAULT NULL,
-  `forgotten_password_time` int(11) unsigned DEFAULT NULL,
-  `remember_code` varchar(40) DEFAULT NULL,
-  `created_on` int(11) unsigned NOT NULL,
-  `last_login` int(11) unsigned DEFAULT NULL,
-  `active` tinyint(1) unsigned DEFAULT NULL,
-  `first_name` varchar(50) DEFAULT NULL,
-  `last_name` varchar(50) DEFAULT NULL,
-  `company` varchar(100) DEFAULT NULL,
-  `phone` varchar(20) DEFAULT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
-
---
--- Dumping data for table `users`
---
-
-INSERT INTO `users` (`id`, `ip_address`, `username`, `password`, `salt`, `email`, `activation_code`, `forgotten_password_code`, `forgotten_password_time`, `remember_code`, `created_on`, `last_login`, `active`, `first_name`, `last_name`, `company`, `phone`) VALUES
-(1, '127.0.0.1', 'gzapico', '$2y$08$Vvox9aCbxuOc/f.KoyG96umehGNSAVh3s3orvb9QSpPWaHWqsrMbW', '', 'gzapico@altabox.net', '', '7HY4YQoKCRYe3RKBdes1O.a0c209e589ae0b76b9', 1422976432, NULL, 1268889823, 1422971565, 1, 'Gustavo', 'Zapico', 'Altabox', '+34608037206');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `users_groups`
---
-
-CREATE TABLE IF NOT EXISTS `users_groups` (
-`id` int(11) unsigned NOT NULL,
-  `user_id` int(11) unsigned NOT NULL,
-  `group_id` mediumint(8) unsigned NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
-
---
--- Dumping data for table `users_groups`
---
-
-INSERT INTO `users_groups` (`id`, `user_id`, `group_id`) VALUES
-(3, 1, 1),
-(4, 1, 2);
-
 --
 -- Indexes for dumped tables
 --
@@ -20839,12 +20785,6 @@ ALTER TABLE `displays_pds`
  ADD PRIMARY KEY (`id_displays_pds`);
 
 --
--- Indexes for table `groups`
---
-ALTER TABLE `groups`
- ADD PRIMARY KEY (`id`);
-
---
 -- Indexes for table `incidencias`
 --
 ALTER TABLE `incidencias`
@@ -20929,18 +20869,6 @@ ALTER TABLE `type_via`
  ADD PRIMARY KEY (`id_type_via`), ADD UNIQUE KEY `via_UNIQUE` (`via`);
 
 --
--- Indexes for table `users`
---
-ALTER TABLE `users`
- ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `users_groups`
---
-ALTER TABLE `users_groups`
- ADD PRIMARY KEY (`id`), ADD UNIQUE KEY `uc_users_groups` (`user_id`,`group_id`), ADD KEY `fk_users_groups_users1_idx` (`user_id`), ADD KEY `fk_users_groups_groups1_idx` (`group_id`);
-
---
 -- AUTO_INCREMENT for dumped tables
 --
 
@@ -20948,7 +20876,7 @@ ALTER TABLE `users_groups`
 -- AUTO_INCREMENT for table `agent`
 --
 ALTER TABLE `agent`
-MODIFY `agent_id` int(10) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=1547;
+MODIFY `agent_id` int(10) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=1549;
 --
 -- AUTO_INCREMENT for table `alarm`
 --
@@ -21050,20 +20978,15 @@ MODIFY `id_displays_panelado` smallint(5) unsigned NOT NULL AUTO_INCREMENT,AUTO_
 ALTER TABLE `displays_pds`
 MODIFY `id_displays_pds` smallint(5) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=8192;
 --
--- AUTO_INCREMENT for table `groups`
---
-ALTER TABLE `groups`
-MODIFY `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=3;
---
 -- AUTO_INCREMENT for table `incidencias`
 --
 ALTER TABLE `incidencias`
-MODIFY `id_incidencia` int(10) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=157;
+MODIFY `id_incidencia` int(10) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=156;
 --
 -- AUTO_INCREMENT for table `intervenciones`
 --
 ALTER TABLE `intervenciones`
-MODIFY `id_intervencion` int(10) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=5;
+MODIFY `id_intervencion` int(10) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=6;
 --
 -- AUTO_INCREMENT for table `login_attempts`
 --
@@ -21119,27 +21042,6 @@ MODIFY `id_type_profile` tinyint(3) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREM
 --
 ALTER TABLE `type_via`
 MODIFY `id_type_via` tinyint(3) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=30;
---
--- AUTO_INCREMENT for table `users`
---
-ALTER TABLE `users`
-MODIFY `id` int(11) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2;
---
--- AUTO_INCREMENT for table `users_groups`
---
-ALTER TABLE `users_groups`
-MODIFY `id` int(11) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=5;
---
--- Constraints for dumped tables
---
-
---
--- Constraints for table `users_groups`
---
-ALTER TABLE `users_groups`
-ADD CONSTRAINT `fk_users_groups_users1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
-ADD CONSTRAINT `fk_users_groups_groups1` FOREIGN KEY (`group_id`) REFERENCES `groups` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION;
-
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
