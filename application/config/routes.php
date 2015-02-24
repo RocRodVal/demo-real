@@ -40,19 +40,13 @@
 
 
 // Default page
-$route['default_controller']  = 'admin';
+$route['default_controller']  = 'tienda';
 
 // CMS
-$route['admin/(:any)']        = 'admin/$1';
-$route['intervencion/(:any)'] = 'intervencion/$1';
-$route['inventario/(:any)']   = 'inventario/$1';
-$route['operacion/(:any)']    = 'intervencion/$1';
+$route['admin/(:any)']   = 'admin/$1';
+$route['tienda/(:any)']  = 'tienda/$1';
+$route['master/(:any)']  = 'master/$1';
 
-// Frontend
-// $route['home']                = 'home';
-
-// Estáticas
-// $route['pages/(:any)']        = 'pages/$1';
 
 // Error 404 override
 $route['404_override']        = '';

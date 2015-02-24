@@ -50,68 +50,46 @@ class Master extends CI_Controller {
 	{
 		if($this->session->userdata('logged_in'))
 		{
-			$session_data     = $this->session->userdata('logged_in');
-			$data['sfid']     = $this->session->userdata('sfid');
-			$data['agent_id'] = $this->session->userdata('agent_id');
-			$data['type']     = $this->session->userdata('type');
-			
+			$data['id_pds'] = $this->session->userdata('id_pds');
+			$data['sfid']   = $this->session->userdata('sfid');
+	
 			$xcrud = xcrud_get_instance();
-	
 			$this->load->model('tienda_model');
-			$this->load->model('intervencion_model');
-			
-			$data['tiendas']     =  $this->tienda_model->search_pds($this->input->post('sfid'));
-			$incidencias =  $this->tienda_model->get_incidencias();
-			foreach($incidencias as $incidencia){
-				$incidencia->intervencion = $this->intervencion_model->get_intervencion_incidencia($incidencia->id_incidencia);
-			}
-			$data['incidencias']=$incidencias;
-			$xcrud->show_primary_ai_column(true);
-			$xcrud->unset_numbers();
-			$xcrud->start_minimized(true);
-			
-			$xcrud->table('incidencias');
-			$xcrud->table_name('Incidencias');
-			$xcrud->relation('id_pds','pds','id_pds','reference');
-			//$xcrud->relation('id_displays_pds','displays_pds','id_displays_pds','id_displays_pds');
-			//$xcrud->relation('id_devices_pds','devices_pds','id_devices_pds','id_devices_pds');
-			$xcrud->relation('id_displays_pds','display','id_display','display');
-			$xcrud->relation('id_devices_pds','device','id_device','device');
-			$xcrud->relation('id_operador','contact','id_contact','contact');
-			$xcrud->change_type('denuncia', 'file');
-			$xcrud->change_type('parte_pdf', 'file');
-			$xcrud->change_type('foto_url', 'image');
-			$xcrud->change_type('foto_url_2', 'image');
-			$xcrud->change_type('foto_url_3', 'image');
-			$xcrud->label('id_incidencia','REF.')->label('fecha','Fecha')->label('id_pds','SFID')->label('denuncia','Denuncia')->label('parte_pdf','Parte PDF')->label('foto_url','Foto #1')->label('foto_url_2','Foto #2')->label('foto_url_3','Foto #3')->label('id_displays_pds','Cod. mueble')->label('id_devices_pds','Cod. dispositivo')->label('alarm_display','Fallo alarma mueble')->label('alarm_device','Fallo alarma dispositivo')->label('alarm_garra','Fallo anclaje dispositivo')->label('description_1','Comentarios')->label('description_2','Comentarios')->label('contact','Contacto')->label('email','E-mail')->label('phone','Teléfono')->label('id_operador','Instalador')->label('status','Estado SAT')->label('status_pds','Estado');
-			$xcrud->columns('id_incidencia,fecha,id_pds,description_1,contacto,phone,email,status,status_pds');
-			//$xcrud->fields('client,type_profile_client,picture_url,description,status');	
-
-			$data['title']   = 'Información general';
-			$data['content'] = $xcrud->render();
 	
-			if ($this->session->userdata('type') == 9)
-			{			
-			$this->load->view('master/header', $data);
-			$this->load->view('master/navbar', $data);
-			$this->load->view('master/dashboard', $data);
-			$this->load->view('master/footer');
-			}
-			else
+			$data['tiendas']     =  $this->tienda_model->search_pds($this->input->post('sfid'));
+			$incidencias = $this->tienda_model->get_incidencias();
+				
+			foreach($incidencias as $incidencia)
 			{
-				$id_pds = $this->tienda_model->get_id($data['sfid']);
-				
-				$data['id_pds'] = $id_pds['id_pds'];
-				
-				redirect('master/dashboard_pds','refresh');
+				$incidencia->device= $this->tienda_model->get_device($incidencia->id_devices_pds);
+				$incidencia->display= $this->tienda_model->get_display($incidencia->id_displays_pds);
+	
 			}
+			$data['incidencias'] =  $incidencias;
+				
+			$sfid = $this->tienda_model->get_pds($data['id_pds']);
+				
+			$data['id_pds']     = $sfid['id_pds'];
+			$data['commercial'] = $sfid['commercial'];
+			$data['territory']  = $sfid['territory'];
+			$data['reference']  = $sfid['reference'];
+			$data['address']    = $sfid['address'];
+			$data['zip']        = $sfid['zip'];
+			$data['city']       = $sfid['city'];
+	
+			$data['title']   = 'Mis solicitudes';
+				
+			$this->load->view('master/header',$data);
+			$this->load->view('master/navbar',$data);
+			$this->load->view('master/dashboard',$data);
+			$this->load->view('master/footer');
 		}
 		else
 		{
 			redirect('master','refresh');
-		}	
-	}
-
+		}
+	}	
+	
 	
 	public function detalle_incidencia($id_incidencia)
 	{
@@ -132,9 +110,9 @@ class Master extends CI_Controller {
 			$data['address']    = $sfid['address'];
 			$data['zip']        = $sfid['zip'];
 			$data['city']       = $sfid['city'];
-	
-			$incindencia = $this->tienda_model->get_incidencia($id_incidencia);
 				
+			$incindencia = $this->tienda_model->get_incidencia($id_incidencia);
+			
 			$data['id_incidencia']   = $incindencia['id_incidencia'];
 			$data['fecha']           = $incindencia['fecha'];
 			$data['id_pds']          = $incindencia['id_pds'];
@@ -150,13 +128,13 @@ class Master extends CI_Controller {
 			$data['contacto']        = $incindencia['contacto'];
 			$data['phone']           = $incindencia['phone'];
 			$data['status_pds']      = $incindencia['status_pds'];
-				
+			
 			$display     = $this->tienda_model->get_display($incindencia['id_displays_pds']);
 	
 			$data['id_display']      = $display['id_display'];
 			$data['display']         = $display['display'];
 			$data['picture_url_dis'] = $display['picture_url'];
-	
+				
 			$device = $this->tienda_model->get_device($incindencia['id_devices_pds']);
 	
 			$data['id_device']       = $device['id_device'];
