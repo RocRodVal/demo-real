@@ -31,7 +31,6 @@ class Tienda_model extends CI_Model {
 	}
 		
 	
-	
 	public function search_pds($id) {
 		if($id != FALSE) {
 			$query = $this->db->select('pds.*,type_pds.pds,panelado.panelado,territory.territory')
@@ -65,6 +64,7 @@ class Tienda_model extends CI_Model {
 		}
 	}	
 	
+	
 	public function get_inventario_panelado($id) {
 		if($id != FALSE) {		
 			$query = $this->db->select('displays_panelado.*,display.*')
@@ -89,6 +89,7 @@ class Tienda_model extends CI_Model {
 		return $query->result();
 	}	
 
+	
 	public function get_displays() {
 		$query = $this->db->select('*')
 		->order_by('display')
@@ -96,6 +97,7 @@ class Tienda_model extends CI_Model {
 	
 		return $query->result();
 	}	
+	
 	
 	public function get_devices_pds($id) {
 
@@ -115,6 +117,7 @@ class Tienda_model extends CI_Model {
 		}
 	}	
 	
+	
 	public function get_devices_total() {
 
 			$query = $this->db->select('devices_pds.*,device.*, COUNT(devices_pds.id_device) AS unidades')
@@ -126,6 +129,7 @@ class Tienda_model extends CI_Model {
 	
 			return $query->result();
 	}	
+	
 	
 	public function get_displays_total() {
 	
@@ -139,6 +143,7 @@ class Tienda_model extends CI_Model {
 		return $query->result();
 	}	
 	
+	
 	public function get_devices_almacen() {
 	
 		$query = $this->db->select('devices_almacen.*,device.*, COUNT(devices_almacen.id_device) AS unidades')
@@ -151,6 +156,7 @@ class Tienda_model extends CI_Model {
 		return $query->result();
 	}
 	
+	
 	public function get_alarms_almacen() {
 	
 		$query = $this->db->select('alarms_almacen.*,alarm.*, COUNT(alarms_almacen.id_alarm) AS unidades')
@@ -162,6 +168,7 @@ class Tienda_model extends CI_Model {
 	
 		return $query->result();
 	}	
+	
 	
 	public function get_devices_display($id) {
 		if($id != FALSE) {
@@ -187,6 +194,7 @@ class Tienda_model extends CI_Model {
 		$count = $this->db->count_all_results();
 		return $count;
 	}	
+	
 	
 	public function get_pds($id) {
 		if($id != FALSE) {
@@ -230,6 +238,7 @@ class Tienda_model extends CI_Model {
 		}
 	}
 	
+	
 	public function get_id($reference) {
 		if($reference != FALSE) {
 			$query = $this->db->select('*')
@@ -243,6 +252,7 @@ class Tienda_model extends CI_Model {
 		}
 	}	
 	
+	
 	public function get_incidencias() {
 			$query = $this->db->select('incidencias.*,pds.reference as reference')
 			        ->join('pds','incidencias.id_pds = pds.id_pds')
@@ -251,6 +261,7 @@ class Tienda_model extends CI_Model {
 	
 			return $query->result();
 	}	
+	
 	
 	public function get_incidencias_pds($id) {
 		$query = $this->db->select('incidencias.*,pds.reference as reference')
@@ -262,6 +273,7 @@ class Tienda_model extends CI_Model {
 	
 		return $query->result();
 	}	
+	
 	
 	public function get_incidencia($id) {
 		if($id != FALSE) {
@@ -276,6 +288,7 @@ class Tienda_model extends CI_Model {
 		}
 	}	
 	
+	
 	public function incidencia_update($id,$status_pds,$status)
 	{
 		$this->db->set('status_pds', $status_pds, FALSE);
@@ -283,6 +296,7 @@ class Tienda_model extends CI_Model {
 		$this->db->where('id_incidencia',$id);
 		$this->db->update('incidencias');
 	}	
+	
 	
 	public function get_alarms_display($id) {
 		if($id != FALSE) {
@@ -298,7 +312,6 @@ class Tienda_model extends CI_Model {
 		}
 	}
 		
-	
 	public function get_alarms_device($id) {
 		if($id != FALSE) {
 			$query = $this->db->select('alarms_device_pds.*,alarm.*')
