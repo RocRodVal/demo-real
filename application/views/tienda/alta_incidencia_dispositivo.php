@@ -45,9 +45,9 @@
                                         <label>Indica los elementos que están afectados</label>
 
                                         <p>
-                                            <input type="checkbox" name="device" value=0>Dispositivo
-                                            <input type="checkbox" name="alarm_garra" value=0>Soporte/Anclaje
-                                            <input type="checkbox" name="alarm_device" value=0>Alarma/Cableado
+                                            <input type="checkbox" name="device" value="1">Dispositivo
+                                            <input type="checkbox" name="alarm_garra" value="1">Soporte/Anclaje
+                                            <input type="checkbox" name="alarm_device" value="1">Alarma/Cableado
                                         </p>
                                     </div>
                                 </div>
