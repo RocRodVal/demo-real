@@ -9,7 +9,7 @@
     </div>
 
     <form
-        action="<?= site_url('tienda/insert_incidencia/' . $id_display . '/' . $id_device) ?>"
+        action="<?= site_url('tienda/insert_incidencia_mueble_alarma/'.$id_display) ?>"
         method="post" class="content_auto form_login" enctype="multipart/form-data">
         <div class="row">
             <div class="col-lg-offset-1 col-lg-8">
@@ -17,33 +17,6 @@
                     <div class="panel-body">
                         <div class="row">
                             <div class="col-lg-7">
-                                <div class="row">
-                                    <div class="col-lg-12">
-                                        <label>Tipo de incidencia</label>
-                                        <div class="radio">
-                                            <label>
-                                                <input type="radio" name="tipo_averia" id="tipo_averia" value="1"> Robo
-                                            </label>
-                                            <p>Suba una copia de la denuncia por robo:</p>
-											<input id="file-0" class="file" type="file" multiple=false name="userfile">
-                                        </div>
-                                        <div class="radio">
-                                            <label>
-                                                <input type="radio" name="tipo_averia" id="tipo_averia" value="0">Avería
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row" id="alarmaDisplay">
-                                    <div class="col-lg-12">
-                                        <label>Indica los elementos que están afectados</label>
-                                        <p>
-                                        	<input type="checkbox" name="device" value="1">Dispositivo
-                                        	<input type="checkbox" name="alarm_garra" value="1">Soporte/Anclaje
-											<input type="checkbox" name="alarm_device" value="1">Alarma/Cableado
-										</p>	
-                                    </div>
-                                </div>  
                                 <div class="row" id="description_textArea_device">
                                     <div class="col-lg-12">
                                         <div class="form-group">
@@ -53,14 +26,6 @@
                                         </div>
                                     </div>
                                 </div>
-                                <!--//
-                           		<p>Suba una foto de la incidencia #1:</p>
-								<input id="photo_1" class="file" type="file" multiple=false name="photo_1">
-                           		<p>Suba una foto de la incidencia #2:</p>
-								<input id="photo_2" class="file" type="file" multiple=false name="photo_2">
-                           		<p>Suba una foto de la incidencia #3:</p>
-								<input id="photo_3" class="file" type="file" multiple=false name="photo_3">
-								//-->
                             </div>
                             <div class="col-lg-5">
                                 <div class="row">
@@ -90,17 +55,17 @@
                                 <div class="col-lg-12">
                                     <div class="panel panel-default">
                                         <div class="panel-heading">
-                                            <?php echo $device; ?>
+                                            <?php echo $display; ?>
                                         </div>
                                         <div class="panel-body">
 
                                             <div class="col-lg-12">
                                                 <?php
-                                                if ($picture_url_dev <> '') {
+                                                if ($picture_url_dis <> '') {
                                                     ?>
                                                     <img
-                                                        src="<?= site_url('application/uploads/' . $picture_url_dev . '') ?>"
-                                                        style="width:100%;" title="<?php echo $device ?>"/>
+                                                        src="<?= site_url('application/uploads/'.$picture_url_dis.'') ?>"
+                                                        style="width:100%;" title="<?php echo $display ?>"/>
                                                 <?php
                                                 }
                                                 ?>
