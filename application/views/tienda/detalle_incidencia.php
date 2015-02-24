@@ -119,7 +119,7 @@
                                         <li class="timeline-inverted">
                                             <div class="timeline-badge"><i
                                                     class="glyphicon glyphicon-credit-card"></i></div>
-                                            <div style="padding:10px 20px 0px 20px" class="timeline-panel <?php echo ($value_incidencia>4)?'state_actual' : ''?>">
+                                            <div style="padding:10px 20px 0px 20px" class="timeline-panel <?php echo ($value_incidencia>=4)?'state_actual' : ''?>">
                                                 <div class="timeline-heading">
                                                     <h4 class="timeline-title"><?php echo ($value_incidencia>=4)?$status_pds : 'Finalizada'?></h4>
                                                 </div>
