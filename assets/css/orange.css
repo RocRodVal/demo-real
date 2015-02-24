@@ -122,12 +122,13 @@ Estilos de las dataTables
 ESTILO DEL TIMELINE
 */
 .timeline > li > .timeline-panel{
-    width: 42%;
+    width: 40%;
 }
 
 .state_pasado{
     background: #999;
     color: #fff;
+    opacity: 0.6;
 }
 
 .state_actual{
@@ -139,6 +140,10 @@ ESTILO DEL TIMELINE
     padding: 10px 20px;
     top: 15px;
     text-align: center;
+}
+
+.sombreado{
+    opacity: 0.6;
 }
 
 .timeline > li > .timeline-panel.state_pasado:after, .timeline > li > .timeline-panel.state_pasado:before {

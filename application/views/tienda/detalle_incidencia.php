@@ -70,7 +70,7 @@
                                     <?php
                                         $value_incidencia=0;
                                         switch($status_pds){
-                                            case "Alta incidencia": $value_incidencia=1;break;
+                                            case "Alta realizada":  $value_incidencia=1;break;
                                             case "En proceso":      $value_incidencia=2;break;
                                             case "Visita prevista": $value_incidencia=3;break;
                                             case "Finalizada":      $value_incidencia=4;break;
@@ -79,42 +79,55 @@
                                     ?>
                                     <ul class="timeline">
                                         <li>
-                                            <div class="timeline-badge"><i class="glyphicon glyphicon-check"></i></div>
-                                            <div style="padding:10px 20px 0px 20px" class="timeline-panel <?php echo ($value_incidencia>1)?'state_pasado' : ''?>
+                                            <div class="timeline-badge <?php echo ($value_incidencia>1)?'sombreado' : ''?>"><i class="glyphicon glyphicon-check"></i></div>
+                                            <div style="padding:10px 20px 0px 20px" class="timeline-panel <?php echo ($value_incidencia>1)?'state_pasado sombreado' : ''?>
                                             <?php echo ($value_incidencia==1)?'state_actual' : ''?>">
                                                 <div class="timeline-heading">
                                                     <h4 class="timeline-title">Alta realizada</h4>
                                                 </div>
                                             </div>
                                         </li>
-                                        <li class="timeline-inverted">
-                                            <div class="timeline-badge"><i
-                                                    class="fa fa-cogs"></i></div>
-                                            <div style="padding:10px 20px 0px 20px" class="timeline-panel <?php echo ($value_incidencia>2)?'state_pasado' : ''?>
-                                            <?php echo ($value_incidencia==2)?'state_actual' : ''?>">
-                                                <div class="timeline-heading">
-                                                    <h4 class="timeline-title">En proceso</h4>
+                                        <?php if($value_incidencia>1) { ?>
+                                            <li class="timeline-inverted">
+                                                <div class="timeline-badge <?php echo ($value_incidencia>2)?'sombreado' : ''?>"><i
+                                                        class="fa fa-cogs"></i></div>
+                                                <div style="padding:10px 20px 0px 20px"
+                                                     class="timeline-panel <?php echo ($value_incidencia > 2) ? 'state_pasado sombreado' : '' ?>
+                                            <?php echo ($value_incidencia == 2) ? 'state_actual' : '' ?>">
+                                                    <div class="timeline-heading">
+                                                        <h4 class="timeline-title">En proceso</h4>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </li>
+                                            </li>
+                                        <?php
+                                        }
+                                        if($value_incidencia>2) {
+                                        ?>
                                         <li>
-                                            <div class="timeline-badge"><i class="fa fa-truck"></i></div>
-                                            <div style="padding:10px 20px 0px 20px" class="timeline-panel <?php echo ($value_incidencia>3)?'state_pasado' : ''?>
+                                            <div class="timeline-badge <?php echo ($value_incidencia>3)?'sombreado' : ''?>"><i class="fa fa-truck"></i></div>
+                                            <div style="padding:10px 20px 0px 20px" class="timeline-panel <?php echo ($value_incidencia>3)?'state_pasado sombreado' : ''?>
                                             <?php echo ($value_incidencia==3)?'state_actual' : ''?>">
                                                 <div class="timeline-heading">
                                                     <h4 class="timeline-title">Visita prevista</h4>
                                                 </div>
                                             </div>
                                         </li>
+                                        <?php
+                                        }
+                                        if($value_incidencia>3) {
+                                        ?>
                                         <li class="timeline-inverted">
                                             <div class="timeline-badge"><i
                                                     class="glyphicon glyphicon-credit-card"></i></div>
                                             <div style="padding:10px 20px 0px 20px" class="timeline-panel <?php echo ($value_incidencia>4)?'state_actual' : ''?>">
                                                 <div class="timeline-heading">
-                                                    <h4 class="timeline-title"><?php echo ($value_incidencia>4)?$status_pds : 'Finalizada'?></h4>
+                                                    <h4 class="timeline-title"><?php echo ($value_incidencia>=4)?$status_pds : 'Finalizada'?></h4>
                                                 </div>
                                             </div>
                                         </li>
+                                        <?php
+                                        }
+                                        ?>
                                     </ul>
                                 </div>
                             </div>
