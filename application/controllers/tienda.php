@@ -649,7 +649,7 @@ class Tienda extends CI_Controller {
 
 			$this->load->view('tienda/header', $data);
 			$this->load->view('tienda/navbar', $data);
-			$this->load->view('tienda/content', $data);
+			$this->load->view('tienda/ayuda', $data);
 			$this->load->view('tienda/footer');
 		}
 		else
