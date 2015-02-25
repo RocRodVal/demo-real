@@ -1372,11 +1372,10 @@ class Admin extends CI_Controller {
 	   	}
 	   	
 		$data['title']   = 'Ayuda';
-		$data['content'] = 'En construcción.';
 	
 		$this->load->view('backend/header', $data);
 		$this->load->view('backend/navbar', $data);
-		$this->load->view('backend/content', $data);
+		$this->load->view('backend/ayuda', $data);
 		$this->load->view('backend/footer');
 	}	
 		

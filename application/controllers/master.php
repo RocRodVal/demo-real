@@ -1177,11 +1177,10 @@ class Master extends CI_Controller {
 	   	}
 	   	
 		$data['title']   = 'Ayuda';
-		$data['content'] = 'En construcción.';
 	
 		$this->load->view('master/header', $data);
 		$this->load->view('master/navbar', $data);
-		$this->load->view('master/content', $data);
+		$this->load->view('master/ayuda', $data);
 		$this->load->view('master/footer');
 	}	
 

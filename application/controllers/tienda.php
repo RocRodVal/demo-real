@@ -645,7 +645,6 @@ class Tienda extends CI_Controller {
 			$data['id_pds_url'] = $sfid['id_pds'];
 			
 			$data['title']      = 'Ayuda';
-			$data['content']    = 'En construcción.';
 
 			$this->load->view('tienda/header', $data);
 			$this->load->view('tienda/navbar', $data);
