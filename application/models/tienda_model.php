@@ -64,6 +64,38 @@ class Tienda_model extends CI_Model {
 		}
 	}	
 	
+	/* Funciones específicas para muebles y dispositivos tienda basados en SFID */
+	
+	public function get_displays_pds($id) {
+		if($id != FALSE) {
+			$query = $this->db->select('displays_pds.*,display.*')
+			->join('display','displays_pds.id_display = display.id_display')
+			->where('displays_pds.id_pds', $id)
+			->order_by('position')
+			->get('displays_pds');
+	
+			return $query->result();
+		}
+		else {
+			return FALSE;
+		}
+	}	
+	
+	public function get_display_pds($id) {
+			if($id != FALSE) {
+			$query = $this->db->select('displays_pds.id_displays_pds, displays_pds.description, display.*')
+			->join('display','displays_pds.id_display = display.id_display')
+			->where('displays_pds.id_displays_pds', $id)
+			->get('displays_pds');
+
+			return $query->row_array();
+		}
+		else {
+			return FALSE;
+		}
+	}	
+	
+	/* Fin funciones específicas para muebles y dispositivos tienda basados en SFID */	
 	
 	public function get_inventario_panelado($id) {
 		if($id != FALSE) {		
@@ -223,6 +255,7 @@ class Tienda_model extends CI_Model {
 			return FALSE;
 		}
 	}
+
 
 			
 	public function get_device($id) {

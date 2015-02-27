@@ -24,12 +24,11 @@
             <video id="example_video_1" class="video-js vjs-default-skin" controls preload="none" height='300px' width="90%"
                    data-setup="{}">
                 <source src="<?php echo base_url(); ?>videos/ver_incidencias.mp4" type='video/mp4'/>
-                1
             </video>
         </div>
         <div class="col-lg-6">
             <h3>Crear nueva avería</h3>
-            <video id="example_video_1" class="video-js vjs-default-skin" controls preload="none" height='300px' width="90%"
+            <video id="example_video_2" class="video-js vjs-default-skin" controls preload="none" height='300px' width="90%"
                    data-setup="{}">
                 <source src="<?php echo base_url(); ?>videos/nueva_averia.mp4" type='video/mp4'/>
             </video>
@@ -38,14 +37,14 @@
     <div class="row">
         <div class="col-lg-6">
             <h3>Crear nuevo robo</h3>
-            <video id="example_video_1" class="video-js vjs-default-skin" controls preload="none" height='300px' width="90%"
+            <video id="example_video_3" class="video-js vjs-default-skin" controls preload="none" height='300px' width="90%"
                    data-setup="{}">
                 <source src="<?php echo base_url(); ?>videos/nuevo_robo.mp4" type='video/mp4'/>
             </video>
         </div>
         <div class="col-lg-6">
             <h3>Crear nueva incidencia de mueble</h3>
-            <video id="example_video_1" class="video-js vjs-default-skin" controls preload="none" height='300px' width="90%"
+            <video id="example_video_4" class="video-js vjs-default-skin" controls preload="none" height='300px' width="90%"
                    data-setup="{}">
                 <source src="<?php echo base_url(); ?>videos/nueva_incidencia_mueble.mp4" type='video/mp4'/>
             </video>

@@ -21,25 +21,11 @@ a.list-group-item:hover, a.list-group-item:focus{
     display: block;
     padding: 0;
     border: 0;
-    padding-top:25px;
+    padding-top:0px;
 }
 
 .caption img a {
     font-size: 8px;
-}
-.caption::before {
-    content: attr(title);
-    position: absolute;
-    background: #000; /* Color de fondo */
-    color: #F60; /* Color del texto */
-    font-size: 15px; /* Tamaño del texto */
-    padding: 5px;
-    right: 0;
-    height:35px;
-    top: -10px;
-    left: 0;
-    text-align: center;
-    z-index: 1;
 }
 
 #modal_alert>.modal-dialog {

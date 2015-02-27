@@ -566,7 +566,7 @@ class Tienda extends CI_Controller {
 			$data['zip']        = $sfid['zip'];
 			$data['city']       = $sfid['city'];
 
-			$displays           = $this->tienda_model->get_displays_panelado($data['id_pds']);
+			$displays           = $this->tienda_model->get_displays_pds($data['id_pds']);
 			foreach($displays as $key=>$display) {
 				$num_devices = $this->tienda_model->count_devices_display($display->id_display);
 				$display->devices_count = $num_devices;
@@ -605,7 +605,7 @@ class Tienda extends CI_Controller {
 			$data['zip']        = $sfid['zip'];
 			$data['city']       = $sfid['city'];			
 
-			$display             = $this->tienda_model->get_display($this->uri->segment(3));
+			$display             = $this->tienda_model->get_display_pds($this->uri->segment(3));
 			$data['id_display']  = $display['id_display'];
 			$data['display']     = $display['display'];
 			$data['picture_url'] = $display['picture_url'];

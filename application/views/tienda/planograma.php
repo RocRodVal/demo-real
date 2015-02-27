@@ -31,18 +31,16 @@
 									if ($display->picture_url != '')
 									{
 									?>
-									<a href="<?=site_url('tienda/planograma_mueble/'.$display->id_display) ?>">
+									<a href="<?=site_url('tienda/planograma_mueble/'.$display->id_displays_pds) ?>">
 										<div class="caption">
-											<img src="<?=site_url('application/uploads/'.$display->picture_url.'')?>" title="<?php echo $display->display ?>"/>
+											<img src="<?=site_url('application/uploads/'.$display->picture_url.'')?>" title="<?php echo strtoupper($display->display) ?>"/>
 										</div>
 									</a>
 									<?php
 									}
 									else{
 									?>
-									<a href="<?=site_url('tienda/planograma_mueble/'.$display->id_display) ?>">
-										<div class="caption" title="<?php echo $display->display; ?>"></div>
-									</a>	
+									<a href="<?=site_url('tienda/planograma_mueble/'.$display->id_displays_pds) ?>"><?php echo strtoupper($display->display); ?>"</a>	
 									<?php
 									}
 									?>
