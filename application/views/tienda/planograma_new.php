@@ -1,11 +1,11 @@
 		<!-- #page-wrapper -->
         <div id="page-wrapper">
             <div class="row">
-                <div class="col-lg-12">
-                    <h1 class="page-header"><?php echo $title ?>
+		        <div class="col-lg-12">
+		        	<h1 class="page-header"><?php echo $title ?>
 						<a href="<?=site_url('tienda/dashboard')?>" class="btn btn-danger right">Volver</a>
 					</h1>
-                </div>
+		        </div>
             </div>
             <div class="row">
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -18,7 +18,7 @@
  					?> 
  					<div class="panel panel-default">
                	 		<div class="panel-heading">
-                            Seleccione mueble
+                            Muebles
                         </div>
 						<div class="panel-body">
 							<div class="row">
@@ -31,7 +31,7 @@
 									if ($display->picture_url != '')
 									{
 									?>
-									<a href="<?=site_url('tienda/alta_incidencia_mueble'.'/'.$display->id_display) ?>">
+									<a href="<?=site_url('tienda/planograma_mueble/'.$display->id_displays_pds) ?>">
 										<div class="caption">
 											<img src="<?=site_url('application/uploads/'.$display->picture_url.'')?>" title="<?php echo strtoupper($display->display) ?>"/>
 										</div>
@@ -40,7 +40,7 @@
 									}
 									else{
 									?>
-									<a href="<?=site_url('tienda/alta_incidencia_mueble/'.$display->id_display) ?>"><?php echo strtoupper($display->display); ?>"</a>
+									<a href="<?=site_url('tienda/planograma_mueble/'.$display->id_displays_pds) ?>"><?php echo strtoupper($display->display); ?>"</a>	
 									<?php
 									}
 									?>
@@ -59,4 +59,3 @@
             </div>     	            
         </div>
         <!-- /#page-wrapper -->
-		<?php $this->load->view('tienda/modal_alert');?>

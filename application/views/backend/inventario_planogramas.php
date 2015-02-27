@@ -5,7 +5,6 @@
 		            <h1 class="page-header"><?php echo $title ?></h1>
 		        </div>
 		    </div>
-		    
             <div class="row">
                 <div class="col-lg-12">
                 	<form action="<?=site_url('admin/inventarios_planogramas');?>" method="post" class="form-inline form-sfid">
@@ -70,11 +69,5 @@
             <?php 
             }
             ?>
-                   	            
-            <div class="row">
-                <div class="col-lg-12">
-                    <?php echo $content ?>
-                </div>
-            </div>
         </div>
         <!-- /#page-wrapper -->

@@ -7,7 +7,6 @@
             </h1>
         </div>
     </div>
-
     <form
         action="<?= site_url('tienda/insert_incidencia_mueble_alarma/'.$id_display) ?>"
         method="post" class="content_auto form_login" enctype="multipart/form-data">
@@ -20,7 +19,7 @@
                                 <div class="row" id="description_textArea_device">
                                     <div class="col-lg-12">
                                         <div class="form-group">
-                                            <label>Describe brevemente el problema <small>(Mín. 20 caracteres)</small></label>
+                                            <label>Describe brevemente el problema <small>(Mín. 10 caracteres)</small></label>
                                             <textarea class="form-control" rows="5" name="description_1"
                                                       id="description_1"></textarea>
                                         </div>
@@ -32,7 +31,6 @@
                                     <div class="col-lg-12">
                                         <div class="form-group">
                                             <label>Persona de contacto</label>
-
                                             <div class="input-group">
                                                 <div class="input-group-addon"><i class="fa fa-user"></i></div>
                                                 <input class="form-control" name="contacto" id="contacto"
@@ -43,7 +41,6 @@
                                     <div class="col-lg-12">
                                         <div class="form-group">
                                             <label>Teléfono de contacto</label>
-
                                             <div class="input-group">
                                                 <div class="input-group-addon"><i class="fa fa-phone"></i></div>
                                                 <input type="phone" class="form-control" name="phone" id="phone"
@@ -54,28 +51,26 @@
                                 </div>
                                 <div class="col-lg-12">
                                     <div class="panel panel-default">
-                                        <div class="panel-heading">
-                                            <?php echo $display; ?>
-                                        </div>
                                         <div class="panel-body">
-
                                             <div class="col-lg-12">
                                                 <?php
                                                 if ($picture_url_dis <> '') {
-                                                    ?>
-                                                    <img
-                                                        src="<?= site_url('application/uploads/'.$picture_url_dis.'') ?>"
-                                                        style="width:100%;" title="<?php echo $display ?>"/>
+                                                ?>
+                                                <img src="<?= site_url('application/uploads/'.$picture_url_dis.'') ?>" style="width:100%;" title="<?php echo strtoupper($display) ?>"/>
                                                 <?php
                                                 }
-                                                ?>
+												else
+												{
+												?>
+												<p><strong><?php echo strtoupper($display); ?></strong></p>
+												<?php
+												}	
+												?>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-
-
                         </div>
                         <div class="row">
                             <div class="col-lg-offset-8 col-lg-4">

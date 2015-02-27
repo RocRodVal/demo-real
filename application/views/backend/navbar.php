@@ -51,18 +51,18 @@
                         <li><a <?=($this->uri->segment(1)==='intervencion')?'class="active"':''?> href="<?=site_url('intervencion')?>"><i class="fa fa-cog fa-fw"></i> Intervenciones</a></li>
                         <li><a <?=($this->uri->segment(1)==='inventario')?'class="active"':''?> href="<?=site_url('inventario')?>"><i class="fa fa-table fa-fw"></i> Depósito</a></li>
                         <?php               
-                        $exposicion = array('descripcion','exp_alta_incidencia','exp_alta_incidencia_mueble','exp_alta_incidencia_device','inventarios_panelados','inventarios_planogramas','inventarios');
+                        $exposicion = array('descripcion','exp_alta_incidencia','exp_alta_incidencia_mueble','exp_alta_incidencia_device','inventarios_panelados','inventarios_planogramas','inventarios','listado_panelados');
                         ?>
                         <li <?=(in_array($this->uri->segment(2), $exposicion))?'class="active"':''?>>
                             <a href="#"><i class="fa fa-sitemap fa-fw"></i> Exposición<span class="fa arrow"></span></a>
                             <ul class="nav nav-second-level">
-                            	<li><a <?=($this->uri->segment(2)==='inventarios_planogramas')?'class="active"':''?> href="<?=site_url('admin/inventarios_planogramas')?>">Planograma genérico &raquo;</a></li>
+                            	<li><a <?=($this->uri->segment(2)==='inventarios_panelados')?'class="active"':''?> href="<?=site_url('admin/inventarios_panelados')?>">Panelado genérico &raquo;</a></li>
+                                <li><a <?=($this->uri->segment(2)==='inventarios_planogramas')?'class="active"':''?> href="<?=site_url('admin/inventarios_planogramas')?>">Planograma genérico &raquo;</a></li>
                             	<?php
                             	$descripcion = array('descripcion','exp_alta_incidencia','exp_alta_incidencia_mueble','exp_alta_incidencia_device');
                             	?>
                             	<li><a <?=(in_array($this->uri->segment(2), $descripcion))?'class="active"':''?> href="<?=site_url('admin/descripcion')?>">Planograma tiendas &raquo;</a></li>
-                             <li><a <?=($this->uri->segment(2)==='inventarios')?'class="active"':''?> href="<?=site_url('admin/inventarios')?>">Inventarios tiendas &raquo;</a></li>
-                            	
+                             	<li><a <?=($this->uri->segment(2)==='inventarios')?'class="active"':''?> href="<?=site_url('admin/inventarios')?>">Inventarios tiendas &raquo;</a></li>
                             </ul>
                         </li>                        
                         <li><a <?=($this->uri->segment(2)==='facturacion')?'class="active"':''?> href="<?=site_url('admin/facturacion')?>"><i class="fa fa-money fa-fw"></i> Facturación</a></li>

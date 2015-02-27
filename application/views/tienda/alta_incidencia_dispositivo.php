@@ -7,7 +7,6 @@
             </h1>
         </div>
     </div>
-
     <form
         action="<?= site_url('tienda/insert_incidencia/' . $id_display . '/' . $id_device) ?>"
         method="post" class="content_auto form_login" enctype="multipart/form-data">
@@ -20,34 +19,27 @@
                                 <div class="row">
                                     <div class="col-lg-12">
                                         <label>Tipo de incidencia</label>
-
                                         <div class="radio">
                                             <label>
                                                 <input type="radio" name="tipo_averia" id="tipo_averia_robo" value="1"> Robo
                                             </label>
                                             <label>
-                                                <input type="radio" name="tipo_averia" id="tipo_averia_averia" value="0">Avería
+                                                <input type="radio" name="tipo_averia" id="tipo_averia_averia" value="0"> Avería
                                             </label>
-
                                             <div id="denuncia" hidden>
                                                 <p>Suba una copia de la denuncia por robo:</p>
-                                                <input id="denuncia" class="file" type="file" multiple=false
-                                                       name="userfile">
+                                                <input id="denuncia" class="file" type="file" multiple=false name="userfile">
                                             </div>
-                                        </div>
-                                        <div class="radio">
-
                                         </div>
                                     </div>
                                 </div>
                                 <div class="row" id="alarmaDisplay">
                                     <div class="col-lg-12">
                                         <label>Indica los elementos que están afectados</label>
-
                                         <p>
-                                            <input type="checkbox" name="device" value="1">Dispositivo
-                                            <input type="checkbox" name="alarm_garra" value="1">Soporte/Anclaje
-                                            <input type="checkbox" name="alarm_device" value="1">Alarma/Cableado
+                                            <input type="checkbox" name="device" value="1"> Dispositivo
+                                            <input type="checkbox" name="alarm_garra" value="1"> Soporte/Anclaje
+                                            <input type="checkbox" name="alarm_device" value="1"> Alarma/Cableado
                                         </p>
                                     </div>
                                 </div>
@@ -55,28 +47,19 @@
                                     <div class="col-lg-12">
                                         <div class="form-group">
                                             <label>Describe brevemente el problema
-                                                <small>(Mín. 20 caracteres)</small>
+                                                <small>(Mín. 10 caracteres)</small>
                                             </label>
                                             <textarea class="form-control" rows="5" name="description_1"
                                                       id="description_1"></textarea>
                                         </div>
                                     </div>
                                 </div>
-                                <!--//
-                           		<p>Suba una foto de la incidencia #1:</p>
-								<input id="photo_1" class="file" type="file" multiple=false name="photo_1">
-                           		<p>Suba una foto de la incidencia #2:</p>
-								<input id="photo_2" class="file" type="file" multiple=false name="photo_2">
-                           		<p>Suba una foto de la incidencia #3:</p>
-								<input id="photo_3" class="file" type="file" multiple=false name="photo_3">
-								//-->
                             </div>
                             <div class="col-lg-5">
                                 <div class="row">
                                     <div class="col-lg-12">
                                         <div class="form-group">
                                             <label>Persona de contacto</label>
-
                                             <div class="input-group">
                                                 <div class="input-group-addon"><i class="fa fa-user"></i></div>
                                                 <input class="form-control" name="contacto" id="contacto"
@@ -87,7 +70,6 @@
                                     <div class="col-lg-12">
                                         <div class="form-group">
                                             <label>Teléfono de contacto</label>
-
                                             <div class="input-group">
                                                 <div class="input-group-addon"><i class="fa fa-phone"></i></div>
                                                 <input type="phone" class="form-control" name="phone" id="phone"
@@ -98,28 +80,26 @@
                                 </div>
                                 <div class="col-lg-12">
                                     <div class="panel panel-default">
-                                        <div class="panel-heading">
-                                            <?php echo $device; ?>
-                                        </div>
                                         <div class="panel-body">
-
                                             <div class="col-lg-12">
                                                 <?php
                                                 if ($picture_url_dev <> '') {
-                                                    ?>
-                                                    <img
-                                                        src="<?= site_url('application/uploads/' . $picture_url_dev . '') ?>"
-                                                        style="width:100%;" title="<?php echo $device ?>"/>
+                                                ?>
+                                                <img src="<?= site_url('application/uploads/' . $picture_url_dev . '') ?>" style="width:100%;" title="<?php echo strtoupper($device) ?>"/>
                                                 <?php
                                                 }
-                                                ?>
+												else
+												{
+												?>
+												<p><strong><?php echo strtoupper($device); ?></strong></p>
+												<?php
+												}	
+												?>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-
-
                         </div>
                         <div class="row right">
                             <div class="right col-lg-12">

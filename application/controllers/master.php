@@ -90,6 +90,8 @@ class Master extends CI_Controller {
 		}
 	}	
 	
+
+	
 	
 	public function detalle_incidencia($id_incidencia)
 	{

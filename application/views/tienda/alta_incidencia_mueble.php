@@ -34,7 +34,7 @@
 										<?php
 										}
 										?>
-										<a class="list-group-item" href="<?=site_url('tienda/alta_incidencia_mueble_alarma/'.$id_display)?>"> &gt; Afecta al sistema de alarma central &lt; </a>
+										<a class="list-group-item" href="<?=site_url('tienda/alta_incidencia_mueble_alarma/'.$id_display)?>"> &gt; Afecta al sistema de seguridad central &lt; </a>
 									</div>
 								</div>
 								<div class="col-lg-4">
@@ -42,9 +42,15 @@
 									if ($picture_url != '')
 									{
 									?>
-									<img src="<?=site_url('application/uploads/'.$picture_url.'')?>" title="<?php echo $display ?> " style='width:100%'; />
+									<img src="<?=site_url('application/uploads/'.$picture_url.'')?>" title="<?php echo strtoupper($display) ?> " style='width:100%'; />
 									<?php
 									}
+									else
+									{
+									?>
+									<p><strong><?php echo strtoupper($display); ?></strong></p>
+									<?php
+									}	
 									?>
 								</div>
 							</div>

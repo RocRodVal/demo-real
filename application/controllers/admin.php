@@ -162,6 +162,29 @@ class Admin extends CI_Controller {
 		}	
 	}	
 	
+	public function listado_panelados()
+	{
+	
+		$xcrud = xcrud_get_instance();
+		$this->load->model('tienda_model');
+	
+		$panelados = $this->tienda_model->get_panelados_maestros();
+	
+		foreach($panelados as $key=>$panelado) {
+			$displays = $this->tienda_model->get_displays_panelado_maestros($panelado->id_panelado);
+			$data['displays'] = $displays;
+		}
+	
+		$data['panelados'] = $panelados;
+	
+		$data['title'] = 'Panelado tienda';
+	
+		$this->load->view('backend/header', $data);
+		$this->load->view('backend/navbar', $data);
+		$this->load->view('backend/maestro', $data);
+		$this->load->view('backend/footer');
+	}	
+	
 
 	public function operar_incidencia()
 	{
@@ -658,7 +681,7 @@ class Admin extends CI_Controller {
 		$xcrud_2->unset_numbers();
 		$xcrud_2->start_minimized(true);
 
-		$data['title']   = 'Panelados tiendas';
+		$data['title']   = 'Panelado genérico';
 		$data['content'] = $xcrud_1->render();
 		$data['content'] = $data['content'].$xcrud_2->render();
 

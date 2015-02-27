@@ -64,6 +64,29 @@ class Tienda_model extends CI_Model {
 		}
 	}	
 	
+	public function get_panelados_maestros() {
+		$query = $this->db->select('id_panelado,panelado,panelado_abx')
+			   ->order_by('panelado_abx')
+			   ->get('panelado');
+	
+		return $query->result();
+	}	
+	
+	public function get_displays_panelado_maestros($id_panelado) {
+		if($id_panelado != FALSE) {
+			$query = $this->db->select('displays_panelado.*,display.*')
+			->join('display','displays_panelado.id_display = display.id_display')
+			->where('displays_panelado.id_panelado', $id_panelado)
+			->order_by('position')
+			->get('displays_panelado');
+	
+			return $query->result();
+		}
+		else {
+			return FALSE;
+		}
+	}	
+	
 	/* Funciones específicas para muebles y dispositivos tienda basados en SFID */
 	
 	public function get_displays_pds($id) {
@@ -299,8 +322,8 @@ class Tienda_model extends CI_Model {
 	public function get_incidencias_pds($id) {
 		$query = $this->db->select('incidencias.*,pds.reference as reference')
 		->join('pds','incidencias.id_pds = pds.id_pds')
-	
 		->where('incidencias.id_pds',$id)
+		->where('incidencias.status != "Cancelada"')
 		->order_by('fecha ASC')
 		->get('incidencias');
 	
@@ -383,7 +406,6 @@ class Tienda_model extends CI_Model {
 		$this->db->insert('incidencias',$data);
 		$id=$this->db->insert_id();
 		return array('add' => (isset($id)) ? $id : FALSE, 'id' => $id);
-		//return (isset($id)) ? $id : FALSE;
 	}	
 	
 	
