@@ -36,11 +36,11 @@
                                 <div class="row" id="alarmaDisplay">
                                     <div class="col-lg-12">
                                         <label>Indica los elementos que están afectados</label>
-                                        <p>
-                                            <input type="checkbox" name="device" value="1"> Dispositivo
-                                            <input type="checkbox" name="alarm_garra" value="1"> Soporte/Anclaje
-                                            <input type="checkbox" name="alarm_device" value="1"> Alarma/Cableado
-                                        </p>
+                                        <ul style="list-style:none">
+                                            <li><input type="checkbox" name="device" value="1"> Dispositivo</li>
+                                            <li><input type="checkbox" name="alarm_garra" value="1"> Soporte/Anclaje</li>
+                                            <li><input type="checkbox" name="alarm_device" value="1"> Alarma/Cableado</li>
+                                        </ul>
                                     </div>
                                 </div>
                                 <div class="row" id="description_textArea_device">
