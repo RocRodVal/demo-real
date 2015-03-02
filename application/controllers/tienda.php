@@ -667,7 +667,7 @@ class Tienda extends CI_Controller {
 		}		
 	}	
 	
-	
+/*
 	public function ayuda()
 	{
 		if($this->session->userdata('logged_in'))
@@ -676,7 +676,7 @@ class Tienda extends CI_Controller {
 			$data['sfid']   = $this->session->userdata('sfid');
 			
 			$xcrud = xcrud_get_instance();
-			$this->load->model('tienda_model');			
+			$this->load->model('tienda_model');
 						
 			$sfid               = $this->tienda_model->get_pds($data['id_pds']);
 			$data['id_pds']     = $sfid['id_pds'];
@@ -699,7 +699,46 @@ class Tienda extends CI_Controller {
 			redirect('tienda','refresh');
 		}
 	}
+*/
+	public function ayuda($tipo)
+	{
+		if($this->session->userdata('logged_in'))
+		{
+			$data['id_pds'] = $this->session->userdata('id_pds');
+			$data['sfid']   = $this->session->userdata('sfid');
 
+			$xcrud = xcrud_get_instance();
+			$this->load->model('tienda_model');
+
+			switch($tipo){
+				case 1: $data['video']="ver_incidencias.mp4";			$data['ayuda_title']="MIS SOLICITUDES"; 	break;
+				case 2: $data['video']="nueva_averia.mp4"; 				$data['ayuda_title']="ALTA DE NUEVA INCIDENCIA";	break;
+				case 3: $data['video']="nueva_incidencia_mueble.mp4"; 	$data['ayuda_title']="ALTA DE NUEVA INCIDENCIA DE MUEBLE";	break;
+				case 4: $data['video']="nuevo_robo.mp4"; 				$data['ayuda_title']="INCIDENCIAS FRECUENTES";	break;
+				default: $data['video']="ver_incidencias.mp4";
+			}
+
+			$sfid               = $this->tienda_model->get_pds($data['id_pds']);
+			$data['id_pds']     = $sfid['id_pds'];
+			$data['commercial'] = $sfid['commercial'];
+			$data['reference']  = $sfid['reference'];
+			$data['address']    = $sfid['address'];
+			$data['zip']        = $sfid['zip'];
+			$data['city']       = $sfid['city'];
+			$data['id_pds_url'] = $sfid['id_pds'];
+
+			$data['title']      = 'Ayuda';
+
+			$this->load->view('tienda/header', $data);
+			$this->load->view('tienda/navbar', $data);
+			$this->load->view('tienda/ayuda', $data);
+			$this->load->view('tienda/footer');
+		}
+		else
+		{
+			redirect('tienda','refresh');
+		}
+	}
 
 	public function logout()
 	{
