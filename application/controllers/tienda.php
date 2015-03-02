@@ -59,8 +59,8 @@ class Tienda extends CI_Controller {
 			
 			foreach($incidencias as $incidencia)
 			{
-				$incidencia->device= $this->tienda_model->get_device($incidencia->id_devices_pds);
-				$incidencia->display= $this->tienda_model->get_display($incidencia->id_displays_pds);
+				$incidencia->device  = $this->tienda_model->get_device($incidencia->id_devices_pds);
+				$incidencia->display = $this->tienda_model->get_display($incidencia->id_displays_pds);
 
 			}			
 			$data['incidencias'] =  $incidencias;
@@ -373,7 +373,7 @@ class Tienda extends CI_Controller {
 				'id_displays_pds' 	=> $id_dis,
 				'id_devices_pds' 	=> $id_dev,
 				'tipo_averia' 	    => $tipo_averia,
-				'device'            => $this->input->post('device'),
+				'fail_device'       => $this->input->post('device'),
 				'alarm_display'     => $this->input->post('alarm_display'),
 				'alarm_device'      => $this->input->post('alarm_device'),
 				'alarm_garra'       => $this->input->post('alarm_garra'),
@@ -454,7 +454,7 @@ class Tienda extends CI_Controller {
 				'id_displays_pds' 	=> $id_dis,
 				'id_devices_pds' 	=> NULL,
 				'tipo_averia' 	    => 'Avería',
-				'device'            => 0,
+				'fail_device'       => 0,
 				'alarm_display'     => 1,
 				'alarm_device'      => 0,
 				'alarm_garra'       => 0,

@@ -46,6 +46,8 @@ function checkDenuncia(){
     console.log($('.file-caption-name')[0]);
     disable=$('.file-caption-name')[0].innerHTML=='';
     //$('input[name="submit"]').attr('disabled',disable);
+    if(disable==FALSE)
+    	$('input[name="device"]').prop('checked',TRUE);
     return disable;
     //$('textarea').attr('disabled',disable);
     //$('input[type="checkbox"]').attr('disabled',disable);
