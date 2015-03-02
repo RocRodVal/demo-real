@@ -10,6 +10,7 @@ $(document).ready(function(){
         $('input[name="tipo_averia"]').change(showDenuncia);
         $('input[name="tipo_averia"]').change(checkUserData);
         $('textarea[name="description_1"]').keypress(checkUserData);
+        $('#denuncia').change(checkDenuncia);
         $('#denuncia').change(checkUserData);
         /*
         if(controller == "alta_incidencia_dispositivo")
@@ -31,7 +32,6 @@ $(document).ready(function(){
 
 
 function showDenuncia(){
-    console.log($("#"+this.id));
     if($("#"+this.id).attr('value')==1){
         $("#denuncia").show('slow');
     }
@@ -43,11 +43,10 @@ function showDenuncia(){
 }
 
 function checkDenuncia(){
-    console.log($('.file-caption-name')[0]);
     disable=$('.file-caption-name')[0].innerHTML=='';
     //$('input[name="submit"]').attr('disabled',disable);
-    if(disable==FALSE)
-    	$('input[name="device"]').prop('checked',TRUE);
+    if(disable==false)
+    	$('input[name="device"]').attr('checked',true);
     return disable;
     //$('textarea').attr('disabled',disable);
     //$('input[type="checkbox"]').attr('disabled',disable);
@@ -63,7 +62,6 @@ function checkUserData(){
             check = false;
 
             for (var i = 0; i < $('input[type="checkbox"]').length; i++) {
-                console.log()
                 if ($('input[type="checkbox"]')[i].checked) {
                     check = true;
                     break;
@@ -84,7 +82,6 @@ function checkUserData(){
             }
         }
     }
-    console.log("DISABLED->"+!value);
     $('input[name="submit"]').attr('disabled',!value);
 }
 
