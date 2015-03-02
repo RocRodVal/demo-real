@@ -711,10 +711,10 @@ class Tienda extends CI_Controller {
 			$this->load->model('tienda_model');
 
 			switch($tipo){
-				case 1: $data['video']="ver_incidencias.mp4";			$data['ayuda_title']="MIS SOLICITUDES"; 	break;
-				case 2: $data['video']="nueva_averia.mp4"; 				$data['ayuda_title']="ALTA DE NUEVA INCIDENCIA";	break;
-				case 3: $data['video']="nueva_incidencia_mueble.mp4"; 	$data['ayuda_title']="ALTA DE NUEVA INCIDENCIA DE MUEBLE";	break;
-				case 4: $data['video']="nuevo_robo.mp4"; 				$data['ayuda_title']="INCIDENCIAS FRECUENTES";	break;
+				case 1: $data['video']="ver_incidencias.mp4";			$data['ayuda_title']="Mis solicitudes"; 	    break;
+				case 2: $data['video']="nueva_averia.mp4"; 				$data['ayuda_title']="Alta incidencia";	        break;
+				case 3: $data['video']="nueva_incidencia_mueble.mp4"; 	$data['ayuda_title']="Alta incidencia mueble";	break;
+				case 4: $data['video']="nuevo_robo.mp4"; 				$data['ayuda_title']="Incidencias frecuentes";	break;
 				default: $data['video']="ver_incidencias.mp4";
 			}
 
