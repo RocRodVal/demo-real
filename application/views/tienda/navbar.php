@@ -26,10 +26,10 @@
                         <li <?=($this->uri->segment(2)==='ayuda')?'class="active"':''?>>
                         <a href="#"><i class="fa fa-question-circle fa-fw"></i> Ayuda<span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level">
-                            <li><a <?=($this->uri->segment(3)==='1')?'class="active"':''?> href="<?=site_url('tienda/ayuda/1')?>"> Mis solicitudes</a> </li>
-                            <li><a <?=($this->uri->segment(3)==='2')?'class="active"':''?> href="<?=site_url('tienda/ayuda/2')?>"> Alta incidencia</a> </li>
-                            <li><a <?=($this->uri->segment(3)==='3')?'class="active"':''?> href="<?=site_url('tienda/ayuda/3')?>"> Alta incidencia mueble</a> </li>
-                            <li><a <?=($this->uri->segment(3)==='4')?'class="active"':''?> href="<?=site_url('tienda/ayuda/4')?>"> Incidencias frecuentes</a> </li>
+                            <li><a <?=($this->uri->segment(3)==='1')?'class="active"':''?> href="<?=site_url('tienda/ayuda/1')?>"> Mis solicitudes</a></li>
+                            <li><a <?=($this->uri->segment(3)==='2')?'class="active"':''?> href="<?=site_url('tienda/ayuda/2')?>"> Alta incidencia</a></li>
+                            <li><a <?=($this->uri->segment(3)==='3')?'class="active"':''?> href="<?=site_url('tienda/ayuda/3')?>"> Alta incidencia mueble</a></li>
+                            <li><a <?=($this->uri->segment(3)==='4')?'class="active"':''?> href="<?=site_url('tienda/ayuda/4')?>"> Incidencias frecuentes</a></li>
                         </ul>
                         </li>
                     </ul>

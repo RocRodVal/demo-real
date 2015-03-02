@@ -102,26 +102,17 @@ class Master extends CI_Controller {
 	
 			$xcrud = xcrud_get_instance();
 			$this->load->model('tienda_model');
-	
-			$sfid = $this->tienda_model->get_pds($data['id_pds']);
-	
-			$data['id_pds']     = $sfid['id_pds'];
-			$data['commercial'] = $sfid['commercial'];
-			$data['territory']  = $sfid['territory'];
-			$data['reference']  = $sfid['reference'];
-			$data['address']    = $sfid['address'];
-			$data['zip']        = $sfid['zip'];
-			$data['city']       = $sfid['city'];
-				
-			$incindencia = $this->tienda_model->get_incidencia($id_incidencia);
 			
+			$incindencia = $this->tienda_model->get_incidencia($id_incidencia);
+
 			$data['id_incidencia']   = $incindencia['id_incidencia'];
 			$data['fecha']           = $incindencia['fecha'];
 			$data['id_pds']          = $incindencia['id_pds'];
 			$data['id_displays_pds'] = $incindencia['id_displays_pds'];
 			$data['id_devices_pds']  = $incindencia['id_devices_pds'];
-			$data['tipo_averia']     = $incindencia['tipo_averia'];
 			$data['alarm_display']   = $incindencia['alarm_display'];
+			$data['tipo_averia']     = $incindencia['tipo_averia'];
+			$data['fail_device']     = $incindencia['fail_device'];
 			$data['alarm_device']    = $incindencia['alarm_device'];
 			$data['alarm_garra']     = $incindencia['alarm_garra'];
 			$data['description_1']   = $incindencia['description_1'];
@@ -129,7 +120,17 @@ class Master extends CI_Controller {
 			$data['denuncia']        = $incindencia['denuncia'];
 			$data['contacto']        = $incindencia['contacto'];
 			$data['phone']           = $incindencia['phone'];
-			$data['status_pds']      = $incindencia['status_pds'];
+			$data['status_pds']      = $incindencia['status_pds'];			
+			
+			$sfid = $this->tienda_model->get_pds($incindencia['id_pds']);
+			
+			$data['id_pds']     = $sfid['id_pds'];
+			$data['commercial'] = $sfid['commercial'];
+			$data['territory']  = $sfid['territory'];
+			$data['reference']  = $sfid['reference'];
+			$data['address']    = $sfid['address'];
+			$data['zip']        = $sfid['zip'];
+			$data['city']       = $sfid['city'];			
 			
 			$display     = $this->tienda_model->get_display($incindencia['id_displays_pds']);
 	
@@ -143,7 +144,7 @@ class Master extends CI_Controller {
 			$data['device']          = $device['device'];
 			$data['picture_url_dev'] = $device['picture_url'];
 	
-			$data['title'] = 'Estado de solicitud #'.$id_incidencia;
+			$data['title'] = 'Estado de solicitud #'.$id_incidencia.' [SFID-'.$data['reference'].']';
 	
 			$this->load->view('master/header',$data);
 			$this->load->view('master/navbar',$data);

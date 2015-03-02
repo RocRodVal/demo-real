@@ -289,7 +289,7 @@ class Tienda extends CI_Controller {
 			$data['id_devices_pds']  = $incindencia['id_devices_pds'];
 			$data['alarm_display']   = $incindencia['alarm_display'];
 			$data['tipo_averia']     = $incindencia['tipo_averia'];
-			$data['device']          = $incindencia['device'];			
+			$data['fail_device']     = $incindencia['fail_device'];			
 			$data['alarm_device']    = $incindencia['alarm_device'];
 			$data['alarm_garra']     = $incindencia['alarm_garra'];
 			$data['description_1']   = $incindencia['description_1'];
@@ -711,11 +711,11 @@ class Tienda extends CI_Controller {
 			$this->load->model('tienda_model');
 
 			switch($tipo){
-				case 1: $data['video']="ver_incidencias.mp4";			$data['ayuda_title']="MIS SOLICITUDES"; 	break;
-				case 2: $data['video']="nueva_averia.mp4"; 				$data['ayuda_title']="ALTA DE NUEVA INCIDENCIA";	break;
-				case 3: $data['video']="nueva_incidencia_mueble.mp4"; 	$data['ayuda_title']="ALTA DE NUEVA INCIDENCIA DE MUEBLE";	break;
-				case 4: $data['video']="nuevo_robo.mp4"; 				$data['ayuda_title']="INCIDENCIAS FRECUENTES";	break;
-				default: $data['video']="ver_incidencias.mp4";
+				case 1: $data['video']="ver_incidencias.mp4";			$data['ayuda_title']="Mis solicitudes"; 	    break;
+				case 2: $data['video']="nueva_averia.mp4"; 				$data['ayuda_title']="Alta incidencia";	        break;
+				case 3: $data['video']="nueva_incidencia_mueble.mp4"; 	$data['ayuda_title']="Alta incidencia mueble";	break;
+				case 4: $data['video']="nuevo_robo.mp4"; 				$data['ayuda_title']="Incidencias frecuentes";	break;
+				default: $data['video']="ver_incidencias.mp4";          $data['ayuda_title']="Mis solicitudes"; 
 			}
 
 			$sfid               = $this->tienda_model->get_pds($data['id_pds']);

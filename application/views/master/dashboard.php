@@ -108,7 +108,7 @@
 		                                <td><?=($incidencia->alarm_display==1)?'Mueble: '.$incidencia->display['display']:'Dispositivo: '.$incidencia->device['device']?>
 		                                </td>
 		                                <td><?=($incidencia->alarm_display==1)?'&#x25cf;':''?></td>
-		                                <td><?=($incidencia->id_devices_pds!=NULL)?'&#x25cf;':''?></td>
+		                                <td><?=($incidencia->fail_device==1)?'&#x25cf;':''?></td>
 		                                <td><?=($incidencia->alarm_device==1)?'&#x25cf;':''?></td>
 		                                <td><?=($incidencia->alarm_garra==1)?'&#x25cf;':''?></td>
 		                                <td><?php echo $incidencia->tipo_averia ?></td>
