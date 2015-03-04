@@ -15,7 +15,6 @@ class Tienda extends CI_Controller {
 	{
 		$xcrud = xcrud_get_instance();
 		$this->load->model('user_model');
-		$this->load->model('tienda_model');
 		
 		$this->form_validation->set_rules('sfid','SFID','required|xss_clean');
 		$this->form_validation->set_rules('password','password','required|xss_clean');
@@ -36,7 +35,7 @@ class Tienda extends CI_Controller {
 		{
 			$this->data['message'] = (validation_errors() ? validation_errors() : ($this->session->flashdata('message')));
 						
-			$data['title']   = 'Login';
+			$data['title'] = 'Login';
 			
 			$this->load->view('tienda/header',$data);
 			$this->load->view('tienda/login',$data);
@@ -53,20 +52,18 @@ class Tienda extends CI_Controller {
 			$data['sfid']   = $this->session->userdata('sfid');
 				
 			$xcrud = xcrud_get_instance();
-			$this->load->model('tienda_model');			
+			$this->load->model(array('sfid_model'));			
 
-			$incidencias = $this->tienda_model->get_incidencias_pds($data['id_pds']);
-			
+			$incidencias = $this->sfid_model->get_incidencias_pds($data['id_pds']);
 			foreach($incidencias as $incidencia)
 			{
-				$incidencia->device  = $this->tienda_model->get_device($incidencia->id_devices_pds);
-				$incidencia->display = $this->tienda_model->get_display($incidencia->id_displays_pds);
+				$incidencia->device  = $this->sfid_model->get_device_pds($incidencia->id_devices_pds);
+				$incidencia->display = $this->sfid_model->get_display_pds($incidencia->id_displays_pds);
 
-			}			
+			}
 			$data['incidencias'] =  $incidencias;
 			
-			$sfid = $this->tienda_model->get_pds($data['id_pds']);
-			
+			$sfid = $this->sfid_model->get_pds($data['id_pds']);
 			$data['id_pds']     = $sfid['id_pds'];
 			$data['commercial'] = $sfid['commercial'];
 			$data['territory']  = $sfid['territory'];
@@ -75,7 +72,7 @@ class Tienda extends CI_Controller {
 			$data['zip']        = $sfid['zip'];
 			$data['city']       = $sfid['city'];
 	
-			$data['title']   = 'Mis solicitudes';
+			$data['title'] = 'Mis solicitudes';
 			
 			$this->load->view('tienda/header',$data);
 			$this->load->view('tienda/navbar',$data);
@@ -97,10 +94,9 @@ class Tienda extends CI_Controller {
 			$data['sfid']   = $this->session->userdata('sfid');
 		
 			$xcrud = xcrud_get_instance();
-			$this->load->model('tienda_model');		
+			$this->load->model('sfid_model');		
 	
-			$sfid = $this->tienda_model->get_pds($data['id_pds']);
-			
+			$sfid = $this->sfid_model->get_pds($data['id_pds']);
 			$data['id_pds']     = $sfid['id_pds'];
 			$data['commercial'] = $sfid['commercial'];
 			$data['territory']  = $sfid['territory'];
@@ -109,16 +105,15 @@ class Tienda extends CI_Controller {
 			$data['zip']        = $sfid['zip'];
 			$data['city']       = $sfid['city'];
 
-			$displays = $this->tienda_model->get_displays_panelado($data['id_pds']);
-			
+			$displays = $this->sfid_model->get_displays_pds($data['id_pds']);
 			foreach($displays as $key=>$display) 
 			{
-				$num_devices = $this->tienda_model->count_devices_display($display->id_display);
+				$num_devices = $this->sfid_model->count_devices_display($display->id_display);
 				$display->devices_count = $num_devices;
 			}
 			$data['displays'] = $displays;
 
-			$data['title']    = 'Alta incidencia';
+			$data['title'] = 'Alta incidencia';
 		
 			$this->load->view('tienda/header',$data);
 			$this->load->view('tienda/navbar',$data);
@@ -140,10 +135,10 @@ class Tienda extends CI_Controller {
 			$data['sfid']   = $this->session->userdata('sfid');
 		
 			$xcrud = xcrud_get_instance();
-			$this->load->model('tienda_model');
+			$this->load->model('sfid_model');	
 		
-			$sfid = $this->tienda_model->get_pds($data['id_pds']);
-		
+			$sfid = $this->sfid_model->get_pds($data['id_pds']);
+			
 			$data['id_pds']     = $sfid['id_pds'];
 			$data['commercial'] = $sfid['commercial'];
 			$data['territory']  = $sfid['territory'];
@@ -152,13 +147,13 @@ class Tienda extends CI_Controller {
 			$data['zip']        = $sfid['zip'];
 			$data['city']       = $sfid['city'];
 			
-			$display = $this->tienda_model->get_display($this->uri->segment(3));
-	
+			$display = $this->sfid_model->get_display($this->uri->segment(3));
+			
 			$data['id_display']  = $display['id_display'];
 			$data['display']     = $display['display'];
 			$data['picture_url'] = $display['picture_url'];		
 		
-			$data['devices'] = $this->tienda_model->get_devices_display($this->uri->segment(3));
+			$data['devices'] = $this->sfid_model->get_devices_display_pds($this->uri->segment(3));
 		
 			$data['title'] = 'Alta incidencia';
 	
@@ -182,10 +177,10 @@ class Tienda extends CI_Controller {
 			$data['sfid']   = $this->session->userdata('sfid');
 		
 			$xcrud = xcrud_get_instance();
-			$this->load->model('tienda_model');
+			$this->load->model('sfid_model');
 		
-			$sfid = $this->tienda_model->get_pds($data['id_pds']);
-		
+			$sfid = $this->sfid_model->get_pds($data['id_pds']);
+			
 			$data['id_pds']     = $sfid['id_pds'];
 			$data['commercial'] = $sfid['commercial'];
 			$data['territory']  = $sfid['territory'];
@@ -194,15 +189,15 @@ class Tienda extends CI_Controller {
 			$data['zip']        = $sfid['zip'];
 			$data['city']       = $sfid['city'];
 			
-			$display = $this->tienda_model->get_display($this->uri->segment(3));	
+			$display = $this->sfid_model->get_display($this->uri->segment(3));
 		
-			$data['id_display']      = $display['id_display'];
+			$data['id_displays_pds'] = $display['id_displays_pds'];
 			$data['display']         = $display['display'];
 			$data['picture_url_dis'] = $display['picture_url'];
 			
-			$device = $this->tienda_model->get_device($this->uri->segment(4));
+			$device = $this->sfid_model->get_device($this->uri->segment(4));
 	
-			$data['id_device']       = $device['id_device'];
+			$data['id_devices_pds']  = $device['id_devices_pds'];
 			$data['device']          = $device['device'];
 			$data['picture_url_dev'] = $device['picture_url'];
 
@@ -228,9 +223,9 @@ class Tienda extends CI_Controller {
 			$data['sfid']   = $this->session->userdata('sfid');
 	
 			$xcrud = xcrud_get_instance();
-			$this->load->model('tienda_model');
+			$this->load->model('sfid_model');
 	
-			$sfid = $this->tienda_model->get_pds($data['id_pds']);
+			$sfid = $this->sfid_model->get_pds($data['id_pds']);
 	
 			$data['id_pds']     = $sfid['id_pds'];
 			$data['commercial'] = $sfid['commercial'];
@@ -240,9 +235,9 @@ class Tienda extends CI_Controller {
 			$data['zip']        = $sfid['zip'];
 			$data['city']       = $sfid['city'];
 				
-			$display = $this->tienda_model->get_display($this->uri->segment(3));
-	
-			$data['id_display']      = $display['id_display'];
+			$display = $this->sfid_model->get_display($this->uri->segment(3));
+		
+			$data['id_displays_pds'] = $display['id_displays_pds'];
 			$data['display']         = $display['display'];
 			$data['picture_url_dis'] = $display['picture_url'];
 
@@ -279,44 +274,52 @@ class Tienda extends CI_Controller {
 			$data['address']    = $sfid['address'];
 			$data['zip']        = $sfid['zip'];
 			$data['city']       = $sfid['city'];
-				
-			$incindencia = $this->tienda_model->get_incidencia($id_incidencia);
+
+
+			$incindencia = $this->tienda_model->get_incidencia($id_incidencia,$data['id_pds']);
 			
-			$data['id_incidencia']   = $incindencia['id_incidencia'];
-			$data['fecha']           = $incindencia['fecha'];
-			$data['id_pds']          = $incindencia['id_pds'];
-			$data['id_displays_pds'] = $incindencia['id_displays_pds'];
-			$data['id_devices_pds']  = $incindencia['id_devices_pds'];
-			$data['alarm_display']   = $incindencia['alarm_display'];
-			$data['tipo_averia']     = $incindencia['tipo_averia'];
-			$data['fail_device']     = $incindencia['fail_device'];			
-			$data['alarm_device']    = $incindencia['alarm_device'];
-			$data['alarm_garra']     = $incindencia['alarm_garra'];
-			$data['description_1']   = $incindencia['description_1'];
-			$data['description_2']   = $incindencia['description_2'];
-			$data['denuncia']        = $incindencia['denuncia'];
-			$data['contacto']        = $incindencia['contacto'];
-			$data['phone']           = $incindencia['phone'];
-			$data['status_pds']      = $incindencia['status_pds'];
-			
-			$display = $this->tienda_model->get_display($incindencia['id_displays_pds']);
-	
-			$data['id_display']      = $display['id_display'];
-			$data['display']         = $display['display'];
-			$data['picture_url_dis'] = $display['picture_url'];
+			if($incindencia == FALSE)
+			{
+				redirect('tienda/dashboard','refresh');
+			}
+			else
+			{
+				$data['id_incidencia']   = $incindencia['id_incidencia'];
+				$data['fecha']           = $incindencia['fecha'];
+				$data['id_pds']          = $incindencia['id_pds'];
+				$data['id_displays_pds'] = $incindencia['id_displays_pds'];
+				$data['id_devices_pds']  = $incindencia['id_devices_pds'];
+				$data['alarm_display']   = $incindencia['alarm_display'];
+				$data['tipo_averia']     = $incindencia['tipo_averia'];
+				$data['fail_device']     = $incindencia['fail_device'];			
+				$data['alarm_device']    = $incindencia['alarm_device'];
+				$data['alarm_garra']     = $incindencia['alarm_garra'];
+				$data['description_1']   = $incindencia['description_1'];
+				$data['description_2']   = $incindencia['description_2'];
+				$data['denuncia']        = $incindencia['denuncia'];
+				$data['contacto']        = $incindencia['contacto'];
+				$data['phone']           = $incindencia['phone'];
+				$data['status_pds']      = $incindencia['status_pds'];
 				
-			$device = $this->tienda_model->get_device($incindencia['id_devices_pds']);
-	
-			$data['id_device']       = $device['id_device'];
-			$data['device']          = $device['device'];
-			$data['picture_url_dev'] = $device['picture_url'];
-	
-			$data['title'] = 'Estado de incidencia ref. '.$id_incidencia;
-	
-			$this->load->view('tienda/header',$data);
-			$this->load->view('tienda/navbar',$data);
-			$this->load->view('tienda/detalle_incidencia',$data);
-			$this->load->view('tienda/footer');
+				$display = $this->tienda_model->get_display($incindencia['id_displays_pds']);
+		
+				$data['id_display']      = $display['id_display'];
+				$data['display']         = $display['display'];
+				$data['picture_url_dis'] = $display['picture_url'];
+					
+				$device = $this->tienda_model->get_device($incindencia['id_devices_pds']);
+		
+				$data['id_device']       = $device['id_device'];
+				$data['device']          = $device['device'];
+				$data['picture_url_dev'] = $device['picture_url'];
+		
+				$data['title'] = 'Estado de incidencia ref. '.$id_incidencia;
+		
+				$this->load->view('tienda/header',$data);
+				$this->load->view('tienda/navbar',$data);
+				$this->load->view('tienda/detalle_incidencia',$data);
+				$this->load->view('tienda/footer');
+			}				
 		}
 		else
 		{

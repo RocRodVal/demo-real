@@ -28,13 +28,13 @@
 										foreach($devices as $device)
 										{
 										?>
-										<a class="list-group-item" href="<?=site_url('tienda/alta_incidencia_dispositivo/'.$id_display.'/'.$device->id_device)?>">
+										<a class="list-group-item" href="<?=site_url('tienda/alta_incidencia_dispositivo/'.$device->id_displays_pds.'/'.$device->id_devices_pds)?>">
 											<?php echo $device->position.'. '.$device->device ?>
 										</a>
 										<?php
 										}
 										?>
-										<a class="list-group-item" href="<?=site_url('tienda/alta_incidencia_mueble_alarma/'.$id_display)?>"> &gt; Afecta al sistema de seguridad central &lt; </a>
+										<a class="list-group-item" href="<?=site_url('tienda/alta_incidencia_mueble_alarma/'.$device->id_displays_pds)?>"> &gt; Afecta al sistema de seguridad central &lt; </a>
 									</div>
 								</div>
 								<div class="col-lg-4">

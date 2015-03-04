@@ -31,7 +31,7 @@
 									if ($display->picture_url != '')
 									{
 									?>
-									<a href="<?=site_url('tienda/alta_incidencia_mueble'.'/'.$display->id_display) ?>">
+									<a href="<?=site_url('tienda/alta_incidencia_mueble'.'/'.$display->id_displays_pds) ?>">
 										<div class="caption">
 											<img src="<?=site_url('application/uploads/'.$display->picture_url.'')?>" title="<?php echo strtoupper($display->display) ?>"/>
 										</div>
@@ -40,7 +40,7 @@
 									}
 									else{
 									?>
-									<a href="<?=site_url('tienda/alta_incidencia_mueble/'.$display->id_display) ?>"><?php echo strtoupper($display->display); ?>"</a>
+									<a href="<?=site_url('tienda/alta_incidencia_mueble/'.$display->id_displays_pds) ?>"><?php echo strtoupper($display->display); ?>"</a>
 									<?php
 									}
 									?>

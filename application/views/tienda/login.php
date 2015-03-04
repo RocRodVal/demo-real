@@ -2,8 +2,6 @@
 		<div id="bg">
   			<img src="<?=site_url('assets/images/bg-oficina.jpg')?>" alt="">
 		</div>		
-		
-		
 	    <div class="container">
 	        <div class="row">
 	            <div class="col-md-4 col-md-offset-4">
@@ -28,13 +26,13 @@
 	                                <div class="form-group">
 	                                    <input class="form-control" placeholder="contraseña" name="password" type="password" value="<?=$this->form_validation->set_value('password')?>">
 	                                </div>
-	                                <input type="submit" class="btn btn-lg btn-success btn-block" value="Login" />
+	                                <input type="submit" class="btn btn-lg btn-success btn-block" value="Entrar" />
 	                            </fieldset>
 	                        </form>
+	                        <p style="padding:20px 0px 0px;"><a href="<?=site_url('admin');?>">Acceso SAT</a> | <a href="<?=site_url('master');?>">Acceso maestro</a></p> 
 	                    </div>
 	                </div>
 	            </div>
 	        </div>
-	    </div>    
 	    </div>
 		<!-- /#container -->		

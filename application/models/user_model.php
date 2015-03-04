@@ -2,21 +2,23 @@
 
 class User_model extends CI_Model {
 
-	public function __construct()	{
+	public function __construct()
+	{
 		$this->load->database();
 	}
 
+	
 	public function login($data)
 	{
 		$sfid     = $data['sfid'];
 		$password = $data['password'];
 	
 		$query = $this->db->select('agent.*,pds.id_pds AS id_pds')
-			   ->join('pds','agent.sfid = pds.reference')
-		       ->where('sfid',$sfid)
-		       ->where('password',$password)
-		       ->limit(1)
-		       ->get('agent');		
+			->join('pds','agent.sfid = pds.reference')
+		    ->where('sfid',$sfid)
+		    ->where('password',$password)
+		    ->limit(1)
+		    ->get('agent');		
 			
 		if($query->num_rows()==1)
 		{
@@ -36,17 +38,18 @@ class User_model extends CI_Model {
 		}
 	}
 	
+	
 	public function login_admin($data)
 	{
 		$sfid     = $data['sfid'];
 		$password = $data['password'];
 	
 		$query = $this->db->select('*')
-		->where('sfid',$sfid)
-		->where('password',$password)
-		->where('type',9)
-		->limit(1)
-		->get('agent');
+			->where('sfid',$sfid)
+			->where('password',$password)
+			->where('type',9)
+			->limit(1)
+			->get('agent');
 			
 		if($query->num_rows()==1)
 		{
@@ -64,7 +67,7 @@ class User_model extends CI_Model {
 			return FALSE;
 		}
 	}	
-	
+
 }
 
 ?>

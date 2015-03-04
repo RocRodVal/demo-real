@@ -2,7 +2,6 @@
 		<div id="bg">
   			<img src="<?=site_url('assets/images/bg-oficina.jpg')?>" alt="">
 		</div>
-		
 	    <div class="container">
 	        <div class="row">
 	            <div class="col-md-4 col-md-offset-4">
@@ -11,23 +10,29 @@
 	                        <center><img src="<?=site_url('assets/images/logo-orange_big.png')?>" title="<?=lang('comun.titulo')?>" width="50%" /></center>
 	                    </div>
 	                    <div class="panel-body">
-	                        <form action="<?=site_url('admin/');?>" method="post" class="content_auto form_login">
+	                        <form action="<?=site_url('admin');?>" method="post" class="content_auto form_login">
+	                        	<?php 
+	                        	if (isset($message)) 
+								{ 
+	                        	?>
 	                        	<div id="infoMessage"><?php echo $message;?></div>
+	                            <?php 
+								}
+	                            ?>
 	                            <fieldset>
 	                                <div class="form-group">
-	                                    <input class="form-control" placeholder="SFID" name="sfid" type="text" value="<?=$this->form_validation->set_value('sfid')?>">
+	                                    <input class="form-control" placeholder="usuario" name="sfid" type="text" value="<?=$this->form_validation->set_value('sfid')?>">
 	                                </div>
 	                                <div class="form-group">
-	                                    <input class="form-control" placeholder="contraseña" name="password" type="password" value="<?=$this->form_validation->set_value('password')?>">
+	                                    <input class="form-control" placeholder="password" name="password" type="password" value="<?=$this->form_validation->set_value('password')?>">
 	                                </div>
-	                                <p><a href="">¿Olvidaste la contraseña?</a></p>
-	                                <input type="submit" class="btn btn-lg btn-success btn-block" value="Login" />
+	                                <input type="submit" class="btn btn-lg btn-success btn-block" value="Entrar" />
 	                            </fieldset>
 	                        </form>
+	                        <p style="padding:20px 0px 0px;"><a href="<?=site_url('tienda');?>">Acceso SFID</a> | <a href="<?=site_url('master');?>">Acceso maestro</a></p> 
 	                    </div>
 	                </div>
 	            </div>
 	        </div>
 	    </div>    
-	    </div>
 		<!-- /#container -->		

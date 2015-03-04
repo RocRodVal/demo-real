@@ -13,7 +13,7 @@ class Admin extends CI_Controller {
 	
 	public function index()
 	{
-		$this->load->model('tienda_model');
+		$this->load->model(array('tienda_model','user_model'));
 		
 		$this->form_validation->set_rules('sfid','SFID','required|xss_clean');
 		$this->form_validation->set_rules('password','password','required|xss_clean');
@@ -26,7 +26,7 @@ class Admin extends CI_Controller {
 			);
 		}
 		
-		if ($this->form_validation->run() == true && $this->tienda_model->login($data))
+		if ($this->form_validation->run() == true && $this->user_model->login_admin($data))
 		{
 			redirect('admin/dashboard');
 		}

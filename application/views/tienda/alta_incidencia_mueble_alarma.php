@@ -8,7 +8,7 @@
         </div>
     </div>
     <form
-        action="<?= site_url('tienda/insert_incidencia_mueble_alarma/'.$id_display) ?>"
+        action="<?= site_url('tienda/insert_incidencia_mueble_alarma/'.$id_displays_pds) ?>"
         method="post" class="content_auto form_login" enctype="multipart/form-data">
         <div class="row">
             <div class="col-lg-offset-1 col-lg-8">
