@@ -414,21 +414,7 @@ class Tienda extends CI_Controller {
 			$this->email->subject('Demo Real - Registro de incidencia ref. '.$incidencia['id']);
 			$this->email->message($message_admin);
 			$this->email->send();
-			/*
-			$this->email->clear();
-			
-			$message_pds  = 'Se ha registrado una nueva incidencia.'."\r\n\r\n";
-			$message_pds .= 'En breve recibirá más información de la evolución de la misma.'."\r\n\r\n";
-			$message_pds .= 'Atentamente,'."\r\n\r\n";
-			$message_pds .= 'Demo Real'."\r\n";
-			$message_pds .= 'http://demoreal.focusonemotions.com/'."\r\n";
-			
-			$this->email->from('no-reply@altabox.net', 'Demo Real');
-			$this->email->to('gzapico@altabox.net');
-			$this->email->subject('Demo Real - Registro de incidencia ref. '.$incidencia['id']);
-			$this->email->message($message_pds);
-			$this->email->send();
-			*/
+
 			redirect('tienda/alta_incidencia_gracias/'.$incidencia['id']);
 		}
 		else
@@ -495,21 +481,7 @@ class Tienda extends CI_Controller {
 			$this->email->subject('Demo Real - Registro de incidencia ref. '.$incidencia['id']);
 			$this->email->message($message_admin);
 			$this->email->send();
-			/*
-			$this->email->clear();
-	
-			$message_pds  = 'Se ha registrado una nueva incidencia.'."\r\n\r\n";
-			$message_pds .= 'En breve recibirá más información de la evolución de la misma.'."\r\n\r\n";
-			$message_pds .= 'Atentamente,'."\r\n\r\n";
-			$message_pds .= 'Demo Real'."\r\n";
-			$message_pds .= 'http://demoreal.focusonemotions.com/'."\r\n";
-	
-			$this->email->from('no-reply@altabox.net', 'Demo Real');
-			$this->email->to('gzapico@altabox.net');
-			$this->email->subject('Demo Real - Registro de incidencia ref. '.$incidencia['id']);
-			$this->email->message($message_pds);
-			$this->email->send();
-			*/	
+
 			redirect('tienda/alta_incidencia_gracias/'.$incidencia['id']);
 		}
 		else
@@ -554,155 +526,7 @@ class Tienda extends CI_Controller {
 		}		
 	}
 	
-
-	public function planograma_new()
-	{
-		if($this->session->userdata('logged_in'))
-		{
-			$data['id_pds'] = $this->session->userdata('id_pds');
-			$data['sfid']   = $this->session->userdata('sfid');
-			
-			$xcrud = xcrud_get_instance();
-			$this->load->model('tienda_model');
-			
-			$sfid               = $this->tienda_model->get_pds($data['id_pds']);			
-			$data['id_pds']     = $sfid['id_pds'];
-			$data['commercial'] = $sfid['commercial'];
-			$data['reference']  = $sfid['reference'];
-			$data['address']    = $sfid['address'];
-			$data['zip']        = $sfid['zip'];
-			$data['city']       = $sfid['city'];
-
-			$displays           = $this->tienda_model->get_displays_pds($data['id_pds']);
-			foreach($displays as $key=>$display) {
-				$num_devices = $this->tienda_model->count_devices_display($display->id_display);
-				$display->devices_count = $num_devices;
-			}
-			
-			$data['displays']   = $displays;
-			$data['title']      = 'Mi tienda';
 	
-			$this->load->view('tienda/header',$data);
-			$this->load->view('tienda/navbar',$data);
-			$this->load->view('tienda/planograma_new',$data);
-			$this->load->view('tienda/footer');
-		}
-		else
-		{
-			redirect('tienda','refresh');
-		}
-	}
-	
-	
-	public function planograma()
-	{
-		if($this->session->userdata('logged_in'))
-		{
-			$data['id_pds'] = $this->session->userdata('id_pds');
-			$data['sfid']   = $this->session->userdata('sfid');
-				
-			$xcrud = xcrud_get_instance();
-			$this->load->model('tienda_model');
-				
-			$sfid               = $this->tienda_model->get_pds($data['id_pds']);
-			$data['id_pds']     = $sfid['id_pds'];
-			$data['commercial'] = $sfid['commercial'];
-			$data['reference']  = $sfid['reference'];
-			$data['address']    = $sfid['address'];
-			$data['zip']        = $sfid['zip'];
-			$data['city']       = $sfid['city'];
-	
-			$displays           = $this->tienda_model->get_displays_panelado($data['id_pds']);
-			foreach($displays as $key=>$display) {
-				$num_devices = $this->tienda_model->count_devices_display($display->id_display);
-				$display->devices_count = $num_devices;
-			}
-				
-			$data['displays']   = $displays;
-			$data['title']      = 'Mi tienda';
-	
-			$this->load->view('tienda/header',$data);
-			$this->load->view('tienda/navbar',$data);
-			$this->load->view('tienda/planograma',$data);
-			$this->load->view('tienda/footer');
-		}
-		else
-		{
-			redirect('tienda','refresh');
-		}
-	}
-		
-	
-	public function planograma_mueble()
-	{
-		if($this->session->userdata('logged_in'))
-		{
-			$data['id_pds'] = $this->session->userdata('id_pds');
-			$data['sfid']   = $this->session->userdata('sfid');
-			
-			$xcrud = xcrud_get_instance();
-			$this->load->model('tienda_model');
-				
-			$sfid               = $this->tienda_model->get_pds($data['id_pds']);
-			$data['id_pds']     = $sfid['id_pds'];
-			$data['commercial'] = $sfid['commercial'];
-			$data['reference']  = $sfid['reference'];
-			$data['address']    = $sfid['address'];
-			$data['zip']        = $sfid['zip'];
-			$data['city']       = $sfid['city'];			
-
-			$display             = $this->tienda_model->get_display_pds($this->uri->segment(3));
-			$data['id_display']  = $display['id_display'];
-			$data['display']     = $display['display'];
-			$data['picture_url'] = $display['picture_url'];
-			
-			$data['devices']     = $this->tienda_model->get_devices_display($this->uri->segment(3));
-			$data['title']       = 'Mi tienda';
-	
-			$this->load->view('tienda/header',$data);
-			$this->load->view('tienda/navbar',$data);
-			$this->load->view('tienda/planograma_mueble',$data);
-			$this->load->view('tienda/footer');
-		}
-		else
-		{
-			redirect('tienda','refresh');
-		}		
-	}	
-	
-/*
-	public function ayuda()
-	{
-		if($this->session->userdata('logged_in'))
-		{
-			$data['id_pds'] = $this->session->userdata('id_pds');
-			$data['sfid']   = $this->session->userdata('sfid');
-			
-			$xcrud = xcrud_get_instance();
-			$this->load->model('tienda_model');
-						
-			$sfid               = $this->tienda_model->get_pds($data['id_pds']);
-			$data['id_pds']     = $sfid['id_pds'];
-			$data['commercial'] = $sfid['commercial'];
-			$data['reference']  = $sfid['reference'];
-			$data['address']    = $sfid['address'];
-			$data['zip']        = $sfid['zip'];
-			$data['city']       = $sfid['city'];
-			$data['id_pds_url'] = $sfid['id_pds'];
-			
-			$data['title']      = 'Ayuda';
-
-			$this->load->view('tienda/header', $data);
-			$this->load->view('tienda/navbar', $data);
-			$this->load->view('tienda/ayuda', $data);
-			$this->load->view('tienda/footer');
-		}
-		else
-		{
-			redirect('tienda','refresh');
-		}
-	}
-*/
 	public function ayuda($tipo)
 	{
 		if($this->session->userdata('logged_in'))
