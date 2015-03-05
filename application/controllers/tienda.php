@@ -52,25 +52,28 @@ class Tienda extends CI_Controller {
 			$data['sfid']   = $this->session->userdata('sfid');
 				
 			$xcrud = xcrud_get_instance();
-			$this->load->model(array('sfid_model'));			
+			$this->load->model('sfid_model');
 
-			$incidencias = $this->sfid_model->get_incidencias_pds($data['id_pds']);
-			foreach($incidencias as $incidencia)
-			{
-				$incidencia->device  = $this->sfid_model->get_device_pds($incidencia->id_devices_pds);
-				$incidencia->display = $this->sfid_model->get_display_pds($incidencia->id_displays_pds);
-
-			}
-			$data['incidencias'] =  $incidencias;
-			
 			$sfid = $this->sfid_model->get_pds($data['id_pds']);
+				
 			$data['id_pds']     = $sfid['id_pds'];
 			$data['commercial'] = $sfid['commercial'];
 			$data['territory']  = $sfid['territory'];
 			$data['reference']  = $sfid['reference'];
 			$data['address']    = $sfid['address'];
 			$data['zip']        = $sfid['zip'];
-			$data['city']       = $sfid['city'];
+			$data['city']       = $sfid['city'];			
+
+			$incidencias = $this->sfid_model->get_incidencias($data['id_pds']);
+			
+			foreach($incidencias as $incidencia)
+			{
+				$incidencia->device  = $this->sfid_model->get_device($incidencia->id_devices_pds);
+				$incidencia->display = $this->sfid_model->get_display($incidencia->id_displays_pds);
+
+			}
+			
+			$data['incidencias'] =  $incidencias;
 	
 			$data['title'] = 'Mis solicitudes';
 			
@@ -97,6 +100,7 @@ class Tienda extends CI_Controller {
 			$this->load->model('sfid_model');		
 	
 			$sfid = $this->sfid_model->get_pds($data['id_pds']);
+			
 			$data['id_pds']     = $sfid['id_pds'];
 			$data['commercial'] = $sfid['commercial'];
 			$data['territory']  = $sfid['territory'];
@@ -106,11 +110,13 @@ class Tienda extends CI_Controller {
 			$data['city']       = $sfid['city'];
 
 			$displays = $this->sfid_model->get_displays_pds($data['id_pds']);
+			
 			foreach($displays as $key=>$display) 
 			{
-				$num_devices = $this->sfid_model->count_devices_display($display->id_display);
+				$num_devices = $this->sfid_model->count_devices_displays_pds($display->id_displays_pds);
 				$display->devices_count = $num_devices;
 			}
+			
 			$data['displays'] = $displays;
 
 			$data['title'] = 'Alta incidencia';
@@ -153,7 +159,7 @@ class Tienda extends CI_Controller {
 			$data['display']     = $display['display'];
 			$data['picture_url'] = $display['picture_url'];		
 		
-			$data['devices'] = $this->sfid_model->get_devices_display_pds($this->uri->segment(3));
+			$data['devices'] = $this->sfid_model->get_devices_displays_pds($this->uri->segment(3));
 		
 			$data['title'] = 'Alta incidencia';
 	
@@ -263,9 +269,9 @@ class Tienda extends CI_Controller {
 			$data['sfid']   = $this->session->userdata('sfid');
 	
 			$xcrud = xcrud_get_instance();
-			$this->load->model('tienda_model');
+			$this->load->model('sfid_model');
 	
-			$sfid = $this->tienda_model->get_pds($data['id_pds']);
+			$sfid = $this->sfid_model->get_pds($data['id_pds']);
 	
 			$data['id_pds']     = $sfid['id_pds'];
 			$data['commercial'] = $sfid['commercial'];
@@ -275,39 +281,38 @@ class Tienda extends CI_Controller {
 			$data['zip']        = $sfid['zip'];
 			$data['city']       = $sfid['city'];
 
-
-			$incindencia = $this->tienda_model->get_incidencia($id_incidencia,$data['id_pds']);
+			$incidencia = $this->sfid_model->get_incidencia($id_incidencia,$data['id_pds']);
 			
-			if($incindencia == FALSE)
+			if($incidencia == FALSE)
 			{
 				redirect('tienda/dashboard','refresh');
 			}
 			else
 			{
-				$data['id_incidencia']   = $incindencia['id_incidencia'];
-				$data['fecha']           = $incindencia['fecha'];
-				$data['id_pds']          = $incindencia['id_pds'];
-				$data['id_displays_pds'] = $incindencia['id_displays_pds'];
-				$data['id_devices_pds']  = $incindencia['id_devices_pds'];
-				$data['alarm_display']   = $incindencia['alarm_display'];
-				$data['tipo_averia']     = $incindencia['tipo_averia'];
-				$data['fail_device']     = $incindencia['fail_device'];			
-				$data['alarm_device']    = $incindencia['alarm_device'];
-				$data['alarm_garra']     = $incindencia['alarm_garra'];
-				$data['description_1']   = $incindencia['description_1'];
-				$data['description_2']   = $incindencia['description_2'];
-				$data['denuncia']        = $incindencia['denuncia'];
-				$data['contacto']        = $incindencia['contacto'];
-				$data['phone']           = $incindencia['phone'];
-				$data['status_pds']      = $incindencia['status_pds'];
+				$data['id_incidencia']   = $incidencia['id_incidencia'];
+				$data['fecha']           = $incidencia['fecha'];
+				$data['id_pds']          = $incidencia['id_pds'];
+				$data['id_displays_pds'] = $incidencia['id_displays_pds'];
+				$data['id_devices_pds']  = $incidencia['id_devices_pds'];
+				$data['alarm_display']   = $incidencia['alarm_display'];
+				$data['tipo_averia']     = $incidencia['tipo_averia'];
+				$data['fail_device']     = $incidencia['fail_device'];			
+				$data['alarm_device']    = $incidencia['alarm_device'];
+				$data['alarm_garra']     = $incidencia['alarm_garra'];
+				$data['description_1']   = $incidencia['description_1'];
+				$data['description_2']   = $incidencia['description_2'];
+				$data['denuncia']        = $incidencia['denuncia'];
+				$data['contacto']        = $incidencia['contacto'];
+				$data['phone']           = $incidencia['phone'];
+				$data['status_pds']      = $incidencia['status_pds'];
 				
-				$display = $this->tienda_model->get_display($incindencia['id_displays_pds']);
+				$display = $this->sfid_model->get_display($incidencia['id_displays_pds']);
 		
 				$data['id_display']      = $display['id_display'];
 				$data['display']         = $display['display'];
 				$data['picture_url_dis'] = $display['picture_url'];
 					
-				$device = $this->tienda_model->get_device($incindencia['id_devices_pds']);
+				$device = $this->sfid_model->get_device($incidencia['id_devices_pds']);
 		
 				$data['id_device']       = $device['id_device'];
 				$data['device']          = $device['device'];
@@ -330,165 +335,169 @@ class Tienda extends CI_Controller {
 	
 	public function insert_incidencia()
 	{
-		$data['id_pds'] = $this->session->userdata('id_pds');
-		$data['sfid']   = $this->session->userdata('sfid');
+		if($this->session->userdata('logged_in'))
+		{
+			$data['id_pds'] = $this->session->userdata('id_pds');
+			$data['sfid']   = $this->session->userdata('sfid');
 		
-		$id_pds = $this->session->userdata('id_pds');
-		$id_dis = $this->uri->segment(3);
-		$id_dev = $this->uri->segment(4);
+			$xcrud = xcrud_get_instance();
+			$this->load->model('sfid_model');
+			
+			$config['upload_path']   = dirname($_SERVER["SCRIPT_FILENAME"]).'/uploads/';
+			$config['upload_url']    = base_url().'/uploads/';
+			$config['allowed_types'] = 'doc|docx|pdf|jpg|png';
+			$new_name                = $data['sfid'].'-'.time().'-'.$_FILES["userfile"]['name'];
+			$config['file_name']     = $new_name;
+			$config['overwrite']     = TRUE;
+			$config['max_size']      = '10000KB';
 	
-		$xcrud = xcrud_get_instance();
-		$this->load->model('tienda_model');
+			$this->load->library('upload', $config);
+			
+			$denuncia = '';
+			
+			if($this->upload->do_upload())
+			{
+				$denuncia = $new_name;
+			}
+			else
+			{
+				echo 'Ha fallado la carga de la denuncia.';
+			}		
+			
+			if ($this->input->post('tipo_averia') == 1)
+			{ 
+				$tipo_averia = 'Robo'; 
+			}
+			else
+			{
+				$tipo_averia = 'Avería';
+			}	
 		
-		$config['upload_path']   = dirname($_SERVER["SCRIPT_FILENAME"]).'/uploads/';
-		$config['upload_url']    = base_url().'/uploads/';
-		$config['allowed_types'] = 'doc|docx|pdf|jpg|png';
-		$new_name                = $data['sfid'].'-'.time().'-'.$_FILES["userfile"]['name'];
-		$config['file_name']     = $new_name;
-		$config['overwrite']     = TRUE;
-		$config['max_size']      = '1000KB';
-
-		$this->load->library('upload', $config);
+			$data = array(
+					'fecha'    	        => date('Y-m-d H:i:s'),
+					'id_pds'            => $data['id_pds'],
+					'id_displays_pds' 	=> $this->uri->segment(3),
+					'id_devices_pds' 	=> $this->uri->segment(4),
+					'tipo_averia' 	    => $tipo_averia,
+					'fail_device'       => $this->input->post('device'),
+					'alarm_display'     => $this->input->post('alarm_display'),
+					'alarm_device'      => $this->input->post('alarm_device'),
+					'alarm_garra'       => $this->input->post('alarm_garra'),
+					'description_1'  	=> $this->input->post('description_1'),
+					'description_2'  	=> '',
+					'parte_pdf'  	    => '',
+					'denuncia'  	    => $denuncia,
+					'foto_url'  	    => '',
+					'foto_url_2'  	    => '',
+					'foto_url_3'  	    => '',
+					'contacto'  	    => $this->input->post('contacto'),
+					'phone'  	        => $this->input->post('phone'),
+					'email'  	        => NULL,
+					'id_operador'  	    => NULL,
+					'intervencion'  	=> NULL,
+					'status_pds'	    => 1,
+					'status'	        => 1,
+			);
+				
+			$incidencia = $this->sfid_model->insert_incidencia($data);
+				
+			if ($incidencia['add'])
+			{
+				$pds = $this->sfid_model->get_pds($data['id_pds']);
 		
-		$denuncia = '';
+				$message_admin  = 'Se ha registrado una nueva incidencia.'."\r\n\r\n";
+				$message_admin .= 'La tienda con SFID '.$pds['reference'].' ha creado una incidencia con ref. '.$incidencia['id'].'.'."\r\n\r\n";
+				$message_admin .= 'En http://demoreal.focusonemotions.com/ podrás revisar la misma.'."\r\n\r\n";
+				$message_admin .= 'Atentamente,'."\r\n\r\n";
+				$message_admin .= 'Demo Real'."\r\n";
+				$message_admin .= 'http://demoreal.focusonemotions.com/'."\r\n";
 		
-		if($this->upload->do_upload())
-		{
-			$denuncia = $new_name;
+				$this->email->from('no-reply@altabox.net', 'Demo Real');
+				$this->email->to('demoreal@focusonemotions.com');
+				$this->email->subject('Demo Real - Registro de incidencia ref. '.$incidencia['id']);
+				$this->email->message($message_admin);
+				$this->email->send();
+	
+				redirect('tienda/alta_incidencia_gracias/'.$incidencia['id']);
+			}
+			else
+			{
+				$this->data['message'] = (validation_errors() ? validation_errors() : ($this->session->flashdata('message')));
+			}
 		}
 		else
 		{
-			echo 'Ha fallado la carga de la denuncia.';
-		}		
-		
-		if ($this->input->post('tipo_averia') == 1)
-		{ 
-			$tipo_averia = 'Robo'; 
-		}
-		else
-		{
-			$tipo_averia = 'Avería';
+			redirect('tienda','refresh');
 		}	
-	
-		$data = array(
-				'fecha'    	        => date('Y-m-d H:i:s'),
-				'id_pds'            => $id_pds,
-				'id_displays_pds' 	=> $id_dis,
-				'id_devices_pds' 	=> $id_dev,
-				'tipo_averia' 	    => $tipo_averia,
-				'fail_device'       => $this->input->post('device'),
-				'alarm_display'     => $this->input->post('alarm_display'),
-				'alarm_device'      => $this->input->post('alarm_device'),
-				'alarm_garra'       => $this->input->post('alarm_garra'),
-				'description_1'  	=> $this->input->post('description_1'),
-				'description_2'  	=> '',
-				'parte_pdf'  	    => '',
-				'denuncia'  	    => $denuncia,
-				'foto_url'  	    => '',
-				'foto_url_2'  	    => '',
-				'foto_url_3'  	    => '',
-				'contacto'  	    => $this->input->post('contacto'),
-				'phone'  	        => $this->input->post('phone'),
-				'email'  	        => $this->input->post('email'),
-				'id_operador'  	    => NULL,
-				'intervencion'  	=> NULL,
-				'status_pds'	    => 1,
-				'status'	        => 1,
-		);
-			
-		$incidencia = $this->tienda_model->insert_incidencia($data);
-			
-		if ($incidencia['add'])
-		{
-			$pds = $this->tienda_model->get_pds($id_pds);
-	
-			$message_admin  = 'Se ha registrado una nueva incidencia.'."\r\n\r\n";
-			$message_admin .= 'La tienda con SFID '.$pds['reference'].' ha creado una incidencia con ref. '.$incidencia['id'].'.'."\r\n\r\n";
-			$message_admin .= 'En http://demoreal.focusonemotions.com/ podrás revisar la misma.'."\r\n\r\n";
-			$message_admin .= 'Atentamente,'."\r\n\r\n";
-			$message_admin .= 'Demo Real'."\r\n";
-			$message_admin .= 'http://demoreal.focusonemotions.com/'."\r\n";
-	
-			$this->email->from('no-reply@altabox.net', 'Demo Real');
-			$this->email->to('gzapico@altabox.net');
-			$this->email->subject('Demo Real - Registro de incidencia ref. '.$incidencia['id']);
-			$this->email->message($message_admin);
-			$this->email->send();
-
-			redirect('tienda/alta_incidencia_gracias/'.$incidencia['id']);
-		}
-		else
-		{
-			$this->data['message'] = (validation_errors() ? validation_errors() : ($this->session->flashdata('message')));
-		}
-	
 	}
 	
 	
 	public function insert_incidencia_mueble_alarma()
 	{
-		$data['id_pds'] = $this->session->userdata('id_pds');
-		$data['sfid']   = $this->session->userdata('sfid');
+		if($this->session->userdata('logged_in'))
+		{		
+			$data['id_pds'] = $this->session->userdata('id_pds');
+			$data['sfid']   = $this->session->userdata('sfid');
+		
+			$xcrud = xcrud_get_instance();
+			$this->load->model('sfid_model');
+		
+			$data = array(
+					'fecha'    	        => date('Y-m-d H:i:s'),
+					'id_pds'            => $data['id_pds'],
+					'id_displays_pds' 	=> $this->uri->segment(3),
+					'id_devices_pds' 	=> NULL,
+					'tipo_averia' 	    => 'Avería',
+					'fail_device'       => 0,
+					'alarm_display'     => 1,
+					'alarm_device'      => 0,
+					'alarm_garra'       => 0,
+					'description_1'  	=> $this->input->post('description_1'),
+					'description_2'  	=> '',
+					'parte_pdf'  	    => '',
+					'denuncia'  	    => '',
+					'foto_url'  	    => '',
+					'foto_url_2'  	    => '',
+					'foto_url_3'  	    => '',
+					'contacto'  	    => $this->input->post('contacto'),
+					'phone'  	        => $this->input->post('phone'),
+					'email'  	        => NULL,
+					'id_operador'  	    => NULL,
+					'intervencion'  	=> NULL,
+					'status_pds'	    => 1,
+					'status'	        => 1,
+			);
+				
+			$incidencia = $this->sfid_model->insert_incidencia($data);
+				
+			if ($incidencia['add'])
+			{
+				$pds = $this->sfid_model->get_pds($data['id_pds']);
+		
+				$message_admin  = 'Se ha registrado una nueva incidencia.'."\r\n\r\n";
+				$message_admin .= 'La tienda con SFID '.$pds['reference'].' ha creado una incidencia con ref. '.$incidencia['id'].'.'."\r\n\r\n";
+				$message_admin .= 'En http://demoreal.focusonemotions.com/ podrás revisar la misma.'."\r\n\r\n";
+				$message_admin .= 'Atentamente,'."\r\n\r\n";
+				$message_admin .= 'Demo Real'."\r\n";
+				$message_admin .= 'http://demoreal.focusonemotions.com/'."\r\n";
+		
+				$this->email->from('no-reply@altabox.net', 'Demo Real');
+				$this->email->to('demoreal@focusonemotions.com');
+				$this->email->subject('Demo Real - Registro de incidencia ref. '.$incidencia['id']);
+				$this->email->message($message_admin);
+				$this->email->send();
 	
-		$id_pds = $this->session->userdata('id_pds');
-		$id_dis = $this->uri->segment(3);
-		$id_dev = NULL;
-	
-		$xcrud = xcrud_get_instance();
-		$this->load->model('tienda_model');
-	
-		$data = array(
-				'fecha'    	        => date('Y-m-d H:i:s'),
-				'id_pds'            => $id_pds,
-				'id_displays_pds' 	=> $id_dis,
-				'id_devices_pds' 	=> NULL,
-				'tipo_averia' 	    => 'Avería',
-				'fail_device'       => 0,
-				'alarm_display'     => 1,
-				'alarm_device'      => 0,
-				'alarm_garra'       => 0,
-				'description_1'  	=> $this->input->post('description_1'),
-				'description_2'  	=> '',
-				'parte_pdf'  	    => '',
-				'denuncia'  	    => '',
-				'foto_url'  	    => '',
-				'foto_url_2'  	    => '',
-				'foto_url_3'  	    => '',
-				'contacto'  	    => $this->input->post('contacto'),
-				'phone'  	        => $this->input->post('phone'),
-				'email'  	        => $this->input->post('email'),
-				'id_operador'  	    => NULL,
-				'intervencion'  	=> NULL,
-				'status_pds'	    => 1,
-				'status'	        => 1,
-		);
-			
-		$incidencia = $this->tienda_model->insert_incidencia($data);
-			
-		if ($incidencia['add'])
-		{
-			$pds = $this->tienda_model->get_pds($id_pds);
-	
-			$message_admin  = 'Se ha registrado una nueva incidencia.'."\r\n\r\n";
-			$message_admin .= 'La tienda con SFID '.$pds['reference'].' ha creado una incidencia con ref. '.$incidencia['id'].'.'."\r\n\r\n";
-			$message_admin .= 'En http://demoreal.focusonemotions.com/ podrás revisar la misma.'."\r\n\r\n";
-			$message_admin .= 'Atentamente,'."\r\n\r\n";
-			$message_admin .= 'Demo Real'."\r\n";
-			$message_admin .= 'http://demoreal.focusonemotions.com/'."\r\n";
-	
-			$this->email->from('no-reply@altabox.net', 'Demo Real');
-			$this->email->to('gzapico@altabox.net');
-			$this->email->subject('Demo Real - Registro de incidencia ref. '.$incidencia['id']);
-			$this->email->message($message_admin);
-			$this->email->send();
-
-			redirect('tienda/alta_incidencia_gracias/'.$incidencia['id']);
+				redirect('tienda/alta_incidencia_gracias/'.$incidencia['id']);
+			}
+			else
+			{
+				$this->data['message'] = (validation_errors() ? validation_errors() : ($this->session->flashdata('message')));
+			}
 		}
 		else
 		{
-			$this->data['message'] = (validation_errors() ? validation_errors() : ($this->session->flashdata('message')));
-		}
-	
+			redirect('tienda','refresh');
+		}	
 	}	
 	
 	
@@ -502,9 +511,9 @@ class Tienda extends CI_Controller {
 			$referencia = $this->uri->segment(3);			
 			
 			$xcrud = xcrud_get_instance();
-			$this->load->model('tienda_model');
+			$this->load->model('sfid_model');
 			
-			$sfid               = $this->tienda_model->get_pds($data['id_pds']);			
+			$sfid               = $this->sfid_model->get_pds($data['id_pds']);			
 			$data['id_pds']     = $sfid['id_pds'];
 			$data['commercial'] = $sfid['commercial'];
 			$data['reference']  = $sfid['reference'];
@@ -535,17 +544,9 @@ class Tienda extends CI_Controller {
 			$data['sfid']   = $this->session->userdata('sfid');
 
 			$xcrud = xcrud_get_instance();
-			$this->load->model('tienda_model');
+			$this->load->model('sfid_model');
 
-			switch($tipo){
-				case 1: $data['video']="ver_incidencias.mp4";			$data['ayuda_title']="Mis solicitudes"; 	    break;
-				case 2: $data['video']="nueva_averia.mp4"; 				$data['ayuda_title']="Alta incidencia";	        break;
-				case 3: $data['video']="nueva_incidencia_mueble.mp4"; 	$data['ayuda_title']="Alta incidencia mueble";	break;
-				case 4: $data['video']="nuevo_robo.mp4"; 				$data['ayuda_title']="Incidencias frecuentes";	break;
-				default: $data['video']="ver_incidencias.mp4";          $data['ayuda_title']="Mis solicitudes"; 
-			}
-
-			$sfid               = $this->tienda_model->get_pds($data['id_pds']);
+			$sfid               = $this->sfid_model->get_pds($data['id_pds']);
 			$data['id_pds']     = $sfid['id_pds'];
 			$data['commercial'] = $sfid['commercial'];
 			$data['reference']  = $sfid['reference'];
@@ -553,12 +554,34 @@ class Tienda extends CI_Controller {
 			$data['zip']        = $sfid['zip'];
 			$data['city']       = $sfid['city'];
 			$data['id_pds_url'] = $sfid['id_pds'];
+			
+			switch($tipo){
+				case 1: 
+					$data['video']="ver_incidencias.mp4";
+					$data['ayuda_title']="Mis solicitudes";
+					break;
+				case 2: 
+					$data['video']="nueva_averia.mp4";
+					$data['ayuda_title']="Alta incidencia";
+					break;
+				case 3: 
+					$data['video']="nueva_incidencia_mueble.mp4";
+					$data['ayuda_title']="Alta incidencia sistema seguridad general del mueble";
+					break;
+				case 4: 
+					$data['video']="nuevo_robo.mp4";
+					$data['ayuda_title']="Incidencias frecuentes";
+					break;
+				default:
+					$data['video']="ver_incidencias.mp4";
+					$data['ayuda_title']="Mis solicitudes";
+			}
 
 			$data['title']      = 'Ayuda';
 
-			$this->load->view('tienda/header', $data);
-			$this->load->view('tienda/navbar', $data);
-			$this->load->view('tienda/ayuda', $data);
+			$this->load->view('tienda/header',$data);
+			$this->load->view('tienda/navbar',$data);
+			$this->load->view('tienda/ayuda',$data);
 			$this->load->view('tienda/footer');
 		}
 		else

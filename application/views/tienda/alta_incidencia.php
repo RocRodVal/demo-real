@@ -3,7 +3,7 @@
             <div class="row">
                 <div class="col-lg-12">
 		            <h1 class="page-header"><?php echo $title ?>
-		            	<a href="#" onclick="history.go(-1);return false;" class="btn btn-danger right">Volver</a>
+		            	<a onclick="history.go(-1);return false;" class="btn btn-danger right">Volver</a>
 		            </h1>
                 </div>
             </div>
@@ -40,7 +40,7 @@
 									}
 									else{
 									?>
-									<a href="<?=site_url('tienda/alta_incidencia_mueble/'.$display->id_displays_pds) ?>"><?php echo strtoupper($display->display); ?>"</a>
+									<a href="<?=site_url('tienda/alta_incidencia_mueble/'.$display->id_displays_pds) ?>"><?php echo strtoupper($display->display); ?></a>
 									<?php
 									}
 									?>
