@@ -47,9 +47,38 @@ class User_model extends CI_Model {
 		$query = $this->db->select('*')
 			->where('sfid',$sfid)
 			->where('password',$password)
-			->where('type',9)
+			->where('type',10)
 			->limit(1)
 			->get('agent');
+			
+		if($query->num_rows()==1)
+		{
+			$row = $query->row();
+			$data = array(
+					'sfid'      => $row->sfid,
+					'type'      => $row->type,
+					'logged_in' => TRUE
+			);
+			$this->session->set_userdata($data);
+			return TRUE;
+		}
+		else
+		{
+			return FALSE;
+		}
+	}	
+	
+	public function login_master($data)
+	{
+		$sfid     = $data['sfid'];
+		$password = $data['password'];
+	
+		$query = $this->db->select('*')
+		->where('sfid',$sfid)
+		->where('password',$password)
+		->where('type',9)
+		->limit(1)
+		->get('agent');
 			
 		if($query->num_rows()==1)
 		{
