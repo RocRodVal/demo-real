@@ -3,7 +3,7 @@
     <div class="row">
         <div class="col-lg-12">
             <h1 class="page-header"><?php echo $title ?>
-            	<a href="#" onclick="history.go(-1);return false;" class="btn btn-danger right">Volver</a>
+            	<a onclick="history.go(-1);return false;" class="btn btn-danger right">Volver</a>
             </h1>
         </div>
     </div>
@@ -139,8 +139,8 @@
                                 } 
                                 else
 								{
-                                	$name   = $device;
-                                	$imagen = $picture_url_dev;
+                                	$name        = $device;
+                                	$imagen      = $picture_url_dev;
                                 }
                                 ?>
                                 <div class="panel-body">
@@ -152,6 +152,7 @@
                                     <img
 	                                    src="<?= site_url('application/uploads/' . $imagen . '') ?>"
 	                                    style="width:100%;" title="<?php echo strtoupper($name) ?>"/>
+	                                <p><strong><?php echo strtoupper($name); ?></strong></p>    
                                     <?php
 									}
 									else

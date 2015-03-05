@@ -19,13 +19,14 @@
 <!-- #page-wrapper -->
 <div id="page-wrapper">
     <div class="row">
-        <div class="col-lg-6">
-            <h3>Ver mis incidencias</h3>
-            <video id="example_video_1" class="video-js vjs-default-skin" controls preload="none" height='300px' width="90%"
+        <div class="col-lg-offset-2 col-lg-8">
+            <h2><?php echo $ayuda_title?></h2>
+            <video id="example_video_1" class="video-js vjs-default-skin" controls preload="none" height='500px' width="90%"
                    data-setup="{}">
-                <source src="<?php echo base_url(); ?>videos/ver_incidencias.mp4" type='video/mp4'/>
+                <source src="<?php echo base_url(); ?>videos/<?php echo $video?>" type='video/mp4'/>
             </video>
         </div>
+        <!--
         <div class="col-lg-6">
             <h3>Crear nueva avería</h3>
             <video id="example_video_2" class="video-js vjs-default-skin" controls preload="none" height='300px' width="90%"
@@ -33,7 +34,9 @@
                 <source src="<?php echo base_url(); ?>videos/nueva_averia.mp4" type='video/mp4'/>
             </video>
         </div>
+        -->
     </div>
+    <!--
     <div class="row">
         <div class="col-lg-6">
             <h3>Crear nuevo robo</h3>
@@ -50,4 +53,5 @@
             </video>
         </div>
     </div>
+    -->
 </div>
