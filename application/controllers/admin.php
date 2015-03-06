@@ -299,8 +299,9 @@ class Admin extends CI_Controller {
 		$xcrud_3->relation('type_alarm','type_alarm','id_type_alarm','type');
 		$xcrud_3->relation('brand_alarm','brand_alarm','id_brand_alarm','brand');
 		$xcrud_3->change_type('picture_url', 'image');
+		$xcrud_3->modal('picture_url');
 		$xcrud_3->label('brand_alarm','Fabricante')->label('type_alarm','Tipo')->label('code','Código')->label('alarm','Modelo')->label('picture_url','Foto')->label('description','Comentarios')->label('status','Estado');
-		$xcrud_3->columns('brand_alarm,type_alarm,code,alarm,status');
+		$xcrud_3->columns('brand_alarm,type_alarm,code,alarm,picture_url,status');
 		$xcrud_3->fields('brand_alarm,type_alarm,code,alarm,picture_url,description,status');
 		
 		$xcrud_4 = xcrud_get_instance();
@@ -360,8 +361,9 @@ class Admin extends CI_Controller {
         $xcrud_3->relation('type_device','type_device','id_type_device','type');
         $xcrud_3->relation('brand_device','brand_device','id_brand_device','brand');
         $xcrud_3->change_type('picture_url', 'image');
+        $xcrud_3->modal('picture_url');
         $xcrud_3->label('brand_device','Fabricante')->label('type_device','Tipo')->label('device','Modelo')->label('brand_name','Modelo fabricante')->label('picture_url','Foto')->label('description','Comentarios')->label('status','Estado');
-        $xcrud_3->columns('brand_device,type_device,device,brand_name,status');
+        $xcrud_3->columns('brand_device,type_device,device,picture_url,brand_name,status');
         $xcrud_3->fields('brand_device,type_device,device,brand_name,picture_url,description,status');
 	   
 		$data['title']   = 'Dispositivos';
