@@ -137,7 +137,6 @@ function showModalViewIntervencion(id_intervencion){
                 incidencia.fecha,
                 incidencia.pds.reference,
                 incidencia.pds.address,
-                "-------",
                 incidencia.status,
                 btnDelete
             ));

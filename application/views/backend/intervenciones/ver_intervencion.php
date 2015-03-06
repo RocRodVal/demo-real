@@ -16,7 +16,7 @@
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                         aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="modal_ver_intervencion_title">Intervencion title</h4>
+                <h4 class="modal-title" id="modal_ver_intervencion_title">Intervencion <?php echo $id_inc_url;?></h4>
             </div>
             <div class="modal-body">
                 <div class="row">
@@ -76,7 +76,6 @@
                                 <th>FECHA</th>
                                 <th>SFID</th>
                                 <th>DIRECCION</th>
-                                <th>TECNICO</th>
                                 <th>STATUS</th>
                                 <th>ACCIONES</th>
                             </tr>
