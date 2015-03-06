@@ -7,25 +7,26 @@ class Admin extends CI_Controller {
 		parent::__construct();
 		$this->load->database();
 		$this->load->helper(array('email','text','xcrud'));
-		$this->load->library(array('email','form_validation','ion_auth','encrypt','form_validation','session'));
+		$this->load->library(array('email','encrypt','form_validation','session'));		
 	}
 	
 	
 	public function index()
 	{
-		$this->load->model(array('tienda_model','user_model'));
-		
+		$xcrud = xcrud_get_instance();
+		$this->load->model('user_model');
+	
 		$this->form_validation->set_rules('sfid','SFID','required|xss_clean');
 		$this->form_validation->set_rules('password','password','required|xss_clean');
-		
+	
 		if ($this->form_validation->run() == true)
 		{
 			$data = array(
-					'sfid' 	=> strtolower($this->input->post('sfid')),
-					'password' 	=> $this->input->post('password'),
+					'sfid' 	   => strtolower($this->input->post('sfid')),
+					'password' => $this->input->post('password'),
 			);
 		}
-		
+	
 		if ($this->form_validation->run() == true && $this->user_model->login_admin($data))
 		{
 			redirect('admin/dashboard');
@@ -33,42 +34,48 @@ class Admin extends CI_Controller {
 		else
 		{
 			$this->data['message'] = (validation_errors() ? validation_errors() : ($this->session->flashdata('message')));
-		
-			$xcrud = xcrud_get_instance();
-		
-			$data['title']   = 'Login';
-			
-			$this->load->view('backend/header', $data);
-			$this->load->view('backend/login', $this->data);
-			$this->load->view('backend/footer');
-		}		
-	}
 	
+			$data['title'] = 'Login';
+				
+			$this->load->view('backend/header',$data);
+			$this->load->view('backend/login',$data);
+			$this->load->view('backend/footer');
+		}
+	}
+
 	
 	public function dashboard()
 	{
-		if($this->session->userdata('logged_in'))
+		if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10))
 		{
-			$session_data     = $this->session->userdata('logged_in');
-			$data['sfid']     = $this->session->userdata('sfid');
-			$data['agent_id'] = $this->session->userdata('agent_id');
-			$data['type']     = $this->session->userdata('type');
-			
-			$xcrud = xcrud_get_instance();
+			$data['id_pds'] = $this->session->userdata('id_pds');
+			$data['sfid']   = $this->session->userdata('sfid');
 	
-			$this->load->model('tienda_model');
-			$this->load->model('intervencion_model');
-			
-			$data['tiendas']     =  $this->tienda_model->search_pds($this->input->post('sfid'));
-			$incidencias =  $this->tienda_model->get_incidencias();
-			foreach($incidencias as $incidencia){
+			$xcrud = xcrud_get_instance();
+			$this->load->model(array('intervencion_model','tienda_model','sfid_model'));
+	
+			$data['tiendas'] =  $this->tienda_model->search_pds($this->input->post('sfid'));
+			$incidencias = $this->tienda_model->get_incidencias();
+	
+			foreach($incidencias as $incidencia)
+			{
+				$incidencia->device       = $this->sfid_model->get_device($incidencia->id_devices_pds);
+				$incidencia->display      = $this->sfid_model->get_display($incidencia->id_displays_pds);
 				$incidencia->intervencion = $this->intervencion_model->get_intervencion_incidencia($incidencia->id_incidencia);
 			}
-			$data['incidencias']=$incidencias;
-			$xcrud->show_primary_ai_column(true);
-			$xcrud->unset_numbers();
-			$xcrud->start_minimized(true);
+				
+			$data['incidencias'] =  $incidencias;
 			
+			$sfid = $this->tienda_model->get_pds($data['id_pds']);
+	
+			$data['id_pds']     = $sfid['id_pds'];
+			$data['commercial'] = $sfid['commercial'];
+			$data['territory']  = $sfid['territory'];
+			$data['reference']  = $sfid['reference'];
+			$data['address']    = $sfid['address'];
+			$data['zip']        = $sfid['zip'];
+			$data['city']       = $sfid['city'];
+				
 			$xcrud->table('incidencias');
 			$xcrud->table_name('Incidencias');
 			$xcrud->relation('id_pds','pds','id_pds','reference');
@@ -86,58 +93,41 @@ class Admin extends CI_Controller {
 			$xcrud->columns('id_incidencia,fecha,id_pds,description_1,contacto,phone,email,status,status_pds');
 			//$xcrud->fields('client,type_profile_client,picture_url,description,status');	
 
-			$data['title']   = 'Información general';
-			$data['content'] = $xcrud->render();
+			$xcrud->show_primary_ai_column(false);
+			$xcrud->unset_add();
+			$xcrud->unset_edit();
+			$xcrud->unset_remove();
+			$xcrud->unset_numbers();
+			$xcrud->start_minimized(true);
 	
-			if ($this->session->userdata('type') == 9)
-			{			
-			$this->load->view('backend/header', $data);
-			$this->load->view('backend/navbar', $data);
-			$this->load->view('backend/dashboard', $data);
+			$data['title']   = 'Mis solicitudes';
+			//$data['content'] = $xcrud->render();
+			$data['content']   = '';
+	
+			$this->load->view('backend/header',$data);
+			$this->load->view('backend/navbar',$data);
+			$this->load->view('backend/dashboard',$data);
 			$this->load->view('backend/footer');
-			}
-			else
-			{
-				$id_pds = $this->tienda_model->get_id($data['sfid']);
-				
-				$data['id_pds'] = $id_pds['id_pds'];
-				
-				redirect('admin/dashboard_pds','refresh');
-			}
 		}
 		else
 		{
 			redirect('admin','refresh');
-		}	
-	}
-
+		}
+	}	
 	
-	public function dashboard_pds()
+	
+	public function operar_incidencia()
 	{
-		if($this->session->userdata('logged_in'))
-		{
-			$session_data     = $this->session->userdata('logged_in');
-			$data['sfid']     = $this->session->userdata('sfid');
-			$data['agent_id'] = $this->session->userdata('agent_id');
-			$data['type']     = $this->session->userdata('type');
-			
+		if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10))
+		{		
+			$id_pds = $this->uri->segment(3);
+			$id_inc = $this->uri->segment(4);
+				
 			$xcrud = xcrud_get_instance();
-	
-			$this->load->model('tienda_model');
-			
-			$id_pds = $this->tienda_model->get_id($data['sfid']);
-			$data['id_pds'] = $id_pds['id_pds'];
-			
-
-			$incidencias = $this->tienda_model->get_incidencias_pds($data['id_pds']);
-			foreach($incidencias as $incidencia){
-				$incidencia->device= $this->tienda_model->get_device($incidencia->id_devices_pds);
-				$incidencia->display= $this->tienda_model->get_display($incidencia->id_displays_pds);
-
-			}
-			$data['incidencias'] =  $incidencias;
-			$sfid = $this->tienda_model->get_pds($data['id_pds']);
-			
+			$this->load->model(array('intervencion_model','tienda_model','sfid_model'));
+		
+			$sfid = $this->tienda_model->get_pds($id_pds);
+		
 			$data['id_pds']     = 'ABX/PDS-'.$sfid['id_pds'];
 			$data['commercial'] = $sfid['commercial'];
 			$data['territory']  = $sfid['territory'];
@@ -145,21 +135,27 @@ class Admin extends CI_Controller {
 			$data['address']    = $sfid['address'];
 			$data['zip']        = $sfid['zip'];
 			$data['city']       = $sfid['city'];
-			$data['id_pds_url'] = $sfid['id_pds'];
-	
-			$data['title']   = 'Información general';
-	
-			
+		
+			$data['id_pds_url']     = $id_pds;
+			$data['id_inc_url']     = $id_inc;
+		
+			$incidencia = $this->tienda_model->get_incidencia($id_inc);
+			$incidencia['intervencion'] = $this->intervencion_model->get_intervencion_incidencia($id_inc);
+			$incidencia['device']= $this->sfid_model->get_device($incidencia['id_devices_pds']);
+			$incidencia['display']= $this->sfid_model->get_display($incidencia['id_displays_pds']);
+			$data['incidencia'] = $incidencia;
+		
+			$data['title']   = 'Operativa incidencia';
+		
 			$this->load->view('backend/header', $data);
 			$this->load->view('backend/navbar', $data);
-			$this->load->view('backend/dashboard_pds', $data);
+			$this->load->view('backend/operar_incidencia', $data);
 			$this->load->view('backend/footer');
-
 		}
 		else
 		{
 			redirect('admin','refresh');
-		}	
+		}
 	}	
 	
 	public function listado_panelados()
@@ -186,41 +182,7 @@ class Admin extends CI_Controller {
 	}	
 	
 
-	public function operar_incidencia()
-	{
-		$id_pds = $this->uri->segment(3);
-		$id_inc = $this->uri->segment(4);
-			
-		$xcrud = xcrud_get_instance();
-		$this->load->model('tienda_model');
-		$this->load->model('intervencion_model');
-		
-		$sfid = $this->tienda_model->get_pds($id_pds);
-		
-		$data['id_pds']     = 'ABX/PDS-'.$sfid['id_pds'];
-		$data['commercial'] = $sfid['commercial'];
-		$data['territory']  = $sfid['territory'];
-		$data['reference']  = $sfid['reference'];
-		$data['address']    = $sfid['address'];
-		$data['zip']        = $sfid['zip'];
-		$data['city']       = $sfid['city'];
-		
-		$data['id_pds_url']     = $id_pds;
-		$data['id_inc_url']     = $id_inc;		
 
-		$incidencia = $this->tienda_model->get_incidencia($id_inc);
-		$incidencia['intervencion'] = $this->intervencion_model->get_intervencion_incidencia($id_inc);
-		$incidencia['device']= $this->tienda_model->get_device($incidencia['id_devices_pds']);
-		$incidencia['display']= $this->tienda_model->get_display($incidencia['id_displays_pds']);
-		$data['incidencia'] = $incidencia;
-		
-		$data['title']   = 'Operativa incidencias';
-	
-		$this->load->view('backend/header', $data);
-		$this->load->view('backend/navbar', $data);
-		$this->load->view('backend/operar_incidencia', $data);
-		$this->load->view('backend/footer');
-	}	
 	
 	public function update_incidencia()
 	{
@@ -1372,69 +1334,11 @@ class Admin extends CI_Controller {
 	}
 		
 	
-	public function ayuda()
-	{
-		$xcrud = xcrud_get_instance();
-	   	
-	   	if ($this->session->userdata('type') == 1)
-	   	{
-	   	$this->load->model('tienda_model');
-	   		
-	   	$sfid   = $this->session->userdata('sfid');
-	   	$id_pds = $this->tienda_model->get_id($sfid);
-	   	$data['id_pds_url'] = $id_pds['id_pds'];
-	   	$data['id_pds']     = $id_pds['id_pds'];
-	   	
-	   	$sfid = $this->tienda_model->get_pds($id_pds['id_pds']);
-	   	$data['commercial'] = $sfid['commercial'];
-	   	$data['territory']  = $sfid['territory'];
-	   	$data['reference']  = $sfid['reference'];
-	   	$data['address']    = $sfid['address'];
-	   	$data['zip']        = $sfid['zip'];
-	   	$data['city']       = $sfid['city'];
-	   	}
-	   	
-		$data['title']   = 'Ayuda';
-	
-		$this->load->view('backend/header', $data);
-		$this->load->view('backend/navbar', $data);
-		$this->load->view('backend/ayuda', $data);
-		$this->load->view('backend/footer');
-	}	
-		
-	
 	public function auditorias()
 	{
 		$xcrud = xcrud_get_instance();
 	
 		$data['title']   = 'Auditorías';
-		$data['content'] = 'Aún no ha sido asignada ninguna auditoría';
-	
-		$this->load->view('backend/header', $data);
-		$this->load->view('backend/navbar', $data);
-		//$this->load->view('backend/content', $data);
-		$this->load->view('backend/auditorias', $data);
-		$this->load->view('backend/footer');
-	}
-	
-	public function auditorias_ver()
-	{
-		$xcrud = xcrud_get_instance();
-	
-		$data['title']   = 'Auditorías';
-		$data['content'] = 'En construcción.';
-	
-		$this->load->view('backend/header', $data);
-		$this->load->view('backend/navbar', $data);
-		$this->load->view('backend/auditorias_ver', $data);
-		$this->load->view('backend/footer');
-	}	
-		
-	public function operaciones()
-	{
-		$xcrud = xcrud_get_instance();
-	
-		$data['title']   = 'Operaciones';
 		$data['content'] = 'En construcción.';
 	
 		$this->load->view('backend/header', $data);
@@ -1442,6 +1346,7 @@ class Admin extends CI_Controller {
 		$this->load->view('backend/content', $data);
 		$this->load->view('backend/footer');
 	}
+		
 	
 	public function facturacion()
 	{
@@ -1456,12 +1361,75 @@ class Admin extends CI_Controller {
 		$this->load->view('backend/footer');
 	}
 		
+	
+	public function operaciones()
+	{
+		$xcrud = xcrud_get_instance();
+	
+		$data['title']   = 'Operaciones';
+		$data['content'] = 'En construcción.';
+	
+		$this->load->view('backend/header', $data);
+		$this->load->view('backend/navbar', $data);
+		$this->load->view('backend/content', $data);
+		$this->load->view('backend/footer');
+	}
+		
+	
+	public function ayuda($tipo)
+	{
+		if($this->session->userdata('logged_in'))
+		{
+			$data['id_pds'] = $this->session->userdata('id_pds');
+			$data['sfid']   = $this->session->userdata('sfid');
+
+			$xcrud = xcrud_get_instance();
+
+			switch($tipo){
+				case 1: 
+					$data['video']="ver_incidencias.mp4";
+					$data['ayuda_title']="Mis solicitudes";
+					break;
+				case 2: 
+					$data['video']="nueva_averia.mp4";
+					$data['ayuda_title']="Alta incidencia";
+					break;
+				case 3: 
+					$data['video']="nueva_incidencia_mueble.mp4";
+					$data['ayuda_title']="Alta incidencia sistema seguridad general del mueble";
+					break;
+				case 4: 
+					$data['video']="nuevo_robo.mp4";
+					$data['ayuda_title']="Incidencias frecuentes";
+					break;
+				default:
+					$data['video']="ver_incidencias.mp4";
+					$data['ayuda_title']="Mis solicitudes";
+			}
+
+			$data['title']      = 'Ayuda';
+
+			$this->load->view('backend/header',$data);
+			$this->load->view('backend/navbar',$data);
+			$this->load->view('backend/ayuda',$data);
+			$this->load->view('backend/footer');
+		}
+		else
+		{
+			redirect('admin','refresh');
+		}
+	}
+
+	
 	public function logout()
 	{
-		$this->session->unset_userdata('logged_in');
-		redirect('/','refresh');
-	}		
-	
+		if($this->session->userdata('logged_in'))
+		{		
+			$this->session->unset_userdata('logged_in');
+		}	
+		redirect('admin','refresh');
+	}
+			
 }
 /* End of file admin.php */
 /* Location: ./application/controllers/admin.php */

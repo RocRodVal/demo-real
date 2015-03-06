@@ -13,7 +13,7 @@ class Inventario extends CI_Controller {
 	
 	public function index()
 	{
-		if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 9))
+		if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10))
 		{
 			$xcrud = xcrud_get_instance();
 			$this->load->model('tienda_model');
