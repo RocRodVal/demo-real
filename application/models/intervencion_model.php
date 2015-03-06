@@ -145,7 +145,7 @@ class Intervencion_model extends MY_Model
         foreach ($query->result_array() as $row) {
             $i = new IncidenciaVO();
             $i->__set('id_incidencia', $row['id_incidencia']);
-            $i->__set('description', $row['description']);
+            $i->__set('description', $row['description_1']);
             $i->__set('fecha', $row['fecha']);
             $i->__set('denuncia', $row['denuncia']);
             $i->__set('status', $row['status']);

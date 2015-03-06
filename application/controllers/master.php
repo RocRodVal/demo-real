@@ -75,7 +75,7 @@ class Master extends CI_Controller {
 			$data['zip']        = $sfid['zip'];
 			$data['city']       = $sfid['city'];
 	
-			$data['title']   = 'Solicitudes';
+			$data['title'] = 'Mis solicitudes';
 				
 			$this->load->view('master/header',$data);
 			$this->load->view('master/navbar',$data);

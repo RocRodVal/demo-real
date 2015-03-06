@@ -11,25 +11,13 @@
             </div>
 
             <ul class="nav navbar-top-links navbar-right">
-               <?php
-               if ($this->session->userdata('type') == 9)
-               {
-               ?>
                <li><a href="<?=site_url('admin/logout')?>"><i class="fa fa-sign-out fa-fw"></i> Logout</a></li>	            
-			   <?php 
-               }
-               else {
-			   ?>		            
-               <li><?php $this->load->view('backend/infoTienda');?> </li>
-			   <?php 
-			   }
-			   ?>		
             </ul>
             <div class="navbar-default sidebar" role="navigation">
                 <div class="sidebar-nav navbar-collapse">
                     <ul class="nav" id="side-menu" style="margin-top:20px;">
                         <?php
-                        if ($this->session->userdata('type') == 9)
+                        if ($this->session->userdata('type') == 10)
                         {
                         ?>                                                 
                         <li><a <?=($this->uri->segment(2)==='dashboard')?'class="active"':''?> href="<?=site_url('admin/dashboard')?>"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a></li>
@@ -80,7 +68,15 @@
                         <?php
                         }	
                         ?>
-                        <li><a <?=($this->uri->segment(2)==='ayuda')?'class="active"':''?> href="<?=site_url('admin/ayuda')?>"><i class="fa fa-question-circle fa-fw"></i> Ayuda</a> </li>   
+                        <li <?=($this->uri->segment(2)==='ayuda')?'class="active"':''?>>
+                        <a href="#"><i class="fa fa-question-circle fa-fw"></i> Ayuda<span class="fa arrow"></span></a>
+                        <ul class="nav nav-second-level">
+                            <li><a <?=($this->uri->segment(3)==='1')?'class="active"':''?> href="<?=site_url('admin/ayuda/1')?>"> Mis solicitudes</a></li>
+                            <li><a <?=($this->uri->segment(3)==='2')?'class="active"':''?> href="<?=site_url('admin/ayuda/2')?>"> Alta incidencia</a></li>
+                            <li><a <?=($this->uri->segment(3)==='3')?'class="active"':''?> href="<?=site_url('admin/ayuda/3')?>"> Alta incidencia sistema seguridad general del mueble</a></li>
+                            <!--<li><a <?=($this->uri->segment(3)==='4')?'class="active"':''?> href="<?=site_url('admin/ayuda/4')?>"> Incidencias frecuentes</a></li>-->
+                        </ul>
+                        </li>  
                     </ul>
                 </div>
             </div>
