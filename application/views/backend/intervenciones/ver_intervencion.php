@@ -16,14 +16,14 @@
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                         aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="modal_ver_intervencion_title">Intervencion #<?php echo $incidencia['intervencion'];?></h4>
+                <h4 class="modal-title" id="modal_ver_intervencion_title">Intervención</h4>
             </div>
             <div class="modal-body">
                 <div class="row">
                     <div class="col-lg-8">
                         <div class="panel panel-default">
                             <div class="panel-heading">
-                                <h3 class="panel-title">Infromación</h3>
+                                <h3 class="panel-title">Información</h3>
                             </div>
                             <div class="panel-body">
                                 <div class="input-group">
@@ -35,7 +35,7 @@
                                     <span class="input-group-addon data" id="status_ver_intervencion"></span>
                                 </div>
                                 <div class="input-group">
-                                    <span class="input-group-addon">DESCRIPCION</span>
+                                    <span class="input-group-addon">DESCRIPCIÓN</span>
                                     <span class="input-group-addon data" id="description_ver_intervencion"></span>
                                 </div>
                             </div>
@@ -85,7 +85,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
             </div>
         </div>
     </div>

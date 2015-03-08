@@ -79,10 +79,10 @@ class Admin extends CI_Controller {
 			$xcrud->table('incidencias');
 			$xcrud->table_name('Incidencias');
 			$xcrud->relation('id_pds','pds','id_pds','reference');
-			//$xcrud->relation('id_displays_pds','displays_pds','id_displays_pds','id_displays_pds');
-			//$xcrud->relation('id_devices_pds','devices_pds','id_devices_pds','id_devices_pds');
-			$xcrud->relation('id_displays_pds','display','id_display','display');
-			$xcrud->relation('id_devices_pds','device','id_device','device');
+			$xcrud->relation('id_displays_pds','displays_pds','id_displays_pds','id_displays_pds');
+			$xcrud->relation('id_devices_pds','devices_pds','id_devices_pds','id_devices_pds');
+			//$xcrud->relation('id_displays_pds','display','id_display','display');
+			//$xcrud->relation('id_devices_pds','device','id_device','device');
 			$xcrud->relation('id_operador','contact','id_contact','contact');
 			$xcrud->change_type('denuncia', 'file');
 			$xcrud->change_type('parte_pdf', 'file');
@@ -300,9 +300,9 @@ class Admin extends CI_Controller {
 		$xcrud_3->relation('brand_alarm','brand_alarm','id_brand_alarm','brand');
 		$xcrud_3->change_type('picture_url', 'image');
 		$xcrud_3->modal('picture_url');
-		$xcrud_3->label('brand_alarm','Fabricante')->label('type_alarm','Tipo')->label('code','Código')->label('alarm','Modelo')->label('picture_url','Foto')->label('description','Comentarios')->label('status','Estado');
-		$xcrud_3->columns('brand_alarm,type_alarm,code,alarm,picture_url,status');
-		$xcrud_3->fields('brand_alarm,type_alarm,code,alarm,picture_url,description,status');
+		$xcrud_3->label('brand_alarm','Fabricante')->label('type_alarm','Tipo')->label('code','Código')->label('alarm','Modelo')->label('picture_url','Foto')->label('description','Comentarios')->label('units','Unidades')->label('status','Estado');
+		$xcrud_3->columns('brand_alarm,type_alarm,code,alarm,picture_url,units,status');
+		$xcrud_3->fields('brand_alarm,type_alarm,code,alarm,picture_url,description,units,status');
 		
 		$xcrud_4 = xcrud_get_instance();
 		$xcrud_4->table('alarms_display');
