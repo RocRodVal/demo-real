@@ -29,7 +29,6 @@
 	                                <input type="submit" class="btn btn-lg btn-success btn-block" value="Entrar" />
 	                            </fieldset>
 	                        </form>
-	                        <p style="padding:20px 0px 0px;"><a href="<?=site_url('tienda');?>">Acceso SFID</a> | <a href="<?=site_url('master');?>">Acceso maestro</a></p> 
 	                    </div>
 	                </div>
 	            </div>
