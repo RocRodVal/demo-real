@@ -30,7 +30,7 @@
                         </div>
                         <div class="col-lg-7 labelText white">Asignar materiales</div>
                         <div class="col-lg-5 labelBtn white">
-                            <a href="<?= site_url('admin/update_incidencia/' . $id_pds_url . '/' . $id_inc_url . '/2/3') ?>"
+                            <a href="<?= site_url('admin/update_incidencia_materiales/' . $id_pds_url . '/' . $id_inc_url . '/2/3') ?>"
                                classBtn="status" class="btn btn-success" <?php if ($incidencia['status'] != 'Revisada') {
                                 echo 'disabled';
                             } ?>>Asignar mat.</a></td>
