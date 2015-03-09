@@ -211,6 +211,27 @@ class Tienda_model extends CI_Model {
 		return $query->result();
 	}
 	
+	public function get_devices_almacen_reserva() {
+	
+		$query = $this->db->select('devices_almacen.*, device.*')
+		->join('device','devices_almacen.id_device = device.id_device')
+		->where('devices_almacen.status','En stock')
+		->order_by('device.device')
+		->get('devices_almacen');
+	
+		return $query->result();
+	}	
+	
+	public function get_alarms_almacen_reserva() {
+	
+		$query = $this->db->select('alarm.*')
+		->where('status','Alta')
+		->order_by('code')
+		->get('alarm');
+	
+		return $query->result();
+	}	
+	
 	
 	public function get_alarms_almacen() {
 	
@@ -354,6 +375,14 @@ class Tienda_model extends CI_Model {
 	}	
 	
 	
+	public function incidencia_update_device_pds($id_devices_pds,$status)
+	{
+		$this->db->set('status', $status, FALSE);
+		$this->db->where('id_devices_pds',$id_devices_pds);
+		$this->db->update('devices_pds');
+	}
+		
+	
 	public function get_alarms_display($id) {
 		if($id != FALSE) {
 			$query = $this->db->select('alarms_display_pds.*,alarm.*')
@@ -408,6 +437,12 @@ class Tienda_model extends CI_Model {
 		return array('add' => (isset($id)) ? $id : FALSE, 'id' => $id);
 	}	
 	
+	
+	public function historico($data)
+	{
+		$this->db->insert('historico',$data);
+		$id=$this->db->insert_id();
+	}	
 	
 	public function login($data)
 	{

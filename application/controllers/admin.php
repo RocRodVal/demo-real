@@ -209,6 +209,27 @@ class Admin extends CI_Controller {
 	
 		$this->tienda_model->incidencia_update($id_inc,$status_pds,$status);
 		
+		if ($status == 2)
+		{
+			$incidencia = $this->tienda_model->get_incidencia($id_inc);
+			if ($incidencia['fail_device'] == 1)
+			{
+				$this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'],2);
+			}	
+		}
+		
+		$data = array(
+				'fecha'    	        => date('Y-m-d H:i:s'),
+				'id_incidencia'     => $id_inc,
+				'id_pds'            => $id_pds,
+				'description'  	    => NULL,
+				'agent' 	        => $this->session->userdata('sfid'),
+				'status_pds'	    => $status_pds,
+				'status'	        => $status
+		);		
+		
+		$this->tienda_model->historico($data);
+		
 		redirect('admin/dashboard','refresh');
 		/*
 		$data['title']   = 'Operativa incidencias';
@@ -220,6 +241,53 @@ class Admin extends CI_Controller {
 		*/
 	}	
 	
+	
+	public function update_incidencia_materiales()
+	{
+		if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10))
+		{		
+			$id_pds     = $this->uri->segment(3);
+			$id_inc     = $this->uri->segment(4);
+			$status_pds = $this->uri->segment(5);
+			$status     = $this->uri->segment(6);
+
+			$xcrud = xcrud_get_instance();
+			$this->load->model(array('intervencion_model','tienda_model','sfid_model'));
+		
+			$sfid = $this->tienda_model->get_pds($id_pds);
+		
+			$data['id_pds']     = 'ABX/PDS-'.$sfid['id_pds'];
+			$data['commercial'] = $sfid['commercial'];
+			$data['territory']  = $sfid['territory'];
+			$data['reference']  = $sfid['reference'];
+			$data['address']    = $sfid['address'];
+			$data['zip']        = $sfid['zip'];
+			$data['city']       = $sfid['city'];
+		
+			$data['id_pds_url']     = $id_pds;
+			$data['id_inc_url']     = $id_inc;
+		
+			$incidencia = $this->tienda_model->get_incidencia($id_inc);
+			$incidencia['intervencion'] = $this->intervencion_model->get_intervencion_incidencia($id_inc);
+			$incidencia['device']= $this->sfid_model->get_device($incidencia['id_devices_pds']);
+			$incidencia['display']= $this->sfid_model->get_display($incidencia['id_displays_pds']);
+			$data['incidencia'] = $incidencia;
+		
+			$data['alarms_almacen']  = $this->tienda_model->get_alarms_almacen_reserva();
+			$data['devices_almacen'] = $this->tienda_model->get_devices_almacen_reserva();
+			
+			$data['title']   = 'Operativa incidencia';
+		
+			$this->load->view('backend/header', $data);
+			$this->load->view('backend/navbar', $data);
+			$this->load->view('backend/operar_incidencia_materiales', $data);
+			$this->load->view('backend/footer');
+		}
+		else
+		{
+			redirect('admin','refresh');
+		}
+	}	
 
 	
 	public function clientes()
