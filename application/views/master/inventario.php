@@ -84,6 +84,8 @@
 		    </div>    
 		    <div class="row">
 		        <div class="col-lg-12">
+		        	<?php echo $alarms_almacen; ?>
+		        	<!--//
 		            <?php
 		            if (empty($alarms_almacen)) {
 		                echo '<p>No hay alarmas.</p>';
@@ -115,6 +117,7 @@
 		            <?php
 		            }
 		            ?>
+		            //-->
 		        </div>
 		    </div> 
 			    <div class="row">

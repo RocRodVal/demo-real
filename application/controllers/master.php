@@ -165,9 +165,10 @@ class Master extends CI_Controller {
 		$xcrud->table_name('Modelo');
 		$xcrud->relation('type_alarm','type_alarm','id_type_alarm','type');
 		$xcrud->relation('brand_alarm','brand_alarm','id_brand_alarm','brand');
-		$xcrud->change_type('picture_url', 'image');
+		$xcrud->change_type('picture_url','image');
+		$xcrud->modal('picture_url');
 		$xcrud->label('brand_alarm','Fabricante')->label('type_alarm','Tipo')->label('code','Código')->label('alarm','Modelo')->label('picture_url','Foto')->label('description','Comentarios')->label('status','Estado');
-		$xcrud->columns('brand_alarm,type_alarm,code,alarm,status');
+		$xcrud->columns('brand_alarm,type_alarm,code,alarm,picture_url,status');
 		$xcrud->fields('brand_alarm,type_alarm,code,alarm,picture_url,description,status');
 		
 		$xcrud->show_primary_ai_column(false);
@@ -193,9 +194,10 @@ class Master extends CI_Controller {
         $xcrud->table_name('Modelo');
         $xcrud->relation('type_device','type_device','id_type_device','type');
         $xcrud->relation('brand_device','brand_device','id_brand_device','brand');
-        $xcrud->change_type('picture_url', 'image');
+        $xcrud->change_type('picture_url','image');
+        $xcrud->modal('picture_url');
         $xcrud->label('brand_device','Fabricante')->label('type_device','Tipo')->label('device','Modelo')->label('brand_name','Modelo fabricante')->label('picture_url','Foto')->label('description','Comentarios')->label('status','Estado');
-        $xcrud->columns('brand_device,type_device,device,brand_name,status');
+        $xcrud->columns('brand_device,type_device,device,picture_url,brand_name,status');
         $xcrud->fields('brand_device,type_device,device,brand_name,picture_url,description,status');
         
         $xcrud->show_primary_ai_column(false);
@@ -221,7 +223,7 @@ class Master extends CI_Controller {
 		$xcrud->table_name('Modelo');
 		$xcrud->relation('client_display','client','id_client','client');
 		$xcrud->change_type('picture_url', 'image');
-		$xcrud->change_type('canvas_url', 'file');
+		$xcrud->change_type('canvas_url','file');
 		$xcrud->modal('picture_url');
 		$xcrud->label('client_display','Cliente')->label('display','Modelo')->label('picture_url','Foto')->label('canvas_url','SVG')->label('description','Comentarios')->label('positions','Posiciones')->label('status','Estado');
 		$xcrud->columns('client_display,display,picture_url,positions,status');
@@ -288,7 +290,26 @@ class Master extends CI_Controller {
 			$this->load->model('tienda_model');
 				
 			$data['stocks']          = $this->tienda_model->get_stock();
-			$data['alarms_almacen']  = $this->tienda_model->get_alarms_almacen();
+			//$data['alarms_almacen']  = $this->tienda_model->get_alarms_almacen();
+			
+			$xcrud->table('alarm');
+			$xcrud->table_name('Alarmas almacén');
+			$xcrud->relation('type_alarm','type_alarm','id_type_alarm','type');
+			$xcrud->relation('brand_alarm','brand_alarm','id_brand_alarm','brand');
+			$xcrud->change_type('picture_url','image');
+			$xcrud->modal('picture_url');
+			$xcrud->label('brand_alarm','Fabricante')->label('type_alarm','Tipo')->label('code','Código')->label('alarm','Modelo')->label('picture_url','Foto')->label('description','Comentarios')->label('status','Estado');
+			$xcrud->columns('brand_alarm,alarm,picture_url,units');
+			
+			$xcrud->show_primary_ai_column(false);
+			$xcrud->unset_add();
+			$xcrud->unset_view();
+			$xcrud->unset_edit();
+			$xcrud->unset_remove();
+			$xcrud->unset_numbers();
+			
+			$data['alarms_almacen'] = $xcrud->render();
+			
 			$data['devices_almacen'] = $this->tienda_model->get_devices_almacen();
 			$data['displays_pds']    = $this->tienda_model->get_displays_total();
 			$data['devices_pds']     = $this->tienda_model->get_devices_total();
