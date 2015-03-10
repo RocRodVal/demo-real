@@ -104,6 +104,18 @@ class Tienda_model extends CI_Model {
 		}
 	}	
 	
+	public function material_retorno() {
+		$query = $this->db->select('devices_pds.id_devices_pds, pds.reference AS SFID, incidencias.id_incidencia AS incidencia, device.device as dispositivo, devices_pds.status AS estado')
+		->join('pds','devices_pds.id_pds = pds.id_pds')
+		->join('incidencias','devices_pds.id_devices_pds = incidencias.id_devices_pds')
+		->join('device','devices_pds.id_device = device.id_device	')
+		->where('devices_pds.status', 'Incidencia')
+		->order_by('incidencias.id_incidencia')
+		->get('devices_pds');
+	
+		return $query->result();
+	}	
+	
 	public function get_display_pds($id) {
 			if($id != FALSE) {
 			$query = $this->db->select('displays_pds.id_displays_pds, displays_pds.description, display.*')

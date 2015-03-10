@@ -116,6 +116,31 @@ class Admin extends CI_Controller {
 	}	
 	
 	
+	public function material_retorno()
+	{
+		if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10))
+		{
+			$data['id_pds'] = $this->session->userdata('id_pds');
+			$data['sfid']   = $this->session->userdata('sfid');
+	
+			$xcrud = xcrud_get_instance();
+			$this->load->model(array('tienda_model','sfid_model'));
+	
+			$data['material_retorno'] =  $this->tienda_model->material_retorno();
+	
+			$data['title']   = 'Material retorno';
+	
+			$this->load->view('backend/header',$data);
+			$this->load->view('backend/navbar',$data);
+			$this->load->view('backend/material_retorno',$data);
+			$this->load->view('backend/footer');
+		}
+		else
+		{
+			redirect('admin','refresh');
+		}
+	}	
+	
 	public function operar_incidencia()
 	{
 		if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10))
@@ -294,14 +319,14 @@ class Admin extends CI_Controller {
 	{
 		$xcrud = xcrud_get_instance();
 		$xcrud->table('client');
-		$xcrud->table_name('Cliente');
+		$xcrud->table_name('Empresa');
 		$xcrud->relation('type_profile_client','type_profile','id_type_profile','type');
 		$xcrud->change_type('picture_url', 'image');
-		$xcrud->label('client','Cliente')->label('type_profile_client','Tipo')->label('picture_url','Foto')->label('description','Comentarios')->label('status','Estado');
+		$xcrud->label('client','Empresa')->label('type_profile_client','Tipo')->label('picture_url','Foto')->label('description','Comentarios')->label('status','Estado');
 		$xcrud->columns('client,type_profile_client');
 		$xcrud->fields('client,type_profile_client,picture_url,description,status');
 
-		$data['title']   = 'Clientes';
+		$data['title']   = 'Empresas';
 		$data['content'] = $xcrud->render();
 	
 		$this->load->view('backend/header', $data);
@@ -330,9 +355,15 @@ class Admin extends CI_Controller {
 		$xcrud_2->table_name('Contacto');
 		$xcrud_2->relation('client_contact','client','id_client','client');
 		$xcrud_2->relation('type_profile_contact','type_profile','id_type_profile','type');
-		$xcrud_2->label('client_contact','Cliente')->label('type_profile_contact','Tipo')->label('contact','Contacto')->label('email','E-mail')->label('phone','Teléfono')->label('status','Estado');
+		$xcrud_2->relation('territory','territory','id_territory','territory');
+		$xcrud_2->relation('panelado_pds','panelado','id_panelado','panelado');
+		$xcrud_2->relation('type_via','type_via','id_type_via','via');
+		$xcrud_2->relation('province','province','id_province','province');
+		$xcrud_2->relation('county','county','id_county','county');		
+		$xcrud_2->label('client_contact','Empresa')->label('type_profile_contact','Tipo')->label('contact','Contacto')->label('type_via','Tipo vía')->label('address','Dirección')->label('zip','C.P.')->label('city','Ciudad')->label('province','Provincia')->label('county','CC.AA.')->label('schedule','Horario')->label('phone','Teléfono')->label('mobile','Móvil')->label('email','Email')->label('status','Estado');
 		$xcrud_2->columns('client_contact,type_profile_contact,contact,email');
-		$xcrud_2->fields('client_contact,type_profile_contact,contact,email,phone,status');		
+		$xcrud_2->fields('client_contact,type_profile_contact,contact,type_via,address,zip,city,province,county,schedule,phone,mobile,email,status');		
+
 		
 		$data['title']   = 'Contactos';
 		$data['content'] = $xcrud_1->render();
