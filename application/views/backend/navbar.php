@@ -21,13 +21,14 @@
                         {
                         ?>                                                 
                         <li><a <?=($this->uri->segment(2)==='dashboard')?'class="active"':''?> href="<?=site_url('admin/dashboard')?>"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a></li>
+                        <li><a <?=($this->uri->segment(2)==='material_retorno')?'class="active"':''?> href="<?=site_url('admin/material_retorno')?>"><i class="fa fa-mobile fa-fw"></i> Material retorno</a></li>
                         <?php               
                         $maestros = array('clientes','contactos','alarmas','dispositivos','muebles','puntos_de_venta');
                         ?>
                         <li <?=(in_array($this->uri->segment(2), $maestros))?'class="active"':''?>>
                             <a href="#"><i class="fa fa-sitemap fa-fw"></i> Maestros<span class="fa arrow"></span></a>
                             <ul class="nav nav-second-level">
-                            	<li><a <?=($this->uri->segment(2)==='clientes')?'class="active"':''?> href="<?=site_url('admin/clientes')?>">Clientes &raquo;</a></li> 
+                            	<li><a <?=($this->uri->segment(2)==='clientes')?'class="active"':''?> href="<?=site_url('admin/clientes')?>">Empresas &raquo;</a></li> 
                                 <li><a <?=($this->uri->segment(2)==='contactos')?'class="active"':''?> href="<?=site_url('admin/contactos')?>">Contactos &raquo;</a></li>        
                                 <li><a <?=($this->uri->segment(2)==='alarmas')?'class="active"':''?> href="<?=site_url('admin/alarmas')?>">Alarmas &raquo;</a></li>
                                 <li><a <?=($this->uri->segment(2)==='dispositivos')?'class="active"':''?> href="<?=site_url('admin/dispositivos')?>">Dispositivos &raquo;</a></li>
