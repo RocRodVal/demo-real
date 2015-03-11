@@ -91,7 +91,7 @@ function saveIntervencion() {
             alert('Seleccione un operador');
             return;
         }
-        description=$("#nueva_intervencion_description").html();
+        description=$("#nueva_intervencion_description").val();
         $.ajax({
             type: "POST",
             data:   "operador_id=" + operador_id +
