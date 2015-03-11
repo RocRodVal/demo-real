@@ -39,7 +39,7 @@ function getIntervenciones() {
         $.each(json, function (key, intervencion) {
             actionsBtn = actionsIntervencion(intervencion.id_intervencion, intervencion.status);
             intervenciones_array.push(new Array(
-                "<a onClick='viewIntervencion(" + intervencion.id_intervencion + ")'>#" + intervencion.id_intervencion + "</a>",
+                "<a onClick='viewIntervencion(" + intervencion.id_intervencion + ")'>" + intervencion.id_intervencion + "</a>",
                 intervencion.fecha,
                 intervencion.pds.reference,
                 intervencion.pds.address,
@@ -80,12 +80,12 @@ function viewIntervencion(intervencion_id) {
         $.each(intervencion.incidencias, function (key, incidencia) {
             actionsBtn = actionsIncidencia(incidencia.id_incidencia);
             incidencias_array.push(new Array(
-                "<a onClick='viewIncidencia(" + incidencia.id_incidencia + ")'>#" + incidencia.id_incidencia + "</a>",
+                "<a onClick='viewIncidencia(" + incidencia.id_incidencia + ")'>" + incidencia.id_incidencia + "</a>",
                 incidencia.fecha,
                 incidencia.pds.reference,
                 incidencia.pds.address,
-                incidencia.status,
-                actionsBtn
+                incidencia.status//,
+                //actionsBtn
             ));
 
         });
@@ -263,13 +263,12 @@ function refreshTablaIncidencias() {
         $.each(intervencion.incidencias, function (key, incidencia) {
             actionsBtn = actionsIncidencia(incidencia.id_incidencia);
             incidencias_array.push(new Array(
-                "<a onClick='viewIncidencia(" + incidencia.id_incidencia + ")'>#" + incidencia.id_incidencia + "</a>",
+                "<a onClick='viewIncidencia(" + incidencia.id_incidencia + ")'>" + incidencia.id_incidencia + "</a>",
                 incidencia.fecha,
                 incidencia.pds.reference,
                 incidencia.pds.address,
-                "-------",
-                incidencia.status,
-                actionsBtn
+                incidencia.status//,
+                //actionsBtn
             ));
 
         });
