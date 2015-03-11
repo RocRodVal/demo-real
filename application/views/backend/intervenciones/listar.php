@@ -20,14 +20,16 @@
                cellspacing="0" width="100%">
             <thead>
             <tr>
-                <th>ID</th>
+                <th>REF.</th>
                 <th>FECHA</th>
                 <th>SFID</th>
-                <th>NOMBRE TIENDA</th>
-                <th>TECNICO</th>
-                <th>COUNT</th>
-                <th>STATUS</th>
+                <th>TIENDA</th>
+                <th>TÉCNICO</th>
+                <th>INCIDENCIAS</th>
+                <!--//
+                <th>ESTADO</th>
                 <th>ACCIONES</th>
+                //-->
             </tr>
             </thead>
         </table>
@@ -35,7 +37,7 @@
 </div>
 
 
-<?php $this->load->view('backend/intervenciones/ver_intervencion'); ?>
+<?php $this->load->view('backend/intervenciones/ver_intervencion_incidencia'); ?>
 
 <!-- Modal Ver intervencion-->
 <div class="modal fade" id="modal_ver_incidencia" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"

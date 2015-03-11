@@ -22,7 +22,7 @@ class Intervencion_model extends MY_Model
         $this->db->select('intervenciones.*,
                 contact.id_contact, contact.contact,
                 contact.email, contact.phone,
-                pds.id_pds, pds.reference, pds.address');
+                pds.id_pds, pds.reference, pds.commercial');
         $this->db->from('intervenciones');
         $this->db->join('contact', 'intervenciones.id_operador=contact.id_contact');
         $this->db->join('pds', 'intervenciones.id_pds = pds.id_pds');
@@ -44,7 +44,7 @@ class Intervencion_model extends MY_Model
             $pds = new PdsVO();
             $pds->__set('id_pds', $row['id_pds']);
             $pds->__set('reference', $row['reference']);
-            $pds->__set('address', $row['address']);
+            $pds->__set('commercial', $row['commercial']);
             $i->__set('pds', $pds);
             $i->__set('incidencias',$this->get_incidencias_by_intervencion($i));
 
@@ -60,7 +60,7 @@ class Intervencion_model extends MY_Model
         $this->load->model('VO/PdsVO');
         $this->db->select('intervenciones.*,
                 contact.id_contact,contact.email,contact.contact,contact.phone,
-                pds.id_pds,pds.reference, pds.address');
+                pds.id_pds,pds.reference, pds.commercial');
         $this->db->from('intervenciones');
         $this->db->join('contact', 'intervenciones.id_operador=contact.id_contact');
         $this->db->join('pds', 'intervenciones.id_pds = pds.id_pds');
@@ -83,7 +83,7 @@ class Intervencion_model extends MY_Model
             $pds = new PdsVO();
             $pds->__set('id_pds', $row->id_pds);
             $pds->__set('reference', $row->reference);
-            $pds->__set('address', $row->address);
+            $pds->__set('commercial', $row->commercial);
 
             $intervencion->__set('pds', $pds);
         }
@@ -135,7 +135,7 @@ class Intervencion_model extends MY_Model
     {
         $this->load->model('VO/IncidenciaVO');
         $this->load->model('VO/PdsVO');
-        $this->db->select('incidencias.*,pds.id_pds, pds.reference, pds.address, display.display, device.device');
+        $this->db->select('incidencias.*,pds.id_pds, pds.reference, pds.commercial, display.display, device.device');
         //$this->db->select('incidencias.*,pds.id_pds, pds.reference, pds.address');
         $this->db->from('intervenciones_incidencias');
         $this->db->join('incidencias', 'incidencias.id_incidencia=intervenciones_incidencias.id_incidencia');
@@ -160,7 +160,7 @@ class Intervencion_model extends MY_Model
             $pds = new PdsVO();
             $pds->__set('id_pds', $row['id_pds']);
             $pds->__set('reference', $row['reference']);
-            $pds->__set('address', $row['address']);
+            $pds->__set('commercial', $row['commercial']);
             $i->__set('pds', $pds);
             $incidencias[] = $i;
         }

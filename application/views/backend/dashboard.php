@@ -145,5 +145,5 @@
         </div>
         <!-- /#page-wrapper -->
 
-        <?php $this->load->view('backend/intervenciones/ver_intervencion');?>
+        <?php $this->load->view('backend/intervenciones/ver_intervencion_incidencia');?>
 

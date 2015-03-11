@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost:3306
--- Generation Time: Mar 10, 2015 at 06:09 PM
+-- Generation Time: Mar 11, 2015 at 05:57 PM
 -- Server version: 5.5.40
 -- PHP Version: 5.4.35
 
@@ -1837,6 +1837,22 @@ INSERT INTO `brand_device` (`id_brand_device`, `brand`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `chat`
+--
+
+CREATE TABLE IF NOT EXISTS `chat` (
+`id_chat` int(10) unsigned NOT NULL,
+  `fecha` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `id_incidencia` int(10) unsigned NOT NULL,
+  `agent` varchar(100) NOT NULL,
+  `texto` text NOT NULL,
+  `foto` varchar(200) DEFAULT NULL,
+  `status` enum('Nuevo','Leído','Contestado','Privado','Borrado') NOT NULL DEFAULT 'Nuevo'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `ci_sessions`
 --
 
@@ -1853,7 +1869,7 @@ CREATE TABLE IF NOT EXISTS `ci_sessions` (
 --
 
 INSERT INTO `ci_sessions` (`session_id`, `ip_address`, `user_agent`, `last_activity`, `user_data`) VALUES
-('58532037197409b3951944c5793d499c', '::1', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/40.0.2214.115 Safari/537.36', 1426007248, 'a:5:{s:9:"user_data";s:0:"";s:4:"sfid";s:7:"altabox";s:4:"type";s:2:"10";s:9:"logged_in";b:1;s:10:"xcrud_sess";a:2:{s:40:"cca3ab85461174b6e8b82a727a2104c4699428f6";a:130:{s:3:"key";s:40:"cbffb092873a70b03e11251cdab0e2587007039b";s:4:"time";i:1426007273;s:5:"table";s:12:"type_profile";s:10:"table_name";s:4:"Tipo";s:5:"where";a:0:{}s:8:"order_by";a:0:{}s:8:"relation";a:0:{}s:13:"fields_create";a:1:{s:17:"type_profile.type";a:3:{s:5:"table";s:12:"type_profile";s:5:"field";s:4:"type";s:3:"tab";b:0;}}s:11:"fields_edit";a:1:{s:17:"type_profile.type";a:3:{s:5:"table";s:12:"type_profile";s:5:"field";s:4:"type";s:3:"tab";b:0;}}s:11:"fields_view";a:1:{s:17:"type_profile.type";a:3:{s:5:"table";s:12:"type_profile";s:5:"field";s:4:"type";s:3:"tab";b:0;}}s:11:"fields_list";a:1:{s:17:"type_profile.type";a:2:{s:5:"table";s:12:"type_profile";s:5:"field";s:4:"type";}}s:6:"labels";a:1:{s:17:"type_profile.type";s:4:"Tipo";}s:13:"columns_names";a:1:{s:17:"type_profile.type";s:4:"Tipo";}s:9:"is_create";b:1;s:7:"is_edit";b:1;s:9:"is_remove";b:1;s:6:"is_csv";b:1;s:7:"buttons";a:0:{}s:19:"validation_required";a:2:{s:28:"type_profile.id_type_profile";i:1;s:17:"type_profile.type";i:1;}s:18:"validation_pattern";a:0:{}s:13:"before_insert";a:0:{}s:13:"before_update";a:0:{}s:13:"before_remove";a:0:{}s:12:"after_insert";a:0:{}s:12:"after_update";a:0:{}s:12:"after_remove";a:0:{}s:10:"field_type";a:2:{s:28:"type_profile.id_type_profile";s:3:"int";s:17:"type_profile.type";s:4:"text";}s:10:"field_attr";a:2:{s:28:"type_profile.id_type_profile";a:1:{s:9:"maxlength";i:3;}s:17:"type_profile.type";a:1:{s:9:"maxlength";i:100;}}s:5:"limit";i:10;s:10:"limit_list";a:5:{i:0;i:10;i:1;s:2:"25";i:2;s:2:"50";i:3;s:3:"100";i:4;s:3:"all";}s:10:"column_cut";i:50;s:15:"column_cut_list";a:0:{}s:9:"no_editor";a:0:{}s:21:"show_primary_ai_field";b:0;s:22:"show_primary_ai_column";b:0;s:8:"disabled";a:0:{}s:8:"readonly";a:0:{}s:9:"benchmark";b:0;s:14:"search_pattern";a:2:{i:0;s:1:"%";i:1;s:1:"%";}s:10:"connection";b:0;s:14:"remove_confirm";b:1;s:13:"upload_folder";a:0:{}s:13:"upload_config";a:0:{}s:8:"pass_var";a:0:{}s:14:"reverse_fields";a:4:{s:4:"list";b:0;s:6:"create";b:0;s:4:"edit";b:0;s:4:"view";b:0;}s:9:"no_quotes";a:0:{}s:20:"inner_table_instance";a:0:{}s:11:"inner_where";a:0:{}s:6:"unique";a:2:{s:28:"type_profile.id_type_profile";b:1;s:17:"type_profile.type";b:1;}s:5:"theme";s:9:"bootstrap";s:12:"is_duplicate";b:0;s:11:"links_label";a:0:{}s:12:"emails_label";a:0:{}s:3:"sum";a:0:{}s:12:"alert_create";N;s:10:"alert_edit";N;s:9:"is_search";b:1;s:8:"is_print";b:1;s:13:"is_pagination";b:1;s:12:"is_limitlist";b:1;s:11:"is_sortable";b:1;s:7:"is_list";b:1;s:9:"subselect";a:0:{}s:16:"subselect_before";a:0:{}s:9:"highlight";a:0:{}s:13:"highlight_row";a:0:{}s:5:"modal";a:0:{}s:12:"column_class";a:0:{}s:9:"no_select";a:0:{}s:8:"is_inner";b:0;s:4:"join";a:0:{}s:11:"fk_relation";a:0:{}s:8:"is_title";b:1;s:10:"is_numbers";b:1;s:8:"language";s:2:"es";s:12:"field_params";a:0:{}s:17:"mass_alert_create";a:0:{}s:15:"mass_alert_edit";a:0:{}s:15:"column_callback";a:0:{}s:14:"field_callback";a:0:{}s:14:"replace_insert";a:0:{}s:14:"replace_update";a:0:{}s:14:"replace_remove";a:0:{}s:20:"send_external_create";a:0:{}s:18:"send_external_edit";a:0:{}s:14:"column_pattern";a:0:{}s:10:"field_tabs";a:0:{}s:12:"field_marker";a:0:{}s:7:"is_view";b:1;s:13:"field_tooltip";a:0:{}s:13:"table_tooltip";a:0:{}s:14:"column_tooltip";a:0:{}s:14:"search_columns";a:0:{}s:14:"search_default";N;s:12:"column_width";a:0:{}s:6:"before";s:4:"list";s:13:"before_upload";a:0:{}s:12:"after_upload";a:0:{}s:12:"after_resize";a:0:{}s:11:"custom_vars";a:0:{}s:7:"tabdesc";a:0:{}s:11:"column_name";a:0:{}s:14:"upload_to_save";a:0:{}s:16:"upload_to_remove";a:0:{}s:8:"defaults";a:2:{s:28:"type_profile.id_type_profile";N;s:17:"type_profile.type";N;}s:6:"search";i:0;s:11:"inner_value";b:0;s:9:"bit_field";a:0:{}s:11:"point_field";a:0:{}s:16:"buttons_position";s:5:"right";s:14:"grid_condition";a:0:{}s:9:"condition";a:0:{}s:11:"hide_button";a:0:{}s:8:"set_lang";a:0:{}s:8:"table_ro";b:0;s:17:"grid_restrictions";a:0:{}s:9:"load_view";a:4:{s:4:"list";s:19:"xcrud_list_view.php";s:6:"create";s:21:"xcrud_detail_view.php";s:4:"edit";s:21:"xcrud_detail_view.php";s:4:"view";s:21:"xcrud_detail_view.php";}s:6:"action";a:0:{}s:6:"prefix";s:0:"";s:5:"query";s:0:"";s:11:"default_tab";b:0;s:10:"strip_tags";b:1;s:11:"safe_output";b:0;s:11:"before_list";a:0:{}s:13:"before_create";a:0:{}s:11:"before_edit";a:0:{}s:11:"before_view";a:0:{}s:14:"lists_null_opt";b:1;s:13:"custom_fields";a:0:{}s:11:"date_format";a:2:{s:5:"php_d";s:5:"d.m.Y";s:5:"php_t";s:5:"H:i:s";}}s:40:"b76e89cbd5ec90cb31f6a44ca5bc715ba4acea27";a:130:{s:3:"key";s:40:"a31ed36fe05ecc4e825074e4a91fdb8bb834dd94";s:4:"time";i:1426007294;s:5:"table";s:7:"contact";s:10:"table_name";s:8:"Contacto";s:5:"where";a:0:{}s:8:"order_by";a:0:{}s:8:"relation";a:7:{s:22:"contact.client_contact";a:13:{s:7:"rel_tbl";s:6:"client";s:9:"rel_alias";s:10:"alias10132";s:9:"rel_field";s:9:"id_client";s:8:"rel_name";s:6:"client";s:9:"rel_where";a:0:{}s:13:"rel_separator";s:1:" ";s:8:"order_by";b:0;s:5:"multi";b:0;s:5:"table";s:7:"contact";s:5:"field";s:14:"client_contact";s:4:"tree";b:0;s:12:"depend_field";s:0:"";s:9:"depend_on";s:0:"";}s:28:"contact.type_profile_contact";a:13:{s:7:"rel_tbl";s:12:"type_profile";s:9:"rel_alias";s:9:"alias8765";s:9:"rel_field";s:15:"id_type_profile";s:8:"rel_name";s:4:"type";s:9:"rel_where";a:0:{}s:13:"rel_separator";s:1:" ";s:8:"order_by";b:0;s:5:"multi";b:0;s:5:"table";s:7:"contact";s:5:"field";s:20:"type_profile_contact";s:4:"tree";b:0;s:12:"depend_field";s:0:"";s:9:"depend_on";s:0:"";}s:17:"contact.territory";a:13:{s:7:"rel_tbl";s:9:"territory";s:9:"rel_alias";s:10:"alias23090";s:9:"rel_field";s:12:"id_territory";s:8:"rel_name";s:9:"territory";s:9:"rel_where";a:0:{}s:13:"rel_separator";s:1:" ";s:8:"order_by";b:0;s:5:"multi";b:0;s:5:"table";s:7:"contact";s:5:"field";s:9:"territory";s:4:"tree";b:0;s:12:"depend_field";s:0:"";s:9:"depend_on";s:0:"";}s:20:"contact.panelado_pds";a:13:{s:7:"rel_tbl";s:8:"panelado";s:9:"rel_alias";s:10:"alias21379";s:9:"rel_field";s:11:"id_panelado";s:8:"rel_name";s:8:"panelado";s:9:"rel_where";a:0:{}s:13:"rel_separator";s:1:" ";s:8:"order_by";b:0;s:5:"multi";b:0;s:5:"table";s:7:"contact";s:5:"field";s:12:"panelado_pds";s:4:"tree";b:0;s:12:"depend_field";s:0:"";s:9:"depend_on";s:0:"";}s:16:"contact.type_via";a:13:{s:7:"rel_tbl";s:8:"type_via";s:9:"rel_alias";s:10:"alias10496";s:9:"rel_field";s:11:"id_type_via";s:8:"rel_name";s:3:"via";s:9:"rel_where";a:0:{}s:13:"rel_separator";s:1:" ";s:8:"order_by";b:0;s:5:"multi";b:0;s:5:"table";s:7:"contact";s:5:"field";s:8:"type_via";s:4:"tree";b:0;s:12:"depend_field";s:0:"";s:9:"depend_on";s:0:"";}s:16:"contact.province";a:13:{s:7:"rel_tbl";s:8:"province";s:9:"rel_alias";s:9:"alias9529";s:9:"rel_field";s:11:"id_province";s:8:"rel_name";s:8:"province";s:9:"rel_where";a:0:{}s:13:"rel_separator";s:1:" ";s:8:"order_by";b:0;s:5:"multi";b:0;s:5:"table";s:7:"contact";s:5:"field";s:8:"province";s:4:"tree";b:0;s:12:"depend_field";s:0:"";s:9:"depend_on";s:0:"";}s:14:"contact.county";a:13:{s:7:"rel_tbl";s:6:"county";s:9:"rel_alias";s:10:"alias26494";s:9:"rel_field";s:9:"id_county";s:8:"rel_name";s:6:"county";s:9:"rel_where";a:0:{}s:13:"rel_separator";s:1:" ";s:8:"order_by";b:0;s:5:"multi";b:0;s:5:"table";s:7:"contact";s:5:"field";s:6:"county";s:4:"tree";b:0;s:12:"depend_field";s:0:"";s:9:"depend_on";s:0:"";}}s:13:"fields_create";a:14:{s:22:"contact.client_contact";a:3:{s:5:"table";s:7:"contact";s:5:"field";s:14:"client_contact";s:3:"tab";b:0;}s:28:"contact.type_profile_contact";a:3:{s:5:"table";s:7:"contact";s:5:"field";s:20:"type_profile_contact";s:3:"tab";b:0;}s:15:"contact.contact";a:3:{s:5:"table";s:7:"contact";s:5:"field";s:7:"contact";s:3:"tab";b:0;}s:16:"contact.type_via";a:3:{s:5:"table";s:7:"contact";s:5:"field";s:8:"type_via";s:3:"tab";b:0;}s:15:"contact.address";a:3:{s:5:"table";s:7:"contact";s:5:"field";s:7:"address";s:3:"tab";b:0;}s:11:"contact.zip";a:3:{s:5:"table";s:7:"contact";s:5:"field";s:3:"zip";s:3:"tab";b:0;}s:12:"contact.city";a:3:{s:5:"table";s:7:"contact";s:5:"field";s:4:"city";s:3:"tab";b:0;}s:16:"contact.province";a:3:{s:5:"table";s:7:"contact";s:5:"field";s:8:"province";s:3:"tab";b:0;}s:14:"contact.county";a:3:{s:5:"table";s:7:"contact";s:5:"field";s:6:"county";s:3:"tab";b:0;}s:16:"contact.schedule";a:3:{s:5:"table";s:7:"contact";s:5:"field";s:8:"schedule";s:3:"tab";b:0;}s:13:"contact.phone";a:3:{s:5:"table";s:7:"contact";s:5:"field";s:5:"phone";s:3:"tab";b:0;}s:14:"contact.mobile";a:3:{s:5:"table";s:7:"contact";s:5:"field";s:6:"mobile";s:3:"tab";b:0;}s:13:"contact.email";a:3:{s:5:"table";s:7:"contact";s:5:"field";s:5:"email";s:3:"tab";b:0;}s:14:"contact.status";a:3:{s:5:"table";s:7:"contact";s:5:"field";s:6:"status";s:3:"tab";b:0;}}s:11:"fields_edit";a:14:{s:22:"contact.client_contact";a:3:{s:5:"table";s:7:"contact";s:5:"field";s:14:"client_contact";s:3:"tab";b:0;}s:28:"contact.type_profile_contact";a:3:{s:5:"table";s:7:"contact";s:5:"field";s:20:"type_profile_contact";s:3:"tab";b:0;}s:15:"contact.contact";a:3:{s:5:"table";s:7:"contact";s:5:"field";s:7:"contact";s:3:"tab";b:0;}s:16:"contact.type_via";a:3:{s:5:"table";s:7:"contact";s:5:"field";s:8:"type_via";s:3:"tab";b:0;}s:15:"contact.address";a:3:{s:5:"table";s:7:"contact";s:5:"field";s:7:"address";s:3:"tab";b:0;}s:11:"contact.zip";a:3:{s:5:"table";s:7:"contact";s:5:"field";s:3:"zip";s:3:"tab";b:0;}s:12:"contact.city";a:3:{s:5:"table";s:7:"contact";s:5:"field";s:4:"city";s:3:"tab";b:0;}s:16:"contact.province";a:3:{s:5:"table";s:7:"contact";s:5:"field";s:8:"province";s:3:"tab";b:0;}s:14:"contact.county";a:3:{s:5:"table";s:7:"contact";s:5:"field";s:6:"county";s:3:"tab";b:0;}s:16:"contact.schedule";a:3:{s:5:"table";s:7:"contact";s:5:"field";s:8:"schedule";s:3:"tab";b:0;}s:13:"contact.phone";a:3:{s:5:"table";s:7:"contact";s:5:"field";s:5:"phone";s:3:"tab";b:0;}s:14:"contact.mobile";a:3:{s:5:"table";s:7:"contact";s:5:"field";s:6:"mobile";s:3:"tab";b:0;}s:13:"contact.email";a:3:{s:5:"table";s:7:"contact";s:5:"field";s:5:"email";s:3:"tab";b:0;}s:14:"contact.status";a:3:{s:5:"table";s:7:"contact";s:5:"field";s:6:"status";s:3:"tab";b:0;}}s:11:"fields_view";a:14:{s:22:"contact.client_contact";a:3:{s:5:"table";s:7:"contact";s:5:"field";s:14:"client_contact";s:3:"tab";b:0;}s:28:"contact.type_profile_contact";a:3:{s:5:"table";s:7:"contact";s:5:"field";s:20:"type_profile_contact";s:3:"tab";b:0;}s:15:"contact.contact";a:3:{s:5:"table";s:7:"contact";s:5:"field";s:7:"contact";s:3:"tab";b:0;}s:16:"contact.type_via";a:3:{s:5:"table";s:7:"contact";s:5:"field";s:8:"type_via";s:3:"tab";b:0;}s:15:"contact.address";a:3:{s:5:"table";s:7:"contact";s:5:"field";s:7:"address";s:3:"tab";b:0;}s:11:"contact.zip";a:3:{s:5:"table";s:7:"contact";s:5:"field";s:3:"zip";s:3:"tab";b:0;}s:12:"contact.city";a:3:{s:5:"table";s:7:"contact";s:5:"field";s:4:"city";s:3:"tab";b:0;}s:16:"contact.province";a:3:{s:5:"table";s:7:"contact";s:5:"field";s:8:"province";s:3:"tab";b:0;}s:14:"contact.county";a:3:{s:5:"table";s:7:"contact";s:5:"field";s:6:"county";s:3:"tab";b:0;}s:16:"contact.schedule";a:3:{s:5:"table";s:7:"contact";s:5:"field";s:8:"schedule";s:3:"tab";b:0;}s:13:"contact.phone";a:3:{s:5:"table";s:7:"contact";s:5:"field";s:5:"phone";s:3:"tab";b:0;}s:14:"contact.mobile";a:3:{s:5:"table";s:7:"contact";s:5:"field";s:6:"mobile";s:3:"tab";b:0;}s:13:"contact.email";a:3:{s:5:"table";s:7:"contact";s:5:"field";s:5:"email";s:3:"tab";b:0;}s:14:"contact.status";a:3:{s:5:"table";s:7:"contact";s:5:"field";s:6:"status";s:3:"tab";b:0;}}s:11:"fields_list";a:4:{s:22:"contact.client_contact";a:2:{s:5:"table";s:7:"contact";s:5:"field";s:14:"client_contact";}s:28:"contact.type_profile_contact";a:2:{s:5:"table";s:7:"contact";s:5:"field";s:20:"type_profile_contact";}s:15:"contact.contact";a:2:{s:5:"table";s:7:"contact";s:5:"field";s:7:"contact";}s:13:"contact.email";a:2:{s:5:"table";s:7:"contact";s:5:"field";s:5:"email";}}s:6:"labels";a:14:{s:22:"contact.client_contact";s:7:"Cliente";s:28:"contact.type_profile_contact";s:4:"Tipo";s:15:"contact.contact";s:8:"Contacto";s:16:"contact.type_via";s:9:"Tipo vía";s:15:"contact.address";s:10:"Dirección";s:11:"contact.zip";s:4:"C.P.";s:12:"contact.city";s:6:"Ciudad";s:16:"contact.province";s:9:"Provincia";s:14:"contact.county";s:6:"CC.AA.";s:16:"contact.schedule";s:7:"Horario";s:13:"contact.phone";s:9:"Teléfono";s:14:"contact.mobile";s:6:"Móvil";s:13:"contact.email";s:5:"Email";s:14:"contact.status";s:6:"Estado";}s:13:"columns_names";a:4:{s:22:"contact.client_contact";s:7:"Cliente";s:28:"contact.type_profile_contact";s:4:"Tipo";s:15:"contact.contact";s:8:"Contacto";s:13:"contact.email";s:5:"Email";}s:9:"is_create";b:1;s:7:"is_edit";b:1;s:9:"is_remove";b:1;s:6:"is_csv";b:1;s:7:"buttons";a:0:{}s:19:"validation_required";a:5:{s:18:"contact.id_contact";i:1;s:22:"contact.client_contact";i:1;s:28:"contact.type_profile_contact";i:1;s:15:"contact.contact";i:1;s:14:"contact.status";i:1;}s:18:"validation_pattern";a:0:{}s:13:"before_insert";a:0:{}s:13:"before_update";a:0:{}s:13:"before_remove";a:0:{}s:12:"after_insert";a:0:{}s:12:"after_update";a:0:{}s:12:"after_remove";a:0:{}s:10:"field_type";a:15:{s:18:"contact.id_contact";s:3:"int";s:22:"contact.client_contact";s:8:"relation";s:28:"contact.type_profile_contact";s:8:"relation";s:15:"contact.contact";s:4:"text";s:16:"contact.type_via";s:8:"relation";s:15:"contact.address";s:10:"texteditor";s:11:"contact.zip";s:4:"text";s:12:"contact.city";s:4:"text";s:16:"contact.province";s:8:"relation";s:14:"contact.county";s:8:"relation";s:16:"contact.schedule";s:10:"texteditor";s:13:"contact.phone";s:4:"text";s:14:"contact.mobile";s:4:"text";s:13:"contact.email";s:4:"text";s:14:"contact.status";s:6:"select";}s:10:"field_attr";a:15:{s:18:"contact.id_contact";a:1:{s:9:"maxlength";i:5;}s:22:"contact.client_contact";a:1:{s:9:"maxlength";i:3;}s:28:"contact.type_profile_contact";a:1:{s:9:"maxlength";i:3;}s:15:"contact.contact";a:1:{s:9:"maxlength";i:200;}s:16:"contact.type_via";a:1:{s:9:"maxlength";i:3;}s:15:"contact.address";a:0:{}s:11:"contact.zip";a:1:{s:9:"maxlength";i:10;}s:12:"contact.city";a:1:{s:9:"maxlength";i:200;}s:16:"contact.province";a:1:{s:9:"maxlength";i:6;}s:14:"contact.county";a:1:{s:9:"maxlength";i:4;}s:16:"contact.schedule";a:0:{}s:13:"contact.phone";a:1:{s:9:"maxlength";i:20;}s:14:"contact.mobile";a:1:{s:9:"maxlength";i:20;}s:13:"contact.email";a:1:{s:9:"maxlength";i:100;}s:14:"contact.status";a:2:{s:9:"maxlength";i:0;s:6:"values";s:13:"''Alta'',''Baja''";}}s:5:"limit";s:2:"10";s:10:"limit_list";a:5:{i:0;i:10;i:1;s:2:"25";i:2;s:2:"50";i:3;s:3:"100";i:4;s:3:"all";}s:10:"column_cut";i:50;s:15:"column_cut_list";a:0:{}s:9:"no_editor";a:0:{}s:21:"show_primary_ai_field";b:0;s:22:"show_primary_ai_column";b:0;s:8:"disabled";a:0:{}s:8:"readonly";a:0:{}s:9:"benchmark";b:0;s:14:"search_pattern";a:2:{i:0;s:1:"%";i:1;s:1:"%";}s:10:"connection";b:0;s:14:"remove_confirm";b:1;s:13:"upload_folder";a:0:{}s:13:"upload_config";a:0:{}s:8:"pass_var";a:0:{}s:14:"reverse_fields";a:4:{s:4:"list";b:0;s:6:"create";b:0;s:4:"edit";b:0;s:4:"view";b:0;}s:9:"no_quotes";a:0:{}s:20:"inner_table_instance";a:0:{}s:11:"inner_where";a:0:{}s:6:"unique";a:1:{s:18:"contact.id_contact";b:1;}s:5:"theme";s:9:"bootstrap";s:12:"is_duplicate";b:0;s:11:"links_label";a:0:{}s:12:"emails_label";a:0:{}s:3:"sum";a:0:{}s:12:"alert_create";N;s:10:"alert_edit";N;s:9:"is_search";b:1;s:8:"is_print";b:1;s:13:"is_pagination";b:1;s:12:"is_limitlist";b:1;s:11:"is_sortable";b:1;s:7:"is_list";b:1;s:9:"subselect";a:0:{}s:16:"subselect_before";a:0:{}s:9:"highlight";a:0:{}s:13:"highlight_row";a:0:{}s:5:"modal";a:0:{}s:12:"column_class";a:0:{}s:9:"no_select";a:0:{}s:8:"is_inner";b:0;s:4:"join";a:0:{}s:11:"fk_relation";a:0:{}s:8:"is_title";b:1;s:10:"is_numbers";b:1;s:8:"language";s:2:"es";s:12:"field_params";a:0:{}s:17:"mass_alert_create";a:0:{}s:15:"mass_alert_edit";a:0:{}s:15:"column_callback";a:0:{}s:14:"field_callback";a:0:{}s:14:"replace_insert";a:0:{}s:14:"replace_update";a:0:{}s:14:"replace_remove";a:0:{}s:20:"send_external_create";a:0:{}s:18:"send_external_edit";a:0:{}s:14:"column_pattern";a:0:{}s:10:"field_tabs";a:0:{}s:12:"field_marker";a:0:{}s:7:"is_view";b:1;s:13:"field_tooltip";a:0:{}s:13:"table_tooltip";a:0:{}s:14:"column_tooltip";a:0:{}s:14:"search_columns";a:0:{}s:14:"search_default";N;s:12:"column_width";a:0:{}s:6:"before";s:6:"create";s:13:"before_upload";a:0:{}s:12:"after_upload";a:0:{}s:12:"after_resize";a:0:{}s:11:"custom_vars";a:0:{}s:7:"tabdesc";a:0:{}s:11:"column_name";a:0:{}s:14:"upload_to_save";a:0:{}s:16:"upload_to_remove";a:0:{}s:8:"defaults";a:15:{s:18:"contact.id_contact";N;s:22:"contact.client_contact";N;s:28:"contact.type_profile_contact";N;s:15:"contact.contact";N;s:16:"contact.type_via";N;s:15:"contact.address";N;s:11:"contact.zip";N;s:12:"contact.city";N;s:16:"contact.province";N;s:14:"contact.county";N;s:16:"contact.schedule";N;s:13:"contact.phone";N;s:14:"contact.mobile";N;s:13:"contact.email";N;s:14:"contact.status";s:4:"Alta";}s:6:"search";i:0;s:11:"inner_value";b:0;s:9:"bit_field";a:0:{}s:11:"point_field";a:0:{}s:16:"buttons_position";s:5:"right";s:14:"grid_condition";a:0:{}s:9:"condition";a:0:{}s:11:"hide_button";a:0:{}s:8:"set_lang";a:0:{}s:8:"table_ro";b:0;s:17:"grid_restrictions";a:0:{}s:9:"load_view";a:4:{s:4:"list";s:19:"xcrud_list_view.php";s:6:"create";s:21:"xcrud_detail_view.php";s:4:"edit";s:21:"xcrud_detail_view.php";s:4:"view";s:21:"xcrud_detail_view.php";}s:6:"action";a:0:{}s:6:"prefix";s:0:"";s:5:"query";s:0:"";s:11:"default_tab";b:0;s:10:"strip_tags";b:1;s:11:"safe_output";b:0;s:11:"before_list";a:0:{}s:13:"before_create";a:0:{}s:11:"before_edit";a:0:{}s:11:"before_view";a:0:{}s:14:"lists_null_opt";b:1;s:13:"custom_fields";a:0:{}s:11:"date_format";a:2:{s:5:"php_d";s:5:"d.m.Y";s:5:"php_t";s:5:"H:i:s";}}}}');
+('397442849ed6c50a7fcd037578085f38', '::1', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/40.0.2214.115 Safari/537.36', 1426092447, 'a:4:{s:9:"user_data";s:0:"";s:4:"sfid";s:7:"altabox";s:4:"type";s:2:"10";s:9:"logged_in";b:1;}');
 
 -- --------------------------------------------------------
 
@@ -21504,7 +21520,7 @@ CREATE TABLE IF NOT EXISTS `historico` (
   `agent` varchar(100) NOT NULL,
   `status_pds` enum('Alta realizada','En proceso','En visita','Finalizada','Cancelada') NOT NULL DEFAULT 'Alta realizada',
   `status` enum('Nueva','Revisada','Material asignado','Instalador asignado','Comunicada','Resuelta','Pendiente recogida','Cerrada','Cancelada') NOT NULL DEFAULT 'Nueva'
-) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `historico`
@@ -21528,7 +21544,9 @@ INSERT INTO `historico` (`id_historico`, `fecha`, `id_incidencia`, `id_pds`, `de
 (15, '2015-03-09 10:47:04', 193, 2675, NULL, 'altabox', 'Finalizada', 'Cerrada'),
 (16, '2015-03-09 10:47:11', 194, 2675, NULL, 'altabox', 'Finalizada', 'Pendiente recogida'),
 (17, '2015-03-09 10:47:16', 194, 2675, NULL, 'altabox', 'Finalizada', 'Cerrada'),
-(18, '2015-03-10 02:54:06', 196, 2675, NULL, 'altabox', 'En proceso', 'Revisada');
+(18, '2015-03-10 02:54:06', 196, 2675, NULL, 'altabox', 'En proceso', 'Revisada'),
+(19, '2015-03-11 12:05:29', 172, 2828, NULL, 'altabox', 'En proceso', 'Revisada'),
+(20, '2015-03-11 12:07:46', 173, 2828, NULL, 'altabox', 'En proceso', 'Revisada');
 
 -- --------------------------------------------------------
 
@@ -21568,13 +21586,13 @@ CREATE TABLE IF NOT EXISTS `incidencias` (
 --
 
 INSERT INTO `incidencias` (`id_incidencia`, `fecha`, `id_pds`, `id_displays_pds`, `id_devices_pds`, `tipo_averia`, `fail_device`, `alarm_display`, `alarm_device`, `alarm_garra`, `description_1`, `description_2`, `parte_pdf`, `denuncia`, `foto_url`, `foto_url_2`, `foto_url_3`, `contacto`, `phone`, `email`, `id_operador`, `intervencion`, `status_pds`, `status`) VALUES
-(172, '2015-02-26 02:22:12', 2828, 6254, 4544, 'Avería', NULL, 0, 1, 0, 'El terminal no carga, creemos que puede ser el anclaje y no el propio movil.', '', '', '', '', '', '', 'Antonia', '691107002', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
-(173, '2015-02-26 02:35:29', 2828, 6258, 4548, 'Avería', NULL, 0, 1, 1, 'El anclaje de la Tablet está suelta y a su vez salta la alarma.', '', '', '', '', '', '', 'Antonia', '691107002', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
+(172, '2015-02-26 02:22:12', 2828, 6254, 4544, 'Avería', NULL, 0, 1, 0, 'El terminal no carga, creemos que puede ser el anclaje y no el propio movil.', '', '', '', '', '', '', 'Antonia', '691107002', NULL, NULL, NULL, 'En proceso', 'Instalador asignado'),
+(173, '2015-02-26 02:35:29', 2828, 6258, 4548, 'Avería', NULL, 0, 1, 1, 'El anclaje de la Tablet está suelta y a su vez salta la alarma.', '', '', '', '', '', '', 'Antonia', '691107002', NULL, NULL, NULL, 'En proceso', 'Instalador asignado'),
 (174, '2015-02-26 03:49:22', 2876, 6685, 5182, 'Avería', 1, 0, 0, 0, 'El terminal aparece apagado y no enciende', '', '', '', '', '', '', 'Belén Palomero', '685110161', NULL, NULL, NULL, 'En proceso', 'Revisada'),
 (175, '2015-02-26 07:16:44', 2876, 6686, 5184, 'Avería', NULL, 0, 1, 1, 'el soporte esta suelto y se levanta, faltaria un tornillo en la parte inferior.', '', '', '', '', '', '', 'Andrea/Belen', '685110161', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
 (176, '2015-02-27 06:58:31', 2876, 6688, 5173, 'Avería', 1, 0, 0, 0, 'en el plv de febrero aparece que tendria que estar cambiado por un g3s y no han venido a cambiarlo, ha venido el comercial de lg y me ha preguntado por que no esta cambiado.', '', '', '', '', '', '', 'BELEN//ANDREA', '685110161', NULL, NULL, NULL, 'En proceso', 'Material asignado'),
-(191, '2015-03-08 12:12:16', 2708, 5141, 2722, 'Avería', 1, 0, 0, 0, 'Incidencias de prueba realizada por Israel Garcia', '', '', '', '', '', '', 'Israel Garcia', '666 666 666', NULL, NULL, NULL, 'Finalizada', 'Cerrada'),
-(192, '2015-03-09 02:36:42', 2825, 6234, 4506, 'Avería', 1, 0, 0, 1, 'Incidencia de prueba Ana Crivillé', '', '', '', '', '', '', 'Ana Crivillé', '665 665 665', NULL, NULL, NULL, 'Finalizada', 'Cerrada'),
+(191, '2015-03-08 12:12:16', 2708, 5141, 2722, 'Avería', 1, 0, 0, 0, 'Incidencias de prueba realizada por Israel Garcia', '', '', '', '', '', '', 'Israel Garcia', '666 666 666', NULL, NULL, NULL, 'Finalizada', 'Comunicada'),
+(192, '2015-03-09 02:36:42', 2825, 6234, 4506, 'Avería', 1, 0, 0, 1, 'Incidencia de prueba Ana Crivillé', '', '', '', '', '', '', 'Ana Crivillé', '665 665 665', NULL, NULL, NULL, 'Finalizada', 'Resuelta'),
 (193, '2015-03-09 10:25:11', 2675, 5011, 2511, 'Avería', 1, 0, 1, 1, 'prueba de incidencia', '', '', '', '', '', '', 'Israel García', '666 666 666', NULL, NULL, NULL, 'Finalizada', 'Cerrada'),
 (194, '2015-03-09 10:41:37', 2675, 5009, 2502, 'Avería', 1, 0, 1, 1, 'Prueba de incidencia nivel 2....', '', '', '', '', '', '', 'israel', '666 666 666', NULL, NULL, NULL, 'Finalizada', 'Cerrada'),
 (195, '2015-03-09 10:43:53', 2675, 5002, 2484, 'Avería', 1, 0, 0, 0, 'prueba de puesta en marcha', '', '', '', '', '', '', 'israel ', '666 666 666', NULL, NULL, NULL, 'En proceso', 'Material asignado'),
@@ -21593,16 +21611,17 @@ CREATE TABLE IF NOT EXISTS `intervenciones` (
   `id_operador` smallint(5) unsigned DEFAULT NULL,
   `description` text,
   `status` enum('Nueva','Comunicada','Cerrada','Cancelada') NOT NULL DEFAULT 'Nueva'
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `intervenciones`
 --
 
 INSERT INTO `intervenciones` (`id_intervencion`, `id_pds`, `fecha`, `id_operador`, `description`, `status`) VALUES
-(1, 2708, '2015-03-08 19:15:25', 5, '', 'Nueva'),
-(2, 2825, '2015-03-09 09:46:15', 5, '', 'Nueva'),
-(3, 2675, '2015-03-09 17:39:15', 6, '', 'Nueva');
+(1, 2708, '2015-03-08 19:15:25', 5, '', 'Comunicada'),
+(2, 2825, '2015-03-09 09:46:15', 5, '', 'Cerrada'),
+(3, 2675, '2015-03-09 17:39:15', 6, '', 'Nueva'),
+(4, 2828, '2015-03-11 12:06:26', 6, '', 'Nueva');
 
 -- --------------------------------------------------------
 
@@ -21623,7 +21642,9 @@ INSERT INTO `intervenciones_incidencias` (`id_intervencion`, `id_incidencia`) VA
 (1, 191),
 (2, 192),
 (3, 193),
-(3, 194);
+(3, 194),
+(4, 172),
+(4, 173);
 
 -- --------------------------------------------------------
 
@@ -23691,6 +23712,12 @@ ALTER TABLE `brand_device`
  ADD PRIMARY KEY (`id_brand_device`), ADD UNIQUE KEY `brand_UNIQUE` (`brand`);
 
 --
+-- Indexes for table `chat`
+--
+ALTER TABLE `chat`
+ ADD PRIMARY KEY (`id_chat`);
+
+--
 -- Indexes for table `ci_sessions`
 --
 ALTER TABLE `ci_sessions`
@@ -23909,6 +23936,11 @@ MODIFY `id_brand_alarm` smallint(5) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREM
 ALTER TABLE `brand_device`
 MODIFY `id_brand_device` smallint(5) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=19;
 --
+-- AUTO_INCREMENT for table `chat`
+--
+ALTER TABLE `chat`
+MODIFY `id_chat` int(10) unsigned NOT NULL AUTO_INCREMENT;
+--
 -- AUTO_INCREMENT for table `client`
 --
 ALTER TABLE `client`
@@ -23972,7 +24004,7 @@ MODIFY `id_displays_pds` smallint(5) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCRE
 -- AUTO_INCREMENT for table `historico`
 --
 ALTER TABLE `historico`
-MODIFY `id_historico` int(10) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=19;
+MODIFY `id_historico` int(10) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=21;
 --
 -- AUTO_INCREMENT for table `incidencias`
 --
@@ -23982,7 +24014,7 @@ MODIFY `id_incidencia` int(10) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=1
 -- AUTO_INCREMENT for table `intervenciones`
 --
 ALTER TABLE `intervenciones`
-MODIFY `id_intervencion` int(10) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=4;
+MODIFY `id_intervencion` int(10) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=5;
 --
 -- AUTO_INCREMENT for table `login_attempts`
 --

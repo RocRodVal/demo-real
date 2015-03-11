@@ -8,6 +8,7 @@ var intervencion_session = null;
 var id_intervencion_session = 0;
 
 $(document).ready(function () {
+
     pathname = window.location.href;
     controller = pathname.split("/")[4];
     if(controller=="intervencion") {
@@ -38,10 +39,10 @@ function getIntervenciones() {
         $.each(json, function (key, intervencion) {
             actionsBtn = actionsIntervencion(intervencion.id_intervencion, intervencion.status);
             intervenciones_array.push(new Array(
-                "<a onClick='viewIntervencion(" + intervencion.id_intervencion + ")'>#" + intervencion.id_intervencion + "</a>",
+                "<a onClick='viewIntervencion(" + intervencion.id_intervencion + ")'>" + intervencion.id_intervencion + "</a>",
                 intervencion.fecha,
                 intervencion.pds.reference,
-                intervencion.pds.address,
+                intervencion.pds.commercial,
                 intervencion.operador.contact,
                 intervencion.incidencias.length,
                 intervencion.status,
@@ -59,7 +60,9 @@ function getIntervenciones() {
             onConfirm: cancelIntervencion,
             placement: "left"
         }
+
         $('[data-toggle="confirmation"]').confirmation(options);
+        $('[data-toggle="tooltip"]').tooltip();
     }).error(function (msg) {
 
     });
@@ -77,13 +80,12 @@ function viewIntervencion(intervencion_id) {
         $.each(intervencion.incidencias, function (key, incidencia) {
             actionsBtn = actionsIncidencia(incidencia.id_incidencia);
             incidencias_array.push(new Array(
-                "<a onClick='viewIncidencia(" + incidencia.id_incidencia + ")'>#" + incidencia.id_incidencia + "</a>",
+                "<a onClick='viewIncidencia(" + incidencia.id_incidencia + ")'>" + incidencia.id_incidencia + "</a>",
                 incidencia.fecha,
                 incidencia.pds.reference,
-                incidencia.pds.address,
-                "-------",
-                incidencia.status,
-                actionsBtn
+                incidencia.pds.commercial,
+                incidencia.status//,
+                //actionsBtn
             ));
 
         });
@@ -93,8 +95,10 @@ function viewIntervencion(intervencion_id) {
             "bProcessing": true,
             "bDestroy": true
         });
+        $('[data-toggle="tooltip"]').tooltip();
 
         //añadimos los datos de la intervencion
+        $("#ver_intervencion_id").html("#"+intervencion_id);
         $("#fecha_ver_intervencion").html(intervencion.fecha);
         $("#status_ver_intervencion").html(intervencion.status);
         $("#description_ver_intervencion").html(intervencion.description);
@@ -104,6 +108,7 @@ function viewIntervencion(intervencion_id) {
         $("#email_contacto_ver_intervencion").html(intervencion.operador.email);
         //si el estado no es nueva, le deshabilitamos el botón de añadir incidencias
         $("#bnt_add_incidencia_to_intervencion").attr('disabled',intervencion.status!='Nueva');
+
         //mostramos el modal con la información obtenida
         $("#modal_ver_intervencion").modal();
 
@@ -133,15 +138,15 @@ function actionsIntervencion(id_intervencion, status) {
             disableRemove = 'disabled';
             break;
     }
-    btnResolve = "<button class='btn btnTable btn-success' " + disableResolve + " onClick='cerrarIntervencion(" + id_intervencion + ");'><i class='fa fa-check-square-o'></i></button>";
-    btnDocu = "<button class='btn btnTable btn-default' " + disableDocu + " onClick='generateDoc(" + id_intervencion + ");'><i class='fa fa-files-o'></i></button>";
-    btnDelete = "<button class='delete btn btnTable btn-danger' " + disableRemove + "data-toggle='confirmation' onClick='setIntervencionSession(" + id_intervencion + ");'>" +
+    btnResolve = "<button data-toggle='tooltip' title='Resolver intervención' class='btn btnTable btn-success' " + disableResolve + " onClick='cerrarIntervencion(" + id_intervencion + ");'><i class='fa fa-check-square-o'></i></button>";
+    btnDocu = "<button data-toggle='tooltip' title='Imprimir documentación' class='btn btnTable btn-default' " + disableDocu + " onClick='generateDoc(" + id_intervencion + ");'><i class='fa fa-files-o'></i></button>";
+    btnDelete = "<button title='Cancelar intervención' class='delete btn btnTable btn-danger' " + disableRemove + "data-toggle='confirmation' onClick='setIntervencionSession(" + id_intervencion + ");'>" +
     "<i class='fa fa-trash'></i></button>"
     return btnResolve + btnDocu + btnDelete
 }
 
 function actionsIncidencia(id_incidencia) {
-    btnDelete = "<div class='btn btn-danger btnTable' onClick='deleteIncidenciaIntervencion(" + id_incidencia + ");'><i class='fa fa-trash'></i></div>";
+    btnDelete = "<div data-toggle='tooltip' title='Eliminar de la intervención' class='btn btn-danger btnTable' onClick='deleteIncidenciaIntervencion(" + id_incidencia + ");'><i class='fa fa-trash'></i></div>";
     return btnDelete
 }
 
@@ -157,6 +162,12 @@ function viewIncidencia(incidencia_id) {
 
 function showDataIncidencia(incidencia) {
     console.log(incidencia);
+    $("#id_incidencia").html("#"+incidencia.id_incidencia);
+    $("#fecha_alta_incidencia").html(incidencia.fecha);
+    $("#estado_incidencia").html(incidencia.status);
+    $("#comentario_incidencia").html(incidencia.description);
+    $("#mueble_incidencia").html(incidencia.display);
+    $("#telefono_incidencia").html(incidencia.device);
     $("#modal_ver_incidencia").modal();
 }
 
@@ -252,13 +263,12 @@ function refreshTablaIncidencias() {
         $.each(intervencion.incidencias, function (key, incidencia) {
             actionsBtn = actionsIncidencia(incidencia.id_incidencia);
             incidencias_array.push(new Array(
-                "<a onClick='viewIncidencia(" + incidencia.id_incidencia + ")'>#" + incidencia.id_incidencia + "</a>",
+                "<a onClick='viewIncidencia(" + incidencia.id_incidencia + ")'>" + incidencia.id_incidencia + "</a>",
                 incidencia.fecha,
                 incidencia.pds.reference,
-                incidencia.pds.address,
-                "-------",
-                incidencia.status,
-                actionsBtn
+                incidencia.pds.commercial,
+                incidencia.status//,
+                //actionsBtn
             ));
 
         });
@@ -268,6 +278,7 @@ function refreshTablaIncidencias() {
             "bProcessing": true,
             "bDestroy": true
         });
+        $('[data-toggle="tooltip"]').tooltip();
     }).error(function (msg) {
     });
 }

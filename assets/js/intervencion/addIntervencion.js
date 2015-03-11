@@ -91,7 +91,7 @@ function saveIntervencion() {
             alert('Seleccione un operador');
             return;
         }
-        description=$("#nueva_intervencion_description").html();
+        description=$("#nueva_intervencion_description").val();
         $.ajax({
             type: "POST",
             data:   "operador_id=" + operador_id +
@@ -133,12 +133,12 @@ function showModalViewIntervencion(id_intervencion){
         $.each(intervencion.incidencias, function (key, incidencia) {
             btnDelete = "<div class='btn btn-danger' disabled onClick='deleteIncidenciaIntervencion(" + incidencia.id_incidencia + ");'><i class='fa fa-trash'></i></div>";
             incidencias_array.push(new Array(
-                "#" + incidencia.id_incidencia,
+                "<a onClick='viewIncidencia_(" + incidencia.id_incidencia + ")'>" + incidencia.id_incidencia + "</a>",
                 incidencia.fecha,
                 incidencia.pds.reference,
-                incidencia.pds.address,
-                incidencia.status,
-                btnDelete
+                incidencia.pds.commercial,
+                incidencia.status//,
+                //btnDelete
             ));
 
         });
@@ -161,5 +161,26 @@ function showModalViewIntervencion(id_intervencion){
         $("#modal_ver_intervencion").modal();
     }).error(function (msg) {
     });
+}
+
+function viewIncidencia_(incidencia_id) {
+    intervencion = intervencion_session;
+    $.each(intervencion.incidencias, function (key, incidencia) {
+        if (incidencia.id_incidencia == incidencia_id) {
+            showDataIncidencia_(incidencia);
+            return;
+        }
+    });
+}
+
+function showDataIncidencia_(incidencia) {
+    console.log(incidencia);
+    $("#id_incidencia").html("#"+incidencia.id_incidencia);
+    $("#fecha_alta_incidencia").html(incidencia.fecha);
+    $("#estado_incidencia").html(incidencia.status);
+    $("#comentario_incidencia").html(incidencia.description);
+    $("#mueble_incidencia").html(incidencia.display);
+    $("#telefono_incidencia").html(incidencia.device);
+    $("#modal_ver_incidencia_").modal();
 }
 
