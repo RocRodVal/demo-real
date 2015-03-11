@@ -35,7 +35,7 @@
 </div>
 
 
-<?php $this->load->view('backend/intervenciones/ver_intervencion'); ?>
+<?php $this->load->view('backend/intervenciones/ver_intervencion_incidencia'); ?>
 
 <!-- Modal Ver intervencion-->
 <div class="modal fade" id="modal_ver_incidencia" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"

@@ -118,4 +118,36 @@
 <!-- /#page-wrapper -->
 
 <?php $this->load->view('backend/intervenciones/nueva_intervencion'); ?>
-<?php $this->load->view('backend/intervenciones/ver_intervencion'); ?>
+<?php $this->load->view('backend/intervenciones/ver_intervencion_incidencia'); ?>
+
+<!-- Modal Ver intervencion-->
+<div class="modal fade" id="modal_ver_incidencia_" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="modal_ver_intervencion_title">Ver incidencia <span id="id_incidencia"></span></h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-lg-offset-2 col-lg-8">
+                        <div class="panel panel-default">
+                            <div class="panel-body">
+                                <strong>Fecha alta:</strong> <span id="fecha_alta_incidencia"></span><br/>
+                                <strong>Estado:</strong> <span id="estado_incidencia"></span><br/>
+                                <strong>Mueble:</strong> <span id="mueble_incidencia"></span><br/>
+                                <strong>Teléfono:</strong> <span id="telefono_incidencia"></span><br/>
+                                <strong>Comentario:</strong> <span id="comentario_incidencia"></span><br/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
