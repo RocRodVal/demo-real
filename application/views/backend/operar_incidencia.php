@@ -28,25 +28,25 @@
                                 echo 'disabled';
                             } ?>>Cancelar</a>
                         </div>
-                        <div class="col-lg-7 labelText white">Asignar materiales</div>
-                        <div class="col-lg-5 labelBtn white">
-                            <a href="<?= site_url('admin/update_incidencia_materiales/' . $id_pds_url . '/' . $id_inc_url . '/2/3') ?>"
-                               classBtn="status" class="btn btn-success" <?php if ($incidencia['status'] != 'Revisada') {
-                                echo 'disabled';
-                            } ?>>Asignar mat.</a></td>
-                        </div>
                         <div class="col-lg-7 labelText grey">Asignar instalador e intervención</div>
                         <div class="col-lg-5 labelBtn grey">
                             <a onClick="showModalNewIntervencion(<?php echo $id_pds_url . ',' . $id_inc_url ?>)"
-                               classBtn="status" class="btn btn-success" <?php if ($incidencia['status'] != 'Material asignado') {
+                               classBtn="status" class="btn btn-success" <?php if ($incidencia['status'] != 'Revisada') {
                                 echo 'disabled';
                             } ?>>Asignar instalador</a>
+                        </div>                        
+                        <div class="col-lg-7 labelText white">Asignar materiales</div>
+                        <div class="col-lg-5 labelBtn white">
+                            <a href="<?= site_url('admin/update_incidencia_materiales/' . $id_pds_url . '/' . $id_inc_url . '/2/3') ?>"
+                               classBtn="status" class="btn btn-success" <?php if ($incidencia['status'] != 'Instalador asignado') {
+                                echo 'disabled';
+                            } ?>>Asignar mat.</a></td>
                         </div>
                         <div class="col-lg-7 labelText white">Imprimir documentación</div>
                         <div class="col-lg-5 labelBtn white">
                             <a href="<?= site_url('admin/update_incidencia/' . $id_pds_url . '/' . $id_inc_url . '/3/5') ?>"
                                classBtn="status" class="btn btn-success"
-                                <?php if ($incidencia['status'] == 'Instalador asignado' ||
+                                <?php if ($incidencia['status'] == 'Material asignado' ||
                                             $incidencia['status'] == 'Comunicada' ||
                                             $incidencia['status'] == 'Resuelta' ||
                                             $incidencia['status'] == 'Pendiente recogida') {
