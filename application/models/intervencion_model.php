@@ -135,10 +135,15 @@ class Intervencion_model extends MY_Model
     {
         $this->load->model('VO/IncidenciaVO');
         $this->load->model('VO/PdsVO');
-        $this->db->select('incidencias.*,pds.id_pds, pds.reference, pds.address');
+        $this->db->select('incidencias.*,pds.id_pds, pds.reference, pds.address, display.display, device.device');
+        //$this->db->select('incidencias.*,pds.id_pds, pds.reference, pds.address');
         $this->db->from('intervenciones_incidencias');
         $this->db->join('incidencias', 'incidencias.id_incidencia=intervenciones_incidencias.id_incidencia');
         $this->db->join('pds', 'incidencias.id_pds = pds.id_pds');
+        $this->db->join('devices_pds', 'incidencias.id_devices_pds=devices_pds.id_devices_pds');
+        $this->db->join('device', 'devices_pds.id_device=device.id_device');
+        $this->db->join('displays_pds', 'displays_pds.id_displays_pds=incidencias.id_displays_pds');
+        $this->db->join('display', 'displays_pds.id_display=display.id_display');
         $this->db->where('id_intervencion', $intervencion->id_intervencion);
         $query = $this->db->get();
         $incidencias = array();
@@ -150,6 +155,8 @@ class Intervencion_model extends MY_Model
             $i->__set('denuncia', $row['denuncia']);
             $i->__set('status', $row['status']);
             $i->__set('foto_url', $row['foto_url']);
+            $i->__set('device', $row['device']);
+            $i->__set('display', $row['display']);
             $pds = new PdsVO();
             $pds->__set('id_pds', $row['id_pds']);
             $pds->__set('reference', $row['reference']);
