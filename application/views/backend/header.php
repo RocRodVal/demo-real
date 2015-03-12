@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
     <link href='http://fonts.googleapis.com/css?family=Roboto+Slab|Roboto' rel='stylesheet' type='text/css'>
     <link href="<?= site_url('assets/css/orange.css') ?>" rel="stylesheet">
+    <link href="<?= site_url('assets/css/chat/chat.css') ?>" rel="stylesheet">
     <?= Xcrud::load_css(); ?>
     <?= Xcrud::load_js(); ?>
     <!--[if lt IE 9]>

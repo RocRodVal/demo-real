@@ -79,54 +79,7 @@
                     </div>
                 </div>
             </div>
-            <div class="form-group">
-            	<h2>Chat offline</h2>
-            	<?php
-			 	if(empty($chats))
-				{
-					echo '<p>No tiene mensajes en el chat.</p>';
-				}
-				else
-				{					
-					foreach($chats as $chat)
-					{
-				?>
-					<div <?=($chat->agent==='altabox')?'class="sat"':'class="sfid"'?>>
-						<p>
-							<small><?php echo $chat->fecha; ?></small>
-							<em>(<?=($chat->agent==='altabox')?'SAT':'Tienda'?>)</em>
-						</p>
-						<p><?php echo $chat->texto; ?></p>
-						<?php 
-						if ($chat->foto <> '')
-						{
-						?>
-							<p><img src="<?= site_url('chats/'.$chat->foto) ?>" width="200" />
-						<?php 
-						}
-						?>
-					</div>	
-					<?php
-					}
-				}
-				?>                                       
-			</div>
-            <form action="<?= site_url('admin/insert_chat/'.$id_pds_url.'/'.$id_inc_url) ?>" method="post" class="content_auto form_login" enctype="multipart/form-data">
-            <div class="form-group">
-            	<label>Añade comentarios a la incidencia
-            	</label>
-            	<textarea class="form-control" rows="5" name="texto_chat" id="texto_chat"></textarea>
-            </div>
-            <div class="form-group">
-            	<label>Adjuntar imagen
-            		<small>(JPG, PNG, GIF)</small>
-            	</label>
-            	<input id="foto" class="file" type="file" multiple=false name="userfile">
-            </div>
-            <div class="form-group">
-            	<input type="submit" value="Envíar" name="submit" class="btn btn-success"/>
-            </div>                                    
-            </form>            
+            <?php $this->load->view('backend/chat.php'); ?>
         </div>
         <div class="col-lg-6 col-md-6">
             <div class="panel panel-default">

@@ -27,7 +27,7 @@
 										{
 										?>
 										<a class="list-group-item" href="<?=site_url('master/exp_alta_incidencia_device/'.
-											$id_pds_url.'/'.$id_dis_url.'/'.$device->id_device)?>">
+											$id_pds_url.'/'.$id_dis_url.'/'.$device->id_devices_pds)?>">
 											<?php echo $device->device ?></a>
 										<?php
 										}
@@ -45,40 +45,6 @@
 									?>
 								</div>
 							</div>
-							<!--
-                            <div class="table-responsive">
-                                <table class="table">
-                                    <tbody>
-                                        <tr>
-                                           	<td width="250px;">
-                                        	<p><strong>Terminales</strong></p>
-                                        	<ol>
-					                            <?php 
-					   							foreach($devices as $device)
-					    						{
-					    						?>
-					    						<li><a href="<?=site_url('master/alta_incidencia_device/'.$id_pds_url.'/'.$denuncia.'/'.$id_dis_url.'/'.$device->id_device)?>"><?php echo $device->device ?></a></li>
-										    	<?php
-										    	}
-										    	?>
-                                        	</ol>
-                                        	</td>
-                                           	<td>
-                                           		<strong><?php echo $display ?><br clear="all" />
-                                           		<?php 
-                                        		if ($picture_url != '')
-                                        		{	
-                                        		?>
-                                           		<img src="<?=site_url('application/uploads/'.$picture_url.'')?>" title="<?php echo $display ?> style='width:100%;'" />
-                                           		<?php 
-                                        		}
-                                           		?>
-                                           	</td>
-                                        </tr>                                    
-                                    </tbody>
-                                </table>
-                            </div>
-                            -->
                         </div>
                     </div>
                     <?php 

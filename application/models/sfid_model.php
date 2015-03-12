@@ -156,33 +156,10 @@ class Sfid_model extends CI_Model {
 		}
 	}
 
-	public function get_chat_incidencia($id_incidencia) {
-		if($id_incidencia != FALSE)
-		{		
-			$query = $this->db->select('chat.*')
-				->where('chat.id_incidencia',$id_incidencia)
-				->order_by('chat.fecha ASC')
-				->get('chat');
-		
-			return $query->result();
-		}	
-		else
-		{
-			return FALSE;
-		}	
-	}
-
 	
 	public function insert_incidencia($data)
 	{
 		$this->db->insert('incidencias',$data);
-		$id=$this->db->insert_id();
-		return array('add' => (isset($id)) ? $id : FALSE, 'id' => $id);
-	}	
-
-	public function insert_chat_incidencia($data)
-	{
-		$this->db->insert('chat',$data);
 		$id=$this->db->insert_id();
 		return array('add' => (isset($id)) ? $id : FALSE, 'id' => $id);
 	}	

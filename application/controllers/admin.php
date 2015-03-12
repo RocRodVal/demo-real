@@ -149,7 +149,7 @@ class Admin extends CI_Controller {
 			$id_inc = $this->uri->segment(4);
 				
 			$xcrud = xcrud_get_instance();
-			$this->load->model(array('intervencion_model','tienda_model','sfid_model'));
+			$this->load->model(array('chat_model','intervencion_model','tienda_model','sfid_model'));
 		
 			$sfid = $this->tienda_model->get_pds($id_pds);
 		
@@ -170,7 +170,7 @@ class Admin extends CI_Controller {
 			$incidencia['display']= $this->sfid_model->get_display($incidencia['id_displays_pds']);
 			$data['incidencia'] = $incidencia;
 		
-			$chats = $this->sfid_model->get_chat_incidencia($incidencia['id_incidencia']);
+			$chats = $this->chat_model->get_chat_incidencia_sat($incidencia['id_incidencia']);
 			$data['chats'] = $chats;			
 			
 			$data['title']   = 'Operativa incidencia';
@@ -194,7 +194,7 @@ class Admin extends CI_Controller {
 			$id_inc = $this->uri->segment(4);
 	
 			$xcrud = xcrud_get_instance();
-			$this->load->model('sfid_model');
+			$this->load->model('chat_model');
 	
 			$config['upload_path']   = dirname($_SERVER["SCRIPT_FILENAME"]).'/chats/';
 			$config['upload_url']    = base_url().'/chats/';
@@ -226,7 +226,7 @@ class Admin extends CI_Controller {
 					'status'	        => 1,
 			);
 	
-			$chat = $this->sfid_model->insert_chat_incidencia($data);
+			$chat = $this->chat_model->insert_chat_incidencia($data);
 	
 			if ($chat['add'])
 			{
@@ -987,6 +987,7 @@ class Admin extends CI_Controller {
 
 		$xcrud = xcrud_get_instance();
 		$this->load->model('tienda_model');
+		$this->load->model('sfid_model');
 	
 		$sfid = $this->tienda_model->get_pds($id_pds);
 	
@@ -999,7 +1000,7 @@ class Admin extends CI_Controller {
 		$data['city']       = $sfid['city'];
 		$data['id_pds_url'] = $id_pds;
 	
-		$displays = $this->tienda_model->get_displays_panelado($id_pds);
+		$displays = $this->sfid_model->get_displays_pds($id_pds);
 	
 		foreach($displays as $key=>$display) {
 			$num_devices = $this->tienda_model->count_devices_display($display->id_display);
@@ -1023,6 +1024,7 @@ class Admin extends CI_Controller {
 	
 		$xcrud = xcrud_get_instance();
 		$this->load->model('tienda_model');
+		$this->load->model('sfid_model');
 	
 		$sfid = $this->tienda_model->get_pds($id_pds);
 	
@@ -1034,14 +1036,14 @@ class Admin extends CI_Controller {
 		$data['zip']        = $sfid['zip'];
 		$data['city']       = $sfid['city'];
 	
-		$display = $this->tienda_model->get_display($id_dis);
+		$display = $this->sfid_model->get_display($this->uri->segment(4));
 	
 		$data['id_display']  = $display['id_display'];
 		$data['display']     = $display['display'];
 		$data['picture_url'] = $display['picture_url'];
 	
-		$data['devices'] = $this->tienda_model->get_devices_display($id_dis);
-	
+		$data['devices'] = $this->sfid_model->get_devices_displays_pds($id_dis);		
+		
 		$data['id_pds_url']  = $id_pds;
 		$data['id_dis_url']  = $id_dis;
 	
@@ -1061,6 +1063,7 @@ class Admin extends CI_Controller {
 	
 		$xcrud = xcrud_get_instance();
 		$this->load->model('tienda_model');
+		$this->load->model('sfid_model');
 	
 		$sfid = $this->tienda_model->get_pds($id_pds);
 	
@@ -1072,14 +1075,13 @@ class Admin extends CI_Controller {
 		$data['zip']        = $sfid['zip'];
 		$data['city']       = $sfid['city'];
 	
-		$display = $this->tienda_model->get_display($id_dis);
+		$display = $this->sfid_model->get_display($this->uri->segment(4));
 	
 		$data['id_display']      = $display['id_display'];
 		$data['display']         = $display['display'];
 		$data['picture_url_dis'] = $display['picture_url'];
 	
-	
-		$device = $this->tienda_model->get_device($id_dev);
+		$device = $this->sfid_model->get_device($this->uri->segment(5));
 	
 		$data['id_device']       = $device['id_device'];
 		$data['device']          = $device['device'];

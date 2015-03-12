@@ -27,7 +27,7 @@
 										{
 										?>
 										<a class="list-group-item" href="<?=site_url('admin/exp_alta_incidencia_device/'.
-											$id_pds_url.'/'.$id_dis_url.'/'.$device->id_device)?>">
+											$id_pds_url.'/'.$id_dis_url.'/'.$device->id_devices_pds)?>">
 											<?php echo $device->device ?></a>
 										<?php
 										}

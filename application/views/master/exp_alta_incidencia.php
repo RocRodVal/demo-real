@@ -34,7 +34,7 @@
 									{
 										?>
 
-										<a href="<?=site_url('master/exp_alta_incidencia_mueble')?>/<?php echo $display->id_pds.'/'.$display->id_display ?>">
+										<a href="<?=site_url('master/exp_alta_incidencia_mueble')?>/<?php echo $display->id_pds.'/'.$display->id_displays_pds ?>">
 											<div class="caption" title="<?php echo $display->display; ?>">
 											<img
 												src="<?=site_url('application/uploads/'.$display->picture_url.'')?>"

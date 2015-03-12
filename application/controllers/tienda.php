@@ -269,7 +269,7 @@ class Tienda extends CI_Controller {
 			$data['sfid']   = $this->session->userdata('sfid');
 	
 			$xcrud = xcrud_get_instance();
-			$this->load->model('sfid_model');
+			$this->load->model(array('chat_model','sfid_model'));
 	
 			$sfid = $this->sfid_model->get_pds($data['id_pds']);
 	
@@ -318,7 +318,7 @@ class Tienda extends CI_Controller {
 				$data['device']          = $device['device'];
 				$data['picture_url_dev'] = $device['picture_url'];
 				
-				$chats = $this->sfid_model->get_chat_incidencia($incidencia['id_incidencia']);
+				$chats = $this->chat_model->get_chat_incidencia_pds($incidencia['id_incidencia']);
 				$data['chats'] = $chats;
 				
 				$data['title'] = 'Estado de incidencia Ref. '.$id_incidencia;
@@ -344,7 +344,7 @@ class Tienda extends CI_Controller {
 			$data['sfid']   = $this->session->userdata('sfid');
 	
 			$xcrud = xcrud_get_instance();
-			$this->load->model('sfid_model');
+			$this->load->model(array('chat_model','sfid_model'));
 				
 			$config['upload_path']   = dirname($_SERVER["SCRIPT_FILENAME"]).'/chats/';
 			$config['upload_url']    = base_url().'/chats/';
@@ -376,7 +376,7 @@ class Tienda extends CI_Controller {
 					'status'	        => 1,
 			);
 	
-			$chat = $this->sfid_model->insert_chat_incidencia($data);
+			$chat = $this->chat_model->insert_chat_incidencia($data);
 	
 			if ($chat['add'])
 			{
