@@ -1,4 +1,7 @@
 <!-- #page-wrapper -->
+<?php 
+
+?>
 <div id="page-wrapper">
     <div class="row">
         <div class="col-lg-12">
@@ -61,6 +64,58 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                        <h2>Chat offline</h2>
+             							<?php
+					                    if(empty($chats)){
+					                    	echo '<p>No tiene mensajes en el chat.</p>';
+					                    }
+					                    else
+					                    {					
+											foreach($chats as $chat)
+											{
+											?>
+												<div <?=($chat->agent==='altabox')?'class="sat"':'class="sfid"'?>>
+												<p>
+													<small><?php echo $chat->fecha; ?></small>
+													<em>(<?=($chat->agent==='altabox')?'SAT':'Tienda'?>)</em>
+												</p>
+												<p><?php echo $chat->texto; ?></p>
+												<?php 
+												if ($chat->foto <> '')
+												{
+												?>
+												<p><img src="<?= site_url('chats/'.$chat->foto) ?>" width="200" />
+												<?php 
+												}
+												?>
+												</div>	
+											<?php
+											}
+					                    }
+					                    ?>                                       
+                                    </div>
+                                    <form action="<?= site_url('tienda/insert_chat/'.$id_incidencia) ?>" method="post" class="content_auto form_login" enctype="multipart/form-data">
+                                    <div class="form-group">
+                                            <label>Añade comentarios a la incidencia
+                                                <small>(Mín. 10 caracteres)</small>
+                                            </label>
+                                            <textarea class="form-control" rows="5" name="texto_chat"
+                                                      id="texto_chat"></textarea>
+                                    </div>
+                                    <div class="form-group">
+                                    		<label>Adjuntar imagen o documento
+                                    			<small>(JPG, PNG, PDF, DOC)</small>
+                                    		</label>
+                                    		<input id="foto" class="file" type="file" multiple=false name="userfile">
+                                    </div>
+                            		<div class="form-group">
+                                		<input type="submit" value="Envíar" name="submit" class="btn btn-success"/>
+                           			</div>                                    
+                                </div>                                 
+                            </div>                                                      
                         </div>
                         <div class="col-lg-4">
                             <div class="row">

@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost:3306
--- Generation Time: Mar 11, 2015 at 05:57 PM
+-- Generation Time: Mar 12, 2015 at 03:47 PM
 -- Server version: 5.5.40
 -- PHP Version: 5.4.35
 
@@ -1847,8 +1847,22 @@ CREATE TABLE IF NOT EXISTS `chat` (
   `agent` varchar(100) NOT NULL,
   `texto` text NOT NULL,
   `foto` varchar(200) DEFAULT NULL,
-  `status` enum('Nuevo','Leído','Contestado','Privado','Borrado') NOT NULL DEFAULT 'Nuevo'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `status` enum('Nuevo','Leído','Privado','Borrado') NOT NULL DEFAULT 'Nuevo'
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `chat`
+--
+
+INSERT INTO `chat` (`id_chat`, `fecha`, `id_incidencia`, `agent`, `texto`, `foto`, `status`) VALUES
+(1, '2015-03-12 12:01:13', 172, '16000117', 'Se sabe algo del proceso de la incidencia?', NULL, 'Nuevo'),
+(2, '2015-03-12 12:03:07', 172, 'altabox', 'El técnico pasará esta misma semana', NULL, 'Nuevo'),
+(3, '2015-03-12 12:03:07', 172, '16000117', 'Eso ya se dijo la pasada y aquí estamos', NULL, 'Nuevo'),
+(4, '2015-03-12 14:36:39', 172, '16000117', 'Sigue sin aparecer nadie dos semanas más tarde.', NULL, 'Nuevo'),
+(5, '2015-03-12 14:38:42', 172, '16000117', 'No viene nadie.', NULL, 'Nuevo'),
+(6, '2015-03-12 14:39:14', 172, '16000117', 'Y sigo esperando.', '16000117-1426171154-11013242_10154191666763521_858470402246384341_n.jpg', 'Nuevo'),
+(7, '2015-03-12 14:45:03', 173, '16000117', 'Me teneis contento.', NULL, 'Nuevo'),
+(8, '2015-03-12 14:45:18', 173, '16000117', 'dfsgsrftgsrtgrwt', '16000117-1426171518-AnluJvrlD24Q3wwyCfueAGR3VzZpI8jrui3ih31kEGBY.jpg', 'Nuevo');
 
 -- --------------------------------------------------------
 
@@ -1869,7 +1883,7 @@ CREATE TABLE IF NOT EXISTS `ci_sessions` (
 --
 
 INSERT INTO `ci_sessions` (`session_id`, `ip_address`, `user_agent`, `last_activity`, `user_data`) VALUES
-('397442849ed6c50a7fcd037578085f38', '::1', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/40.0.2214.115 Safari/537.36', 1426092447, 'a:4:{s:9:"user_data";s:0:"";s:4:"sfid";s:7:"altabox";s:4:"type";s:2:"10";s:9:"logged_in";b:1;}');
+('552988e9f6f968b5488b7436a3386d79', '::1', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/40.0.2214.115 Safari/537.36', 1426171448, 'a:5:{s:9:"user_data";s:0:"";s:4:"sfid";s:8:"16000117";s:6:"id_pds";s:4:"2828";s:4:"type";s:1:"1";s:9:"logged_in";b:1;}');
 
 -- --------------------------------------------------------
 
@@ -23939,7 +23953,7 @@ MODIFY `id_brand_device` smallint(5) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCRE
 -- AUTO_INCREMENT for table `chat`
 --
 ALTER TABLE `chat`
-MODIFY `id_chat` int(10) unsigned NOT NULL AUTO_INCREMENT;
+MODIFY `id_chat` int(10) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=9;
 --
 -- AUTO_INCREMENT for table `client`
 --

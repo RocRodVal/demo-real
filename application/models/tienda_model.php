@@ -408,7 +408,7 @@ class Tienda_model extends CI_Model {
 			return FALSE;
 		}
 	}
-		
+	
 	public function get_alarms_device($id) {
 		if($id != FALSE) {
 			$query = $this->db->select('alarms_device_pds.*,alarm.*')
