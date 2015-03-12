@@ -348,7 +348,7 @@ class Tienda extends CI_Controller {
 				
 			$config['upload_path']   = dirname($_SERVER["SCRIPT_FILENAME"]).'/chats/';
 			$config['upload_url']    = base_url().'/chats/';
-			$config['allowed_types'] = 'doc|docx|pdf|jpg|png';
+			$config['allowed_types'] = 'gif|jpg|png';
 			$new_name                = $id_incidencia.'-'.time().'-'.$_FILES["userfile"]['name'];
 			$config['file_name']     = $new_name;
 			$config['overwrite']     = TRUE;

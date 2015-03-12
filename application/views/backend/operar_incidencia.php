@@ -114,13 +114,12 @@
             <form action="<?= site_url('admin/insert_chat/'.$id_pds_url.'/'.$id_inc_url) ?>" method="post" class="content_auto form_login" enctype="multipart/form-data">
             <div class="form-group">
             	<label>Añade comentarios a la incidencia
-            		<small>(Mín. 10 caracteres)</small>
             	</label>
             	<textarea class="form-control" rows="5" name="texto_chat" id="texto_chat"></textarea>
             </div>
             <div class="form-group">
-            	<label>Adjuntar imagen o documento
-            		<small>(JPG, PNG, PDF, DOC)</small>
+            	<label>Adjuntar imagen
+            		<small>(JPG, PNG, GIF)</small>
             	</label>
             	<input id="foto" class="file" type="file" multiple=false name="userfile">
             </div>
