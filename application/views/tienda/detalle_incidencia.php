@@ -113,7 +113,8 @@
                                     </div>
                             		<div class="form-group">
                                 		<input type="submit" value="Envíar" name="submit" class="btn btn-success"/>
-                           			</div>                                    
+                           			</div>
+                           			</form>                                    
                                 </div>                                 
                             </div>                                                      
                         </div>

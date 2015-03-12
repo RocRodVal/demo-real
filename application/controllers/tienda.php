@@ -321,7 +321,7 @@ class Tienda extends CI_Controller {
 				$chats = $this->sfid_model->get_chat_incidencia($incidencia['id_incidencia']);
 				$data['chats'] = $chats;
 				
-				$data['title'] = 'Estado de incidencia ref. '.$id_incidencia;
+				$data['title'] = 'Estado de incidencia Ref. '.$id_incidencia;
 		
 				$this->load->view('tienda/header',$data);
 				$this->load->view('tienda/navbar',$data);
@@ -349,7 +349,7 @@ class Tienda extends CI_Controller {
 			$config['upload_path']   = dirname($_SERVER["SCRIPT_FILENAME"]).'/chats/';
 			$config['upload_url']    = base_url().'/chats/';
 			$config['allowed_types'] = 'doc|docx|pdf|jpg|png';
-			$new_name                = $data['sfid'].'-'.time().'-'.$_FILES["userfile"]['name'];
+			$new_name                = $id_incidencia.'-'.time().'-'.$_FILES["userfile"]['name'];
 			$config['file_name']     = $new_name;
 			$config['overwrite']     = TRUE;
 			$config['max_size']      = '10000KB';

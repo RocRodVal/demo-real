@@ -170,12 +170,68 @@ class Admin extends CI_Controller {
 			$incidencia['display']= $this->sfid_model->get_display($incidencia['id_displays_pds']);
 			$data['incidencia'] = $incidencia;
 		
+			$chats = $this->sfid_model->get_chat_incidencia($incidencia['id_incidencia']);
+			$data['chats'] = $chats;			
+			
 			$data['title']   = 'Operativa incidencia';
 		
 			$this->load->view('backend/header', $data);
 			$this->load->view('backend/navbar', $data);
 			$this->load->view('backend/operar_incidencia', $data);
 			$this->load->view('backend/footer');
+		}
+		else
+		{
+			redirect('admin','refresh');
+		}
+	}	
+	
+	public function insert_chat($id_incidencia)
+	{
+		if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10))
+		{
+			$id_pds = $this->uri->segment(3);
+			$id_inc = $this->uri->segment(4);
+	
+			$xcrud = xcrud_get_instance();
+			$this->load->model('sfid_model');
+	
+			$config['upload_path']   = dirname($_SERVER["SCRIPT_FILENAME"]).'/chats/';
+			$config['upload_url']    = base_url().'/chats/';
+			$config['allowed_types'] = 'doc|docx|pdf|jpg|png';
+			$new_name                = $id_inc.'-'.time().'-'.$_FILES["userfile"]['name'];
+			$config['file_name']     = $new_name;
+			$config['overwrite']     = TRUE;
+			$config['max_size']      = '10000KB';
+	
+			$this->load->library('upload', $config);
+	
+			$foto = NULL;
+	
+			if($this->upload->do_upload())
+			{
+				$foto = $new_name;
+			}
+			else
+			{
+				echo 'Ha fallado la carga de la foto.';
+			}
+	
+			$data = array(
+					'fecha'    	        => date('Y-m-d H:i:s'),
+					'id_incidencia'     => $id_inc,
+					'agent' 	        => 'altabox',
+					'texto'             => $this->input->post('texto_chat'),
+					'foto'  	        => $foto,
+					'status'	        => 1,
+			);
+	
+			$chat = $this->sfid_model->insert_chat_incidencia($data);
+	
+			if ($chat['add'])
+			{
+				redirect('admin/operar_incidencia/'.$id_pds.'/'.$id_inc);
+			}
 		}
 		else
 		{

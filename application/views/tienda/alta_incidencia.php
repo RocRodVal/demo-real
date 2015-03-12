@@ -23,8 +23,11 @@
 						<div class="panel-body">
 							<div class="row">
 							<?php
+							$counter = 0;
+							$sep     = array(6,12,18,24);
 							foreach($displays as $display){
 								if($display->devices_count != 0){
+									$counter++; 
 									?>
 									<div class="col-lg-2 col-md-3 col-sm-6 col-xs-12 textoColumna">
 									<?php
@@ -46,6 +49,11 @@
 									?>
 									</div>
 								<?php
+									if (in_array($counter, $sep))
+									{
+										$counter = 0;
+										echo '<br clear="all" />';
+									}		
 								}
 							}
 							?>
