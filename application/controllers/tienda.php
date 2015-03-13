@@ -71,9 +71,6 @@ class Tienda extends CI_Controller {
 				$incidencia->device  = $this->sfid_model->get_device($incidencia->id_devices_pds);
 				$incidencia->display = $this->sfid_model->get_display($incidencia->id_displays_pds);
 				$incidencia->nuevos  = $this->chat_model->contar_nuevos($incidencia->id_incidencia,'altabox');
-				
-				var_dump($incidencia->nuevos);
-
 			}
 			
 			$data['incidencias'] =  $incidencias;

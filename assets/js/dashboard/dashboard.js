@@ -21,6 +21,9 @@ function createDataTable(){
 }
 
 function avisoChat(){
+    $(".chat_nuevo").each(function(key,elem){
+            $(elem).addClass('pulse');
+    });
     /*
     setInterval(function(){
         $(".chat_nuevo").each(function(key,elem){
