@@ -52,7 +52,7 @@ class Tienda extends CI_Controller {
 			$data['sfid']   = $this->session->userdata('sfid');
 				
 			$xcrud = xcrud_get_instance();
-			$this->load->model('sfid_model');
+			$this->load->model(array('chat_model','sfid_model'));
 
 			$sfid = $this->sfid_model->get_pds($data['id_pds']);
 				
@@ -70,6 +70,9 @@ class Tienda extends CI_Controller {
 			{
 				$incidencia->device  = $this->sfid_model->get_device($incidencia->id_devices_pds);
 				$incidencia->display = $this->sfid_model->get_display($incidencia->id_displays_pds);
+				$incidencia->nuevos  = $this->chat_model->contar_nuevos($incidencia->id_incidencia,'altabox');
+				
+				var_dump($incidencia->nuevos);
 
 			}
 			
@@ -331,6 +334,7 @@ class Tienda extends CI_Controller {
 				
 				
 				$chats = $this->chat_model->get_chat_incidencia_pds($incidencia['id_incidencia']);
+				$leido = $this->chat_model->marcar_leido($incidencia['id_incidencia'],'altabox');
 				$data['chats'] = $chats;
 				
 				$data['title'] = 'Estado de incidencia Ref. '.$id_incidencia;
