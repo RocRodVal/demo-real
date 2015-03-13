@@ -178,11 +178,41 @@
                                                 src="<?= site_url('application/uploads/' . $imagen . '') ?>"
                                                 style="width:100%;" title="<?php echo strtoupper($name) ?>"/>
                                             <p><strong><?php echo strtoupper($name); ?></strong></p>
-                                        <?php
-                                        } else {
+			                                <?php
+			                                if ($device != NULL) {
+											?>
+											<h3>Datos teléfono</h3>							
+		                                    <p>
+		                                        Modelo: <?php echo $device ?><br />
+		                                        Modelo de marca: <?php echo $brand_name ?><br />
+		                                        IMEI: <?php echo $IMEI ?><br />
+		                                        MAC: <?php echo $mac ?><br />
+		                                        Número de serie: <?php echo $serial ?><br />
+		                                       	Código de barras: <?php echo $barcode ?><br />
+		                                        Descripción: <?php echo $description ?><br />
+		                                        Dueño: <?php echo $owner ?>
+		                                    </p>									
+											<?php
+											}	                                            
+                                          } else {
                                             ?>
                                             <p><strong><?php echo strtoupper($name); ?></strong></p>
-                                        <?php
+			                                <?php
+			                                if ($device != NULL) {
+											?>
+											<h3>Datos teléfono</h3>							
+		                                    <p>
+		                                        Modelo: <?php echo $device ?><br />
+		                                        Modelo de marca: <?php echo $brand_name ?><br />
+		                                        IMEI: <?php echo $IMEI ?><br />
+		                                        MAC: <?php echo $mac ?><br />
+		                                        Número de serie: <?php echo $serial ?><br />
+		                                       	Código de barras: <?php echo $barcode ?><br />
+		                                        Descripción: <?php echo $description ?><br />
+		                                        Dueño: <?php echo $owner ?>
+		                                    </p>									
+											<?php
+											}	                                          
                                         }
                                         ?>
                                     </div>

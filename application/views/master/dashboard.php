@@ -102,7 +102,7 @@
 		                        foreach ($incidencias as $incidencia) {
 		                            ?>
 		                            <tr>
-		                                <td><a href="<?=site_url('master/detalle_incidencia/'.$incidencia->id_incidencia.'/'.$incidencia->id_pds)?>">#<?php echo $incidencia->id_incidencia ?></a></td>
+		                                <td><a href="<?=site_url('master/detalle_incidencia/'.$incidencia->id_incidencia.'/'.$incidencia->id_pds)?>"><?php echo $incidencia->id_incidencia ?></a></td>
 		                                <td><?php echo $incidencia->reference ?></td>
 		                                <td><?php echo date_format(date_create($incidencia->fecha), 'd/m/Y'); ?></td>
 		                                <td><?=($incidencia->alarm_display==1)?'Mueble: '.$incidencia->display['display']:'Dispositivo: '.$incidencia->device['device']?>

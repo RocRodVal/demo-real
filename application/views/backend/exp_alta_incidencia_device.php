@@ -11,18 +11,22 @@
         <div class="row">
             <div class="col-lg-12">
                 <div class="panel panel-default">
-                        <div class="table-responsive">
                             <table class="table">
                                 <tbody>
                                 <tr>
-                                    <td>
+                                    <td align="left">
                                         <p><strong><?php echo $device ?></strong></p>
                                         <h3>Datos teléfono</h3>
-
                                         <p>
-                                            <strong>Modelo</strong><br>
-                                        <pre><?php echo $device ?></pre>
-
+	                                        Modelo: <?php echo $device ?><br />
+	                                        Modelo de marca: <?php echo $brand_name ?><br />
+	                                        IMEI: <?php echo $IMEI ?><br />
+	                                        MAC: <?php echo $mac ?><br />
+	                                        Número de serie: <?php echo $serial ?><br />
+	                                       	Código de barras: <?php echo $barcode ?><br />
+	                                        Descripción: <?php echo $description ?><br />
+	                                        Dueño: <?php echo $owner ?>
+                                        </p>
                                     </td>
                                     <?php
                         if ($picture_url_dev <> '') {
@@ -35,7 +39,6 @@
                                 </tr>
                                 </tbody>
                             </table>
-                        </div>
                     </div>
                 </div>
             </div>

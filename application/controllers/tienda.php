@@ -155,7 +155,6 @@ class Tienda extends CI_Controller {
 			
 			$display = $this->sfid_model->get_display($this->uri->segment(3));
 			
-			$data['id_display']  = $display['id_display'];
 			$data['display']     = $display['display'];
 			$data['picture_url'] = $display['picture_url'];		
 		
@@ -203,9 +202,16 @@ class Tienda extends CI_Controller {
 			
 			$device = $this->sfid_model->get_device($this->uri->segment(4));
 	
-			$data['id_devices_pds']  = $device['id_devices_pds'];
-			$data['device']          = $device['device'];
-			$data['picture_url_dev'] = $device['picture_url'];
+			$data['id_devices_pds']           = $device['id_devices_pds'];
+			$data['device']        		 	  = $device['device'];
+			$data['brand_name']   			  = $device['brand_name'];
+			$data['IMEI']          		 	  = $device['IMEI'];
+			$data['mac']            		  = $device['mac'];
+			$data['serial']          		  = $device['serial'];
+			$data['barcode']                  = $device['barcode'];
+			$data['description']    	      = $device['description'];
+			$data['owner']          		  = $device['owner'];
+			$data['picture_url_dev'] 		  = $device['picture_url'];			
 
 			$data['title'] = 'Alta incidencia';
 	
@@ -308,15 +314,21 @@ class Tienda extends CI_Controller {
 				
 				$display = $this->sfid_model->get_display($incidencia['id_displays_pds']);
 		
-				$data['id_display']      = $display['id_display'];
 				$data['display']         = $display['display'];
 				$data['picture_url_dis'] = $display['picture_url'];
 					
 				$device = $this->sfid_model->get_device($incidencia['id_devices_pds']);
-		
-				$data['id_device']       = $device['id_device'];
-				$data['device']          = $device['device'];
-				$data['picture_url_dev'] = $device['picture_url'];
+
+				$data['device']        		 	  = $device['device'];
+				$data['brand_name']   			  = $device['brand_name'];
+				$data['IMEI']          		 	  = $device['IMEI'];
+				$data['mac']            		  = $device['mac'];
+				$data['serial']          		  = $device['serial'];
+				$data['barcode']                  = $device['barcode'];
+				$data['description']    	      = $device['description'];
+				$data['owner']          		  = $device['owner'];
+				$data['picture_url_dev'] 		  = $device['picture_url'];				
+				
 				
 				$chats = $this->chat_model->get_chat_incidencia_pds($incidencia['id_incidencia']);
 				$data['chats'] = $chats;

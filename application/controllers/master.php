@@ -138,12 +138,19 @@ class Master extends CI_Controller {
 				$data['picture_url_dis'] = $display['picture_url'];
 					
 				$device = $this->sfid_model->get_device($incidencia['id_devices_pds']);
+				
+				$data['id_device']      		  = $device['id_device'];
+				$data['device']        		 	  = $device['device'];
+				$data['brand_name']   			  = $device['brand_name'];
+				$data['IMEI']          		 	  = $device['IMEI'];
+				$data['mac']            		  = $device['mac'];
+				$data['serial']          		  = $device['serial'];
+				$data['barcode']                  = $device['barcode'];
+				$data['description']    	      = $device['description'];
+				$data['owner']          		  = $device['owner'];
+				$data['picture_url_dev'] 		  = $device['picture_url'];				
 		
-				$data['id_device']       = $device['id_device'];
-				$data['device']          = $device['device'];
-				$data['picture_url_dev'] = $device['picture_url'];
-		
-				$data['title'] = 'Estado de incidencia ref. '.$id_incidencia.' [SFID-'.$data['reference'].']';
+				$data['title'] = 'Estado de incidencia Ref. '.$id_incidencia.' [SFID-'.$data['reference'].']';
 		
 				$this->load->view('master/header',$data);
 				$this->load->view('master/navbar',$data);
@@ -455,12 +462,18 @@ class Master extends CI_Controller {
 	
 	
 		$device = $this->sfid_model->get_device($this->uri->segment(5));
-	
-		$data['id_device']       = $device['id_device'];
-		$data['device']          = $device['device'];
-		$data['picture_url_dev'] = $device['picture_url'];
-		$data['device_'] = $device;
-	
+		
+		$data['id_device']      		  = $device['id_device'];
+		$data['device']        		 	  = $device['device'];
+		$data['brand_name']   			  = $device['brand_name'];
+		$data['IMEI']          		 	  = $device['IMEI'];
+		$data['mac']            		  = $device['mac'];
+		$data['serial']          		  = $device['serial'];
+		$data['barcode']                  = $device['barcode'];
+		$data['description']    	      = $device['description'];
+		$data['owner']          		  = $device['owner'];
+		$data['picture_url_dev'] 		  = $device['picture_url'];
+				
 		$data['id_pds_url']  = $id_pds;
 		$data['id_dis_url']  = $id_dis;
 		$data['id_dev_url']  = $id_dev;
