@@ -24,3 +24,11 @@ Estilos de las tabla
 .modal-dialog {
     width: 80%;
 }
+
+.chat_nuevo{
+    color:#f60;
+}
+
+.chat_leido{
+    color:#000;
+}

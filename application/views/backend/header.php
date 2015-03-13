@@ -26,6 +26,7 @@
     <!-- Carga de los JS/CSS dependiendo de donde estemos-->
     <link href="<?= site_url('assets/css/dashboard/dashboard_pds.css') ?>" rel="stylesheet">
     <link href="<?= site_url('assets/css/dashboard/dashboard.css') ?>" rel="stylesheet">
+    <link href="<?= site_url('assets/css/dashboard/hover.css') ?>" rel="stylesheet">
     <link href="<?= site_url('assets/css/intervencion/modal_intervencion.css') ?>" rel="stylesheet">
     <link href="<?= site_url('assets/css/plugins/tooltipster/tooltipster.css') ?>" rel="stylesheet">
     <link href="<?= site_url('assets/css/incidencia/operar_incidencia.css') ?>" rel="stylesheet">

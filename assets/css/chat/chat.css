@@ -20,11 +20,13 @@
     bottom: 0px;
     float:right;
     clear:both;
+    font-style: italic;
 }
 .sfid>.date{
     font-size: 8pt;
     float: left;
     clear:both;
+    font-style: italic;
 }
 .sat {
     padding-top:15px;
@@ -80,4 +82,8 @@
     z-index: 1;
     right: -14px;
     top: 10px;
+}
+
+textarea[name='texto_chat']{
+    border-radius: 20px;
 }
