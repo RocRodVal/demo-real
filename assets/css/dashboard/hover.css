@@ -76,6 +76,30 @@
     }
 }
 
+@-webkit-keyframes pulse {
+    25% {
+        -webkit-transform: scale(1.5);
+        transform: scale(1.5);
+    }
+
+    75% {
+        -webkit-transform: scale(0.9);
+        transform: scale(0.9);
+    }
+}
+
+@keyframes pulse {
+    25% {
+        -webkit-transform: scale(1.5);
+        transform: scale(1.5);
+    }
+
+    75% {
+        -webkit-transform: scale(0.7);
+        transform: scale(0.7);
+    }
+}
+
 .pulse {
     display: inline-block;
     vertical-align: middle;
@@ -85,10 +109,10 @@
     -webkit-backface-visibility: hidden;
     backface-visibility: hidden;
     -moz-osx-font-smoothing: grayscale;
-    -webkit-animation-name: hvr-pulse;
-    animation-name: hvr-pulse;
-    -webkit-animation-duration: 1s;
-    animation-duration: 1s;
+    -webkit-animation-name: pulse;
+    animation-name: pulse;
+    -webkit-animation-duration: 1.5s;
+    animation-duration: 1.5s;
     -webkit-animation-timing-function: linear;
     animation-timing-function: linear;
     -webkit-animation-iteration-count: infinite;

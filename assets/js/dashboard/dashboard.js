@@ -21,6 +21,7 @@ function createDataTable(){
 }
 
 function avisoChat(){
+    /*
     setInterval(function(){
         $(".chat_nuevo").each(function(key,elem){
             if($(elem).hasClass('pulse')){
@@ -31,4 +32,18 @@ function avisoChat(){
             }
         });
     }, 2000);
+    */
+    var contador=0;
+    setInterval(function(){
+        $(".chat_nuevo").each(function(key,elem){
+            if(contador%2!=0){
+                $(elem).css('color','#f60');
+            }
+            else{
+                $(elem).css('color','#000');
+            }
+
+        });
+        contador++;
+    }, 750);
 }
