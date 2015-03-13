@@ -1,9 +1,9 @@
 		<!-- #page-wrapper -->
         <div id="page-wrapper">
             <div class="row">
-                <div class="col-lg-12">
-                    <h1 class="page-header"><?php echo $title ?></h1>
-                </div>
+		    	<h1 class="page-header"><?php echo $title ?>
+		        	<a onclick="history.go(-1);return false;" class="btn btn-danger right">Volver</a>
+		        </h1>
             </div>
             <div class="row">
 				<div class="col-lg-6">
@@ -16,11 +16,11 @@
  					?>                
  					<div class="panel panel-default">
                	 		<div class="panel-heading">
-                            SELECCIONE EL DISPOSITVO
+                            Seleccione dispositivo
                         </div>
                         <div class="panel-body">
 							<div class="row">
-								<div class="col-lg-6">
+								<div class="col-lg-8">
 									<div class="list-group">
 										<?php
 										foreach($devices as $device)
@@ -28,22 +28,29 @@
 										?>
 										<a class="list-group-item" href="<?=site_url('master/exp_alta_incidencia_device/'.
 											$id_pds_url.'/'.$id_dis_url.'/'.$device->id_devices_pds)?>">
-											<?php echo $device->device ?></a>
+											<?php echo $device->position.'. '.$device->device ?>
+										</a>
 										<?php
 										}
 										?>
 									</div>
 								</div>
-								<div class="col-lg-6">
+								<div class="col-lg-4">
 									<?php
 									if ($picture_url != '')
 									{
 									?>
-									<img src="<?=site_url('application/uploads/'.$picture_url.'')?>" title="<?php echo $display ?> " style='width:100%'; />
+									<img src="<?=site_url('application/uploads/'.$picture_url.'')?>" title="<?php echo strtoupper($display) ?> " style='width:100%'; />
 									<?php
 									}
+									else
+									{
 									?>
-								</div>
+									<p><strong><?php echo strtoupper($display); ?></strong></p>
+									<?php
+									}	
+									?>
+								</div>								
 							</div>
                         </div>
                     </div>

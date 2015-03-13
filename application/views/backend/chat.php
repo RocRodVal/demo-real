@@ -120,6 +120,7 @@
                 </div>
                 </section>
             </div>
+		</form>            
     </div>
 </div>
 <script src="<?php echo base_url(); ?>assets/js/incidencia/view_incidencia.js" type="text/javascript"></script>

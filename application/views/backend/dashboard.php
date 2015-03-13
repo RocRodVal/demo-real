@@ -36,7 +36,7 @@
                                 <table class="table table-striped table-bordered table-hover" id="dataTables-example">
                                     <thead>
                                         <tr>
-                                            <th>SFID / Referencia</th>
+                                            <th>SFID</th>
                                             <th>Tipo</th>
                                             <th>Panelado</th>
                                             <th>Nombre comercial</th>

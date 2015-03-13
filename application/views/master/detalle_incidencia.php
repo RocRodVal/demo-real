@@ -61,6 +61,7 @@
                                     </div>
                                 </div>
                             </div>
+                            <?php $this->load->view('master/chat.php'); ?>
                         </div>
                         <div class="col-lg-4">
                             <div class="row">

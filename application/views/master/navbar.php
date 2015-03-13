@@ -52,12 +52,11 @@
                         <li <?=(in_array($this->uri->segment(2), $exposicion))?'class="active"':''?>>
                             <a href="#"><i class="fa fa-sitemap fa-fw"></i> Exposición<span class="fa arrow"></span></a>
                             <ul class="nav nav-second-level">
-                            	<li><a <?=($this->uri->segment(2)==='inventarios_planogramas')?'class="active"':''?> href="<?=site_url('master/inventarios_planogramas')?>">Planograma genérico &raquo;</a></li>
                             	<?php
                             	$descripcion = array('descripcion','exp_alta_incidencia','exp_alta_incidencia_mueble','exp_alta_incidencia_device');
                             	?>
-                            	<li><a <?=(in_array($this->uri->segment(2), $descripcion))?'class="active"':''?> href="<?=site_url('master/descripcion')?>">Planograma tiendas &raquo;</a></li>
-                           	
+                            	<li><a <?=(in_array($this->uri->segment(2), $descripcion))?'class="active"':''?> href="<?=site_url('master/descripcion')?>">Planograma tienda &raquo;</a></li>                            
+                            	<li><a <?=($this->uri->segment(2)==='inventarios_planogramas')?'class="active"':''?> href="<?=site_url('master/inventarios_planogramas')?>">Planograma mueble &raquo;</a></li>
                             </ul>
                         </li>                        
                         <?php 

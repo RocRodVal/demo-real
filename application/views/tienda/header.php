@@ -33,8 +33,8 @@
     <link href="<?= site_url('assets/css/intervencion/modal_intervencion.css') ?>" rel="stylesheet">
     <link href="<?= site_url('assets/css/incidencia/alta_incidencia.css') ?>" rel="stylesheet">
     <link href="<?= site_url('assets/css/incidencia/alta_incidencia.css') ?>" rel="stylesheet">
-    <link href="<?= site_url('assets/css/plugins/fileInput/fileinput.css"') ?>" rel="stylesheet">
-    <link href="<?= site_url('assets/css/incidencia/alta_robo.css"') ?>" rel="stylesheet">
+    <link href="<?= site_url('assets/css/plugins/fileInput/fileinput.css') ?>" rel="stylesheet">
+    <link href="<?= site_url('assets/css/incidencia/alta_robo.css') ?>" rel="stylesheet">
     <link href="<?= site_url('assets/css/intervencion/intervencion.css') ?>" rel="stylesheet">
     <link href="<?= site_url('assets/css/intervencion/modal_intervencion.css') ?>" rel="stylesheet">
     <script src="<?php echo base_url(); ?>assets/js/plugins/dataTables/jquery.dataTables.js" type="text/javascript"></script>
@@ -54,7 +54,6 @@
     <script src="<?php echo base_url(); ?>assets/js/incidencia/formulario_incidencia.js" type="text/javascript"></script>
     <script src="<?php echo base_url(); ?>assets/js/bootstrap-tooltip.js" type="text/javascript"></script>
     <script src="<?php echo base_url(); ?>assets/js/bootstrap-confirmation.js" type="text/javascript"></script>
-
 </head>
 
 <?php

@@ -329,7 +329,6 @@ class Tienda extends CI_Controller {
 				$data['owner']          		  = $device['owner'];
 				$data['picture_url_dev'] 		  = $device['picture_url'];				
 				
-				
 				$chats = $this->chat_model->get_chat_incidencia_pds($incidencia['id_incidencia']);
 				$leido = $this->chat_model->marcar_leido($incidencia['id_incidencia'],'altabox');
 				$data['chats'] = $chats;
@@ -379,14 +378,16 @@ class Tienda extends CI_Controller {
 			{
 				echo 'Ha fallado la carga de la foto.';
 			}
+			
 			$texto_chat = $this->input->post('texto_chat');
-			$texto_chat=$this->strip_html_tags($texto_chat);
+			$texto_chat = $this->strip_html_tags($texto_chat);
+			
 			if ($foto != '' || $texto_chat != '' && $texto_chat != ' ') {
 				$data = array(
 					'fecha' => date('Y-m-d H:i:s'),
 					'id_incidencia' => $id_incidencia,
 					'agent' => $data['sfid'],
-					'texto' => $this->input->post('texto_chat'),
+					'texto' => $texto_chat,
 					'foto' => $foto,
 					'status' => 1,
 				);
@@ -406,6 +407,7 @@ class Tienda extends CI_Controller {
 			redirect('tienda','refresh');
 		}
 	}
+	
 	
 	public function strip_html_tags($text)
 	{
@@ -435,6 +437,7 @@ class Tienda extends CI_Controller {
 			$text);
 		return strip_tags($text);
 	}
+	
 	
 	public function insert_incidencia()
 	{
@@ -476,6 +479,9 @@ class Tienda extends CI_Controller {
 				$tipo_averia = 'Avería';
 			}	
 		
+			$description_1 = $this->input->post('description_1');
+			$description_1 = $this->strip_html_tags($description_1);			
+			
 			$data = array(
 					'fecha'    	        => date('Y-m-d H:i:s'),
 					'id_pds'            => $data['id_pds'],
@@ -486,7 +492,7 @@ class Tienda extends CI_Controller {
 					'alarm_display'     => $this->input->post('alarm_display'),
 					'alarm_device'      => $this->input->post('alarm_device'),
 					'alarm_garra'       => $this->input->post('alarm_garra'),
-					'description_1'  	=> $this->input->post('description_1'),
+					'description_1'  	=> $description_1,
 					'description_2'  	=> '',
 					'parte_pdf'  	    => '',
 					'denuncia'  	    => $denuncia,

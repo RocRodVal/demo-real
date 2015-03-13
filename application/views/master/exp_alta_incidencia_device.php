@@ -2,14 +2,14 @@
 <div id="page-wrapper">
     <div class="row">
         <div class="col-lg-12">
-            <h1 class="page-header"><?php echo $title ?>
-                <a href="<?= site_url('master/dashboard') ?>" class="btn btn-danger right">Volver</a>
-            </h1>
+		    <h1 class="page-header"><?php echo $title ?>
+		    	<a onclick="history.go(-1);return false;" class="btn btn-danger right">Volver</a>
+		    </h1>
         </div>
     </div>
 
         <div class="row">
-            <div class="col-lg-12">
+            <div class="col-lg-6">
                 <div class="panel panel-default">
                         <div class="table-responsive">
                             <table class="table">
@@ -33,7 +33,7 @@
                         if ($picture_url_dev <> '') {
                             ?>
                                         <td><img src="<?= site_url('application/uploads/' . $picture_url_dev . '') ?>"
-                                                 width="200" title="<?php echo $device ?>"/></td>
+                                                 width="200" title="<?php echo strtoupper($device) ?>"/></td>
                                     <?php
                         }
                         ?>

@@ -103,8 +103,7 @@
 			                                        MAC: <?php echo $mac ?><br />
 			                                        Número de serie: <?php echo $serial ?><br />
 			                                       	Código de barras: <?php echo $barcode ?><br />
-			                                        Descripción: <?php echo $description ?><br />
-			                                        Dueño: <?php echo $owner ?>
+			                                        Descripción: <?php echo $description ?>
 		                                        </p>												
                                             </div>
                                         </div>

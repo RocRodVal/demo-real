@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
     <link href='http://fonts.googleapis.com/css?family=Roboto+Slab|Roboto' rel='stylesheet' type='text/css'>
     <link href="<?= site_url('assets/css/orange.css') ?>" rel="stylesheet">
+    <link href="<?= site_url('assets/css/chat/chat.css') ?>" rel="stylesheet">
     <?= Xcrud::load_css(); ?>
     <?= Xcrud::load_js(); ?>
     <!--[if lt IE 9]>
@@ -25,14 +26,15 @@
     <!-- Carga de los JS/CSS dependiendo de donde estemos-->
     <link href="<?= site_url('assets/css/dashboard/dashboard_pds.css') ?>" rel="stylesheet">
     <link href="<?= site_url('assets/css/dashboard/dashboard.css') ?>" rel="stylesheet">
+    <link href="<?= site_url('assets/css/dashboard/hover.css') ?>" rel="stylesheet">
     <link href="<?= site_url('assets/css/intervencion/modal_intervencion.css') ?>" rel="stylesheet">
     <link href="<?= site_url('assets/css/plugins/tooltipster/tooltipster.css') ?>" rel="stylesheet">
     <link href="<?= site_url('assets/css/incidencia/operar_incidencia.css') ?>" rel="stylesheet">
     <link href="<?= site_url('assets/css/intervencion/modal_intervencion.css') ?>" rel="stylesheet">
     <link href="<?= site_url('assets/css/incidencia/alta_incidencia.css') ?>" rel="stylesheet">
     <link href="<?= site_url('assets/css/incidencia/alta_incidencia.css') ?>" rel="stylesheet">
-    <link href="<?= site_url('assets/css/plugins/fileInput/fileinput.css"') ?>" rel="stylesheet">
-    <link href="<?= site_url('assets/css/incidencia/alta_robo.css"') ?>" rel="stylesheet">
+    <link href="<?= site_url('assets/css/plugins/fileInput/fileinput.css') ?>" rel="stylesheet">
+    <link href="<?= site_url('assets/css/incidencia/alta_robo.css') ?>" rel="stylesheet">
     <link href="<?= site_url('assets/css/intervencion/intervencion.css') ?>" rel="stylesheet">
     <link href="<?= site_url('assets/css/intervencion/modal_intervencion.css') ?>" rel="stylesheet">
     <script src="<?php echo base_url(); ?>assets/js/plugins/dataTables/jquery.dataTables.js" type="text/javascript"></script>

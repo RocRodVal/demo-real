@@ -89,39 +89,7 @@
                 ?> </div> <?php
                 }
                 ?>
-
         </div>
-        <form action="<?= site_url('tienda/insert_chat/' . $id_incidencia) ?>" method="post"
-              class="content_auto form_login" enctype="multipart/form-data">
-            <div class="row">
-                <div class="col-lg-10">
-                    <div class="form-group">
-                        <div class="row">
-                            <!--<label>Añadir comentarios</label>-->
-                            <div class="col-lg-11">
-                                <textarea class="form-control" rows="1" name="texto_chat" id="texto_chat"></textarea>
-                            </div>
-                                <input id="foto" type="file" multiple=false name="userfile" accept=".gif,.jpg,.png,.jpeg">
-                        </div>
-                    </div>
-                    <!--
-                    <div class="form-group">
-                       <label>Adjuntar imagen
-                            <small>(JPG, PNG, GIF)</small>
-                        </label>
-                        <input id="foto" type="file" multiple=false name="userfile">
-                    </div>
-                    -->
-                </div>
-                <section id="chat">
-                <div class="col-lg-2">
-                    <div class="form-group">
-                        <input type="submit" value="Enviar" name="submit" class="btn btn-success enviar"/>
-                    </div>
-                </div>
-                </section>
-            </div>
-		</form>            
     </div>
 </div>
 <script src="<?php echo base_url(); ?>assets/js/incidencia/view_incidencia.js" type="text/javascript"></script>

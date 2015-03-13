@@ -7,7 +7,7 @@ class Inventario extends CI_Controller {
 		parent::__construct();
 		$this->load->database();
 		$this->load->helper(array('email','text','xcrud'));
-		$this->load->library(array('email','form_validation','ion_auth','encrypt','form_validation','session'));
+		$this->load->library(array('email','form_validation','encrypt','form_validation','session'));
 	}
 	
 	

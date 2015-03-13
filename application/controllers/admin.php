@@ -199,8 +199,10 @@ class Admin extends CI_Controller
             } else {
                 echo 'Ha fallado la carga de la foto.';
             }
+            
             $texto_chat = $this->input->post('texto_chat');
-            $texto_chat=$this->strip_html_tags($texto_chat);
+            $texto_chat = $this->strip_html_tags($texto_chat);
+            
             if ($foto != '' || $texto_chat != '' && $texto_chat != ' ') {
 
                 $data = array(
@@ -1387,6 +1389,9 @@ class Admin extends CI_Controller
             $tipo_averia = 'Avería';
         }
 
+        $description_1 = $this->input->post('description_1');
+        $description_1 = $this->strip_html_tags($description_1);        
+        
         $data = array(
             'fecha' => date('Y-m-d H:i:s'),
             'id_pds' => $id_pds,
@@ -1396,7 +1401,7 @@ class Admin extends CI_Controller
             'alarm_display' => $this->input->post('alarm_display'),
             'alarm_device' => $this->input->post('alarm_device'),
             'alarm_garra' => $this->input->post('alarm_garra'),
-            'description_1' => $this->input->post('description_1'),
+            'description_1' => $description_1,
             'description_2' => '',
             'parte_pdf' => '',
             'denuncia' => $denuncia,

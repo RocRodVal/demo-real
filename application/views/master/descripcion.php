@@ -30,15 +30,12 @@
                     {					
  					?>
  					<div class="panel panel-default">
-               	 		<div class="panel-heading">
-                            Seleccione el punto de venta.
-                        </div>
                         <div class="panel-body">
                             <div class="table-responsive">
                                 <table class="table table-striped table-bordered table-hover" id="dataTables-example">
                                     <thead>
                                         <tr>
-                                            <th>SFID / Referencia</th>
+                                            <th>SFID</th>
                                             <th>Tipo</th>
                                             <th>Panelado</th>
                                             <th>Nombre comercial</th>

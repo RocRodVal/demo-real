@@ -13,7 +13,7 @@ class Operacion extends CI_Controller
     {
         parent::__construct();
         $this->load->helper('xcrud', 'text');
-        $this->load->library(array('email', 'form_validation', 'ion_auth', 'encrypt', 'form_validation', 'session'));
+        $this->load->library(array('email', 'form_validation','encrypt', 'form_validation', 'session'));
         $this->load->helper('text');
         $this->load->database();
         $this->load->model('intervencion_model');

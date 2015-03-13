@@ -27,7 +27,7 @@
             {	
             ?>
             <div class="row">
-                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+				<div class="col-lg-6">
  					<?php
                     if ((empty($displays)) || (empty($devices))){
                     	echo '<p>No dispone de terminales <em>Demo Real</em>.</p>';
@@ -38,28 +38,34 @@
  					<div class="panel panel-default">
                         <div class="panel-body">
 							<div class="row">
-								<div class="col-lg-6">
+								<div class="col-lg-8">
 									<div class="list-group">
 										<?php
 										foreach($devices as $device)
 										{
 										?>
-										<p class="list-group-item"><?php echo $device->device ?></p>
+										<p><?php echo $device->position.'. '.$device->device ?></p>
 										<?php
 										}
 										?>
 									</div>
-								</div>
-								<div class="col-lg-6">
+								</div>								
+								<div class="col-lg-4">
 									<?php
 									if ($picture_url != '')
 									{
 									?>
-									<img src="<?=site_url('application/uploads/'.$picture_url.'')?>" style="width:200px;" />
+									<img src="<?=site_url('application/uploads/'.$picture_url.'')?>" title="<?php echo strtoupper($display_name) ?>" style='width:100%'; />
 									<?php
 									}
+									else
+									{
 									?>
-								</div>
+									<p><strong><?php echo strtoupper($display_name); ?></strong></p>
+									<?php
+									}	
+									?>
+								</div>								
 							</div>
                     </div>
                     <?php 
