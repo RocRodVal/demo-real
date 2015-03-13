@@ -26,14 +26,14 @@
 		                            <th>Soporte sujección</th>
 		                            <th>Tipo incidencia</th>
 		                            <th>Estado</th>
-		                            <th>Más info.</th>
+		                            <th>Chat offline</th>
 		                        </tr>
 		                        </thead>
 		                        <tbody>
 		                        <?php
 		                        foreach ($incidencias as $incidencia) {
 		                            ?>
-		                            <tr>
+		                            <tr onClick="window.location.href='<?=site_url('tienda/detalle_incidencia/'.$incidencia->id_incidencia)?>'">
 		                                <td><a href="<?=site_url('tienda/detalle_incidencia/'.$incidencia->id_incidencia)?>"><?php echo $incidencia->id_incidencia ?></a></td>
 		                                <td><?php echo $sfid ?></td>
 		                                <td><?php echo date_format(date_create($incidencia->fecha), 'd/m/Y'); ?></td>
@@ -45,7 +45,7 @@
 		                                <td><?=($incidencia->alarm_garra==1)?'&#x25cf;':''?></td>
 		                                <td><?php echo $incidencia->tipo_averia ?></td>
 		                                <td><strong><?php echo $incidencia->status_pds ?></strong></td>
-		                                <td><a href="<?=site_url('tienda/detalle_incidencia/'.$incidencia->id_incidencia)?>"><strong>+</strong></a></td>
+		                                <td><a href="<?=site_url('tienda/detalle_incidencia/'.$incidencia->id_incidencia)?>#chat"><strong><i class="fa fa-whatsapp chat_nuevo pulse"></i></strong></a></td>
 		                            </tr>
 		                        <?php
 		                        }

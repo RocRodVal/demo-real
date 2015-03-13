@@ -94,14 +94,14 @@
 		                            <th>Interv.</th>
 		                            <th>Estado</th>
 		                            <th>Estado SAT</th>
-		                            <th>Más info.</th>
+		                            <th>Chat offline</th>
 		                        </tr>
 		                        </thead>
 		                        <tbody>
 		                        <?php
 		                        foreach ($incidencias as $incidencia) {
 		                            ?>
-		                            <tr>
+		                            <tr onClick="window.location.href='<?=site_url('admin/operar_incidencia/'.$incidencia->id_pds.'/'.$incidencia->id_incidencia)?>'">
 		                                <td><a href="<?=site_url('admin/operar_incidencia/'.$incidencia->id_pds.'/'.$incidencia->id_incidencia)?>"><?php echo $incidencia->id_incidencia?></a></td>
 		                                <!--<td><a href="<?=site_url('tienda/detalle_incidencia/'.$incidencia->id_incidencia)?>">#<?php echo $incidencia->id_incidencia ?></a></td>-->
 		                                <td><?php echo $incidencia->reference ?></td>
@@ -124,7 +124,7 @@
                                         </td>		                                
 		                                <td><strong><?php echo $incidencia->status_pds ?></strong></td>
 		                                <td><strong><?php echo $incidencia->status ?></strong></td>
-		                                <td><a href="<?=site_url('admin/operar_incidencia/'.$incidencia->id_pds.'/'.$incidencia->id_incidencia)?>"><strong>+</strong></a></td>
+		                                <td><a href="<?=site_url('admin/operar_incidencia/'.$incidencia->id_pds.'/'.$incidencia->id_incidencia)?>#chat"><i class="fa fa-whatsapp chat_nuevo pulse"></i></strong></a></td>
 		                            </tr>
 		                        <?php
 		                        }

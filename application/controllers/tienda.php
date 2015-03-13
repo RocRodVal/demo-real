@@ -349,7 +349,7 @@ class Tienda extends CI_Controller {
 			$config['upload_path']   = dirname($_SERVER["SCRIPT_FILENAME"]).'/chats/';
 			$config['upload_url']    = base_url().'/chats/';
 			$config['allowed_types'] = 'gif|jpg|png';
-			$new_name                = $id_incidencia.'-'.time().'-'.$_FILES["userfile"]['name'];
+			$new_name                = $id_incidencia.'-'.time();
 			$config['file_name']     = $new_name;
 			$config['overwrite']     = TRUE;
 			$config['max_size']      = '10000KB';
@@ -366,27 +366,61 @@ class Tienda extends CI_Controller {
 			{
 				echo 'Ha fallado la carga de la foto.';
 			}
-	
-			$data = array(
-					'fecha'    	        => date('Y-m-d H:i:s'),
-					'id_incidencia'     => $id_incidencia,
-					'agent' 	        => $data['sfid'],
-					'texto'             => $this->input->post('texto_chat'),
-					'foto'  	        => $foto,
-					'status'	        => 1,
-			);
-	
-			$chat = $this->chat_model->insert_chat_incidencia($data);
-	
-			if ($chat['add'])
-			{
-				redirect('tienda/detalle_incidencia/'.$id_incidencia);
+			$texto_chat = $this->input->post('texto_chat');
+			$texto_chat=$this->strip_html_tags($texto_chat);
+			if ($foto != '' || $texto_chat != '' && $texto_chat != ' ') {
+				$data = array(
+					'fecha' => date('Y-m-d H:i:s'),
+					'id_incidencia' => $id_incidencia,
+					'agent' => $data['sfid'],
+					'texto' => $this->input->post('texto_chat'),
+					'foto' => $foto,
+					'status' => 1,
+				);
+
+				$chat = $this->chat_model->insert_chat_incidencia($data);
+
+				if ($chat['add']) {
+					redirect('tienda/detalle_incidencia/' . $id_incidencia);
+				}
+			}
+			else{
+				redirect('tienda/detalle_incidencia/' . $id_incidencia);
 			}
 		}
 		else
 		{
 			redirect('tienda','refresh');
 		}
+	}
+	
+	public function strip_html_tags($text)
+	{
+		$text = preg_replace(
+			array(
+				// Remove invisible content
+				'@<head[^>]*?>.*?</head>@siu',
+				'@<script[^>]*?.*?</script>@siu',
+				'@<object[^>]*?.*?</object>@siu',
+				'@<embed[^>]*?.*?</embed>@siu',
+				'@<noscript[^>]*?.*?</noscript>@siu',
+				'@<noembed[^>]*?.*?</noembed>@siu',
+				// Add line breaks before and after blocks
+				'@</?((address)|(blockquote)|(center)|(del))@iu',
+				'@</?((div)|(h[1-9])|(ins)|(isindex)|(p)|(pre))@iu',
+				'@</?((dir)|(dl)|(dt)|(dd)|(li)|(menu)|(ol)|(ul))@iu',
+				'@</?((table)|(th)|(td)|(caption))@iu',
+				'@</?((form)|(button)|(fieldset)|(legend)|(input))@iu',
+				'@</?((label)|(select)|(optgroup)|(option)|(textarea))@iu',
+				'@</?((frameset)|(frame)|(iframe))@iu',
+			),
+			array(
+				' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
+				"\n\$0", "\n\$0", "\n\$0", "\n\$0", "\n\$0", "\n\$0",
+				"\n\$0", "\n\$0",
+			),
+			$text);
+		return strip_tags($text);
 	}
 	
 	public function insert_incidencia()
