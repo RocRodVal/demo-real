@@ -725,9 +725,9 @@ class Admin extends CI_Controller
         $xcrud_3->modal('picture_url_1');
         $xcrud_3->modal('picture_url_2');
         $xcrud_3->modal('picture_url_3');
-        $xcrud_3->label('client_type_pds', 'Cliente')->label('id_devices_pds', 'REF.')->label('id_pds', 'SFID')->label('id_displays_pds', 'Cod. mueble')->label('id_display', 'Mueble')->label('position', 'Posición')->label('id_device', 'Dispositivo')->label('IMEI', 'IMEI')->label('mac', 'MAC')->label('serial', 'Nº de serie')->label('barcode', 'Código de barras')->label('id_color_device', 'Color')->label('id_complement_device', 'Complementos')->label('id_status_device', 'Estado dispositivo')->label('id_status_packaging_device', 'Estado packaging')->label('picture_url_1', 'Foto #1')->label('picture_url_2', 'Foto #2')->label('picture_url_3', 'Foto #3')->label('description', 'Comentarios')->label('status', 'Estado');
+        $xcrud_3->label('client_type_pds', 'Cliente')->label('id_devices_pds', 'REF.')->label('id_pds', 'SFID')->label('id_displays_pds', 'Cod. mueble')->label('id_display', 'Mueble')->label('alta', 'Fecha de alta')->label('position', 'Posición')->label('id_device', 'Dispositivo')->label('IMEI', 'IMEI')->label('mac', 'MAC')->label('serial', 'Nº de serie')->label('barcode', 'Código de barras')->label('id_color_device', 'Color')->label('id_complement_device', 'Complementos')->label('id_status_device', 'Estado dispositivo')->label('id_status_packaging_device', 'Estado packaging')->label('picture_url_1', 'Foto #1')->label('picture_url_2', 'Foto #2')->label('picture_url_3', 'Foto #3')->label('description', 'Comentarios')->label('status', 'Estado');
         $xcrud_3->columns('client_type_pds,id_devices_pds,id_pds,id_displays_pds,id_display,id_device,position,IMEI,mac,status');
-        $xcrud_3->fields('client_type_pds,id_devices_pds,id_pds,id_displays_pds,id_display,id_device,position,serial,IMEI,mac,barcode,id_color_device,id_complement_device,id_status_device,id_status_packaging_device,picture_url_1,picture_url_2,picture_url_3,description,status');
+        $xcrud_3->fields('client_type_pds,id_devices_pds,id_pds,id_displays_pds,id_display,alta,id_device,position,serial,IMEI,mac,barcode,id_color_device,id_complement_device,id_status_device,id_status_packaging_device,picture_url_1,picture_url_2,picture_url_3,description,status');
         $xcrud_3->order_by('id_pds', 'asc');
         $xcrud_3->order_by('id_displays_pds', 'asc');
         $xcrud_3->order_by('position', 'asc');
@@ -878,50 +878,34 @@ class Admin extends CI_Controller
     {
         $this->load->model('tienda_model');
 
-        $data['alarms'] = $this->tienda_model->get_alarms_almacen();
         $data['devices'] = $this->tienda_model->get_devices_almacen();
 
-        $xcrud_1 = xcrud_get_instance();
-        $xcrud_1->table('alarms_almacen');
-        $xcrud_1->table_name('Inventario alarmas almacén');
-        $xcrud_1->relation('id_alarm', 'alarm', 'id_alarm', 'alarm');
-        $xcrud_1->label('id_alarms_almacen', 'Ref.')->label('id_alarm', 'Alarma')->label('code', 'Código fabricante')->label('barcode', 'Código de barras')->label('description', 'Comentarios')->label('status', 'Estado');
-        $xcrud_1->columns('id_alarms_almacen,id_alarm,code,barcode,status');
-        $xcrud_1->fields('id_alarms_almacen,id_alarm,code,barcode,description,status');
-        $xcrud_1->order_by('id_alarm', 'asc');
-        $xcrud_1->order_by('status', 'asc');
-        $xcrud_1->order_by('id_alarms_almacen', 'asc');
-        $xcrud_1->show_primary_ai_column(true);
-        $xcrud_1->unset_numbers();
-        $xcrud_1->start_minimized(true);
+        $xcrud = xcrud_get_instance();
+        $xcrud->table('devices_almacen');
+        $xcrud->table_name('Inventario dispositivos almacén');
+        $xcrud->relation('id_device', 'device', 'id_device', 'device');
+        $xcrud->relation('id_color_device', 'color_device', 'id_color_device', 'color_device');
+        $xcrud->relation('id_complement_device', 'complement_device', 'id_complement_device', 'complement_device');
+        $xcrud->relation('id_status_device', 'status_device', 'id_status_device', 'status_device');
+        $xcrud->relation('id_status_packaging_device', 'status_packaging_device', 'id_status_packaging_device', 'status_packaging_device');
+        $xcrud->change_type('picture_url_1', 'image');
+        $xcrud->change_type('picture_url_2', 'image');
+        $xcrud->change_type('picture_url_3', 'image');
+        $xcrud->modal('picture_url_1');
+        $xcrud->modal('picture_url_2');
+        $xcrud->modal('picture_url_3');
+        $xcrud->label('id_devices_almacen', 'Ref.')->label('alta', 'Fecha de alta')->label('id_device', 'Dispositivo')->label('serial', 'Nº de serie')->label('IMEI', 'IMEI')->label('mac', 'MAC')->label('barcode', 'Código de barras')->label('id_color_device', 'Color')->label('id_complement_device', 'Complementos')->label('id_status_device', 'Estado dispositivo')->label('id_status_packaging_device', 'Estado packaging')->label('picture_url_1', 'Foto #1')->label('picture_url_2', 'Foto #2')->label('picture_url_3', 'Foto #3')->label('description', 'Comentarios')->label('status', 'Estado');
+        $xcrud->columns('id_devices_almacen,id_device,IMEI,mac,barcode,status');
+        $xcrud->fields('id_devices_almacen,alta,id_device,serial,IMEI,mac,barcode,id_color_device,id_complement_device,id_status_device,id_status_packaging_device,picture_url_1,picture_url_2,picture_url_3,description,status');
+        $xcrud->order_by('id_device', 'asc');
+        $xcrud->order_by('status', 'asc');
+        $xcrud->order_by('id_devices_almacen', 'asc');
+        $xcrud->show_primary_ai_column(true);
+        $xcrud->unset_numbers();
+        $xcrud->start_minimized(true);
 
-        $xcrud_2 = xcrud_get_instance();
-        $xcrud_2->table('devices_almacen');
-        $xcrud_2->table_name('Inventario dispositivos almacén');
-        $xcrud_2->relation('id_device', 'device', 'id_device', 'device');
-        $xcrud_2->relation('id_color_device', 'color_device', 'id_color_device', 'color_device');
-        $xcrud_2->relation('id_complement_device', 'complement_device', 'id_complement_device', 'complement_device');
-        $xcrud_2->relation('id_status_device', 'status_device', 'id_status_device', 'status_device');
-        $xcrud_2->relation('id_status_packaging_device', 'status_packaging_device', 'id_status_packaging_device', 'status_packaging_device');
-        $xcrud_2->change_type('picture_url_1', 'image');
-        $xcrud_2->change_type('picture_url_2', 'image');
-        $xcrud_2->change_type('picture_url_3', 'image');
-        $xcrud_2->modal('picture_url_1');
-        $xcrud_2->modal('picture_url_2');
-        $xcrud_2->modal('picture_url_3');
-        $xcrud_2->label('id_devices_almacen', 'Ref.')->label('id_device', 'Dispositivo')->label('serial', 'Nº de serie')->label('IMEI', 'IMEI')->label('mac', 'MAC')->label('barcode', 'Código de barras')->label('id_color_device', 'Color')->label('id_complement_device', 'Complementos')->label('id_status_device', 'Estado dispositivo')->label('id_status_packaging_device', 'Estado packaging')->label('picture_url_1', 'Foto #1')->label('picture_url_2', 'Foto #2')->label('picture_url_3', 'Foto #3')->label('description', 'Comentarios')->label('status', 'Estado');
-        $xcrud_2->columns('id_devices_almacen,id_device,IMEI,mac,barcode,status');
-        $xcrud_2->fields('id_devices_almacen,id_device,serial,IMEI,mac,barcode,id_color_device,id_complement_device,id_status_device,id_status_packaging_device,picture_url_1,picture_url_2,picture_url_3,description,status');
-        $xcrud_2->order_by('id_device', 'asc');
-        $xcrud_2->order_by('status', 'asc');
-        $xcrud_2->order_by('id_devices_almacen', 'asc');
-        $xcrud_2->show_primary_ai_column(true);
-        $xcrud_2->unset_numbers();
-        $xcrud_2->start_minimized(true);
-
-        $data['title'] = 'Depósito';
-        $data['content'] = $xcrud_1->render();
-        $data['content'] = $data['content'] . $xcrud_2->render();
+        $data['title'] = 'Almacén';
+        $data['content'] = $xcrud->render();
 
         $this->load->view('backend/header', $data);
         $this->load->view('backend/navbar', $data);

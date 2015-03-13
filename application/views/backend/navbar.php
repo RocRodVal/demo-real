@@ -39,6 +39,7 @@
                         <li><a <?=($this->uri->segment(2)==='auditorias')?'class="active"':''?> href="<?=site_url('admin/auditorias')?>"><i class="fa fa-list-alt fa-fw"></i> Auditorías</a></li>
                         <li><a <?=($this->uri->segment(1)==='intervencion')?'class="active"':''?> href="<?=site_url('intervencion')?>"><i class="fa fa-cog fa-fw"></i> Intervenciones</a></li>
                         <li><a <?=($this->uri->segment(1)==='inventario')?'class="active"':''?> href="<?=site_url('inventario')?>"><i class="fa fa-table fa-fw"></i> Depósito</a></li>
+                        <li><a <?=($this->uri->segment(2)==='almacen')?'class="active"':''?> href="<?=site_url('admin/almacen')?>"><i class="fa fa-table fa-fw"></i> Almacén</a></li>
                         <?php               
                         $exposicion = array('descripcion','exp_alta_incidencia','exp_alta_incidencia_mueble','exp_alta_incidencia_device','inventarios_panelados','inventarios_planogramas','inventarios','listado_panelados');
                         ?>

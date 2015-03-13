@@ -30,6 +30,14 @@
 										?>
 										<a class="list-group-item" href="<?=site_url('tienda/alta_incidencia_dispositivo/'.$device->id_displays_pds.'/'.$device->id_devices_pds)?>">
 											<?php echo $device->position.'. '.$device->device ?>
+											<?php 
+											if ($device->status == 'Incidencia')
+											{	
+											?>
+											<i class="fa fa-exclamation-triangle"></i>
+											<?php 
+											}
+											?>
 										</a>
 										<?php
 										}
