@@ -45,7 +45,7 @@
 | the active record class
 */
 
-$active_group = 'dev';
+$active_group = 'pro';
 $active_record = TRUE;
 
 $db['dev']['hostname'] = 'localhost';
