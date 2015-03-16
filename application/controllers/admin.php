@@ -48,28 +48,30 @@ class Admin extends CI_Controller
             $data['sfid'] = $this->session->userdata('sfid');
 
             $xcrud = xcrud_get_instance();
-            $this->load->model(array('intervencion_model', 'tienda_model', 'sfid_model'));
+            $this->load->model(array('intervencion_model', 'tienda_model', 'sfid_model','chat_model'));
 
             $data['tiendas'] = $this->tienda_model->search_pds($this->input->post('sfid'));
+            
+            $sfid = $this->tienda_model->get_pds($data['id_pds']);
+            
+            $data['id_pds']     = $sfid['id_pds'];
+            $data['commercial'] = $sfid['commercial'];
+            $data['territory']  = $sfid['territory'];
+            $data['reference']  = $sfid['reference'];
+            $data['address']    = $sfid['address'];
+            $data['zip']        = $sfid['zip'];
+            $data['city']       = $sfid['city'];            
+            
             $incidencias = $this->tienda_model->get_incidencias();
 
             foreach ($incidencias as $incidencia) {
                 $incidencia->device = $this->sfid_model->get_device($incidencia->id_devices_pds);
                 $incidencia->display = $this->sfid_model->get_display($incidencia->id_displays_pds);
+                $incidencia->nuevos  = $this->chat_model->contar_nuevos($incidencia->id_incidencia,$incidencia->reference);
                 $incidencia->intervencion = $this->intervencion_model->get_intervencion_incidencia($incidencia->id_incidencia);
             }
 
             $data['incidencias'] = $incidencias;
-
-            $sfid = $this->tienda_model->get_pds($data['id_pds']);
-
-            $data['id_pds'] = $sfid['id_pds'];
-            $data['commercial'] = $sfid['commercial'];
-            $data['territory'] = $sfid['territory'];
-            $data['reference'] = $sfid['reference'];
-            $data['address'] = $sfid['address'];
-            $data['zip'] = $sfid['zip'];
-            $data['city'] = $sfid['city'];
 
             $xcrud->table('incidencias');
             $xcrud->table_name('Incidencias');
@@ -159,8 +161,10 @@ class Admin extends CI_Controller
             $incidencia['display'] = $this->sfid_model->get_display($incidencia['id_displays_pds']);
             $data['incidencia'] = $incidencia;
 
-            $chats = $this->chat_model->get_chat_incidencia_sat($incidencia['id_incidencia']);
-            $data['chats'] = $chats;
+            $chats = $this->chat_model->get_chat_incidencia_pds($incidencia['id_incidencia']);
+            $leido = $this->chat_model->marcar_leido($incidencia['id_incidencia'],$sfid['reference']);
+            $data['chats'] = $chats;            
+
 
             $data['title'] = 'Operativa incidencia';
 
@@ -324,16 +328,8 @@ class Admin extends CI_Controller
         );
 
         $this->tienda_model->historico($data);
-
-        redirect('admin/dashboard', 'refresh');
-        /*
-        $data['title']   = 'Operativa incidencias';
-
-        $this->load->view('backend/header', $data);
-        $this->load->view('backend/navbar', $data);
-        $this->load->view('backend/dashboard', $data);
-        $this->load->view('backend/footer');
-        */
+        
+        redirect('admin/operar_incidencia/'.$id_pds.'/'.$id_inc, 'refresh');
     }
 
 
@@ -1144,7 +1140,7 @@ class Admin extends CI_Controller
         $config['upload_path'] = dirname($_SERVER["SCRIPT_FILENAME"]) . '/uploads/';
         $config['upload_url'] = base_url() . '/uploads/';
         $config['allowed_types'] = 'doc|docx|pdf|jpg|png';
-        $new_name = $sfid['reference'] . '-' . time() . '-' . $_FILES["userfile"]['name'];
+        $new_name = $sfid['reference'] . '-' . time();
         $config['file_name'] = $new_name;
         $config['overwrite'] = TRUE;
         $config['max_size'] = '1000KB';

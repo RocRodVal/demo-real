@@ -29,6 +29,14 @@
 										<a class="list-group-item" href="<?=site_url('master/exp_alta_incidencia_device/'.
 											$id_pds_url.'/'.$id_dis_url.'/'.$device->id_devices_pds)?>">
 											<?php echo $device->position.'. '.$device->device ?>
+											<?php 
+											if ($device->estado == 'Incidencia')
+											{	
+											?>
+											<i class="fa fa-exclamation-triangle"></i>
+											<?php 
+											}
+											?>											
 										</a>
 										<?php
 										}

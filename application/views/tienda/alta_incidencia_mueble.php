@@ -27,19 +27,22 @@
 										<?php
 										foreach($devices as $device)
 										{
+											if ($device->estado == 'Incidencia')
+											{
 										?>
-										<a class="list-group-item" href="<?=site_url('tienda/alta_incidencia_dispositivo/'.$device->id_displays_pds.'/'.$device->id_devices_pds)?>">
-											<?php echo $device->position.'. '.$device->device ?>
-											<?php 
-											if ($device->status == 'Incidencia')
+											<a class="list-group-item" href="#">
+												<?php echo $device->position.'. '.$device->device ?> <i class="fa fa-exclamation-triangle"></i>
+											</a>
+											<?php
+											}
+											else
 											{	
 											?>
-											<i class="fa fa-exclamation-triangle"></i>
-											<?php 
-											}
-											?>
-										</a>
+											<a class="list-group-item" href="<?=site_url('tienda/alta_incidencia_dispositivo/'.$device->id_displays_pds.'/'.$device->id_devices_pds)?>">
+												<?php echo $device->position.'. '.$device->device ?>
+											</a>											
 										<?php
+											}
 										}
 										?>
 										<a class="list-group-item" href="<?=site_url('tienda/alta_incidencia_mueble_alarma/'.$device->id_displays_pds)?>"> &gt; Afecta al sistema de seguridad central &lt; </a>

@@ -452,7 +452,7 @@ class Tienda extends CI_Controller {
 			$config['upload_path']   = dirname($_SERVER["SCRIPT_FILENAME"]).'/uploads/';
 			$config['upload_url']    = base_url().'/uploads/';
 			$config['allowed_types'] = 'doc|docx|pdf|jpg|png';
-			$new_name                = $data['sfid'].'-'.time().'-'.$_FILES["userfile"]['name'];
+			$new_name                = $data['sfid'].'-'.time();
 			$config['file_name']     = $new_name;
 			$config['overwrite']     = TRUE;
 			$config['max_size']      = '10000KB';
