@@ -229,6 +229,7 @@ class Tienda_model extends CI_Model {
 		->join('device','devices_almacen.id_device = device.id_device')
 		->where('devices_almacen.status','En stock')
 		->order_by('device.device')
+		->order_by('devices_almacen.serial')
 		->get('devices_almacen');
 	
 		return $query->result();
@@ -236,9 +237,12 @@ class Tienda_model extends CI_Model {
 	
 	public function get_alarms_almacen_reserva() {
 	
-		$query = $this->db->select('alarm.*')
+		$query = $this->db->select('alarm.*, brand_alarm.brand, type_alarm.type')
+		->join('brand_alarm','alarm.brand_alarm = brand_alarm.id_brand_alarm')
+		->join('type_alarm','alarm.type_alarm = type_alarm.id_type_alarm')
 		->where('status','Alta')
-		->order_by('code')
+		->order_by('brand')
+		->order_by('alarm')
 		->get('alarm');
 	
 		return $query->result();
@@ -286,7 +290,8 @@ class Tienda_model extends CI_Model {
 	
 	public function get_pds($id) {
 		if($id != FALSE) {
-			$query = $this->db->select('pds.*,territory.territory')
+			$query = $this->db->select('pds.*,province.province, territory.territory')
+			->join('province','pds.province = province.id_province')
 			->join('territory','pds.territory = territory.id_territory')
 			->where('pds.id_pds',$id)
 			->get('pds');
@@ -386,6 +391,12 @@ class Tienda_model extends CI_Model {
 		$this->db->update('incidencias');
 	}	
 	
+	public function comentario_incidencia_update($id,$texto)
+	{
+		$this->db->set('description_2', $texto);
+		$this->db->where('id_incidencia',$id);
+		$this->db->update('incidencias');
+	}	
 	
 	public function incidencia_update_device_pds($id_devices_pds,$status)
 	{
@@ -454,6 +465,46 @@ class Tienda_model extends CI_Model {
 	{
 		$this->db->insert('historico',$data);
 		$id=$this->db->insert_id();
+	}	
+	
+	public function incidencia_update_material($data)
+	{
+		$this->db->insert('material_incidencias',$data);
+		$id=$this->db->insert_id();
+	}	
+	
+	public function facturacion($data)
+	{
+		$this->db->insert('facturacion',$data);
+		$id=$this->db->insert_id();
+	}
+		
+	
+	public function get_alarms_incidencia($id) {
+		if($id != FALSE) {
+			$query = $this->db->select('COUNT(id_alarm) as alarmas')
+			->where('material_incidencias.id_incidencia',$id)
+			->get('material_incidencias');
+	
+			return $query->row_array();
+		}
+		else {
+			return FALSE;
+		}
+	}	
+	
+	
+	public function get_devices_incidencia($id) {
+		if($id != FALSE) {
+			$query = $this->db->select('COUNT(id_devices_almacen) as dispositivos')
+			->where('material_incidencias.id_incidencia',$id)
+			->get('material_incidencias');
+	
+			return $query->row_array();
+		}
+		else {
+			return FALSE;
+		}
 	}	
 	
 	public function login($data)

@@ -151,6 +151,8 @@ class Admin extends CI_Controller
             $data['address'] = $sfid['address'];
             $data['zip'] = $sfid['zip'];
             $data['city'] = $sfid['city'];
+            $data['province'] = $sfid['province'];
+            $data['phone_pds'] = $sfid['phone'];
 
             $data['id_pds_url'] = $id_pds;
             $data['id_inc_url'] = $id_inc;
@@ -166,7 +168,7 @@ class Admin extends CI_Controller
             $data['chats'] = $chats;            
 
 
-            $data['title'] = 'Operativa incidencia';
+            $data['title'] = 'Operativa incidencia Ref. '.$data['id_inc_url'];
 
             $this->load->view('backend/header', $data);
             $this->load->view('backend/navbar', $data);
@@ -293,7 +295,7 @@ class Admin extends CI_Controller
         $status = $this->uri->segment(6);
 
         $xcrud = xcrud_get_instance();
-        $this->load->model('tienda_model');
+        $this->load->model(array('tienda_model','intervencion_model'));
 
         $sfid = $this->tienda_model->get_pds($id_pds);
 
@@ -310,12 +312,34 @@ class Admin extends CI_Controller
 
         $this->tienda_model->incidencia_update($id_inc, $status_pds, $status);
 
+        $incidencia = $this->tienda_model->get_incidencia($id_inc);
+        
         if ($status == 2) {
-            $incidencia = $this->tienda_model->get_incidencia($id_inc);
+            
             if ($incidencia['fail_device'] == 1) {
                 $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'], 2);
             }
         }
+        
+        if ($status == 5) {
+        	$intervencion = $this->intervencion_model->get_intervencion_incidencia($id_inc);
+        	
+        	$dispositivos = $this->tienda_model->get_devices_incidencia($id_inc);
+        	$alarmas = $this->tienda_model->get_alarms_incidencia($id_inc);
+        	
+        	$facturacion_data= array(
+        			'fecha' => date('Y-m-d H:i:s'),
+        			'id_pds' => $id_pds,
+        			'id_intervencion' => $intervencion,
+        			'id_incidencia' => $id_inc,
+        			'id_displays_pds' => $incidencia['id_displays_pds'],
+        			'units_device' => $dispositivos['dispositivos'],
+        			'units_alarma' => $alarmas['alarmas'],
+        			'description' => NULL
+        	);   
+     	        	
+        	$this->tienda_model->facturacion($facturacion_data);
+        }        
 
         $data = array(
             'fecha' => date('Y-m-d H:i:s'),
@@ -332,6 +356,148 @@ class Admin extends CI_Controller
         redirect('admin/operar_incidencia/'.$id_pds.'/'.$id_inc, 'refresh');
     }
 
+    public function update_materiales_incidencia()
+    {
+    	$id_pds = $this->uri->segment(3);
+    	$id_inc = $this->uri->segment(4);
+    	$status_pds = $this->uri->segment(5);
+    	$status = $this->uri->segment(6);
+    
+    	$xcrud = xcrud_get_instance();
+    	$this->load->model('tienda_model');
+    
+    	
+    	if ($this->input->post('units_dipositivo_almacen_1') <> '')
+    	{	
+    	$dipositivo_almacen_1 = array(
+    			'fecha' => date('Y-m-d H:i:s'),
+    			'id_incidencia' => $id_inc,
+    			'id_pds' => $id_pds,
+    			'id_alarm' => NULL,
+    			'id_devices_almacen' => $this->input->post('dipositivo_almacen_1'),
+    			'cantidad' => $this->input->post('units_dipositivo_almacen_1')
+    	);
+
+    	$this->tienda_model->incidencia_update_material($dipositivo_almacen_1);
+    	}
+    	
+    	if ($this->input->post('units_dipositivo_almacen_2') <> '')
+    	{    	
+    	$dipositivo_almacen_2 = array(
+    			'fecha' => date('Y-m-d H:i:s'),
+    			'id_incidencia' => $id_inc,
+    			'id_pds' => $id_pds,
+    			'id_alarm' => NULL,
+    			'id_devices_almacen' => $this->input->post('dipositivo_almacen_2'),
+    			'cantidad' => $this->input->post('units_dipositivo_almacen_2')
+    	);    	
+    	
+    	$this->tienda_model->incidencia_update_material($dipositivo_almacen_2);
+    	}
+    	
+    	if ($this->input->post('units_alarma_almacen_1') <> '')
+    	{  
+    	$alarma_almacen_1 = array(
+    			'fecha' => date('Y-m-d H:i:s'),
+    			'id_incidencia' => $id_inc,
+    			'id_pds' => $id_pds,
+    			'id_alarm' => $this->input->post('alarma_almacen_1'),
+    			'id_devices_almacen' => NULL,
+    			'cantidad' => $this->input->post('units_alarma_almacen_1')
+    	);    	
+    	
+    	$this->tienda_model->incidencia_update_material($alarma_almacen_1);
+    	}
+    	 
+    	if ($this->input->post('units_alarma_almacen_2') <> '')
+    	{  	
+    	$alarma_almacen_2 = array(
+    			'fecha' => date('Y-m-d H:i:s'),
+    			'id_incidencia' => $id_inc,
+    			'id_pds' => $id_pds,
+    			'id_alarm' => $this->input->post('alarma_almacen_2'),
+    			'id_devices_almacen' => NULL,
+    			'cantidad' => $this->input->post('units_alarma_almacen_2'),
+    	);
+    	
+    	$this->tienda_model->incidencia_update_material($alarma_almacen_2);
+    	}
+    	 
+    	if ($this->input->post('units_alarma_almacen_3') <> '')
+    	{    	
+    	$alarma_almacen_3 = array(
+    			'fecha' => date('Y-m-d H:i:s'),
+    			'id_incidencia' => $id_inc,
+    			'id_pds' => $id_pds,
+    			'id_alarm' => $this->input->post('alarma_almacen_3'),
+    			'id_devices_almacen' => NULL,
+    			'cantidad' => $this->input->post('units_alarma_almacen_3'),
+    	);
+
+    	$this->tienda_model->incidencia_update_material($alarma_almacen_3);    	
+    	}
+    	 
+    	if ($this->input->post('units_alarma_almacen_4') <> '')
+    	{    	
+    	$alarma_almacen_4 = array(
+    			'fecha' => date('Y-m-d H:i:s'),
+    			'id_incidencia' => $id_inc,
+    			'id_pds' => $id_pds,
+    			'id_alarm' => $this->input->post('alarma_almacen_4'),
+    			'id_devices_almacen' => NULL,
+    			'cantidad' => $this->input->post('units_alarma_almacen_4'),
+    	);    	
+    	
+    	$this->tienda_model->incidencia_update_material($alarma_almacen_4);    	
+    	}
+    	 
+    	if ($this->input->post('units_alarma_almacen_5') <> '')
+    	{    	
+    	$alarma_almacen_5 = array(
+    			'fecha' => date('Y-m-d H:i:s'),
+    			'id_incidencia' => $id_inc,
+    			'id_pds' => $id_pds,
+    			'id_alarm' => $this->input->post('alarma_almacen_5'),
+    			'id_devices_almacen' => NULL,
+    			'cantidad' => $this->input->post('units_alarma_almacen_5'),
+    	);
+    	 
+    	$this->tienda_model->incidencia_update_material($alarma_almacen_5);    	
+    	}
+    	
+    	$this->tienda_model->incidencia_update($id_inc, $status_pds, $status);    	
+    	
+    	$data = array(
+    			'fecha' => date('Y-m-d H:i:s'),
+    			'id_incidencia' => $id_inc,
+    			'id_pds' => $id_pds,
+    			'description' => NULL,
+    			'agent' => $this->session->userdata('sfid'),
+    			'status_pds' => $status_pds,
+    			'status' => $status
+    	);
+    	    	
+    	
+    	$this->tienda_model->historico($data);
+    
+    	redirect('admin/operar_incidencia/'.$id_pds.'/'.$id_inc, 'refresh');
+    }   
+    
+    
+    public function insert_comentario_incidencia()
+    {
+    	$id_pds = $this->uri->segment(3);
+    	$id_inc = $this->uri->segment(4);
+    
+    	$xcrud = xcrud_get_instance();
+    	$this->load->model('tienda_model');
+    
+        $description_2 = $this->input->post('description_2');
+        $description_2 = $this->strip_html_tags($description_2);
+    	$this->tienda_model->comentario_incidencia_update($id_inc, $description_2);
+    
+    	redirect('admin/operar_incidencia/'.$id_pds.'/'.$id_inc, 'refresh');
+    }    
 
     public function update_incidencia_materiales()
     {
@@ -353,6 +519,8 @@ class Admin extends CI_Controller
             $data['address'] = $sfid['address'];
             $data['zip'] = $sfid['zip'];
             $data['city'] = $sfid['city'];
+            $data['province'] = $sfid['province'];
+            $data['phone_pds'] = $sfid['phone'];
 
             $data['id_pds_url'] = $id_pds;
             $data['id_inc_url'] = $id_inc;
@@ -366,7 +534,7 @@ class Admin extends CI_Controller
             $data['alarms_almacen'] = $this->tienda_model->get_alarms_almacen_reserva();
             $data['devices_almacen'] = $this->tienda_model->get_devices_almacen_reserva();
 
-            $data['title'] = 'Operativa incidencia';
+            $data['title'] = 'Operativa incidencia Ref. '.$data['id_inc_url'];
 
             $this->load->view('backend/header', $data);
             $this->load->view('backend/navbar', $data);
