@@ -3,8 +3,18 @@
     <div class="row">
         <div class="col-lg-12">
             <h1 class="page-header"><?php echo $title ?>
-                <div class="data_tienda"><?php echo $commercial ?> /
-                    <?php echo $address ?> , <?php echo $zip ?> -  <?php echo $city ?></div>
+                <div class="data_tienda"><strong>[<?php echo $reference ?>]</strong> <?php echo $commercial ?><br />
+                    <?php echo $address ?><br />
+                    <?php echo $zip ?> -  <?php echo $city ?> (<?php echo $province ?>)<br />
+                    <?php 
+                    if ($phone_pds <>'')
+                    {	
+                    ?>
+                    Tel. <?php echo $phone_pds ?>
+                    <?php 
+                    }
+                    ?>
+                </div>
             </h1>
         </div>
     </div>
@@ -12,17 +22,12 @@
         <div class="col-lg-6 col-md-6">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    Aignación de material para la incidencia
+                    Asignación de material para la incidencia
                 </div>
+                <form action="<?= site_url('admin/update_materiales_incidencia/' . $id_pds_url . '/' . $id_inc_url . '/2/3') ?>" method="post">
                 <div class="panel-body incidenciaEstado">
                     <div class="row">
                         <div class="col-lg-7 labelText white">Asignar materiales</div>
-                        <div class="col-lg-5 labelBtn white">
-                            <a href="<?= site_url('admin/update_incidencia/' . $id_pds_url . '/' . $id_inc_url . '/2/3') ?>"
-                               classBtn="status" class="btn btn-success" <?php if ($incidencia['status'] != 'Revisada') {
-                                echo 'disabled';
-                            } ?>>Asignar mat.</a></td>
-                        </div>
                     </div>
                     <div class="row">
 		            <?php
@@ -45,7 +50,7 @@
 		                              	<?php
 		                        		foreach ($devices_almacen as $device_almacen) {
 		                            	?>
-		                                	<option id="<?php echo $device_almacen->id_devices_almacen ?>">[<?php echo $device_almacen->serial.'] '.$device_almacen->device ?> (<?php echo $device_almacen->owner ?>)</option>
+		                                	<option value="<?php echo $device_almacen->id_devices_almacen ?>"><?php echo $device_almacen->device ?> [<?php echo $device_almacen->serial ?>] (<?php echo $device_almacen->owner ?>)</option>
 				                        <?php
 				                        }
 				                        ?>		                                
@@ -59,10 +64,10 @@
 		                              	<?php
 		                        		foreach ($devices_almacen as $device_almacen) {
 		                            	?>
-		                                	<option id="<?php echo $device_almacen->id_devices_almacen ?>">[<?php echo $device_almacen->serial.'] '.$device_almacen->device ?> (<?php echo $device_almacen->owner ?>)</option>
+		                                	<option value="<?php echo $device_almacen->id_devices_almacen ?>"><?php echo $device_almacen->device ?> [<?php echo $device_almacen->serial ?>] (<?php echo $device_almacen->owner ?>)</option>
 				                        <?php
 				                        }
-				                        ?>		                                
+				                        ?>	                                
 		                                </select>
 		                                </td>
 		                                <td><input type="text" id="units_dipositivo_almacen_2" name="units_dipositivo_almacen_2" onkeypress='return event.charCode >= 48 && event.charCode <= 57'></input></td>
@@ -95,7 +100,7 @@
 		                              	<?php
 		                        		foreach ($alarms_almacen as $alarm_almacen) {
 		                            	?>
-		                                	<option id="<?php echo $alarm_almacen->id_alarm ?>">[<?php echo $alarm_almacen->code.'] '.$alarm_almacen->alarm ?></option>
+		                                	<option value="<?php echo $alarm_almacen->id_alarm ?>"><?php echo $alarm_almacen->brand. ' '.$alarm_almacen->alarm.' ['.$alarm_almacen->code.'/'.$alarm_almacen->type.']' ?></option>
 				                        <?php
 				                        }
 				                        ?>		                                
@@ -109,7 +114,7 @@
 		                              	<?php
 		                        		foreach ($alarms_almacen as $alarm_almacen) {
 		                            	?>
-		                                	<option id="<?php echo $alarm_almacen->id_alarm ?>">[<?php echo $alarm_almacen->code.'] '.$alarm_almacen->alarm ?></option>
+		                                	<option value="<?php echo $alarm_almacen->id_alarm ?>"><?php echo $alarm_almacen->brand. ' '.$alarm_almacen->alarm.' ['.$alarm_almacen->code.'/'.$alarm_almacen->type.']' ?></option>
 				                        <?php
 				                        }
 				                        ?>		                                
@@ -123,10 +128,10 @@
 		                              	<?php
 		                        		foreach ($alarms_almacen as $alarm_almacen) {
 		                            	?>
-		                                	<option id="<?php echo $alarm_almacen->id_alarm ?>">[<?php echo $alarm_almacen->code.'] '.$alarm_almacen->alarm ?></option>
+		                                	<option value="<?php echo $alarm_almacen->id_alarm ?>"><?php echo $alarm_almacen->brand. ' '.$alarm_almacen->alarm.' ['.$alarm_almacen->code.'/'.$alarm_almacen->type.']' ?></option>
 				                        <?php
 				                        }
-				                        ?>		                                
+				                        ?>			                                
 		                                </select>
 		                                </td>
 		                                <td><input type="text" id="units_alarma_almacen_3" name="units_alarma_almacen_3" onkeypress='return event.charCode >= 48 && event.charCode <= 57'></input></td>
@@ -137,10 +142,10 @@
 		                              	<?php
 		                        		foreach ($alarms_almacen as $alarm_almacen) {
 		                            	?>
-		                                	<option id="<?php echo $alarm_almacen->id_alarm ?>">[<?php echo $alarm_almacen->code.'] '.$alarm_almacen->alarm ?></option>
+		                                	<option value="<?php echo $alarm_almacen->id_alarm ?>"><?php echo $alarm_almacen->brand. ' '.$alarm_almacen->alarm.' ['.$alarm_almacen->code.'/'.$alarm_almacen->type.']' ?></option>
 				                        <?php
 				                        }
-				                        ?>		                                
+				                        ?>			                                
 		                                </select>
 		                                </td>
 		                                <td><input type="text" id="units_alarma_almacen_4" name="units_alarma_almacen_4" onkeypress='return event.charCode >= 48 && event.charCode <= 57'></input></td>
@@ -151,7 +156,7 @@
 		                              	<?php
 		                        		foreach ($alarms_almacen as $alarm_almacen) {
 		                            	?>
-		                                	<option id="<?php echo $alarm_almacen->id_alarm ?>">[<?php echo $alarm_almacen->code.'] '.$alarm_almacen->alarm ?></option>
+		                                	<option value="<?php echo $alarm_almacen->id_alarm ?>"><?php echo $alarm_almacen->brand. ' '.$alarm_almacen->alarm.' ['.$alarm_almacen->code.'/'.$alarm_almacen->type.']' ?></option>
 				                        <?php
 				                        }
 				                        ?>		                                
@@ -168,14 +173,10 @@
 		       		</div>		       		
                     <div class="row">
                         <div class="col-lg-7 labelText white">Asignar materiales</div>
-                        <div class="col-lg-5 labelBtn white">
-                            <a href="<?= site_url('admin/update_incidencia/' . $id_pds_url . '/' . $id_inc_url . '/2/3') ?>"
-                               classBtn="status" class="btn btn-success" <?php if ($incidencia['status'] != 'Revisada') {
-                                echo 'disabled';
-                            } ?>>Asignar mat.</a></td>
-                        </div>
+                        <input type="submit" value="Envíar" name="submit" class="btn btn-success" />
                     </div>		       		 
                 </div>
+                </form>
             </div>
         </div>
         <div class="col-lg-6 col-md-6">
@@ -186,14 +187,24 @@
                 <div class="panel-body">
                     <strong>Fecha alta:</strong> <?php echo $incidencia['fecha'] ?><br/>
                     <strong>Estado:</strong> <?php echo $incidencia['status'] ?><br/>
+                    <strong>Tipo:</strong> <?php echo $incidencia['tipo_averia'] ?>
+                    <?php
+                    if ($incidencia['tipo_averia'] == 'Robo') {
+                    ?>
+                    [<a href="<?= site_url('uploads/' . $incidencia['denuncia']) ?>" target="_blank">ver denuncia</a>]
+                    <?php
+                    }
+                    ?>
+                    <br />                    
                     <strong>Mueble:</strong> <?php echo $incidencia['display']['display'] ?><br/>
-                    <strong>Teléfono:</strong> <?php echo $incidencia['device']['brand_name']." / ".$incidencia['device']['device'] ?><br/>
+                    <strong>Dispositivo:</strong> <?php echo $incidencia['device']['brand_name']." / ".$incidencia['device']['device'] ?><br/>
+                    <strong>Contacto:</strong> <?php echo $incidencia['contacto'].' Tel. '.$incidencia['phone'] ?><br/>
                     <strong>Intervención:</strong>
                     <?php
                     //Si el estado es superior a Instalador asignado e intervención!=null->Esto nunca debería darse pero se contempla
                     if (($incidencia['status'] == 'Comunicada' || $incidencia['status'] == 'Resuelta' ||
-                            $incidencia['status'] == 'Instalador asignado') && $incidencia['intervencion'] != null
-                    ) {
+                            $incidencia['status'] == 'Instalador asignado' || $incidencia['status'] == 'Material asignado') && $incidencia['intervencion'] != null) 
+					{
                         ?>
                         <a onClick="showModalViewIntervencion(<?php echo $incidencia['intervencion']; ?>)">
                             #<?php echo $incidencia['intervencion']; ?></a>
@@ -203,9 +214,24 @@
                     }
 
                     ?><br/>
-                    <strong>Comentario:</strong> <?php echo $incidencia['description_1'] ?><br/>
+                    <strong>Comentario:</strong> <?php echo $incidencia['description_1'] ?>
                 </div>
             </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Notas incidencia
+                </div>
+                <form action="<?= site_url('admin/insert_comentario_incidencia/' . $id_pds_url .'/' . $id_inc_url) ?>" method="post">
+                <div class="panel-body">
+                    <strong>Comentarios:</strong>
+                    <textarea class="form-control" rows="10" name="description_2" id="description_2"><?php echo $incidencia['description_2'] ?></textarea>
+                    <br clear="all" />
+                    <p>
+                    <input type="submit" value="Envíar" name="submit" class="btn btn-success" />
+                    </p>
+                </div>
+                </form>
+            </div>            
         </div>
     </div>
 </div>
