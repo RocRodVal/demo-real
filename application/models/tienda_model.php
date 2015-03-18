@@ -480,6 +480,23 @@ class Tienda_model extends CI_Model {
 	}
 		
 	
+	public function incidencia_update_historico_sfid($data)
+	{
+		$this->db->insert('historico_sfid',$data);
+		$id=$this->db->insert_id();
+	}
+		
+	public function incidencia_update_sfid($sfid_old,$sfid_new)
+	{
+		$this->db->set('sfid',$sfid_new);
+		$this->db->where('sfid',$sfid_old);
+		$this->db->update('agent');
+		
+		$this->db->set('reference',$sfid_new);
+		$this->db->where('reference',$sfid_old);
+		$this->db->update('pds');		
+	}	
+	
 	public function get_alarms_incidencia($id) {
 		if($id != FALSE) {
 			$query = $this->db->select('COUNT(id_alarm) as alarmas')

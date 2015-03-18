@@ -22,6 +22,7 @@
                         ?>                                                 
                         <li><a <?=($this->uri->segment(2)==='dashboard')?'class="active"':''?> href="<?=site_url('admin/dashboard')?>"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a></li>
                         <li><a <?=($this->uri->segment(2)==='material_retorno')?'class="active"':''?> href="<?=site_url('admin/material_retorno')?>"><i class="fa fa-mobile fa-fw"></i> Material retorno</a></li>
+                        <li><a <?=($this->uri->segment(2)==='cambio_sfid')?'class="active"':''?> href="<?=site_url('admin/cambio_sfid')?>"><i class="fa fa-retweet fa-fw"></i> Cambio de SFID</a></li>
                         <?php               
                         $maestros = array('clientes','contactos','alarmas','dispositivos','muebles','puntos_de_venta');
                         ?>
