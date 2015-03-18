@@ -78,7 +78,7 @@
 		            } else {
 		                ?>
 		                <div class="table-responsive">
-		                    <table class="table table-striped table-bordered table-hover" id="dataTables-example">
+		                    <table class="table table-striped table-bordered table-hover" id="table_incidencias_dashboard">
 		                        <thead>
 		                        <tr>
 		                            <th>Ref.</th>

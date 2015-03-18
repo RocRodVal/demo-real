@@ -132,7 +132,59 @@ class Admin extends CI_Controller
             redirect('admin', 'refresh');
         }
     }
+    
+    
+    public function cambio_sfid()
+    {
+    	if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
+    		$data['id_pds'] = $this->session->userdata('id_pds');
+    		$data['sfid'] = $this->session->userdata('sfid');
+    
+    		$xcrud = xcrud_get_instance();
+    		$this->load->model(array('tienda_model', 'sfid_model'));
+    
+			$data['tiendas'] =  $this->tienda_model->search_pds($this->input->post('sfid'));
+    
+    		$data['title'] = 'Cambio de SFID';
+    
+    		$this->load->view('backend/header', $data);
+    		$this->load->view('backend/navbar', $data);
+    		$this->load->view('backend/cambio_sfid', $data);
+    		$this->load->view('backend/footer');
+    	} else {
+    		redirect('admin', 'refresh');
+    	}
+    }
+    
+    
+    public function update_sfid()
+    {
+    	if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10))
+    	{
+    		$this->load->model(array('tienda_model', 'sfid_model'));
+    	
+	    	if ($this->input->post('sfid_new') <> '')
+	    	{
+	    		$historico_sfid = array(
+	    				'id_pds' => $this->input->post('id_pds'),
+	    				'fecha' => date('Y-m-d H:i:s'),
+	    				'sfid_old' => $this->input->post('sfid_old'),
+	    				'sfid_new' => $this->input->post('sfid_new')
+	    		);
+	    		
+	    		$this->tienda_model->incidencia_update_sfid($this->input->post('sfid_old'),$this->input->post('sfid_new'));
+	    		$this->tienda_model->incidencia_update_historico_sfid($historico_sfid);
+	    	}
+	    	
+	    	redirect('admin/cambio_sfid', 'refresh');
+	    } 
+	    else 
+	    {
+	    	redirect('admin', 'refresh');
+	    }	    		
+    }    
 
+    
     public function operar_incidencia()
     {
         if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
@@ -782,7 +834,7 @@ class Admin extends CI_Controller
         $xcrud_2->relation('client_pds', 'client', 'id_client', 'client');
         $xcrud_2->relation('type_pds', 'type_pds', 'id_type_pds', 'pds');
         $xcrud_2->relation('territory', 'territory', 'id_territory', 'territory');
-        $xcrud_2->relation('panelado_pds', 'panelado', 'id_panelado', 'panelado');
+        $xcrud_2->relation('panelado_pds', 'panelado', 'id_panelado', 'panelado_abx');
         $xcrud_2->relation('type_via', 'type_via', 'id_type_via', 'via');
         $xcrud_2->relation('province', 'province', 'id_province', 'province');
         $xcrud_2->relation('county', 'county', 'id_county', 'county');
@@ -791,11 +843,14 @@ class Admin extends CI_Controller
         $xcrud_2->relation('contact_supervisor', 'contact', 'id_contact', 'contact');
         $xcrud_2->change_type('picture_url', 'image');
         $xcrud_2->modal('picture_url');
+        //$xcrud_2->readonly('reference');
+        $xcrud_2->disabled('reference','edit');
         $xcrud_2->sum('m2_total', 'm2_fo', 'm2_bo');
-        $xcrud_2->label('client_pds', 'Cliente')->label('reference', 'SFID')->label('type_pds', 'Tipo')->label('territory', 'Zona')->label('panelado_pds', 'Panelado Orange')->label('dispo', 'Disposición')->label('commercial', 'Nombre comercial')->label('cif', 'CIF')->label('picture_url', 'Foto')->label('m2_fo', 'M2 front-office')->label('m2_bo', 'M2 back-office')->label('m2_total', 'M2 total')->label('type_via', 'Tipo vía')->label('address', 'Dirección')->label('zip', 'C.P.')->label('city', 'Ciudad')->label('province', 'Provincia')->label('county', 'CC.AA.')->label('schedule', 'Horario')->label('phone', 'Teléfono')->label('mobile', 'Móvil')->label('email', 'Email')->label('contact_contact_person', 'Contacto')->label('contact_in_charge', 'Encargado')->label('contact_supervisor', 'Supervisor')->label('status', 'Estado');
+        $xcrud_2->label('client_pds', 'Cliente')->label('reference', 'SFID')->label('type_pds', 'Tipo')->label('territory', 'Zona')->label('panelado_pds', 'Panelado')->label('dispo', 'Disposición')->label('commercial', 'Nombre comercial')->label('cif', 'CIF')->label('picture_url', 'Foto')->label('m2_fo', 'M2 front-office')->label('m2_bo', 'M2 back-office')->label('m2_total', 'M2 total')->label('type_via', 'Tipo vía')->label('address', 'Dirección')->label('zip', 'C.P.')->label('city', 'Ciudad')->label('province', 'Provincia')->label('county', 'CC.AA.')->label('schedule', 'Horario')->label('phone', 'Teléfono')->label('mobile', 'Móvil')->label('email', 'Email')->label('contact_contact_person', 'Contacto')->label('contact_in_charge', 'Encargado')->label('contact_supervisor', 'Supervisor')->label('status', 'Estado');
         $xcrud_2->columns('client_pds,reference,type_pds,panelado_pds,commercial,territory,status');
         $xcrud_2->fields('client_pds,reference,type_pds,panelado_pds,dispo,commercial,cif,territory,picture_url,m2_fo,m2_bo,m2_total,type_via,address,zip,city,province,county,schedule,phone,mobile,email,contact_contact_person,contact_in_charge,contact_supervisor,status');
-
+        
+        
         $data['title'] = 'Puntos de venta';
         $data['content'] = $xcrud_1->render();
         $data['content'] = $data['content'] . $xcrud_2->render();
