@@ -116,6 +116,41 @@ class Tienda_model extends CI_Model {
 		return $query->result();
 	}	
 	
+	
+	public function facturacion_estado() {
+		$query = $this->db->select('facturacion.fecha, pds.reference AS SFID, type_pds.pds, facturacion.id_intervencion AS visita, display.display, SUM(facturacion.units_device) AS dispositivos, SUM(facturacion.units_alarma) AS otros')
+		->join('pds','facturacion.id_pds = pds.id_pds')
+		->join('type_pds','pds.type_pds = type_pds.id_type_pds')
+		->join('displays_pds','facturacion.id_displays_pds = displays_pds.id_displays_pds')
+		->join('display','displays_pds.id_display = display.id_display')
+		->group_by('facturacion.id_intervencion')
+		->order_by('facturacion.fecha')
+		->get('facturacion');
+	
+		return $query->result();
+	}	
+
+	
+	function facturacion_estado_csv()
+	{
+		$this->load->dbutil();
+		$this->load->helper('file');
+		$this->load->helper('download');
+		$query = $this->db->select('facturacion.fecha, pds.reference AS SFID, type_pds.pds, facturacion.id_intervencion AS visita, display.display, SUM(facturacion.units_device) AS dispositivos, SUM(facturacion.units_alarma) AS otros')
+		->join('pds','facturacion.id_pds = pds.id_pds')
+		->join('type_pds','pds.type_pds = type_pds.id_type_pds')
+		->join('displays_pds','facturacion.id_displays_pds = displays_pds.id_displays_pds')
+		->join('display','displays_pds.id_display = display.id_display')
+		->group_by('facturacion.id_intervencion')
+		->order_by('facturacion.fecha')
+		->get('facturacion');
+		$delimiter = ",";
+		$newline = "\r\n";
+		$data = $this->dbutil->csv_from_result($query, $delimiter, $newline);
+		force_download('Demo_Real-Facturacion.csv', $data);
+	}	
+	
+	
 	public function get_display_pds($id) {
 			if($id != FALSE) {
 			$query = $this->db->select('displays_pds.id_displays_pds, displays_pds.description, display.*')

@@ -1719,17 +1719,42 @@ class Admin extends CI_Controller
 
     public function facturacion()
     {
-        $xcrud = xcrud_get_instance();
-
-        $data['title'] = 'Facturación';
-        $data['content'] = 'En construcción.';
-
-        $this->load->view('backend/header', $data);
-        $this->load->view('backend/navbar', $data);
-        $this->load->view('backend/content', $data);
-        $this->load->view('backend/footer');
+    	if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
+    		$data['id_pds'] = $this->session->userdata('id_pds');
+    		$data['sfid'] = $this->session->userdata('sfid');
+    
+    		$xcrud = xcrud_get_instance();
+    		$this->load->model(array('tienda_model','sfid_model'));
+    
+    		$data['facturacion'] = $this->tienda_model->facturacion_estado();
+    
+    		$data['title'] = 'Facturación';
+    
+    		$this->load->view('backend/header', $data);
+    		$this->load->view('backend/navbar', $data);
+    		$this->load->view('backend/facturacion', $data);
+    		$this->load->view('backend/footer');
+    	} else {
+    		redirect('admin', 'refresh');
+    	}
     }
+        
+    
+    public function facturacion_csv()
+    {
+    	if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
+    		$data['id_pds'] = $this->session->userdata('id_pds');
+    		$data['sfid'] = $this->session->userdata('sfid');
+    
+    		$xcrud = xcrud_get_instance();
+    		$this->load->model(array('tienda_model','sfid_model'));
+  
+       		$data['facturacion_csv'] = $this->tienda_model->facturacion_estado_csv();
 
+    	} else {
+    		redirect('admin', 'refresh');
+    	}
+    }    
 
     public function operaciones()
     {
