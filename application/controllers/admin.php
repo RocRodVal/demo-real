@@ -1726,8 +1726,14 @@ class Admin extends CI_Controller
     		$xcrud = xcrud_get_instance();
     		$this->load->model(array('tienda_model','sfid_model'));
     
-    		$data['facturacion'] = $this->tienda_model->facturacion_estado();
-    
+    		$fecha_inicio = $this->input->post('fecha_inicio');
+    		$fecha_fin    = $this->input->post('fecha_fin');
+    		
+    		$data['facturacion'] = $this->tienda_model->facturacion_estado($fecha_inicio,$fecha_fin);
+    		
+    		$data['fecha_inicio'] = $fecha_inicio;
+    		$data['fecha_fin']   = $fecha_fin;
+    		
     		$data['title'] = 'Facturación';
     
     		$this->load->view('backend/header', $data);
@@ -1745,11 +1751,14 @@ class Admin extends CI_Controller
     	if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
     		$data['id_pds'] = $this->session->userdata('id_pds');
     		$data['sfid'] = $this->session->userdata('sfid');
-    
+    		
+    		$fecha_inicio = $this->uri->segment(3);
+    		$fecha_fin    = $this->uri->segment(4);
+    		
     		$xcrud = xcrud_get_instance();
     		$this->load->model(array('tienda_model','sfid_model'));
   
-       		$data['facturacion_csv'] = $this->tienda_model->facturacion_estado_csv();
+       		$data['facturacion_csv'] = $this->tienda_model->facturacion_estado_csv($fecha_inicio,$fecha_fin);
 
     	} else {
     		redirect('admin', 'refresh');

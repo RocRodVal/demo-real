@@ -275,6 +275,31 @@ class Intervencion extends CI_Controller
             $this->data['data']=false;
         $this->load->view('backend/dataJSON', $this->data);
     }
+    
+    
+    function cerrarIntervencionIncidencia(){
+    	if (isset($_POST['intervencion_id'])) {
+    		//Cambiamos el estado de las incidencias a resueltas
+    		$this->load->model('VO/IntervencionVO');
+    		$this->load->model('VO/IncidenciaVO');
+    		$intervencion_id=$_POST['intervencion_id'];
+    		//buscamos las incidencias de la intervencion y las pasamos al estado resuelto
+    		$intervencion=new IntervencionVO();
+    		$intervencion->__set('id_intervencion',$intervencion_id);
+    		$incidencias = $this->intervencion_model->get_incidencias_by_intervencion($intervencion);
+    		$status_incidencia=6;
+    		foreach($incidencias as $incidencia){
+    			$this->intervencion_model->change_status_incidencia($incidencia->id_incidencia,$status_incidencia);
+    		}
+    		//cambiamos el estado de la intervencion a cerrada
+    		$status=3;
+    		$result=$this->intervencion_model->change_status_intervencion($intervencion_id,$status);
+    		$this->data['data']=$result;
+    	}
+    	else
+    		$this->data['data']=false;
+    	$this->load->view('backend/dataJSON', $this->data);
+    }    
 
 }
 
