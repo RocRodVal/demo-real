@@ -106,8 +106,22 @@
                     Información de la incidencia
                 </div>
                 <div class="panel-body">
-                    <strong>Fecha alta:</strong> <?php echo $incidencia['fecha'] ?><br/>
+                    <strong>Fecha alta:</strong> <?php echo date_format(date_create($incidencia['fecha']), 'd/m/Y'); ?><br/>
                     <strong>Estado:</strong> <?php echo $incidencia['status'] ?><br/>
+                    <?php
+                    if ($historico_material_asignado <> '---')
+					{
+					?>
+					<strong>Fecha asignación material:</strong> <?php echo date_format(date_create($historico_material_asignado), 'd/m/Y'); ?><br/>
+					<?php
+					}
+                    if ($historico_fecha_comunicada <> '---')
+					{
+					?>
+					<strong>Fecha comunicación:</strong> <?php echo date_format(date_create($historico_fecha_comunicada), 'd/m/Y'); ?><br/>
+					<?php 	
+					}
+                    ?>
                     <strong>Tipo:</strong> <?php echo $incidencia['tipo_averia'] ?>
                     <?php
                     if ($incidencia['tipo_averia'] == 'Robo') {
@@ -136,6 +150,69 @@
 
                     ?><br/>
                     <strong>Comentario:</strong> <?php echo $incidencia['description_1'] ?>
+                    <br clear="all" />
+                    
+                    <h3>Material asignado</h3>
+ 					<?php
+		            if (empty($material_dispositivos)) {
+		                echo '<p>No hay dipositivos asociados.</p>';
+		            } else {
+		                ?>
+		                <div class="table-responsive">
+		                    <table class="table table-striped table-bordered table-hover" id="table_incidencias_dashboard">
+		                        <thead>
+		                        <tr>
+		                            <th>Dispositivo</th>
+		                        	<th>Código de barras</th>
+		                        	<th>Unidades</th>
+		                        </tr>
+		                        </thead>
+		                        <tbody>
+		                        <?php
+		                        foreach ($material_dispositivos as $material_dispositivos_item) {
+		                            ?>
+		                            <tr>
+		                                <td><?php echo $material_dispositivos_item->device ?></td>
+		                                <td><?php echo $material_dispositivos_item->barcode ?></td>
+		                                <td><?php echo $material_dispositivos_item->cantidad ?></td>
+		                            </tr>
+		                        <?php
+		                        }
+		                        ?>
+		                        </tbody>
+		                    </table>
+		                </div>
+		            <?php
+		            }
+		            if (empty($material_alarmas)) {
+		                echo '<p>No hay alarmas asociadas.</p>';
+		            } else {
+		                ?>
+		                <div class="table-responsive">
+		                    <table class="table table-striped table-bordered table-hover" id="table_incidencias_dashboard">
+		                        <thead>
+		                        <tr>
+		                            <th>Alarma</th>
+		                        	<th>Unidades</th>
+		                        </tr>
+		                        </thead>
+		                        <tbody>
+		                        <?php
+		                        foreach ($material_alarmas as $material_alarmas_item) {
+		                            ?>
+		                            <tr>
+		                                <td><?php echo $material_alarmas_item->alarm ?></td>
+		                                <td><?php echo $material_alarmas_item->cantidad ?></td>
+		                            </tr>
+		                        <?php
+		                        }
+		                        ?>
+		                        </tbody>
+		                    </table>
+		                </div>
+		            <?php
+		            }
+		            ?>                     
                 </div>
             </div>
             <div class="panel panel-default">

@@ -210,11 +210,40 @@ class Admin extends CI_Controller
             $data['id_inc_url'] = $id_inc;
 
             $incidencia = $this->tienda_model->get_incidencia($id_inc);
+            
+            $historico_material_asignado = $this->tienda_model->historico_fecha($id_inc,'Material asignado');
+            
+            if (isset($historico_material_asignado['fecha']))
+            {
+            	$data['historico_material_asignado'] = $historico_material_asignado['fecha'];
+            }
+            else
+            {
+            	$data['historico_material_asignado'] = '---';
+            }
+                        
+            $historico_fecha_comunicada = $this->tienda_model->historico_fecha($id_inc,'Comunicada');
+            
+            if (isset($historico_fecha_comunicada['fecha']))
+            {
+            	$data['historico_fecha_comunicada'] = $historico_fecha_comunicada['fecha'];
+            }
+            else
+            {
+            	$data['historico_fecha_comunicada'] = '---';
+            }  
+            
             $incidencia['intervencion'] = $this->intervencion_model->get_intervencion_incidencia($id_inc);
             $incidencia['device'] = $this->sfid_model->get_device($incidencia['id_devices_pds']);
             $incidencia['display'] = $this->sfid_model->get_display($incidencia['id_displays_pds']);
             $data['incidencia'] = $incidencia;
-
+            
+            $material_dispositivos = $this->tienda_model->get_material_dispositivos($incidencia['id_incidencia']);
+            $data['material_dispositivos'] = $material_dispositivos;            
+            
+            $material_alarmas = $this->tienda_model->get_material_alarmas($incidencia['id_incidencia']);
+            $data['material_alarmas'] = $material_alarmas;
+                
             $chats = $this->chat_model->get_chat_incidencia_pds($incidencia['id_incidencia']);
             $leido = $this->chat_model->marcar_leido($incidencia['id_incidencia'],$sfid['reference']);
             $data['chats'] = $chats;            
@@ -431,6 +460,7 @@ class Admin extends CI_Controller
     	);
 
     	$this->tienda_model->incidencia_update_material($dipositivo_almacen_1);
+    	$this->tienda_model->reservar_dispositivos($this->input->post('dipositivo_almacen_1'),2);
     	}
     	
     	if ($this->input->post('units_dipositivo_almacen_2') <> '')
@@ -445,6 +475,7 @@ class Admin extends CI_Controller
     	);    	
     	
     	$this->tienda_model->incidencia_update_material($dipositivo_almacen_2);
+    	$this->tienda_model->reservar_dispositivos($this->input->post('dipositivo_almacen_2'),2);
     	}
     	
     	if ($this->input->post('units_alarma_almacen_1') <> '')

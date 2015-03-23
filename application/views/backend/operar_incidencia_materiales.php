@@ -56,7 +56,7 @@
 				                        ?>		                                
 		                                </select>
 		                                </td>
-		                                <td><input type="text" id="units_dipositivo_almacen_1" name="units_dipositivo_almacen_1" onkeypress='return event.charCode >= 48 && event.charCode <= 57'></input></td>
+		                                <td><input type="text" id="units_dipositivo_almacen_1" name="units_dipositivo_almacen_1" onkeypress='return event.charCode >= 48 && event.charCode <= 57' value="1" readonly></input></td>
 		                            </tr>
 		                            <tr>
 		                                <td>
@@ -70,7 +70,7 @@
 				                        ?>	                                
 		                                </select>
 		                                </td>
-		                                <td><input type="text" id="units_dipositivo_almacen_2" name="units_dipositivo_almacen_2" onkeypress='return event.charCode >= 48 && event.charCode <= 57'></input></td>
+		                                <td><input type="text" id="units_dipositivo_almacen_2" name="units_dipositivo_almacen_2" onkeypress='return event.charCode >= 48 && event.charCode <= 57' value="1" readonly></input></td>
 		                            </tr>
 		                        </tbody>
 		                    </table>

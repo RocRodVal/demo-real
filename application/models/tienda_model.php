@@ -264,6 +264,42 @@ class Tienda_model extends CI_Model {
 		return $query->result();
 	}
 	
+	
+	public function get_material_dispositivos($id) {
+	
+		$query = $this->db->select('device.device AS device, devices_almacen.barcode AS barcode, material_incidencias.cantidad AS cantidad')
+		->join('devices_almacen','devices_almacen.id_devices_almacen = material_incidencias.id_devices_almacen')
+		->join('device','devices_almacen.id_device = device.id_device')
+		->where('material_incidencias.id_incidencia',$id)
+		->where('material_incidencias.id_devices_almacen <>','')
+		->order_by('device.device')
+		->get('material_incidencias');
+	
+		return $query->result();
+	}
+	
+	
+	public function get_material_alarmas($id) {
+	
+		$query = $this->db->select('alarm.alarm AS alarm, material_incidencias.cantidad AS cantidad')
+		->join('alarm','material_incidencias.id_alarm = alarm.id_alarm')
+		->where('material_incidencias.id_incidencia',$id)
+		->where('material_incidencias.id_alarm <>','')
+		->order_by('alarm.alarm')
+		->get('material_incidencias');
+	
+		return $query->result();
+	}	
+	
+	
+	public function reservar_dispositivos($id,$status)
+	{
+		$this->db->set('status',$status, FALSE);
+		$this->db->where('id_devices_almacen',$id);
+		$this->db->update('devices_almacen');
+	}
+		
+
 	public function get_devices_almacen_reserva() {
 	
 		$query = $this->db->select('devices_almacen.*, device.*')
@@ -274,7 +310,8 @@ class Tienda_model extends CI_Model {
 		->get('devices_almacen');
 	
 		return $query->result();
-	}	
+	}
+		
 	
 	public function get_alarms_almacen_reserva() {
 	
@@ -415,6 +452,20 @@ class Tienda_model extends CI_Model {
 			$query = $this->db->select('incidencias.*')
 			->where('incidencias.id_incidencia',$id)
 			->get('incidencias');
+	
+			return $query->row_array();
+		}
+		else {
+			return FALSE;
+		}
+	}	
+	
+	public function historico_fecha($id,$status) {
+		if($id != FALSE) {
+			$query = $this->db->select('historico.fecha')
+			->where('historico.id_incidencia',$id)
+			->where('historico.status',$status)
+			->get('historico');
 	
 			return $query->row_array();
 		}
