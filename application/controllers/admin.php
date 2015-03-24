@@ -73,33 +73,7 @@ class Admin extends CI_Controller
 
             $data['incidencias'] = $incidencias;
 
-            $xcrud->table('incidencias');
-            $xcrud->table_name('Incidencias');
-            $xcrud->relation('id_pds', 'pds', 'id_pds', 'reference');
-            $xcrud->relation('id_displays_pds', 'displays_pds', 'id_displays_pds', 'id_displays_pds');
-            $xcrud->relation('id_devices_pds', 'devices_pds', 'id_devices_pds', 'id_devices_pds');
-            //$xcrud->relation('id_displays_pds','display','id_display','display');
-            //$xcrud->relation('id_devices_pds','device','id_device','device');
-            $xcrud->relation('id_operador', 'contact', 'id_contact', 'contact');
-            $xcrud->change_type('denuncia', 'file');
-            $xcrud->change_type('parte_pdf', 'file');
-            $xcrud->change_type('foto_url', 'image');
-            $xcrud->change_type('foto_url_2', 'image');
-            $xcrud->change_type('foto_url_3', 'image');
-            $xcrud->label('id_incidencia', 'REF.')->label('fecha', 'Fecha')->label('id_pds', 'SFID')->label('denuncia', 'Denuncia')->label('parte_pdf', 'Parte PDF')->label('foto_url', 'Foto #1')->label('foto_url_2', 'Foto #2')->label('foto_url_3', 'Foto #3')->label('id_displays_pds', 'Cod. mueble')->label('id_devices_pds', 'Cod. dispositivo')->label('alarm_display', 'Fallo alarma mueble')->label('alarm_device', 'Fallo alarma dispositivo')->label('alarm_garra', 'Fallo anclaje dispositivo')->label('description_1', 'Comentarios')->label('description_2', 'Comentarios')->label('contact', 'Contacto')->label('email', 'E-mail')->label('phone', 'Teléfono')->label('id_operador', 'Instalador')->label('status', 'Estado SAT')->label('status_pds', 'Estado');
-            $xcrud->columns('id_incidencia,fecha,id_pds,description_1,contacto,phone,email,status,status_pds');
-            //$xcrud->fields('client,type_profile_client,picture_url,description,status');
-
-            $xcrud->show_primary_ai_column(false);
-            $xcrud->unset_add();
-            $xcrud->unset_edit();
-            $xcrud->unset_remove();
-            $xcrud->unset_numbers();
-            $xcrud->start_minimized(true);
-
             $data['title'] = 'Mis solicitudes';
-            //$data['content'] = $xcrud->render();
-            $data['content'] = '';
 
             $this->load->view('backend/header', $data);
             $this->load->view('backend/navbar', $data);
@@ -247,7 +221,6 @@ class Admin extends CI_Controller
             $chats = $this->chat_model->get_chat_incidencia_pds($incidencia['id_incidencia']);
             $leido = $this->chat_model->marcar_leido($incidencia['id_incidencia'],$sfid['reference']);
             $data['chats'] = $chats;            
-
 
             $data['title'] = 'Operativa incidencia Ref. '.$data['id_inc_url'];
 
@@ -404,6 +377,7 @@ class Admin extends CI_Controller
         
         if ($status == 5) {
         	$intervencion = $this->intervencion_model->get_intervencion_incidencia($id_inc);
+        	$this->tienda_model->reservar_dispositivos($this->input->post('dipositivo_almacen_2'),3);
         	
         	$dispositivos = $this->tienda_model->get_devices_incidencia($id_inc);
         	$alarmas = $this->tienda_model->get_alarms_incidencia($id_inc);
@@ -652,9 +626,47 @@ class Admin extends CI_Controller
 
     public function incidencias()
     {
-        redirect('admin/dashboard', 'refresh');
-    }
+        if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
 
+            $xcrud_SQL = xcrud_get_instance();
+            $xcrud_SQL->query('SELECT 
+					incidencias.id_incidencia AS Incidencia,
+					incidencias.fecha AS Fecha,
+					pds.reference AS Referencia,
+					display.display AS Mueble,
+					device.device AS Dispositivo,
+					incidencias.tipo_averia AS Tipo,
+					incidencias.fail_device AS "Fallo dispositivo",
+					incidencias.alarm_display "Alarma mueble",
+					incidencias.alarm_device "Alarma dispositivo",
+					incidencias.alarm_garra "Sistema de alarma",
+					incidencias.description_1 AS "Comentarios",
+					incidencias.description_2 AS "Comentarios SAT",
+					incidencias.contacto,
+					incidencias.phone AS "Teléfono",
+            		incidencias.status_pds AS "Estado tienda",
+					incidencias.status AS "Estado SAT"
+				FROM demoreal.incidencias
+				JOIN pds ON incidencias.id_pds = pds.id_pds
+				JOIN displays_pds ON incidencias.id_displays_pds = displays_pds.id_displays_pds
+				JOIN display ON displays_pds.id_display = display.id_display
+				LEFT JOIN devices_pds ON incidencias.id_devices_pds = devices_pds.id_devices_pds
+				LEFT JOIN device ON devices_pds.id_device = device.id_device');
+
+            
+            $data['title'] = 'Export incidencias';
+            $data['content'] = $xcrud_SQL->render();
+
+            $this->load->view('backend/header', $data);
+            $this->load->view('backend/navbar', $data);
+            $this->load->view('backend/content', $data);
+            $this->load->view('backend/footer');
+        } else {
+            redirect('admin', 'refresh');
+        }
+    }
+    
+    
     public function contactos()
     {
         $xcrud_1 = xcrud_get_instance();
@@ -1144,9 +1156,9 @@ class Admin extends CI_Controller
         $xcrud->modal('picture_url_1');
         $xcrud->modal('picture_url_2');
         $xcrud->modal('picture_url_3');
-        $xcrud->label('id_devices_almacen', 'Ref.')->label('alta', 'Fecha de alta')->label('id_device', 'Dispositivo')->label('serial', 'Nº de serie')->label('IMEI', 'IMEI')->label('mac', 'MAC')->label('barcode', 'Código de barras')->label('id_color_device', 'Color')->label('id_complement_device', 'Complementos')->label('id_status_device', 'Estado dispositivo')->label('id_status_packaging_device', 'Estado packaging')->label('picture_url_1', 'Foto #1')->label('picture_url_2', 'Foto #2')->label('picture_url_3', 'Foto #3')->label('description', 'Comentarios')->label('status', 'Estado');
+        $xcrud->label('id_devices_almacen', 'Ref.')->label('alta', 'Fecha de alta')->label('id_device', 'Dispositivo')->label('serial', 'Nº de serie')->label('IMEI', 'IMEI')->label('mac', 'MAC')->label('barcode', 'Código de barras')->label('id_color_device', 'Color')->label('id_complement_device', 'Complementos')->label('id_status_device', 'Estado dispositivo')->label('id_status_packaging_device', 'Estado packaging')->label('picture_url_1', 'Foto #1')->label('picture_url_2', 'Foto #2')->label('picture_url_3', 'Foto #3')->label('description', 'Comentarios')->label('owner', 'Dueño')->label('status', 'Estado');
         $xcrud->columns('id_devices_almacen,id_device,IMEI,mac,barcode,status');
-        $xcrud->fields('id_devices_almacen,alta,id_device,serial,IMEI,mac,barcode,id_color_device,id_complement_device,id_status_device,id_status_packaging_device,picture_url_1,picture_url_2,picture_url_3,description,status');
+        $xcrud->fields('id_devices_almacen,alta,id_device,serial,IMEI,mac,barcode,id_color_device,id_complement_device,id_status_device,id_status_packaging_device,picture_url_1,picture_url_2,picture_url_3,description,owner,status');
         $xcrud->order_by('id_device', 'asc');
         $xcrud->order_by('status', 'asc');
         $xcrud->order_by('id_devices_almacen', 'asc');
