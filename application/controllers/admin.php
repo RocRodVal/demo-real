@@ -452,76 +452,161 @@ class Admin extends CI_Controller
     	$this->tienda_model->reservar_dispositivos($this->input->post('dipositivo_almacen_2'),2);
     	}
     	
+    	if ($this->input->post('units_dipositivo_almacen_3') <> '')
+    	{
+    		$dipositivo_almacen_3 = array(
+    				'fecha' => date('Y-m-d H:i:s'),
+    				'id_incidencia' => $id_inc,
+    				'id_pds' => $id_pds,
+    				'id_alarm' => NULL,
+    				'id_devices_almacen' => $this->input->post('dipositivo_almacen_3'),
+    				'cantidad' => $this->input->post('units_dipositivo_almacen_3')
+    		);
+    		 
+    		$this->tienda_model->incidencia_update_material($dipositivo_almacen_3);
+    		$this->tienda_model->reservar_dispositivos($this->input->post('dipositivo_almacen_3'),2);
+    	}    	
+    	
     	if ($this->input->post('units_alarma_almacen_1') <> '')
     	{  
-    	$alarma_almacen_1 = array(
-    			'fecha' => date('Y-m-d H:i:s'),
-    			'id_incidencia' => $id_inc,
-    			'id_pds' => $id_pds,
-    			'id_alarm' => $this->input->post('alarma_almacen_1'),
-    			'id_devices_almacen' => NULL,
-    			'cantidad' => $this->input->post('units_alarma_almacen_1')
-    	);    	
-    	
-    	$this->tienda_model->incidencia_update_material($alarma_almacen_1);
+	    	$alarma_almacen_1 = array(
+	    			'fecha' => date('Y-m-d H:i:s'),
+	    			'id_incidencia' => $id_inc,
+	    			'id_pds' => $id_pds,
+	    			'id_alarm' => $this->input->post('alarma_almacen_1'),
+	    			'id_devices_almacen' => NULL,
+	    			'cantidad' => $this->input->post('units_alarma_almacen_1')
+	    	);    	
+	    	
+	    	$this->tienda_model->incidencia_update_material($alarma_almacen_1);
     	}
     	 
     	if ($this->input->post('units_alarma_almacen_2') <> '')
     	{  	
-    	$alarma_almacen_2 = array(
-    			'fecha' => date('Y-m-d H:i:s'),
-    			'id_incidencia' => $id_inc,
-    			'id_pds' => $id_pds,
-    			'id_alarm' => $this->input->post('alarma_almacen_2'),
-    			'id_devices_almacen' => NULL,
-    			'cantidad' => $this->input->post('units_alarma_almacen_2'),
-    	);
-    	
-    	$this->tienda_model->incidencia_update_material($alarma_almacen_2);
+	    	$alarma_almacen_2 = array(
+	    			'fecha' => date('Y-m-d H:i:s'),
+	    			'id_incidencia' => $id_inc,
+	    			'id_pds' => $id_pds,
+	    			'id_alarm' => $this->input->post('alarma_almacen_2'),
+	    			'id_devices_almacen' => NULL,
+	    			'cantidad' => $this->input->post('units_alarma_almacen_2'),
+	    	);
+	    	
+	    	$this->tienda_model->incidencia_update_material($alarma_almacen_2);
     	}
     	 
     	if ($this->input->post('units_alarma_almacen_3') <> '')
     	{    	
-    	$alarma_almacen_3 = array(
-    			'fecha' => date('Y-m-d H:i:s'),
-    			'id_incidencia' => $id_inc,
-    			'id_pds' => $id_pds,
-    			'id_alarm' => $this->input->post('alarma_almacen_3'),
-    			'id_devices_almacen' => NULL,
-    			'cantidad' => $this->input->post('units_alarma_almacen_3'),
-    	);
-
-    	$this->tienda_model->incidencia_update_material($alarma_almacen_3);    	
+	    	$alarma_almacen_3 = array(
+	    			'fecha' => date('Y-m-d H:i:s'),
+	    			'id_incidencia' => $id_inc,
+	    			'id_pds' => $id_pds,
+	    			'id_alarm' => $this->input->post('alarma_almacen_3'),
+	    			'id_devices_almacen' => NULL,
+	    			'cantidad' => $this->input->post('units_alarma_almacen_3'),
+	    	);
+	
+	    	$this->tienda_model->incidencia_update_material($alarma_almacen_3);    	
     	}
     	 
     	if ($this->input->post('units_alarma_almacen_4') <> '')
     	{    	
-    	$alarma_almacen_4 = array(
-    			'fecha' => date('Y-m-d H:i:s'),
-    			'id_incidencia' => $id_inc,
-    			'id_pds' => $id_pds,
-    			'id_alarm' => $this->input->post('alarma_almacen_4'),
-    			'id_devices_almacen' => NULL,
-    			'cantidad' => $this->input->post('units_alarma_almacen_4'),
-    	);    	
-    	
-    	$this->tienda_model->incidencia_update_material($alarma_almacen_4);    	
+	    	$alarma_almacen_4 = array(
+	    			'fecha' => date('Y-m-d H:i:s'),
+	    			'id_incidencia' => $id_inc,
+	    			'id_pds' => $id_pds,
+	    			'id_alarm' => $this->input->post('alarma_almacen_4'),
+	    			'id_devices_almacen' => NULL,
+	    			'cantidad' => $this->input->post('units_alarma_almacen_4'),
+	    	);    	
+	    	
+	    	$this->tienda_model->incidencia_update_material($alarma_almacen_4);    	
     	}
     	 
     	if ($this->input->post('units_alarma_almacen_5') <> '')
     	{    	
-    	$alarma_almacen_5 = array(
-    			'fecha' => date('Y-m-d H:i:s'),
-    			'id_incidencia' => $id_inc,
-    			'id_pds' => $id_pds,
-    			'id_alarm' => $this->input->post('alarma_almacen_5'),
-    			'id_devices_almacen' => NULL,
-    			'cantidad' => $this->input->post('units_alarma_almacen_5'),
-    	);
-    	 
-    	$this->tienda_model->incidencia_update_material($alarma_almacen_5);    	
+	    	$alarma_almacen_5 = array(
+	    			'fecha' => date('Y-m-d H:i:s'),
+	    			'id_incidencia' => $id_inc,
+	    			'id_pds' => $id_pds,
+	    			'id_alarm' => $this->input->post('alarma_almacen_5'),
+	    			'id_devices_almacen' => NULL,
+	    			'cantidad' => $this->input->post('units_alarma_almacen_5'),
+	    	);
+	    	 
+	    	$this->tienda_model->incidencia_update_material($alarma_almacen_5);    	
     	}
     	
+    	if ($this->input->post('units_alarma_almacen_6') <> '')
+    	{
+    		$alarma_almacen_6 = array(
+    				'fecha' => date('Y-m-d H:i:s'),
+    				'id_incidencia' => $id_inc,
+    				'id_pds' => $id_pds,
+    				'id_alarm' => $this->input->post('alarma_almacen_6'),
+    				'id_devices_almacen' => NULL,
+    				'cantidad' => $this->input->post('units_alarma_almacen_6'),
+    		);
+    	
+    		$this->tienda_model->incidencia_update_material($alarma_almacen_6);
+    	}    	
+    	
+    	if ($this->input->post('units_alarma_almacen_7') <> '')
+    	{
+    		$alarma_almacen_7 = array(
+    				'fecha' => date('Y-m-d H:i:s'),
+    				'id_incidencia' => $id_inc,
+    				'id_pds' => $id_pds,
+    				'id_alarm' => $this->input->post('alarma_almacen_7'),
+    				'id_devices_almacen' => NULL,
+    				'cantidad' => $this->input->post('units_alarma_almacen_7'),
+    		);
+    	
+    		$this->tienda_model->incidencia_update_material($alarma_almacen_7);
+    	}    	
+    	
+    	if ($this->input->post('units_alarma_almacen_8') <> '')
+    	{
+    		$alarma_almacen_8 = array(
+    				'fecha' => date('Y-m-d H:i:s'),
+    				'id_incidencia' => $id_inc,
+    				'id_pds' => $id_pds,
+    				'id_alarm' => $this->input->post('alarma_almacen_8'),
+    				'id_devices_almacen' => NULL,
+    				'cantidad' => $this->input->post('units_alarma_almacen_8'),
+    		);
+    	
+    		$this->tienda_model->incidencia_update_material($alarma_almacen_8);
+    	}    	
+    	
+    	if ($this->input->post('units_alarma_almacen_9') <> '')
+    	{
+    		$alarma_almacen_9 = array(
+    				'fecha' => date('Y-m-d H:i:s'),
+    				'id_incidencia' => $id_inc,
+    				'id_pds' => $id_pds,
+    				'id_alarm' => $this->input->post('alarma_almacen_9'),
+    				'id_devices_almacen' => NULL,
+    				'cantidad' => $this->input->post('units_alarma_almacen_9'),
+    		);
+    	
+    		$this->tienda_model->incidencia_update_material($alarma_almacen_9);
+    	}
+
+    	if ($this->input->post('units_alarma_almacen_10') <> '')
+    	{
+    		$alarma_almacen_10 = array(
+    				'fecha' => date('Y-m-d H:i:s'),
+    				'id_incidencia' => $id_inc,
+    				'id_pds' => $id_pds,
+    				'id_alarm' => $this->input->post('alarma_almacen_10'),
+    				'id_devices_almacen' => NULL,
+    				'cantidad' => $this->input->post('units_alarma_almacen_10'),
+    		);
+    	
+    		$this->tienda_model->incidencia_update_material($alarma_almacen_10);
+    	}    	
+    	    	
     	$this->tienda_model->incidencia_update($id_inc, $status_pds, $status);    	
     	
     	$data = array(
@@ -646,7 +731,7 @@ class Admin extends CI_Controller
 					incidencias.phone AS "Teléfono",
             		incidencias.status_pds AS "Estado tienda",
 					incidencias.status AS "Estado SAT"
-				FROM demoreal.incidencias
+				FROM incidencias
 				JOIN pds ON incidencias.id_pds = pds.id_pds
 				JOIN displays_pds ON incidencias.id_displays_pds = displays_pds.id_displays_pds
 				JOIN display ON displays_pds.id_display = display.id_display

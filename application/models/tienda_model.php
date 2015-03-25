@@ -281,7 +281,7 @@ class Tienda_model extends CI_Model {
 	
 	public function get_material_alarmas($id) {
 	
-		$query = $this->db->select('alarm.alarm AS alarm, material_incidencias.cantidad AS cantidad')
+		$query = $this->db->select('alarm.code AS code, alarm.alarm AS alarm, material_incidencias.cantidad AS cantidad')
 		->join('alarm','material_incidencias.id_alarm = alarm.id_alarm')
 		->where('material_incidencias.id_incidencia',$id)
 		->where('material_incidencias.id_alarm <>','')

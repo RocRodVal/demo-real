@@ -512,6 +512,7 @@ class Tienda extends CI_Controller {
 				
 			if ($incidencia['add'])
 			{
+				/*
 				$pds = $this->sfid_model->get_pds($data['id_pds']);
 		
 				$message_admin  = 'Se ha registrado una nueva incidencia.'."\r\n\r\n";
@@ -526,6 +527,7 @@ class Tienda extends CI_Controller {
 				$this->email->subject('Demo Real - Registro de incidencia ref. '.$incidencia['id']);
 				$this->email->message($message_admin);
 				$this->email->send();
+				*/
 	
 				redirect('tienda/alta_incidencia_gracias/'.$incidencia['id']);
 			}

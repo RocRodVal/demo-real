@@ -162,9 +162,9 @@
 		                    <table class="table table-striped table-bordered table-hover" id="table_incidencias_dashboard">
 		                        <thead>
 		                        <tr>
-		                            <th>Dispositivo</th>
-		                        	<th>Código de barras</th>
-		                        	<th>Unidades</th>
+									<th width="30%">Código</th>
+		                        	<th width="60%">Dispositivo</th>
+		                        	<th width="10%">Unidades</th>
 		                        </tr>
 		                        </thead>
 		                        <tbody>
@@ -172,8 +172,8 @@
 		                        foreach ($material_dispositivos as $material_dispositivos_item) {
 		                            ?>
 		                            <tr>
-		                                <td><?php echo $material_dispositivos_item->device ?></td>
 		                                <td><?php echo $material_dispositivos_item->barcode ?></td>
+		                                <td><?php echo $material_dispositivos_item->device ?></td>
 		                                <td><?php echo $material_dispositivos_item->cantidad ?></td>
 		                            </tr>
 		                        <?php
@@ -192,8 +192,9 @@
 		                    <table class="table table-striped table-bordered table-hover" id="table_incidencias_dashboard">
 		                        <thead>
 		                        <tr>
-		                            <th>Alarma</th>
-		                        	<th>Unidades</th>
+		                        	<th width="30%">Código</th>
+		                            <th width="60%">Alarma</th>
+		                        	<th width="10%">Unidades</th>
 		                        </tr>
 		                        </thead>
 		                        <tbody>
@@ -201,6 +202,7 @@
 		                        foreach ($material_alarmas as $material_alarmas_item) {
 		                            ?>
 		                            <tr>
+		                            	<td><?php echo $material_alarmas_item->code ?></td>
 		                                <td><?php echo $material_alarmas_item->alarm ?></td>
 		                                <td><?php echo $material_alarmas_item->cantidad ?></td>
 		                            </tr>

@@ -72,6 +72,20 @@
 		                                </td>
 		                                <td><input type="text" id="units_dipositivo_almacen_2" name="units_dipositivo_almacen_2" onkeypress='return event.charCode >= 48 && event.charCode <= 57'></input></td>
 		                            </tr>
+		                            <tr>
+		                                <td>
+		                                <select id="dipositivo_almacen_3" name="dipositivo_almacen_3" width="500" style="width:500px">
+		                              	<?php
+		                        		foreach ($devices_almacen as $device_almacen) {
+		                            	?>
+		                                	<option value="<?php echo $device_almacen->id_devices_almacen ?>"><?php echo $device_almacen->device ?> [<?php echo $device_almacen->serial ?>] (<?php echo $device_almacen->owner ?>)</option>
+				                        <?php
+				                        }
+				                        ?>	                                
+		                                </select>
+		                                </td>
+		                                <td><input type="text" id="units_dipositivo_almacen_3" name="units_dipositivo_almacen_3" onkeypress='return event.charCode >= 48 && event.charCode <= 57'></input></td>
+		                            </tr>		                            
 		                        </tbody>
 		                    </table>
 		                </div>
@@ -163,7 +177,77 @@
 		                                </select>
 		                                </td>
 		                                <td><input type="text" id="units_alarma_almacen_5" name="units_alarma_almacen_5" onkeypress='return event.charCode >= 48 && event.charCode <= 57'></input></td>
-		                            </tr>			                            		                            	                            
+		                            </tr>
+		                            <tr>
+		                                <td>
+		                                <select id="alarma_almacen_6" name="alarma_almacen_6" width="500" style="width:500px">
+		                              	<?php
+		                        		foreach ($alarms_almacen as $alarm_almacen) {
+		                            	?>
+		                                	<option value="<?php echo $alarm_almacen->id_alarm ?>"><?php echo $alarm_almacen->brand. ' '.$alarm_almacen->alarm.' ['.$alarm_almacen->code.'/'.$alarm_almacen->type.']' ?></option>
+				                        <?php
+				                        }
+				                        ?>		                                
+		                                </select>
+		                                </td>
+		                                <td><input type="text" id="units_alarma_almacen_6" name="units_alarma_almacen_6" onkeypress='return event.charCode >= 48 && event.charCode <= 57'></input></td>
+		                            </tr>
+		                            <tr>
+		                                <td>
+		                                <select id="alarma_almacen_7" name="alarma_almacen_7" width="500" style="width:500px">
+		                              	<?php
+		                        		foreach ($alarms_almacen as $alarm_almacen) {
+		                            	?>
+		                                	<option value="<?php echo $alarm_almacen->id_alarm ?>"><?php echo $alarm_almacen->brand. ' '.$alarm_almacen->alarm.' ['.$alarm_almacen->code.'/'.$alarm_almacen->type.']' ?></option>
+				                        <?php
+				                        }
+				                        ?>		                                
+		                                </select>
+		                                </td>
+		                                <td><input type="text" id="units_alarma_almacen_7" name="units_alarma_almacen_7" onkeypress='return event.charCode >= 48 && event.charCode <= 57'></input></td>
+		                            </tr>	
+		                            <tr>
+		                                <td>
+		                                <select id="alarma_almacen_8" name="alarma_almacen_8" width="500" style="width:500px">
+		                              	<?php
+		                        		foreach ($alarms_almacen as $alarm_almacen) {
+		                            	?>
+		                                	<option value="<?php echo $alarm_almacen->id_alarm ?>"><?php echo $alarm_almacen->brand. ' '.$alarm_almacen->alarm.' ['.$alarm_almacen->code.'/'.$alarm_almacen->type.']' ?></option>
+				                        <?php
+				                        }
+				                        ?>		                                
+		                                </select>
+		                                </td>
+		                                <td><input type="text" id="units_alarma_almacen_8" name="units_alarma_almacen_8" onkeypress='return event.charCode >= 48 && event.charCode <= 57'></input></td>
+		                            </tr>
+		                            <tr>
+		                                <td>
+		                                <select id="alarma_almacen_9" name="alarma_almacen_9" width="500" style="width:500px">
+		                              	<?php
+		                        		foreach ($alarms_almacen as $alarm_almacen) {
+		                            	?>
+		                                	<option value="<?php echo $alarm_almacen->id_alarm ?>"><?php echo $alarm_almacen->brand. ' '.$alarm_almacen->alarm.' ['.$alarm_almacen->code.'/'.$alarm_almacen->type.']' ?></option>
+				                        <?php
+				                        }
+				                        ?>		                                
+		                                </select>
+		                                </td>
+		                                <td><input type="text" id="units_alarma_almacen_9" name="units_alarma_almacen_9" onkeypress='return event.charCode >= 48 && event.charCode <= 57'></input></td>
+		                            </tr>	
+		                            <tr>
+		                                <td>
+		                                <select id="alarma_almacen_10" name="alarma_almacen_10" width="500" style="width:500px">
+		                              	<?php
+		                        		foreach ($alarms_almacen as $alarm_almacen) {
+		                            	?>
+		                                	<option value="<?php echo $alarm_almacen->id_alarm ?>"><?php echo $alarm_almacen->brand. ' '.$alarm_almacen->alarm.' ['.$alarm_almacen->code.'/'.$alarm_almacen->type.']' ?></option>
+				                        <?php
+				                        }
+				                        ?>		                                
+		                                </select>
+		                                </td>
+		                                <td><input type="text" id="units_alarma_almacen_10" name="units_alarma_almacen_10" onkeypress='return event.charCode >= 48 && event.charCode <= 57'></input></td>
+		                            </tr>			                            			                            		                            
 		                        </tbody>
 		                    </table>
 		                </div>
