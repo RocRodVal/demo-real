@@ -2,7 +2,7 @@
 class Xcrud_config
 {
     // default connection
-    public static $dbname = 'demoreal'; // Your database name
+    public static $dbname = 'orange'; // Your database name
     public static $dbuser = 'root'; // Your database username
     public static $dbpass = 'developer';
     public static $dbhost = 'localhost'; // Your database host, 'localhost' is default.
