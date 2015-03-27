@@ -4,7 +4,8 @@ Muebles por PdS
 INSERT INTO displays_pds (client_type_pds,id_type_pds,id_pds,id_panelado,id_display,position,description,status)
 SELECT pds.client_pds, pds.type_pds, pds.id_pds, pds.panelado_pds, displays_panelado.id_display, displays_panelado.position, '', 'Alta'
 FROM pds, displays_panelado
-WHERE pds.panelado_pds=displays_panelado.id_panelado;
+WHERE pds.panelado_pds=displays_panelado.id_panelado
+AND pds.reference = SFID;
 
 /*
 Devices por PdS
@@ -13,7 +14,8 @@ INSERT INTO devices_pds (client_type_pds,id_pds,id_displays_pds,id_display,posit
 SELECT pds.client_pds,pds.id_pds,displays_pds.id_displays_pds,displays_pds.id_display,devices_display.position,devices_display.id_device,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'Alta'
 FROM pds,displays_pds,devices_display
 WHERE pds.id_pds=displays_pds.id_pds
-AND displays_pds.id_display=devices_display.id_display;
+AND displays_pds.id_display=devices_display.id_display
+AND pds.reference = SFID;
 
 /*
 Consulta SFIDs en grupo
@@ -23,23 +25,6 @@ FROM pds
 JOIN type_pds ON pds.type_pds = type_pds.id_type_pds
 JOIN panelado ON pds.panelado_pds = panelado.id_panelado
 WHERE reference IN (19990272,19440334,26360017,36000077,36000072,48810015,49440274,49990159,49440270,49990141,49990153,49990164,49440267,49440134,59440338,59990180,59990179,59990178,59990207,56000152);
-
-/*
-Insertar muebles por SFID
-*/
-INSERT INTO displays_pds (client_type_pds,id_type_pds,id_pds,id_panelado,id_display,position,description,status)
-SELECT pds.client_pds, pds.type_pds, pds.id_pds, pds.panelado_pds, displays_panelado.id_display, displays_panelado.position, '', 'Alta'
-FROM pds, displays_panelado
-WHERE pds.panelado_pds=displays_panelado.id_panelado;
-
-/*
-Insertar dispositivos por SFID
-*/
-INSERT INTO devices_pds (client_type_pds,id_pds,id_displays_pds,id_display,position,id_device,IMEI,mac,serial,barcode,id_color_device,id_complement_device,id_status_device,id_status_packaging_device,picture_url_1,picture_url_2,picture_url_3,description,status)
-SELECT pds.client_pds,pds.id_pds,displays_pds.id_displays_pds,displays_pds.id_display,devices_display.position,devices_display.id_device,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'Alta'
-FROM pds,displays_pds,devices_display
-WHERE pds.id_pds=displays_pds.id_pds
-AND displays_pds.id_display=devices_display.id_display;
 
 /*
 Facturación

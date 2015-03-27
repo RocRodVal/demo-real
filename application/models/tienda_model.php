@@ -13,16 +13,16 @@ class Tienda_model extends CI_Model {
 									(
 									SELECT  COUNT(*)
 									FROM    devices_almacen
-									WHERE   devices_almacen.id_device = devices_pds.id_device
+									WHERE (devices_almacen.id_device = devices_pds.id_device) AND (devices_almacen.status = "En stock")
 									) AS deposito_almacen,
 									(
 									SELECT  COUNT(*)
 									FROM    devices_almacen
-									WHERE   devices_almacen.id_device = devices_pds.id_device
+									WHERE (devices_almacen.id_device = devices_pds.id_device) AND (devices_almacen.status = "En stock")
 									) -
 									(ROUND((COUNT(devices_pds.id_device)*0.05))+2) AS balance')
 			   	 ->join('device','devices_pds.id_device = device.id_device')
-		         //->where('devices_pds.status','Alta')
+		         ->where('devices_pds.status','Alta')
 		         ->group_by('devices_pds.id_device')
 		         ->order_by('device')
 		         ->get('devices_pds');
