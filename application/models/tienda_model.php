@@ -46,6 +46,35 @@ class Tienda_model extends CI_Model {
 			return FALSE;
 		}
 	}	
+
+	
+	public function search_dispositivo($id) {
+		if($id != FALSE) {
+			$query = $this->db->select('devices_almacen.*')
+			//->where('devices_almacen.status','En stock')
+			->where("(devices_almacen.IMEI LIKE '%{$id}%' OR devices_almacen.mac LIKE '%{$id}%' OR devices_almacen.serial LIKE '%{$id}%' OR devices_almacen.barcode LIKE '%{$id}%')")
+			->get('devices_almacen');
+	
+			return $query->result();
+		}
+		else {
+			return FALSE;
+		}
+	}	
+	
+	
+	public function search_dispositivo_id($id) {
+		if($id != FALSE) {
+			$query = $this->db->select('devices_almacen.*')
+			->where('devices_almacen.id_devices_almacen',$id)
+			->get('devices_almacen');
+	
+			return $query->result();
+		}
+		else {
+			return FALSE;
+		}
+	}	
 	
 	
 	public function get_displays_panelado($id) {

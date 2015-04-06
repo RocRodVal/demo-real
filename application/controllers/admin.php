@@ -131,6 +131,29 @@ class Admin extends CI_Controller
     }
     
     
+    public function update_dispositivo()
+    {
+    	if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
+    		$data['id_pds'] = $this->session->userdata('id_pds');
+    		$data['sfid'] = $this->session->userdata('sfid');
+    
+    		$xcrud = xcrud_get_instance();
+    		$this->load->model(array('tienda_model', 'sfid_model'));
+    
+    		$data['dispositivos']    =  $this->tienda_model->search_dispositivo_id($this->input->post('dipositivo_almacen_1'));
+    
+    		$data['title'] = 'Carga datos dispositivo';
+    
+    		$this->load->view('backend/header', $data);
+    		$this->load->view('backend/navbar', $data);
+    		$this->load->view('backend/carga_datos_dispositivo_edit', $data);
+    		$this->load->view('backend/footer');
+    	} else {
+    		redirect('admin', 'refresh');
+    	}
+    }
+        
+    
     public function update_sfid()
     {
     	if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10))
@@ -686,8 +709,31 @@ class Admin extends CI_Controller
             redirect('admin', 'refresh');
         }
     }
-
-
+    
+    public function carga_datos_dispositivo()
+    {
+    	if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
+    		$data['id_pds'] = $this->session->userdata('id_pds');
+    		$data['sfid'] = $this->session->userdata('sfid');
+    
+    		$xcrud = xcrud_get_instance();
+    		$this->load->model(array('tienda_model', 'sfid_model'));
+    
+    		$data['dispositivos']    =  $this->tienda_model->search_dispositivo($this->input->post('codigo'));
+    		$data['devices_almacen'] = $this->tienda_model->get_devices_almacen_reserva();
+    
+    		$data['title'] = 'Carga datos dispositivo';
+    
+    		$this->load->view('backend/header', $data);
+    		$this->load->view('backend/navbar', $data);
+    		$this->load->view('backend/carga_datos_dispositivo', $data);
+    		$this->load->view('backend/footer');
+    	} else {
+    		redirect('admin', 'refresh');
+    	}
+    }    
+    
+    
     public function clientes()
     {
         $xcrud = xcrud_get_instance();
