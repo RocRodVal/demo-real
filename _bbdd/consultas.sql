@@ -109,6 +109,7 @@ JOIN device ON devices_almacen.id_device = device.id_device;
 /*
 Seleccionar alarmas incidencia
 */
-SELECT material_incidencias.*, alarm.alarm
+SELECT material_incidencias.*, brand_alarm.brand, alarm.alarm
 FROM material_incidencias
-JOIN alarm ON alarm.id_alarm = material_incidencias.id_alarm;
+JOIN alarm ON alarm.id_alarm = material_incidencias.id_alarm
+JOIN brand_alarm ON alarm.brand_alarm = brand_alarm.id_brand_alarm;
