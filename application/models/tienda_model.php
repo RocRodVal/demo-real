@@ -519,6 +519,14 @@ class Tienda_model extends CI_Model {
 		$this->db->update('incidencias');
 	}	
 	
+	public function comentario_incidencia_instalador_update($id,$texto)
+	{
+		$this->db->set('description_3', $texto);
+		$this->db->where('id_incidencia',$id);
+		$this->db->update('incidencias');
+	}
+		
+	
 	public function incidencia_update_device_pds($id_devices_pds,$status)
 	{
 		$this->db->set('status', $status, FALSE);

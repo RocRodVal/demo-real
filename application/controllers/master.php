@@ -128,6 +128,7 @@ class Master extends CI_Controller {
 				$data['alarm_garra']     = $incidencia['alarm_garra'];
 				$data['description_1']   = $incidencia['description_1'];
 				$data['description_2']   = $incidencia['description_2'];
+				$data['description_3']   = $incidencia['description_3'];
 				$data['denuncia']        = $incidencia['denuncia'];
 				$data['contacto']        = $incidencia['contacto'];
 				$data['phone']           = $incidencia['phone'];

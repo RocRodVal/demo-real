@@ -307,6 +307,7 @@ class Tienda extends CI_Controller {
 				$data['alarm_garra']     = $incidencia['alarm_garra'];
 				$data['description_1']   = $incidencia['description_1'];
 				$data['description_2']   = $incidencia['description_2'];
+				$data['description_3']   = $incidencia['description_3'];
 				$data['denuncia']        = $incidencia['denuncia'];
 				$data['contacto']        = $incidencia['contacto'];
 				$data['phone']           = $incidencia['phone'];
@@ -494,6 +495,7 @@ class Tienda extends CI_Controller {
 					'alarm_garra'       => $this->input->post('alarm_garra'),
 					'description_1'  	=> $description_1,
 					'description_2'  	=> '',
+					'description_3'  	=> '',
 					'parte_pdf'  	    => '',
 					'denuncia'  	    => $denuncia,
 					'foto_url'  	    => '',
@@ -565,6 +567,7 @@ class Tienda extends CI_Controller {
 					'alarm_garra'       => 0,
 					'description_1'  	=> $this->input->post('description_1'),
 					'description_2'  	=> '',
+					'description_3'  	=> '',
 					'parte_pdf'  	    => '',
 					'denuncia'  	    => '',
 					'foto_url'  	    => '',

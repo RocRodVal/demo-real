@@ -231,7 +231,23 @@
                     </p>
                 </div>
                 </form>
-            </div>            
+            </div>    
+            
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Notas instalador
+                </div>
+                <form action="<?= site_url('admin/insert_comentario_incidencia_instalador/' . $id_pds_url .'/' . $id_inc_url) ?>" method="post">
+                <div class="panel-body">
+                    <strong>Comentarios:</strong>
+                    <textarea class="form-control" rows="10" name="description_3" id="description_3"><?php echo $incidencia['description_3'] ?></textarea>
+                    <br clear="all" />
+                    <p>
+                    <input type="submit" value="Envíar" name="submit" class="btn btn-success" />
+                    </p>
+                </div>
+                </form>
+            </div>                       
         </div>
     </div>
 </div>

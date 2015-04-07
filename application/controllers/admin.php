@@ -664,6 +664,21 @@ class Admin extends CI_Controller
     	redirect('admin/operar_incidencia/'.$id_pds.'/'.$id_inc, 'refresh');
     }    
 
+    public function insert_comentario_incidencia_instalador()
+    {
+    	$id_pds = $this->uri->segment(3);
+    	$id_inc = $this->uri->segment(4);
+    
+    	$xcrud = xcrud_get_instance();
+    	$this->load->model('tienda_model');
+    
+    	$description_3 = $this->input->post('description_3');
+    	$description_3 = $this->strip_html_tags($description_3);
+    	$this->tienda_model->comentario_incidencia_instalador_update($id_inc, $description_3);
+    
+    	redirect('admin/operar_incidencia/'.$id_pds.'/'.$id_inc, 'refresh');
+    }
+    
     public function update_incidencia_materiales()
     {
         if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
@@ -773,6 +788,7 @@ class Admin extends CI_Controller
 					incidencias.alarm_garra "Sistema de alarma",
 					incidencias.description_1 AS "Comentarios",
 					incidencias.description_2 AS "Comentarios SAT",
+            		incidencias.description_3 AS "Comentarios Instalador",
 					incidencias.contacto,
 					incidencias.phone AS "Teléfono",
             		incidencias.status_pds AS "Estado tienda",
@@ -1073,9 +1089,9 @@ class Admin extends CI_Controller
         $xcrud_1->relation('client_type_pds', 'client', 'id_client', 'client');
         $xcrud_1->relation('id_pds', 'pds', 'id_pds', 'reference');
         $xcrud_1->relation('id_type_pds', 'type_pds', 'id_type_pds', 'pds');
-        $xcrud_1->relation('id_panelado', 'panelado', 'id_panelado', 'panelado');
+        $xcrud_1->relation('id_panelado', 'panelado', 'id_panelado', 'panelado_abx');
         $xcrud_1->relation('id_display', 'display', 'id_display', 'display');
-        $xcrud_1->label('client_type_pds', 'Cliente')->label('id_displays_pds', 'REF.')->label('id_type_pds', 'Tipo')->label('id_pds', 'SFID')->label('id_panelado', 'Panelado Orange')->label('id_display', 'Mueble')->label('position', 'Posición Orange')->label('description', 'Comentarios')->label('status', 'Estado');
+        $xcrud_1->label('client_type_pds', 'Cliente')->label('id_displays_pds', 'REF.')->label('id_type_pds', 'Tipo')->label('id_pds', 'SFID')->label('id_panelado', 'Panelado')->label('id_display', 'Mueble')->label('position', 'Posición Orange')->label('description', 'Comentarios')->label('status', 'Estado');
         $xcrud_1->columns('client_type_pds,id_displays_pds,id_type_pds,id_pds,id_panelado,id_display,position,status');
         $xcrud_1->fields('client_type_pds,id_displays_pds,id_type_pds,id_pds,id_panelado,id_display,position,description,status');
         $xcrud_1->order_by('id_pds', 'asc');
@@ -1780,6 +1796,7 @@ class Admin extends CI_Controller
             'alarm_garra' => $this->input->post('alarm_garra'),
             'description_1' => $description_1,
             'description_2' => '',
+        	'description_3' => '',
             'parte_pdf' => '',
             'denuncia' => $denuncia,
             'foto_url' => '',
