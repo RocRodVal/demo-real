@@ -1,11 +1,30 @@
-<!DOCTYPE html>
-<html lang="es">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es">
 <head>
-    <meta charset="utf-8">
-    <title>Parte</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title><?=lang('comun.titulo')?> &gt; <?=$title?></title>
+	<link rel="stylesheet" href="<?=site_url('assets/css/styles.css')?>" />
+<style>
+body {
+	font-family: "Arial, sans-serif";
+	font: 12px;
+}
+h1 {
+	font-family: "Arial, sans-serif";
+	font: 18px;
+}
+h2 {
+	font: 16px;
+}
+h3 {
+	font: 14px;
+}
+</style>
 </head>
 
 <body>
+<h1><img src="<?=site_url('assets/images/focus.png')?>" width="200" /></h1>
+
 <div id="wrapper">
 <div id="page-wrapper">
     <div class="row">
