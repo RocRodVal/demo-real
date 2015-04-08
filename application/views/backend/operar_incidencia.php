@@ -51,6 +51,7 @@
                                 echo 'disabled';
                             } ?>>Asignar mat.</a></td>
                         </div>
+                        <!--//
                         <div class="col-lg-7 labelText white">Imprimir documentación</div>
                         <div class="col-lg-5 labelBtn white">
                             <a href="<?= site_url('admin/update_incidencia/' . $id_pds_url . '/' . $id_inc_url . '/3/5') ?>"
@@ -61,19 +62,13 @@
                                 else{
                                     echo 'disabled';
                             } ?>>Imprimir</a>
-                            <!--//                               
-                                <?php if ($incidencia['status'] == 'Material asignado' ||
-                                		    $incidencia['status'] == 'Instalador asignado' ||
-                                            $incidencia['status'] == 'Comunicada' ||
-                                            $incidencia['status'] == 'Resuelta' ||
-                                            $incidencia['status'] == 'Pendiente recogida') {
-                                    echo '';
-                                }
-                                else{
-                                    echo 'disabled';
-                            } ?>>Imprimir</a>
-                            -->
                         </div>
+						//-->
+                        <div class="col-lg-5 labelBtn white">
+                            <a href="<?= site_url('admin/update_incidencia/' . $id_pds_url . '/' . $id_inc_url . '/3/5') ?>"
+                               classBtn="status" class="btn btn-success">Imprimir</a>
+                        </div>
+                                                
                         <div class="col-lg-7 labelText grey">Resolver incidencia</div>
                         <div class="col-lg-5 labelBtn grey">
                             <a href="<?= site_url('admin/update_incidencia/' . $id_pds_url . '/' . $id_inc_url . '/4/6') ?>"

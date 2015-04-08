@@ -255,6 +255,94 @@ class Admin extends CI_Controller
             redirect('admin', 'refresh');
         }
     }
+    
+    
+    public function imprimir_incidencia()
+    {
+    	if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
+    		$id_pds = $this->uri->segment(3);
+    		$id_inc = $this->uri->segment(4);
+    
+    		$xcrud = xcrud_get_instance();
+    		$this->load->model(array('chat_model', 'intervencion_model', 'tienda_model', 'sfid_model'));
+    		$this->load->helper(array('dompdf', 'file'));
+    
+    		$sfid = $this->tienda_model->get_pds($id_pds);
+    
+    		$data['id_pds'] = 'ABX/PDS-' . $sfid['id_pds'];
+    		$data['commercial'] = $sfid['commercial'];
+    		$data['territory'] = $sfid['territory'];
+    		$data['reference'] = $sfid['reference'];
+    		$data['address'] = $sfid['address'];
+    		$data['zip'] = $sfid['zip'];
+    		$data['city'] = $sfid['city'];
+    		$data['province'] = $sfid['province'];
+    		$data['phone_pds'] = $sfid['phone'];
+    
+    		$data['id_pds_url'] = $id_pds;
+    		$data['id_inc_url'] = $id_inc;
+    
+    		$incidencia = $this->tienda_model->get_incidencia($id_inc);
+    
+    		$historico_material_asignado = $this->tienda_model->historico_fecha($id_inc,'Material asignado');
+    
+    		if (isset($historico_material_asignado['fecha']))
+    		{
+    			$data['historico_material_asignado'] = $historico_material_asignado['fecha'];
+    		}
+    		else
+    		{
+    			$data['historico_material_asignado'] = '---';
+    		}
+    
+    		$historico_fecha_comunicada = $this->tienda_model->historico_fecha($id_inc,'Comunicada');
+    
+    		if (isset($historico_fecha_comunicada['fecha']))
+    		{
+    			$data['historico_fecha_comunicada'] = $historico_fecha_comunicada['fecha'];
+    		}
+    		else
+    		{
+    			$data['historico_fecha_comunicada'] = '---';
+    		}
+    
+    		$incidencia['intervencion'] = $this->intervencion_model->get_intervencion_incidencia($id_inc);
+    		$incidencia['device'] = $this->sfid_model->get_device($incidencia['id_devices_pds']);
+    		$incidencia['display'] = $this->sfid_model->get_display($incidencia['id_displays_pds']);
+    		$data['incidencia'] = $incidencia;
+    
+    		$material_dispositivos = $this->tienda_model->get_material_dispositivos($incidencia['id_incidencia']);
+    		$data['material_dispositivos'] = $material_dispositivos;
+    
+    		$material_alarmas = $this->tienda_model->get_material_alarmas($incidencia['id_incidencia']);
+    		$data['material_alarmas'] = $material_alarmas;
+    
+    		$chats = $this->chat_model->get_chat_incidencia_pds($incidencia['id_incidencia']);
+    		$leido = $this->chat_model->marcar_leido($incidencia['id_incidencia'],$sfid['reference']);
+    		$data['chats'] = $chats;
+    
+    		$data['title'] = 'DOCUMENTACIÓN DE RESOLUCIÓN DE INCIDENCIA';
+    
+    		
+    		
+    		// page info here, db calls, etc.
+    		$html = $this->load->view('backend/imprimir_incidencia', $data, true);
+    		pdf_create($html, 'filename');
+    		
+    		//$data = pdf_create($html, '', false);
+    		//write_file('name', $data);
+    		
+    		//if you want to write it to disk and/or send it as an attachment    		
+    		/*
+    		$this->load->view('backend/header', $data);
+    		$this->load->view('backend/navbar', $data);
+    		$this->load->view('backend/imprimir_incidencia', $data);
+    		$this->load->view('backend/footer');
+    		*/
+    	} else {
+    		redirect('admin', 'refresh');
+    	}
+    }    
 
     public function insert_chat($id_incidencia)
     {
@@ -400,7 +488,10 @@ class Admin extends CI_Controller
         
         if ($status == 5) {
         	$intervencion = $this->intervencion_model->get_intervencion_incidencia($id_inc);
+        	        	
+        	$this->tienda_model->reservar_dispositivos($this->input->post('dipositivo_almacen_1'),3);
         	$this->tienda_model->reservar_dispositivos($this->input->post('dipositivo_almacen_2'),3);
+        	$this->tienda_model->reservar_dispositivos($this->input->post('dipositivo_almacen_3'),3);
         	
         	$dispositivos = $this->tienda_model->get_devices_incidencia($id_inc);
         	$alarmas = $this->tienda_model->get_alarms_incidencia($id_inc);
@@ -431,7 +522,14 @@ class Admin extends CI_Controller
 
         $this->tienda_model->historico($data);
         
-        redirect('admin/operar_incidencia/'.$id_pds.'/'.$id_inc, 'refresh');
+        if ($status == 5) 
+        {
+        	redirect('admin/imprimir_incidencia/'.$id_pds.'/'.$id_inc, 'refresh');
+        }
+        else
+        {	
+        	redirect('admin/operar_incidencia/'.$id_pds.'/'.$id_inc, 'refresh');
+        }	
     }
 
     public function update_materiales_incidencia()
