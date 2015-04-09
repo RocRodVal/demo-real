@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost:3306
--- Generation Time: Apr 08, 2015 at 06:21 PM
+-- Generation Time: Apr 09, 2015 at 05:44 PM
 -- Server version: 5.5.40
 -- PHP Version: 5.4.34
 
@@ -1110,7 +1110,7 @@ INSERT INTO `agent` (`agent_id`, `sfid`, `password`, `type`) VALUES
 (1073, '49440123', 'demoreal', 1),
 (1074, '56000008', 'demoreal', 1),
 (1075, '56000109', 'demoreal', 1),
-(1076, '59442753', 'demoreal', 1),
+(1076, '59990207', 'demoreal', 1),
 (1077, '20070000', 'demoreal', 1),
 (1078, '10070003', 'demoreal', 1),
 (1079, '10070011', 'demoreal', 1),
@@ -1852,7 +1852,7 @@ CREATE TABLE IF NOT EXISTS `chat` (
   `texto` text NOT NULL,
   `foto` varchar(200) DEFAULT NULL,
   `status` enum('Nuevo','Old','Privado') NOT NULL DEFAULT 'Nuevo'
-) ENGINE=InnoDB AUTO_INCREMENT=157 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=177 DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `chat`
@@ -1880,7 +1880,7 @@ INSERT INTO `chat` (`id_chat`, `fecha`, `id_incidencia`, `agent`, `texto`, `foto
 (19, '2015-03-24 12:27:17', 323, '26000116', 'Buenas! nosotros seguimos sin la tablet, no esta solventada.', NULL, 'Old'),
 (20, '2015-03-24 12:27:26', 324, '26000116', 'Buenas! nosotros seguimos sin la tablet, no esta solventada.', NULL, 'Old'),
 (21, '2015-03-24 12:27:32', 325, '26000116', 'Buenas! nosotros seguimos sin la tablet, no esta solventada.', NULL, 'Old'),
-(22, '2015-03-24 12:27:38', 326, '26000116', 'Buenas! nosotros seguimos sin la tablet, no esta solventada.', NULL, 'Nuevo'),
+(22, '2015-03-24 12:27:38', 326, '26000116', 'Buenas! nosotros seguimos sin la tablet, no esta solventada.', NULL, 'Old'),
 (23, '2015-03-25 08:54:48', 293, '49050000', 'hola', NULL, 'Old'),
 (24, '2015-03-25 08:55:34', 293, '49050000', 'alguien me puede atender', NULL, 'Old'),
 (25, '2015-03-25 08:55:52', 293, '49050000', '????', NULL, 'Old'),
@@ -1984,10 +1984,10 @@ INSERT INTO `chat` (`id_chat`, `fecha`, `id_incidencia`, `agent`, `texto`, `foto
 (123, '2015-04-03 10:15:07', 26, '46000076', 'BUENOS DÍAS, SEGUIMOS CON LA TABLET AVERIADA Y SIN RESPUESTA. NOS PODRÍAN INFORMAR? SALUDOS', NULL, 'Old'),
 (124, '2015-04-04 10:04:56', 3, '46000077', 'Ya está creada, gracias.', NULL, 'Old'),
 (125, '2015-04-06 06:51:09', 209, 'altabox', 'buenos dias. necesitamos saber si esta solucionada ya esta incidencia y de no ser asi saber que es lo que falta exactamente , es decir si solo faltan las garras de sujeccion o flta tambien en soporte y el cableado', NULL, 'Nuevo'),
-(126, '2015-04-06 06:52:56', 298, 'altabox', 'buenos dias , por favor abrir una nueva incidencia para poder enviar de nuevo a los tecnicos. gracias', NULL, 'Nuevo'),
+(126, '2015-04-06 06:52:56', 298, 'altabox', 'buenos dias , por favor abrir una nueva incidencia para poder enviar de nuevo a los tecnicos. gracias', NULL, 'Old'),
 (127, '2015-04-06 07:01:33', 346, 'altabox', 'buenos dias , pasara un tecnico a lo largo de esta semana', NULL, 'Nuevo'),
 (128, '2015-04-06 08:13:53', 81, 'altabox', 'Buenos días, nos comunica el técnico que esta incidencia no se puede resolver, pues es un tema de mobiliario que deben abrir por el procedimiento habitual. Muchas gracias, ', NULL, 'Old'),
-(129, '2015-04-06 08:34:16', 577, '40070000', 'Buenos días, el 26/03/2015 dimos de alta , esta incidencia, y no tenemos respuestas, ¿en que estado esta?', NULL, 'Nuevo'),
+(129, '2015-04-06 08:34:16', 577, '40070000', 'Buenos días, el 26/03/2015 dimos de alta , esta incidencia, y no tenemos respuestas, ¿en que estado esta?', NULL, 'Old'),
 (130, '2015-04-06 10:30:05', 447, '36000062', 'buenos dias ', NULL, 'Old'),
 (131, '2015-04-06 10:30:35', 447, '36000062', 'hace dos semanas de la apertura de esta incidencia y no hemos tenido respuesta alguna ', NULL, 'Old'),
 (132, '2015-04-06 11:11:53', 784, 'altabox', 'Buenas tardes, para solicitar las llaves del mueble debe hacerlo a su mantenimiento habitual. Una vez dispongan de las llaves, acudiremos a solucionar la incidencia. Saludos, ', NULL, 'Nuevo'),
@@ -2006,15 +2006,35 @@ INSERT INTO `chat` (`id_chat`, `fecha`, `id_incidencia`, `agent`, `texto`, `foto
 (145, '2015-04-07 12:53:29', 264, 'altabox', 'Cerramos incidencia por estar duplicada. Muchas gracias, ', NULL, 'Nuevo'),
 (146, '2015-04-07 13:07:06', 281, 'altabox', 'Buenas tardes, se cierra incidencia por estar duplicada. Muchas gracias', NULL, 'Nuevo'),
 (147, '2015-04-07 14:01:45', 265, 'altabox', 'pasara un tecnico esta semana', NULL, 'Nuevo'),
-(148, '2015-04-07 15:18:59', 4, '26000033', 'necesitamos que esta incidencia este resuelta para antes del 20 de abril....sabemos cuando vendran a solucionarla?', NULL, 'Nuevo'),
+(148, '2015-04-07 15:18:59', 4, '26000033', 'necesitamos que esta incidencia este resuelta para antes del 20 de abril....sabemos cuando vendran a solucionarla?', NULL, 'Old'),
 (149, '2015-04-08 08:14:47', 635, 'altabox', 'procedemos al cierre de la incidencia  enviar las proximas que no sean de demo real al correo del sat, gracias', NULL, 'Nuevo'),
-(150, '2015-04-08 10:24:03', 317, '26000091', 'buenas tardes, \nSeguimos en la misma situación, nos llamaron para informarnnos que vendrían el martes de la semana pasada, pero no ha venido nadie.\n\nUn saludo.', NULL, 'Nuevo'),
-(151, '2015-04-08 10:24:22', 546, '26000091', 'buenas tardes, Seguimos en la misma situación, nos llamaron para informarnnos que vendrían el martes de la semana pasada, pero no ha venido nadie. Un saludo. ', NULL, 'Nuevo'),
-(152, '2015-04-08 10:24:43', 547, '26000091', 'buenas tardes, Seguimos en la misma situación, nos llamaron para informarnnos que vendrían el martes de la semana pasada, pero no ha venido nadie. Un saludo. ', NULL, 'Nuevo'),
-(153, '2015-04-08 10:25:20', 548, '26000091', 'buenas tardes, Seguimos en la misma situación, nos llamaron para informarnnos que vendrían el martes de la semana pasada, pero no ha venido nadie. Un saludo. ', NULL, 'Nuevo'),
-(154, '2015-04-08 10:25:44', 549, '26000091', 'buenas tardes, Seguimos en la misma situación, nos llamaron para informarnnos que vendrían el martes de la semana pasada, pero no ha venido nadie. Un saludo. ', NULL, 'Nuevo'),
+(150, '2015-04-08 10:24:03', 317, '26000091', 'buenas tardes, \nSeguimos en la misma situación, nos llamaron para informarnnos que vendrían el martes de la semana pasada, pero no ha venido nadie.\n\nUn saludo.', NULL, 'Old'),
+(151, '2015-04-08 10:24:22', 546, '26000091', 'buenas tardes, Seguimos en la misma situación, nos llamaron para informarnnos que vendrían el martes de la semana pasada, pero no ha venido nadie. Un saludo. ', NULL, 'Old'),
+(152, '2015-04-08 10:24:43', 547, '26000091', 'buenas tardes, Seguimos en la misma situación, nos llamaron para informarnnos que vendrían el martes de la semana pasada, pero no ha venido nadie. Un saludo. ', NULL, 'Old'),
+(153, '2015-04-08 10:25:20', 548, '26000091', 'buenas tardes, Seguimos en la misma situación, nos llamaron para informarnnos que vendrían el martes de la semana pasada, pero no ha venido nadie. Un saludo. ', NULL, 'Old'),
+(154, '2015-04-08 10:25:44', 549, '26000091', 'buenas tardes, Seguimos en la misma situación, nos llamaron para informarnnos que vendrían el martes de la semana pasada, pero no ha venido nadie. Un saludo. ', NULL, 'Old'),
 (155, '2015-04-08 11:58:27', 478, 'altabox', 'hola , me podeis enviar una foto, gracias', NULL, 'Nuevo'),
-(156, '2015-04-08 12:08:06', 481, 'altabox', 'pasaran este viernes gracias', NULL, 'Nuevo');
+(156, '2015-04-08 12:08:06', 481, 'altabox', 'pasaran este viernes gracias', NULL, 'Nuevo'),
+(157, '2015-04-08 18:05:11', 35, '49990156', 'Buenas tardes, la incidencia esta finalizada y no se ha solucionado la averia no ha venido ningun tecnico', NULL, 'Old'),
+(158, '2015-04-09 07:12:48', 324, 'altabox', 'el lunes tendreis en tienda un tecnico', NULL, 'Nuevo'),
+(159, '2015-04-09 07:52:27', 827, 'altabox', 'buenos dias, para solucionar esta incidencia debe dirigirse a su mantenimiento habitual. cancelamos la misma , saludos.', NULL, 'Nuevo'),
+(160, '2015-04-09 08:16:10', 846, '26000003', 'Incidencia repetida. ', NULL, 'Nuevo'),
+(161, '2015-04-09 08:50:27', 107, '26360002', 'Buenos días, \n¿Cuándo tendremos la reparación de este mueble?', NULL, 'Old'),
+(162, '2015-04-09 09:12:06', 564, 'altabox', 'buenos dias , me podeis enviar foto ? gracias', NULL, 'Nuevo'),
+(163, '2015-04-09 09:22:00', 425, 'altabox', 'como comentamos ayer por telefono necesito una foto foto poder  gestionar correctamente la incidencia\ngracias', NULL, 'Nuevo'),
+(164, '2015-04-09 09:29:28', 563, 'altabox', 'buenos dias , intentamos contactar via telefono pero nos es imposible  necesitariamos mas informacion', NULL, 'Nuevo'),
+(165, '2015-04-09 09:33:32', 565, 'altabox', 'buenos dias \nnecesitamos que abrais una incidencia por cada uno de los terminales para saber que telefono es.\nabrid por favor nuevas incidencias que nosotros procederemos a cancelar esta\n\ngracias', NULL, 'Nuevo'),
+(166, '2015-04-09 09:44:21', 7, '46000080', 'hola han dejado el cuello suelto\n', NULL, 'Old'),
+(167, '2015-04-09 09:44:54', 7, '46000080', 'la tablet esta totalmente descolgada y la alarma pita constantemente.', NULL, 'Old'),
+(168, '2015-04-09 10:44:51', 546, 'altabox', 'pasaran el lunes , gracias', NULL, 'Nuevo'),
+(169, '2015-04-09 10:56:21', 547, 'altabox', 'pasaran el lunes a reparar ,gracias', NULL, 'Nuevo'),
+(170, '2015-04-09 11:33:26', 692, '76000046', 'Este terminal continua teniendo la pantalla rota. ', NULL, 'Nuevo'),
+(171, '2015-04-09 11:34:20', 223, '76000046', 'Acudieron ayer a reparar la tablet, y continua igual, no funciona y el soporte continua delgado del marco. ', NULL, 'Nuevo'),
+(172, '2015-04-09 15:20:34', 7, 'altabox', 'Buenas tardes, para que podamos asistir a resolver la incidencia debéis abrir una nueva para poder gestionarla. Muchas gracias, ', NULL, 'Nuevo'),
+(173, '2015-04-09 15:23:03', 577, 'altabox', 'el lunes pasara un tecnico , gracias', NULL, 'Nuevo'),
+(174, '2015-04-09 15:26:24', 839, 'altabox', 'por favor, para este tipo de incidencias teneis que indicar que terminal es el averiado.\n', NULL, 'Nuevo'),
+(175, '2015-04-09 15:26:29', 839, 'altabox', 'gracias\n', NULL, 'Nuevo'),
+(176, '2015-04-09 15:33:15', 35, 'altabox', 'perdon ha sido un error abrimos nueva y la solucionamos en breve.\nmil disculpas', NULL, 'Nuevo');
 
 -- --------------------------------------------------------
 
@@ -2035,17 +2055,19 @@ CREATE TABLE IF NOT EXISTS `ci_sessions` (
 --
 
 INSERT INTO `ci_sessions` (`session_id`, `ip_address`, `user_agent`, `last_activity`, `user_data`) VALUES
-('9fc63d4433f3a0fb4fdb2a4aaa6cf123', '212.89.16.245', 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36', 1428507376, 'a:4:{s:9:"user_data";s:0:"";s:4:"sfid";s:7:"altabox";s:4:"type";s:2:"10";s:9:"logged_in";b:1;}'),
-('b5574e12756b6ac945e3311a3c8fc9cb', '85.62.13.194', 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:25.0) Gecko/20100101 Firefox/25.0', 1428505120, 'a:5:{s:9:"user_data";s:0:"";s:4:"sfid";s:8:"26000116";s:6:"id_pds";s:4:"2891";s:4:"type";s:1:"1";s:9:"logged_in";b:1;}'),
-('f84d8824b9442f454d6317badc99b361', '85.62.13.195', 'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1; WOW64; Trident/4.0; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .N', 1428510046, 'a:5:{s:9:"user_data";s:0:"";s:4:"sfid";s:8:"57000000";s:6:"id_pds";s:4:"2677";s:4:"type";s:1:"1";s:9:"logged_in";b:1;}'),
-('8c7085ec2c7904a842fa8854a8e78249', '213.143.45.44', 'Mozilla/5.0 (Linux; U; Android 4.0.3; es-es; SensationXL_Beats_X315e Build/IML74K) AppleWebKit/534.30 (KHTML, like Gecko', 1428506207, 'a:4:{s:9:"user_data";s:0:"";s:4:"sfid";s:8:"26000071";s:6:"id_pds";s:4:"2783";s:4:"type";s:1:"1";}'),
-('98709ac41baafec83be621117c0fb833', '85.48.208.24', 'Mozilla/5.0 (Windows NT 6.1; rv:36.0) Gecko/20100101 Firefox/36.0', 1428506958, ''),
-('b727e647ebe9d7a7bcdaf280eeb7b14e', '212.170.61.131', 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:37.0) Gecko/20100101 Firefox/37.0', 1428508179, 'a:4:{s:9:"user_data";s:0:"";s:4:"sfid";s:8:"59440094";s:6:"id_pds";s:4:"2274";s:4:"type";s:1:"1";}'),
-('e0502e16405a13827340c1af392d7d9d', '88.26.241.241', 'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1; Trident/4.0; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.4506', 1428508381, 'a:5:{s:9:"user_data";s:0:"";s:4:"sfid";s:8:"26360082";s:6:"id_pds";s:4:"3016";s:4:"type";s:1:"1";s:9:"logged_in";b:1;}'),
-('9d3ad9993ffeb4f06d60851eaff3278e', '88.26.241.241', 'Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko', 1428509725, 'a:5:{s:9:"user_data";s:0:"";s:4:"sfid";s:8:"26360082";s:6:"id_pds";s:4:"3016";s:4:"type";s:1:"1";s:9:"logged_in";b:1;}'),
-('16e3aba7b6faf28e4d8e6f5f500f36c5', '212.89.16.245', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36', 1428508674, 'a:4:{s:9:"user_data";s:0:"";s:4:"sfid";s:7:"altabox";s:4:"type";s:2:"10";s:9:"logged_in";b:1;}'),
-('6f330bb73bd8941d7bee70a8e829eebb', '89.131.93.10', 'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1; Trident/4.0; GTB7.5; .NET4.0C; .NET4.0E; .NET CLR 2.0.50727; .NET CLR', 1428508280, 'a:5:{s:9:"user_data";s:0:"";s:4:"sfid";s:8:"59440269";s:6:"id_pds";s:4:"2137";s:4:"type";s:1:"1";s:9:"logged_in";b:1;}'),
-('926bda6f57286b0225bc38f30bd6e133', '85.62.13.196', 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:25.0) Gecko/20100101 Firefox/25.0', 1428510054, 'a:5:{s:9:"user_data";s:0:"";s:4:"sfid";s:8:"57000000";s:6:"id_pds";s:4:"2677";s:4:"type";s:1:"1";s:9:"logged_in";b:1;}');
+('f24227f566a8e6b847fcf8ae22d23425', '89.167.129.60', 'Mozilla/5.0 (Windows NT 6.3; WOW64; Trident/7.0; LCJB; rv:11.0) like Gecko', 1428593224, 'a:5:{s:9:"user_data";s:0:"";s:4:"sfid";s:8:"45010166";s:6:"id_pds";s:4:"1600";s:4:"type";s:1:"1";s:9:"logged_in";b:1;}'),
+('02aa806edaed1357886764f43f86468e', '89.167.129.60', 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36', 1428593501, 'a:5:{s:9:"user_data";s:0:"";s:4:"sfid";s:8:"45010166";s:6:"id_pds";s:4:"1600";s:4:"type";s:1:"1";s:9:"logged_in";b:1;}'),
+('b53ca73c87cd6207d9157ef855617c87', '85.62.13.196', 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:25.0) Gecko/20100101 Firefox/25.0', 1428594080, 'a:5:{s:9:"user_data";s:0:"";s:4:"sfid";s:8:"59449375";s:6:"id_pds";s:4:"2934";s:4:"type";s:1:"1";s:9:"logged_in";b:1;}'),
+('b362bcf59e7dcc30c06ac914de713c82', '85.62.13.194', 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:25.0) Gecko/20100101 Firefox/25.0', 1428592528, 'a:5:{s:9:"user_data";s:0:"";s:4:"sfid";s:8:"56000083";s:6:"id_pds";s:4:"2863";s:4:"type";s:1:"1";s:9:"logged_in";b:1;}'),
+('a8cdd8f6d6b4d9b101cd564cea080a9d', '85.62.13.195', 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:25.0) Gecko/20100101 Firefox/25.0', 1428593143, 'a:5:{s:9:"user_data";s:0:"";s:4:"sfid";s:8:"56000083";s:6:"id_pds";s:4:"2863";s:4:"type";s:1:"1";s:9:"logged_in";b:1;}'),
+('3d7570818399988d9a676a696b83007b', '212.89.16.245', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36', 1428593276, 'a:5:{s:9:"user_data";s:0:"";s:4:"sfid";s:7:"altabox";s:4:"type";s:2:"10";s:9:"logged_in";b:1;s:10:"xcrud_sess";a:1:{s:40:"e6e1b92dfdbd3edda93cf0f4467222b92a328cca";a:130:{s:3:"key";s:40:"922996c61be45c5ad3b383fe501c1ffb274602a7";s:4:"time";i:1428593280;s:5:"table";s:15:"devices_almacen";s:10:"table_name";s:32:"Inventario dispositivos almacén";s:5:"where";a:0:{}s:8:"order_by";a:3:{s:25:"devices_almacen.id_device";s:3:"asc";s:22:"devices_almacen.status";s:3:"asc";s:34:"devices_almacen.id_devices_almacen";s:3:"asc";}s:8:"relation";a:5:{s:25:"devices_almacen.id_device";a:13:{s:7:"rel_tbl";s:6:"device";s:9:"rel_alias";s:14:"alias782623406";s:9:"rel_field";s:9:"id_device";s:8:"rel_name";s:6:"device";s:9:"rel_where";a:0:{}s:13:"rel_separator";s:1:" ";s:8:"order_by";b:0;s:5:"multi";b:0;s:5:"table";s:15:"devices_almacen";s:5:"field";s:9:"id_device";s:4:"tree";b:0;s:12:"depend_field";s:0:"";s:9:"depend_on";s:0:"";}s:31:"devices_almacen.id_color_device";a:13:{s:7:"rel_tbl";s:12:"color_device";s:9:"rel_alias";s:14:"alias143162316";s:9:"rel_field";s:15:"id_color_device";s:8:"rel_name";s:12:"color_device";s:9:"rel_where";a:0:{}s:13:"rel_separator";s:1:" ";s:8:"order_by";b:0;s:5:"multi";b:0;s:5:"table";s:15:"devices_almacen";s:5:"field";s:15:"id_color_device";s:4:"tree";b:0;s:12:"depend_field";s:0:"";s:9:"depend_on";s:0:"";}s:36:"devices_almacen.id_complement_device";a:13:{s:7:"rel_tbl";s:17:"complement_device";s:9:"rel_alias";s:15:"alias1006009109";s:9:"rel_field";s:20:"id_complement_device";s:8:"rel_name";s:17:"complement_device";s:9:"rel_where";a:0:{}s:13:"rel_separator";s:1:" ";s:8:"order_by";b:0;s:5:"multi";b:0;s:5:"table";s:15:"devices_almacen";s:5:"field";s:20:"id_complement_device";s:4:"tree";b:0;s:12:"depend_field";s:0:"";s:9:"depend_on";s:0:"";}s:32:"devices_almacen.id_status_device";a:13:{s:7:"rel_tbl";s:13:"status_device";s:9:"rel_alias";s:15:"alias1629624435";s:9:"rel_field";s:16:"id_status_device";s:8:"rel_name";s:13:"status_device";s:9:"rel_where";a:0:{}s:13:"rel_separator";s:1:" ";s:8:"order_by";b:0;s:5:"multi";b:0;s:5:"table";s:15:"devices_almacen";s:5:"field";s:16:"id_status_device";s:4:"tree";b:0;s:12:"depend_field";s:0:"";s:9:"depend_on";s:0:"";}s:42:"devices_almacen.id_status_packaging_device";a:13:{s:7:"rel_tbl";s:23:"status_packaging_device";s:9:"rel_alias";s:14:"alias700001800";s:9:"rel_field";s:26:"id_status_packaging_device";s:8:"rel_name";s:23:"status_packaging_device";s:9:"rel_where";a:0:{}s:13:"rel_separator";s:1:" ";s:8:"order_by";b:0;s:5:"multi";b:0;s:5:"table";s:15:"devices_almacen";s:5:"field";s:26:"id_status_packaging_device";s:4:"tree";b:0;s:12:"depend_field";s:0:"";s:9:"depend_on";s:0:"";}}s:13:"fields_create";a:17:{s:34:"devices_almacen.id_devices_almacen";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:18:"id_devices_almacen";s:3:"tab";b:0;}s:20:"devices_almacen.alta";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:4:"alta";s:3:"tab";b:0;}s:25:"devices_almacen.id_device";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:9:"id_device";s:3:"tab";b:0;}s:22:"devices_almacen.serial";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:6:"serial";s:3:"tab";b:0;}s:20:"devices_almacen.IMEI";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:4:"IMEI";s:3:"tab";b:0;}s:19:"devices_almacen.mac";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:3:"mac";s:3:"tab";b:0;}s:23:"devices_almacen.barcode";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:7:"barcode";s:3:"tab";b:0;}s:31:"devices_almacen.id_color_device";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:15:"id_color_device";s:3:"tab";b:0;}s:36:"devices_almacen.id_complement_device";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:20:"id_complement_device";s:3:"tab";b:0;}s:32:"devices_almacen.id_status_device";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:16:"id_status_device";s:3:"tab";b:0;}s:42:"devices_almacen.id_status_packaging_device";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:26:"id_status_packaging_device";s:3:"tab";b:0;}s:29:"devices_almacen.picture_url_1";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:13:"picture_url_1";s:3:"tab";b:0;}s:29:"devices_almacen.picture_url_2";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:13:"picture_url_2";s:3:"tab";b:0;}s:29:"devices_almacen.picture_url_3";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:13:"picture_url_3";s:3:"tab";b:0;}s:27:"devices_almacen.description";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:11:"description";s:3:"tab";b:0;}s:21:"devices_almacen.owner";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:5:"owner";s:3:"tab";b:0;}s:22:"devices_almacen.status";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:6:"status";s:3:"tab";b:0;}}s:11:"fields_edit";a:17:{s:34:"devices_almacen.id_devices_almacen";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:18:"id_devices_almacen";s:3:"tab";b:0;}s:20:"devices_almacen.alta";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:4:"alta";s:3:"tab";b:0;}s:25:"devices_almacen.id_device";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:9:"id_device";s:3:"tab";b:0;}s:22:"devices_almacen.serial";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:6:"serial";s:3:"tab";b:0;}s:20:"devices_almacen.IMEI";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:4:"IMEI";s:3:"tab";b:0;}s:19:"devices_almacen.mac";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:3:"mac";s:3:"tab";b:0;}s:23:"devices_almacen.barcode";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:7:"barcode";s:3:"tab";b:0;}s:31:"devices_almacen.id_color_device";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:15:"id_color_device";s:3:"tab";b:0;}s:36:"devices_almacen.id_complement_device";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:20:"id_complement_device";s:3:"tab";b:0;}s:32:"devices_almacen.id_status_device";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:16:"id_status_device";s:3:"tab";b:0;}s:42:"devices_almacen.id_status_packaging_device";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:26:"id_status_packaging_device";s:3:"tab";b:0;}s:29:"devices_almacen.picture_url_1";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:13:"picture_url_1";s:3:"tab";b:0;}s:29:"devices_almacen.picture_url_2";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:13:"picture_url_2";s:3:"tab";b:0;}s:29:"devices_almacen.picture_url_3";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:13:"picture_url_3";s:3:"tab";b:0;}s:27:"devices_almacen.description";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:11:"description";s:3:"tab";b:0;}s:21:"devices_almacen.owner";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:5:"owner";s:3:"tab";b:0;}s:22:"devices_almacen.status";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:6:"status";s:3:"tab";b:0;}}s:11:"fields_view";a:17:{s:34:"devices_almacen.id_devices_almacen";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:18:"id_devices_almacen";s:3:"tab";b:0;}s:20:"devices_almacen.alta";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:4:"alta";s:3:"tab";b:0;}s:25:"devices_almacen.id_device";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:9:"id_device";s:3:"tab";b:0;}s:22:"devices_almacen.serial";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:6:"serial";s:3:"tab";b:0;}s:20:"devices_almacen.IMEI";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:4:"IMEI";s:3:"tab";b:0;}s:19:"devices_almacen.mac";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:3:"mac";s:3:"tab";b:0;}s:23:"devices_almacen.barcode";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:7:"barcode";s:3:"tab";b:0;}s:31:"devices_almacen.id_color_device";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:15:"id_color_device";s:3:"tab";b:0;}s:36:"devices_almacen.id_complement_device";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:20:"id_complement_device";s:3:"tab";b:0;}s:32:"devices_almacen.id_status_device";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:16:"id_status_device";s:3:"tab";b:0;}s:42:"devices_almacen.id_status_packaging_device";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:26:"id_status_packaging_device";s:3:"tab";b:0;}s:29:"devices_almacen.picture_url_1";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:13:"picture_url_1";s:3:"tab";b:0;}s:29:"devices_almacen.picture_url_2";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:13:"picture_url_2";s:3:"tab";b:0;}s:29:"devices_almacen.picture_url_3";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:13:"picture_url_3";s:3:"tab";b:0;}s:27:"devices_almacen.description";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:11:"description";s:3:"tab";b:0;}s:21:"devices_almacen.owner";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:5:"owner";s:3:"tab";b:0;}s:22:"devices_almacen.status";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:6:"status";s:3:"tab";b:0;}}s:11:"fields_list";a:6:{s:34:"devices_almacen.id_devices_almacen";a:2:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:18:"id_devices_almacen";}s:25:"devices_almacen.id_device";a:2:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:9:"id_device";}s:20:"devices_almacen.IMEI";a:2:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:4:"IMEI";}s:19:"devices_almacen.mac";a:2:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:3:"mac";}s:23:"devices_almacen.barcode";a:2:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:7:"barcode";}s:22:"devices_almacen.status";a:2:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:6:"status";}}s:6:"labels";a:17:{s:34:"devices_almacen.id_devices_almacen";s:4:"Ref.";s:20:"devices_almacen.alta";s:13:"Fecha de alta";s:25:"devices_almacen.id_device";s:11:"Dispositivo";s:22:"devices_almacen.serial";s:12:"Nº de serie";s:20:"devices_almacen.IMEI";s:4:"IMEI";s:19:"devices_almacen.mac";s:3:"MAC";s:23:"devices_almacen.barcode";s:17:"Código de barras";s:31:"devices_almacen.id_color_device";s:5:"Color";s:36:"devices_almacen.id_complement_device";s:12:"Complementos";s:32:"devices_almacen.id_status_device";s:18:"Estado dispositivo";s:42:"devices_almacen.id_status_packaging_device";s:16:"Estado packaging";s:29:"devices_almacen.picture_url_1";s:7:"Foto #1";s:29:"devices_almacen.picture_url_2";s:7:"Foto #2";s:29:"devices_almacen.picture_url_3";s:7:"Foto #3";s:27:"devices_almacen.description";s:11:"Comentarios";s:21:"devices_almacen.owner";s:6:"Dueño";s:22:"devices_almacen.status";s:6:"Estado";}s:13:"columns_names";a:6:{s:34:"devices_almacen.id_devices_almacen";s:4:"Ref.";s:25:"devices_almacen.id_device";s:11:"Dispositivo";s:20:"devices_almacen.IMEI";s:4:"IMEI";s:19:"devices_almacen.mac";s:3:"MAC";s:23:"devices_almacen.barcode";s:17:"Código de barras";s:22:"devices_almacen.status";s:6:"Estado";}s:9:"is_create";b:1;s:7:"is_edit";b:1;s:9:"is_remove";b:1;s:6:"is_csv";b:1;s:7:"buttons";a:0:{}s:19:"validation_required";a:3:{s:34:"devices_almacen.id_devices_almacen";i:1;s:25:"devices_almacen.id_device";i:1;s:22:"devices_almacen.status";i:1;}s:18:"validation_pattern";a:0:{}s:13:"before_insert";a:0:{}s:13:"before_update";a:0:{}s:13:"before_remove";a:0:{}s:12:"after_insert";a:0:{}s:12:"after_update";a:0:{}s:12:"after_remove";a:0:{}s:10:"field_type";a:17:{s:29:"devices_almacen.picture_url_1";s:5:"image";s:29:"devices_almacen.picture_url_2";s:5:"image";s:29:"devices_almacen.picture_url_3";s:5:"image";s:34:"devices_almacen.id_devices_almacen";s:3:"int";s:25:"devices_almacen.id_device";s:8:"relation";s:20:"devices_almacen.alta";s:4:"date";s:20:"devices_almacen.IMEI";s:4:"text";s:19:"devices_almacen.mac";s:4:"text";s:22:"devices_almacen.serial";s:4:"text";s:23:"devices_almacen.barcode";s:4:"text";s:31:"devices_almacen.id_color_device";s:8:"relation";s:36:"devices_almacen.id_complement_device";s:8:"relation";s:32:"devices_almacen.id_status_device";s:8:"relation";s:42:"devices_almacen.id_status_packaging_device";s:8:"relation";s:27:"devices_almacen.description";s:10:"texteditor";s:21:"devices_almacen.owner";s:4:"text";s:22:"devices_almacen.status";s:6:"select";}s:10:"field_attr";a:17:{s:34:"devices_almacen.id_devices_almacen";a:1:{s:9:"maxlength";i:8;}s:25:"devices_almacen.id_device";a:1:{s:9:"maxlength";i:5;}s:20:"devices_almacen.alta";a:0:{}s:20:"devices_almacen.IMEI";a:1:{s:9:"maxlength";i:50;}s:19:"devices_almacen.mac";a:1:{s:9:"maxlength";i:50;}s:22:"devices_almacen.serial";a:1:{s:9:"maxlength";i:50;}s:23:"devices_almacen.barcode";a:1:{s:9:"maxlength";i:50;}s:31:"devices_almacen.id_color_device";a:1:{s:9:"maxlength";i:3;}s:36:"devices_almacen.id_complement_device";a:1:{s:9:"maxlength";i:3;}s:32:"devices_almacen.id_status_device";a:1:{s:9:"maxlength";i:3;}s:42:"devices_almacen.id_status_packaging_device";a:1:{s:9:"maxlength";i:3;}s:29:"devices_almacen.picture_url_1";a:1:{s:9:"maxlength";i:200;}s:29:"devices_almacen.picture_url_2";a:1:{s:9:"maxlength";i:200;}s:29:"devices_almacen.picture_url_3";a:1:{s:9:"maxlength";i:200;}s:27:"devices_almacen.description";a:0:{}s:21:"devices_almacen.owner";a:1:{s:9:"maxlength";i:5;}s:22:"devices_almacen.status";a:2:{s:9:"maxlength";i:0;s:6:"values";s:39:"''En stock'',''Reservado'',''Enviado'',''Baja''";}}s:5:"limit";s:2:"10";s:10:"limit_list";a:5:{i:0;i:10;i:1;s:2:"25";i:2;s:2:"50";i:3;s:3:"100";i:4;s:3:"all";}s:10:"column_cut";i:50;s:15:"column_cut_list";a:0:{}s:9:"no_editor";a:0:{}s:21:"show_primary_ai_field";b:0;s:22:"show_primary_ai_column";b:1;s:8:"disabled";a:1:{s:34:"devices_almacen.id_devices_almacen";a:4:{s:4:"list";i:1;s:6:"create";i:1;s:4:"edit";i:1;s:4:"view";i:1;}}s:8:"readonly";a:0:{}s:9:"benchmark";b:0;s:14:"search_pattern";a:2:{i:0;s:1:"%";i:1;s:1:"%";}s:10:"connection";b:0;s:14:"remove_confirm";b:1;s:13:"upload_folder";a:0:{}s:13:"upload_config";a:3:{s:29:"devices_almacen.picture_url_1";a:0:{}s:29:"devices_almacen.picture_url_2";a:0:{}s:29:"devices_almacen.picture_url_3";a:0:{}}s:8:"pass_var";a:0:{}s:14:"reverse_fields";a:4:{s:4:"list";b:0;s:6:"create";b:0;s:4:"edit";b:0;s:4:"view";b:0;}s:9:"no_quotes";a:0:{}s:20:"inner_table_instance";a:0:{}s:11:"inner_where";a:0:{}s:6:"unique";a:1:{s:34:"devices_almacen.id_devices_almacen";b:1;}s:5:"theme";s:9:"bootstrap";s:12:"is_duplicate";b:0;s:11:"links_label";a:0:{}s:12:"emails_label";a:0:{}s:3:"sum";a:0:{}s:12:"alert_create";N;s:10:"alert_edit";N;s:9:"is_search";b:1;s:8:"is_print";b:1;s:13:"is_pagination";b:1;s:12:"is_limitlist";b:1;s:11:"is_sortable";b:1;s:7:"is_list";b:1;s:9:"subselect";a:0:{}s:16:"subselect_before";a:0:{}s:9:"highlight";a:0:{}s:13:"highlight_row";a:0:{}s:5:"modal";a:3:{s:29:"devices_almacen.picture_url_1";b:0;s:29:"devices_almacen.picture_url_2";b:0;s:29:"devices_almacen.picture_url_3";b:0;}s:12:"column_class";a:0:{}s:9:"no_select";a:0:{}s:8:"is_inner";b:0;s:4:"join";a:0:{}s:11:"fk_relation";a:0:{}s:8:"is_title";b:1;s:10:"is_numbers";b:0;s:8:"language";s:2:"es";s:12:"field_params";a:0:{}s:17:"mass_alert_create";a:0:{}s:15:"mass_alert_edit";a:0:{}s:15:"column_callback";a:0:{}s:14:"field_callback";a:0:{}s:14:"replace_insert";a:0:{}s:14:"replace_update";a:0:{}s:14:"replace_remove";a:0:{}s:20:"send_external_create";a:0:{}s:18:"send_external_edit";a:0:{}s:14:"column_pattern";a:0:{}s:10:"field_tabs";a:0:{}s:12:"field_marker";a:0:{}s:7:"is_view";b:1;s:13:"field_tooltip";a:0:{}s:13:"table_tooltip";a:0:{}s:14:"column_tooltip";a:0:{}s:14:"search_columns";a:0:{}s:14:"search_default";N;s:12:"column_width";a:0:{}s:6:"before";s:4:"list";s:13:"before_upload";a:0:{}s:12:"after_upload";a:0:{}s:12:"after_resize";a:0:{}s:11:"custom_vars";a:0:{}s:7:"tabdesc";a:0:{}s:11:"column_name";a:0:{}s:14:"upload_to_save";a:0:{}s:16:"upload_to_remove";a:0:{}s:8:"defaults";a:17:{s:29:"devices_almacen.picture_url_1";b:0;s:29:"devices_almacen.picture_url_2";b:0;s:29:"devices_almacen.picture_url_3";b:0;s:34:"devices_almacen.id_devices_almacen";N;s:25:"devices_almacen.id_device";N;s:20:"devices_almacen.alta";N;s:20:"devices_almacen.IMEI";N;s:19:"devices_almacen.mac";N;s:22:"devices_almacen.serial";N;s:23:"devices_almacen.barcode";N;s:31:"devices_almacen.id_color_device";N;s:36:"devices_almacen.id_complement_device";N;s:32:"devices_almacen.id_status_device";N;s:42:"devices_almacen.id_status_packaging_device";N;s:27:"devices_almacen.description";N;s:21:"devices_almacen.owner";N;s:22:"devices_almacen.status";s:8:"En stock";}s:6:"search";i:1;s:11:"inner_value";b:0;s:9:"bit_field";a:0:{}s:11:"point_field";a:0:{}s:16:"buttons_position";s:5:"right";s:14:"grid_condition";a:0:{}s:9:"condition";a:0:{}s:11:"hide_button";a:0:{}s:8:"set_lang";a:0:{}s:8:"table_ro";b:0;s:17:"grid_restrictions";a:0:{}s:9:"load_view";a:4:{s:4:"list";s:19:"xcrud_list_view.php";s:6:"create";s:21:"xcrud_detail_view.php";s:4:"edit";s:21:"xcrud_detail_view.php";s:4:"view";s:21:"xcrud_detail_view.php";}s:6:"action";a:0:{}s:6:"prefix";s:0:"";s:5:"query";s:0:"";s:11:"default_tab";b:0;s:10:"strip_tags";b:1;s:11:"safe_output";b:0;s:11:"before_list";a:0:{}s:13:"before_create";a:0:{}s:11:"before_edit";a:0:{}s:11:"before_view";a:0:{}s:14:"lists_null_opt";b:1;s:13:"custom_fields";a:0:{}s:11:"date_format";a:2:{s:5:"php_d";s:5:"d.m.Y";s:5:"php_t";s:5:"H:i:s";}}}}'),
+('35252591d0c00295c51932503136b38a', '212.89.16.245', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36', 1428593595, 'a:5:{s:9:"user_data";s:0:"";s:4:"sfid";s:7:"altabox";s:4:"type";s:2:"10";s:9:"logged_in";b:1;s:10:"xcrud_sess";a:1:{s:40:"a3afd62fbfcdfaede8c2998b57cdc7443259de62";a:130:{s:3:"key";s:40:"70fb7d7d4a2aef061eda0451dad4a763a035f5b1";s:4:"time";i:1428579174;s:5:"table";s:15:"devices_almacen";s:10:"table_name";s:32:"Inventario dispositivos almacén";s:5:"where";a:0:{}s:8:"order_by";a:3:{s:25:"devices_almacen.id_device";s:3:"asc";s:22:"devices_almacen.status";s:3:"asc";s:34:"devices_almacen.id_devices_almacen";s:3:"asc";}s:8:"relation";a:5:{s:25:"devices_almacen.id_device";a:13:{s:7:"rel_tbl";s:6:"device";s:9:"rel_alias";s:15:"alias1199317183";s:9:"rel_field";s:9:"id_device";s:8:"rel_name";s:6:"device";s:9:"rel_where";a:0:{}s:13:"rel_separator";s:1:" ";s:8:"order_by";b:0;s:5:"multi";b:0;s:5:"table";s:15:"devices_almacen";s:5:"field";s:9:"id_device";s:4:"tree";b:0;s:12:"depend_field";s:0:"";s:9:"depend_on";s:0:"";}s:31:"devices_almacen.id_color_device";a:13:{s:7:"rel_tbl";s:12:"color_device";s:9:"rel_alias";s:15:"alias1561903060";s:9:"rel_field";s:15:"id_color_device";s:8:"rel_name";s:12:"color_device";s:9:"rel_where";a:0:{}s:13:"rel_separator";s:1:" ";s:8:"order_by";b:0;s:5:"multi";b:0;s:5:"table";s:15:"devices_almacen";s:5:"field";s:15:"id_color_device";s:4:"tree";b:0;s:12:"depend_field";s:0:"";s:9:"depend_on";s:0:"";}s:36:"devices_almacen.id_complement_device";a:13:{s:7:"rel_tbl";s:17:"complement_device";s:9:"rel_alias";s:14:"alias990246651";s:9:"rel_field";s:20:"id_complement_device";s:8:"rel_name";s:17:"complement_device";s:9:"rel_where";a:0:{}s:13:"rel_separator";s:1:" ";s:8:"order_by";b:0;s:5:"multi";b:0;s:5:"table";s:15:"devices_almacen";s:5:"field";s:20:"id_complement_device";s:4:"tree";b:0;s:12:"depend_field";s:0:"";s:9:"depend_on";s:0:"";}s:32:"devices_almacen.id_status_device";a:13:{s:7:"rel_tbl";s:13:"status_device";s:9:"rel_alias";s:14:"alias401570068";s:9:"rel_field";s:16:"id_status_device";s:8:"rel_name";s:13:"status_device";s:9:"rel_where";a:0:{}s:13:"rel_separator";s:1:" ";s:8:"order_by";b:0;s:5:"multi";b:0;s:5:"table";s:15:"devices_almacen";s:5:"field";s:16:"id_status_device";s:4:"tree";b:0;s:12:"depend_field";s:0:"";s:9:"depend_on";s:0:"";}s:42:"devices_almacen.id_status_packaging_device";a:13:{s:7:"rel_tbl";s:23:"status_packaging_device";s:9:"rel_alias";s:15:"alias1833548357";s:9:"rel_field";s:26:"id_status_packaging_device";s:8:"rel_name";s:23:"status_packaging_device";s:9:"rel_where";a:0:{}s:13:"rel_separator";s:1:" ";s:8:"order_by";b:0;s:5:"multi";b:0;s:5:"table";s:15:"devices_almacen";s:5:"field";s:26:"id_status_packaging_device";s:4:"tree";b:0;s:12:"depend_field";s:0:"";s:9:"depend_on";s:0:"";}}s:13:"fields_create";a:17:{s:34:"devices_almacen.id_devices_almacen";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:18:"id_devices_almacen";s:3:"tab";b:0;}s:20:"devices_almacen.alta";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:4:"alta";s:3:"tab";b:0;}s:25:"devices_almacen.id_device";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:9:"id_device";s:3:"tab";b:0;}s:22:"devices_almacen.serial";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:6:"serial";s:3:"tab";b:0;}s:20:"devices_almacen.IMEI";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:4:"IMEI";s:3:"tab";b:0;}s:19:"devices_almacen.mac";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:3:"mac";s:3:"tab";b:0;}s:23:"devices_almacen.barcode";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:7:"barcode";s:3:"tab";b:0;}s:31:"devices_almacen.id_color_device";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:15:"id_color_device";s:3:"tab";b:0;}s:36:"devices_almacen.id_complement_device";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:20:"id_complement_device";s:3:"tab";b:0;}s:32:"devices_almacen.id_status_device";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:16:"id_status_device";s:3:"tab";b:0;}s:42:"devices_almacen.id_status_packaging_device";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:26:"id_status_packaging_device";s:3:"tab";b:0;}s:29:"devices_almacen.picture_url_1";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:13:"picture_url_1";s:3:"tab";b:0;}s:29:"devices_almacen.picture_url_2";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:13:"picture_url_2";s:3:"tab";b:0;}s:29:"devices_almacen.picture_url_3";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:13:"picture_url_3";s:3:"tab";b:0;}s:27:"devices_almacen.description";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:11:"description";s:3:"tab";b:0;}s:21:"devices_almacen.owner";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:5:"owner";s:3:"tab";b:0;}s:22:"devices_almacen.status";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:6:"status";s:3:"tab";b:0;}}s:11:"fields_edit";a:17:{s:34:"devices_almacen.id_devices_almacen";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:18:"id_devices_almacen";s:3:"tab";b:0;}s:20:"devices_almacen.alta";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:4:"alta";s:3:"tab";b:0;}s:25:"devices_almacen.id_device";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:9:"id_device";s:3:"tab";b:0;}s:22:"devices_almacen.serial";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:6:"serial";s:3:"tab";b:0;}s:20:"devices_almacen.IMEI";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:4:"IMEI";s:3:"tab";b:0;}s:19:"devices_almacen.mac";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:3:"mac";s:3:"tab";b:0;}s:23:"devices_almacen.barcode";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:7:"barcode";s:3:"tab";b:0;}s:31:"devices_almacen.id_color_device";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:15:"id_color_device";s:3:"tab";b:0;}s:36:"devices_almacen.id_complement_device";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:20:"id_complement_device";s:3:"tab";b:0;}s:32:"devices_almacen.id_status_device";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:16:"id_status_device";s:3:"tab";b:0;}s:42:"devices_almacen.id_status_packaging_device";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:26:"id_status_packaging_device";s:3:"tab";b:0;}s:29:"devices_almacen.picture_url_1";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:13:"picture_url_1";s:3:"tab";b:0;}s:29:"devices_almacen.picture_url_2";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:13:"picture_url_2";s:3:"tab";b:0;}s:29:"devices_almacen.picture_url_3";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:13:"picture_url_3";s:3:"tab";b:0;}s:27:"devices_almacen.description";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:11:"description";s:3:"tab";b:0;}s:21:"devices_almacen.owner";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:5:"owner";s:3:"tab";b:0;}s:22:"devices_almacen.status";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:6:"status";s:3:"tab";b:0;}}s:11:"fields_view";a:17:{s:34:"devices_almacen.id_devices_almacen";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:18:"id_devices_almacen";s:3:"tab";b:0;}s:20:"devices_almacen.alta";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:4:"alta";s:3:"tab";b:0;}s:25:"devices_almacen.id_device";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:9:"id_device";s:3:"tab";b:0;}s:22:"devices_almacen.serial";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:6:"serial";s:3:"tab";b:0;}s:20:"devices_almacen.IMEI";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:4:"IMEI";s:3:"tab";b:0;}s:19:"devices_almacen.mac";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:3:"mac";s:3:"tab";b:0;}s:23:"devices_almacen.barcode";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:7:"barcode";s:3:"tab";b:0;}s:31:"devices_almacen.id_color_device";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:15:"id_color_device";s:3:"tab";b:0;}s:36:"devices_almacen.id_complement_device";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:20:"id_complement_device";s:3:"tab";b:0;}s:32:"devices_almacen.id_status_device";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:16:"id_status_device";s:3:"tab";b:0;}s:42:"devices_almacen.id_status_packaging_device";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:26:"id_status_packaging_device";s:3:"tab";b:0;}s:29:"devices_almacen.picture_url_1";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:13:"picture_url_1";s:3:"tab";b:0;}s:29:"devices_almacen.picture_url_2";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:13:"picture_url_2";s:3:"tab";b:0;}s:29:"devices_almacen.picture_url_3";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:13:"picture_url_3";s:3:"tab";b:0;}s:27:"devices_almacen.description";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:11:"description";s:3:"tab";b:0;}s:21:"devices_almacen.owner";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:5:"owner";s:3:"tab";b:0;}s:22:"devices_almacen.status";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:6:"status";s:3:"tab";b:0;}}s:11:"fields_list";a:6:{s:34:"devices_almacen.id_devices_almacen";a:2:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:18:"id_devices_almacen";}s:25:"devices_almacen.id_device";a:2:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:9:"id_device";}s:20:"devices_almacen.IMEI";a:2:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:4:"IMEI";}s:19:"devices_almacen.mac";a:2:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:3:"mac";}s:23:"devices_almacen.barcode";a:2:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:7:"barcode";}s:22:"devices_almacen.status";a:2:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:6:"status";}}s:6:"labels";a:17:{s:34:"devices_almacen.id_devices_almacen";s:4:"Ref.";s:20:"devices_almacen.alta";s:13:"Fecha de alta";s:25:"devices_almacen.id_device";s:11:"Dispositivo";s:22:"devices_almacen.serial";s:12:"Nº de serie";s:20:"devices_almacen.IMEI";s:4:"IMEI";s:19:"devices_almacen.mac";s:3:"MAC";s:23:"devices_almacen.barcode";s:17:"Código de barras";s:31:"devices_almacen.id_color_device";s:5:"Color";s:36:"devices_almacen.id_complement_device";s:12:"Complementos";s:32:"devices_almacen.id_status_device";s:18:"Estado dispositivo";s:42:"devices_almacen.id_status_packaging_device";s:16:"Estado packaging";s:29:"devices_almacen.picture_url_1";s:7:"Foto #1";s:29:"devices_almacen.picture_url_2";s:7:"Foto #2";s:29:"devices_almacen.picture_url_3";s:7:"Foto #3";s:27:"devices_almacen.description";s:11:"Comentarios";s:21:"devices_almacen.owner";s:6:"Dueño";s:22:"devices_almacen.status";s:6:"Estado";}s:13:"columns_names";a:6:{s:34:"devices_almacen.id_devices_almacen";s:4:"Ref.";s:25:"devices_almacen.id_device";s:11:"Dispositivo";s:20:"devices_almacen.IMEI";s:4:"IMEI";s:19:"devices_almacen.mac";s:3:"MAC";s:23:"devices_almacen.barcode";s:17:"Código de barras";s:22:"devices_almacen.status";s:6:"Estado";}s:9:"is_create";b:1;s:7:"is_edit";b:1;s:9:"is_remove";b:1;s:6:"is_csv";b:1;s:7:"buttons";a:0:{}s:19:"validation_required";a:3:{s:34:"devices_almacen.id_devices_almacen";i:1;s:25:"devices_almacen.id_device";i:1;s:22:"devices_almacen.status";i:1;}s:18:"validation_pattern";a:0:{}s:13:"before_insert";a:0:{}s:13:"before_update";a:0:{}s:13:"before_remove";a:0:{}s:12:"after_insert";a:0:{}s:12:"after_update";a:0:{}s:12:"after_remove";a:0:{}s:10:"field_type";a:17:{s:29:"devices_almacen.picture_url_1";s:5:"image";s:29:"devices_almacen.picture_url_2";s:5:"image";s:29:"devices_almacen.picture_url_3";s:5:"image";s:34:"devices_almacen.id_devices_almacen";s:3:"int";s:25:"devices_almacen.id_device";s:8:"relation";s:20:"devices_almacen.alta";s:4:"date";s:20:"devices_almacen.IMEI";s:4:"text";s:19:"devices_almacen.mac";s:4:"text";s:22:"devices_almacen.serial";s:4:"text";s:23:"devices_almacen.barcode";s:4:"text";s:31:"devices_almacen.id_color_device";s:8:"relation";s:36:"devices_almacen.id_complement_device";s:8:"relation";s:32:"devices_almacen.id_status_device";s:8:"relation";s:42:"devices_almacen.id_status_packaging_device";s:8:"relation";s:27:"devices_almacen.description";s:10:"texteditor";s:21:"devices_almacen.owner";s:4:"text";s:22:"devices_almacen.status";s:6:"select";}s:10:"field_attr";a:17:{s:34:"devices_almacen.id_devices_almacen";a:1:{s:9:"maxlength";i:8;}s:25:"devices_almacen.id_device";a:1:{s:9:"maxlength";i:5;}s:20:"devices_almacen.alta";a:0:{}s:20:"devices_almacen.IMEI";a:1:{s:9:"maxlength";i:50;}s:19:"devices_almacen.mac";a:1:{s:9:"maxlength";i:50;}s:22:"devices_almacen.serial";a:1:{s:9:"maxlength";i:50;}s:23:"devices_almacen.barcode";a:1:{s:9:"maxlength";i:50;}s:31:"devices_almacen.id_color_device";a:1:{s:9:"maxlength";i:3;}s:36:"devices_almacen.id_complement_device";a:1:{s:9:"maxlength";i:3;}s:32:"devices_almacen.id_status_device";a:1:{s:9:"maxlength";i:3;}s:42:"devices_almacen.id_status_packaging_device";a:1:{s:9:"maxlength";i:3;}s:29:"devices_almacen.picture_url_1";a:1:{s:9:"maxlength";i:200;}s:29:"devices_almacen.picture_url_2";a:1:{s:9:"maxlength";i:200;}s:29:"devices_almacen.picture_url_3";a:1:{s:9:"maxlength";i:200;}s:27:"devices_almacen.description";a:0:{}s:21:"devices_almacen.owner";a:1:{s:9:"maxlength";i:5;}s:22:"devices_almacen.status";a:2:{s:9:"maxlength";i:0;s:6:"values";s:39:"''En stock'',''Reservado'',''Enviado'',''Baja''";}}s:5:"limit";s:2:"10";s:10:"limit_list";a:5:{i:0;i:10;i:1;s:2:"25";i:2;s:2:"50";i:3;s:3:"100";i:4;s:3:"all";}s:10:"column_cut";i:50;s:15:"column_cut_list";a:0:{}s:9:"no_editor";a:0:{}s:21:"show_primary_ai_field";b:0;s:22:"show_primary_ai_column";b:1;s:8:"disabled";a:1:{s:34:"devices_almacen.id_devices_almacen";a:4:{s:4:"list";i:1;s:6:"create";i:1;s:4:"edit";i:1;s:4:"view";i:1;}}s:8:"readonly";a:0:{}s:9:"benchmark";b:0;s:14:"search_pattern";a:2:{i:0;s:1:"%";i:1;s:1:"%";}s:10:"connection";b:0;s:14:"remove_confirm";b:1;s:13:"upload_folder";a:0:{}s:13:"upload_config";a:3:{s:29:"devices_almacen.picture_url_1";a:0:{}s:29:"devices_almacen.picture_url_2";a:0:{}s:29:"devices_almacen.picture_url_3";a:0:{}}s:8:"pass_var";a:0:{}s:14:"reverse_fields";a:4:{s:4:"list";b:0;s:6:"create";b:0;s:4:"edit";b:0;s:4:"view";b:0;}s:9:"no_quotes";a:0:{}s:20:"inner_table_instance";a:0:{}s:11:"inner_where";a:0:{}s:6:"unique";a:1:{s:34:"devices_almacen.id_devices_almacen";b:1;}s:5:"theme";s:9:"bootstrap";s:12:"is_duplicate";b:0;s:11:"links_label";a:0:{}s:12:"emails_label";a:0:{}s:3:"sum";a:0:{}s:12:"alert_create";N;s:10:"alert_edit";N;s:9:"is_search";b:1;s:8:"is_print";b:1;s:13:"is_pagination";b:1;s:12:"is_limitlist";b:1;s:11:"is_sortable";b:1;s:7:"is_list";b:1;s:9:"subselect";a:0:{}s:16:"subselect_before";a:0:{}s:9:"highlight";a:0:{}s:13:"highlight_row";a:0:{}s:5:"modal";a:3:{s:29:"devices_almacen.picture_url_1";b:0;s:29:"devices_almacen.picture_url_2";b:0;s:29:"devices_almacen.picture_url_3";b:0;}s:12:"column_class";a:0:{}s:9:"no_select";a:0:{}s:8:"is_inner";b:0;s:4:"join";a:0:{}s:11:"fk_relation";a:0:{}s:8:"is_title";b:1;s:10:"is_numbers";b:0;s:8:"language";s:2:"es";s:12:"field_params";a:0:{}s:17:"mass_alert_create";a:0:{}s:15:"mass_alert_edit";a:0:{}s:15:"column_callback";a:0:{}s:14:"field_callback";a:0:{}s:14:"replace_insert";a:0:{}s:14:"replace_update";a:0:{}s:14:"replace_remove";a:0:{}s:20:"send_external_create";a:0:{}s:18:"send_external_edit";a:0:{}s:14:"column_pattern";a:0:{}s:10:"field_tabs";a:0:{}s:12:"field_marker";a:0:{}s:7:"is_view";b:1;s:13:"field_tooltip";a:0:{}s:13:"table_tooltip";a:0:{}s:14:"column_tooltip";a:0:{}s:14:"search_columns";a:0:{}s:14:"search_default";N;s:12:"column_width";a:0:{}s:6:"before";s:4:"list";s:13:"before_upload";a:0:{}s:12:"after_upload";a:0:{}s:12:"after_resize";a:0:{}s:11:"custom_vars";a:0:{}s:7:"tabdesc";a:0:{}s:11:"column_name";a:0:{}s:14:"upload_to_save";a:0:{}s:16:"upload_to_remove";a:0:{}s:8:"defaults";a:17:{s:29:"devices_almacen.picture_url_1";b:0;s:29:"devices_almacen.picture_url_2";b:0;s:29:"devices_almacen.picture_url_3";b:0;s:34:"devices_almacen.id_devices_almacen";N;s:25:"devices_almacen.id_device";N;s:20:"devices_almacen.alta";N;s:20:"devices_almacen.IMEI";N;s:19:"devices_almacen.mac";N;s:22:"devices_almacen.serial";N;s:23:"devices_almacen.barcode";N;s:31:"devices_almacen.id_color_device";N;s:36:"devices_almacen.id_complement_device";N;s:32:"devices_almacen.id_status_device";N;s:42:"devices_almacen.id_status_packaging_device";N;s:27:"devices_almacen.description";N;s:21:"devices_almacen.owner";N;s:22:"devices_almacen.status";s:8:"En stock";}s:6:"search";i:0;s:11:"inner_value";b:0;s:9:"bit_field";a:0:{}s:11:"point_field";a:0:{}s:16:"buttons_position";s:5:"right";s:14:"grid_condition";a:0:{}s:9:"condition";a:0:{}s:11:"hide_button";a:0:{}s:8:"set_lang";a:0:{}s:8:"table_ro";b:0;s:17:"grid_restrictions";a:0:{}s:9:"load_view";a:4:{s:4:"list";s:19:"xcrud_list_view.php";s:6:"create";s:21:"xcrud_detail_view.php";s:4:"edit";s:21:"xcrud_detail_view.php";s:4:"view";s:21:"xcrud_detail_view.php";}s:6:"action";a:0:{}s:6:"prefix";s:0:"";s:5:"query";s:0:"";s:11:"default_tab";b:0;s:10:"strip_tags";b:1;s:11:"safe_output";b:0;s:11:"before_list";a:0:{}s:13:"before_create";a:0:{}s:11:"before_edit";a:0:{}s:11:"before_view";a:0:{}s:14:"lists_null_opt";b:1;s:13:"custom_fields";a:0:{}s:11:"date_format";a:2:{s:5:"php_d";s:5:"d.m.Y";s:5:"php_t";s:5:"H:i:s";}}}}'),
+('4052537435e6e03aeaa8d1e1aa34bb7e', '88.1.6.140', 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.1; Trident/4.0; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .NET CLR ', 1428587004, 'a:5:{s:9:"user_data";s:0:"";s:4:"sfid";s:8:"18810003";s:6:"id_pds";s:4:"2067";s:4:"type";s:1:"1";s:9:"logged_in";b:1;}');
+INSERT INTO `ci_sessions` (`session_id`, `ip_address`, `user_agent`, `last_activity`, `user_data`) VALUES
+('ceda3b5d46131398af84c649eaa52dd1', '212.89.16.245', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36', 1428593647, 'a:5:{s:9:"user_data";s:0:"";s:4:"sfid";s:7:"altabox";s:4:"type";s:2:"10";s:9:"logged_in";b:1;s:10:"xcrud_sess";a:1:{s:40:"d72737a3aad1f8ffc47e75fbd73bb3ae3d958e26";a:130:{s:3:"key";s:40:"2a40b859e124aba33db598b460b073c7b44d90f8";s:4:"time";i:1428583013;s:5:"table";s:15:"devices_almacen";s:10:"table_name";s:32:"Inventario dispositivos almacén";s:5:"where";a:0:{}s:8:"order_by";a:3:{s:25:"devices_almacen.id_device";s:3:"asc";s:22:"devices_almacen.status";s:3:"asc";s:34:"devices_almacen.id_devices_almacen";s:3:"asc";}s:8:"relation";a:5:{s:25:"devices_almacen.id_device";a:13:{s:7:"rel_tbl";s:6:"device";s:9:"rel_alias";s:14:"alias593306477";s:9:"rel_field";s:9:"id_device";s:8:"rel_name";s:6:"device";s:9:"rel_where";a:0:{}s:13:"rel_separator";s:1:" ";s:8:"order_by";b:0;s:5:"multi";b:0;s:5:"table";s:15:"devices_almacen";s:5:"field";s:9:"id_device";s:4:"tree";b:0;s:12:"depend_field";s:0:"";s:9:"depend_on";s:0:"";}s:31:"devices_almacen.id_color_device";a:13:{s:7:"rel_tbl";s:12:"color_device";s:9:"rel_alias";s:14:"alias732062873";s:9:"rel_field";s:15:"id_color_device";s:8:"rel_name";s:12:"color_device";s:9:"rel_where";a:0:{}s:13:"rel_separator";s:1:" ";s:8:"order_by";b:0;s:5:"multi";b:0;s:5:"table";s:15:"devices_almacen";s:5:"field";s:15:"id_color_device";s:4:"tree";b:0;s:12:"depend_field";s:0:"";s:9:"depend_on";s:0:"";}s:36:"devices_almacen.id_complement_device";a:13:{s:7:"rel_tbl";s:17:"complement_device";s:9:"rel_alias";s:15:"alias1734247347";s:9:"rel_field";s:20:"id_complement_device";s:8:"rel_name";s:17:"complement_device";s:9:"rel_where";a:0:{}s:13:"rel_separator";s:1:" ";s:8:"order_by";b:0;s:5:"multi";b:0;s:5:"table";s:15:"devices_almacen";s:5:"field";s:20:"id_complement_device";s:4:"tree";b:0;s:12:"depend_field";s:0:"";s:9:"depend_on";s:0:"";}s:32:"devices_almacen.id_status_device";a:13:{s:7:"rel_tbl";s:13:"status_device";s:9:"rel_alias";s:15:"alias1216123267";s:9:"rel_field";s:16:"id_status_device";s:8:"rel_name";s:13:"status_device";s:9:"rel_where";a:0:{}s:13:"rel_separator";s:1:" ";s:8:"order_by";b:0;s:5:"multi";b:0;s:5:"table";s:15:"devices_almacen";s:5:"field";s:16:"id_status_device";s:4:"tree";b:0;s:12:"depend_field";s:0:"";s:9:"depend_on";s:0:"";}s:42:"devices_almacen.id_status_packaging_device";a:13:{s:7:"rel_tbl";s:23:"status_packaging_device";s:9:"rel_alias";s:15:"alias1911267509";s:9:"rel_field";s:26:"id_status_packaging_device";s:8:"rel_name";s:23:"status_packaging_device";s:9:"rel_where";a:0:{}s:13:"rel_separator";s:1:" ";s:8:"order_by";b:0;s:5:"multi";b:0;s:5:"table";s:15:"devices_almacen";s:5:"field";s:26:"id_status_packaging_device";s:4:"tree";b:0;s:12:"depend_field";s:0:"";s:9:"depend_on";s:0:"";}}s:13:"fields_create";a:17:{s:34:"devices_almacen.id_devices_almacen";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:18:"id_devices_almacen";s:3:"tab";b:0;}s:20:"devices_almacen.alta";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:4:"alta";s:3:"tab";b:0;}s:25:"devices_almacen.id_device";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:9:"id_device";s:3:"tab";b:0;}s:22:"devices_almacen.serial";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:6:"serial";s:3:"tab";b:0;}s:20:"devices_almacen.IMEI";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:4:"IMEI";s:3:"tab";b:0;}s:19:"devices_almacen.mac";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:3:"mac";s:3:"tab";b:0;}s:23:"devices_almacen.barcode";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:7:"barcode";s:3:"tab";b:0;}s:31:"devices_almacen.id_color_device";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:15:"id_color_device";s:3:"tab";b:0;}s:36:"devices_almacen.id_complement_device";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:20:"id_complement_device";s:3:"tab";b:0;}s:32:"devices_almacen.id_status_device";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:16:"id_status_device";s:3:"tab";b:0;}s:42:"devices_almacen.id_status_packaging_device";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:26:"id_status_packaging_device";s:3:"tab";b:0;}s:29:"devices_almacen.picture_url_1";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:13:"picture_url_1";s:3:"tab";b:0;}s:29:"devices_almacen.picture_url_2";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:13:"picture_url_2";s:3:"tab";b:0;}s:29:"devices_almacen.picture_url_3";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:13:"picture_url_3";s:3:"tab";b:0;}s:27:"devices_almacen.description";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:11:"description";s:3:"tab";b:0;}s:21:"devices_almacen.owner";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:5:"owner";s:3:"tab";b:0;}s:22:"devices_almacen.status";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:6:"status";s:3:"tab";b:0;}}s:11:"fields_edit";a:17:{s:34:"devices_almacen.id_devices_almacen";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:18:"id_devices_almacen";s:3:"tab";b:0;}s:20:"devices_almacen.alta";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:4:"alta";s:3:"tab";b:0;}s:25:"devices_almacen.id_device";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:9:"id_device";s:3:"tab";b:0;}s:22:"devices_almacen.serial";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:6:"serial";s:3:"tab";b:0;}s:20:"devices_almacen.IMEI";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:4:"IMEI";s:3:"tab";b:0;}s:19:"devices_almacen.mac";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:3:"mac";s:3:"tab";b:0;}s:23:"devices_almacen.barcode";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:7:"barcode";s:3:"tab";b:0;}s:31:"devices_almacen.id_color_device";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:15:"id_color_device";s:3:"tab";b:0;}s:36:"devices_almacen.id_complement_device";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:20:"id_complement_device";s:3:"tab";b:0;}s:32:"devices_almacen.id_status_device";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:16:"id_status_device";s:3:"tab";b:0;}s:42:"devices_almacen.id_status_packaging_device";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:26:"id_status_packaging_device";s:3:"tab";b:0;}s:29:"devices_almacen.picture_url_1";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:13:"picture_url_1";s:3:"tab";b:0;}s:29:"devices_almacen.picture_url_2";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:13:"picture_url_2";s:3:"tab";b:0;}s:29:"devices_almacen.picture_url_3";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:13:"picture_url_3";s:3:"tab";b:0;}s:27:"devices_almacen.description";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:11:"description";s:3:"tab";b:0;}s:21:"devices_almacen.owner";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:5:"owner";s:3:"tab";b:0;}s:22:"devices_almacen.status";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:6:"status";s:3:"tab";b:0;}}s:11:"fields_view";a:17:{s:34:"devices_almacen.id_devices_almacen";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:18:"id_devices_almacen";s:3:"tab";b:0;}s:20:"devices_almacen.alta";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:4:"alta";s:3:"tab";b:0;}s:25:"devices_almacen.id_device";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:9:"id_device";s:3:"tab";b:0;}s:22:"devices_almacen.serial";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:6:"serial";s:3:"tab";b:0;}s:20:"devices_almacen.IMEI";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:4:"IMEI";s:3:"tab";b:0;}s:19:"devices_almacen.mac";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:3:"mac";s:3:"tab";b:0;}s:23:"devices_almacen.barcode";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:7:"barcode";s:3:"tab";b:0;}s:31:"devices_almacen.id_color_device";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:15:"id_color_device";s:3:"tab";b:0;}s:36:"devices_almacen.id_complement_device";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:20:"id_complement_device";s:3:"tab";b:0;}s:32:"devices_almacen.id_status_device";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:16:"id_status_device";s:3:"tab";b:0;}s:42:"devices_almacen.id_status_packaging_device";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:26:"id_status_packaging_device";s:3:"tab";b:0;}s:29:"devices_almacen.picture_url_1";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:13:"picture_url_1";s:3:"tab";b:0;}s:29:"devices_almacen.picture_url_2";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:13:"picture_url_2";s:3:"tab";b:0;}s:29:"devices_almacen.picture_url_3";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:13:"picture_url_3";s:3:"tab";b:0;}s:27:"devices_almacen.description";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:11:"description";s:3:"tab";b:0;}s:21:"devices_almacen.owner";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:5:"owner";s:3:"tab";b:0;}s:22:"devices_almacen.status";a:3:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:6:"status";s:3:"tab";b:0;}}s:11:"fields_list";a:6:{s:34:"devices_almacen.id_devices_almacen";a:2:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:18:"id_devices_almacen";}s:25:"devices_almacen.id_device";a:2:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:9:"id_device";}s:20:"devices_almacen.IMEI";a:2:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:4:"IMEI";}s:19:"devices_almacen.mac";a:2:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:3:"mac";}s:23:"devices_almacen.barcode";a:2:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:7:"barcode";}s:22:"devices_almacen.status";a:2:{s:5:"table";s:15:"devices_almacen";s:5:"field";s:6:"status";}}s:6:"labels";a:17:{s:34:"devices_almacen.id_devices_almacen";s:4:"Ref.";s:20:"devices_almacen.alta";s:13:"Fecha de alta";s:25:"devices_almacen.id_device";s:11:"Dispositivo";s:22:"devices_almacen.serial";s:12:"Nº de serie";s:20:"devices_almacen.IMEI";s:4:"IMEI";s:19:"devices_almacen.mac";s:3:"MAC";s:23:"devices_almacen.barcode";s:17:"Código de barras";s:31:"devices_almacen.id_color_device";s:5:"Color";s:36:"devices_almacen.id_complement_device";s:12:"Complementos";s:32:"devices_almacen.id_status_device";s:18:"Estado dispositivo";s:42:"devices_almacen.id_status_packaging_device";s:16:"Estado packaging";s:29:"devices_almacen.picture_url_1";s:7:"Foto #1";s:29:"devices_almacen.picture_url_2";s:7:"Foto #2";s:29:"devices_almacen.picture_url_3";s:7:"Foto #3";s:27:"devices_almacen.description";s:11:"Comentarios";s:21:"devices_almacen.owner";s:6:"Dueño";s:22:"devices_almacen.status";s:6:"Estado";}s:13:"columns_names";a:6:{s:34:"devices_almacen.id_devices_almacen";s:4:"Ref.";s:25:"devices_almacen.id_device";s:11:"Dispositivo";s:20:"devices_almacen.IMEI";s:4:"IMEI";s:19:"devices_almacen.mac";s:3:"MAC";s:23:"devices_almacen.barcode";s:17:"Código de barras";s:22:"devices_almacen.status";s:6:"Estado";}s:9:"is_create";b:1;s:7:"is_edit";b:1;s:9:"is_remove";b:1;s:6:"is_csv";b:1;s:7:"buttons";a:0:{}s:19:"validation_required";a:3:{s:34:"devices_almacen.id_devices_almacen";i:1;s:25:"devices_almacen.id_device";i:1;s:22:"devices_almacen.status";i:1;}s:18:"validation_pattern";a:0:{}s:13:"before_insert";a:0:{}s:13:"before_update";a:0:{}s:13:"before_remove";a:0:{}s:12:"after_insert";a:0:{}s:12:"after_update";a:0:{}s:12:"after_remove";a:0:{}s:10:"field_type";a:17:{s:29:"devices_almacen.picture_url_1";s:5:"image";s:29:"devices_almacen.picture_url_2";s:5:"image";s:29:"devices_almacen.picture_url_3";s:5:"image";s:34:"devices_almacen.id_devices_almacen";s:3:"int";s:25:"devices_almacen.id_device";s:8:"relation";s:20:"devices_almacen.alta";s:4:"date";s:20:"devices_almacen.IMEI";s:4:"text";s:19:"devices_almacen.mac";s:4:"text";s:22:"devices_almacen.serial";s:4:"text";s:23:"devices_almacen.barcode";s:4:"text";s:31:"devices_almacen.id_color_device";s:8:"relation";s:36:"devices_almacen.id_complement_device";s:8:"relation";s:32:"devices_almacen.id_status_device";s:8:"relation";s:42:"devices_almacen.id_status_packaging_device";s:8:"relation";s:27:"devices_almacen.description";s:10:"texteditor";s:21:"devices_almacen.owner";s:4:"text";s:22:"devices_almacen.status";s:6:"select";}s:10:"field_attr";a:17:{s:34:"devices_almacen.id_devices_almacen";a:1:{s:9:"maxlength";i:8;}s:25:"devices_almacen.id_device";a:1:{s:9:"maxlength";i:5;}s:20:"devices_almacen.alta";a:0:{}s:20:"devices_almacen.IMEI";a:1:{s:9:"maxlength";i:50;}s:19:"devices_almacen.mac";a:1:{s:9:"maxlength";i:50;}s:22:"devices_almacen.serial";a:1:{s:9:"maxlength";i:50;}s:23:"devices_almacen.barcode";a:1:{s:9:"maxlength";i:50;}s:31:"devices_almacen.id_color_device";a:1:{s:9:"maxlength";i:3;}s:36:"devices_almacen.id_complement_device";a:1:{s:9:"maxlength";i:3;}s:32:"devices_almacen.id_status_device";a:1:{s:9:"maxlength";i:3;}s:42:"devices_almacen.id_status_packaging_device";a:1:{s:9:"maxlength";i:3;}s:29:"devices_almacen.picture_url_1";a:1:{s:9:"maxlength";i:200;}s:29:"devices_almacen.picture_url_2";a:1:{s:9:"maxlength";i:200;}s:29:"devices_almacen.picture_url_3";a:1:{s:9:"maxlength";i:200;}s:27:"devices_almacen.description";a:0:{}s:21:"devices_almacen.owner";a:1:{s:9:"maxlength";i:5;}s:22:"devices_almacen.status";a:2:{s:9:"maxlength";i:0;s:6:"values";s:39:"''En stock'',''Reservado'',''Enviado'',''Baja''";}}s:5:"limit";s:2:"10";s:10:"limit_list";a:5:{i:0;i:10;i:1;s:2:"25";i:2;s:2:"50";i:3;s:3:"100";i:4;s:3:"all";}s:10:"column_cut";i:50;s:15:"column_cut_list";a:0:{}s:9:"no_editor";a:0:{}s:21:"show_primary_ai_field";b:0;s:22:"show_primary_ai_column";b:1;s:8:"disabled";a:1:{s:34:"devices_almacen.id_devices_almacen";a:4:{s:4:"list";i:1;s:6:"create";i:1;s:4:"edit";i:1;s:4:"view";i:1;}}s:8:"readonly";a:0:{}s:9:"benchmark";b:0;s:14:"search_pattern";a:2:{i:0;s:1:"%";i:1;s:1:"%";}s:10:"connection";b:0;s:14:"remove_confirm";b:1;s:13:"upload_folder";a:0:{}s:13:"upload_config";a:3:{s:29:"devices_almacen.picture_url_1";a:0:{}s:29:"devices_almacen.picture_url_2";a:0:{}s:29:"devices_almacen.picture_url_3";a:0:{}}s:8:"pass_var";a:0:{}s:14:"reverse_fields";a:4:{s:4:"list";b:0;s:6:"create";b:0;s:4:"edit";b:0;s:4:"view";b:0;}s:9:"no_quotes";a:0:{}s:20:"inner_table_instance";a:0:{}s:11:"inner_where";a:0:{}s:6:"unique";a:1:{s:34:"devices_almacen.id_devices_almacen";b:1;}s:5:"theme";s:9:"bootstrap";s:12:"is_duplicate";b:0;s:11:"links_label";a:0:{}s:12:"emails_label";a:0:{}s:3:"sum";a:0:{}s:12:"alert_create";N;s:10:"alert_edit";N;s:9:"is_search";b:1;s:8:"is_print";b:1;s:13:"is_pagination";b:1;s:12:"is_limitlist";b:1;s:11:"is_sortable";b:1;s:7:"is_list";b:1;s:9:"subselect";a:0:{}s:16:"subselect_before";a:0:{}s:9:"highlight";a:0:{}s:13:"highlight_row";a:0:{}s:5:"modal";a:3:{s:29:"devices_almacen.picture_url_1";b:0;s:29:"devices_almacen.picture_url_2";b:0;s:29:"devices_almacen.picture_url_3";b:0;}s:12:"column_class";a:0:{}s:9:"no_select";a:0:{}s:8:"is_inner";b:0;s:4:"join";a:0:{}s:11:"fk_relation";a:0:{}s:8:"is_title";b:1;s:10:"is_numbers";b:0;s:8:"language";s:2:"es";s:12:"field_params";a:0:{}s:17:"mass_alert_create";a:0:{}s:15:"mass_alert_edit";a:0:{}s:15:"column_callback";a:0:{}s:14:"field_callback";a:0:{}s:14:"replace_insert";a:0:{}s:14:"replace_update";a:0:{}s:14:"replace_remove";a:0:{}s:20:"send_external_create";a:0:{}s:18:"send_external_edit";a:0:{}s:14:"column_pattern";a:0:{}s:10:"field_tabs";a:0:{}s:12:"field_marker";a:0:{}s:7:"is_view";b:1;s:13:"field_tooltip";a:0:{}s:13:"table_tooltip";a:0:{}s:14:"column_tooltip";a:0:{}s:14:"search_columns";a:0:{}s:14:"search_default";N;s:12:"column_width";a:0:{}s:6:"before";s:4:"list";s:13:"before_upload";a:0:{}s:12:"after_upload";a:0:{}s:12:"after_resize";a:0:{}s:11:"custom_vars";a:0:{}s:7:"tabdesc";a:0:{}s:11:"column_name";a:0:{}s:14:"upload_to_save";a:0:{}s:16:"upload_to_remove";a:0:{}s:8:"defaults";a:17:{s:29:"devices_almacen.picture_url_1";b:0;s:29:"devices_almacen.picture_url_2";b:0;s:29:"devices_almacen.picture_url_3";b:0;s:34:"devices_almacen.id_devices_almacen";N;s:25:"devices_almacen.id_device";N;s:20:"devices_almacen.alta";N;s:20:"devices_almacen.IMEI";N;s:19:"devices_almacen.mac";N;s:22:"devices_almacen.serial";N;s:23:"devices_almacen.barcode";N;s:31:"devices_almacen.id_color_device";N;s:36:"devices_almacen.id_complement_device";N;s:32:"devices_almacen.id_status_device";N;s:42:"devices_almacen.id_status_packaging_device";N;s:27:"devices_almacen.description";N;s:21:"devices_almacen.owner";N;s:22:"devices_almacen.status";s:8:"En stock";}s:6:"search";i:0;s:11:"inner_value";b:0;s:9:"bit_field";a:0:{}s:11:"point_field";a:0:{}s:16:"buttons_position";s:5:"right";s:14:"grid_condition";a:0:{}s:9:"condition";a:0:{}s:11:"hide_button";a:0:{}s:8:"set_lang";a:0:{}s:8:"table_ro";b:0;s:17:"grid_restrictions";a:0:{}s:9:"load_view";a:4:{s:4:"list";s:19:"xcrud_list_view.php";s:6:"create";s:21:"xcrud_detail_view.php";s:4:"edit";s:21:"xcrud_detail_view.php";s:4:"view";s:21:"xcrud_detail_view.php";}s:6:"action";a:0:{}s:6:"prefix";s:0:"";s:5:"query";s:0:"";s:11:"default_tab";b:0;s:10:"strip_tags";b:1;s:11:"safe_output";b:0;s:11:"before_list";a:0:{}s:13:"before_create";a:0:{}s:11:"before_edit";a:0:{}s:11:"before_view";a:0:{}s:14:"lists_null_opt";b:1;s:13:"custom_fields";a:0:{}s:11:"date_format";a:2:{s:5:"php_d";s:5:"d.m.Y";s:5:"php_t";s:5:"H:i:s";}}}}'),
+('055b3c928228c46c415c45e8c81e7cd1', '85.62.13.195', 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:25.0) Gecko/20100101 Firefox/25.0', 1428590869, 'a:5:{s:9:"user_data";s:0:"";s:4:"sfid";s:8:"36000017";s:6:"id_pds";s:4:"2852";s:4:"type";s:1:"1";s:9:"logged_in";b:1;}'),
+('b75e2e11280c1a8ccef9ba51b5f85488', '83.40.72.173', 'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1; Trident/4.0; BTRS106681; InfoPath.2; .NET CLR 2.0.50727; .NET CLR 3.0', 1428587401, 'a:5:{s:9:"user_data";s:0:"";s:4:"sfid";s:8:"59080302";s:6:"id_pds";s:4:"2715";s:4:"type";s:1:"1";s:9:"logged_in";b:1;}'),
+('ecb3853f015eb69fb6daed3df44bd4cb', '212.89.16.245', 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36', 1428592707, 'a:5:{s:9:"user_data";s:0:"";s:4:"sfid";s:7:"altabox";s:4:"type";s:2:"10";s:9:"logged_in";b:1;s:10:"xcrud_sess";a:2:{s:40:"dddbcaf5b1c7098cc6a44155141d9a42ea80180e";a:130:{s:3:"key";s:40:"87c9e3501693461a8598fe528cb247ae45841f06";s:4:"time";i:1428591602;s:5:"table";s:8:"type_pds";s:10:"table_name";s:4:"Tipo";s:5:"where";a:0:{}s:8:"order_by";a:0:{}s:8:"relation";a:1:{s:24:"type_pds.client_type_pds";a:13:{s:7:"rel_tbl";s:6:"client";s:9:"rel_alias";s:15:"alias1773166069";s:9:"rel_field";s:9:"id_client";s:8:"rel_name";s:6:"client";s:9:"rel_where";a:0:{}s:13:"rel_separator";s:1:" ";s:8:"order_by";b:0;s:5:"multi";b:0;s:5:"table";s:8:"type_pds";s:5:"field";s:15:"client_type_pds";s:4:"tree";b:0;s:12:"depend_field";s:0:"";s:9:"depend_on";s:0:"";}}s:13:"fields_create";a:4:{s:24:"type_pds.client_type_pds";a:3:{s:5:"table";s:8:"type_pds";s:5:"field";s:15:"client_type_pds";s:3:"tab";b:0;}s:12:"type_pds.pds";a:3:{s:5:"table";s:8:"type_pds";s:5:"field";s:3:"pds";s:3:"tab";b:0;}s:20:"type_pds.description";a:3:{s:5:"table";s:8:"type_pds";s:5:"field";s:11:"description";s:3:"tab";b:0;}s:15:"type_pds.status";a:3:{s:5:"table";s:8:"type_pds";s:5:"field";s:6:"status";s:3:"tab";b:0;}}s:11:"fields_edit";a:4:{s:24:"type_pds.client_type_pds";a:3:{s:5:"table";s:8:"type_pds";s:5:"field";s:15:"client_type_pds";s:3:"tab";b:0;}s:12:"type_pds.pds";a:3:{s:5:"table";s:8:"type_pds";s:5:"field";s:3:"pds";s:3:"tab";b:0;}s:20:"type_pds.description";a:3:{s:5:"table";s:8:"type_pds";s:5:"field";s:11:"description";s:3:"tab";b:0;}s:15:"type_pds.status";a:3:{s:5:"table";s:8:"type_pds";s:5:"field";s:6:"status";s:3:"tab";b:0;}}s:11:"fields_view";a:4:{s:24:"type_pds.client_type_pds";a:3:{s:5:"table";s:8:"type_pds";s:5:"field";s:15:"client_type_pds";s:3:"tab";b:0;}s:12:"type_pds.pds";a:3:{s:5:"table";s:8:"type_pds";s:5:"field";s:3:"pds";s:3:"tab";b:0;}s:20:"type_pds.description";a:3:{s:5:"table";s:8:"type_pds";s:5:"field";s:11:"description";s:3:"tab";b:0;}s:15:"type_pds.status";a:3:{s:5:"table";s:8:"type_pds";s:5:"field";s:6:"status";s:3:"tab";b:0;}}s:11:"fields_list";a:3:{s:24:"type_pds.client_type_pds";a:2:{s:5:"table";s:8:"type_pds";s:5:"field";s:15:"client_type_pds";}s:12:"type_pds.pds";a:2:{s:5:"table";s:8:"type_pds";s:5:"field";s:3:"pds";}s:15:"type_pds.status";a:2:{s:5:"table";s:8:"type_pds";s:5:"field";s:6:"status";}}s:6:"labels";a:4:{s:24:"type_pds.client_type_pds";s:7:"Cliente";s:12:"type_pds.pds";s:4:"Tipo";s:20:"type_pds.description";s:11:"Comentarios";s:15:"type_pds.status";s:6:"Estado";}s:13:"columns_names";a:3:{s:24:"type_pds.client_type_pds";s:7:"Cliente";s:12:"type_pds.pds";s:4:"Tipo";s:15:"type_pds.status";s:6:"Estado";}s:9:"is_create";b:1;s:7:"is_edit";b:1;s:9:"is_remove";b:1;s:6:"is_csv";b:1;s:7:"buttons";a:0:{}s:19:"validation_required";a:4:{s:20:"type_pds.id_type_pds";i:1;s:24:"type_pds.client_type_pds";i:1;s:12:"type_pds.pds";i:1;s:15:"type_pds.status";i:1;}s:18:"validation_pattern";a:0:{}s:13:"before_insert";a:0:{}s:13:"before_update";a:0:{}s:13:"before_remove";a:0:{}s:12:"after_insert";a:0:{}s:12:"after_update";a:0:{}s:12:"after_remove";a:0:{}s:10:"field_type";a:5:{s:20:"type_pds.id_type_pds";s:3:"int";s:24:"type_pds.client_type_pds";s:8:"relation";s:12:"type_pds.pds";s:4:"text";s:20:"type_pds.description";s:10:"texteditor";s:15:"type_pds.status";s:6:"select";}s:10:"field_attr";a:5:{s:20:"type_pds.id_type_pds";a:1:{s:9:"maxlength";i:3;}s:24:"type_pds.client_type_pds";a:1:{s:9:"maxlength";i:3;}s:12:"type_pds.pds";a:1:{s:9:"maxlength";i:100;}s:20:"type_pds.description";a:0:{}s:15:"type_pds.status";a:2:{s:9:"maxlength";i:0;s:6:"values";s:13:"''Alta'',''Baja''";}}s:5:"limit";i:10;s:10:"limit_list";a:5:{i:0;i:10;i:1;s:2:"25";i:2;s:2:"50";i:3;s:3:"100";i:4;s:3:"all";}s:10:"column_cut";i:50;s:15:"column_cut_list";a:0:{}s:9:"no_editor";a:0:{}s:21:"show_primary_ai_field";b:0;s:22:"show_primary_ai_column";b:0;s:8:"disabled";a:0:{}s:8:"readonly";a:0:{}s:9:"benchmark";b:0;s:14:"search_pattern";a:2:{i:0;s:1:"%";i:1;s:1:"%";}s:10:"connection";b:0;s:14:"remove_confirm";b:1;s:13:"upload_folder";a:0:{}s:13:"upload_config";a:0:{}s:8:"pass_var";a:0:{}s:14:"reverse_fields";a:4:{s:4:"list";b:0;s:6:"create";b:0;s:4:"edit";b:0;s:4:"view";b:0;}s:9:"no_quotes";a:0:{}s:20:"inner_table_instance";a:0:{}s:11:"inner_where";a:0:{}s:6:"unique";a:1:{s:20:"type_pds.id_type_pds";b:1;}s:5:"theme";s:9:"bootstrap";s:12:"is_duplicate";b:0;s:11:"links_label";a:0:{}s:12:"emails_label";a:0:{}s:3:"sum";a:0:{}s:12:"alert_create";N;s:10:"alert_edit";N;s:9:"is_search";b:1;s:8:"is_print";b:1;s:13:"is_pagination";b:1;s:12:"is_limitlist";b:1;s:11:"is_sortable";b:1;s:7:"is_list";b:1;s:9:"subselect";a:0:{}s:16:"subselect_before";a:0:{}s:9:"highlight";a:0:{}s:13:"highlight_row";a:0:{}s:5:"modal";a:0:{}s:12:"column_class";a:0:{}s:9:"no_select";a:0:{}s:8:"is_inner";b:0;s:4:"join";a:0:{}s:11:"fk_relation";a:0:{}s:8:"is_title";b:1;s:10:"is_numbers";b:1;s:8:"language";s:2:"es";s:12:"field_params";a:0:{}s:17:"mass_alert_create";a:0:{}s:15:"mass_alert_edit";a:0:{}s:15:"column_callback";a:0:{}s:14:"field_callback";a:0:{}s:14:"replace_insert";a:0:{}s:14:"replace_update";a:0:{}s:14:"replace_remove";a:0:{}s:20:"send_external_create";a:0:{}s:18:"send_external_edit";a:0:{}s:14:"column_pattern";a:0:{}s:10:"field_tabs";a:0:{}s:12:"field_marker";a:0:{}s:7:"is_view";b:1;s:13:"field_tooltip";a:0:{}s:13:"table_tooltip";a:0:{}s:14:"column_tooltip";a:0:{}s:14:"search_columns";a:0:{}s:14:"search_default";N;s:12:"column_width";a:0:{}s:6:"before";s:4:"list";s:13:"before_upload";a:0:{}s:12:"after_upload";a:0:{}s:12:"after_resize";a:0:{}s:11:"custom_vars";a:0:{}s:7:"tabdesc";a:0:{}s:11:"column_name";a:0:{}s:14:"upload_to_save";a:0:{}s:16:"upload_to_remove";a:0:{}s:8:"defaults";a:5:{s:20:"type_pds.id_type_pds";N;s:24:"type_pds.client_type_pds";N;s:12:"type_pds.pds";N;s:20:"type_pds.description";N;s:15:"type_pds.status";s:4:"Alta";}s:6:"search";i:0;s:11:"inner_value";b:0;s:9:"bit_field";a:0:{}s:11:"point_field";a:0:{}s:16:"buttons_position";s:5:"right";s:14:"grid_condition";a:0:{}s:9:"condition";a:0:{}s:11:"hide_button";a:0:{}s:8:"set_lang";a:0:{}s:8:"table_ro";b:0;s:17:"grid_restrictions";a:0:{}s:9:"load_view";a:4:{s:4:"list";s:19:"xcrud_list_view.php";s:6:"create";s:21:"xcrud_detail_view.php";s:4:"edit";s:21:"xcrud_detail_view.php";s:4:"view";s:21:"xcrud_detail_view.php";}s:6:"action";a:0:{}s:6:"prefix";s:0:"";s:5:"query";s:0:"";s:11:"default_tab";b:0;s:10:"strip_tags";b:1;s:11:"safe_output";b:0;s:11:"before_list";a:0:{}s:13:"before_create";a:0:{}s:11:"before_edit";a:0:{}s:11:"before_view";a:0:{}s:14:"lists_null_opt";b:1;s:13:"custom_fields";a:0:{}s:11:"date_format";a:2:{s:5:"php_d";s:5:"d.m.Y";s:5:"php_t";s:5:"H:i:s";}}s:40:"4a472623c036bc6cf4f39e08212b61dfebd866e1";a:130:{s:3:"key";s:40:"aed82087b8c037c5f8d9c771ff0c24adb1ee2293";s:4:"time";i:1428592056;s:5:"table";s:3:"pds";s:10:"table_name";s:6:"Tienda";s:5:"where";a:0:{}s:8:"order_by";a:0:{}s:8:"relation";a:10:{s:14:"pds.client_pds";a:13:{s:7:"rel_tbl";s:6:"client";s:9:"rel_alias";s:13:"alias75768502";s:9:"rel_field";s:9:"id_client";s:8:"rel_name";s:6:"client";s:9:"rel_where";a:0:{}s:13:"rel_separator";s:1:" ";s:8:"order_by";b:0;s:5:"multi";b:0;s:5:"table";s:3:"pds";s:5:"field";s:10:"client_pds";s:4:"tree";b:0;s:12:"depend_field";s:0:"";s:9:"depend_on";s:0:"";}s:12:"pds.type_pds";a:13:{s:7:"rel_tbl";s:8:"type_pds";s:9:"rel_alias";s:14:"alias973947072";s:9:"rel_field";s:11:"id_type_pds";s:8:"rel_name";s:3:"pds";s:9:"rel_where";a:0:{}s:13:"rel_separator";s:1:" ";s:8:"order_by";b:0;s:5:"multi";b:0;s:5:"table";s:3:"pds";s:5:"field";s:8:"type_pds";s:4:"tree";b:0;s:12:"depend_field";s:0:"";s:9:"depend_on";s:0:"";}s:13:"pds.territory";a:13:{s:7:"rel_tbl";s:9:"territory";s:9:"rel_alias";s:15:"alias1839468284";s:9:"rel_field";s:12:"id_territory";s:8:"rel_name";s:9:"territory";s:9:"rel_where";a:0:{}s:13:"rel_separator";s:1:" ";s:8:"order_by";b:0;s:5:"multi";b:0;s:5:"table";s:3:"pds";s:5:"field";s:9:"territory";s:4:"tree";b:0;s:12:"depend_field";s:0:"";s:9:"depend_on";s:0:"";}s:16:"pds.panelado_pds";a:13:{s:7:"rel_tbl";s:8:"panelado";s:9:"rel_alias";s:15:"alias1480461578";s:9:"rel_field";s:11:"id_panelado";s:8:"rel_name";s:12:"panelado_abx";s:9:"rel_where";a:0:{}s:13:"rel_separator";s:1:" ";s:8:"order_by";b:0;s:5:"multi";b:0;s:5:"table";s:3:"pds";s:5:"field";s:12:"panelado_pds";s:4:"tree";b:0;s:12:"depend_field";s:0:"";s:9:"depend_on";s:0:"";}s:12:"pds.type_via";a:13:{s:7:"rel_tbl";s:8:"type_via";s:9:"rel_alias";s:15:"alias1383203716";s:9:"rel_field";s:11:"id_type_via";s:8:"rel_name";s:3:"via";s:9:"rel_where";a:0:{}s:13:"rel_separator";s:1:" ";s:8:"order_by";b:0;s:5:"multi";b:0;s:5:"table";s:3:"pds";s:5:"field";s:8:"type_via";s:4:"tree";b:0;s:12:"depend_field";s:0:"";s:9:"depend_on";s:0:"";}s:12:"pds.province";a:13:{s:7:"rel_tbl";s:8:"province";s:9:"rel_alias";s:14:"alias322908996";s:9:"rel_field";s:11:"id_province";s:8:"rel_name";s:8:"province";s:9:"rel_where";a:0:{}s:13:"rel_separator";s:1:" ";s:8:"order_by";b:0;s:5:"multi";b:0;s:5:"table";s:3:"pds";s:5:"field";s:8:"province";s:4:"tree";b:0;s:12:"depend_field";s:0:"";s:9:"depend_on";s:0:"";}s:10:"pds.county";a:13:{s:7:"rel_tbl";s:6:"county";s:9:"rel_alias";s:14:"alias726722221";s:9:"rel_field";s:9:"id_county";s:8:"rel_name";s:6:"county";s:9:"rel_where";a:0:{}s:13:"rel_separator";s:1:" ";s:8:"order_by";b:0;s:5:"multi";b:0;s:5:"table";s:3:"pds";s:5:"field";s:6:"county";s:4:"tree";b:0;s:12:"depend_field";s:0:"";s:9:"depend_on";s:0:"";}s:26:"pds.contact_contact_person";a:13:{s:7:"rel_tbl";s:7:"contact";s:9:"rel_alias";s:14:"alias369003636";s:9:"rel_field";s:10:"id_contact";s:8:"rel_name";s:7:"contact";s:9:"rel_where";a:0:{}s:13:"rel_separator";s:1:" ";s:8:"order_by";b:0;s:5:"multi";b:0;s:5:"table";s:3:"pds";s:5:"field";s:22:"contact_contact_person";s:4:"tree";b:0;s:12:"depend_field";s:0:"";s:9:"depend_on";s:0:"";}s:21:"pds.contact_in_charge";a:13:{s:7:"rel_tbl";s:7:"contact";s:9:"rel_alias";s:14:"alias571739245";s:9:"rel_field";s:10:"id_contact";s:8:"rel_name";s:7:"contact";s:9:"rel_where";a:0:{}s:13:"rel_separator";s:1:" ";s:8:"order_by";b:0;s:5:"multi";b:0;s:5:"table";s:3:"pds";s:5:"field";s:17:"contact_in_charge";s:4:"tree";b:0;s:12:"depend_field";s:0:"";s:9:"depend_on";s:0:"";}s:22:"pds.contact_supervisor";a:13:{s:7:"rel_tbl";s:7:"contact";s:9:"rel_alias";s:14:"alias177603134";s:9:"rel_field";s:10:"id_contact";s:8:"rel_name";s:7:"contact";s:9:"rel_where";a:0:{}s:13:"rel_separator";s:1:" ";s:8:"order_by";b:0;s:5:"multi";b:0;s:5:"table";s:3:"pds";s:5:"field";s:18:"contact_supervisor";s:4:"tree";b:0;s:12:"depend_field";s:0:"";s:9:"depend_on";s:0:"";}}s:13:"fields_create";a:26:{s:14:"pds.client_pds";a:3:{s:5:"table";s:3:"pds";s:5:"field";s:10:"client_pds";s:3:"tab";b:0;}s:13:"pds.reference";a:3:{s:5:"table";s:3:"pds";s:5:"field";s:9:"reference";s:3:"tab";b:0;}s:12:"pds.type_pds";a:3:{s:5:"table";s:3:"pds";s:5:"field";s:8:"type_pds";s:3:"tab";b:0;}s:16:"pds.panelado_pds";a:3:{s:5:"table";s:3:"pds";s:5:"field";s:12:"panelado_pds";s:3:"tab";b:0;}s:9:"pds.dispo";a:3:{s:5:"table";s:3:"pds";s:5:"field";s:5:"dispo";s:3:"tab";b:0;}s:14:"pds.commercial";a:3:{s:5:"table";s:3:"pds";s:5:"field";s:10:"commercial";s:3:"tab";b:0;}s:7:"pds.cif";a:3:{s:5:"table";s:3:"pds";s:5:"field";s:3:"cif";s:3:"tab";b:0;}s:13:"pds.territory";a:3:{s:5:"table";s:3:"pds";s:5:"field";s:9:"territory";s:3:"tab";b:0;}s:15:"pds.picture_url";a:3:{s:5:"table";s:3:"pds";s:5:"field";s:11:"picture_url";s:3:"tab";b:0;}s:9:"pds.m2_fo";a:3:{s:5:"table";s:3:"pds";s:5:"field";s:5:"m2_fo";s:3:"tab";b:0;}s:9:"pds.m2_bo";a:3:{s:5:"table";s:3:"pds";s:5:"field";s:5:"m2_bo";s:3:"tab";b:0;}s:12:"pds.m2_total";a:3:{s:5:"table";s:3:"pds";s:5:"field";s:8:"m2_total";s:3:"tab";b:0;}s:12:"pds.type_via";a:3:{s:5:"table";s:3:"pds";s:5:"field";s:8:"type_via";s:3:"tab";b:0;}s:11:"pds.address";a:3:{s:5:"table";s:3:"pds";s:5:"field";s:7:"address";s:3:"tab";b:0;}s:7:"pds.zip";a:3:{s:5:"table";s:3:"pds";s:5:"field";s:3:"zip";s:3:"tab";b:0;}s:8:"pds.city";a:3:{s:5:"table";s:3:"pds";s:5:"field";s:4:"city";s:3:"tab";b:0;}s:12:"pds.province";a:3:{s:5:"table";s:3:"pds";s:5:"field";s:8:"province";s:3:"tab";b:0;}s:10:"pds.county";a:3:{s:5:"table";s:3:"pds";s:5:"field";s:6:"county";s:3:"tab";b:0;}s:12:"pds.schedule";a:3:{s:5:"table";s:3:"pds";s:5:"field";s:8:"schedule";s:3:"tab";b:0;}s:9:"pds.phone";a:3:{s:5:"table";s:3:"pds";s:5:"field";s:5:"phone";s:3:"tab";b:0;}s:10:"pds.mobile";a:3:{s:5:"table";s:3:"pds";s:5:"field";s:6:"mobile";s:3:"tab";b:0;}s:9:"pds.email";a:3:{s:5:"table";s:3:"pds";s:5:"field";s:5:"email";s:3:"tab";b:0;}s:26:"pds.contact_contact_person";a:3:{s:5:"table";s:3:"pds";s:5:"field";s:22:"contact_contact_person";s:3:"tab";b:0;}s:21:"pds.contact_in_charge";a:3:{s:5:"table";s:3:"pds";s:5:"field";s:17:"contact_in_charge";s:3:"tab";b:0;}s:22:"pds.contact_supervisor";a:3:{s:5:"table";s:3:"pds";s:5:"field";s:18:"contact_supervisor";s:3:"tab";b:0;}s:10:"pds.status";a:3:{s:5:"table";s:3:"pds";s:5:"field";s:6:"status";s:3:"tab";b:0;}}s:11:"fields_edit";a:26:{s:14:"pds.client_pds";a:3:{s:5:"table";s:3:"pds";s:5:"field";s:10:"client_pds";s:3:"tab";b:0;}s:13:"pds.reference";a:3:{s:5:"table";s:3:"pds";s:5:"field";s:9:"reference";s:3:"tab";b:0;}s:12:"pds.type_pds";a:3:{s:5:"table";s:3:"pds";s:5:"field";s:8:"type_pds";s:3:"tab";b:0;}s:16:"pds.panelado_pds";a:3:{s:5:"table";s:3:"pds";s:5:"field";s:12:"panelado_pds";s:3:"tab";b:0;}s:9:"pds.dispo";a:3:{s:5:"table";s:3:"pds";s:5:"field";s:5:"dispo";s:3:"tab";b:0;}s:14:"pds.commercial";a:3:{s:5:"table";s:3:"pds";s:5:"field";s:10:"commercial";s:3:"tab";b:0;}s:7:"pds.cif";a:3:{s:5:"table";s:3:"pds";s:5:"field";s:3:"cif";s:3:"tab";b:0;}s:13:"pds.territory";a:3:{s:5:"table";s:3:"pds";s:5:"field";s:9:"territory";s:3:"tab";b:0;}s:15:"pds.picture_url";a:3:{s:5:"table";s:3:"pds";s:5:"field";s:11:"picture_url";s:3:"tab";b:0;}s:9:"pds.m2_fo";a:3:{s:5:"table";s:3:"pds";s:5:"field";s:5:"m2_fo";s:3:"tab";b:0;}s:9:"pds.m2_bo";a:3:{s:5:"table";s:3:"pds";s:5:"field";s:5:"m2_bo";s:3:"tab";b:0;}s:12:"pds.m2_total";a:3:{s:5:"table";s:3:"pds";s:5:"field";s:8:"m2_total";s:3:"tab";b:0;}s:12:"pds.type_via";a:3:{s:5:"table";s:3:"pds";s:5:"field";s:8:"type_via";s:3:"tab";b:0;}s:11:"pds.address";a:3:{s:5:"table";s:3:"pds";s:5:"field";s:7:"address";s:3:"tab";b:0;}s:7:"pds.zip";a:3:{s:5:"table";s:3:"pds";s:5:"field";s:3:"zip";s:3:"tab";b:0;}s:8:"pds.city";a:3:{s:5:"table";s:3:"pds";s:5:"field";s:4:"city";s:3:"tab";b:0;}s:12:"pds.province";a:3:{s:5:"table";s:3:"pds";s:5:"field";s:8:"province";s:3:"tab";b:0;}s:10:"pds.county";a:3:{s:5:"table";s:3:"pds";s:5:"field";s:6:"county";s:3:"tab";b:0;}s:12:"pds.schedule";a:3:{s:5:"table";s:3:"pds";s:5:"field";s:8:"schedule";s:3:"tab";b:0;}s:9:"pds.phone";a:3:{s:5:"table";s:3:"pds";s:5:"field";s:5:"phone";s:3:"tab";b:0;}s:10:"pds.mobile";a:3:{s:5:"table";s:3:"pds";s:5:"field";s:6:"mobile";s:3:"tab";b:0;}s:9:"pds.email";a:3:{s:5:"table";s:3:"pds";s:5:"field";s:5:"email";s:3:"tab";b:0;}s:26:"pds.contact_contact_person";a:3:{s:5:"table";s:3:"pds";s:5:"field";s:22:"contact_contact_person";s:3:"tab";b:0;}s:21:"pds.contact_in_charge";a:3:{s:5:"table";s:3:"pds";s:5:"field";s:17:"contact_in_charge";s:3:"tab";b:0;}s:22:"pds.contact_supervisor";a:3:{s:5:"table";s:3:"pds";s:5:"field";s:18:"contact_supervisor";s:3:"tab";b:0;}s:10:"pds.status";a:3:{s:5:"table";s:3:"pds";s:5:"field";s:6:"status";s:3:"tab";b:0;}}s:11:"fields_view";a:26:{s:14:"pds.client_pds";a:3:{s:5:"table";s:3:"pds";s:5:"field";s:10:"client_pds";s:3:"tab";b:0;}s:13:"pds.reference";a:3:{s:5:"table";s:3:"pds";s:5:"field";s:9:"reference";s:3:"tab";b:0;}s:12:"pds.type_pds";a:3:{s:5:"table";s:3:"pds";s:5:"field";s:8:"type_pds";s:3:"tab";b:0;}s:16:"pds.panelado_pds";a:3:{s:5:"table";s:3:"pds";s:5:"field";s:12:"panelado_pds";s:3:"tab";b:0;}s:9:"pds.dispo";a:3:{s:5:"table";s:3:"pds";s:5:"field";s:5:"dispo";s:3:"tab";b:0;}s:14:"pds.commercial";a:3:{s:5:"table";s:3:"pds";s:5:"field";s:10:"commercial";s:3:"tab";b:0;}s:7:"pds.cif";a:3:{s:5:"table";s:3:"pds";s:5:"field";s:3:"cif";s:3:"tab";b:0;}s:13:"pds.territory";a:3:{s:5:"table";s:3:"pds";s:5:"field";s:9:"territory";s:3:"tab";b:0;}s:15:"pds.picture_url";a:3:{s:5:"table";s:3:"pds";s:5:"field";s:11:"picture_url";s:3:"tab";b:0;}s:9:"pds.m2_fo";a:3:{s:5:"table";s:3:"pds";s:5:"field";s:5:"m2_fo";s:3:"tab";b:0;}s:9:"pds.m2_bo";a:3:{s:5:"table";s:3:"pds";s:5:"field";s:5:"m2_bo";s:3:"tab";b:0;}s:12:"pds.m2_total";a:3:{s:5:"table";s:3:"pds";s:5:"field";s:8:"m2_total";s:3:"tab";b:0;}s:12:"pds.type_via";a:3:{s:5:"table";s:3:"pds";s:5:"field";s:8:"type_via";s:3:"tab";b:0;}s:11:"pds.address";a:3:{s:5:"table";s:3:"pds";s:5:"field";s:7:"address";s:3:"tab";b:0;}s:7:"pds.zip";a:3:{s:5:"table";s:3:"pds";s:5:"field";s:3:"zip";s:3:"tab";b:0;}s:8:"pds.city";a:3:{s:5:"table";s:3:"pds";s:5:"field";s:4:"city";s:3:"tab";b:0;}s:12:"pds.province";a:3:{s:5:"table";s:3:"pds";s:5:"field";s:8:"province";s:3:"tab";b:0;}s:10:"pds.county";a:3:{s:5:"table";s:3:"pds";s:5:"field";s:6:"county";s:3:"tab";b:0;}s:12:"pds.schedule";a:3:{s:5:"table";s:3:"pds";s:5:"field";s:8:"schedule";s:3:"tab";b:0;}s:9:"pds.phone";a:3:{s:5:"table";s:3:"pds";s:5:"field";s:5:"phone";s:3:"tab";b:0;}s:10:"pds.mobile";a:3:{s:5:"table";s:3:"pds";s:5:"field";s:6:"mobile";s:3:"tab";b:0;}s:9:"pds.email";a:3:{s:5:"table";s:3:"pds";s:5:"field";s:5:"email";s:3:"tab";b:0;}s:26:"pds.contact_contact_person";a:3:{s:5:"table";s:3:"pds";s:5:"field";s:22:"contact_contact_person";s:3:"tab";b:0;}s:21:"pds.contact_in_charge";a:3:{s:5:"table";s:3:"pds";s:5:"field";s:17:"contact_in_charge";s:3:"tab";b:0;}s:22:"pds.contact_supervisor";a:3:{s:5:"table";s:3:"pds";s:5:"field";s:18:"contact_supervisor";s:3:"tab";b:0;}s:10:"pds.status";a:3:{s:5:"table";s:3:"pds";s:5:"field";s:6:"status";s:3:"tab";b:0;}}s:11:"fields_list";a:7:{s:14:"pds.client_pds";a:2:{s:5:"table";s:3:"pds";s:5:"field";s:10:"client_pds";}s:13:"pds.reference";a:2:{s:5:"table";s:3:"pds";s:5:"field";s:9:"reference";}s:12:"pds.type_pds";a:2:{s:5:"table";s:3:"pds";s:5:"field";s:8:"type_pds";}s:16:"pds.panelado_pds";a:2:{s:5:"table";s:3:"pds";s:5:"field";s:12:"panelado_pds";}s:14:"pds.commercial";a:2:{s:5:"table";s:3:"pds";s:5:"field";s:10:"commercial";}s:13:"pds.territory";a:2:{s:5:"table";s:3:"pds";s:5:"field";s:9:"territory";}s:10:"pds.status";a:2:{s:5:"table";s:3:"pds";s:5:"field";s:6:"status";}}s:6:"labels";a:26:{s:14:"pds.client_pds";s:7:"Cliente";s:13:"pds.reference";s:4:"SFID";s:12:"pds.type_pds";s:4:"Tipo";s:13:"pds.territory";s:4:"Zona";s:16:"pds.panelado_pds";s:8:"Panelado";s:9:"pds.dispo";s:12:"Disposición";s:14:"pds.commercial";s:16:"Nombre comercial";s:7:"pds.cif";s:3:"CIF";s:15:"pds.picture_url";s:4:"Foto";s:9:"pds.m2_fo";s:15:"M2 front-office";s:9:"pds.m2_bo";s:14:"M2 back-office";s:12:"pds.m2_total";s:8:"M2 total";s:12:"pds.type_via";s:9:"Tipo vía";s:11:"pds.address";s:10:"Dirección";s:7:"pds.zip";s:4:"C.P.";s:8:"pds.city";s:6:"Ciudad";s:12:"pds.province";s:9:"Provincia";s:10:"pds.county";s:6:"CC.AA.";s:12:"pds.schedule";s:7:"Horario";s:9:"pds.phone";s:9:"Teléfono";s:10:"pds.mobile";s:6:"Móvil";s:9:"pds.email";s:5:"Email";s:26:"pds.contact_contact_person";s:8:"Contacto";s:21:"pds.contact_in_charge";s:9:"Encargado";s:22:"pds.contact_supervisor";s:10:"Supervisor";s:10:"pds.status";s:6:"Estado";}s:13:"columns_names";a:7:{s:14:"pds.client_pds";s:7:"Cliente";s:13:"pds.reference";s:4:"SFID";s:12:"pds.type_pds";s:4:"Tipo";s:16:"pds.panelado_pds";s:8:"Panelado";s:14:"pds.commercial";s:16:"Nombre comercial";s:13:"pds.territory";s:4:"Zona";s:10:"pds.status";s:6:"Estado";}s:9:"is_create";b:1;s:7:"is_edit";b:1;s:9:"is_remove";b:1;s:6:"is_csv";b:1;s:7:"buttons";a:0:{}s:19:"validation_required";a:6:{s:10:"pds.id_pds";i:1;s:14:"pds.client_pds";i:1;s:13:"pds.reference";i:1;s:9:"pds.dispo";i:1;s:14:"pds.commercial";i:1;s:10:"pds.status";i:1;}s:18:"validation_pattern";a:0:{}s:13:"before_insert";a:0:{}s:13:"before_update";a:0:{}s:13:"before_remove";a:0:{}s:12:"after_insert";a:0:{}s:12:"after_update";a:0:{}s:12:"after_remove";a:0:{}s:10:"field_type";a:27:{s:15:"pds.picture_url";s:5:"image";s:10:"pds.id_pds";s:3:"int";s:14:"pds.client_pds";s:8:"relation";s:13:"pds.reference";s:4:"text";s:12:"pds.type_pds";s:8:"relation";s:13:"pds.territory";s:8:"relation";s:16:"pds.panelado_pds";s:8:"relation";s:9:"pds.dispo";s:6:"select";s:14:"pds.commercial";s:4:"text";s:7:"pds.cif";s:4:"text";s:9:"pds.m2_fo";s:3:"int";s:9:"pds.m2_bo";s:3:"int";s:12:"pds.m2_total";s:3:"int";s:12:"pds.type_via";s:8:"relation";s:11:"pds.address";s:10:"texteditor";s:7:"pds.zip";s:4:"text";s:8:"pds.city";s:4:"text";s:12:"pds.province";s:8:"relation";s:10:"pds.county";s:8:"relation";s:12:"pds.schedule";s:10:"texteditor";s:9:"pds.phone";s:4:"text";s:10:"pds.mobile";s:4:"text";s:9:"pds.email";s:4:"text";s:26:"pds.contact_contact_person";s:8:"relation";s:21:"pds.contact_in_charge";s:8:"relation";s:22:"pds.contact_supervisor";s:8:"relation";s:10:"pds.status";s:6:"select";}s:10:"field_attr";a:27:{s:10:"pds.id_pds";a:1:{s:9:"maxlength";i:5;}s:14:"pds.client_pds";a:1:{s:9:"maxlength";i:3;}s:13:"pds.reference";a:1:{s:9:"maxlength";i:50;}s:12:"pds.type_pds";a:1:{s:9:"maxlength";i:3;}s:13:"pds.territory";a:1:{s:9:"maxlength";i:3;}s:16:"pds.panelado_pds";a:1:{s:9:"maxlength";i:3;}s:9:"pds.dispo";a:2:{s:9:"maxlength";i:0;s:6:"values";s:26:"''Normal'',''Inversa'',''Mixta''";}s:14:"pds.commercial";a:1:{s:9:"maxlength";i:200;}s:7:"pds.cif";a:1:{s:9:"maxlength";i:12;}s:15:"pds.picture_url";a:1:{s:9:"maxlength";i:200;}s:9:"pds.m2_fo";a:1:{s:9:"maxlength";i:10;}s:9:"pds.m2_bo";a:1:{s:9:"maxlength";i:10;}s:12:"pds.m2_total";a:1:{s:9:"maxlength";i:10;}s:12:"pds.type_via";a:1:{s:9:"maxlength";i:3;}s:11:"pds.address";a:0:{}s:7:"pds.zip";a:1:{s:9:"maxlength";i:10;}s:8:"pds.city";a:1:{s:9:"maxlength";i:200;}s:12:"pds.province";a:1:{s:9:"maxlength";i:6;}s:10:"pds.county";a:1:{s:9:"maxlength";i:4;}s:12:"pds.schedule";a:0:{}s:9:"pds.phone";a:1:{s:9:"maxlength";i:20;}s:10:"pds.mobile";a:1:{s:9:"maxlength";i:20;}s:9:"pds.email";a:1:{s:9:"maxlength";i:100;}s:26:"pds.contact_contact_person";a:1:{s:9:"maxlength";i:5;}s:21:"pds.contact_in_charge";a:1:{s:9:"maxlength";i:5;}s:22:"pds.contact_supervisor";a:1:{s:9:"maxlength";i:5;}s:10:"pds.status";a:2:{s:9:"maxlength";i:0;s:6:"values";s:13:"''Alta'',''Baja''";}}s:5:"limit";s:2:"10";s:10:"limit_list";a:5:{i:0;i:10;i:1;s:2:"25";i:2;s:2:"50";i:3;s:3:"100";i:4;s:3:"all";}s:10:"column_cut";i:50;s:15:"column_cut_list";a:0:{}s:9:"no_editor";a:0:{}s:21:"show_primary_ai_field";b:0;s:22:"show_primary_ai_column";b:0;s:8:"disabled";a:1:{s:13:"pds.reference";a:1:{s:4:"edit";i:1;}}s:8:"readonly";a:0:{}s:9:"benchmark";b:0;s:14:"search_pattern";a:2:{i:0;s:1:"%";i:1;s:1:"%";}s:10:"connection";b:0;s:14:"remove_confirm";b:1;s:13:"upload_folder";a:0:{}s:13:"upload_config";a:1:{s:15:"pds.picture_url";a:0:{}}s:8:"pass_var";a:0:{}s:14:"reverse_fields";a:4:{s:4:"list";b:0;s:6:"create";b:0;s:4:"edit";b:0;s:4:"view";b:0;}s:9:"no_quotes";a:0:{}s:20:"inner_table_instance";a:0:{}s:11:"inner_where";a:0:{}s:6:"unique";a:2:{s:10:"pds.id_pds";b:1;s:13:"pds.reference";b:1;}s:5:"theme";s:9:"bootstrap";s:12:"is_duplicate";b:0;s:11:"links_label";a:0:{}s:12:"emails_label";a:0:{}s:3:"sum";a:1:{s:12:"pds.m2_total";a:4:{s:5:"table";s:3:"pds";s:6:"column";s:8:"m2_total";s:5:"class";s:5:"m2_fo";s:6:"custom";s:5:"m2_bo";}}s:12:"alert_create";N;s:10:"alert_edit";N;s:9:"is_search";b:1;s:8:"is_print";b:1;s:13:"is_pagination";b:1;s:12:"is_limitlist";b:1;s:11:"is_sortable";b:1;s:7:"is_list";b:1;s:9:"subselect";a:0:{}s:16:"subselect_before";a:0:{}s:9:"highlight";a:0:{}s:13:"highlight_row";a:0:{}s:5:"modal";a:1:{s:15:"pds.picture_url";b:0;}s:12:"column_class";a:0:{}s:9:"no_select";a:0:{}s:8:"is_inner";b:0;s:4:"join";a:0:{}s:11:"fk_relation";a:0:{}s:8:"is_title";b:1;s:10:"is_numbers";b:1;s:8:"language";s:2:"es";s:12:"field_params";a:0:{}s:17:"mass_alert_create";a:0:{}s:15:"mass_alert_edit";a:0:{}s:15:"column_callback";a:0:{}s:14:"field_callback";a:0:{}s:14:"replace_insert";a:0:{}s:14:"replace_update";a:0:{}s:14:"replace_remove";a:0:{}s:20:"send_external_create";a:0:{}s:18:"send_external_edit";a:0:{}s:14:"column_pattern";a:0:{}s:10:"field_tabs";a:0:{}s:12:"field_marker";a:0:{}s:7:"is_view";b:1;s:13:"field_tooltip";a:0:{}s:13:"table_tooltip";a:0:{}s:14:"column_tooltip";a:0:{}s:14:"search_columns";a:0:{}s:14:"search_default";N;s:12:"column_width";a:0:{}s:6:"before";s:4:"view";s:13:"before_upload";a:0:{}s:12:"after_upload";a:0:{}s:12:"after_resize";a:0:{}s:11:"custom_vars";a:0:{}s:7:"tabdesc";a:0:{}s:11:"column_name";a:0:{}s:14:"upload_to_save";a:0:{}s:16:"upload_to_remove";a:0:{}s:8:"defaults";a:27:{s:15:"pds.picture_url";b:0;s:10:"pds.id_pds";N;s:14:"pds.client_pds";N;s:13:"pds.reference";N;s:12:"pds.type_pds";N;s:13:"pds.territory";N;s:16:"pds.panelado_pds";N;s:9:"pds.dispo";s:6:"Normal";s:14:"pds.commercial";N;s:7:"pds.cif";N;s:9:"pds.m2_fo";N;s:9:"pds.m2_bo";N;s:12:"pds.m2_total";N;s:12:"pds.type_via";N;s:11:"pds.address";N;s:7:"pds.zip";N;s:8:"pds.city";N;s:12:"pds.province";N;s:10:"pds.county";N;s:12:"pds.schedule";N;s:9:"pds.phone";N;s:10:"pds.mobile";N;s:9:"pds.email";N;s:26:"pds.contact_contact_person";N;s:21:"pds.contact_in_charge";N;s:22:"pds.contact_supervisor";N;s:10:"pds.status";s:4:"Alta";}s:6:"search";i:1;s:11:"inner_value";b:0;s:9:"bit_field";a:0:{}s:11:"point_field";a:0:{}s:16:"buttons_position";s:5:"right";s:14:"grid_condition";a:0:{}s:9:"condition";a:0:{}s:11:"hide_button";a:0:{}s:8:"set_lang";a:0:{}s:8:"table_ro";b:0;s:17:"grid_restrictions";a:0:{}s:9:"load_view";a:4:{s:4:"list";s:19:"xcrud_list_view.php";s:6:"create";s:21:"xcrud_detail_view.php";s:4:"edit";s:21:"xcrud_detail_view.php";s:4:"view";s:21:"xcrud_detail_view.php";}s:6:"action";a:0:{}s:6:"prefix";s:0:"";s:5:"query";s:0:"";s:11:"default_tab";b:0;s:10:"strip_tags";b:1;s:11:"safe_output";b:0;s:11:"before_list";a:0:{}s:13:"before_create";a:0:{}s:11:"before_edit";a:0:{}s:11:"before_view";a:0:{}s:14:"lists_null_opt";b:1;s:13:"custom_fields";a:0:{}s:11:"date_format";a:2:{s:5:"php_d";s:5:"d.m.Y";s:5:"php_t";s:5:"H:i:s";}}}}');
 
 -- --------------------------------------------------------
 
@@ -2330,7 +2352,7 @@ CREATE TABLE IF NOT EXISTS `devices_almacen` (
   `description` text,
   `owner` varchar(5) DEFAULT NULL,
   `status` enum('En stock','Reservado','Enviado','Baja') NOT NULL DEFAULT 'En stock'
-) ENGINE=InnoDB AUTO_INCREMENT=6739 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=6745 DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `devices_almacen`
@@ -3007,7 +3029,7 @@ INSERT INTO `devices_almacen` (`id_devices_almacen`, `id_device`, `alta`, `IMEI`
 (3768, 25, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
 (3769, 25, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
 (3770, 25, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
-(3771, 25, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
+(3771, 25, '2015-04-06', '357997053842783', NULL, 'DNPLHE2PFFG9', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Reservado'),
 (3772, 25, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
 (3773, 25, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
 (3774, 25, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
@@ -3193,9 +3215,9 @@ INSERT INTO `devices_almacen` (`id_devices_almacen`, `id_device`, `alta`, `IMEI`
 (3954, 25, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
 (3955, 25, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
 (3956, 25, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
-(3957, 25, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
-(3958, 25, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock');
+(3957, 25, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock');
 INSERT INTO `devices_almacen` (`id_devices_almacen`, `id_device`, `alta`, `IMEI`, `mac`, `serial`, `barcode`, `id_color_device`, `id_complement_device`, `id_status_device`, `id_status_packaging_device`, `picture_url_1`, `picture_url_2`, `picture_url_3`, `description`, `owner`, `status`) VALUES
+(3958, 25, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
 (3959, 25, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
 (3960, 25, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
 (3961, 25, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
@@ -3627,12 +3649,12 @@ INSERT INTO `devices_almacen` (`id_devices_almacen`, `id_device`, `alta`, `IMEI`
 (4387, 26, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
 (4388, 26, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
 (4389, 26, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
-(4390, 26, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
+(4390, 26, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Reservado'),
 (4391, 26, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
 (4392, 26, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
-(4393, 26, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
-(4394, 26, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock');
+(4393, 26, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock');
 INSERT INTO `devices_almacen` (`id_devices_almacen`, `id_device`, `alta`, `IMEI`, `mac`, `serial`, `barcode`, `id_color_device`, `id_complement_device`, `id_status_device`, `id_status_packaging_device`, `picture_url_1`, `picture_url_2`, `picture_url_3`, `description`, `owner`, `status`) VALUES
+(4394, 26, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
 (4395, 26, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
 (4396, 26, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
 (4397, 26, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
@@ -3640,7 +3662,7 @@ INSERT INTO `devices_almacen` (`id_devices_almacen`, `id_device`, `alta`, `IMEI`
 (4399, 26, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
 (4400, 26, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
 (4401, 26, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
-(4402, 26, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
+(4402, 26, '2015-04-06', '352069060109484', NULL, 'C39N7K65G5MN', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Reservado'),
 (4403, 26, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
 (4404, 26, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
 (4405, 26, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
@@ -3717,7 +3739,7 @@ INSERT INTO `devices_almacen` (`id_devices_almacen`, `id_device`, `alta`, `IMEI`
 (4476, 26, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
 (4477, 26, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
 (4478, 27, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
-(4479, 27, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
+(4479, 27, '2015-04-06', '354441061905251', NULL, 'FK1NM3NXG5QT', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Reservado'),
 (4480, 27, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
 (4481, 27, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
 (4482, 27, '2015-04-06', '354384064093800', NULL, 'FK1NM3P6G5QT', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Reservado'),
@@ -4066,9 +4088,9 @@ INSERT INTO `devices_almacen` (`id_devices_almacen`, `id_device`, `alta`, `IMEI`
 (4825, 31, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
 (4826, 31, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
 (4827, 31, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
-(4828, 31, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
-(4829, 31, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock');
+(4828, 31, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock');
 INSERT INTO `devices_almacen` (`id_devices_almacen`, `id_device`, `alta`, `IMEI`, `mac`, `serial`, `barcode`, `id_color_device`, `id_complement_device`, `id_status_device`, `id_status_packaging_device`, `picture_url_1`, `picture_url_2`, `picture_url_3`, `description`, `owner`, `status`) VALUES
+(4829, 31, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
 (4830, 31, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
 (4831, 31, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
 (4832, 31, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
@@ -4503,9 +4525,9 @@ INSERT INTO `devices_almacen` (`id_devices_almacen`, `id_device`, `alta`, `IMEI`
 (5261, 44, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
 (5262, 44, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
 (5263, 44, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
-(5264, 44, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
-(5265, 44, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock');
+(5264, 44, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock');
 INSERT INTO `devices_almacen` (`id_devices_almacen`, `id_device`, `alta`, `IMEI`, `mac`, `serial`, `barcode`, `id_color_device`, `id_complement_device`, `id_status_device`, `id_status_packaging_device`, `picture_url_1`, `picture_url_2`, `picture_url_3`, `description`, `owner`, `status`) VALUES
+(5265, 44, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
 (5266, 44, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
 (5267, 84, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
 (5268, 84, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
@@ -4939,9 +4961,9 @@ INSERT INTO `devices_almacen` (`id_devices_almacen`, `id_device`, `alta`, `IMEI`
 (5696, 59, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
 (5697, 59, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
 (5698, 59, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
-(5699, 59, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
-(5700, 59, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock');
+(5699, 59, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock');
 INSERT INTO `devices_almacen` (`id_devices_almacen`, `id_device`, `alta`, `IMEI`, `mac`, `serial`, `barcode`, `id_color_device`, `id_complement_device`, `id_status_device`, `id_status_packaging_device`, `picture_url_1`, `picture_url_2`, `picture_url_3`, `description`, `owner`, `status`) VALUES
+(5700, 59, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
 (5701, 59, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
 (5702, 59, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
 (5703, 59, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
@@ -4983,7 +5005,7 @@ INSERT INTO `devices_almacen` (`id_devices_almacen`, `id_device`, `alta`, `IMEI`
 (5739, 79, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
 (5740, 79, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
 (5741, 79, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
-(5742, 79, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
+(5742, 79, '2015-04-06', NULL, NULL, '430101750016719', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Reservado'),
 (5743, 67, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
 (5744, 67, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
 (5745, 67, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
@@ -5375,10 +5397,10 @@ INSERT INTO `devices_almacen` (`id_devices_almacen`, `id_device`, `alta`, `IMEI`
 (6131, 65, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
 (6132, 65, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
 (6133, 65, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
-(6134, 65, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
-(6135, 65, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
-(6136, 65, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock');
+(6134, 65, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock');
 INSERT INTO `devices_almacen` (`id_devices_almacen`, `id_device`, `alta`, `IMEI`, `mac`, `serial`, `barcode`, `id_color_device`, `id_complement_device`, `id_status_device`, `id_status_packaging_device`, `picture_url_1`, `picture_url_2`, `picture_url_3`, `description`, `owner`, `status`) VALUES
+(6135, 65, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
+(6136, 65, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
 (6137, 65, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
 (6138, 65, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
 (6139, 65, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
@@ -5433,8 +5455,8 @@ INSERT INTO `devices_almacen` (`id_devices_almacen`, `id_device`, `alta`, `IMEI`
 (6188, 100, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
 (6189, 101, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
 (6190, 102, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
-(6191, 72, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
-(6192, 71, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
+(6191, 72, '2015-04-06', NULL, NULL, 'Z6W4C14619000531', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Reservado'),
+(6192, 71, '2015-04-06', '868815010084368', NULL, 'Z3P6RA9390400229', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Reservado'),
 (6193, 71, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'ME', 'En stock'),
 (6194, 103, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
 (6195, 103, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
@@ -5808,10 +5830,10 @@ INSERT INTO `devices_almacen` (`id_devices_almacen`, `id_device`, `alta`, `IMEI`
 (6563, 112, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
 (6564, 112, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
 (6565, 112, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
-(6566, 112, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
-(6567, 112, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
-(6568, 112, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock');
+(6566, 112, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock');
 INSERT INTO `devices_almacen` (`id_devices_almacen`, `id_device`, `alta`, `IMEI`, `mac`, `serial`, `barcode`, `id_color_device`, `id_complement_device`, `id_status_device`, `id_status_packaging_device`, `picture_url_1`, `picture_url_2`, `picture_url_3`, `description`, `owner`, `status`) VALUES
+(6567, 112, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
+(6568, 112, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
 (6569, 112, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
 (6570, 112, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
 (6571, 112, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
@@ -5981,7 +6003,13 @@ INSERT INTO `devices_almacen` (`id_devices_almacen`, `id_device`, `alta`, `IMEI`
 (6735, 116, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
 (6736, 116, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
 (6737, 116, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
-(6738, 116, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock');
+(6738, 116, '2015-04-06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'En stock'),
+(6739, 74, '2015-04-09', '351885060279527', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Reservado'),
+(6740, 74, '2015-04-09', '351885060327664', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Reservado'),
+(6741, 74, '2015-04-09', '351885060327573', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Reservado'),
+(6742, 62, '2015-04-09', NULL, NULL, 'RF8F917MZ7V', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Reservado'),
+(6743, 74, '2015-04-09', '351885060327573', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Reservado'),
+(6744, 74, '2015-04-09', '351885060279287', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Reservado');
 
 -- --------------------------------------------------------
 
@@ -6898,7 +6926,7 @@ INSERT INTO `devices_pds` (`id_devices_pds`, `client_type_pds`, `id_pds`, `id_di
 (663, 1, 2067, 532, 36, NULL, 1, 25, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (664, 1, 2067, 532, 36, NULL, 2, 26, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (665, 1, 2067, 532, 36, NULL, 3, 27, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
-(666, 1, 2067, 538, 31, NULL, 1, 74, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
+(666, 1, 2067, 538, 31, NULL, 1, 74, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Incidencia'),
 (667, 1, 2067, 538, 31, NULL, 2, 62, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (668, 1, 2067, 538, 31, NULL, 3, 89, NULL, NULL, 'RF8FC0X13YD', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (669, 1, 2068, 542, 36, NULL, 1, 25, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Incidencia'),
@@ -7182,7 +7210,7 @@ INSERT INTO `devices_pds` (`id_devices_pds`, `client_type_pds`, `id_pds`, `id_di
 (952, 1, 2115, 1012, 36, NULL, 2, 26, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (953, 1, 2115, 1012, 36, NULL, 3, 27, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (954, 1, 2115, 1018, 31, NULL, 1, 74, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
-(955, 1, 2115, 1018, 31, NULL, 2, 62, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
+(955, 1, 2115, 1018, 31, NULL, 2, 62, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Incidencia'),
 (956, 1, 2115, 1018, 31, NULL, 3, 89, NULL, NULL, 'RF8FC0VLW6M', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (957, 1, 2116, 1022, 36, NULL, 1, 25, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (958, 1, 2116, 1022, 36, NULL, 2, 26, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
@@ -7307,7 +7335,7 @@ INSERT INTO `devices_pds` (`id_devices_pds`, `client_type_pds`, `id_pds`, `id_di
 (1083, 1, 2137, 1232, 36, NULL, 1, 25, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (1084, 1, 2137, 1232, 36, NULL, 2, 26, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (1085, 1, 2137, 1232, 36, NULL, 3, 27, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
-(1086, 1, 2137, 1238, 31, NULL, 1, 74, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
+(1086, 1, 2137, 1238, 31, NULL, 1, 74, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Incidencia'),
 (1087, 1, 2137, 1238, 31, NULL, 2, 62, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (1088, 1, 2137, 1238, 31, NULL, 3, 89, NULL, NULL, 'RF8FC0VL38L', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (1089, 1, 2138, 1242, 36, NULL, 1, 25, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
@@ -7450,9 +7478,9 @@ INSERT INTO `devices_pds` (`id_devices_pds`, `client_type_pds`, `id_pds`, `id_di
 (1229, 1, 2162, 1474, 36, NULL, 2, 26, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (1230, 1, 2162, 1474, 36, NULL, 3, 27, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (1231, 1, 2162, 1478, 65, NULL, 1, 74, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
-(1232, 1, 2162, 1478, 65, NULL, 2, 62, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
-(1233, 1, 2163, 1483, 36, NULL, 1, 25, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta');
+(1232, 1, 2162, 1478, 65, NULL, 2, 62, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta');
 INSERT INTO `devices_pds` (`id_devices_pds`, `client_type_pds`, `id_pds`, `id_displays_pds`, `id_display`, `alta`, `position`, `id_device`, `IMEI`, `mac`, `serial`, `barcode`, `id_color_device`, `id_complement_device`, `id_status_device`, `id_status_packaging_device`, `picture_url_1`, `picture_url_2`, `picture_url_3`, `description`, `owner`, `status`) VALUES
+(1233, 1, 2163, 1483, 36, NULL, 1, 25, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (1234, 1, 2163, 1483, 36, NULL, 2, 26, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (1235, 1, 2163, 1483, 36, NULL, 3, 27, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (1236, 1, 2163, 1487, 65, NULL, 1, 74, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
@@ -7850,9 +7878,9 @@ INSERT INTO `devices_pds` (`id_devices_pds`, `client_type_pds`, `id_pds`, `id_di
 (1628, 1, 2242, 2194, 36, NULL, 1, 25, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (1629, 1, 2242, 2194, 36, NULL, 2, 26, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (1630, 1, 2242, 2194, 36, NULL, 3, 27, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
-(1631, 1, 2242, 2198, 65, NULL, 1, 74, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
-(1632, 1, 2242, 2198, 65, NULL, 2, 62, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta');
+(1631, 1, 2242, 2198, 65, NULL, 1, 74, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta');
 INSERT INTO `devices_pds` (`id_devices_pds`, `client_type_pds`, `id_pds`, `id_displays_pds`, `id_display`, `alta`, `position`, `id_device`, `IMEI`, `mac`, `serial`, `barcode`, `id_color_device`, `id_complement_device`, `id_status_device`, `id_status_packaging_device`, `picture_url_1`, `picture_url_2`, `picture_url_3`, `description`, `owner`, `status`) VALUES
+(1632, 1, 2242, 2198, 65, NULL, 2, 62, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (1633, 1, 2243, 2203, 36, NULL, 1, 25, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (1634, 1, 2243, 2203, 36, NULL, 2, 26, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (1635, 1, 2243, 2203, 36, NULL, 3, 27, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
@@ -8011,7 +8039,7 @@ INSERT INTO `devices_pds` (`id_devices_pds`, `client_type_pds`, `id_pds`, `id_di
 (1788, 1, 2274, 2482, 36, NULL, 1, 25, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (1789, 1, 2274, 2482, 36, NULL, 2, 26, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (1790, 1, 2274, 2482, 36, NULL, 3, 27, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
-(1791, 1, 2274, 2486, 65, NULL, 1, 74, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
+(1791, 1, 2274, 2486, 65, NULL, 1, 74, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Incidencia'),
 (1792, 1, 2274, 2486, 65, NULL, 2, 62, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (1793, 1, 2275, 2491, 36, NULL, 1, 25, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (1794, 1, 2275, 2491, 36, NULL, 2, 26, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
@@ -8076,7 +8104,7 @@ INSERT INTO `devices_pds` (`id_devices_pds`, `client_type_pds`, `id_pds`, `id_di
 (1853, 1, 2287, 2599, 36, NULL, 1, 25, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (1854, 1, 2287, 2599, 36, NULL, 2, 26, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (1855, 1, 2287, 2599, 36, NULL, 3, 27, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
-(1856, 1, 2287, 2603, 65, NULL, 1, 74, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
+(1856, 1, 2287, 2603, 65, NULL, 1, 74, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Incidencia'),
 (1857, 1, 2287, 2603, 65, NULL, 2, 62, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (1858, 1, 2288, 2608, 36, NULL, 1, 25, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (1859, 1, 2288, 2608, 36, NULL, 2, 26, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
@@ -8250,9 +8278,9 @@ INSERT INTO `devices_pds` (`id_devices_pds`, `client_type_pds`, `id_pds`, `id_di
 (2027, 1, 2325, 2927, 68, NULL, 1, 26, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (2028, 1, 2326, 2934, 68, NULL, 1, 26, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (2029, 1, 2327, 2941, 68, NULL, 1, 26, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
-(2030, 1, 2328, 2948, 68, NULL, 1, 26, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
-(2031, 1, 2329, 2955, 68, NULL, 1, 26, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta');
+(2030, 1, 2328, 2948, 68, NULL, 1, 26, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta');
 INSERT INTO `devices_pds` (`id_devices_pds`, `client_type_pds`, `id_pds`, `id_displays_pds`, `id_display`, `alta`, `position`, `id_device`, `IMEI`, `mac`, `serial`, `barcode`, `id_color_device`, `id_complement_device`, `id_status_device`, `id_status_packaging_device`, `picture_url_1`, `picture_url_2`, `picture_url_3`, `description`, `owner`, `status`) VALUES
+(2031, 1, 2329, 2955, 68, NULL, 1, 26, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (2032, 1, 2330, 2962, 68, NULL, 1, 26, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (2033, 1, 2331, 2969, 68, NULL, 1, 26, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (2034, 1, 2332, 2976, 68, NULL, 1, 26, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
@@ -8649,9 +8677,9 @@ INSERT INTO `devices_pds` (`id_devices_pds`, `client_type_pds`, `id_pds`, `id_di
 (2429, 1, 2646, 4981, 45, NULL, 1, 26, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (2430, 1, 2646, 4981, 45, NULL, 2, 27, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (2431, 1, 2647, 4982, 45, NULL, 1, 26, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
-(2432, 1, 2647, 4982, 45, NULL, 2, 27, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
-(2433, 1, 2648, 4983, 45, NULL, 1, 26, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta');
+(2432, 1, 2647, 4982, 45, NULL, 2, 27, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta');
 INSERT INTO `devices_pds` (`id_devices_pds`, `client_type_pds`, `id_pds`, `id_displays_pds`, `id_display`, `alta`, `position`, `id_device`, `IMEI`, `mac`, `serial`, `barcode`, `id_color_device`, `id_complement_device`, `id_status_device`, `id_status_packaging_device`, `picture_url_1`, `picture_url_2`, `picture_url_3`, `description`, `owner`, `status`) VALUES
+(2433, 1, 2648, 4983, 45, NULL, 1, 26, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (2434, 1, 2648, 4983, 45, NULL, 2, 27, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (2435, 1, 2649, 4984, 45, NULL, 1, 26, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (2436, 1, 2649, 4984, 45, NULL, 2, 27, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
@@ -9048,9 +9076,9 @@ INSERT INTO `devices_pds` (`id_devices_pds`, `client_type_pds`, `id_pds`, `id_di
 (2833, 1, 2724, 5232, 38, NULL, 1, 24, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (2834, 1, 2724, 5232, 38, NULL, 2, 35, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (2835, 1, 2724, 5232, 38, NULL, 3, 43, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
-(2836, 1, 2724, 5232, 38, NULL, 4, 30, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
-(2837, 1, 2724, 5232, 38, NULL, 5, 32, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta');
+(2836, 1, 2724, 5232, 38, NULL, 4, 30, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta');
 INSERT INTO `devices_pds` (`id_devices_pds`, `client_type_pds`, `id_pds`, `id_displays_pds`, `id_display`, `alta`, `position`, `id_device`, `IMEI`, `mac`, `serial`, `barcode`, `id_color_device`, `id_complement_device`, `id_status_device`, `id_status_packaging_device`, `picture_url_1`, `picture_url_2`, `picture_url_3`, `description`, `owner`, `status`) VALUES
+(2837, 1, 2724, 5232, 38, NULL, 5, 32, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (2838, 1, 2724, 5232, 38, NULL, 6, 66, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (2839, 1, 2724, 5233, 36, NULL, 1, 25, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (2840, 1, 2724, 5233, 36, NULL, 2, 26, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
@@ -9446,9 +9474,9 @@ INSERT INTO `devices_pds` (`id_devices_pds`, `client_type_pds`, `id_pds`, `id_di
 (3233, 1, 2750, 5526, 31, NULL, 2, 62, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (3234, 1, 2750, 5526, 31, NULL, 3, 89, NULL, NULL, 'RF8FC0VLQPB', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (3235, 1, 2751, 5529, 32, NULL, 1, 66, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
-(3236, 1, 2751, 5529, 32, NULL, 2, 69, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
-(3237, 1, 2751, 5529, 32, NULL, 3, 70, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta');
+(3236, 1, 2751, 5529, 32, NULL, 2, 69, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta');
 INSERT INTO `devices_pds` (`id_devices_pds`, `client_type_pds`, `id_pds`, `id_displays_pds`, `id_display`, `alta`, `position`, `id_device`, `IMEI`, `mac`, `serial`, `barcode`, `id_color_device`, `id_complement_device`, `id_status_device`, `id_status_packaging_device`, `picture_url_1`, `picture_url_2`, `picture_url_3`, `description`, `owner`, `status`) VALUES
+(3237, 1, 2751, 5529, 32, NULL, 3, 70, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (3238, 1, 2751, 5530, 36, NULL, 1, 25, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (3239, 1, 2751, 5530, 36, NULL, 2, 26, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (3240, 1, 2751, 5530, 36, NULL, 3, 27, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
@@ -9837,9 +9865,9 @@ INSERT INTO `devices_pds` (`id_devices_pds`, `client_type_pds`, `id_pds`, `id_di
 (3623, 1, 2770, 5745, 38, NULL, 3, 43, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (3624, 1, 2770, 5745, 38, NULL, 4, 30, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (3625, 1, 2770, 5745, 38, NULL, 5, 32, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
-(3626, 1, 2770, 5745, 38, NULL, 6, 66, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
-(3627, 1, 2770, 5746, 36, NULL, 1, 25, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta');
+(3626, 1, 2770, 5745, 38, NULL, 6, 66, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta');
 INSERT INTO `devices_pds` (`id_devices_pds`, `client_type_pds`, `id_pds`, `id_displays_pds`, `id_display`, `alta`, `position`, `id_device`, `IMEI`, `mac`, `serial`, `barcode`, `id_color_device`, `id_complement_device`, `id_status_device`, `id_status_packaging_device`, `picture_url_1`, `picture_url_2`, `picture_url_3`, `description`, `owner`, `status`) VALUES
+(3627, 1, 2770, 5746, 36, NULL, 1, 25, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (3628, 1, 2770, 5746, 36, NULL, 2, 26, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (3629, 1, 2770, 5746, 36, NULL, 3, 27, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (3630, 1, 2770, 5750, 35, NULL, 1, 72, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
@@ -10111,13 +10139,13 @@ INSERT INTO `devices_pds` (`id_devices_pds`, `client_type_pds`, `id_pds`, `id_di
 (3899, 1, 2787, 5899, 36, NULL, 1, 25, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (3900, 1, 2787, 5899, 36, NULL, 2, 26, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (3901, 1, 2787, 5899, 36, NULL, 3, 27, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
-(3902, 1, 2787, 5903, 35, NULL, 1, 72, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
-(3903, 1, 2787, 5903, 35, NULL, 2, 79, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
+(3902, 1, 2787, 5903, 35, NULL, 1, 72, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Incidencia'),
+(3903, 1, 2787, 5903, 35, NULL, 2, 79, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Incidencia'),
 (3904, 1, 2787, 5903, 35, NULL, 3, 71, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (3905, 1, 2787, 5903, 35, NULL, 4, 73, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (3906, 1, 2787, 5905, 31, NULL, 1, 74, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Incidencia'),
 (3907, 1, 2787, 5905, 31, NULL, 2, 62, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
-(3908, 1, 2787, 5905, 31, NULL, 3, 55, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
+(3908, 1, 2787, 5905, 31, NULL, 3, 55, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Incidencia'),
 (3909, 1, 2788, 5907, 38, NULL, 1, 24, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (3910, 1, 2788, 5907, 38, NULL, 2, 35, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (3911, 1, 2788, 5907, 38, NULL, 3, 43, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
@@ -10235,9 +10263,9 @@ INSERT INTO `devices_pds` (`id_devices_pds`, `client_type_pds`, `id_pds`, `id_di
 (4023, 1, 2795, 5970, 38, NULL, 3, 43, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (4024, 1, 2795, 5970, 38, NULL, 4, 30, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (4025, 1, 2795, 5970, 38, NULL, 5, 32, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
-(4026, 1, 2795, 5970, 38, NULL, 6, 66, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
-(4027, 1, 2795, 5971, 36, NULL, 1, 25, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta');
+(4026, 1, 2795, 5970, 38, NULL, 6, 66, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta');
 INSERT INTO `devices_pds` (`id_devices_pds`, `client_type_pds`, `id_pds`, `id_displays_pds`, `id_display`, `alta`, `position`, `id_device`, `IMEI`, `mac`, `serial`, `barcode`, `id_color_device`, `id_complement_device`, `id_status_device`, `id_status_packaging_device`, `picture_url_1`, `picture_url_2`, `picture_url_3`, `description`, `owner`, `status`) VALUES
+(4027, 1, 2795, 5971, 36, NULL, 1, 25, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (4028, 1, 2795, 5971, 36, NULL, 2, 26, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (4029, 1, 2795, 5971, 36, NULL, 3, 27, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (4030, 1, 2795, 5975, 35, NULL, 1, 72, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
@@ -10633,9 +10661,9 @@ INSERT INTO `devices_pds` (`id_devices_pds`, `client_type_pds`, `id_pds`, `id_di
 (4429, 1, 2820, 6196, 36, NULL, 3, 27, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (4430, 1, 2820, 6200, 35, NULL, 1, 72, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (4431, 1, 2820, 6200, 35, NULL, 2, 79, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
-(4432, 1, 2820, 6200, 35, NULL, 3, 71, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
-(4433, 1, 2820, 6200, 35, NULL, 4, 73, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta');
+(4432, 1, 2820, 6200, 35, NULL, 3, 71, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta');
 INSERT INTO `devices_pds` (`id_devices_pds`, `client_type_pds`, `id_pds`, `id_displays_pds`, `id_display`, `alta`, `position`, `id_device`, `IMEI`, `mac`, `serial`, `barcode`, `id_color_device`, `id_complement_device`, `id_status_device`, `id_status_packaging_device`, `picture_url_1`, `picture_url_2`, `picture_url_3`, `description`, `owner`, `status`) VALUES
+(4433, 1, 2820, 6200, 35, NULL, 4, 73, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (4437, 1, 2821, 6204, 38, NULL, 1, 24, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (4438, 1, 2821, 6204, 38, NULL, 2, 35, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (4439, 1, 2821, 6204, 38, NULL, 3, 43, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
@@ -11029,9 +11057,9 @@ INSERT INTO `devices_pds` (`id_devices_pds`, `client_type_pds`, `id_pds`, `id_di
 (4827, 1, 2850, 6451, 32, NULL, 2, 69, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (4828, 1, 2850, 6451, 32, NULL, 3, 70, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (4829, 1, 2850, 6452, 36, NULL, 1, 25, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
-(4830, 1, 2850, 6452, 36, NULL, 2, 26, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
-(4831, 1, 2850, 6452, 36, NULL, 3, 27, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta');
+(4830, 1, 2850, 6452, 36, NULL, 2, 26, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta');
 INSERT INTO `devices_pds` (`id_devices_pds`, `client_type_pds`, `id_pds`, `id_displays_pds`, `id_display`, `alta`, `position`, `id_device`, `IMEI`, `mac`, `serial`, `barcode`, `id_color_device`, `id_complement_device`, `id_status_device`, `id_status_packaging_device`, `picture_url_1`, `picture_url_2`, `picture_url_3`, `description`, `owner`, `status`) VALUES
+(4831, 1, 2850, 6452, 36, NULL, 3, 27, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (4832, 1, 2850, 6456, 35, NULL, 1, 72, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (4833, 1, 2850, 6456, 35, NULL, 2, 79, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (4834, 1, 2850, 6456, 35, NULL, 3, 71, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
@@ -11427,9 +11455,9 @@ INSERT INTO `devices_pds` (`id_devices_pds`, `client_type_pds`, `id_pds`, `id_di
 (5224, 1, 2879, 6706, 36, NULL, 2, 26, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (5225, 1, 2879, 6706, 36, NULL, 3, 27, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (5226, 1, 2879, 6709, 65, NULL, 1, 74, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
-(5227, 1, 2879, 6709, 65, NULL, 2, 62, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
-(5228, 1, 2879, 6710, 35, NULL, 1, 72, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta');
+(5227, 1, 2879, 6709, 65, NULL, 2, 62, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta');
 INSERT INTO `devices_pds` (`id_devices_pds`, `client_type_pds`, `id_pds`, `id_displays_pds`, `id_display`, `alta`, `position`, `id_device`, `IMEI`, `mac`, `serial`, `barcode`, `id_color_device`, `id_complement_device`, `id_status_device`, `id_status_packaging_device`, `picture_url_1`, `picture_url_2`, `picture_url_3`, `description`, `owner`, `status`) VALUES
+(5228, 1, 2879, 6710, 35, NULL, 1, 72, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (5229, 1, 2879, 6710, 35, NULL, 2, 79, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (5230, 1, 2879, 6710, 35, NULL, 3, 71, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (5231, 1, 2879, 6710, 35, NULL, 4, 73, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
@@ -11601,17 +11629,17 @@ INSERT INTO `devices_pds` (`id_devices_pds`, `client_type_pds`, `id_pds`, `id_di
 (5397, 1, 2891, 6801, 38, NULL, 1, 24, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (5398, 1, 2891, 6801, 38, NULL, 2, 35, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (5399, 1, 2891, 6801, 38, NULL, 3, 43, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
-(5400, 1, 2891, 6801, 38, NULL, 4, 30, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
-(5401, 1, 2891, 6801, 38, NULL, 5, 32, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
-(5402, 1, 2891, 6801, 38, NULL, 6, 66, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
+(5400, 1, 2891, 6801, 38, NULL, 4, 30, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Incidencia'),
+(5401, 1, 2891, 6801, 38, NULL, 5, 32, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Incidencia'),
+(5402, 1, 2891, 6801, 38, NULL, 6, 66, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Incidencia'),
 (5403, 1, 2891, 6802, 36, NULL, 1, 25, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (5404, 1, 2891, 6802, 36, NULL, 2, 26, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (5405, 1, 2891, 6802, 36, NULL, 3, 27, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (5406, 1, 2891, 6805, 65, NULL, 1, 74, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (5407, 1, 2891, 6805, 65, NULL, 2, 62, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
-(5408, 1, 2891, 6806, 35, NULL, 1, 72, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
-(5409, 1, 2891, 6806, 35, NULL, 2, 79, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
-(5410, 1, 2891, 6806, 35, NULL, 3, 71, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
+(5408, 1, 2891, 6806, 35, NULL, 1, 72, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Incidencia'),
+(5409, 1, 2891, 6806, 35, NULL, 2, 79, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Incidencia'),
+(5410, 1, 2891, 6806, 35, NULL, 3, 71, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Incidencia'),
 (5411, 1, 2891, 6806, 35, NULL, 4, 73, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Incidencia'),
 (5412, 1, 2892, 6809, 38, NULL, 1, 24, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (5413, 1, 2892, 6809, 38, NULL, 2, 35, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
@@ -11826,9 +11854,9 @@ INSERT INTO `devices_pds` (`id_devices_pds`, `client_type_pds`, `id_pds`, `id_di
 (5622, 1, 2906, 6921, 38, NULL, 1, 24, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (5623, 1, 2906, 6921, 38, NULL, 2, 35, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (5624, 1, 2906, 6921, 38, NULL, 3, 43, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
-(5625, 1, 2906, 6921, 38, NULL, 4, 30, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
-(5626, 1, 2906, 6921, 38, NULL, 5, 32, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta');
+(5625, 1, 2906, 6921, 38, NULL, 4, 30, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta');
 INSERT INTO `devices_pds` (`id_devices_pds`, `client_type_pds`, `id_pds`, `id_displays_pds`, `id_display`, `alta`, `position`, `id_device`, `IMEI`, `mac`, `serial`, `barcode`, `id_color_device`, `id_complement_device`, `id_status_device`, `id_status_packaging_device`, `picture_url_1`, `picture_url_2`, `picture_url_3`, `description`, `owner`, `status`) VALUES
+(5626, 1, 2906, 6921, 38, NULL, 5, 32, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (5627, 1, 2906, 6921, 38, NULL, 6, 66, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (5628, 1, 2906, 6922, 36, NULL, 1, 25, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (5629, 1, 2906, 6922, 36, NULL, 2, 26, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
@@ -12226,9 +12254,9 @@ INSERT INTO `devices_pds` (`id_devices_pds`, `client_type_pds`, `id_pds`, `id_di
 (6021, 1, 2932, 7133, 65, NULL, 1, 74, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (6022, 1, 2932, 7133, 65, NULL, 2, 62, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (6023, 1, 2932, 7134, 35, NULL, 1, 72, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
-(6024, 1, 2932, 7134, 35, NULL, 2, 79, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
-(6025, 1, 2932, 7134, 35, NULL, 3, 71, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta');
+(6024, 1, 2932, 7134, 35, NULL, 2, 79, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta');
 INSERT INTO `devices_pds` (`id_devices_pds`, `client_type_pds`, `id_pds`, `id_displays_pds`, `id_display`, `alta`, `position`, `id_device`, `IMEI`, `mac`, `serial`, `barcode`, `id_color_device`, `id_complement_device`, `id_status_device`, `id_status_packaging_device`, `picture_url_1`, `picture_url_2`, `picture_url_3`, `description`, `owner`, `status`) VALUES
+(6025, 1, 2932, 7134, 35, NULL, 3, 71, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (6026, 1, 2932, 7134, 35, NULL, 4, 73, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (6027, 1, 2933, 7137, 38, NULL, 1, 24, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (6028, 1, 2933, 7137, 38, NULL, 2, 35, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
@@ -12624,9 +12652,9 @@ INSERT INTO `devices_pds` (`id_devices_pds`, `client_type_pds`, `id_pds`, `id_di
 (6418, 1, 2962, 7375, 35, NULL, 2, 79, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (6419, 1, 2962, 7375, 35, NULL, 3, 71, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (6420, 1, 2962, 7375, 35, NULL, 4, 73, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
-(6421, 1, 2963, 7378, 32, NULL, 1, 66, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Incidencia'),
-(6422, 1, 2963, 7378, 32, NULL, 2, 69, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta');
+(6421, 1, 2963, 7378, 32, NULL, 1, 66, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Incidencia');
 INSERT INTO `devices_pds` (`id_devices_pds`, `client_type_pds`, `id_pds`, `id_displays_pds`, `id_display`, `alta`, `position`, `id_device`, `IMEI`, `mac`, `serial`, `barcode`, `id_color_device`, `id_complement_device`, `id_status_device`, `id_status_packaging_device`, `picture_url_1`, `picture_url_2`, `picture_url_3`, `description`, `owner`, `status`) VALUES
+(6422, 1, 2963, 7378, 32, NULL, 2, 69, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (6423, 1, 2963, 7378, 32, NULL, 3, 70, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (6424, 1, 2963, 7379, 36, NULL, 1, 25, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (6425, 1, 2963, 7379, 36, NULL, 2, 26, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
@@ -13024,9 +13052,9 @@ INSERT INTO `devices_pds` (`id_devices_pds`, `client_type_pds`, `id_pds`, `id_di
 (6817, 1, 2999, 7625, 37, NULL, 1, 26, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (6818, 1, 2999, 7627, 34, NULL, 1, 72, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (6819, 1, 2999, 7627, 34, NULL, 2, 71, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
-(6820, 1, 2999, 7627, 34, NULL, 3, 79, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
-(6821, 1, 3000, 7630, 38, NULL, 1, 24, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta');
+(6820, 1, 2999, 7627, 34, NULL, 3, 79, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta');
 INSERT INTO `devices_pds` (`id_devices_pds`, `client_type_pds`, `id_pds`, `id_displays_pds`, `id_display`, `alta`, `position`, `id_device`, `IMEI`, `mac`, `serial`, `barcode`, `id_color_device`, `id_complement_device`, `id_status_device`, `id_status_packaging_device`, `picture_url_1`, `picture_url_2`, `picture_url_3`, `description`, `owner`, `status`) VALUES
+(6821, 1, 3000, 7630, 38, NULL, 1, 24, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (6822, 1, 3000, 7630, 38, NULL, 2, 35, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (6823, 1, 3000, 7630, 38, NULL, 3, 43, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (6824, 1, 3000, 7630, 38, NULL, 4, 30, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
@@ -13192,7 +13220,7 @@ INSERT INTO `devices_pds` (`id_devices_pds`, `client_type_pds`, `id_pds`, `id_di
 (6984, 1, 3016, 7726, 38, NULL, 4, 30, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (6985, 1, 3016, 7726, 38, NULL, 5, 32, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (6986, 1, 3016, 7726, 38, NULL, 6, 66, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
-(6987, 1, 3016, 7727, 37, NULL, 1, 26, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
+(6987, 1, 3016, 7727, 37, NULL, 1, 26, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Incidencia'),
 (6988, 1, 3016, 7729, 34, NULL, 1, 72, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (6989, 1, 3016, 7729, 34, NULL, 2, 71, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (6990, 1, 3016, 7729, 34, NULL, 3, 79, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
@@ -13424,9 +13452,9 @@ INSERT INTO `devices_pds` (`id_devices_pds`, `client_type_pds`, `id_pds`, `id_di
 (7216, 1, 3039, 7864, 38, NULL, 6, 66, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (7217, 1, 3039, 7865, 37, NULL, 1, 26, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (7218, 1, 3039, 7867, 34, NULL, 1, 72, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
-(7219, 1, 3039, 7867, 34, NULL, 2, 71, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
-(7220, 1, 3039, 7867, 34, NULL, 3, 79, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta');
+(7219, 1, 3039, 7867, 34, NULL, 2, 71, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta');
 INSERT INTO `devices_pds` (`id_devices_pds`, `client_type_pds`, `id_pds`, `id_displays_pds`, `id_display`, `alta`, `position`, `id_device`, `IMEI`, `mac`, `serial`, `barcode`, `id_color_device`, `id_complement_device`, `id_status_device`, `id_status_packaging_device`, `picture_url_1`, `picture_url_2`, `picture_url_3`, `description`, `owner`, `status`) VALUES
+(7220, 1, 3039, 7867, 34, NULL, 3, 79, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (7221, 1, 3040, 7870, 38, NULL, 1, 24, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (7222, 1, 3040, 7870, 38, NULL, 2, 35, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (7223, 1, 3040, 7870, 38, NULL, 3, 43, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
@@ -13824,9 +13852,9 @@ INSERT INTO `devices_pds` (`id_devices_pds`, `client_type_pds`, `id_pds`, `id_di
 (7615, 1, 3079, 8104, 38, NULL, 5, 32, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (7616, 1, 3079, 8104, 38, NULL, 6, 66, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (7617, 1, 3079, 8105, 37, NULL, 1, 26, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
-(7618, 1, 3079, 8107, 34, NULL, 1, 72, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Incidencia'),
-(7619, 1, 3079, 8107, 34, NULL, 2, 71, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta');
+(7618, 1, 3079, 8107, 34, NULL, 1, 72, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Incidencia');
 INSERT INTO `devices_pds` (`id_devices_pds`, `client_type_pds`, `id_pds`, `id_displays_pds`, `id_display`, `alta`, `position`, `id_device`, `IMEI`, `mac`, `serial`, `barcode`, `id_color_device`, `id_complement_device`, `id_status_device`, `id_status_packaging_device`, `picture_url_1`, `picture_url_2`, `picture_url_3`, `description`, `owner`, `status`) VALUES
+(7619, 1, 3079, 8107, 34, NULL, 2, 71, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (7620, 1, 3079, 8107, 34, NULL, 3, 79, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (7621, 1, 3080, 8110, 38, NULL, 1, 24, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (7622, 1, 3080, 8110, 38, NULL, 2, 35, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
@@ -22568,7 +22596,7 @@ CREATE TABLE IF NOT EXISTS `facturacion` (
   `units_device` smallint(5) unsigned NOT NULL DEFAULT '0',
   `units_alarma` smallint(5) unsigned NOT NULL DEFAULT '0',
   `description` text
-) ENGINE=InnoDB AUTO_INCREMENT=436 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=478 DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `facturacion`
@@ -23009,7 +23037,49 @@ INSERT INTO `facturacion` (`id_facturacion`, `fecha`, `id_pds`, `id_intervencion
 (432, '2015-04-08 13:54:17', 2704, 221, 483, 5115, 0, 3, NULL),
 (433, '2015-04-08 14:10:12', 2977, 218, 476, 7495, 0, 0, NULL),
 (434, '2015-04-08 15:03:25', 2288, 222, 484, 2608, 0, 1, NULL),
-(435, '2015-04-08 15:57:57', 3064, 223, 302, 8017, 0, 4, NULL);
+(435, '2015-04-08 15:57:57', 3064, 223, 302, 8017, 0, 4, NULL),
+(436, '2015-04-09 07:12:08', 2891, 224, 323, 6806, 1, 6, NULL),
+(437, '2015-04-09 07:25:27', 2891, 224, 324, 6806, 1, 6, NULL),
+(438, '2015-04-09 07:35:53', 2891, 224, 325, 6806, 1, 6, NULL),
+(439, '2015-04-09 07:44:23', 2891, 224, 628, 6801, 0, 1, NULL),
+(440, '2015-04-09 07:46:29', 2891, 224, 629, 6801, 0, 1, NULL),
+(441, '2015-04-09 08:25:10', 2101, 225, 825, 872, 0, 2, NULL),
+(442, '2015-04-09 08:26:06', 2787, 227, 409, 5905, 1, 10, NULL),
+(443, '2015-04-09 08:32:30', 2787, 227, 410, 5905, 0, 4, NULL),
+(444, '2015-04-09 08:32:54', 2787, 227, 410, 5905, 0, 4, NULL),
+(445, '2015-04-09 08:37:50', 2787, 227, 411, 5905, 0, 4, NULL),
+(446, '2015-04-09 08:40:24', 2787, 227, 412, 5903, 0, 1, NULL),
+(447, '2015-04-09 08:47:12', 2787, 227, 413, 5903, 0, 1, NULL),
+(448, '2015-04-09 09:23:08', 2137, 226, 830, 1238, 0, 2, NULL),
+(449, '2015-04-09 09:23:36', 2137, 226, 829, 1238, 1, 1, NULL),
+(450, '2015-04-09 09:26:34', 2137, 226, 828, 1232, 0, 0, NULL),
+(451, '2015-04-09 10:25:49', 2145, 229, 475, 1312, 0, 1, NULL),
+(452, '2015-04-09 10:35:01', 2115, 228, 615, 1018, 0, 1, NULL),
+(453, '2015-04-09 10:35:23', 2115, 228, 616, 1018, 0, 1, NULL),
+(454, '2015-04-09 10:39:11', 2764, 230, 832, 5683, 0, 1, NULL),
+(455, '2015-04-09 10:43:30', 2844, 122, 317, 6398, 3, 5, NULL),
+(456, '2015-04-09 10:53:55', 2844, 122, 546, 6402, 0, 1, NULL),
+(457, '2015-04-09 10:57:29', 2844, 122, 547, 6402, 0, 1, NULL),
+(458, '2015-04-09 11:02:47', 2844, 122, 549, 6404, 0, 1, NULL),
+(459, '2015-04-09 11:23:26', 2906, 232, 576, 6926, 0, 1, NULL),
+(460, '2015-04-09 11:32:02', 2287, 231, 834, 2599, 0, 1, NULL),
+(461, '2015-04-09 11:32:14', 2287, 231, 833, 2603, 0, 1, NULL),
+(462, '2015-04-09 11:41:59', 2274, 233, 836, 2482, 0, 1, NULL),
+(463, '2015-04-09 11:42:45', 2274, 233, 835, 2486, 1, 1, NULL),
+(464, '2015-04-09 12:10:56', 3016, 235, 837, 7727, 1, 4, NULL),
+(465, '2015-04-09 12:25:58', 2853, 102, 510, 6479, 0, 1, NULL),
+(466, '2015-04-09 12:29:01', 2853, 102, 510, 6479, 0, 1, NULL),
+(467, '2015-04-09 12:29:29', 2853, 102, 510, 6479, 0, 1, NULL),
+(468, '2015-04-09 14:23:38', 2279, 234, 311, 2531, 1, 2, NULL),
+(469, '2015-04-09 14:24:22', 2279, 234, 311, 2531, 1, 2, NULL),
+(470, '2015-04-09 14:25:22', 2279, 234, 311, 2531, 1, 2, NULL),
+(471, '2015-04-09 14:26:26', 2279, 234, 312, 2531, 1, 2, NULL),
+(472, '2015-04-09 14:54:42', 2067, 236, 838, 538, 1, 1, NULL),
+(473, '2015-04-09 14:56:44', 2067, 236, 838, 538, 1, 1, NULL),
+(474, '2015-04-09 15:18:12', 2067, 236, 839, 532, 0, 2, NULL),
+(475, '2015-04-09 15:18:30', 2067, 236, 840, 538, 0, 0, NULL),
+(476, '2015-04-09 15:18:41', 2067, 236, 841, 538, 0, 0, NULL),
+(477, '2015-04-09 15:34:40', 2644, 237, 577, 4979, 0, 3, NULL);
 
 -- --------------------------------------------------------
 
@@ -23026,7 +23096,7 @@ CREATE TABLE IF NOT EXISTS `historico` (
   `agent` varchar(100) NOT NULL,
   `status_pds` enum('Alta realizada','En proceso','En visita','Finalizada','Cancelada') NOT NULL DEFAULT 'Alta realizada',
   `status` enum('Nueva','Revisada','Material asignado','Instalador asignado','Comunicada','Resuelta','Pendiente recogida','Cerrada','Cancelada') NOT NULL DEFAULT 'Nueva'
-) ENGINE=InnoDB AUTO_INCREMENT=2044 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2159 DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `historico`
@@ -25070,7 +25140,122 @@ INSERT INTO `historico` (`id_historico`, `fecha`, `id_incidencia`, `id_pds`, `de
 (2040, '2015-04-08 15:25:17', 305, 3011, NULL, 'altabox', 'Finalizada', 'Resuelta'),
 (2041, '2015-04-08 15:41:07', 308, 2279, NULL, 'altabox', 'Finalizada', 'Resuelta'),
 (2042, '2015-04-08 15:42:45', 302, 3064, NULL, 'altabox', 'En proceso', 'Material asignado'),
-(2043, '2015-04-08 15:57:57', 302, 3064, NULL, 'altabox', 'En visita', 'Comunicada');
+(2043, '2015-04-08 15:57:57', 302, 3064, NULL, 'altabox', 'En visita', 'Comunicada'),
+(2044, '2015-04-09 07:02:00', 323, 2891, NULL, 'altabox', 'En proceso', 'Revisada'),
+(2045, '2015-04-09 07:08:26', 323, 2891, NULL, 'altabox', 'En proceso', 'Material asignado'),
+(2046, '2015-04-09 07:12:08', 323, 2891, NULL, 'altabox', 'En visita', 'Comunicada'),
+(2047, '2015-04-09 07:15:33', 324, 2891, NULL, 'altabox', 'En proceso', 'Revisada'),
+(2048, '2015-04-09 07:23:47', 324, 2891, NULL, 'altabox', 'En proceso', 'Material asignado'),
+(2049, '2015-04-09 07:24:32', 825, 2101, NULL, 'altabox', 'En proceso', 'Revisada'),
+(2050, '2015-04-09 07:25:27', 324, 2891, NULL, 'altabox', 'En visita', 'Comunicada'),
+(2051, '2015-04-09 07:27:06', 325, 2891, NULL, 'altabox', 'En proceso', 'Revisada'),
+(2052, '2015-04-09 07:33:47', 825, 2101, NULL, 'altabox', 'En proceso', 'Material asignado'),
+(2053, '2015-04-09 07:35:04', 325, 2891, NULL, 'altabox', 'En proceso', 'Material asignado'),
+(2054, '2015-04-09 07:35:53', 325, 2891, NULL, 'altabox', 'En visita', 'Comunicada'),
+(2055, '2015-04-09 07:37:54', 326, 2891, NULL, 'altabox', 'En proceso', 'Revisada'),
+(2056, '2015-04-09 07:40:21', 628, 2891, NULL, 'altabox', 'En proceso', 'Revisada'),
+(2057, '2015-04-09 07:41:33', 628, 2891, NULL, 'altabox', 'En proceso', 'Material asignado'),
+(2058, '2015-04-09 07:44:23', 628, 2891, NULL, 'altabox', 'En visita', 'Comunicada'),
+(2059, '2015-04-09 07:45:17', 629, 2891, NULL, 'altabox', 'En proceso', 'Revisada'),
+(2060, '2015-04-09 07:45:41', 629, 2891, NULL, 'altabox', 'En proceso', 'Material asignado'),
+(2061, '2015-04-09 07:46:30', 629, 2891, NULL, 'altabox', 'En visita', 'Comunicada'),
+(2062, '2015-04-09 07:47:18', 826, 2705, NULL, 'altabox', 'En proceso', 'Revisada'),
+(2063, '2015-04-09 07:52:31', 827, 1911, NULL, 'altabox', 'Cancelada', 'Cancelada'),
+(2064, '2015-04-09 07:53:02', 410, 2787, NULL, 'altabox', 'En proceso', 'Revisada'),
+(2065, '2015-04-09 07:58:27', 829, 2137, NULL, 'altabox', 'En proceso', 'Revisada'),
+(2066, '2015-04-09 08:21:15', 409, 2787, NULL, 'altabox', 'En proceso', 'Material asignado'),
+(2067, '2015-04-09 08:25:10', 825, 2101, NULL, 'altabox', 'En visita', 'Comunicada'),
+(2068, '2015-04-09 08:26:06', 409, 2787, NULL, 'altabox', 'En visita', 'Comunicada'),
+(2069, '2015-04-09 08:31:30', 410, 2787, NULL, 'altabox', 'En proceso', 'Material asignado'),
+(2070, '2015-04-09 08:32:30', 410, 2787, NULL, 'altabox', 'En visita', 'Comunicada'),
+(2071, '2015-04-09 08:32:54', 410, 2787, NULL, 'altabox', 'En visita', 'Comunicada'),
+(2072, '2015-04-09 08:33:59', 411, 2787, NULL, 'altabox', 'En proceso', 'Revisada'),
+(2073, '2015-04-09 08:37:28', 411, 2787, NULL, 'altabox', 'En proceso', 'Material asignado'),
+(2074, '2015-04-09 08:37:50', 411, 2787, NULL, 'altabox', 'En visita', 'Comunicada'),
+(2075, '2015-04-09 08:38:42', 412, 2787, NULL, 'altabox', 'En proceso', 'Revisada'),
+(2076, '2015-04-09 08:39:25', 412, 2787, NULL, 'altabox', 'En proceso', 'Material asignado'),
+(2077, '2015-04-09 08:40:24', 412, 2787, NULL, 'altabox', 'En visita', 'Comunicada'),
+(2078, '2015-04-09 08:40:51', 413, 2787, NULL, 'altabox', 'En proceso', 'Revisada'),
+(2079, '2015-04-09 08:42:33', 413, 2787, NULL, 'altabox', 'En proceso', 'Material asignado'),
+(2080, '2015-04-09 08:44:18', 829, 2137, NULL, 'altabox', 'En proceso', 'Material asignado'),
+(2081, '2015-04-09 08:47:12', 413, 2787, NULL, 'altabox', 'En visita', 'Comunicada'),
+(2082, '2015-04-09 08:48:29', 830, 2137, NULL, 'altabox', 'En proceso', 'Revisada'),
+(2083, '2015-04-09 08:51:27', 830, 2137, NULL, 'altabox', 'En proceso', 'Material asignado'),
+(2084, '2015-04-09 08:51:55', 828, 2137, NULL, 'altabox', 'En proceso', 'Revisada'),
+(2085, '2015-04-09 08:52:13', 828, 2137, NULL, 'altabox', 'En proceso', 'Material asignado'),
+(2086, '2015-04-09 08:58:14', 616, 2115, NULL, 'altabox', 'En proceso', 'Revisada'),
+(2087, '2015-04-09 09:00:39', 616, 2115, NULL, 'altabox', 'En proceso', 'Material asignado'),
+(2088, '2015-04-09 09:06:08', 615, 2115, NULL, 'altabox', 'En proceso', 'Revisada'),
+(2089, '2015-04-09 09:06:31', 615, 2115, NULL, 'altabox', 'En proceso', 'Material asignado'),
+(2090, '2015-04-09 09:14:30', 831, 2885, NULL, 'altabox', 'En proceso', 'Revisada'),
+(2091, '2015-04-09 09:15:56', 831, 2885, NULL, 'altabox', 'En proceso', 'Revisada'),
+(2092, '2015-04-09 09:23:08', 830, 2137, NULL, 'altabox', 'En visita', 'Comunicada'),
+(2093, '2015-04-09 09:23:12', 475, 2145, NULL, 'altabox', 'En proceso', 'Revisada'),
+(2094, '2015-04-09 09:23:36', 829, 2137, NULL, 'altabox', 'En visita', 'Comunicada'),
+(2095, '2015-04-09 09:23:47', 475, 2145, NULL, 'altabox', 'En proceso', 'Material asignado'),
+(2096, '2015-04-09 09:26:34', 828, 2137, NULL, 'altabox', 'En visita', 'Comunicada'),
+(2097, '2015-04-09 09:28:29', 563, 2676, NULL, 'altabox', 'En proceso', 'Revisada'),
+(2098, '2015-04-09 09:29:52', 564, 2676, NULL, 'altabox', 'En proceso', 'Revisada'),
+(2099, '2015-04-09 09:33:35', 565, 2640, NULL, 'altabox', 'En proceso', 'Revisada'),
+(2100, '2015-04-09 09:42:03', 832, 2764, NULL, 'altabox', 'En proceso', 'Revisada'),
+(2101, '2015-04-09 09:43:06', 832, 2764, NULL, 'altabox', 'En proceso', 'Material asignado'),
+(2102, '2015-04-09 09:46:33', 317, 2844, NULL, 'altabox', 'En proceso', 'Material asignado'),
+(2103, '2015-04-09 10:25:49', 475, 2145, NULL, 'altabox', 'En visita', 'Comunicada'),
+(2104, '2015-04-09 10:35:01', 615, 2115, NULL, 'altabox', 'En visita', 'Comunicada'),
+(2105, '2015-04-09 10:35:23', 616, 2115, NULL, 'altabox', 'En visita', 'Comunicada'),
+(2106, '2015-04-09 10:39:11', 832, 2764, NULL, 'altabox', 'En visita', 'Comunicada'),
+(2107, '2015-04-09 10:42:57', 833, 2287, NULL, 'altabox', 'En proceso', 'Revisada'),
+(2108, '2015-04-09 10:43:30', 317, 2844, NULL, 'altabox', 'En visita', 'Comunicada'),
+(2109, '2015-04-09 10:53:13', 546, 2844, NULL, 'altabox', 'En proceso', 'Material asignado'),
+(2110, '2015-04-09 10:53:55', 546, 2844, NULL, 'altabox', 'En visita', 'Comunicada'),
+(2111, '2015-04-09 10:56:52', 547, 2844, NULL, 'altabox', 'En proceso', 'Material asignado'),
+(2112, '2015-04-09 10:56:59', 833, 2287, NULL, 'altabox', 'En proceso', 'Material asignado'),
+(2113, '2015-04-09 10:57:29', 547, 2844, NULL, 'altabox', 'En visita', 'Comunicada'),
+(2114, '2015-04-09 10:59:34', 549, 2844, NULL, 'altabox', 'En proceso', 'Material asignado'),
+(2115, '2015-04-09 11:01:49', 834, 2287, NULL, 'altabox', 'En proceso', 'Revisada'),
+(2116, '2015-04-09 11:02:47', 549, 2844, NULL, 'altabox', 'En visita', 'Comunicada'),
+(2117, '2015-04-09 11:03:39', 834, 2287, NULL, 'altabox', 'En proceso', 'Material asignado'),
+(2118, '2015-04-09 11:09:43', 576, 2906, NULL, 'altabox', 'En proceso', 'Revisada'),
+(2119, '2015-04-09 11:10:13', 576, 2906, NULL, 'altabox', 'En proceso', 'Material asignado'),
+(2120, '2015-04-09 11:19:05', 835, 2274, NULL, 'altabox', 'En proceso', 'Revisada'),
+(2121, '2015-04-09 11:20:32', 309, 2279, NULL, 'altabox', 'Finalizada', 'Resuelta'),
+(2122, '2015-04-09 11:20:57', 310, 2279, NULL, 'altabox', 'Finalizada', 'Resuelta'),
+(2123, '2015-04-09 11:22:25', 835, 2274, NULL, 'altabox', 'En proceso', 'Material asignado'),
+(2124, '2015-04-09 11:23:06', 836, 2274, NULL, 'altabox', 'En proceso', 'Revisada'),
+(2125, '2015-04-09 11:23:26', 576, 2906, NULL, 'altabox', 'En visita', 'Comunicada'),
+(2126, '2015-04-09 11:25:04', 836, 2274, NULL, 'altabox', 'En proceso', 'Material asignado'),
+(2127, '2015-04-09 11:32:02', 834, 2287, NULL, 'altabox', 'En visita', 'Comunicada'),
+(2128, '2015-04-09 11:32:14', 833, 2287, NULL, 'altabox', 'En visita', 'Comunicada'),
+(2129, '2015-04-09 11:41:59', 836, 2274, NULL, 'altabox', 'En visita', 'Comunicada'),
+(2130, '2015-04-09 11:42:45', 835, 2274, NULL, 'altabox', 'En visita', 'Comunicada'),
+(2131, '2015-04-09 11:52:05', 837, 3016, NULL, 'altabox', 'En proceso', 'Revisada'),
+(2132, '2015-04-09 11:59:18', 837, 3016, NULL, 'altabox', 'En proceso', 'Material asignado'),
+(2133, '2015-04-09 12:08:28', 311, 2279, NULL, 'altabox', 'En proceso', 'Material asignado'),
+(2134, '2015-04-09 12:10:56', 837, 3016, NULL, 'altabox', 'En visita', 'Comunicada'),
+(2135, '2015-04-09 12:18:56', 312, 2279, NULL, 'altabox', 'En proceso', 'Material asignado'),
+(2136, '2015-04-09 12:25:58', 510, 2853, NULL, 'altabox', 'En visita', 'Comunicada'),
+(2137, '2015-04-09 12:29:01', 510, 2853, NULL, 'altabox', 'En visita', 'Comunicada'),
+(2138, '2015-04-09 12:29:29', 510, 2853, NULL, 'altabox', 'En visita', 'Comunicada'),
+(2139, '2015-04-09 12:32:31', 838, 2067, NULL, 'altabox', 'En proceso', 'Revisada'),
+(2140, '2015-04-09 14:23:38', 311, 2279, NULL, 'altabox', 'En visita', 'Comunicada'),
+(2141, '2015-04-09 14:24:22', 311, 2279, NULL, 'altabox', 'En visita', 'Comunicada'),
+(2142, '2015-04-09 14:25:22', 311, 2279, NULL, 'altabox', 'En visita', 'Comunicada'),
+(2143, '2015-04-09 14:26:26', 312, 2279, NULL, 'altabox', 'En visita', 'Comunicada'),
+(2144, '2015-04-09 14:37:39', 838, 2067, NULL, 'altabox', 'En proceso', 'Material asignado'),
+(2145, '2015-04-09 14:54:42', 838, 2067, NULL, 'altabox', 'En visita', 'Comunicada'),
+(2146, '2015-04-09 14:56:44', 838, 2067, NULL, 'altabox', 'En visita', 'Comunicada'),
+(2147, '2015-04-09 15:04:11', 839, 2067, NULL, 'altabox', 'En proceso', 'Revisada'),
+(2148, '2015-04-09 15:08:42', 839, 2067, NULL, 'altabox', 'En proceso', 'Material asignado'),
+(2149, '2015-04-09 15:14:29', 577, 2644, NULL, 'altabox', 'En proceso', 'Revisada'),
+(2150, '2015-04-09 15:14:40', 841, 2067, NULL, 'altabox', 'En proceso', 'Revisada'),
+(2151, '2015-04-09 15:15:44', 841, 2067, NULL, 'altabox', 'En proceso', 'Material asignado'),
+(2152, '2015-04-09 15:16:35', 840, 2067, NULL, 'altabox', 'En proceso', 'Revisada'),
+(2153, '2015-04-09 15:16:55', 840, 2067, NULL, 'altabox', 'En proceso', 'Material asignado'),
+(2154, '2015-04-09 15:17:11', 577, 2644, NULL, 'altabox', 'En proceso', 'Material asignado'),
+(2155, '2015-04-09 15:18:12', 839, 2067, NULL, 'altabox', 'En visita', 'Comunicada'),
+(2156, '2015-04-09 15:18:30', 840, 2067, NULL, 'altabox', 'En visita', 'Comunicada'),
+(2157, '2015-04-09 15:18:41', 841, 2067, NULL, 'altabox', 'En visita', 'Comunicada'),
+(2158, '2015-04-09 15:34:40', 577, 2644, NULL, 'altabox', 'En visita', 'Comunicada');
 
 -- --------------------------------------------------------
 
@@ -25321,6 +25506,7 @@ INSERT INTO `historico_sfid` (`id_pds`, `fecha`, `sfid_old`, `sfid_new`) VALUES
 (2321, '2015-03-18 12:54:29', '16001107', '19440341'),
 (2458, '2015-03-18 12:51:13', '46000288', '49440284'),
 (2540, '2015-03-18 12:44:27', '56300056', '59990211'),
+(2613, '2015-04-09 15:08:54', '59442753', '59990207'),
 (2614, '2015-03-26 10:29:58', '29990246', '20070000'),
 (2615, '2015-03-26 10:28:15', '16000152', '10070003'),
 (2616, '2015-03-26 10:28:42', '16000171', '10070011'),
@@ -25418,7 +25604,7 @@ CREATE TABLE IF NOT EXISTS `incidencias` (
   `intervencion` int(10) unsigned DEFAULT NULL,
   `status_pds` enum('Alta realizada','En proceso','En visita','Finalizada','Cancelada') NOT NULL DEFAULT 'Alta realizada',
   `status` enum('Nueva','Revisada','Material asignado','Instalador asignado','Comunicada','Resuelta','Pendiente recogida','Cerrada','Cancelada') NOT NULL DEFAULT 'Nueva'
-) ENGINE=InnoDB AUTO_INCREMENT=838 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=868 DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `incidencias`
@@ -25733,24 +25919,24 @@ INSERT INTO `incidencias` (`id_incidencia`, `fecha`, `id_pds`, `id_displays_pds`
 (306, '2015-03-18 17:36:47', 3011, 7699, 6939, 'Avería', 0, 0, 0, 1, 'EL ANCLAJE BLANCO QUE AGUANTA LA TABLET, SE GIRA, NO QUEDA FIJA. ', 'enviar soporte\nalarma\ntornillos\n\n\nVPG\n\nMPI\nenviado 26/03/2015', NULL, '', '', '', '', '', 'Loli García Moreno', '977242427', NULL, NULL, NULL, 'En visita', 'Comunicada'),
 (307, '2015-03-18 18:33:11', 2938, 7178, 6108, 'Avería', 1, 0, 1, 0, 'no enciende', 'vpg\n\nviatec\nA LA ATT DE: AVELINO GONZALEZ. \n\nC/ANTONIO ALZAGA 30\n\nCP: 48980 SANTURTZI  (BIZCAYA). \n\nTLF: 670413163\n', NULL, '', '', '', '', '', 'leyre arto', '661683842', NULL, NULL, NULL, 'En visita', 'Comunicada'),
 (308, '2015-03-18 18:46:40', 2279, 2527, 1813, 'Robo', 1, 0, 1, 1, 'HAN ACEDIDO AL INTERIOR DE NUESTRA TIENDA, FUERA DEL HORARIO COMERCIAL SUSTRAYENDO TODAS LAS DEMOS.\nNECESITAMOS QUE VENGAN PARA PONER LAS DEMOS DE NUEVO CON SUS SOPORTES, ALARMAS....', 'VPG\n\nVIATEC\n\nA LA ATT DE: JORGE DANIEL MORILLA GONZÁLEZ.\n\nPLAZA DE LOS MÁRTIRES Nº 13 LAS CABEZAS DE SAN JUAN C.P. 41730 (SEVILLA). JORGE 652847452\n\n \n', NULL, '', '59440139-1426704400', '', '', '', 'MEREDITH', '955870453', NULL, NULL, NULL, 'Finalizada', 'Resuelta'),
-(309, '2015-03-18 18:49:13', 2279, 2527, 1814, 'Robo', 1, 0, 1, 1, 'HAN ACEDIDO AL INTERIOR DE NUESTRA TIENDA, EN HORARIO NO COMERCIAL, SUSTRAYENDO TODAS LAS DEMOS.\nSOLICITAMOS QUE VENGA PARA PONERLAS DE NUEVO CON SUS SOPORTES, ALARMAS....', 'VPG\n\nVIATEC\nA LA ATT DE: JORGE DANIEL MORILLA GONZÁLEZ.\n\nPLAZA DE LOS MÁRTIRES Nº 13 LAS CABEZAS DE SAN JUAN C.P. 41730 (SEVILLA). JORGE 652847452\n\n \n', NULL, '', '59440139-1426704553', '', '', '', 'MEREDITH', '955870453', NULL, NULL, NULL, 'En visita', 'Comunicada'),
-(310, '2015-03-18 18:52:04', 2279, 2527, 1815, 'Robo', 1, 0, 1, 1, 'HAN ACEDIDO AL INTERIOR DE NUESTRA TIENDA, FUERA DEL HORARIO COMERCIAL SUSTRAYENDO TODAS LAS DEMOS.\nSOLICITO QUE VENGA A REPONER LAS DEMOS, SOPORTES, ALARMAS....', 'VPG\n\nVIATEC\nA LA ATT DE: JORGE DANIEL MORILLA GONZÁLEZ.\n\nPLAZA DE LOS MÁRTIRES Nº 13 LAS CABEZAS DE SAN JUAN C.P. 41730 (SEVILLA). JORGE 652847452\n\n \n', NULL, '', '59440139-1426704724', '', '', '', 'MEREDITH', '955870453', NULL, NULL, NULL, 'En visita', 'Comunicada'),
-(311, '2015-03-18 18:57:22', 2279, 2531, 1816, 'Robo', 0, 0, 0, 0, '', 'sin material', NULL, '', '', '', '', '', '0', '0', NULL, NULL, NULL, 'En proceso', 'Revisada'),
-(312, '2015-03-18 19:04:23', 2279, 2531, 1817, 'Robo', 1, 0, 1, 1, 'HAN ENTRADO EN NUESTRA TIENDA, FUERA DEL HORARIO COMERCIAL, SUSTRAYENDO TODAS LAS DEMOS.\nSOLICITO QUE VENGAN PARA REPONER LAS DEMOS, SOPORTES, ALARMAS....', 'sin material', NULL, '', '59440139-1426705463', '', '', '', 'MEREDITH', '955870453', NULL, NULL, NULL, 'En proceso', 'Revisada'),
+(309, '2015-03-18 18:49:13', 2279, 2527, 1814, 'Robo', 1, 0, 1, 1, 'HAN ACEDIDO AL INTERIOR DE NUESTRA TIENDA, EN HORARIO NO COMERCIAL, SUSTRAYENDO TODAS LAS DEMOS.\nSOLICITAMOS QUE VENGA PARA PONERLAS DE NUEVO CON SUS SOPORTES, ALARMAS....', 'VPG\n\nVIATEC\nA LA ATT DE: JORGE DANIEL MORILLA GONZÁLEZ.\n\nPLAZA DE LOS MÁRTIRES Nº 13 LAS CABEZAS DE SAN JUAN C.P. 41730 (SEVILLA). JORGE 652847452\n\n \n', NULL, '', '59440139-1426704553', '', '', '', 'MEREDITH', '955870453', NULL, NULL, NULL, 'Finalizada', 'Resuelta'),
+(310, '2015-03-18 18:52:04', 2279, 2527, 1815, 'Robo', 1, 0, 1, 1, 'HAN ACEDIDO AL INTERIOR DE NUESTRA TIENDA, FUERA DEL HORARIO COMERCIAL SUSTRAYENDO TODAS LAS DEMOS.\nSOLICITO QUE VENGA A REPONER LAS DEMOS, SOPORTES, ALARMAS....', 'VPG\n\nVIATEC\nA LA ATT DE: JORGE DANIEL MORILLA GONZÁLEZ.\n\nPLAZA DE LOS MÁRTIRES Nº 13 LAS CABEZAS DE SAN JUAN C.P. 41730 (SEVILLA). JORGE 652847452\n\n \n', NULL, '', '59440139-1426704724', '', '', '', 'MEREDITH', '955870453', NULL, NULL, NULL, 'Finalizada', 'Resuelta'),
+(311, '2015-03-18 18:57:22', 2279, 2531, 1816, 'Robo', 0, 0, 0, 0, '', 'INVUE\n\nVPG\nA LA ATT DE: JORGE DANIEL MORILLA GONZÁLEZ.\nPLAZA DE LOS MÁRTIRES, 13 LAS CABEZAS DE SAN JUAN\nC.P. 41730 (SEVILLA)\nJORGE 652847452', NULL, '', '', '', '', '', '0', '0', NULL, NULL, NULL, 'En visita', 'Comunicada'),
+(312, '2015-03-18 19:04:23', 2279, 2531, 1817, 'Robo', 1, 0, 1, 1, 'HAN ENTRADO EN NUESTRA TIENDA, FUERA DEL HORARIO COMERCIAL, SUSTRAYENDO TODAS LAS DEMOS.\nSOLICITO QUE VENGAN PARA REPONER LAS DEMOS, SOPORTES, ALARMAS....', 'invue\n viatec\n', NULL, '', '59440139-1426705463', '', '', '', 'MEREDITH', '955870453', NULL, NULL, NULL, 'En visita', 'Comunicada'),
 (313, '2015-03-18 19:11:30', 2972, 7450, 6530, 'Avería', 0, 0, 0, 1, 'Se ha salido el dispositivo', 'peter\n\n30/03/2015', NULL, '', '', '', '', '', 'Alex Navarrete', '952846840', NULL, NULL, NULL, 'En proceso', 'Revisada'),
 (314, '2015-03-18 19:12:22', 2972, 7451, 6532, 'Avería', 0, 0, 0, 1, 'Se ha soltado el dispositivo', 'enviar garras + pegatina\n\nVPG\n\nVIATEC\nA LA ATENCIÓN DE JUAN/FCO. \n\nC/ Gertrudis Gomez de Avellaneda nº 24. Pol. Ind. Trévenez - 29196 Málaga (952040383-ext-3)\n', NULL, '', '', '', '', '', 'Alex Navarrete', '952846840', NULL, NULL, NULL, 'En visita', 'Comunicada'),
 (315, '2015-03-18 19:15:31', 2972, 7455, NULL, 'Avería', 0, 1, 0, 0, 'Salta la Alarma al tocar las tablets', 'cambiar pegatinas\n\nvpg\n\n\nviatec\nA LA ATENCIÓN DE JUAN/FCO. \n\nC/ Gertrudis Gomez de Avellaneda nº 24. Pol. Ind. Trévenez - 29196 Málaga (952040383-ext-3)\n', NULL, '', '', '', '', '', 'Alex Navarrete', '952846840', NULL, NULL, NULL, 'En visita', 'Comunicada'),
 (316, '2015-03-18 20:13:13', 2798, 6002, 4080, 'Avería', 0, 0, 0, 1, 'Se rompio el soporte de la tablet al panel', 'vpg\n\nVIATEC\nRecogerá: Antonio Calleja/David Galante en NACEX de Polígono Industrial Las Atalayas, AV. Antigua peseta 136-137  CP: 03114 Alicante\nenviado 27/03/2015', NULL, '', '', '', '', '', 'encarni', '671040460', NULL, NULL, NULL, 'En visita', 'Comunicada'),
-(317, '2015-03-19 09:00:47', 2844, 6398, 4751, 'Robo', 1, 0, 0, 0, 'ROBO DE DOS IPHONE 5C\nROBO DE UN IPHONE 5S', 'NO TIENE IPHONES EXPUESTOS\n\nEnviar Iphone 5s + Iphone 6 + Iphone 6+\n\nLV1005 x3\nK-DEFCON-02 x 3\nLV1014 x3\nP11008 x 3\nVP-1175BW x3\nSWPH-00612-FMZ x 12\n\n', NULL, '', '26000091-1426755647', '', '', '', 'REBECA', '933858984/695197265', NULL, NULL, NULL, 'En proceso', 'Instalador asignado'),
+(317, '2015-03-19 09:00:47', 2844, 6398, 4751, 'Robo', 1, 0, 0, 0, 'ROBO DE DOS IPHONE 5C\nROBO DE UN IPHONE 5S', 'NO TIENE IPHONES EXPUESTOS\n\nEnviar Iphone 5s + Iphone 6 + Iphone 6+\n\nLV1005 x3\nK-DEFCON-02 x 3\nLV1014 x3\nP11008 x 3\nVP-1175BW x3\nSWPH-00612-FMZ x 12\nENVIADO 09/04 MPI\n\n', NULL, '', '26000091-1426755647', '', '', '', 'REBECA', '933858984/695197265', NULL, NULL, NULL, 'En visita', 'Comunicada'),
 (318, '2015-03-19 09:08:52', 2719, 5205, 2796, 'Avería', 1, 0, 0, 0, 'EL DISPOSITIVO NO SE ENCIENDE.', 'sin material', NULL, '', '', '', '', '', 'MARILO RODRIGUEZ', '691412352', NULL, NULL, NULL, 'En proceso', 'Revisada'),
 (319, '2015-03-19 09:08:56', 2844, 6404, 4758, 'Robo', 1, 0, 0, 0, 'ROBO DE UNA TAB 4', 'FALTA TAB 4', NULL, '', '26000091-1426756136', '', '', '', 'REBECA', '933858984/695197265', NULL, NULL, NULL, 'Cancelada', 'Cancelada'),
 (320, '2015-03-19 09:21:09', 2838, 6344, 4673, 'Robo', 1, 0, 0, 0, 'ROBO IPHONE 5S', 'enviar telefono\nSENSOR DE ALARMA \nCABLE DE CARGA\n\nVPG\n\nMPI\nENVIADO 27/03/2015', NULL, '', '26000045-1426756869', '', '', '', 'CORA', '933608453/653665990', NULL, NULL, NULL, 'Finalizada', 'Cerrada'),
 (321, '2015-03-19 09:26:33', 2817, 6173, 4384, 'Avería', 1, 0, 0, 0, 'tiene el patron bloquedo y esta instalada alreves.\nhay que desmontarla y enviar una nueva.', '', NULL, '', '', '', '', '', 'irene calle guerrero', '610366366', NULL, NULL, NULL, 'Cancelada', 'Cancelada'),
 (322, '2015-03-19 09:27:04', 2891, 6806, 5411, 'Robo', 1, 0, 0, 0, 'ROBO TABLET', 'sin material', NULL, '', '26000116-1426757224', '', '', '', 'MARIA BOLAÑOS', '932004491', NULL, NULL, NULL, 'En proceso', 'Revisada'),
-(323, '2015-03-19 09:28:52', 2891, 6806, 5408, 'Robo', 1, 0, 0, 0, 'ROBADA TABLET', '', NULL, '', '26000116-1426757332', '', '', '', 'MARIA BOLAÑOS', '932004491', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
-(324, '2015-03-19 09:29:33', 2891, 6806, 5409, 'Robo', 1, 0, 0, 0, 'ROBADA TABLET', '', NULL, '', '26000116-1426757373', '', '', '', 'MARIA BOLAÑOS', '932004491', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
-(325, '2015-03-19 09:30:14', 2891, 6806, 5410, 'Robo', 1, 0, 0, 0, 'ROBADA TABLET', '', NULL, '', '26000116-1426757414', '', '', '', 'MARIA BOLAÑOS', '932004491', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
-(326, '2015-03-19 09:31:15', 2891, 6801, 5400, 'Robo', 1, 0, 0, 0, 'ROBO DEL TERMINAL', '', NULL, '', '26000116-1426757475', '', '', '', 'MARIA BOLAÑOS', '932004491', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
+(323, '2015-03-19 09:28:52', 2891, 6806, 5408, 'Robo', 1, 0, 0, 0, 'ROBADA TABLET', 'huawei  sn/ Z6W4C14619000531\n\n\nVPG\n\nMPI\nenviado 09/04', NULL, '', '26000116-1426757332', '', '', '', 'MARIA BOLAÑOS', '932004491', NULL, NULL, NULL, 'En visita', 'Comunicada'),
+(324, '2015-03-19 09:29:33', 2891, 6806, 5409, 'Robo', 1, 0, 0, 0, 'ROBADA TABLET', 'tablet sn/ 430101750016719\n\nvpg\n\nMPI\nenviado 09/04', NULL, '', '26000116-1426757373', '', '', '', 'MARIA BOLAÑOS', '932004491', NULL, NULL, NULL, 'En visita', 'Comunicada'),
+(325, '2015-03-19 09:30:14', 2891, 6806, 5410, 'Robo', 1, 0, 0, 0, 'ROBADA TABLET', 'tablet  sn/Z3P6RA9390400229\n\nVPG\n\nMPI', NULL, '', '26000116-1426757414', '', '', '', 'MARIA BOLAÑOS', '932004491', NULL, NULL, NULL, 'En visita', 'Comunicada'),
+(326, '2015-03-19 09:31:15', 2891, 6801, 5400, 'Robo', 1, 0, 0, 0, 'ROBO DEL TERMINAL', 'SIN TABLET EN STOCK', NULL, '', '26000116-1426757475', '', '', '', 'MARIA BOLAÑOS', '932004491', NULL, NULL, NULL, 'En proceso', 'Revisada'),
 (327, '2015-03-19 09:34:23', 2184, 1672, 1338, 'Avería', 0, 0, 0, 1, 'No carga, cargador estropeado....', 'vpg\n \nMPI\n enviado 30/03/2015', NULL, '', '', '', '', '', 'MIRIAM', '936645503/625589863', NULL, NULL, NULL, 'Finalizada', 'Cerrada'),
 (328, '2015-03-19 09:34:56', 2184, 1672, 1340, 'Avería', 0, 0, 1, 0, 'LA ALARMA NO FUNCIONA, NO ENCIENDE.', 'vpg\n\nMPI\nENVIADO 30/03/2015', NULL, '', '', '', '', '', 'MIRIAM', '936645503/625589863', NULL, NULL, NULL, 'Finalizada', 'Cerrada'),
 (329, '2015-03-19 09:37:35', 2184, 1676, 1341, 'Robo', 1, 0, 0, 0, 'FUE ROBADA UNA TAB-2 ', 'sin material', NULL, '', '26360000-1426757855', '', '', '', 'MIRIAM', '936645503/625589863', NULL, NULL, NULL, 'En proceso', 'Revisada'),
@@ -25823,9 +26009,9 @@ INSERT INTO `incidencias` (`id_incidencia`, `fecha`, `id_pds`, `id_displays_pds`
 (396, '2015-03-20 10:59:41', 2863, 6569, 4999, 'Avería', 1, 0, 0, 0, 'PITA CONSTANTEMENTE, SEGUN NOS DICEN QUE ES UNA ALARMA QUE SUENA PORQUE LE FALTA BATERIA', 'PILAS \nPEGATINAS\nCABLE DE CARGA\n\nVPG\nVIATEC\nA LA ATT DE: PABLO.\n\nC/ ANTON DE ALAMINOS, 3 CP: 21003 HUELVA, Telf: 902364193 / 959543983\nentregado 30/03/2015', NULL, '', '', '', '', '', 'SILVANA FABIO PALOMARES', '959225433', NULL, NULL, NULL, 'En visita', 'Comunicada'),
 (397, '2015-03-20 11:25:55', 2820, 6196, NULL, 'Avería', 0, 1, 0, 0, 'DESDE HACE MESES SONABAN 2 PITIDOS , HEMOS REALIZADO COMPROBACIONES SEGUN EL MANUAL DE ERRORES DE DICHO EXPOSITOR PARA INTENTAR SOLUCIONAR EL PROBLEMA , SIN EXITO ALGUNO , EN ESTE MOMENTO SE ENCUENTRAN APAGADOS LOS TRES TERMINALES EXPUESTOS.', 'pilas\ncables \npegatinas\n\nVPG\n\nVIATEC\nA LA ATT DE: FCO. RODRÍGUEZ\n\nC/ MINERAS, 5 - LOCAL.\n\nCP: 11.100  SAN FERNANDO (CÁDIZ)\n\nCONTACTO: 691547251\n', NULL, '', '', '', '', '', 'NATALIA LOPEZ AMATE ', '956365322', NULL, NULL, NULL, 'En visita', 'Comunicada'),
 (398, '2015-03-20 11:41:37', 3060, 7993, 7429, 'Avería', 0, 0, 1, 1, 'soporte el esta roto y el cableado de la alarma no funciona bien.', 'falta material', NULL, '', '', '', '', '', 'reyes lopez', '617369933', NULL, NULL, NULL, 'En proceso', 'Revisada'),
-(399, '2015-03-20 11:48:23', 2896, 6842, 5478, 'Avería', 1, 0, 0, 0, 'no enciende no carga esta parado', 'vpg\n\nMPI\nenviado 30/03/2015', NULL, '', '', '', '', '', 'cristina miquel jorba', '605842075/938053999', NULL, NULL, NULL, 'En visita', 'Comunicada'),
-(400, '2015-03-20 11:49:02', 2896, 6842, 5479, 'Avería', 1, 0, 0, 0, 'no enciende ,esta parado', 'vpg\n\nMPI\nENVIADO 30/03/2015', NULL, '', '', '', '', '', 'cristina miquel jorba', '605842075/938053999', NULL, NULL, NULL, 'En visita', 'Comunicada');
+(399, '2015-03-20 11:48:23', 2896, 6842, 5478, 'Avería', 1, 0, 0, 0, 'no enciende no carga esta parado', 'vpg\n\nMPI\nenviado 30/03/2015', NULL, '', '', '', '', '', 'cristina miquel jorba', '605842075/938053999', NULL, NULL, NULL, 'En visita', 'Comunicada');
 INSERT INTO `incidencias` (`id_incidencia`, `fecha`, `id_pds`, `id_displays_pds`, `id_devices_pds`, `tipo_averia`, `fail_device`, `alarm_display`, `alarm_device`, `alarm_garra`, `description_1`, `description_2`, `description_3`, `parte_pdf`, `denuncia`, `foto_url`, `foto_url_2`, `foto_url_3`, `contacto`, `phone`, `email`, `id_operador`, `intervencion`, `status_pds`, `status`) VALUES
+(400, '2015-03-20 11:49:02', 2896, 6842, 5479, 'Avería', 1, 0, 0, 0, 'no enciende ,esta parado', 'vpg\n\nMPI\nENVIADO 30/03/2015', NULL, '', '', '', '', '', 'cristina miquel jorba', '605842075/938053999', NULL, NULL, NULL, 'En visita', 'Comunicada'),
 (401, '2015-03-20 12:15:05', 2859, 6533, 4947, 'Avería', 0, 0, 1, 1, 'EL SOPORTE DEL IPHONE 6 ESTA ROTO, UN NIÑO SE COLGÓ. IPHONE LO TENEMOS GUARDADO. LA ALARMA NO PARA DE SONAR CADA 30 SEGUNDOS APROXIMADAMENTE', 'ENVIAR SOPORTE\nCABLE DE CARGA\nPILAS\nPEGATINA\nVPG\n\nVIATEC\nA LA ATT DE: ANDRÉS,\n\nC/PAZ DE BELGRADO Nº14 (LOCAL 18)\n\nCP: 30300 Cartagena (Murcia).\n\nContacto: 868060193\nenviado 30/03/2015', NULL, '', '', '', '', '', 'NURIA JIMENEZ CASTILLO', '968197473', NULL, NULL, NULL, 'En visita', 'Comunicada'),
 (402, '2015-03-20 12:18:06', 2859, 6532, NULL, 'Avería', 0, 1, 0, 0, 'EL SISTEMA DE ALARMADO NO PARA DE SONAR, CADA 30 SEG APROXIMADAMENTE. NO HAY NINGÚN DISPOSITIVO ROTO NI DEJANDO DE FUNCIONAR, TODO OK MENOS EL ALARMADO.', 'PETER \n28/03/2015', NULL, '', '', '', '', '', 'NURIA JIMENEZ CASTILLO', '968197473', NULL, NULL, NULL, 'En proceso', 'Revisada'),
 (403, '2015-03-20 12:19:17', 2859, 6537, NULL, 'Avería', 0, 1, 0, 0, 'EL SISTEMA DE ALARMADO NO FUNCIONA', 'cambiar fuente alimentacion\n\nVPG\n\nVIATEC\nA LA ATT DE: ANDRÉS,\n\nC/PAZ DE BELGRADO Nº14 (LOCAL 18)\n\nCP: 30300 Cartagena (Murcia).\n\nContacto: 868060193\nenviado 30/03/2015', NULL, '', '', '', '', '', 'NURIA JIMENEZ CASTILLO', '968197473', NULL, NULL, NULL, 'En visita', 'Comunicada'),
@@ -25834,11 +26020,11 @@ INSERT INTO `incidencias` (`id_incidencia`, `fecha`, `id_pds`, `id_displays_pds`
 (406, '2015-03-20 12:21:11', 2859, 6537, 4951, 'Avería', 1, 0, 1, 0, 'EL DISPOSITIVO NO ENCIENDE. LA ALARMA NO FUNCIONA. PENSAMOS QUE NO ESTÁ CONECTADO, HAY ALGO QUE NO FUNCIONA.', 'SE ENVIA FUENTE DE ALIMENTACION\n\nVIATEC\nA LA ATT DE: ANDRÉS,\n\nC/PAZ DE BELGRADO Nº14 (LOCAL 18)\n\nCP: 30300 Cartagena (Murcia).\n\nContacto: 868060193\nenviado 30/03/2015', NULL, '', '', '', '', '', 'NURIA JIMENEZ CASTILLO', '968197473', NULL, NULL, NULL, 'En visita', 'Comunicada'),
 (407, '2015-03-20 12:21:30', 2859, 6537, 4952, 'Avería', 1, 0, 1, 0, 'EL DISPOSITIVO NO ENCIENDE. LA ALARMA NO FUNCIONA. PENSAMOS QUE NO ESTÁ CONECTADO, HAY ALGO QUE NO FUNCIONA.', 'SE ENVIA FUENTE DE ALIMENTACION\n\nVIATEC\nA LA ATT DE: ANDRÉS,\n\nC/PAZ DE BELGRADO Nº14 (LOCAL 18)\n\nCP: 30300 Cartagena (Murcia).\n\nContacto: 868060193\nenviado 30/03/2015', NULL, '', '', '', '', '', 'NURIA JIMENEZ CASTILLO', '968197473', NULL, NULL, NULL, 'En visita', 'Comunicada'),
 (408, '2015-03-20 12:23:03', 2194, 1762, 1389, 'Avería', 1, 0, 0, 0, 'no tiene cargador ninguno de los iphones expuestos por lo cual están apagados', 'vpg\n\nMPI\nENVIADO 30/03/2015', NULL, '', '', '', '', '', 'fani escobar', '692224405', NULL, NULL, NULL, 'Finalizada', 'Cerrada'),
-(409, '2015-03-20 12:39:37', 2787, 5905, 3906, 'Avería', 1, 0, 1, 1, 'NO TENEMOS EL DISPOSITIVO NI NADA TENEMOS EL MUEBLE VACÍO COMPLETAMENTE DESDE HACE MESES', 'sin material', NULL, '', '', '', '', '', 'ANABELL', '625353883', NULL, NULL, NULL, 'En proceso', 'Revisada'),
-(410, '2015-03-20 12:40:58', 2787, 5905, 3907, 'Avería', 0, 0, 1, 1, 'MUEBLE VACÍO', '', NULL, '', '', '', '', '', 'ANABELL', '625353883', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
-(411, '2015-03-20 12:41:35', 2787, 5905, 3908, 'Avería', 1, 0, 1, 1, 'NO TENEMOS NADA', '', NULL, '', '', '', '', '', 'ANABELL', '625353883', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
-(412, '2015-03-20 12:42:14', 2787, 5903, 3903, 'Avería', 1, 0, 0, 0, 'NO FUNCIONA ', '', NULL, '', '', '', '', '', 'ANABELL', '625353883', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
-(413, '2015-03-20 12:42:42', 2787, 5903, 3902, 'Avería', 1, 0, 0, 0, 'NO FUNCIONA', '', NULL, '', '', '', '', '', 'ANABELL', '625353883', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
+(409, '2015-03-20 12:39:37', 2787, 5905, 3906, 'Avería', 1, 0, 1, 1, 'NO TENEMOS EL DISPOSITIVO NI NADA TENEMOS EL MUEBLE VACÍO COMPLETAMENTE DESDE HACE MESES', 'INVUE\n\nMPI\ntablet 351885060279527\n enviado 09/04/\n', NULL, '', '', '', '', '', 'ANABELL', '625353883', NULL, NULL, NULL, 'En visita', 'Comunicada'),
+(410, '2015-03-20 12:40:58', 2787, 5905, 3907, 'Avería', 0, 0, 1, 1, 'MUEBLE VACÍO', 'el movil lo  tiene mpi \nES EL S6\nENVIADO 09/04', NULL, '', '', '', '', '', 'ANABELL', '625353883', NULL, NULL, NULL, 'En visita', 'Comunicada'),
+(411, '2015-03-20 12:41:35', 2787, 5905, 3908, 'Avería', 1, 0, 1, 1, 'NO TENEMOS NADA', 'CAMBIAR TEELFONO POR EL NUEVO SAMSUNG \nLO TIENE MPI\n\nENVIADO 09/04', NULL, '', '', '', '', '', 'ANABELL', '625353883', NULL, NULL, NULL, 'En visita', 'Comunicada'),
+(412, '2015-03-20 12:42:14', 2787, 5903, 3903, 'Avería', 1, 0, 0, 0, 'NO FUNCIONA ', 'CABLE DE CARGA\n\nVPG\n\nMPI enviado 09/04\n', NULL, '', '', '', '', '', 'ANABELL', '625353883', NULL, NULL, NULL, 'En visita', 'Comunicada'),
+(413, '2015-03-20 12:42:42', 2787, 5903, 3902, 'Avería', 1, 0, 0, 0, 'NO FUNCIONA', 'vpg\n\nmpi  enviado 09/04\n', NULL, '', '', '', '', '', 'ANABELL', '625353883', NULL, NULL, NULL, 'En visita', 'Comunicada'),
 (414, '2015-03-20 12:58:18', 2940, 7201, 6151, 'Avería', 1, 0, 0, 0, 'el dispositivo no esta instalado en la mesa de experiencia. en su lugar hay otro terminal', '', NULL, '', '', '', '', '', 'carlos sanchez', '665961538', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
 (415, '2015-03-20 12:59:38', 2940, 7201, 6152, 'Avería', 1, 0, 0, 0, 'el dispositivo no esta instalado en la mesa de experiencia. en su lugar hay otro terminal', '', NULL, '', '', '', '', '', 'carlos sanchez', '665961538', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
 (416, '2015-03-20 14:51:04', 3021, 7756, 7036, 'Avería', 0, 0, 1, 0, 'salta la alarma solo con tocarlo', 'cambiar pegatina\n\ninvue\n\nMPI\nENVIADO 27/03/2015', NULL, '', '', '', '', '', 'mireia prunes', '692994950', NULL, NULL, NULL, 'Finalizada', 'Cerrada'),
@@ -25900,7 +26086,7 @@ INSERT INTO `incidencias` (`id_incidencia`, `fecha`, `id_pds`, `id_displays_pds`
 (472, '2015-03-22 23:16:15', 1688, 59, 117, 'Avería', 1, 0, 1, 1, 'La demo del iPhone 5 S silver 16 GB , del stand de Carrefour San Juan de Aznalfarache. Por lo visto, los técnicos estuvieron aquí para realizar el cambio del IPhone 5S por el IPhone 6 pero no pudieran realizar el cambio ya que por  intento de robo falta un tornillo , comentaron que iban a localizar el tornillo y en cuanto lo tuvieran vendrían a realizar el cambio , a día de hoy \naún seguimos con la demo del IPhone 5S\n', 'hablado con tienda 08/04\n\nA LA ATENCIÓN DE: Rafael Alfonso. Parque Empresarial Nuevo Torne c/ Astronomía nº1 Torre2 Planta 8 Módulo 10. CP: 41015 SEVILLA. TELF: Rafael Alfonso 647725457', NULL, '', '', '', '', '', 'Porfirio Castro', '675756688', NULL, NULL, NULL, 'En visita', 'Comunicada'),
 (473, '2015-03-22 23:31:37', 1679, 50, 99, 'Avería', 1, 0, 0, 0, ' DEMO DEL IPHONE 6 NO ENCIENDE LA PANTALLA PERO SI EMITE SONIDOS IMEI 3520750 61455370', 'enviar movil y cable de carga  imei 352075061258592\nvpg\n\nviatec\nA LA ATT DE: FCO. RODRÍGUEZ, C/ MINERAS, 5 - LOCAL.  CP: 11.100  SAN FERNANDO (CÁDIZ). CONTACTO: 691547251\n ', NULL, '', '', '', '', '', 'Porfirio Castro', '675756688', NULL, NULL, NULL, 'En visita', 'Comunicada'),
 (474, '2015-03-22 23:49:14', 1692, 63, 125, 'Avería', 0, 0, 1, 1, 'El Iphone 6 SPACE GRAY 16 GB demo siguen sin colocar ya se pasó en Enero a comunicasa+ fue intento de robo IMEI 35207106 8766695', 'hablado con tienda 08/04\n\nA LA ATENCIÓN DE: Rafael Alfonso.\nParque Empresarial Nuevo Torne c/ Astronomía nº1 Torre2 Planta 8 Módulo 10. CP: 41015 SEVILLA. TELF: Rafael Alfonso 647725457', NULL, '', '', '', '', '', 'Porfirio Castro', '675756688', NULL, NULL, NULL, 'En visita', 'Comunicada'),
-(475, '2015-03-23 09:13:48', 2145, 1312, 1133, 'Avería', 0, 0, 1, 0, 'el latiguillo de la batería no funciona', 'no cogen telefono', NULL, '', '', '', '', '', 'Alicia ', '952574136', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
+(475, '2015-03-23 09:13:48', 2145, 1312, 1133, 'Avería', 0, 0, 1, 0, 'el latiguillo de la batería no funciona', 'vpg\n\nviatec\nA LA ATENCIÓN DE JUAN/FCO. C/ Gertrudis Gomez de Avellaneda nº 24. Pol. Ind. Trévenez - 29196 Málaga (952040383-ext-3)', NULL, '', '', '', '', '', 'Alicia ', '952574136', NULL, NULL, NULL, 'En visita', 'Comunicada'),
 (476, '2015-03-23 10:42:02', 2977, 7495, 6597, 'Avería', 1, 0, 0, 0, 'LA TABLET ESTA BLOQUEADA, YA QUE ALGUIEN HA PUESTO EL PATRON.', 'enviar tecnico a resetear\n viatec\n\nA LA ATT DE: AVELINO GONZALEZ.\nC/ANTONIO ALZAGA 30  CP: 48980 SANTURTZI  (BIZCAYA). TLF: 670413163', NULL, '', '', '', '', '', 'jon', '652675637', NULL, NULL, NULL, 'En visita', 'Comunicada'),
 (477, '2015-03-23 12:02:37', 2987, 7555, 6699, 'Avería', 0, 0, 0, 1, 'El soporte no encaja en la tablet, a la hora de colocarlo', 'hablado con tienda \n\nA LA ATT DE: DAVID. C/ EL TREBOL Nº10-12. CP: 37004 SALAMANCA TFNO.: 651915158', NULL, '', '', '', '', '', 'Guilen Martin', '652341418', NULL, NULL, NULL, 'En visita', 'Comunicada'),
 (478, '2015-03-23 14:13:33', 2860, 6546, 4965, 'Avería', 0, 0, 0, 1, 'Esta suelto el enclaje y no conseguimos colocarla bien', 'no coge telefono\n08/04', NULL, '', '', '', '', '', 'natalia coiras mancera', '956313107', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
@@ -25935,7 +26121,7 @@ INSERT INTO `incidencias` (`id_incidencia`, `fecha`, `id_pds`, `id_displays_pds`
 (507, '2015-03-24 12:00:38', 2892, 6814, 5423, 'Avería', 1, 0, 0, 0, 'La Tablet no funciona, no se enciende.', 'Sin material', NULL, '', '', '', '', '', 'paula', '692680221', NULL, NULL, NULL, 'En proceso', 'Revisada'),
 (508, '2015-03-24 12:01:43', 2892, 6814, 5424, 'Avería', 0, 0, 1, 0, 'AL MINIMO MOVIMIENTO SUENA LA ALARMA Y ESTÁ MEDIA SUELTA DEL SOPORTE', 'enviar pegatinas\nsensor y garras\n\nVPG\n\nMPI\n ENVIADO 25/03/2015', NULL, '', '', '', '', '', 'paula', '692680221', NULL, NULL, NULL, 'En visita', 'Comunicada'),
 (509, '2015-03-24 12:53:34', 2853, 6483, 4873, 'Avería', 1, 0, 0, 0, 'no enciende y no tiene instalado la demo', 'sin material', NULL, '', '', '', '', '', 'belen', '625435996', NULL, NULL, NULL, 'En proceso', 'Revisada'),
-(510, '2015-03-24 12:54:51', 2853, 6479, 4868, 'Avería', 1, 0, 0, 0, 'no enciende ', 'cable de carga\n\nVPG\n\nInstalvia\n\nA LA ATT DE: MARGARITA,\n\nC/ MARQUÉS DE VALLADARES Nº12-2º OFOC 3. CP. 36201 VIGO (PONTEVEDRA). TELF:986220470\nenviado 25/03/2015', NULL, '', '', '', '', '', 'belen', '625435996', NULL, NULL, NULL, 'Finalizada', 'Cerrada'),
+(510, '2015-03-24 12:54:51', 2853, 6479, 4868, 'Avería', 1, 0, 0, 0, 'no enciende ', 'cable de carga\n\nVPG\n\nInstalvia\n\nA LA ATT DE: MARGARITA,\n\nC/ MARQUÉS DE VALLADARES Nº12-2º OFOC 3. CP. 36201 VIGO (PONTEVEDRA). TELF:986220470\nenviado 25/03/2015', NULL, '', '', '', '', '', 'belen', '625435996', NULL, NULL, NULL, 'En visita', 'Comunicada'),
 (511, '2015-03-24 12:58:43', 2837, 6334, 4658, 'Avería', 0, 0, 1, 0, 'Alarma se a despegado del terminal el sensor de alarma .', 'comunicada a merydais\n31/03', NULL, '', '', '', '', '', 'sonia', '695456966', NULL, NULL, NULL, 'En proceso', 'Revisada'),
 (512, '2015-03-24 13:45:32', 2853, 6483, 4872, 'Avería', 1, 0, 0, 0, 'NO TIENE INSTALADA LA DEMO Y SE QUEDA CARGANDO TODO EL TIEMPO IMPOSIBILITANDO SU USO ', 'enviar tablet nueva\n\nA LA ATT DE: MARGARITA,\n\nC/ MARQUÉS DE VALLADARES Nº12-2º OFOC 3. CP. 36201 VIGO (PONTEVEDRA). TELF:986220470\nenviado 25/03/2015', NULL, '', '', '', '', '', 'BELEN', '625435996', NULL, NULL, NULL, 'Finalizada', 'Cerrada'),
 (513, '2015-03-24 13:47:05', 2853, 6483, 4874, 'Avería', 1, 0, 0, 0, 'NO TIENE INSTALADA LA DEMO Y ESTA CARGANDO TODO EL TIEMPO IMPOSIBILITANDO SU USO', 'enviar tablet nueva\nA LA ATT DE: MARGARITA,\n\nC/ MARQUÉS DE VALLADARES Nº12-2º OFOC 3. CP. 36201 VIGO (PONTEVEDRA). TELF:986220470\nenviado 25/03/2015', NULL, '', '', '', '', '', 'BELEN', '625435996', NULL, NULL, NULL, 'Finalizada', 'Cerrada'),
@@ -25970,12 +26156,12 @@ INSERT INTO `incidencias` (`id_incidencia`, `fecha`, `id_pds`, `id_displays_pds`
 (542, '2015-03-25 10:48:03', 2730, 5304, 2940, 'Avería', 1, 0, 0, 0, 'NO SE ENCIENDE, Y SI CONECTAS CARGADOR NO RESPONDE', 'sin material', NULL, '', '', '', '', '', 'TANIA BENAVENTE', '635039035', NULL, NULL, NULL, 'En proceso', 'Revisada'),
 (543, '2015-03-25 10:48:51', 2730, 5306, 2942, 'Avería', 0, 0, 0, 1, 'SE DESPEGA TODO EL SOPORTE', 'enviar:\n\nHS111-W x 1\nHS134-W x 1\nPegatina\n\nInvue\n\nMPI\n\nenviado 26/03/2015\n', NULL, '', '', '', '', '', 'TANIA BENAVENTE', '635039035', NULL, NULL, NULL, 'Finalizada', 'Cerrada'),
 (544, '2015-03-25 10:58:31', 2886, 6761, 5325, 'Avería', 1, 0, 0, 1, 'se ha caido la demo, hay que ponerla de nuevo', 'enviar pegatina \n\nInvue\n\nmpi\nenviado 26/03/2015\n', NULL, '', '', '', '', '', 'juan carlos ballesteros', '652010753', NULL, NULL, NULL, 'Finalizada', 'Cerrada'),
-(545, '2015-03-25 10:59:35', 2886, 6761, 5324, 'Avería', 1, 0, 0, 1, 'se ha caido del soporte.', 'enviar pegatina\n\nInvue\n\nmpi\n26/03/2015', NULL, '', '', '', '', '', 'juan carlos ballesteros', '652010753', NULL, NULL, NULL, 'Finalizada', 'Cerrada'),
-(546, '2015-03-25 11:45:28', 2844, 6402, 4754, 'Avería', 1, 0, 0, 0, 'EL dispositivo en cuestión no enciende.', 'sin material', NULL, '', '', '', '', '', 'rebeca mingo', '695197265', NULL, NULL, NULL, 'En proceso', 'Revisada'),
-(547, '2015-03-25 11:46:00', 2844, 6402, 4756, 'Avería', 1, 0, 0, 0, 'EL dispositivo en cuestión no enciende.', 'sin material', NULL, '', '', '', '', '', 'rebeca mingo', '695197265', NULL, NULL, NULL, 'En proceso', 'Revisada');
+(545, '2015-03-25 10:59:35', 2886, 6761, 5324, 'Avería', 1, 0, 0, 1, 'se ha caido del soporte.', 'enviar pegatina\n\nInvue\n\nmpi\n26/03/2015', NULL, '', '', '', '', '', 'juan carlos ballesteros', '652010753', NULL, NULL, NULL, 'Finalizada', 'Cerrada');
 INSERT INTO `incidencias` (`id_incidencia`, `fecha`, `id_pds`, `id_displays_pds`, `id_devices_pds`, `tipo_averia`, `fail_device`, `alarm_display`, `alarm_device`, `alarm_garra`, `description_1`, `description_2`, `description_3`, `parte_pdf`, `denuncia`, `foto_url`, `foto_url_2`, `foto_url_3`, `contacto`, `phone`, `email`, `id_operador`, `intervencion`, `status_pds`, `status`) VALUES
+(546, '2015-03-25 11:45:28', 2844, 6402, 4754, 'Avería', 1, 0, 0, 0, 'EL dispositivo en cuestión no enciende.', 'VPG\n\nMPI\nenviado 09/04', NULL, '', '', '', '', '', 'rebeca mingo', '695197265', NULL, NULL, NULL, 'En visita', 'Comunicada'),
+(547, '2015-03-25 11:46:00', 2844, 6402, 4756, 'Avería', 1, 0, 0, 0, 'EL dispositivo en cuestión no enciende.', 'vpg\n\nmpi  enviado 09/04', NULL, '', '', '', '', '', 'rebeca mingo', '695197265', NULL, NULL, NULL, 'En visita', 'Comunicada'),
 (548, '2015-03-25 11:48:30', 2844, 6397, NULL, 'Avería', 0, 1, 0, 0, 'EL reloj de exposición de Sony ha sido robado y el alarmado de este esta afectado.', 'PETER', NULL, '', '', '', '', '', 'rebeca mingo', '695197265', NULL, NULL, NULL, 'En proceso', 'Revisada'),
-(549, '2015-03-25 11:49:35', 2844, 6404, NULL, 'Avería', 0, 1, 0, 0, 'Nos cambiaron los terminales de exposición y el samsung galaxy s6 edge no funciona porque no carga.', 'SIN MATERIAL', NULL, '', '', '', '', '', 'rebeca mingo', '695197265', NULL, NULL, NULL, 'En proceso', 'Revisada'),
+(549, '2015-03-25 11:49:35', 2844, 6404, NULL, 'Avería', 0, 1, 0, 0, 'Nos cambiaron los terminales de exposición y el samsung galaxy s6 edge no funciona porque no carga.', 'invue\n\nmpi\nenviado 09/04', NULL, '', '', '', '', '', 'rebeca mingo', '695197265', NULL, NULL, NULL, 'En visita', 'Comunicada'),
 (550, '2015-03-25 12:17:10', 3013, 7708, 6954, 'Avería', 0, 0, 0, 1, 'Cuando los clientes tocan el telfono este se suelta, incluso pueden tirar de él sin que salte la alarma. ', 'sin material', NULL, '', '', '', '', '', 'virginia peña gil ', '876168112', NULL, NULL, NULL, 'En proceso', 'Revisada'),
 (551, '2015-03-25 12:39:11', 2621, 4956, 2380, 'Avería', 1, 0, 0, 0, 'El terminal ha estado varios días sin enceder, ahora enciende pero parece que está mal configurado.', 'enviar iphone 6+ \npegatina\n\nVPG\n\nI2TM\nenviado 26/03/2015', NULL, '', '', '', '', '', 'Inesa, Merche, Jorge', '652573082', NULL, NULL, NULL, 'Finalizada', 'Cerrada'),
 (552, '2015-03-25 13:25:58', 2724, 5233, NULL, 'Avería', 0, 1, 0, 0, 'pita cada diez segundos', 'enviar pilas + pegatinas\n\nVPG\n\nI2TM', NULL, '', '', '', '', '', 'david esteban', '916919593', NULL, NULL, NULL, 'En proceso', 'Instalador asignado'),
@@ -25989,9 +26175,9 @@ INSERT INTO `incidencias` (`id_incidencia`, `fecha`, `id_pds`, `id_displays_pds`
 (560, '2015-03-25 16:20:57', 2677, 5025, 2550, 'Avería', 1, 0, 0, 0, 'Tenemos rotura de un Orange Nura que es el que tenemos en este mueble aunque según esta web el modelo es Nokia 735.', 'Enviar Nura + pegatina\nMP625-W x 1\nADH2007\n\n\n\nInvue\nnura  imei 355570060030320\nA LA ATENCIÓN DE: Rafael Alfonso. Parque Empresarial Nuevo Torne\nc/ Astronomía nº1 Torre2 Planta 8 Módulo 10. CP: 41015 SEVILLA. TELF: Rafael Alfonso 647725457\n ', NULL, '', '', '', '', '', 'Javier Gonzalez Velazquez', '656162727', NULL, NULL, NULL, 'En visita', 'Comunicada'),
 (561, '2015-03-25 16:22:20', 2677, 5025, 2551, 'Avería', 1, 0, 0, 0, 'Rotura de un LG3S que es el dispositivo que tenemos en este mueble aunque en esta web aparece distintos modelos colocados en el mueble.', 'No disponemos de material', NULL, '', '', '', '', '', 'Javier Gonzalez Velazquez', '656162727', NULL, NULL, NULL, 'En proceso', 'Revisada'),
 (562, '2015-03-25 17:06:58', 2902, 6890, 5568, 'Avería', 0, 0, 1, 0, 'HAN ROTO EL CABLE DE CARGA DEL DISPOSITIVO. ENVIAR UNO', 'vpg\n\nviatec\nA LA ATENCIÓN DE: MARGARITA, C/ MARQUÉS DE VALLADARES Nº12-2º OFIC 3. CP. 36201 VIGO (PONTEVEDRA). TELF:986220470', NULL, '', '', '', '', '', 'LUPE/ ANA', '691877263', NULL, NULL, NULL, 'Finalizada', 'Resuelta'),
-(563, '2015-03-25 17:22:24', 2676, 5015, 2529, 'Avería', 0, 0, 0, 1, 'EL TERMINAL GALAXY S6 EDGE COLOCADO HOY, ESTA MEDIO SUELTO Y YA HAN INTENTANDO SACARLO SONANDO LA ALARMA, YA QUE SALE HACIA ARRIBA COMO SI NADA.\n', '', NULL, '', '', '', '', '', 'ALBERT POUS', '615697558', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
-(564, '2015-03-25 17:22:57', 2676, 5015, 2530, 'Avería', 0, 0, 0, 1, 'EL TERMINAL GALAXY S6 COLOCADO HOY, ESTA MEDIO SUELTO Y YA HAN INTENTANDO SACARLO SONANDO LA ALARMA, YA QUE SALE HACIA ARRIBA COMO SI NADA.', '', NULL, '', '', '', '', '', 'ALBERT POUS', '615697558', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
-(565, '2015-03-25 17:27:07', 2640, 4975, NULL, 'Avería', 0, 1, 0, 0, 'Los sitemas de sujección de ambos teléfonos están rotos, no podemos tenerlos expuestos.', '', NULL, '', '', '', '', '', 'LAURA', '652577668', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
+(563, '2015-03-25 17:22:24', 2676, 5015, 2529, 'Avería', 0, 0, 0, 1, 'EL TERMINAL GALAXY S6 EDGE COLOCADO HOY, ESTA MEDIO SUELTO Y YA HAN INTENTANDO SACARLO SONANDO LA ALARMA, YA QUE SALE HACIA ARRIBA COMO SI NADA.\n', 'no cogen telefono', NULL, '', '', '', '', '', 'ALBERT POUS', '615697558', NULL, NULL, NULL, 'En proceso', 'Revisada'),
+(564, '2015-03-25 17:22:57', 2676, 5015, 2530, 'Avería', 0, 0, 0, 1, 'EL TERMINAL GALAXY S6 COLOCADO HOY, ESTA MEDIO SUELTO Y YA HAN INTENTANDO SACARLO SONANDO LA ALARMA, YA QUE SALE HACIA ARRIBA COMO SI NADA.', 'no contestan al telefono', NULL, '', '', '', '', '', 'ALBERT POUS', '615697558', NULL, NULL, NULL, 'En proceso', 'Revisada'),
+(565, '2015-03-25 17:27:07', 2640, 4975, NULL, 'Avería', 0, 1, 0, 0, 'Los sitemas de sujección de ambos teléfonos están rotos, no podemos tenerlos expuestos.', '', NULL, '', '', '', '', '', 'LAURA', '652577668', NULL, NULL, NULL, 'En proceso', 'Revisada'),
 (566, '2015-03-25 17:32:04', 2909, 6950, 5679, 'Avería', 0, 0, 0, 1, 'ESTAN SUELTOS LOS TORNILLOS, LA TABLET ESTA A PUNTO DE CAER', 'enviar tornillos \nsoporte\n\nvpg\n\nVIATEC\nA LA ATENCIÓN DE: Francisco Ventura,\n\nAndrés Mancebo, nº 42 Bajo\n\nCP: 46023 VALENCIA TELF: 963379270\n ENVIADO 26/03/2015', NULL, '', '', '', '', '', 'Verónica Amores', '675622542', NULL, NULL, NULL, 'En visita', 'Comunicada'),
 (567, '2015-03-25 17:47:29', 2909, 6946, 5673, 'Avería', 0, 0, 1, 0, 'el cable del iphone 5s no funciona', 'CAMBIAR CABLE DE CARGAVPG\n\nVIATEC\nA LA ATENCIÓN DE: Francisco Ventura,\n\nAndrés Mancebo, nº 42 Bajo\n\nCP: 46023 VALENCIA TELF: 963379270\n enviado 26/03/2015', NULL, '', '', '', '', '', 'Verónica Amores', '675622542', NULL, NULL, NULL, 'En visita', 'Comunicada'),
 (568, '2015-03-25 18:43:52', 2810, 6110, 4272, 'Avería', 1, 0, 0, 0, 'TIENE EL PATRON DE BLOQUEO Y NO SE  PUEDE DESBLOQUEAR', 'Enviar técnico y que realicen un reset de la tablet\nEnviar pegatina\n  VPG\n\nVIATEC\nA LA ATENCIÓN DE: Francisco Ventura\n\nAndrés Mancebo, nº 42 Bajo,\n\nCP: 46023 VALENCIA TELF: 963379270\n\n \nenviado 27/03/2015', NULL, '', '', '', '', '', 'ROCIO DOMENECH', '615327215', NULL, NULL, NULL, 'Finalizada', 'Cerrada'),
@@ -26002,8 +26188,8 @@ INSERT INTO `incidencias` (`id_incidencia`, `fecha`, `id_pds`, `id_displays_pds`
 (573, '2015-03-26 09:09:17', 2915, 6993, 5757, 'Avería', 0, 0, 0, 1, 'ANCLAJE SACADO EN LOS DOS IPHONE 5C', 'sin material', NULL, '', '', '', '', '', 'VANE', '691411321', NULL, NULL, NULL, 'En proceso', 'Revisada'),
 (574, '2015-03-26 09:09:47', 2915, 6997, 5767, 'Avería', 0, 0, 0, 1, 'ANCLAJE SUELTO Y SACADO', 'sin material', NULL, '', '', '', '', '', 'VANE', '691411321', NULL, NULL, NULL, 'En proceso', 'Revisada'),
 (575, '2015-03-26 09:17:58', 2749, 5507, 3211, 'Avería', 0, 0, 0, 1, 'ANCLAJE SUELTO, CON ALARMA ACTIVADA, HEMOS TENIDO QUE QUITAR EL DESPOSITIVO.', 'peter\n\n28/03/2015', NULL, '', '', '', '', '', 'MARILO PEREZ', '658876884', NULL, NULL, NULL, 'En proceso', 'Revisada'),
-(576, '2015-03-26 09:21:56', 2906, 6926, 5635, 'Avería', 0, 0, 1, 0, 'El conector/cargador de la tablet esta roto', '', NULL, '', '', '', '', '', 'Elena Cabanilles', '636447951', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
-(577, '2015-03-26 09:31:09', 2644, 4979, 2426, 'Avería', 0, 0, 1, 1, 'El Soporte/Anclaje ha sido arrancado y por consiguiente el cableado ha sido dañado. Esperamos areglo lo antes posible.\nGracias.', '', NULL, '', '', '', '', '', 'Desiree Perez', '645752085', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
+(576, '2015-03-26 09:21:56', 2906, 6926, 5635, 'Avería', 0, 0, 1, 0, 'El conector/cargador de la tablet esta roto', 'vpg\n\nviatec\n\nA LA ATENCIÓN DE: Francisco Ventura,\nAndrés Mancebo, nº 42 Bajo, CP: 46023 VALENCIA TELF: 963379270', NULL, '', '', '', '', '', 'Elena Cabanilles', '636447951', NULL, NULL, NULL, 'En visita', 'Comunicada'),
+(577, '2015-03-26 09:31:09', 2644, 4979, 2426, 'Avería', 0, 0, 1, 1, 'El Soporte/Anclaje ha sido arrancado y por consiguiente el cableado ha sido dañado. Esperamos areglo lo antes posible.\nGracias.', 'inovshop\n\nviatec\nA LA ATT DE: ANDRÉS\nC/PAZ DE BELGRADO Nº14 (LOCAL 18) CP: 30300 Cartagena (Murcia). Contacto: 868060193', NULL, '', '', '', '', '', 'Desiree Perez', '645752085', NULL, NULL, NULL, 'En visita', 'Comunicada'),
 (578, '2015-03-26 09:35:12', 2246, 2234, 1651, 'Avería', 0, 0, 0, 1, 'Se han caido los dos hierros laterales que estan enganchados a la tablet ', '', NULL, '', '', '', '', '', 'maria bueno castells ', '692863218', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
 (579, '2015-03-26 09:42:32', 2237, 2149, 1603, 'Avería', 0, 0, 0, 1, 'NOS HAN AVERIADO EL CABLE DE CARGA DEL IPHONE 5S.', '', NULL, '', '', '', '', '', 'WENDEL GALEANO', '677148309', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
 (580, '2015-03-26 10:08:55', 2901, 6886, 5560, 'Avería', 0, 0, 1, 0, 'NO CARGA   ', 'sin material', NULL, '', '', '', '', '', 'HECTOR', '691327884', NULL, NULL, NULL, 'En proceso', 'Revisada'),
@@ -26041,8 +26227,8 @@ INSERT INTO `incidencias` (`id_incidencia`, `fecha`, `id_pds`, `id_displays_pds`
 (612, '2015-03-26 17:16:07', 2886, 6761, 5323, 'Robo', 1, 0, 0, 0, 'Hola,el robo es de un Rono pero no aparece en la lista.', '', NULL, '', '26000056-1427390167', '', '', '', 'Amin Douay', '658933649', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
 (613, '2015-03-26 17:20:54', 2116, 1022, 957, 'Avería', 1, 0, 1, 1, 'no esta instalado', '', NULL, '', '', '', '', '', 'CARMEN AGULLO', '966931206', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
 (614, '2015-03-26 17:21:48', 2116, 1022, NULL, 'Avería', 0, 1, 0, 0, 'NO SUENAN LAS ALARMAS', '', NULL, '', '', '', '', '', 'CARMEN AGULLO', '966931206', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
-(615, '2015-03-26 17:22:44', 2115, 1018, 955, 'Avería', 1, 0, 0, 0, 'NO ENCIENDE EL TERMINAL', '', NULL, '', '', '', '', '', 'VERO', '658196716', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
-(616, '2015-03-26 17:23:55', 2115, 1018, 956, 'Avería', 0, 0, 0, 1, 'ESTA SUELTO DEL ANCLAJE', '', NULL, '', '', '', '', '', 'VERO', '658196716', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
+(615, '2015-03-26 17:22:44', 2115, 1018, 955, 'Avería', 1, 0, 0, 0, 'NO ENCIENDE EL TERMINAL', 'cable de carg y resetear\n\nhablado con tienda\n\nINVUE\n\nVIATEC\nA LA ATENCIÓN DE: Francisco Ventura,\nAndrés Mancebo, nº 42 Bajo,\nCP: 46023 VALENCIA\nTELF: 963379270', NULL, '', '', '', '', '', 'VERO', '658196716', NULL, NULL, NULL, 'En visita', 'Comunicada'),
+(616, '2015-03-26 17:23:55', 2115, 1018, 956, 'Avería', 0, 0, 0, 1, 'ESTA SUELTO DEL ANCLAJE', 'invue\n\nviatec\nA LA ATENCIÓN DE: Francisco Ventura,\nAndrés Mancebo, nº 42 Bajo,\nCP: 46023 VALENCIA\nTELF: 963379270\n', NULL, '', '', '', '', '', 'VERO', '658196716', NULL, NULL, NULL, 'En visita', 'Comunicada'),
 (617, '2015-03-26 17:40:09', 2641, 4976, NULL, 'Avería', 0, 1, 0, 0, 'los dos cables de alimentación no funcionan,y el iphone 6,lo hemos quitado porque se salia del mueble.', '', NULL, '', '', '', '', '', 'maria pilar', '615487475', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
 (618, '2015-03-26 17:47:13', 2960, 7359, 6393, 'Avería', 0, 0, 1, 0, 'No carga ni enciende', 'sin material', NULL, '', '', '', '', '', 'Bea Moreno', '657805203', NULL, NULL, NULL, 'En proceso', 'Revisada'),
 (619, '2015-03-26 17:47:43', 2960, 7359, 6393, 'Avería', 0, 0, 1, 0, 'No carga ni enciende', '', NULL, '', '', '', '', '', 'Bea Moreno', '657805203', NULL, NULL, NULL, 'Cancelada', 'Cancelada'),
@@ -26054,8 +26240,8 @@ INSERT INTO `incidencias` (`id_incidencia`, `fecha`, `id_pds`, `id_displays_pds`
 (625, '2015-03-26 19:12:47', 2978, 7501, 6609, 'Avería', 1, 0, 1, 0, 'LA TABLET NO ENCIENDE Y CREEMOS QUE ES PORQUE EL CABLE DE EL CARGADOR ESTA MAL PORQUE SIEMPRE ESTA CON LA BATERIA DESCARGADA ', '', NULL, '', '', '', '', '', 'MELANY O GEMA ', '675654258', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
 (626, '2015-03-26 20:57:38', 2716, 5190, 2781, 'Avería', 1, 0, 0, 0, 'Se le ha despegado la parte trasera del terminal y que a su vez descansa en el soporte', 'comunicada 06/04/2015', NULL, '', '', '', '', '', 'SILVIA ANERIZ', '957752668', NULL, NULL, NULL, 'En proceso', 'Revisada'),
 (627, '2015-03-26 21:03:21', 2716, 5187, 2775, 'Avería', 0, 0, 1, 0, 'CAMBIAN SOPORTE DE LA TABLET MEDIA PAD M1 8"  PERO NO SE ENCIENDE EL SENSOR, LO VERIFICA CON OTRO CABLE DE OTRA TABLET Y VA BIEN CON LO OCUAL ESTA AVERIADO EL CABLE QUE DESDE LA TABLET AL ADAPTADOR VP-1068. A LA ESPERA DEL ENVIO DE DICHO CABLE', 'enviar defcon 5', NULL, '', '', '', '', '', 'SILVIA ANERIZ', '957752668', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
-(628, '2015-03-27 09:20:04', 2891, 6801, 5401, 'Avería', 1, 0, 0, 0, 'No se enciende el terminal', '', NULL, '', '', '', '', '', 'Jessica Cañestro', '691314945', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
-(629, '2015-03-27 09:21:24', 2891, 6801, 5402, 'Avería', 1, 0, 0, 0, 'No se enciende el terminal', '', NULL, '', '', '', '', '', 'Jessica Cañestro', '691314945', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
+(628, '2015-03-27 09:20:04', 2891, 6801, 5401, 'Avería', 1, 0, 0, 0, 'No se enciende el terminal', 'ENVIAR CABLE\n\nINVUE\n\nMPI\n\nenviado 09/04\n', NULL, '', '', '', '', '', 'Jessica Cañestro', '691314945', NULL, NULL, NULL, 'En visita', 'Comunicada'),
+(629, '2015-03-27 09:21:24', 2891, 6801, 5402, 'Avería', 1, 0, 0, 0, 'No se enciende el terminal', 'cable de carga\n\ninvue\n\nMPI\nENVIADO 09/04', NULL, '', '', '', '', '', 'Jessica Cañestro', '691314945', NULL, NULL, NULL, 'En visita', 'Comunicada'),
 (630, '2015-03-27 09:23:53', 2297, 2689, 1905, 'Avería', 0, 0, 1, 0, 'NO SE CONECTO LA ALARMA', '', NULL, '', '', '', '', '', 'AUXI RUIZ', '922092184', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
 (631, '2015-03-27 09:51:00', 2911, 6961, 5699, 'Avería', 1, 0, 0, 0, 'no enciende', '', NULL, '', '', '', '', '', 'maria jose ', '654302426', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
 (632, '2015-03-27 09:52:00', 2911, 6961, 5700, 'Avería', 1, 0, 0, 0, 'no enciende', '', NULL, '', '', '', '', '', 'maria jose', '654302426', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
@@ -26145,13 +26331,13 @@ INSERT INTO `incidencias` (`id_incidencia`, `fecha`, `id_pds`, `id_displays_pds`
 (716, '2015-03-31 13:39:40', 2712, 5169, NULL, 'Avería', 0, 1, 0, 0, 'Tenemos que tener la llave fija en OFF porque no para de sonar la alarma. Necesitamos que revien y / o cambien el sistema de alarma del mueble.', '', NULL, '', '', '', '', '', 'Fran', '635597211', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
 (717, '2015-03-31 13:41:02', 2712, 5169, 2755, 'Avería', 1, 0, 0, 1, 'Estuvieron cambiando la tablet ya que la anterior estaba bloqueada por un patron, al poner la nueva, la pusieron al revés, la tablet está puesta boca-abajo.', '', NULL, '', '', '', '', '', 'Fran Perez', '635597211', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
 (718, '2015-03-31 13:41:55', 2712, 5169, 2756, 'Avería', 0, 0, 0, 1, 'El anclaje se ha despegado/quebrado y la tablet está colgando de un latiguillo metalico que la sostiene. Necesitamos que reparen esto de forma urgente.', '', NULL, '', '', '', '', '', 'Fran Perez', '635597211', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
-(719, '2015-03-31 16:19:53', 2171, 1559, 1276, 'Avería', 1, 0, 1, 0, 'EL TERMINAL SE APAGA CONSTANTEMENTE, ES COMO SI EL CABLE DE RED NO HICIESE BUEN CONTACTO.', '', NULL, '', '', '', '', '', 'JORGE', '949315454', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
+(719, '2015-03-31 16:19:53', 2171, 1559, 1276, 'Avería', 1, 0, 1, 0, 'EL TERMINAL SE APAGA CONSTANTEMENTE, ES COMO SI EL CABLE DE RED NO HICIESE BUEN CONTACTO.', '', NULL, '', '', '', '', '', 'JORGE', '949315454', NULL, NULL, NULL, 'Alta realizada', 'Nueva');
+INSERT INTO `incidencias` (`id_incidencia`, `fecha`, `id_pds`, `id_displays_pds`, `id_devices_pds`, `tipo_averia`, `fail_device`, `alarm_display`, `alarm_device`, `alarm_garra`, `description_1`, `description_2`, `description_3`, `parte_pdf`, `denuncia`, `foto_url`, `foto_url_2`, `foto_url_3`, `contacto`, `phone`, `email`, `id_operador`, `intervencion`, `status_pds`, `status`) VALUES
 (720, '2015-03-31 16:20:27', 2171, 1559, 1277, 'Avería', 1, 0, 1, 0, 'EL TERMINAL SE APAGA CONSTANTEMENTE, ES COMO SI EL CABLE DE RED NO HICIESE BUEN CONTACTO.', '', NULL, '', '', '', '', '', 'JORGE', '949315454', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
 (721, '2015-03-31 16:21:04', 2171, 1555, 1275, 'Avería', 1, 0, 0, 0, 'EL TERMINAL NO ENCIENDE. NOS INDICA EL TECNICO QUE DEBEN SUSTITUIRLO POR OTRO.', '', NULL, '', '', '', '', '', 'JORGE', '949315454', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
 (722, '2015-03-31 17:05:11', 2135, 1218, 1074, 'Avería', 1, 0, 0, 0, 'la tablet no funciona, creemos que es del cable porque no cargaba bien y ya no enciende, tambien parpadeaba la pantalla. puede ser todo del cableado ya que el note 4 tambien ha dejado de funcionar', '', NULL, '', '', '', '', '', 'lupe cerna', '959261134', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
 (723, '2015-03-31 17:14:28', 2135, 1218, 1075, 'Avería', 1, 0, 0, 0, 'el terminal no enciende ', '', NULL, '', '', '', '', '', 'lupe cerna', '959261134', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
-(724, '2015-03-31 17:20:22', 2317, 2868, 2012, 'Avería', 1, 0, 0, 0, 'EL TERMINAL NO ENCIENDE.', 'comunicada 06/03/2015', NULL, '', '', '', '', '', 'LOURDES', '950263482', NULL, NULL, NULL, 'En proceso', 'Revisada');
-INSERT INTO `incidencias` (`id_incidencia`, `fecha`, `id_pds`, `id_displays_pds`, `id_devices_pds`, `tipo_averia`, `fail_device`, `alarm_display`, `alarm_device`, `alarm_garra`, `description_1`, `description_2`, `description_3`, `parte_pdf`, `denuncia`, `foto_url`, `foto_url_2`, `foto_url_3`, `contacto`, `phone`, `email`, `id_operador`, `intervencion`, `status_pds`, `status`) VALUES
+(724, '2015-03-31 17:20:22', 2317, 2868, 2012, 'Avería', 1, 0, 0, 0, 'EL TERMINAL NO ENCIENDE.', 'comunicada 06/03/2015', NULL, '', '', '', '', '', 'LOURDES', '950263482', NULL, NULL, NULL, 'En proceso', 'Revisada'),
 (725, '2015-03-31 18:03:04', 2757, 5609, 3364, 'Avería', 1, 0, 0, 0, 'NO ENCIENDE, YA LA HABIAN CAMBIADO Y LA NUEVA SIGUE SIN FUNCIONAR.', '', NULL, '', '', '', '', '', 'WESLY ANOUTI', '656164028', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
 (726, '2015-03-31 18:24:56', 2708, 5139, 2721, 'Avería', 0, 0, 1, 0, 'No tenemos cargador.', '', NULL, '', '', '', '', '', 'Anna Maria Rodenas', '932245695', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
 (727, '2015-03-31 18:25:27', 2708, 5139, 2720, 'Avería', 0, 0, 1, 0, 'No tenemos cargador.', '', NULL, '', '', '', '', '', 'Anna Maria Rodenas', '932245695', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
@@ -26252,19 +26438,49 @@ INSERT INTO `incidencias` (`id_incidencia`, `fecha`, `id_pds`, `id_displays_pds`
 (822, '2015-04-07 15:17:04', 2752, 5541, 3252, 'Avería', 1, 0, 1, 0, 'el terminal no carga bien porque el cable solo carga en determinada posición. ', '', NULL, '', '', '', '', '', 'Lara diaz', '635040331', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
 (823, '2015-04-07 18:36:23', 2741, 5425, 3113, 'Avería', 1, 0, 0, 0, 'No enciende la tablet Huawei Mediapad Link', '', '', '', '', '', '', '', 'Jorge del Valle', '657840825', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
 (824, '2015-04-07 18:45:49', 2741, 5425, 3112, 'Avería', 1, 0, 0, 0, 'NO ENCIENDE LA TABLET', '', '', '', '', '', '', '', 'Jorge del Valle', '657840825', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
-(825, '2015-04-08 08:24:21', 2101, 872, NULL, 'Avería', 0, 1, 0, 0, 'LA ALARMA ESTA PITANDO PERMANENTEMENTE, NO PODEMOS DESACTIVARLA', '', '', '', '', '', '', '', 'VERONICA', '692684468', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
-(826, '2015-04-08 08:52:44', 2705, 5124, NULL, 'Avería', 0, 1, 0, 0, 'emite continuamente una alarma y a lo largo de la mañana deja de sonar.', '', '', '', '', '', '', '', 'LORENA PEREZ TORRES', '675916820', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
-(827, '2015-04-08 09:13:18', 1911, 216, 431, 'Avería', 0, 0, 0, 1, 'Nos faltan los metraquilatos para colocar las cartelas', '', '', '', '', '', '', '', 'marta', '965842068', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
-(828, '2015-04-08 09:29:43', 2137, 1232, 1085, 'Avería', 0, 0, 0, 1, 'SOPORTE EN MAL ESTADO.', '', '', '', '', '', '', '', 'BEATRIZ CALASANZ', '954852316', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
-(829, '2015-04-08 09:30:18', 2137, 1238, 1086, 'Avería', 1, 0, 0, 0, 'SE APAGA SOLA ', '', '', '', '', '', '', '', 'BEATRIZ CALASANZ', '954852316', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
-(830, '2015-04-08 09:30:48', 2137, 1238, 1088, 'Avería', 0, 0, 0, 1, 'SOPORTE EN MAL ESTADO', '', '', '', '', '', '', '', 'BEATRIZ CALASANZ', '954852316', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
-(831, '2015-04-08 12:07:25', 2885, 6754, NULL, 'Avería', 0, 1, 0, 0, 'intentaron robar un iPhone. necesitamos que se vuelvan a poner y arreglar el mueble que hay debajo de la mesa de exposición de los Iphones, que han reventado la cerradura. (No tenemos llaves de este mueble y esta la puerta suelta. se pago un presupuesto de 139.15€ el 26 de febrero y aun no hemos recibido respuesta. Ruego se agilice este tema lo antes posible', '', '', '', '', '', '', '', 'VICTOR', '695445665/934861792', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
-(832, '2015-04-08 12:26:42', 2764, 5683, 3509, 'Avería', 0, 0, 0, 1, 'TERMINAL SUELTO, HEMOS RETIRADO POR SEGURIDAD ANTE ROBO.\nGRACIAS', '', '', '', '', '', '', '', 'CLARA', '656163065', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
-(833, '2015-04-08 15:40:21', 2287, 2603, 1856, 'Avería', 1, 0, 0, 0, 'El dispositivo no carga correctamente. Es problema del cable del mueble, hemos realizado prueba cruzada, y con un cargador microusb carga sin problemas.', '', '', '', '', '', '', '', 'TOÑI SIERRA', '657345532', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
-(834, '2015-04-08 15:42:10', 2287, 2599, 1855, 'Avería', 0, 0, 1, 0, 'Problemas de carga con iphone,no carga,  es problema del cable, un saludo', '', '', '', '', '', '', '', 'TOÑI SIERRA', '657345532', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
-(835, '2015-04-08 15:46:25', 2274, 2486, 1791, 'Avería', 1, 0, 0, 0, 'Boton de la tablet no funciona, un saludo', '', '', '', '', '', '', '', 'LAURA SUERO', '603559791', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
-(836, '2015-04-08 15:47:00', 2274, 2482, 1789, 'Avería', 0, 0, 1, 0, 'Cable de carga, averiado, un saludo', '', '', '', '', '', '', '', 'LAURA SUERO', '603559791', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
-(837, '2015-04-08 16:09:12', 3016, 7727, 6987, 'Robo', 1, 0, 1, 1, 'ROBO TERMINAL', '', '', '', '26360082-1428509351', '', '', '', 'NURIA LOPEZ RUBIO ', '977154660', NULL, NULL, NULL, 'Alta realizada', 'Nueva');
+(825, '2015-04-08 08:24:21', 2101, 872, NULL, 'Avería', 0, 1, 0, 0, 'LA ALARMA ESTA PITANDO PERMANENTEMENTE, NO PODEMOS DESACTIVARLA', 'VIATECH\n\nPILAS Y PEGATINAS X3\n\nA LA ATT DE: AVELINO GONZALEZ.\nC/ANTONIO ALZAGA 30  CP: 48980 SANTURTZI  (BIZCAYA). TLF: 670413163', '', '', '', '', '', '', 'VERONICA', '692684468', NULL, NULL, NULL, 'En visita', 'Comunicada'),
+(826, '2015-04-08 08:52:44', 2705, 5124, NULL, 'Avería', 0, 1, 0, 0, 'emite continuamente una alarma y a lo largo de la mañana deja de sonar.', 'ENVIADO A MERYDEIS', '', '', '', '', '', '', 'LORENA PEREZ TORRES', '675916820', NULL, NULL, NULL, 'En proceso', 'Revisada'),
+(827, '2015-04-08 09:13:18', 1911, 216, 431, 'Avería', 0, 0, 0, 1, 'Nos faltan los metraquilatos para colocar las cartelas', '', '', '', '', '', '', '', 'marta', '965842068', NULL, NULL, NULL, 'Cancelada', 'Cancelada'),
+(828, '2015-04-08 09:29:43', 2137, 1232, 1085, 'Avería', 0, 0, 0, 1, 'SOPORTE EN MAL ESTADO.', 'revisa soporte , el soporte esta suelto\n\nA LA ATENCIÓN DE: Rafael Alfonso.\nParque Empresarial Nuevo Torne c/ Astronomía nº1 Torre2 Planta 8 Módulo 10. CP: 41015 SEVILLA. TELF: Rafael Alfonso 647725457\n\n', '', '', '', '', '', '', 'BEATRIZ CALASANZ', '954852316', NULL, NULL, NULL, 'En visita', 'Comunicada'),
+(829, '2015-04-08 09:30:18', 2137, 1238, 1086, 'Avería', 1, 0, 0, 0, 'SE APAGA SOLA ', 'viatech\n\nsamsung tab 4  351885060327664  + pegatina\ninvue\n\nA LA ATENCIÓN DE: Rafael Alfonso.\nParque Empresarial Nuevo Torne c/ Astronomía nº1 Torre2 Planta 8 Módulo 10. CP: 41015 SEVILLA. TELF: Rafael Alfonso 647725457', '', '', '', '', '', '', 'BEATRIZ CALASANZ', '954852316', NULL, NULL, NULL, 'En visita', 'Comunicada'),
+(830, '2015-04-08 09:30:48', 2137, 1238, 1088, 'Avería', 0, 0, 0, 1, 'SOPORTE EN MAL ESTADO', 'soporte x1 \npegatina x1\ninvue\n\nA LA ATENCIÓN DE: Rafael Alfonso.\nParque Empresarial Nuevo Torne c/ Astronomía nº1 Torre2 Planta 8 Módulo 10. CP: 41015 SEVILLA. TELF: Rafael Alfonso 647725457', '', '', '', '', '', '', 'BEATRIZ CALASANZ', '954852316', NULL, NULL, NULL, 'En visita', 'Comunicada'),
+(831, '2015-04-08 12:07:25', 2885, 6754, NULL, 'Avería', 0, 1, 0, 0, 'intentaron robar un iPhone. necesitamos que se vuelvan a poner y arreglar el mueble que hay debajo de la mesa de exposición de los Iphones, que han reventado la cerradura. (No tenemos llaves de este mueble y esta la puerta suelta. se pago un presupuesto de 139.15€ el 26 de febrero y aun no hemos recibido respuesta. Ruego se agilice este tema lo antes posible', 'hablamos con tienda pues tenemos otra incidencia abierta 82, el mueble no ha sido reparado. quedamos a la espera de que tienda nos comunique por chat la reparacion del mismo', '', '', '', '', '', '', 'VICTOR', '695445665/934861792', NULL, NULL, NULL, 'En proceso', 'Revisada'),
+(832, '2015-04-08 12:26:42', 2764, 5683, 3509, 'Avería', 0, 0, 0, 1, 'TERMINAL SUELTO, HEMOS RETIRADO POR SEGURIDAD ANTE ROBO.\nGRACIAS', 'pegatinas x2\nvpg\n\n\nA LA ATT DE: JUAN CARLOS CELDRAN ESPINOSA.\nC/ CERVANTES 21, ESC 2, 2ND G, CP. 03550 SAN JUAN DE ALICANTE (ALICANTE) TLF606858595\n', '', '', '', '', '', '', 'CLARA', '656163065', NULL, NULL, NULL, 'En visita', 'Comunicada'),
+(833, '2015-04-08 15:40:21', 2287, 2603, 1856, 'Avería', 1, 0, 0, 0, 'El dispositivo no carga correctamente. Es problema del cable del mueble, hemos realizado prueba cruzada, y con un cargador microusb carga sin problemas.', 'sensor x1\ninvue\n\nA LA ATT DE: RUBENS\nC/ Pedro de valencia, 28\nCP: 06800 MÉRIDA (BADAJO)\nTELF: 695-38-39-64', '', '', '', '', '', '', 'TOÑI SIERRA', '657345532', NULL, NULL, NULL, 'En visita', 'Comunicada'),
+(834, '2015-04-08 15:42:10', 2287, 2599, 1855, 'Avería', 0, 0, 1, 0, 'Problemas de carga con iphone,no carga,  es problema del cable, un saludo', 'cable de carga\nvpg\n\nA LA ATT DE: RUBENS\nC/ Pedro de valencia, 28\nCP: 06800 MÉRIDA (BADAJO)\nTELF: 695-38-39-64\n', '', '', '', '', '', '', 'TOÑI SIERRA', '657345532', NULL, NULL, NULL, 'En visita', 'Comunicada'),
+(835, '2015-04-08 15:46:25', 2274, 2486, 1791, 'Avería', 1, 0, 0, 0, 'Boton de la tablet no funciona, un saludo', 'samsung tab 4,  imei 351885060327573   + pegatina\n\nINVUE\n\nA LA ATT DE: PABLO.\nC/ ANTON DE ALAMINOS, 3 CP: 21003 HUELVA, Telf: 902364193 / 959543983', '', '', '', '', '', '', 'LAURA SUERO', '603559791', NULL, NULL, NULL, 'En visita', 'Comunicada'),
+(836, '2015-04-08 15:47:00', 2274, 2482, 1789, 'Avería', 0, 0, 1, 0, 'Cable de carga, averiado, un saludo', 'cable de carga\nvpg\n\nA LA ATT DE: PABLO.\nC/ ANTON DE ALAMINOS, 3 CP: 21003 HUELVA, Telf: 902364193 / 959543983', '', '', '', '', '', '', 'LAURA SUERO', '603559791', NULL, NULL, NULL, 'En visita', 'Comunicada'),
+(837, '2015-04-08 16:09:12', 3016, 7727, 6987, 'Robo', 1, 0, 1, 1, 'ROBO TERMINAL', 'iphone 6  IMEI 352074060834917\ndefcon2  x1\nsensor  x1\nsoporte  x1\ntornillos  x2 \n\nvpg\n\n', '', '', '26360082-1428509351', '', '', '', 'NURIA LOPEZ RUBIO ', '977154660', NULL, NULL, NULL, 'En visita', 'Comunicada'),
+(838, '2015-04-08 16:50:35', 2067, 538, 666, 'Avería', 1, 0, 0, 0, 'LA PARTE INFERIOR DE LA PANTALLA ESTÁ DESPEGADA Y LA TECLA FRONTAL SE DESCOLOCA Y NO HACE BIEN CONTACTO', 'samsung galaxy tab 4   IMEI  351885060279287  + pegatina\n\ninvue', '', '', '', '', '', '', 'ISAAC / SANDRA', '645086986', NULL, NULL, NULL, 'En visita', 'Comunicada'),
+(839, '2015-04-08 17:11:21', 2067, 532, NULL, 'Avería', 0, 1, 0, 0, 'EL SOPORTE HA SIDO FORZADO Y ESTÁ CASI SUELTO', 'soporte x1 \npegatina x1\n\nvpg', '', '', '', '', '', '', 'ISAAC / SANDRA', '645086986', NULL, NULL, NULL, 'En visita', 'Comunicada'),
+(840, '2015-04-08 17:14:45', 2067, 538, 667, 'Avería', 0, 0, 0, 1, 'NOS HAN CAMBIADO EL MODELO POR SAMSUNG GALAXY S6 Y EL TERMINAL SE PUEDE EXTRAER SIN NINGUN TIPO DE ESFUERZO. ACTUALMENTE RETIRADO Y GUARDADO ', 'revisar soporte, no se ajustó bien cuando la instalación', '', '', '', '', '', '', 'ISAAC / SANDRA', '645086986', NULL, NULL, NULL, 'En visita', 'Comunicada'),
+(841, '2015-04-08 17:15:55', 2067, 538, 668, 'Avería', 0, 0, 0, 1, 'NOS HAN CAMBIADO EL MODELO POR SAMSUNG GALAXY S6 EDGE Y EL TERMINAL SE PUEDE EXTRAER SIN NINGUN TIPO DE ESFUERZO. ACTUALMENTE RETIRADO Y GUARDADO ', 'revisar soporte, no se ajustó bien cuando la instalación', '', '', '', '', '', '', 'ISAAC / SANDRA', '645086986', NULL, NULL, NULL, 'En visita', 'Comunicada'),
+(842, '2015-04-08 18:31:58', 2712, 5166, NULL, 'Avería', 0, 1, 0, 0, 'El mueble no para de pitar de forma intermitente cada rato hace un "Pi Pi" bastante molesto. Este ruido apareció a raíz de que un cliente hiciera saltar la alarma del Z3.', '', '', '', '', '', '', '', 'Fran Perez', '635597211', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
+(843, '2015-04-09 08:11:55', 2836, 6326, 4649, 'Avería', 0, 0, 0, 1, 'El soporte del Iphone 6 plus esta flojo, el terminal se ha retirado ante un posible robo. Solicitamos un técnico para apretar el soporte. ', '', '', '', '', '', '', '', 'Thalía Mata', '938150520', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
+(844, '2015-04-09 08:14:15', 2836, 6326, 4647, 'Avería', 1, 0, 0, 0, 'el terminal no enciende ', '', '', '', '', '', '', '', 'Thalía Mata', '938150520', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
+(845, '2015-04-09 08:14:36', 2836, 6326, 4648, 'Avería', 1, 0, 0, 0, 'el terminal no enciende. ', '', '', '', '', '', '', '', 'Thalía Mata', '938150520', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
+(846, '2015-04-09 08:15:29', 2836, 6326, 4648, 'Avería', 1, 0, 0, 0, 'el terminal no enciende. ', '', '', '', '', '', '', '', 'Thalía Mata', '938150520', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
+(847, '2015-04-09 08:16:51', 2836, 6330, 4650, 'Avería', 1, 0, 0, 0, 'el terminal no enciende ', '', '', '', '', '', '', '', 'Thalía Mata', '938150520', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
+(848, '2015-04-09 08:45:00', 2712, 5166, 2753, 'Avería', 0, 0, 1, 0, 'El terminal tiene la luz roja encendida y pita constantemente.', '', '', '', '', '', '', '', 'Mari Carmen', '635597211', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
+(849, '2015-04-09 08:47:24', 2712, 5166, NULL, 'Avería', 0, 1, 0, 0, 'La incidencia es del panel de las tablets, la persona que las coloco las puso boca-abajo y el brazo de la tablet sony z2 esta roto, la tablet esta colgando. ', '', '', '', '', '', '', '', 'Mari Carmen', '635597211', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
+(850, '2015-04-09 08:47:46', 2712, 5166, NULL, 'Avería', 0, 1, 0, 0, 'La incidencia es del panel de las tablets, la persona que las coloco las puso boca-abajo y el brazo de la tablet sony z2 esta roto, la tablet esta colgando. ', '', '', '', '', '', '', '', 'Mari Carmen', '635597211', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
+(851, '2015-04-09 08:52:12', 2953, 7302, 6308, 'Avería', 0, 0, 0, 1, 'Se ha roto el anclaje de seguridad', '', '', '', '', '', '', '', 'TANIA CHARLES GALÁN', '645960703', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
+(852, '2015-04-09 08:54:56', 2777, 5809, NULL, 'Avería', 0, 1, 0, 0, 'LAS ALARMAS SIGUEN SALTANDO,CONSTANTEMENTE SE ESCUCHA UN PITIDO', '', '', '', '', '', '', '', 'SUSANA', '675559220', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
+(853, '2015-04-09 09:01:24', 2613, 4942, 2327, 'Avería', 1, 0, 0, 0, 'terminal no enciende, se ha resetado y hace amago de enciender mostrando imagen de bateria en carga', '', '', '', '', '', '', '', 'manuel martin', '665529446', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
+(854, '2015-04-09 09:23:19', 2741, 5427, 3115, 'Avería', 1, 0, 0, 1, 'La tablet está parpadeando continuamente', '', '', '', '', '', '', '', 'Jorge del Valle', '657840825', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
+(855, '2015-04-09 09:42:02', 2777, 5808, 3738, 'Avería', 0, 0, 1, 1, 'LAS VITRINAS ESTAN SUCIAS POR DENTRO Y LA CARTELERIA ES LA ANTIGUA IMAGEN DE ORANGE, SE ABREN CON LLAVE ALLEN Y NO TENEMOS;\n POR OTRO LADO HAY UN PITIDO CONSTANTEMENTE.\nGRACIAS.\nUN SALUDO\n', '', '', '', '', '', '', '', 'SUSANA', '675559220', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
+(856, '2015-04-09 09:43:40', 2714, 5175, NULL, 'Avería', 0, 1, 0, 0, 'Cuando viniero a cambiar la Huawei mediapa 10" desmontaron el cuello de esta, se lo han dejado colgando y la alarma pita constantemente teniendo que tener la llave puesta para eliminar dicha alarma.', '', '', '', '', '', '', '', 'sandra', '657510326', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
+(857, '2015-04-09 09:46:58', 2770, 5745, NULL, 'Avería', 0, 1, 0, 0, 'no me han cambiado los modelos de este espositor, tengo modelos antiguos y ya no hay cartelas para ellos ', '', '', '', '', '', '', '', 'marta ricote', '615670936', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
+(858, '2015-04-09 10:28:13', 2742, 5436, 3126, 'Avería', 0, 0, 0, 1, 'EL ANCLAJE ESTA ROTO', '', '', '', '', '', '', '', 'DANIEL MORA', '605235038', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
+(859, '2015-04-09 10:45:08', 3054, 7957, 7370, 'Avería', 0, 0, 1, 0, 'ROTURA DEL CARGADOR', '', '', '', '', '', '', '', 'VANESA FOLCH', '692628322', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
+(860, '2015-04-09 10:46:18', 3054, 7957, 7369, 'Avería', 1, 0, 0, 0, 'NO INICIA, SE HA QUEDADO BLOQUEADA', '', '', '', '', '', '', '', 'VANESA FOLCH', '692628322', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
+(861, '2015-04-09 10:47:12', 3054, 7954, 7361, 'Avería', 0, 0, 0, 1, 'SOPORTE ROTO', '', '', '', '', '', '', '', 'VANESA FOLCH', '692628322', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
+(862, '2015-04-09 10:51:20', 2069, 552, 675, 'Avería', 0, 0, 1, 0, 'EL SISTEMA DE ALARMA EN ESTE EQUIPO PARECE SUELTO Y NO DEJA DE PITAR POR ESTE TERMINAL. TENEMOS QUE DEJAR EL SISTEMA COMPLETO SIN ALARMA', '', '', '', '', '', '', '', 'SHEILA DIAZ', '926311495', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
+(863, '2015-04-09 10:52:33', 2069, 552, NULL, 'Avería', 0, 1, 0, 0, 'EL SISTEMA CENTRAL NO DEJA DE PITAR CON LA LLAVE EN OFF. CREEMOS QUE ES POR UNA MALA CONEXION DEL IPHONE 5S', '', '', '', '', '', '', '', 'SHEILA DIAZ', '926311495', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
+(864, '2015-04-09 11:24:55', 2201, 1825, 1424, 'Avería', 0, 0, 1, 1, 'terminal se quito de el mural porque estaba a ponto de caer', '', '', '', '', '', '', '', 'mari carmen perez', '692680229', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
+(865, '2015-04-09 11:25:21', 3004, 7654, 6861, 'Avería', 0, 0, 1, 1, 'El cable de carga que está instalado no es el correcto. Sistema de seguridad defectuoso.', '', '', '', '', '', '', '', 'Elena Herranz', '615317702', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
+(866, '2015-04-09 11:27:59', 3004, 7655, 6867, 'Avería', 0, 0, 1, 0, 'El cable de carga está pelado y roto y no carga', '', '', '', '', '', '', '', 'Elena Herranz', '615317702', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
+(867, '2015-04-09 13:53:13', 2715, 5184, 2773, 'Avería', 0, 0, 0, 1, 'se ha caido del soporte el terminal , al telefono no le ha pasado nada pero no podemos colocarlo ', '', '', '', '', '', '', '', 'nazaret mejias ', '685831051', NULL, NULL, NULL, 'Alta realizada', 'Nueva');
 
 -- --------------------------------------------------------
 
@@ -26279,7 +26495,7 @@ CREATE TABLE IF NOT EXISTS `intervenciones` (
   `id_operador` smallint(5) unsigned DEFAULT NULL,
   `description` text,
   `status` enum('Nueva','Comunicada','Cerrada','Cancelada') NOT NULL DEFAULT 'Nueva'
-) ENGINE=InnoDB AUTO_INCREMENT=224 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=238 DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `intervenciones`
@@ -26507,7 +26723,21 @@ INSERT INTO `intervenciones` (`id_intervencion`, `id_pds`, `fecha`, `id_operador
 (220, 2987, '2015-04-08 11:34:28', 7, '', 'Nueva'),
 (221, 2704, '2015-04-08 12:08:18', 7, '', 'Nueva'),
 (222, 2288, '2015-04-08 14:12:36', 7, '', 'Nueva'),
-(223, 3064, '2015-04-08 15:41:26', 7, '', 'Nueva');
+(223, 3064, '2015-04-08 15:41:26', 7, '', 'Nueva'),
+(224, 2891, '2015-04-09 07:03:31', 8, '', 'Nueva'),
+(225, 2101, '2015-04-09 07:27:09', 7, '', 'Nueva'),
+(226, 2137, '2015-04-09 08:03:15', 7, '', 'Nueva'),
+(227, 2787, '2015-04-09 08:13:22', 8, '', 'Nueva'),
+(228, 2115, '2015-04-09 08:58:32', 7, '', 'Nueva'),
+(229, 2145, '2015-04-09 09:23:24', 7, '', 'Nueva'),
+(230, 2764, '2015-04-09 09:42:20', 7, '', 'Nueva'),
+(231, 2287, '2015-04-09 10:43:38', 7, '', 'Nueva'),
+(232, 2906, '2015-04-09 11:09:52', 7, '', 'Nueva'),
+(233, 2274, '2015-04-09 11:19:42', 7, '', 'Nueva'),
+(234, 2279, '2015-04-09 11:41:23', 7, '', 'Nueva'),
+(235, 3016, '2015-04-09 11:55:52', 8, '', 'Nueva'),
+(236, 2067, '2015-04-09 14:34:37', 6, '', 'Nueva'),
+(237, 2644, '2015-04-09 15:14:55', 7, '', 'Nueva');
 
 -- --------------------------------------------------------
 
@@ -26981,7 +27211,41 @@ INSERT INTO `intervenciones_incidencias` (`id_intervencion`, `id_incidencia`) VA
 (221, 482),
 (221, 483),
 (222, 484),
-(223, 302);
+(223, 302),
+(224, 323),
+(224, 324),
+(225, 825),
+(224, 325),
+(224, 628),
+(224, 629),
+(226, 829),
+(227, 409),
+(227, 410),
+(227, 411),
+(227, 412),
+(227, 413),
+(226, 830),
+(226, 828),
+(228, 616),
+(228, 615),
+(229, 475),
+(230, 832),
+(231, 833),
+(122, 546),
+(122, 547),
+(122, 549),
+(231, 834),
+(232, 576),
+(233, 835),
+(233, 836),
+(234, 311),
+(235, 837),
+(234, 312),
+(236, 838),
+(236, 839),
+(236, 841),
+(237, 577),
+(236, 840);
 
 -- --------------------------------------------------------
 
@@ -27010,7 +27274,7 @@ CREATE TABLE IF NOT EXISTS `material_incidencias` (
   `id_alarm` smallint(5) unsigned DEFAULT NULL,
   `id_devices_almacen` mediumint(8) unsigned DEFAULT NULL,
   `cantidad` smallint(5) unsigned NOT NULL DEFAULT '0'
-) ENGINE=InnoDB AUTO_INCREMENT=824 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=913 DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `material_incidencias`
@@ -27823,7 +28087,96 @@ INSERT INTO `material_incidencias` (`id_material_incidencias`, `fecha`, `id_inci
 (820, '2015-04-08 15:42:45', 302, 3064, 36, NULL, 1),
 (821, '2015-04-08 15:42:45', 302, 3064, 63, NULL, 1),
 (822, '2015-04-08 15:42:45', 302, 3064, 50, NULL, 2),
-(823, '2015-04-08 15:42:45', 302, 3064, 35, NULL, 1);
+(823, '2015-04-08 15:42:45', 302, 3064, 35, NULL, 1),
+(824, '2015-04-09 07:08:26', 323, 2891, NULL, 6191, 1),
+(825, '2015-04-09 07:08:26', 323, 2891, 46, NULL, 1),
+(826, '2015-04-09 07:08:26', 323, 2891, 40, NULL, 1),
+(827, '2015-04-09 07:08:26', 323, 2891, 41, NULL, 1),
+(828, '2015-04-09 07:08:26', 323, 2891, 59, NULL, 1),
+(829, '2015-04-09 07:08:26', 323, 2891, 63, NULL, 1),
+(830, '2015-04-09 07:08:26', 323, 2891, 50, NULL, 2),
+(831, '2015-04-09 07:23:47', 324, 2891, NULL, 5742, 1),
+(832, '2015-04-09 07:23:47', 324, 2891, 40, NULL, 1),
+(833, '2015-04-09 07:23:47', 324, 2891, 41, NULL, 1),
+(834, '2015-04-09 07:23:47', 324, 2891, 46, NULL, 1),
+(835, '2015-04-09 07:23:47', 324, 2891, 59, NULL, 1),
+(836, '2015-04-09 07:23:47', 324, 2891, 63, NULL, 1),
+(837, '2015-04-09 07:23:47', 324, 2891, 50, NULL, 2),
+(838, '2015-04-09 07:33:47', 825, 2101, 60, NULL, 1),
+(839, '2015-04-09 07:33:47', 825, 2101, 37, NULL, 3),
+(840, '2015-04-09 07:35:04', 325, 2891, NULL, 6192, 1),
+(841, '2015-04-09 07:35:04', 325, 2891, 63, NULL, 1),
+(842, '2015-04-09 07:35:04', 325, 2891, 46, NULL, 1),
+(843, '2015-04-09 07:35:04', 325, 2891, 59, NULL, 1),
+(844, '2015-04-09 07:35:04', 325, 2891, 40, NULL, 1),
+(845, '2015-04-09 07:35:04', 325, 2891, 41, NULL, 1),
+(846, '2015-04-09 07:35:04', 325, 2891, 50, NULL, 2),
+(847, '2015-04-09 07:41:33', 628, 2891, 92, NULL, 1),
+(848, '2015-04-09 07:45:41', 629, 2891, 92, NULL, 1),
+(849, '2015-04-09 08:21:15', 409, 2787, NULL, 6739, 1),
+(850, '2015-04-09 08:21:15', 409, 2787, 83, NULL, 1),
+(851, '2015-04-09 08:21:15', 409, 2787, 84, NULL, 1),
+(852, '2015-04-09 08:21:15', 409, 2787, 79, NULL, 1),
+(853, '2015-04-09 08:21:15', 409, 2787, 80, NULL, 1),
+(854, '2015-04-09 08:21:15', 409, 2787, 77, NULL, 1),
+(855, '2015-04-09 08:21:15', 409, 2787, 78, NULL, 1),
+(856, '2015-04-09 08:21:15', 409, 2787, 76, NULL, 1),
+(857, '2015-04-09 08:21:15', 409, 2787, 75, NULL, 1),
+(858, '2015-04-09 08:21:15', 409, 2787, 73, NULL, 1),
+(859, '2015-04-09 08:21:15', 409, 2787, 74, NULL, 1),
+(860, '2015-04-09 08:31:30', 410, 2787, 82, NULL, 1),
+(861, '2015-04-09 08:31:30', 410, 2787, 79, NULL, 1),
+(862, '2015-04-09 08:31:30', 410, 2787, 80, NULL, 1),
+(863, '2015-04-09 08:31:30', 410, 2787, 81, NULL, 1),
+(864, '2015-04-09 08:37:28', 411, 2787, 82, NULL, 1),
+(865, '2015-04-09 08:37:28', 411, 2787, 81, NULL, 1),
+(866, '2015-04-09 08:37:28', 411, 2787, 79, NULL, 1),
+(867, '2015-04-09 08:37:28', 411, 2787, 80, NULL, 1),
+(868, '2015-04-09 08:39:25', 412, 2787, 46, NULL, 1),
+(869, '2015-04-09 08:42:33', 413, 2787, 46, NULL, 1),
+(870, '2015-04-09 08:44:18', 829, 2137, NULL, 6740, 1),
+(871, '2015-04-09 08:44:18', 829, 2137, 86, NULL, 1),
+(872, '2015-04-09 08:51:27', 830, 2137, 81, NULL, 1),
+(873, '2015-04-09 08:51:27', 830, 2137, 86, NULL, 1),
+(874, '2015-04-09 09:00:39', 616, 2115, 82, NULL, 1),
+(875, '2015-04-09 09:06:31', 615, 2115, 82, NULL, 1),
+(876, '2015-04-09 09:23:47', 475, 2145, 45, NULL, 1),
+(877, '2015-04-09 09:43:06', 832, 2764, 37, NULL, 2),
+(878, '2015-04-09 09:46:33', 317, 2844, NULL, 3771, 1),
+(879, '2015-04-09 09:46:33', 317, 2844, NULL, 4402, 1),
+(880, '2015-04-09 09:46:33', 317, 2844, NULL, 4479, 1),
+(881, '2015-04-09 09:46:33', 317, 2844, 39, NULL, 3),
+(882, '2015-04-09 09:46:33', 317, 2844, 43, NULL, 3),
+(883, '2015-04-09 09:46:33', 317, 2844, 45, NULL, 3),
+(884, '2015-04-09 09:46:33', 317, 2844, 67, NULL, 3),
+(885, '2015-04-09 09:46:33', 317, 2844, 42, NULL, 3),
+(886, '2015-04-09 10:53:13', 546, 2844, 46, NULL, 1),
+(887, '2015-04-09 10:56:52', 547, 2844, 46, NULL, 1),
+(888, '2015-04-09 10:56:59', 833, 2287, 84, NULL, 1),
+(889, '2015-04-09 10:59:34', 549, 2844, 82, NULL, 1),
+(890, '2015-04-09 11:03:39', 834, 2287, 45, NULL, 1),
+(891, '2015-04-09 11:10:13', 576, 2906, 46, NULL, 1),
+(892, '2015-04-09 11:22:25', 835, 2274, NULL, 6741, 1),
+(893, '2015-04-09 11:22:25', 835, 2274, 88, NULL, 1),
+(894, '2015-04-09 11:25:04', 836, 2274, 45, NULL, 1),
+(895, '2015-04-09 11:59:18', 837, 3016, NULL, 4390, 1),
+(896, '2015-04-09 11:59:18', 837, 3016, 39, NULL, 1),
+(897, '2015-04-09 11:59:18', 837, 3016, 49, NULL, 2),
+(898, '2015-04-09 11:59:18', 837, 3016, 43, NULL, 1),
+(899, '2015-04-09 11:59:18', 837, 3016, 67, NULL, 1),
+(900, '2015-04-09 12:08:28', 311, 2279, NULL, 6743, 1),
+(901, '2015-04-09 12:08:28', 311, 2279, 83, NULL, 1),
+(902, '2015-04-09 12:08:28', 311, 2279, 84, NULL, 1),
+(903, '2015-04-09 12:18:56', 312, 2279, NULL, 6742, 1),
+(904, '2015-04-09 12:18:56', 312, 2279, 81, NULL, 1),
+(905, '2015-04-09 12:18:56', 312, 2279, 82, NULL, 1),
+(906, '2015-04-09 14:37:39', 838, 2067, NULL, 6744, 1),
+(907, '2015-04-09 14:37:39', 838, 2067, 88, NULL, 1),
+(908, '2015-04-09 15:08:42', 839, 2067, 66, NULL, 1),
+(909, '2015-04-09 15:08:42', 839, 2067, 37, NULL, 1),
+(910, '2015-04-09 15:17:11', 577, 2644, 8, NULL, 1),
+(911, '2015-04-09 15:17:11', 577, 2644, 33, NULL, 1),
+(912, '2015-04-09 15:17:11', 577, 2644, 32, NULL, 1);
 
 -- --------------------------------------------------------
 
@@ -29018,7 +29371,7 @@ INSERT INTO `pds` (`id_pds`, `client_pds`, `reference`, `type_pds`, `territory`,
 (2610, 1, '49440123', 13, 5, 44, '', 'ONE TELECOM', '', '', 0, 0, 0, 7, 'CC CARREFOUR EXPRESS. c/MAYOR - S/N', '03190', 'PILAR DE LA HORADADA', 3, 0, '', '', '', '', 0, 0, 0, 'Alta'),
 (2611, 1, '56000008', 13, 3, 44, '', 'ESPACIO ORANGE MEDITERRANEO', '', '', 0, 0, 0, 6, 'DEL MEDITERRANEO - LCL 3 CC-MEDITER', '04009', 'ALMERIA', 4, 0, '', '950144077', '', '', 0, 0, 0, 'Alta'),
 (2612, 1, '56000109', 13, 3, 44, '', 'ESPACIO ORANGE CC CARREFOUR MERIDA', '', '', 0, 0, 0, 7, 'CARREFOUR MERIDA CTRA MADRID-LISBOA - S/N', '06800', 'MERIDA', 6, 0, '', '', '', '', 0, 0, 0, 'Alta'),
-(2613, 1, '59442753', 13, 3, 44, '', 'OFERTEL AVDA BARCELONA', '', '', 0, 0, 0, 6, 'DE BARCELONA - 4', '14010', 'CORDOBA', 14, 0, '', '957435330', '', '', 0, 0, 0, 'Alta'),
+(2613, 1, '59990207', 13, 3, 44, '', 'OFERTEL AVDA BARCELONA', '', '', 0, 0, 0, 6, 'DE BARCELONA - 4', '14010', 'CORDOBA', 14, 0, '', '957435330', '', '', 0, 0, 0, 'Alta'),
 (2614, 1, '20070000', 15, 4, 53, 'Normal', 'STAND ORANGE ECI PLAZA CATALU', NULL, NULL, 0, 0, 0, 20, 'CATALU', '08002', 'BARCELONA', 8, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alta'),
 (2615, 1, '10070003', 15, 1, 53, '', 'STAND ORANGE ECI GOYA-GECI', '', '', 0, 0, 0, 8, 'GOYA - 87', '28009', 'MADRID', 28, 0, '', '', '', '', 0, 0, 0, 'Alta'),
 (2616, 1, '10070011', 15, 1, 54, '', 'STAND ORANGE ECI CALLAO - GGSS', '', '', 0, 0, 0, 20, 'CALLAO - 2', '28013', 'MADRID', 28, 0, '', '', '', '', 0, 0, 0, 'Alta'),
@@ -30104,7 +30457,7 @@ MODIFY `id_brand_device` smallint(5) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCRE
 -- AUTO_INCREMENT for table `chat`
 --
 ALTER TABLE `chat`
-MODIFY `id_chat` int(10) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=157;
+MODIFY `id_chat` int(10) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=177;
 --
 -- AUTO_INCREMENT for table `client`
 --
@@ -30139,7 +30492,7 @@ MODIFY `id_device` smallint(5) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=1
 -- AUTO_INCREMENT for table `devices_almacen`
 --
 ALTER TABLE `devices_almacen`
-MODIFY `id_devices_almacen` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=6739;
+MODIFY `id_devices_almacen` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=6745;
 --
 -- AUTO_INCREMENT for table `devices_display`
 --
@@ -30169,22 +30522,22 @@ MODIFY `id_displays_pds` smallint(5) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCRE
 -- AUTO_INCREMENT for table `facturacion`
 --
 ALTER TABLE `facturacion`
-MODIFY `id_facturacion` int(10) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=436;
+MODIFY `id_facturacion` int(10) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=478;
 --
 -- AUTO_INCREMENT for table `historico`
 --
 ALTER TABLE `historico`
-MODIFY `id_historico` int(10) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2044;
+MODIFY `id_historico` int(10) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2159;
 --
 -- AUTO_INCREMENT for table `incidencias`
 --
 ALTER TABLE `incidencias`
-MODIFY `id_incidencia` int(10) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=838;
+MODIFY `id_incidencia` int(10) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=868;
 --
 -- AUTO_INCREMENT for table `intervenciones`
 --
 ALTER TABLE `intervenciones`
-MODIFY `id_intervencion` int(10) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=224;
+MODIFY `id_intervencion` int(10) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=238;
 --
 -- AUTO_INCREMENT for table `login_attempts`
 --
@@ -30194,7 +30547,7 @@ MODIFY `id` int(11) unsigned NOT NULL AUTO_INCREMENT;
 -- AUTO_INCREMENT for table `material_incidencias`
 --
 ALTER TABLE `material_incidencias`
-MODIFY `id_material_incidencias` int(10) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=824;
+MODIFY `id_material_incidencias` int(10) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=913;
 --
 -- AUTO_INCREMENT for table `panelado`
 --

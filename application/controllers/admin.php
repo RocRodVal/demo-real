@@ -323,22 +323,13 @@ class Admin extends CI_Controller
     
     		$data['title'] = 'DOCUMENTACIÓN DE RESOLUCIÓN DE INCIDENCIA';
     
-    		
-    		
-    		// page info here, db calls, etc.
+    		// Salida PDF
     		$html = $this->load->view('backend/imprimir_incidencia', $data, true);
-    		pdf_create($html, 'filename');
+    		pdf_create($html, 'intervencion-'.$incidencia['intervencion'].'_incidencia-'.$incidencia['id_incidencia']);
+    				
+    		// Salida HTML
+    		// $this->load->view('backend/imprimir_incidencia', $data);
     		
-    		//$data = pdf_create($html, '', false);
-    		//write_file('name', $data);
-    		
-    		//if you want to write it to disk and/or send it as an attachment    		
-    		/*
-    		$this->load->view('backend/header', $data);
-    		$this->load->view('backend/navbar', $data);
-    		$this->load->view('backend/imprimir_incidencia', $data);
-    		$this->load->view('backend/footer');
-    		*/
     	} else {
     		redirect('admin', 'refresh');
     	}

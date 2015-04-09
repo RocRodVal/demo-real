@@ -51,24 +51,32 @@
                                 echo 'disabled';
                             } ?>>Asignar mat.</a></td>
                         </div>
-                        <!--//
                         <div class="col-lg-7 labelText white">Imprimir documentación</div>
                         <div class="col-lg-5 labelBtn white">
                             <a href="<?= site_url('admin/update_incidencia/' . $id_pds_url . '/' . $id_inc_url . '/3/5') ?>"
                                classBtn="status" class="btn btn-success"
-                                <?php if ($incidencia['status'] == 'Material asignado') {
+                                <?php if (($incidencia['status'] == 'Material asignado') ||
+                                		 ($incidencia['status'] == 'Comunicada'))
+                                {
                                     echo '';
                                 }
-                                else{
+                                else
+								{
                                     echo 'disabled';
-                            } ?>>Imprimir</a>
+                            	}
+                            	?>
+                            	target="_blank">
+                                <?php if ($incidencia['status'] == 'Comunicada')
+                                {
+                                    echo 'Volver a imprimir';
+                                }
+                                else
+								{
+                                    echo 'Imprimir';
+                            	}
+                            	?>
+                            	</a>
                         </div>
-						//-->
-                        <div class="col-lg-5 labelBtn white">
-                            <a href="<?= site_url('admin/update_incidencia/' . $id_pds_url . '/' . $id_inc_url . '/3/5') ?>"
-                               classBtn="status" class="btn btn-success">Imprimir</a>
-                        </div>
-                                                
                         <div class="col-lg-7 labelText grey">Resolver incidencia</div>
                         <div class="col-lg-5 labelBtn grey">
                             <a href="<?= site_url('admin/update_incidencia/' . $id_pds_url . '/' . $id_inc_url . '/4/6') ?>"
