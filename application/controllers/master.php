@@ -322,6 +322,55 @@ class Master extends CI_Controller {
 			redirect('master','refresh');
 		}		
 	}
+	
+	
+	public function incidencias()
+	{
+		if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 9))
+		{	
+			$xcrud_SQL = xcrud_get_instance();
+			$xcrud_SQL->table_name('Incidencias');
+			$xcrud_SQL->query("SELECT
+					incidencias.id_incidencia AS Incidencia,
+					DATE_FORMAT(incidencias.fecha,'%d/%m/%Y') AS Fecha,
+					pds.reference AS Referencia,
+            		pds.commercial AS 'Nombre comercial',
+            		pds.address AS Dirección,
+            		pds.zip AS CP,
+            		pds.city AS Ciudad,
+            		province.province AS Provincia,
+            		county.county AS CCAA,
+					display.display AS Mueble,
+					device.device AS Dispositivo,
+					incidencias.tipo_averia AS Tipo,
+					incidencias.fail_device AS 'Fallo dispositivo',
+					incidencias.alarm_display 'Alarma mueble',
+					incidencias.alarm_device 'Alarma dispositivo',
+					incidencias.alarm_garra 'Sistema de alarma',
+					incidencias.description_1 AS 'Comentarios',
+					incidencias.contacto,
+					incidencias.phone AS Teléfono,
+            		incidencias.status_pds AS 'Estado tienda'
+				FROM incidencias
+				JOIN pds ON incidencias.id_pds = pds.id_pds
+            	LEFT JOIN province ON pds.province = province.id_province
+            	LEFT JOIN county ON pds.county = county.id_county
+				JOIN displays_pds ON incidencias.id_displays_pds = displays_pds.id_displays_pds
+				JOIN display ON displays_pds.id_display = display.id_display
+				LEFT JOIN devices_pds ON incidencias.id_devices_pds = devices_pds.id_devices_pds
+				LEFT JOIN device ON devices_pds.id_device = device.id_device");
+	
+			$data['title'] = 'Export incidencias';
+			$data['content'] = $xcrud_SQL->render();
+	
+			$this->load->view('master/header',$data);
+			$this->load->view('master/navbar',$data);
+			$this->load->view('master/content',$data);
+			$this->load->view('master/footer');
+		} else {
+			redirect('master', 'refresh');
+		}
+	}	
 
 	
 	public function inventario()
