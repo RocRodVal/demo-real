@@ -122,3 +122,48 @@ FROM material_incidencias
 JOIN devices_almacen ON devices_almacen.id_devices_almacen = material_incidencias.id_devices_almacen
 JOIN device ON devices_almacen.id_device = device.id_device
 WHERE id_incidencia = INCIDENCIA;
+
+/*
+Seleccionar material incidencias
+*/
+SELECT material_incidencias.*, brand_alarm.brand, alarm.alarm, devices_almacen.serial, device.device
+FROM material_incidencias
+LEFT JOIN devices_almacen ON devices_almacen.id_devices_almacen = material_incidencias.id_devices_almacen
+LEFT JOIN device ON devices_almacen.id_device = device.id_device
+LEFT JOIN alarm ON alarm.id_alarm = material_incidencias.id_alarm
+LEFT JOIN brand_alarm ON alarm.brand_alarm = brand_alarm.id_brand_alarm;
+
+/*
+Export incidencias para volcado CSV
+*/
+SELECT 
+	incidencias.id_incidencia AS Incidencia,
+	incidencias.fecha AS Fecha,
+	pds.reference AS Referencia,
+    pds.commercial AS "Nombre comercial",
+    pds.address AS Dirección,
+    pds.zip AS CP,
+    pds.city AS Ciudad,
+    province.province AS Provincia,
+	display.display AS Mueble,
+	device.device AS Dispositivo,
+	incidencias.tipo_averia AS Tipo,
+	incidencias.fail_device AS "Fallo dispositivo",
+	incidencias.alarm_display "Alarma mueble",
+	incidencias.alarm_device "Alarma dispositivo",
+	incidencias.alarm_garra "Sistema de alarma",
+	incidencias.description_1 AS "Comentarios",
+	incidencias.description_2 AS "Comentarios SAT",
+    incidencias.description_3 AS "Comentarios Instalador",
+	incidencias.contacto,
+	incidencias.phone AS "Teléfono",
+    incidencias.status_pds AS "Estado tienda",
+	incidencias.status AS "Estado SAT"
+FROM incidencias
+JOIN pds ON incidencias.id_pds = pds.id_pds
+JOIN province ON pds.province = province.id_province
+LEFT JOIN county ON pds.county = county.id_county
+LEFT JOIN displays_pds ON incidencias.id_displays_pds = displays_pds.id_displays_pds
+JOIN display ON displays_pds.id_display = display.id_display
+LEFT JOIN devices_pds ON incidencias.id_devices_pds = devices_pds.id_devices_pds
+LEFT JOIN device ON devices_pds.id_device = device.id_device;
