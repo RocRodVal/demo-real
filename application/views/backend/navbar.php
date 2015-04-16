@@ -60,7 +60,6 @@
                         <li><a <?=($this->uri->segment(2)==='facturacion')?'class="active"':''?> href="<?=site_url('admin/facturacion')?>"><i class="fa fa-money fa-fw"></i> Facturación</a></li>
                         <li><a <?=($this->uri->segment(2)==='operaciones')?'class="active"':''?> href="<?=site_url('admin/operaciones')?>"><i class="fa fa-wrench fa-fw"></i> Operaciones</a></li>
                         <li><a <?=($this->uri->segment(2)==='incidencias')?'class="active"':''?> href="<?=site_url('admin/incidencias')?>"><i class="fa fa-wrench fa-fw"></i> Export incidencias</a></li>
-                        <li><a <?=($this->uri->segment(2)==='incidencias_master')?'class="active"':''?> href="<?=site_url('admin/incidencias_master')?>"><i class="fa fa-wrench fa-fw"></i> Export incidencias Orange</a></li>
                         <?php 
                         }
                         else 
