@@ -242,21 +242,30 @@ foreach ($material_alarmas as $material_alarmas_item)
 
 <p style="font-family: 'Helvetica'">
 _____ Resuelta incidencia número <?php echo $id_inc_url ?><br />
-_____ Revisadas que las pantallas funcionan correctamente. En caso de que no sea así ponerse en contacto con el Teléfono __________
+_____ Revisadas que las pantallas funcionan correctamente. En caso de que no sea así ponerse en contacto con el teléfono __________
 </p>
 
 <br clear="all" />
 <br />  
 <br />
 <br />
+<br />
+<br />
 
 <table style="font-family: 'Helvetica'" width="100%">
 <tr>
-<td width="50%" align="left">FDO. Instalador</td>
-<td width="50%" align="left">FDO. Encargado de tienda</td>
+<td width="50%" align="left">
+FDO. Instalador<br />
+<strong>Fecha instalación:</strong> ___ / ___ / ___ (DD/MM/AA)
+</td>
+<td width="50%" align="left">FDO. Cliente (Nombre, firma y sello)</td>
 </tr>
 </table>    
-  
+
+<p style="font-family: 'Helvetica', font: 12px;">
+<em>* En caso de ser necesarias observaciones indicar por la parte posterior.</em>
+</p>
+
 
 </body>
 </html>
