@@ -864,10 +864,17 @@ class Admin extends CI_Controller
         if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
 
             $xcrud_SQL = xcrud_get_instance();
+            $xcrud_SQL->table_name('Incidencias');
             $xcrud_SQL->query('SELECT 
 					incidencias.id_incidencia AS Incidencia,
 					incidencias.fecha AS Fecha,
 					pds.reference AS Referencia,
+            		pds.commercial AS "Nombre comercial",
+            		pds.address AS Dirección,
+            		pds.zip AS CP,
+            		pds.city AS Ciudad,
+            		province.province AS Provincia,
+            		county.county AS CCAA,
 					display.display AS Mueble,
 					device.device AS Dispositivo,
 					incidencias.tipo_averia AS Tipo,
@@ -884,11 +891,12 @@ class Admin extends CI_Controller
 					incidencias.status AS "Estado SAT"
 				FROM incidencias
 				JOIN pds ON incidencias.id_pds = pds.id_pds
+            	LEFT JOIN province ON pds.province = province.id_province
+            	LEFT JOIN county ON pds.county = county.id_county
 				JOIN displays_pds ON incidencias.id_displays_pds = displays_pds.id_displays_pds
 				JOIN display ON displays_pds.id_display = display.id_display
 				LEFT JOIN devices_pds ON incidencias.id_devices_pds = devices_pds.id_devices_pds
 				LEFT JOIN device ON devices_pds.id_device = device.id_device');
-
             
             $data['title'] = 'Export incidencias';
             $data['content'] = $xcrud_SQL->render();
@@ -901,7 +909,7 @@ class Admin extends CI_Controller
             redirect('admin', 'refresh');
         }
     }
-    
+       
     
     public function contactos()
     {

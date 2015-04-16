@@ -33,6 +33,7 @@
                         {
                         ?>                                                 
                         <li><a <?=($this->uri->segment(2)==='dashboard')?'class="active"':''?> href="<?=site_url('master/dashboard')?>"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a></li>
+                        <li><a <?=($this->uri->segment(2)==='incidencias')?'class="active"':''?> href="<?=site_url('master/incidencias')?>"><i class="fa fa-wrench fa-fw"></i> Export incidencias</a></li>
                         <?php               
                         $maestros = array('clientes','contactos','alarmas','dispositivos','muebles','puntos_de_venta');
                         ?>
