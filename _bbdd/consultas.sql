@@ -126,7 +126,7 @@ WHERE id_incidencia = INCIDENCIA;
 /*
 Seleccionar material incidencias
 */
-SELECT material_incidencias.*, brand_alarm.brand, alarm.alarm, devices_almacen.serial, device.device
+SELECT material_incidencias.fecha, material_incidencias.id_incidencia, brand_alarm.brand, alarm.alarm, device.device, devices_almacen.serial
 FROM material_incidencias
 LEFT JOIN devices_almacen ON devices_almacen.id_devices_almacen = material_incidencias.id_devices_almacen
 LEFT JOIN device ON devices_almacen.id_device = device.id_device
