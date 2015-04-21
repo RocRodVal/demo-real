@@ -135,12 +135,15 @@ foreach ($material_alarmas as $material_alarmas_item)
 if (!empty($material_dispositivos))
 {
 ?>
-<table style="font-family: 'Helvetica'" width="1200">
+<table style="font-family: 'Helvetica'" width="100%">
 <thead>
 <tr>
-<th width="50" align="left">Check</th>
-<th width="150" align="left">Unidades</th>
-<th align="left">Dispositivo</th>
+<th width="5%" align="left">Check</th>
+<th width="5%" align="left">Unidades</th>
+<th width="40%" align="left">Dispositivo</th>
+<th width="5%" align="left">Check</th>
+<th width="5%" align="left">Unidades</th>
+<th width="40%" align="left">Dispositivo</th>
 </tr>
 </thead>
 <tbody>
@@ -152,6 +155,9 @@ foreach ($material_dispositivos as $material_dispositivos_item)
 <td align="left">[___]</td>
 <td align="left"><?php echo $material_dispositivos_item->cantidad ?></td>
 <td align="left"><?php echo $material_dispositivos_item->device ?></td>
+<td align="left">[___]</td>
+<td align="left">____</td>
+<td align="left">____________________________________</td>	      
 </tr>
 <?php
 }
@@ -168,12 +174,15 @@ foreach ($material_dispositivos as $material_dispositivos_item)
 if (!empty($material_alarmas))
 {
 ?>
-<table style="font-family: 'Helvetica'" width="1200">
+<table style="font-family: 'Helvetica'" width="100%">
 <thead>
 <tr>
-<th width="50" align="left">Check</th>
-<th width="150" align="left">Unidades</th>
-<th align="left">Alarma</th>
+<th width="5%" align="left">Check</th>
+<th width="5%" align="left">Unidades</th>
+<th width="40%" align="left">Alarma</th>
+<th width="5%" align="left">Check</th>
+<th width="5%" align="left">Unidades</th>
+<th width="40%" align="left">Alarma</th>
 </tr>
 </thead>
 <tbody>
@@ -184,7 +193,10 @@ foreach ($material_alarmas as $material_alarmas_item)
 <tr>
 <td align="left">[___]</td>
 <td align="left"><?php echo $material_alarmas_item->cantidad ?></td>
-<td align="left"><?php echo $material_alarmas_item->alarm ?> (<?php echo $material_alarmas_item->code ?>)</td>		                
+<td align="left"><?php echo $material_alarmas_item->alarm ?> (<?php echo $material_alarmas_item->code ?>)</td>
+<td align="left">[___]</td>
+<td align="left">____</td>
+<td align="left">____________________________________</td>	                
 </tr>
 <?php
 }
@@ -194,47 +206,6 @@ foreach ($material_alarmas as $material_alarmas_item)
 <?php 
 }
 ?>
-
-<br clear="all" />
-
-<h3 style="font-family: 'Helvetica'">OTRO MATERIAL</h3>
-
-<table style="font-family: 'Helvetica'" width="1200">
-<thead>
-<tr>
-<th width="50" align="left">Check</th>
-<th width="150" align="left">Unidades</th>
-<th align="left">Material</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td align="left">[___]</td>
-<td align="left">____</td>
-<td align="left">_________________________________________________________</td>
-</tr>
-<tr>
-<td align="left">[___]</td>
-<td align="left">____</td>
-<td align="left">_________________________________________________________</td>
-</tr>
-<tr>
-<td align="left">[___]</td>
-<td align="left">____</td>
-<td align="left">_________________________________________________________</td>
-</tr>
-<tr>
-<td align="left">[___]</td>
-<td align="left">____</td>
-<td align="left">_________________________________________________________</td>
-</tr>
-<tr>
-<td align="left">[___]</td>
-<td align="left">____</td>
-<td align="left">_________________________________________________________</td>
-</tr>
-</tbody>
-</table>  
 
 <br clear="all" />
 
