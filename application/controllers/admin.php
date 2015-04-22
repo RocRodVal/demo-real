@@ -512,6 +512,15 @@ class Admin extends CI_Controller
         );
 
         $this->tienda_model->historico($data);
+
+        var_dump($this->input->post('fecha_cierre'));
+        
+        if ($status == 6)
+        {
+        	$fecha_cierre = $this->input->post('fecha_cierre');
+        	$this->tienda_model->incidencia_update_cierre($id_inc, $fecha_cierre);
+        }        
+        
         
         if ($status == 5) 
         {
@@ -520,7 +529,9 @@ class Admin extends CI_Controller
         else
         {	
         	redirect('admin/operar_incidencia/'.$id_pds.'/'.$id_inc, 'refresh');
-        }	
+        }
+   
+        
     }
 
     public function update_materiales_incidencia()
@@ -1932,6 +1943,7 @@ class Admin extends CI_Controller
         
         $data = array(
             'fecha' => date('Y-m-d H:i:s'),
+        	'fecha_cierre'    	=> NULL,
             'id_pds' => $id_pds,
             'id_displays_pds' => $id_dis,
             'id_devices_pds' => $id_dev,

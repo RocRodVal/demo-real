@@ -17,7 +17,8 @@
 		                    <table class="table table-striped table-bordered table-hover" id="dataTables-example">
 		                        <thead>
 		                        <tr>
-		                            <th>Dispositivo</th>
+		                            <th>Marca</th>
+		                            <th>Modelo</th>
 		                            <th>Unidades tienda</th>
 		                            <th>Stock necesario</th>
 		                            <th>Deposito en almacén</th>
@@ -29,6 +30,7 @@
 		                        foreach ($stocks as $stock) {
 		                            ?>
 		                            <tr>
+		                                <td><?php echo $stock->brand ?></td>
 		                                <td><?php echo $stock->device ?></td>
 		                                <td><?php echo $stock->unidades_pds ?></td>
 		                                <td><?php echo $stock->stock_necesario ?></td>

@@ -167,3 +167,52 @@ LEFT JOIN displays_pds ON incidencias.id_displays_pds = displays_pds.id_displays
 JOIN display ON displays_pds.id_display = display.id_display
 LEFT JOIN devices_pds ON incidencias.id_devices_pds = devices_pds.id_devices_pds
 LEFT JOIN device ON devices_pds.id_device = device.id_device;
+
+
+/*
+Varios acceso master
+*/
+
+SELECT 
+  YEAR(fecha), 
+  MONTH(fecha), 
+  COUNT(*)
+FROM incidencias
+WHERE fail_device = 1
+GROUP BY 
+  YEAR(fecha),
+  MONTH(fecha);
+
+SELECT 
+  YEAR(fecha) AS Year, 
+  MONTH(fecha) AS Mes, 
+  COUNT(*) AS Incidencias,
+  (
+  SELECT
+	COUNT(*) 
+	FROM incidencias
+	JOIN historico ON incidencias.id_incidencia = historico.id_incidencia
+    WHERE 
+    (
+    (historico.status_pds = 'Finalizada' OR historico.status_pds = 'Cancelada')
+    AND (historico.fecha >= ((incidencias.fecha) + INTERVAL 72 HOUR))
+    AND YEAR(historico.fecha) = Year
+    AND MONTH(historico.fecha) = Mes
+    )
+  ) AS '+ 72h.',
+
+  (
+  SELECT
+	COUNT(*) 
+	FROM incidencias
+	WHERE 
+    (
+    (status_pds = 'Finalizada' OR status_pds = 'Cancelada')
+    AND YEAR(fecha) = Year
+    AND MONTH(fecha) = Mes
+    )
+  ) AS Cerradas
+FROM incidencias
+GROUP BY 
+  YEAR(fecha),
+  MONTH(fecha); 

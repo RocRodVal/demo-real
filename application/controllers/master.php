@@ -372,6 +372,223 @@ class Master extends CI_Controller {
 		}
 	}	
 
+	public function cdm_incidencias()
+	{
+		if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 9))
+		{
+			$xcrud_1 = xcrud_get_instance();
+			$xcrud_1->table_name('Incidencias');
+			$xcrud_1->query("SELECT 
+							  YEAR(fecha) AS Year, 
+							  MONTH(fecha) AS Mes, 
+							  COUNT(*) AS Incidencias, 
+							  (
+							  SELECT
+								COUNT(*) 
+								FROM incidencias
+								WHERE 
+							    (
+								(status_pds = 'Finalizada' OR status_pds = 'Cancelada')
+							    AND (YEAR(fecha) = Year AND MONTH(fecha) = Mes)
+							    )
+							  ) AS Cerradas
+							FROM incidencias
+							GROUP BY 
+							  YEAR(fecha),
+							  MONTH(fecha)");
+				
+				
+			$data['title'] = 'Estado incidencias';
+				
+			$data['content'] = $xcrud_1->render();
+			/*
+			$data['content'] = $data['content'] . $xcrud_2->render();
+			$data['content'] = $data['content'] . $xcrud_3->render();
+			$data['content'] = $data['content'] . $xcrud_4->render();
+			$data['content'] = $data['content'] . $xcrud_5->render();
+			*/
+				
+			$this->load->view('master/header',$data);
+			$this->load->view('master/navbar',$data);
+			$this->load->view('master/content',$data);
+			$this->load->view('master/footer');
+		} else {
+			redirect('master', 'refresh');
+		}
+	}	
+	
+	
+	public function cdm_tipo_incidencia()
+	{
+		if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 9))
+		{
+			$xcrud_1 = xcrud_get_instance();
+			$xcrud_1->table_name('Dispositivo');
+			$xcrud_1->query("SELECT 
+  									YEAR(fecha) AS Año, 
+  									MONTH(fecha) AS Mes, 
+  									COUNT(*) AS Unidades
+								FROM incidencias
+								WHERE fail_device = 1
+								GROUP BY 
+  									YEAR(fecha),
+  									MONTH(fecha)");
+			
+			$xcrud_2 = xcrud_get_instance();
+			$xcrud_2->table_name('Alarma mueble');
+			$xcrud_2->query("SELECT
+  									YEAR(fecha) AS Año,
+  									MONTH(fecha) AS Mes,
+  									COUNT(*) AS Unidades
+								FROM incidencias
+								WHERE alarm_display = 1
+								GROUP BY
+  									YEAR(fecha),
+  									MONTH(fecha)");			
+			
+			$xcrud_3 = xcrud_get_instance();
+			$xcrud_3->table_name('Alarma/Cableado');
+			$xcrud_3->query("SELECT
+  									YEAR(fecha) AS Año,
+  									MONTH(fecha) AS Mes,
+  									COUNT(*) AS Unidades
+								FROM incidencias
+								WHERE alarm_device = 1
+								GROUP BY
+  									YEAR(fecha),
+  									MONTH(fecha)");	
+			
+			$xcrud_4 = xcrud_get_instance();
+			$xcrud_4->table_name('Soporte/Anclaje');
+			$xcrud_4->query("SELECT
+  									YEAR(fecha) AS Año,
+  									MONTH(fecha) AS Mes,
+  									COUNT(*) AS Unidades
+								FROM incidencias
+								WHERE alarm_garra = 1
+								GROUP BY
+  									YEAR(fecha),
+  									MONTH(fecha)");			
+
+			
+			$xcrud_5 = xcrud_get_instance();
+			$xcrud_5->table_name('Dispositivo + Sistema de seguridad');
+			$xcrud_5->query("SELECT
+  									YEAR(fecha) AS Año,
+  									MONTH(fecha) AS Mes,
+  									COUNT(*) AS Unidades
+								FROM incidencias
+								WHERE fail_device = 1 AND (alarm_device = 1 OR alarm_garra = 1)
+								GROUP BY
+  									YEAR(fecha),
+  									MONTH(fecha)");			
+			
+			
+			$data['title'] = 'Tipo incidencia';
+			
+			$data['content'] = $xcrud_1->render();
+			$data['content'] = $data['content'] . $xcrud_2->render();
+			$data['content'] = $data['content'] . $xcrud_3->render();
+			$data['content'] = $data['content'] . $xcrud_4->render();
+			$data['content'] = $data['content'] . $xcrud_5->render();
+			
+			$this->load->view('master/header',$data);
+			$this->load->view('master/navbar',$data);
+			$this->load->view('master/content',$data);
+			$this->load->view('master/footer');
+		} else {
+			redirect('master', 'refresh');
+		}
+	}	
+	
+	public function cdm_alarmas()
+	{
+		if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 9))
+		{
+			$xcrud = xcrud_get_instance();
+			$this->load->model('tienda_model');
+	
+			$data['stocks']  = $this->tienda_model->get_cdm_alarmas();
+	
+			$data['title']   = 'Sistemas de seguridad';
+	
+			$this->load->view('master/header',$data);
+			$this->load->view('master/navbar',$data);
+			$this->load->view('master/cdm_alarmas',$data);
+			$this->load->view('master/footer');
+		}
+		else
+		{
+			redirect('master','refresh');
+		}
+	}	
+	
+	public function cdm_dispositivos()
+	{
+		if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 9))
+		{
+			$xcrud = xcrud_get_instance();
+			$this->load->model('tienda_model');
+	
+			$data['stocks']  = $this->tienda_model->get_cdm_dispositivos();
+				
+			$data['title']   = 'Dispositivos';
+	
+			$this->load->view('master/header',$data);
+			$this->load->view('master/navbar',$data);
+			$this->load->view('master/cdm_dispositivos',$data);
+			$this->load->view('master/footer');
+		}
+		else
+		{
+			redirect('master','refresh');
+		}
+	}	
+	
+	public function cdm_inventario()
+	{
+		if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 9))
+		{
+			$xcrud = xcrud_get_instance();
+			$this->load->model('tienda_model');
+	
+			$data['stocks']          = $this->tienda_model->get_stock();
+	
+			$xcrud->table('alarm');
+			$xcrud->table_name('Alarmas almacén');
+			$xcrud->relation('type_alarm','type_alarm','id_type_alarm','type');
+			$xcrud->relation('brand_alarm','brand_alarm','id_brand_alarm','brand');
+			$xcrud->change_type('picture_url','image');
+			$xcrud->modal('picture_url');
+			$xcrud->label('brand_alarm','Fabricante')->label('type_alarm','Tipo')->label('code','Código')->label('alarm','Modelo')->label('picture_url','Foto')->label('description','Comentarios')->label('status','Estado');
+			$xcrud->columns('brand_alarm,alarm,picture_url,units');
+	
+			$xcrud->show_primary_ai_column(false);
+			$xcrud->unset_add();
+			$xcrud->unset_view();
+			$xcrud->unset_edit();
+			$xcrud->unset_remove();
+			$xcrud->unset_numbers();
+	
+			$data['alarms_almacen'] = $xcrud->render();
+	
+			$data['devices_almacen'] = $this->tienda_model->get_devices_almacen();
+			$data['displays_pds']    = $this->tienda_model->get_displays_total();
+			$data['devices_pds']     = $this->tienda_model->get_devices_total();
+	
+			$data['title']   = 'Inventario/Depósito';
+	
+			$this->load->view('master/header',$data);
+			$this->load->view('master/navbar',$data);
+			$this->load->view('master/inventario',$data);
+			$this->load->view('master/footer');
+		}
+		else
+		{
+			redirect('master','refresh');
+		}
+	}	
+	
 	
 	public function inventario()
 	{

@@ -9,7 +9,7 @@ class Tienda_model extends CI_Model {
 	
 	public function get_stock() {
 	
-		$query = $this->db->select('devices_pds.id_device, device.device, COUNT(devices_pds.id_device) AS unidades_pds, (ROUND((COUNT(devices_pds.id_device)*0.05))+2) AS stock_necesario,
+		$query = $this->db->select('brand_device.brand, device.device, COUNT(devices_pds.id_device) AS unidades_pds, (ROUND((COUNT(devices_pds.id_device)*0.05))+2) AS stock_necesario,
 									(
 									SELECT  COUNT(*)
 									FROM    devices_almacen
@@ -22,14 +22,45 @@ class Tienda_model extends CI_Model {
 									) -
 									(ROUND((COUNT(devices_pds.id_device)*0.05))+2) AS balance')
 			   	 ->join('device','devices_pds.id_device = device.id_device')
+			   	 ->join('brand_device','device.brand_device = brand_device.id_brand_device')
 		         ->where('devices_pds.status','Alta')
 		         ->group_by('devices_pds.id_device')
-		         ->order_by('device')
+		         ->order_by('brand_device.brand', 'ASC')
+		         ->order_by('device.device', 'ASC')
 		         ->get('devices_pds');
 	
 		return $query->result();
 	}
-		
+	
+	public function get_cdm_alarmas() {
+	
+		$query = $this->db->select('brand_alarm.brand, alarm.alarm, COUNT(*) as incidencias')
+		->join('alarm','alarm.id_alarm = material_incidencias.id_alarm')
+		->join('brand_alarm','alarm.brand_alarm = brand_alarm.id_brand_alarm')
+		->group_by('alarm.alarm')
+		->order_by('brand_alarm.brand', 'ASC')
+		->order_by('alarm.alarm', 'ASC')
+		->get('material_incidencias');
+	
+		return $query->result();
+	}
+	
+	
+	public function get_cdm_dispositivos() {
+	
+		$query = $this->db->select('brand_device.brand, device.device, COUNT(*) as incidencias')
+										->join('devices_almacen','devices_almacen.id_devices_almacen = material_incidencias.id_devices_almacen')
+										->join('device','devices_almacen.id_device = device.id_device')
+										->join('brand_device','device.brand_device = brand_device.id_brand_device')
+										->group_by('device.device')
+										->order_by('brand_device.brand', 'ASC')
+										->order_by('device.device', 'ASC')
+										->get('material_incidencias');
+	
+		return $query->result();
+	}	
+	
+
 	
 	public function search_pds($id) {
 		if($id != FALSE) {
@@ -511,6 +542,14 @@ class Tienda_model extends CI_Model {
 		$this->db->where('id_incidencia',$id);
 		$this->db->update('incidencias');
 	}	
+
+	public function incidencia_update_cierre($id,$fecha_cierre)
+	{
+		$this->db->set('fecha_cierre', $fecha_cierre);
+		$this->db->where('id_incidencia',$id);
+		$this->db->update('incidencias');
+	}	
+	
 	
 	public function comentario_incidencia_update($id,$texto)
 	{

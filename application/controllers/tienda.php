@@ -485,6 +485,7 @@ class Tienda extends CI_Controller {
 			
 			$data = array(
 					'fecha'    	        => date('Y-m-d H:i:s'),
+					'fecha_cierre'    	=> NULL,
 					'id_pds'            => $data['id_pds'],
 					'id_displays_pds' 	=> $this->uri->segment(3),
 					'id_devices_pds' 	=> $this->uri->segment(4),
@@ -557,6 +558,7 @@ class Tienda extends CI_Controller {
 		
 			$data = array(
 					'fecha'    	        => date('Y-m-d H:i:s'),
+					'fecha_cierre'    	=> NULL,
 					'id_pds'            => $data['id_pds'],
 					'id_displays_pds' 	=> $this->uri->segment(3),
 					'id_devices_pds' 	=> NULL,
