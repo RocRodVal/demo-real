@@ -120,6 +120,20 @@
                 </div>
                 <div class="panel-body">
                     <strong>Fecha alta:</strong> <?php echo date_format(date_create($incidencia['fecha']), 'd/m/Y'); ?><br/>
+                    <?php
+                    if (strtotime($incidencia['fecha_cierre']))
+                    {
+                    ?>
+                    <strong>Fecha cierre:</strong> <?php echo date_format(date_create($incidencia['fecha_cierre']), 'd/m/Y'); ?><br/>
+                    <?php
+                    }
+                    else 
+                    {
+                    ?>
+                    <strong>Fecha cierre:</strong> ---<br/>
+                    <?php 	
+                    }	
+                    ?>
                     <strong>Estado:</strong> <?php echo $incidencia['status'] ?><br/>
                     <?php
                     if ($historico_material_asignado <> '---')

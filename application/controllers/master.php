@@ -118,6 +118,7 @@ class Master extends CI_Controller {
 			{
 				$data['id_incidencia']   = $incidencia['id_incidencia'];
 				$data['fecha']           = $incidencia['fecha'];
+				$data['fecha_cierre']    = $incidencia['fecha_cierre'];
 				$data['id_pds']          = $incidencia['id_pds'];
 				$data['id_displays_pds'] = $incidencia['id_displays_pds'];
 				$data['id_devices_pds']  = $incidencia['id_devices_pds'];
@@ -388,7 +389,7 @@ class Master extends CI_Controller {
 								FROM incidencias
 								WHERE 
 							    (
-								(status_pds = 'Finalizada' OR status_pds = 'Cancelada')
+								(status = 'Resuelta' OR status = 'Cancelada')
 							    AND (YEAR(fecha) = Year AND MONTH(fecha) = Mes)
 							    )
 							  ) AS Cerradas
