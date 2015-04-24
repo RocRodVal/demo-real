@@ -28,14 +28,16 @@
 		                        <tbody>
 		                        <?php
 		                        foreach ($stocks as $stock) {
+									$necesitamos = round($stock->unidades_pds*0.05)+2;
+									$balance = $stock->unidades_almacen - $necesitamos;
 		                            ?>
 		                            <tr>
 		                                <td><?php echo $stock->brand ?></td>
 		                                <td><?php echo $stock->device ?></td>
 		                                <td><?php echo $stock->unidades_pds ?></td>
-		                                <td><?php echo $stock->stock_necesario ?></td>
-		                                <td><?php echo $stock->deposito_almacen ?></td>
-		                                <td <?=($stock->balance<0)?'style="background-color:red;color:white;"':''?>><?php echo $stock->balance ?></td>
+		                                <td><?php echo $necesitamos ?></td>
+		                                <td><?php echo $stock->unidades_almacen ?></td>
+		                                <td <?=($balance<0)?'style="background-color:red;color:white;"':''?>><?php echo $balance ?></td>
 		                            </tr>
 		                        <?php
 		                        }

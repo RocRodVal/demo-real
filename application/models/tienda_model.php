@@ -21,16 +21,39 @@ class Tienda_model extends CI_Model {
 									WHERE (devices_almacen.id_device = devices_pds.id_device) AND (devices_almacen.status = "En stock")
 									) -
 									(ROUND((COUNT(devices_pds.id_device)*0.05))+2) AS balance')
-			   	 ->join('device','devices_pds.id_device = device.id_device')
-			   	 ->join('brand_device','device.brand_device = brand_device.id_brand_device')
-		         ->where('devices_pds.status','Alta')
-		         ->group_by('devices_pds.id_device')
-		         ->order_by('brand_device.brand', 'ASC')
-		         ->order_by('device.device', 'ASC')
-		         ->get('devices_pds');
+										->join('device','devices_pds.id_device = device.id_device')
+										->join('brand_device','device.brand_device = brand_device.id_brand_device')
+										->where('devices_pds.status','Alta')
+										->group_by('devices_pds.id_device')
+										->order_by('brand_device.brand', 'ASC')
+										->order_by('device.device', 'ASC')
+										->get('devices_pds');
 	
 		return $query->result();
-	}
+	}	
+	
+	
+	public function get_stock_cruzado() {
+	
+		$query = $this->db->select('device.id_device, brand_device.brand, device.device,
+									(
+										SELECT COUNT(*)
+										FROM devices_pds
+								        WHERE (devices_pds.id_device = device.id_device) AND
+										(devices_pds.status = "Alta")
+								    ) AS unidades_pds,
+									(SELECT  COUNT(*)
+										FROM devices_almacen
+										WHERE (devices_almacen.id_device = device.id_device) AND
+										(devices_almacen.status = "En stock")
+									) AS unidades_almacen')
+										->join('brand_device','device.brand_device = brand_device.id_brand_device')
+										->order_by('brand_device.brand', 'ASC')
+										->order_by('device.device', 'ASC')
+										->get('device');
+	
+		return $query->result();
+	}	
 	
 	public function get_cdm_alarmas() {
 	

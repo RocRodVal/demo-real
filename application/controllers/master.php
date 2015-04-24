@@ -334,6 +334,7 @@ class Master extends CI_Controller {
 			$xcrud_SQL->query("SELECT
 					incidencias.id_incidencia AS Incidencia,
 					DATE_FORMAT(incidencias.fecha,'%d/%m/%Y') AS Fecha,
+					type_pds.pds AS 'Tipo Pds',
 					pds.reference AS Referencia,
             		pds.commercial AS 'Nombre comercial',
             		pds.address AS Dirección,
@@ -354,6 +355,7 @@ class Master extends CI_Controller {
             		incidencias.status_pds AS 'Estado tienda'
 				FROM incidencias
 				JOIN pds ON incidencias.id_pds = pds.id_pds
+				JOIN type_pds ON pds.type_pds = type_pds.id_type_pds
             	LEFT JOIN province ON pds.province = province.id_province
             	LEFT JOIN county ON pds.county = county.id_county
 				JOIN displays_pds ON incidencias.id_displays_pds = displays_pds.id_displays_pds
@@ -379,25 +381,37 @@ class Master extends CI_Controller {
 		{
 			$xcrud_1 = xcrud_get_instance();
 			$xcrud_1->table_name('Incidencias');
-			$xcrud_1->query("SELECT 
-							  YEAR(fecha) AS Year, 
-							  MONTH(fecha) AS Mes, 
-							  COUNT(*) AS Incidencias, 
-							  (
-							  SELECT
-								COUNT(*) 
-								FROM incidencias
-								WHERE 
-							    (
-								(status = 'Resuelta' OR status = 'Cancelada')
-							    AND (YEAR(fecha) = Year AND MONTH(fecha) = Mes)
-							    )
-							  ) AS Cerradas
+			$xcrud_1->query("SELECT
+								YEAR(incidencias.fecha) AS Year, 
+								MONTH(incidencias.fecha) AS Mes, 
+								COUNT(*) AS Incidencias,
+						    	(
+									SELECT
+										COUNT(*) 
+										FROM historico
+										WHERE
+										(
+											((historico.status_pds = 'Cancelada' AND historico.status = 'Cancelada') OR
+											(historico.status_pds = 'Finalizada' AND historico.status = 'Resuelta')) AND
+						            		(DATE_ADD(incidencias.fecha, INTERVAL 96 HOUR) >= historico.fecha) AND
+						            		(YEAR(historico.fecha) = Year AND MONTH(historico.fecha) = Mes)
+										)
+						    	) AS '- 72 h.',    
+								(
+									SELECT
+										COUNT(*) 
+										FROM incidencias
+										WHERE 
+										(
+											(incidencias.status_pds = 'Finalizada' OR incidencias.status_pds = 'Cancelada') AND
+											(YEAR(incidencias.fecha) = Year AND MONTH(incidencias.fecha) = Mes)
+										)
+								) AS Cerradas
 							FROM incidencias
 							GROUP BY 
-							  YEAR(fecha),
-							  MONTH(fecha)");
-				
+								YEAR(incidencias.fecha),
+								MONTH(incidencias.fecha)");
+										
 				
 			$data['title'] = 'Estado incidencias';
 				
@@ -553,7 +567,7 @@ class Master extends CI_Controller {
 			$xcrud = xcrud_get_instance();
 			$this->load->model('tienda_model');
 	
-			$data['stocks']          = $this->tienda_model->get_stock();
+			$data['stocks'] = $this->tienda_model->get_stock_cruzado();
 	
 			$xcrud->table('alarm');
 			$xcrud->table_name('Alarmas almacén');

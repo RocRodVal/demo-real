@@ -7,6 +7,7 @@ FROM pds, displays_panelado
 WHERE pds.panelado_pds=displays_panelado.id_panelado
 AND pds.reference = SFID;
 
+
 /*
 Devices por PdS
 */
@@ -17,6 +18,23 @@ WHERE pds.id_pds=displays_pds.id_pds
 AND displays_pds.id_display=devices_display.id_display
 AND pds.reference = SFID;
 
+
+/*
+Alta dispositivos en almacén
+*/
+INSERT INTO `orange`.`devices_almacen`
+(`id_device`,`alta`,`IMEI`,`mac`,`serial`,`barcode`,
+`id_color_device`,`id_complement_device`,`id_status_device`,`id_status_packaging_device`,
+`picture_url_1`,`picture_url_2`,`picture_url_3`,
+`description`,`owner`,`status`)
+VALUES 
+(XXX,now(),NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,"En stock"),
+(XXX,now(),NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,"En stock"),
+(XXX,now(),NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,"En stock"),
+(XXX,now(),NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,"En stock"),
+(XXX,now(),NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,"En stock");
+
+
 /*
 Consulta SFIDs en grupo
 */
@@ -25,6 +43,7 @@ FROM pds
 JOIN type_pds ON pds.type_pds = type_pds.id_type_pds
 JOIN panelado ON pds.panelado_pds = panelado.id_panelado
 WHERE reference IN (19990272,19440334,26360017,36000077,36000072,48810015,49440274,49990159,49440270,49990141,49990153,49990164,49440267,49440134,59440338,59990180,59990179,59990178,59990207,56000152);
+
 
 /*
 Facturación
@@ -38,6 +57,7 @@ JOIN display ON displays_pds.id_display = display.id_display
 GROUP BY facturacion.id_intervencion
 ORDER BY facturacion.fecha ASC;
 
+
 /*
 Reserva dispositivos desde lista materiales
 */
@@ -47,6 +67,7 @@ JOIN incidencias ON material_incidencias.id_incidencia = incidencias.id_incidenc
 SET devices_almacen.status = 4
 WHERE incidencias.status = 'Resuelta';
 
+
 /*
 Incidencias
 */
@@ -55,6 +76,7 @@ FROM incidencias
 JOIN device ON incidencias.id_devices_pds = device.id_device
 JOIN display ON incidencias.id_displays_pds = display.id_display
 JOIN pds ON incidencias.id_pds = pds.id_pds;
+
 
 /*
 Export incidencias
@@ -90,6 +112,7 @@ JOIN display ON displays_pds.id_display = display.id_display
 LEFT JOIN devices_pds ON incidencias.id_devices_pds = devices_pds.id_devices_pds
 LEFT JOIN device ON devices_pds.id_device = device.id_device;
 
+
 /*
 Buscar duplicados
 */
@@ -97,6 +120,7 @@ SELECT reference, COUNT(*) as count
 FROM pds
 GROUP BY reference
 HAVING COUNT(*) > 1;
+
 
 /*
 Seleccionar dispositivos incidencia
@@ -106,6 +130,7 @@ FROM material_incidencias
 JOIN devices_almacen ON devices_almacen.id_devices_almacen = material_incidencias.id_devices_almacen
 JOIN device ON devices_almacen.id_device = device.id_device;
 
+
 /*
 Seleccionar alarmas incidencia
 */
@@ -113,6 +138,7 @@ SELECT material_incidencias.*, brand_alarm.brand, alarm.alarm
 FROM material_incidencias
 JOIN alarm ON alarm.id_alarm = material_incidencias.id_alarm
 JOIN brand_alarm ON alarm.brand_alarm = brand_alarm.id_brand_alarm;
+
 
 /*
 Seleccionar dispositivos almacen por incidencia
@@ -123,6 +149,7 @@ JOIN devices_almacen ON devices_almacen.id_devices_almacen = material_incidencia
 JOIN device ON devices_almacen.id_device = device.id_device
 WHERE id_incidencia = INCIDENCIA;
 
+
 /*
 Seleccionar material incidencias
 */
@@ -132,6 +159,7 @@ LEFT JOIN devices_almacen ON devices_almacen.id_devices_almacen = material_incid
 LEFT JOIN device ON devices_almacen.id_device = device.id_device
 LEFT JOIN alarm ON alarm.id_alarm = material_incidencias.id_alarm
 LEFT JOIN brand_alarm ON alarm.brand_alarm = brand_alarm.id_brand_alarm;
+
 
 /*
 Export incidencias para volcado CSV
@@ -168,6 +196,24 @@ JOIN display ON displays_pds.id_display = display.id_display
 LEFT JOIN devices_pds ON incidencias.id_devices_pds = devices_pds.id_devices_pds
 LEFT JOIN device ON devices_pds.id_device = device.id_device;
 
+/*
+Inventario cruzado
+*/
+SELECT device.id_device, brand_device.brand, device.device,
+	(
+		SELECT COUNT(*)
+		FROM devices_pds
+        WHERE (devices_pds.id_device = device.id_device) AND
+		(devices_pds.status = 'Alta')
+    ) AS unidades_pds,
+	(SELECT  COUNT(*)
+		FROM devices_almacen
+		WHERE (devices_almacen.id_device = device.id_device) AND
+		(devices_almacen.status = 'En stock')
+	) AS unidades_almacen
+FROM device
+JOIN brand_device ON device.brand_device = brand_device.id_brand_device;
+
 
 /*
 Varios acceso master
@@ -182,7 +228,7 @@ SELECT
 			FROM incidencias
 			WHERE 
 			(
-				(status = 'Resuelta' OR status = 'Cancelada')
+				(status_pds = 'Finalizada' OR status_pds = 'Cancelada')
 				AND (YEAR(fecha) = Year AND MONTH(fecha) = Mes)
 			)
 	) AS Cerradas
@@ -190,3 +236,47 @@ FROM incidencias
 GROUP BY 
 	YEAR(fecha),
 	MONTH(fecha);
+
+
+SELECT
+	YEAR(incidencias.fecha) AS Year, 
+	MONTH(incidencias.fecha) AS Mes, 
+	COUNT(*) AS Incidencias,
+    (
+		SELECT
+			COUNT(*) 
+			FROM historico
+			WHERE
+			(
+			((historico.status_pds = 'Cancelada' AND historico.status = 'Cancelada') OR
+			(historico.status_pds = 'Finalizada' AND historico.status = 'Resuelta')) AND
+            (DATE_ADD(incidencias.fecha, INTERVAL 96 HOUR) >= historico.fecha) AND
+            (YEAR(historico.fecha) = Year AND MONTH(historico.fecha) = Mes)
+			)
+    ) AS "- 72 h.",  
+    (
+		SELECT
+			COUNT(*) 
+			FROM historico
+			WHERE
+			(
+			((historico.status_pds = 'Cancelada' AND historico.status = 'Cancelada') OR
+			(historico.status_pds = 'Finalizada' AND historico.status = 'Resuelta')) AND
+            (DATE_ADD(incidencias.fecha, INTERVAL 96 HOUR) <= historico.fecha) AND
+            (YEAR(historico.fecha) = Year AND MONTH(historico.fecha) = Mes)
+			)
+    ) AS "+ 72 h.",           
+	(
+		SELECT
+			COUNT(*) 
+			FROM incidencias
+			WHERE 
+			(
+				(incidencias.status_pds = 'Finalizada' OR incidencias.status_pds = 'Cancelada') AND
+				(YEAR(incidencias.fecha) = Year AND MONTH(incidencias.fecha) = Mes)
+			)
+	) AS Cerradas
+FROM incidencias
+GROUP BY 
+	YEAR(incidencias.fecha),
+	MONTH(incidencias.fecha);

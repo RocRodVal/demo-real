@@ -879,6 +879,7 @@ class Admin extends CI_Controller
             $xcrud_SQL->query('SELECT 
 					incidencias.id_incidencia AS Incidencia,
 					incidencias.fecha AS Fecha,
+            		type_pds.pds AS "Tipo Pds",
 					pds.reference AS Referencia,
             		pds.commercial AS "Nombre comercial",
             		pds.address AS Dirección,
@@ -902,6 +903,7 @@ class Admin extends CI_Controller
 					incidencias.status AS "Estado SAT"
 				FROM incidencias
 				JOIN pds ON incidencias.id_pds = pds.id_pds
+            	JOIN type_pds ON pds.type_pds = type_pds.id_type_pds
             	LEFT JOIN province ON pds.province = province.id_province
             	LEFT JOIN county ON pds.county = county.id_county
 				JOIN displays_pds ON incidencias.id_displays_pds = displays_pds.id_displays_pds
@@ -930,6 +932,7 @@ class Admin extends CI_Controller
     		$xcrud_SQL->query("SELECT
 					incidencias.id_incidencia AS Incidencia,
 					DATE_FORMAT(incidencias.fecha,'%d/%m/%Y') AS Fecha,
+    				type_pds.pds AS 'Tipo Pds',
 					pds.reference AS Referencia,
             		pds.commercial AS 'Nombre comercial',
             		pds.address AS Dirección,
@@ -950,6 +953,7 @@ class Admin extends CI_Controller
             		incidencias.status_pds AS 'Estado tienda'
 				FROM incidencias
 				JOIN pds ON incidencias.id_pds = pds.id_pds
+    			JOIN type_pds ON pds.type_pds = type_pds.id_type_pds
             	LEFT JOIN province ON pds.province = province.id_province
             	LEFT JOIN county ON pds.county = county.id_county
 				JOIN displays_pds ON incidencias.id_displays_pds = displays_pds.id_displays_pds
