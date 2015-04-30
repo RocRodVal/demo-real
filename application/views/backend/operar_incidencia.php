@@ -119,9 +119,11 @@
                     Información de la incidencia
                 </div>
                 <div class="panel-body">
+                	<strong>Tipo tienda:</strong> <?php echo $type_pds ?><br/>
                     <strong>Fecha alta:</strong> <?php echo date_format(date_create($incidencia['fecha']), 'd/m/Y'); ?><br/>
                     <?php
-                    if (strtotime($incidencia['fecha_cierre']))
+                    // var_dump(date_format(date_create($incidencia['fecha_cierre']), 'd/m/Y'));
+                    if (strtotime($incidencia['fecha_cierre']) AND (date_format(date_create($incidencia['fecha_cierre']), 'd/m/Y') <> '30/11/-0001'))
                     {
                     ?>
                     <strong>Fecha cierre:</strong> <?php echo date_format(date_create($incidencia['fecha_cierre']), 'd/m/Y'); ?><br/>

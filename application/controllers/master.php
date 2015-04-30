@@ -569,6 +569,35 @@ class Master extends CI_Controller {
 	
 			$data['stocks'] = $this->tienda_model->get_stock_cruzado();
 	
+			$xcrud_stocks_almacen = xcrud_get_instance();
+			$xcrud_stocks_almacen->table_name('Balance de activos');
+			$xcrud_stocks_almacen->query("SELECT
+					brand_device.brand AS Marca, device.device AS Modelo,
+									(
+										SELECT COUNT(*)
+										FROM devices_pds
+								        WHERE (devices_pds.id_device = device.id_device) AND
+										(devices_pds.status = 'Alta')
+								    ) AS 'Unidades tienda',
+									(SELECT  COUNT(*)
+										FROM devices_almacen
+										WHERE (devices_almacen.id_device = device.id_device) AND
+										(devices_almacen.status = 'En stock')
+									) AS 'Deposito en almacén'
+				FROM device
+				JOIN brand_device ON device.brand_device = brand_device.id_brand_device
+				ORDER BY brand_device.brand, device.device");			
+			
+			$xcrud_stocks_almacen->show_primary_ai_column(false);
+			$xcrud_stocks_almacen->unset_add();
+			$xcrud_stocks_almacen->unset_view();
+			$xcrud_stocks_almacen->unset_edit();
+			$xcrud_stocks_almacen->unset_remove();
+			$xcrud_stocks_almacen->unset_numbers();
+			$xcrud_stocks_almacen->start_minimized(true);
+			
+			$data['stocks_almacen'] = $xcrud_stocks_almacen->render();
+			
 			$xcrud->table('alarm');
 			$xcrud->table_name('Alarmas almacén');
 			$xcrud->relation('type_alarm','type_alarm','id_type_alarm','type');

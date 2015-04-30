@@ -451,7 +451,8 @@ class Tienda_model extends CI_Model {
 	
 	public function get_pds($id) {
 		if($id != FALSE) {
-			$query = $this->db->select('pds.*,province.province, territory.territory')
+			$query = $this->db->select('pds.*,type_pds.pds, province.province, territory.territory')
+			->join('type_pds','pds.type_pds = type_pds.id_type_pds')
 			->join('province','pds.province = province.id_province')
 			->join('territory','pds.territory = territory.id_territory')
 			->where('pds.id_pds',$id)

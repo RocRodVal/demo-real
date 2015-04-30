@@ -269,6 +269,7 @@
                     Información de la incidencia
                 </div>
                 <div class="panel-body">
+                	<strong>Tipo tienda:</strong> <?php echo $type_pds ?><br/>
                     <strong>Fecha alta:</strong> <?php echo $incidencia['fecha'] ?><br/>
                     <strong>Estado:</strong> <?php echo $incidencia['status'] ?><br/>
                     <strong>Tipo:</strong> <?php echo $incidencia['tipo_averia'] ?>

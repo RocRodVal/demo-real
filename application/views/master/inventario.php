@@ -48,6 +48,7 @@
 		            <?php
 		            }
 		            ?>
+		        	<?php echo $stocks_almacen; ?>		            
 		        </div>
 		    </div>             
             

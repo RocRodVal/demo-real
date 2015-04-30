@@ -194,6 +194,7 @@ class Admin extends CI_Controller
             $sfid = $this->tienda_model->get_pds($id_pds);
 
             $data['id_pds'] = 'ABX/PDS-' . $sfid['id_pds'];
+            $data['type_pds'] = $sfid['pds'];
             $data['commercial'] = $sfid['commercial'];
             $data['territory'] = $sfid['territory'];
             $data['reference'] = $sfid['reference'];
@@ -201,11 +202,11 @@ class Admin extends CI_Controller
             $data['zip'] = $sfid['zip'];
             $data['city'] = $sfid['city'];
             $data['province'] = $sfid['province'];
-            $data['phone_pds'] = $sfid['phone'];
-
+            $data['phone_pds'] = $sfid['phone'];      
+            
             $data['id_pds_url'] = $id_pds;
             $data['id_inc_url'] = $id_inc;
-
+            
             $incidencia = $this->tienda_model->get_incidencia($id_inc);
             
             $historico_material_asignado = $this->tienda_model->historico_fecha($id_inc,'Material asignado');
@@ -793,6 +794,7 @@ class Admin extends CI_Controller
             $sfid = $this->tienda_model->get_pds($id_pds);
 
             $data['id_pds'] = 'ABX/PDS-' . $sfid['id_pds'];
+            $data['type_pds'] = $sfid['pds'];
             $data['commercial'] = $sfid['commercial'];
             $data['territory'] = $sfid['territory'];
             $data['reference'] = $sfid['reference'];
