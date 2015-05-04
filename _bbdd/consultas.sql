@@ -22,7 +22,7 @@ AND pds.reference = SFID;
 /*
 Alta dispositivos en almacén
 */
-INSERT INTO `orange`.`devices_almacen`
+INSERT INTO `devices_almacen`
 (`id_device`,`alta`,`IMEI`,`mac`,`serial`,`barcode`,
 `id_color_device`,`id_complement_device`,`id_status_device`,`id_status_packaging_device`,
 `picture_url_1`,`picture_url_2`,`picture_url_3`,
@@ -33,6 +33,13 @@ VALUES
 (XXX,now(),NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,"En stock"),
 (XXX,now(),NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,"En stock"),
 (XXX,now(),NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,"En stock");
+
+
+/*
+Baja dispositivos en almacén
+*/
+UPDATE `devices_almacen` 
+SET `status`= "Enviado" WHERE (`status` = "En stock" AND `id_device` = XXX) LIMIT XXX;
 
 
 /*
@@ -195,6 +202,7 @@ LEFT JOIN displays_pds ON incidencias.id_displays_pds = displays_pds.id_displays
 JOIN display ON displays_pds.id_display = display.id_display
 LEFT JOIN devices_pds ON incidencias.id_devices_pds = devices_pds.id_devices_pds
 LEFT JOIN device ON devices_pds.id_device = device.id_device;
+
 
 /*
 Inventario cruzado
