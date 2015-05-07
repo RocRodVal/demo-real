@@ -20,6 +20,17 @@ AND pds.reference = SFID;
 
 
 /*
+Update masiva en tienda
+*/
+UPDATE devices_pds
+JOIN pds ON pds.id_pds = devices_pds.id_pds
+SET alta= now(), id_device = XXX, devices_pds.status = "Alta"
+WHERE
+	(
+    pds.reference IN (XXX,YYY) AND 
+    ((devices_pds.id_display = XX) AND (devices_pds.id_device = XX) AND (devices_pds.position = XX)));
+
+/*
 Alta dispositivos en almacén
 */
 INSERT INTO `devices_almacen`
