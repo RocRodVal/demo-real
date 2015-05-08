@@ -688,6 +688,9 @@ class Tienda extends CI_Controller {
 					$data['video']="nuevo_robo.mp4";
 					$data['ayuda_title']="Incidencias frecuentes";
 					break;
+				case 5:
+					redirect('tienda/manuales','refresh');
+					break;					
 				default:
 					$data['video']="ver_incidencias.mp4";
 					$data['ayuda_title']="Mis solicitudes";
@@ -705,6 +708,40 @@ class Tienda extends CI_Controller {
 			redirect('tienda','refresh');
 		}
 	}
+	
+	public function manuales()
+	{
+		if($this->session->userdata('logged_in'))
+		{
+			$data['id_pds'] = $this->session->userdata('id_pds');
+			$data['sfid']   = $this->session->userdata('sfid');
+	
+			$xcrud = xcrud_get_instance();
+			$this->load->model('sfid_model');
+	
+			$sfid               = $this->sfid_model->get_pds($data['id_pds']);
+			$data['id_pds']     = $sfid['id_pds'];
+			$data['commercial'] = $sfid['commercial'];
+			$data['reference']  = $sfid['reference'];
+			$data['address']    = $sfid['address'];
+			$data['zip']        = $sfid['zip'];
+			$data['city']       = $sfid['city'];
+			$data['id_pds_url'] = $sfid['id_pds'];
+				
+			$data['title']       = 'Ayuda';
+			$data['ayuda_title'] = 'Manuales';
+			
+			$this->load->view('tienda/header',$data);
+			$this->load->view('tienda/navbar',$data);
+			$this->load->view('tienda/manuales',$data);
+			$this->load->view('tienda/footer');
+		}
+		else
+		{
+			redirect('tienda','refresh');
+		}
+	}	
+	
 
 	public function logout()
 	{

@@ -280,9 +280,15 @@
                     <?php
                     }
                     ?>
-                    <br />                    
-                    <strong>Mueble:</strong> <?php echo $incidencia['display']['display'] ?><br/>
-                    <strong>Dispositivo:</strong> <?php echo $incidencia['device']['brand_name']." / ".$incidencia['device']['device'] ?><br/>
+                    <br />   
+		            <?php 
+		            if (!isset($incidencia['device']['device'])) {$dispositivo = 'Retirado';}
+		            else { $dispositivo = $incidencia['device']['device']; }
+		            if (!isset($incidencia['display']['display'])) { $mueble = 'Retirado'; }
+		            else { $mueble = $incidencia['display']['display']; }		                                		
+		            ?>                    
+                    <strong>Mueble:</strong> <?php echo $mueble ?><br/>
+                    <strong>Dispositivo:</strong> <?php echo $dispositivo ?><br/>                                     
                     <strong>Contacto:</strong> <?php echo $incidencia['contacto'].' Tel. '.$incidencia['phone'] ?><br/>
                     <strong>Intervención:</strong>
                     <?php

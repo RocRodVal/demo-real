@@ -106,8 +106,25 @@
 		                                <!--<td><a href="<?=site_url('tienda/detalle_incidencia/'.$incidencia->id_incidencia)?>">#<?php echo $incidencia->id_incidencia ?></a></td>-->
 		                                <td><?php echo $incidencia->reference ?></td>
 		                                <td><?php echo date_format(date_create($incidencia->fecha), 'd/m/Y'); ?></td>
-		                                <td><?=($incidencia->alarm_display==1)?'Mueble: '.$incidencia->display['display']:'Dispositivo: '.$incidencia->device['device']?>
-		                                </td>
+		                                <?php 
+		                                if (!isset($incidencia->device['device']))
+		                                {
+		                                	$dispositivo = 'Retirado';
+		                                }
+		                                else
+		                                {
+		                                	$dispositivo = $incidencia->device['device']; 
+		                                }
+		                                if (!isset($incidencia->display['display']))
+		                                {
+		                                	$mueble = 'Retirado';
+		                                }
+		                                else
+		                                {
+		                                	$mueble = $incidencia->display['display'];
+		                                }		                                		
+		                                ?>
+		                                <td><?=($incidencia->alarm_display==1)?'Mueble: '.$mueble:'Dispositivo: '.$dispositivo?></td>	
 		                                <td><?=($incidencia->alarm_display==1)?'&#x25cf;':''?></td>
 		                                <td><?=($incidencia->fail_device==1)?'&#x25cf;':''?></td>
 		                                <td><?=($incidencia->alarm_device==1)?'&#x25cf;':''?></td>

@@ -2135,7 +2135,7 @@ class Admin extends CI_Controller
 
     public function ayuda($tipo)
     {
-        if ($this->session->userdata('logged_in')) {
+    	    if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
             $data['id_pds'] = $this->session->userdata('id_pds');
             $data['sfid'] = $this->session->userdata('sfid');
 
@@ -2158,6 +2158,9 @@ class Admin extends CI_Controller
                     $data['video'] = "nuevo_robo.mp4";
                     $data['ayuda_title'] = "Incidencias frecuentes";
                     break;
+                case 5:
+                   	redirect('admin/manuales','refresh');
+                   	break;                    
                 default:
                     $data['video'] = "ver_incidencias.mp4";
                     $data['ayuda_title'] = "Mis solicitudes";
@@ -2174,6 +2177,29 @@ class Admin extends CI_Controller
         }
     }
 
+    
+    public function manuales()
+    {
+    	if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
+            $data['id_pds'] = $this->session->userdata('id_pds');
+            $data['sfid'] = $this->session->userdata('sfid');
+
+            $xcrud = xcrud_get_instance();
+    
+    		$data['title']       = 'Ayuda';
+    		$data['ayuda_title'] = 'Manuales';
+    			
+    		$this->load->view('backend/header',$data);
+    		$this->load->view('backend/navbar',$data);
+    		$this->load->view('backend/manuales',$data);
+    		$this->load->view('backend/footer');
+    	}
+    	else
+    	{
+    		redirect('admin','refresh');
+    	}
+    }
+        
 
     public function logout()
     {

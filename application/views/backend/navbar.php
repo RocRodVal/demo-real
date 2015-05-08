@@ -80,8 +80,9 @@
                             <li><a <?=($this->uri->segment(3)==='2')?'class="active"':''?> href="<?=site_url('admin/ayuda/2')?>"> Alta incidencia</a></li>
                             <li><a <?=($this->uri->segment(3)==='3')?'class="active"':''?> href="<?=site_url('admin/ayuda/3')?>"> Alta incidencia sistema seguridad general del mueble</a></li>
                             <!--<li><a <?=($this->uri->segment(3)==='4')?'class="active"':''?> href="<?=site_url('admin/ayuda/4')?>"> Incidencias frecuentes</a></li>-->
+                            <li><a <?=($this->uri->segment(2)==='manuales')?'class="active"':''?> href="<?=site_url('admin/ayuda/5')?>"> Manuales</a></li>
                         </ul>
-                        </li>  
+                        </li>
                     </ul>
                 </div>
             </div>

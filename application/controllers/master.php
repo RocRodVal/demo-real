@@ -333,15 +333,14 @@ class Master extends CI_Controller {
 			$xcrud_SQL->table_name('Incidencias');
 			$xcrud_SQL->query("SELECT
 					incidencias.id_incidencia AS Incidencia,
-					DATE_FORMAT(incidencias.fecha,'%d/%m/%Y') AS Fecha,
+					DATE_FORMAT(incidencias.fecha,'%d/%m/%Y') AS 'Fecha alta',
 					type_pds.pds AS 'Tipo Pds',
 					pds.reference AS Referencia,
             		pds.commercial AS 'Nombre comercial',
             		pds.address AS Dirección,
             		pds.zip AS CP,
             		pds.city AS Ciudad,
-            		province.province AS Provincia,
-            		county.county AS CCAA,
+					territory.territory AS Zona,
 					display.display AS Mueble,
 					device.device AS Dispositivo,
 					incidencias.tipo_averia AS Tipo,
@@ -352,12 +351,14 @@ class Master extends CI_Controller {
 					incidencias.description_1 AS 'Comentarios',
 					incidencias.contacto,
 					incidencias.phone AS Teléfono,
-            		incidencias.status_pds AS 'Estado tienda'
+            		incidencias.status_pds AS 'Estado tienda',
+					DATE_FORMAT(incidencias.fecha_cierre,'%d/%m/%Y') AS 'Fecha cierre'
 				FROM incidencias
 				JOIN pds ON incidencias.id_pds = pds.id_pds
 				JOIN type_pds ON pds.type_pds = type_pds.id_type_pds
             	LEFT JOIN province ON pds.province = province.id_province
             	LEFT JOIN county ON pds.county = county.id_county
+			    LEFT JOIN territory ON pds.territory = territory.id_territory
 				JOIN displays_pds ON incidencias.id_displays_pds = displays_pds.id_displays_pds
 				JOIN display ON displays_pds.id_display = display.id_display
 				LEFT JOIN devices_pds ON incidencias.id_devices_pds = devices_pds.id_devices_pds
@@ -910,6 +911,9 @@ class Master extends CI_Controller {
 					$data['video']="nuevo_robo.mp4";
 					$data['ayuda_title']="Incidencias frecuentes";
 					break;
+					case 5:
+						redirect('master/manuales','refresh');
+					break;					
 				default:
 					$data['video']="ver_incidencias.mp4";
 					$data['ayuda_title']="Mis solicitudes";
@@ -928,6 +932,26 @@ class Master extends CI_Controller {
 		}
 	}
 
+	
+	public function manuales()
+	{
+		if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 9))
+		{
+			$xcrud = xcrud_get_instance();
+	
+			$data['title']       = 'Ayuda';
+			$data['ayuda_title'] = 'Manuales';
+				
+			$this->load->view('master/header',$data);
+			$this->load->view('master/navbar',$data);
+			$this->load->view('master/manuales',$data);
+			$this->load->view('master/footer');
+		}
+		else
+		{
+			redirect('master','refresh');
+		}
+	}
 	
 	public function logout()
 	{

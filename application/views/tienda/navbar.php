@@ -17,13 +17,14 @@
                     <ul class="nav" id="side-menu" style="margin-top:20px;">
                         <li><a <?=($this->uri->segment(2)==='dashboard')?'class="active"':''?> href="<?=site_url('tienda/dashboard')?>"><i class="fa fa-dashboard fa-fw"></i> Mis solicitudes</a></li>
                         <li><a <?=($this->uri->segment(2)==='alta_incidencia')?'class="active"':''?> href="<?=site_url('tienda/alta_incidencia')?>"><i class="fa fa-ticket fa-fw"></i></i> Alta incidencia</a> </li>   
-                        <li <?=($this->uri->segment(2)==='ayuda')?'class="active"':''?>>
+                        <li <?=($this->uri->segment(2)==='ayuda'||$this->uri->segment(2)==='manuales')?'class="active"':''?>>
                         <a href="#"><i class="fa fa-question-circle fa-fw"></i> Ayuda<span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level">
                             <li><a <?=($this->uri->segment(3)==='1')?'class="active"':''?> href="<?=site_url('tienda/ayuda/1')?>"> Mis solicitudes</a></li>
                             <li><a <?=($this->uri->segment(3)==='2')?'class="active"':''?> href="<?=site_url('tienda/ayuda/2')?>"> Alta incidencia</a></li>
                             <li><a <?=($this->uri->segment(3)==='3')?'class="active"':''?> href="<?=site_url('tienda/ayuda/3')?>"> Alta incidencia sistema seguridad general del mueble</a></li>
                             <!--<li><a <?=($this->uri->segment(3)==='4')?'class="active"':''?> href="<?=site_url('tienda/ayuda/4')?>"> Incidencias frecuentes</a></li>-->
+                            <li><a <?=($this->uri->segment(2)==='manuales')?'class="active"':''?> href="<?=site_url('tienda/ayuda/5')?>"> Manuales</a></li>
                         </ul>
                         </li>
                     </ul>

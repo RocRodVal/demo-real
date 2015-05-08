@@ -91,26 +91,82 @@
 		                            <th>Soporte sujección</th>
 		                            <th>Tipo incidencia</th>
 		                            <th>Estado</th>
+		                            <th>Fecha cierre</th>		                            
 		                            <th>Más info.</th>
 		                        </tr>
 		                        </thead>
 		                        <tbody>
 		                        <?php
 		                        foreach ($incidencias as $incidencia) {
-		                            ?>
+									if ((!isset($incidencia->device['device'])) && (!isset($incidencia->display['display'])))
+									{
+									?>
 		                            <tr>
+		                                <td><?php echo $incidencia->id_incidencia ?></td>
+		                            <?php
+		                            }
+		                            else
+		                            {
+		                            ?>	
+		                            <tr onClick="window.location.href='<?=site_url('master/detalle_incidencia/'.$incidencia->id_incidencia.'/'.$incidencia->id_pds)?>'">
 		                                <td><a href="<?=site_url('master/detalle_incidencia/'.$incidencia->id_incidencia.'/'.$incidencia->id_pds)?>"><?php echo $incidencia->id_incidencia ?></a></td>
+		                            <?php
+		                            }
+		                            ?>	
 		                                <td><?php echo $incidencia->reference ?></td>
 		                                <td><?php echo date_format(date_create($incidencia->fecha), 'd/m/Y'); ?></td>
-		                                <td><?=($incidencia->alarm_display==1)?'Mueble: '.$incidencia->display['display']:'Dispositivo: '.$incidencia->device['device']?>
-		                                </td>
+		                                <?php                               	
+		                                if (!isset($incidencia->device['device']))
+		                                {
+		                                	$dispositivo = 'Retirado';
+		                                }
+		                                else
+		                                {
+		                                	$dispositivo = $incidencia->device['device']; 
+		                                }
+		                                if (!isset($incidencia->display['display']))
+		                                {
+		                                	$mueble = 'Retirado';
+		                                }
+		                                else
+		                                {
+		                                	$mueble = $incidencia->display['display'];
+		                                }		                                		
+		                                ?>
+		                                <td><?=($incidencia->alarm_display==1)?'Mueble: '.$mueble:'Dispositivo: '.$dispositivo?></td>	
 		                                <td><?=($incidencia->alarm_display==1)?'&#x25cf;':''?></td>
 		                                <td><?=($incidencia->fail_device==1)?'&#x25cf;':''?></td>
 		                                <td><?=($incidencia->alarm_device==1)?'&#x25cf;':''?></td>
 		                                <td><?=($incidencia->alarm_garra==1)?'&#x25cf;':''?></td>
 		                                <td><?php echo $incidencia->tipo_averia ?></td>
-		                                <td><strong><?php echo $incidencia->status_pds ?></strong></td>
-		                            	<td><a href="<?=site_url('master/detalle_incidencia/'.$incidencia->id_incidencia.'/'.$incidencia->id_pds)?>#chat"><strong><i class="fa fa-whatsapp chat_leido"></i></strong></a></td>
+		                                <td><strong><?php echo $incidencia->status_pds ?></strong></td>		                                
+		                                <?php
+		                                if ($incidencia->fecha_cierre <> NULL)
+		                                {
+		                                ?>
+		                                <td><?php echo date_format(date_create($incidencia->fecha_cierre), 'd/m/Y'); ?></td>
+		                                <?php 
+		                                }
+		                                else
+		                                {
+		                                ?>
+		                                <td></td>
+		                                <?php
+		                                }		                                
+		                            	if ((!isset($incidencia->device['device'])) && (!isset($incidencia->display['display'])))
+			                            {
+			                            ?>	
+		                                <td><strong><i class="fa fa-whatsapp chat_leido"></i></strong></td>
+			                            <?php
+			                            }
+			                            else
+			                            {
+			                            ?>	
+		                                <td><a href="<?=site_url('master/detalle_incidencia/'.$incidencia->id_incidencia.'/'.$incidencia->id_pds)?>#chat"><strong><i class="fa fa-whatsapp chat_leido"></i></strong></a></td>
+			                            <?php
+			                            }
+			                            ?>			                                
+
 		                            </tr>
 		                        <?php
 		                        }

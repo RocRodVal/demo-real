@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost:3306
--- Generation Time: May 07, 2015 at 05:59 PM
+-- Generation Time: May 08, 2015 at 05:58 PM
 -- Server version: 5.5.40
 -- PHP Version: 5.4.34
 
@@ -336,6 +336,8 @@ CREATE TABLE IF NOT EXISTS `ci_sessions` (
 --
 
 INSERT INTO `ci_sessions` (`session_id`, `ip_address`, `user_agent`, `last_activity`, `user_data`) VALUES
+('10e84853d2dcdc87783fa1478c51d498', '85.62.13.196', 'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1; WOW64; Trident/4.0; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .N', 1431074749, 'a:5:{s:9:"user_data";s:0:"";s:4:"sfid";s:6:"100001";s:6:"id_pds";s:1:"1";s:4:"type";s:1:"1";s:9:"logged_in";b:1;}'),
+('d6786fba5d802c4fd2be2a7a2b4df977', '85.62.13.195', 'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1; WOW64; Trident/4.0; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .N', 1431016103, ''),
 ('74a101ff48fb249d76e1b1448a4d0f54', '212.89.16.245', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36', 1430990282, 'a:4:{s:9:"user_data";s:0:"";s:4:"sfid";s:6:"100001";s:6:"id_pds";s:1:"1";s:4:"type";s:1:"1";}'),
 ('20607bc6ed915020377d33617f9fe913', '85.62.13.194', 'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1; WOW64; Trident/4.0; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .N', 1430993099, 'a:5:{s:9:"user_data";s:0:"";s:4:"sfid";s:6:"100001";s:6:"id_pds";s:1:"1";s:4:"type";s:1:"1";s:9:"logged_in";b:1;}');
 
