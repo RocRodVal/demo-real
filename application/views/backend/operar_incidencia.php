@@ -108,6 +108,11 @@
                                 echo 'disabled';
                             } ?>>Cerrar</a>
                         </div>
+                        <div class="col-lg-7 labelText grey">Cierre forzoso</div>
+                        <div class="col-lg-5 labelBtn grey">
+                            <a href="<?= site_url('admin/update_incidencia/' . $id_pds_url . '/' . $id_inc_url . '/4/8/ext') ?>"
+                               classBtn="status" class="btn btn-danger">Cierre forzoso</a>
+                        </div>                             
                     </div>
                 </div>
             </div>

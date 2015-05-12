@@ -41,7 +41,18 @@
                         <li><a <?=($this->uri->segment(2)==='auditorias')?'class="active"':''?> href="<?=site_url('admin/auditorias')?>"><i class="fa fa-list-alt fa-fw"></i> Auditorías</a></li>
                         <li><a <?=($this->uri->segment(1)==='intervencion')?'class="active"':''?> href="<?=site_url('intervencion')?>"><i class="fa fa-cog fa-fw"></i> Intervenciones</a></li>
                         <li><a <?=($this->uri->segment(1)==='inventario')?'class="active"':''?> href="<?=site_url('inventario')?>"><i class="fa fa-table fa-fw"></i> Depósito</a></li>
-                        <li><a <?=($this->uri->segment(2)==='almacen')?'class="active"':''?> href="<?=site_url('admin/almacen')?>"><i class="fa fa-table fa-fw"></i> Almacén</a></li>
+                        <?php               
+                        $almacenes = array('almacen','alta_dispositivos_almacen','baja_dispositivos_almacen','alarmas_almacen');
+                        ?>                      
+                        <li <?=(in_array($this->uri->segment(2), $almacenes))?'class="active"':''?>>
+                            <a href="#"><i class="fa fa-sitemap fa-fw"></i> Almacén<span class="fa arrow"></span></a>
+                            <ul class="nav nav-second-level">                        
+                           		<li><a <?=($this->uri->segment(2)==='almacen')?'class="active"':''?> href="<?=site_url('admin/almacen')?>"> Inventario &raquo;</a></li>
+                           		<li><a <?=($this->uri->segment(2)==='alta_dispositivos_almacen')?'class="active"':''?> href="<?=site_url('admin/alta_dispositivos_almacen')?>">Alta masiva dispositivos &raquo;</a></li>
+                           		<li><a <?=($this->uri->segment(2)==='baja_dispositivos_almacen')?'class="active"':''?> href="<?=site_url('admin/baja_dispositivos_almacen')?>">Baja masiva dispositivos &raquo;</a></li>
+                           		<li><a <?=($this->uri->segment(2)==='alarmas_almacen')?'class="active"':''?> href="<?=site_url('admin/alarmas_almacen')?>">Gestión alarmas &raquo;</a></li>
+                        	</ul>
+                        </li>		
                         <?php               
                         $exposicion = array('descripcion','exp_alta_incidencia','exp_alta_incidencia_mueble','exp_alta_incidencia_device','inventarios_panelados','inventarios_planogramas','inventarios','listado_panelados');
                         ?>

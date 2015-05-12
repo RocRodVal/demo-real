@@ -32,6 +32,25 @@ class Tienda_model extends CI_Model {
 		return $query->result();
 	}	
 	
+	public function alta_dispositivos_almacen_update($data)
+	{
+		$this->db->insert('devices_almacen',$data);
+		$id=$this->db->insert_id();
+	}	
+	
+	
+	public function baja_dispositivos_almacen_update($id_device,$owner,$units)
+	{
+		$this->db->set('status',4, FALSE);
+		$this->db->where('id_device',$id_device);
+		$this->db->where('owner',$owner);
+		$this->db->where('status',1);
+		$this->db->limit($units);
+		
+		$this->db->update('devices_almacen');		
+	}
+		
+	
 	
 	public function get_stock_cruzado() {
 	
@@ -348,6 +367,16 @@ class Tienda_model extends CI_Model {
 	}
 	
 	
+	public function get_devices() {
+		$query = $this->db->select('device.id_device, device.device')
+		->where('device.status','Alta')
+		->order_by('device')
+		->get('device');
+	
+		return $query->result();
+	}
+		
+	
 	public function get_material_dispositivos($id) {
 	
 		$query = $this->db->select('device.device AS device, devices_almacen.barcode AS barcode, material_incidencias.cantidad AS cantidad')
@@ -402,6 +431,7 @@ class Tienda_model extends CI_Model {
 		->join('brand_alarm','alarm.brand_alarm = brand_alarm.id_brand_alarm')
 		->join('type_alarm','alarm.type_alarm = type_alarm.id_type_alarm')
 		->where('status','Alta')
+		->order_by('code')
 		->order_by('brand')
 		->order_by('alarm')
 		->get('alarm');

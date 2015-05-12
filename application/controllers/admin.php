@@ -450,6 +450,7 @@ class Admin extends CI_Controller
         $id_inc = $this->uri->segment(4);
         $status_pds = $this->uri->segment(5);
         $status = $this->uri->segment(6);
+        $status_ext = $this->uri->segment(7);
 
         $xcrud = xcrud_get_instance();
         $this->load->model(array('tienda_model','intervencion_model'));
@@ -513,13 +514,23 @@ class Admin extends CI_Controller
         );
 
         $this->tienda_model->historico($data);
-
-        var_dump($this->input->post('fecha_cierre'));
         
         if ($status == 6)
         {
         	$fecha_cierre = $this->input->post('fecha_cierre');
         	$this->tienda_model->incidencia_update_cierre($id_inc, $fecha_cierre);
+        	if ($incidencia['fail_device'] == 1) {
+        		$this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'], 1);
+        	}        	
+        	
+        }        
+
+        if (($status == 8) AND ($status_ext == 'ext'))
+        {
+        	if ($incidencia['fail_device'] == 1) {
+        		$this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'], 1);
+        	}
+        	 
         }        
         
         
@@ -1037,8 +1048,8 @@ class Admin extends CI_Controller
         $xcrud_3->change_type('picture_url', 'image');
         $xcrud_3->modal('picture_url');
         $xcrud_3->label('brand_alarm', 'Fabricante')->label('type_alarm', 'Tipo')->label('code', 'Código')->label('alarm', 'Modelo')->label('picture_url', 'Foto')->label('description', 'Comentarios')->label('units', 'Unidades')->label('status', 'Estado');
-        $xcrud_3->columns('brand_alarm,type_alarm,code,alarm,picture_url,units,status');
-        $xcrud_3->fields('brand_alarm,type_alarm,code,alarm,picture_url,description,units,status');
+        $xcrud_3->columns('brand_alarm,type_alarm,code,alarm,picture_url,status');
+        $xcrud_3->fields('brand_alarm,type_alarm,code,alarm,picture_url,description,status');
 
         $xcrud_4 = xcrud_get_instance();
         $xcrud_4->table('alarms_display');
@@ -1074,6 +1085,30 @@ class Admin extends CI_Controller
         $this->load->view('backend/footer');
     }
 
+    
+    
+    public function alarmas_almacen()
+    {
+    	$xcrud = xcrud_get_instance();
+    	$xcrud->table('alarm');
+    	$xcrud->table_name('Alarma');
+    	$xcrud->relation('type_alarm', 'type_alarm', 'id_type_alarm', 'type');
+    	$xcrud->relation('brand_alarm', 'brand_alarm', 'id_brand_alarm', 'brand');
+    	$xcrud->change_type('picture_url', 'image');
+    	$xcrud->modal('picture_url');
+    	$xcrud->label('brand_alarm', 'Fabricante')->label('type_alarm', 'Tipo')->label('code', 'Código')->label('alarm', 'Modelo')->label('picture_url', 'Foto')->label('description', 'Comentarios')->label('units', 'Unidades')->label('status', 'Estado');
+    	$xcrud->columns('brand_alarm,type_alarm,code,alarm,picture_url,units,status');
+    	$xcrud->fields('brand_alarm,type_alarm,code,alarm,picture_url,description,units,status');
+    
+    	$data['title'] = 'Gestión alarmas';
+    	$data['content'] = $xcrud->render();
+    
+    	$this->load->view('backend/header', $data);
+    	$this->load->view('backend/navbar', $data);
+    	$this->load->view('backend/content', $data);
+    	$this->load->view('backend/footer');
+    }
+    
 
     public function dispositivos()
     {
@@ -1450,10 +1485,11 @@ class Admin extends CI_Controller
         $this->load->model('tienda_model');
 
         $data['devices'] = $this->tienda_model->get_devices_almacen();
+        $data['alarmas'] = $this->tienda_model->get_alarms_almacen_reserva();
 
         $xcrud = xcrud_get_instance();
         $xcrud->table('devices_almacen');
-        $xcrud->table_name('Inventario dispositivos almacén');
+        $xcrud->table_name('Inventario dispositivos');
         $xcrud->relation('id_device', 'device', 'id_device', 'device');
         $xcrud->relation('id_color_device', 'color_device', 'id_color_device', 'color_device');
         $xcrud->relation('id_complement_device', 'complement_device', 'id_complement_device', 'complement_device');
@@ -1474,9 +1510,25 @@ class Admin extends CI_Controller
         $xcrud->show_primary_ai_column(true);
         $xcrud->unset_numbers();
         $xcrud->start_minimized(true);
-
-        $data['title'] = 'Almacén';
+        
+        $xcrud_2 = xcrud_get_instance();
+        $xcrud_2->table('alarm');
+        $xcrud_2->table_name('Inventario alarmas');
+        $xcrud_2->relation('type_alarm', 'type_alarm', 'id_type_alarm', 'type');
+        $xcrud_2->relation('brand_alarm', 'brand_alarm', 'id_brand_alarm', 'brand');
+        $xcrud_2->change_type('picture_url', 'image');
+        $xcrud_2->modal('picture_url');
+        $xcrud_2->label('brand_alarm', 'Fabricante')->label('type_alarm', 'Tipo')->label('code', 'Código')->label('alarm', 'Modelo')->label('picture_url', 'Foto')->label('description', 'Comentarios')->label('units', 'Unidades')->label('status', 'Estado');
+        $xcrud_2->columns('brand_alarm,type_alarm,code,alarm,picture_url,units,status');
+        $xcrud_2->fields('brand_alarm,type_alarm,code,alarm,picture_url,description,units,status');  
+        $xcrud_2->order_by('code', 'asc');
+        $xcrud_2->order_by('alarm', 'asc');              
+        $xcrud_2->unset_numbers();
+        $xcrud_2->start_minimized(true);
+        
+        $data['title'] = 'Inventario';
         $data['content'] = $xcrud->render();
+        $data['content'] = $data['content'] . $xcrud_2->render();
 
         $this->load->view('backend/header', $data);
         $this->load->view('backend/navbar', $data);
@@ -1484,7 +1536,111 @@ class Admin extends CI_Controller
         $this->load->view('backend/footer');
     }
 
+    
+    public function alta_dispositivos_almacen()
+    {
+    	if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10))
+    	{   
+    		$xcrud = xcrud_get_instance();
+	    	$this->load->model('tienda_model');
+	    	
+	    	$data['devices'] = $this->tienda_model->get_devices();
+	     
+	    	$data['title'] = 'Alta masiva dispositivos';
+	    
+	    	$this->load->view('backend/header', $data);
+	    	$this->load->view('backend/navbar', $data);
+	    	$this->load->view('backend/alta_dispositivos_almacen', $data);
+	    	$this->load->view('backend/footer');
+    	}
+    	else
+    	{
+    		redirect('admin', 'refresh');
+    	}
+    }    
 
+    
+    public function alta_dispositivos_almacen_update()
+    {
+    	if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10))
+    	{
+    		$this->load->model('tienda_model');
+    
+    		$data = array(
+    				'id_device' => $this->input->post('dipositivo_almacen'),
+    				'alta' => date('Y-m-d H:i:s'),
+    				'IMEI' => NULL,
+    				'mac' => NULL,
+    				'serial' => NULL,
+    				'barcode' => NULL,
+    				'id_color_device' => NULL,
+    				'id_complement_device' => NULL,
+    				'id_status_device' => NULL,
+    				'id_status_packaging_device' => NULL,
+    				'picture_url_1' => NULL,
+    				'picture_url_2' => NULL,
+    				'picture_url_3' => NULL,
+    				'description' => NULL,
+    				'owner' => $this->input->post('owner_dipositivo_almacen'),
+    				'status' => 1,
+    		);
+    		 
+    		$i = 0;
+    
+    		while ($i < $this->input->post('units_dipositivo_almacen'))
+    		{
+    			$this->tienda_model->alta_dispositivos_almacen_update($data);
+    			$i = $i + 1;
+    		}
+    
+    		redirect('admin/alta_dispositivos_almacen', 'refresh');
+    	}
+    	else
+    	{
+    		redirect('admin', 'refresh');
+    	}
+    }    
+    
+    
+    public function baja_dispositivos_almacen()
+    {
+    	if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10))
+    	{
+    		$xcrud = xcrud_get_instance();
+    		$this->load->model('tienda_model');
+    
+    		$data['devices'] = $this->tienda_model->get_devices();
+    
+    		$data['title'] = 'Baja masiva dispositivos';
+    	  
+    		$this->load->view('backend/header', $data);
+    		$this->load->view('backend/navbar', $data);
+    		$this->load->view('backend/baja_dispositivos_almacen', $data);
+    		$this->load->view('backend/footer');
+    	}
+    	else
+    	{
+    		redirect('admin', 'refresh');
+    	}
+    }   
+
+    public function baja_dispositivos_almacen_update()
+    {
+    	if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10))
+    	{
+    		$this->load->model('tienda_model');
+    		 
+			$this->tienda_model->baja_dispositivos_almacen_update($this->input->post('dipositivo_almacen'),$this->input->post('owner_dipositivo_almacen'),$this->input->post('units_dipositivo_almacen'));
+    
+    		redirect('admin/baja_dispositivos_almacen', 'refresh');
+    	}
+    	else
+    	{
+    		redirect('admin', 'refresh');
+    	}
+    }
+  
+    
     public function listado_incidencias()
     {
         $xcrud = xcrud_get_instance();
