@@ -51,6 +51,14 @@ class Tienda_model extends CI_Model {
 	}
 		
 	
+	public function borrar_alarmas($id_alarm,$units)
+	{
+		$this->db->set('units','units - '.$units, FALSE);
+		$this->db->where('id_alarm',$id_alarm);
+	
+		$this->db->update('alarm');
+	}	
+	
 	
 	public function get_stock_cruzado() {
 	

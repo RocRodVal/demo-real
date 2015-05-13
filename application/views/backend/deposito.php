@@ -94,17 +94,19 @@
 		                    <table class="table table-striped table-bordered table-hover" id="dataTables-example">
 		                        <thead>
 		                        <tr>
+		                            <th>Código</th>
 		                            <th>Alarma</th>
 		                            <th>Unidades</th>
 		                        </tr>
 		                        </thead>
 		                        <tbody>
 		                        <?php
-		                        foreach ($alarms_almacen as $alarm_almacen) {
+		                        foreach ($alarms_almacen as $alarma) {
 		                            ?>
 		                            <tr>
-		                                <td><?php echo $alarm_almacen->alarm ?></td>
-		                                <td><?php echo $alarm_almacen->unidades ?></td>
+		                                <td><?php echo $alarma->code ?></td>
+		                                <td><?php echo $alarma->brand.' '.$alarma->alarm ?></td>
+		                                <td><?php echo $alarma->units ?></td>
 		                            </tr>
 		                        <?php
 		                        }
@@ -116,7 +118,10 @@
 		            }
 		            ?>
 		        </div>
-		    </div> 
+		    </div>   		    
+		    
+		    
+		    
 			    <div class="row">
 		        <div class="col-lg-12">
 		            <?php

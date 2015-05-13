@@ -19,7 +19,7 @@ class Inventario extends CI_Controller {
 			$this->load->model('tienda_model');
 			
 			$data['stocks']          = $this->tienda_model->get_stock();
-			$data['alarms_almacen']  = $this->tienda_model->get_alarms_almacen();
+			$data['alarms_almacen']  = $this->tienda_model->get_alarms_almacen_reserva();
 			$data['devices_almacen'] = $this->tienda_model->get_devices_almacen();
 			$data['displays_pds']    = $this->tienda_model->get_displays_total();
 			$data['devices_pds']     = $this->tienda_model->get_devices_total();

@@ -44,13 +44,13 @@
                                 echo 'disabled';
                             } ?>>Asignar instalador</a>
                         </div>                        
-                        <div class="col-lg-7 labelText grey">Asignar materiales</div>
+                        <div class="col-lg-7 labelText grey">Asignar material</div>
                         <div class="col-lg-5 labelBtn grey">
                             <a href="<?= site_url('admin/update_incidencia_materiales/' . $id_pds_url . '/' . $id_inc_url . '/2/3') ?>"
                                classBtn="status" class="btn btn-success" <?php if ($incidencia['status'] != 'Instalador asignado') {
                                 echo 'disabled';
                             } ?>>Asignar mat.</a></td>
-                        </div>
+                        </div>                       
                         <div class="col-lg-7 labelText white">Imprimir documentación</div>
                         <div class="col-lg-5 labelBtn white">
                             <a href="<?= site_url('admin/update_incidencia/' . $id_pds_url . '/' . $id_inc_url . '/3/5') ?>"
@@ -76,7 +76,7 @@
                             	}
                             	?>
                             	</a>
-                        </div>
+                        </div>                    
                         <div class="col-lg-7 labelText grey">Resolver incidencia<br /><br /></div>
 		                <form action="<?= site_url('admin/update_incidencia/' . $id_pds_url . '/' . $id_inc_url . '/4/6') ?>" method="post">
 		                <div class="col-lg-5 labelBtn grey">
@@ -108,8 +108,16 @@
                                 echo 'disabled';
                             } ?>>Cerrar</a>
                         </div>
-                        <div class="col-lg-7 labelText grey">Cierre forzoso</div>
+                        <div class="col-lg-12 labelText white"><i class="fa fa-fire-extinguisher fa-fw"></i> Usar con cuidado</div>
+                        <!--//
+                        <div class="col-lg-7 labelText grey">Puesta a cero (borrado pasos previos)</div>
                         <div class="col-lg-5 labelBtn grey">
+                            <a href="<?= site_url('admin/update_incidencia_puesta_a_cero/' . $id_pds_url . '/' . $id_inc_url . '/1/1') ?>"
+                               classBtn="status" class="btn btn-danger">Puesta a cero</a></td>
+                        </div>
+                        //-->                         
+                        <div class="col-lg-7 labelText white">Cierre forzoso (act. externas)</div>
+                        <div class="col-lg-5 labelBtn white">
                             <a href="<?= site_url('admin/update_incidencia/' . $id_pds_url . '/' . $id_inc_url . '/4/8/ext') ?>"
                                classBtn="status" class="btn btn-danger">Cierre forzoso</a>
                         </div>                             
