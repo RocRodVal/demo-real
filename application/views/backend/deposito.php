@@ -94,7 +94,6 @@
 		                    <table class="table table-striped table-bordered table-hover" id="dataTables-example">
 		                        <thead>
 		                        <tr>
-		                            <th>Código</th>
 		                            <th>Alarma</th>
 		                            <th>Unidades</th>
 		                        </tr>
@@ -104,7 +103,6 @@
 		                        foreach ($alarms_almacen as $alarma) {
 		                            ?>
 		                            <tr>
-		                                <td><?php echo $alarma->code ?></td>
 		                                <td><?php echo $alarma->brand.' '.$alarma->alarm ?></td>
 		                                <td><?php echo $alarma->units ?></td>
 		                            </tr>

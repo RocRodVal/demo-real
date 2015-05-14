@@ -34,10 +34,8 @@
 		                                <td><input type="text" id="units_dipositivo_almacen" name="units_dipositivo_almacen" onkeypress='return event.charCode >= 48 && event.charCode <= 57'></input></td>
 		                                <td>
 		                                <select id="owner_dipositivo_almacen" name="owner_dipositivo_almacen" style="width:50px">
-		                              	<option value=""></option>   
 		                              	<option value="ET">ET</option>                               
 		                                <option value="OT">OT</option>
-		                              	<option value="ME">ME</option>    		                                    
 		                                </select>
 		                                </td>		                                
 		                            </tr>	                            

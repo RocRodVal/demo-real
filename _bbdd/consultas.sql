@@ -29,6 +29,22 @@ WHERE
 	(
     pds.reference IN (XXX,YYY) AND 
     ((devices_pds.id_display = XX) AND (devices_pds.id_device = XX) AND (devices_pds.position = XX)));
+    
+/*
+Borrado muebles tienda
+*/
+DELETE displays_pds FROM displays_pds
+INNER JOIN pds ON pds.id_pds = displays_pds.id_pds
+WHERE pds.reference IN (XXX,YYY);
+
+
+/*
+Borrado dispositivos tienda
+*/
+DELETE devices_pds FROM devices_pds
+INNER JOIN pds ON pds.id_pds = devices_pds.id_pds
+WHERE pds.reference IN (XXX,YYY);
+    
 
 /*
 Alta dispositivos en almacén

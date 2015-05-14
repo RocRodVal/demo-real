@@ -439,8 +439,8 @@ class Tienda_model extends CI_Model {
 		->join('brand_alarm','alarm.brand_alarm = brand_alarm.id_brand_alarm')
 		->join('type_alarm','alarm.type_alarm = type_alarm.id_type_alarm')
 		->where('status','Alta')
-		->order_by('code')
 		->order_by('brand')
+		->order_by('code')
 		->order_by('alarm')
 		->get('alarm');
 	

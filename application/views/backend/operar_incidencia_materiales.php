@@ -58,6 +58,15 @@
 		                                </td>
 		                                <td><input type="text" id="units_dipositivo_almacen_1" name="units_dipositivo_almacen_1" onkeypress='return event.charCode >= 48 && event.charCode <= 57'></input></td>
 		                            </tr>
+		                            <!--
+			                        <tr>
+			                            <td colspan="3" style="text-align:left">
+			                            	IMEI <input type="text" id="imei_1" name="imei_1"></input>
+			                            	Serie <input type="text" id="serial_1" name="serial_1"></input>
+			                            	Barcode <input type="text" id="barcode_1" name="barcode_1"></input>
+			                            </td>
+			                        </tr>
+			                        -->
 		                            <tr>
 		                                <td>
 		                                <select id="dipositivo_almacen_2" name="dipositivo_almacen_2" width="500" style="width:500px">
@@ -72,6 +81,15 @@
 		                                </td>
 		                                <td><input type="text" id="units_dipositivo_almacen_2" name="units_dipositivo_almacen_2" onkeypress='return event.charCode >= 48 && event.charCode <= 57'></input></td>
 		                            </tr>
+		                            <!--
+			                        <tr>
+			                            <td colspan="3" style="text-align:left">
+			                            	IMEI <input type="text" id="imei_2" name="imei_2"></input>
+			                            	Serie <input type="text" id="serial_2" name="serial_2"></input>
+			                            	Barcode <input type="text" id="barcode_2" name="barcode_2"></input>
+			                            </td>
+			                        </tr>
+			                        -->		                            
 		                            <tr>
 		                                <td>
 		                                <select id="dipositivo_almacen_3" name="dipositivo_almacen_3" width="500" style="width:500px">
@@ -85,7 +103,16 @@
 		                                </select>
 		                                </td>
 		                                <td><input type="text" id="units_dipositivo_almacen_3" name="units_dipositivo_almacen_3" onkeypress='return event.charCode >= 48 && event.charCode <= 57'></input></td>
-		                            </tr>		                            
+		                            </tr>
+		                            <!--
+			                        <tr>
+			                            <td colspan="3" style="text-align:left">
+			                            	IMEI <input type="text" id="imei_3" name="imei_3"></input>
+			                            	Serie <input type="text" id="serial_3" name="serial_3"></input>
+			                            	Barcode <input type="text" id="barcode_3" name="barcode_3"></input>
+			                            </td>
+			                        </tr>
+			                        -->		                            		                            
 		                        </tbody>
 		                    </table>
 		                </div>
@@ -114,7 +141,7 @@
 		                              	<?php
 		                        		foreach ($alarms_almacen as $alarm_almacen) {
 		                            	?>
-		                                	<option value="<?php echo $alarm_almacen->id_alarm ?>"><?php echo $alarm_almacen->brand. ' '.$alarm_almacen->alarm.' ['.$alarm_almacen->code.'/'.$alarm_almacen->type.']' ?></option>
+		                                	<option value="<?php echo $alarm_almacen->id_alarm ?>"><?php echo $alarm_almacen->brand.' '.$alarm_almacen->code.' '.$alarm_almacen->alarm ?></option>
 				                        <?php
 				                        }
 				                        ?>		                                
@@ -128,7 +155,7 @@
 		                              	<?php
 		                        		foreach ($alarms_almacen as $alarm_almacen) {
 		                            	?>
-		                                	<option value="<?php echo $alarm_almacen->id_alarm ?>"><?php echo $alarm_almacen->brand. ' '.$alarm_almacen->alarm.' ['.$alarm_almacen->code.'/'.$alarm_almacen->type.']' ?></option>
+		                                	<option value="<?php echo $alarm_almacen->id_alarm ?>"><?php echo $alarm_almacen->brand.' '.$alarm_almacen->code.' '.$alarm_almacen->alarm ?></option>
 				                        <?php
 				                        }
 				                        ?>		                                
@@ -142,7 +169,7 @@
 		                              	<?php
 		                        		foreach ($alarms_almacen as $alarm_almacen) {
 		                            	?>
-		                                	<option value="<?php echo $alarm_almacen->id_alarm ?>"><?php echo $alarm_almacen->brand. ' '.$alarm_almacen->alarm.' ['.$alarm_almacen->code.'/'.$alarm_almacen->type.']' ?></option>
+		                                	<option value="<?php echo $alarm_almacen->id_alarm ?>"><?php echo $alarm_almacen->brand.' '.$alarm_almacen->code.' '.$alarm_almacen->alarm ?></option>
 				                        <?php
 				                        }
 				                        ?>			                                
@@ -156,7 +183,7 @@
 		                              	<?php
 		                        		foreach ($alarms_almacen as $alarm_almacen) {
 		                            	?>
-		                                	<option value="<?php echo $alarm_almacen->id_alarm ?>"><?php echo $alarm_almacen->brand. ' '.$alarm_almacen->alarm.' ['.$alarm_almacen->code.'/'.$alarm_almacen->type.']' ?></option>
+		                                	<option value="<?php echo $alarm_almacen->id_alarm ?>"><?php echo $alarm_almacen->brand.' '.$alarm_almacen->code.' '.$alarm_almacen->alarm ?></option>
 				                        <?php
 				                        }
 				                        ?>			                                
@@ -170,7 +197,7 @@
 		                              	<?php
 		                        		foreach ($alarms_almacen as $alarm_almacen) {
 		                            	?>
-		                                	<option value="<?php echo $alarm_almacen->id_alarm ?>"><?php echo $alarm_almacen->brand. ' '.$alarm_almacen->alarm.' ['.$alarm_almacen->code.'/'.$alarm_almacen->type.']' ?></option>
+		                                	<option value="<?php echo $alarm_almacen->id_alarm ?>"><?php echo $alarm_almacen->brand.' '.$alarm_almacen->code.' '.$alarm_almacen->alarm ?></option>
 				                        <?php
 				                        }
 				                        ?>		                                
@@ -184,7 +211,7 @@
 		                              	<?php
 		                        		foreach ($alarms_almacen as $alarm_almacen) {
 		                            	?>
-		                                	<option value="<?php echo $alarm_almacen->id_alarm ?>"><?php echo $alarm_almacen->brand. ' '.$alarm_almacen->alarm.' ['.$alarm_almacen->code.'/'.$alarm_almacen->type.']' ?></option>
+		                                	<option value="<?php echo $alarm_almacen->id_alarm ?>"><?php echo $alarm_almacen->brand.' '.$alarm_almacen->code.' '.$alarm_almacen->alarm ?></option>
 				                        <?php
 				                        }
 				                        ?>		                                
@@ -198,7 +225,7 @@
 		                              	<?php
 		                        		foreach ($alarms_almacen as $alarm_almacen) {
 		                            	?>
-		                                	<option value="<?php echo $alarm_almacen->id_alarm ?>"><?php echo $alarm_almacen->brand. ' '.$alarm_almacen->alarm.' ['.$alarm_almacen->code.'/'.$alarm_almacen->type.']' ?></option>
+		                                	<option value="<?php echo $alarm_almacen->id_alarm ?>"><?php echo $alarm_almacen->brand.' '.$alarm_almacen->code.' '.$alarm_almacen->alarm ?></option>
 				                        <?php
 				                        }
 				                        ?>		                                
@@ -212,7 +239,7 @@
 		                              	<?php
 		                        		foreach ($alarms_almacen as $alarm_almacen) {
 		                            	?>
-		                                	<option value="<?php echo $alarm_almacen->id_alarm ?>"><?php echo $alarm_almacen->brand. ' '.$alarm_almacen->alarm.' ['.$alarm_almacen->code.'/'.$alarm_almacen->type.']' ?></option>
+		                                	<option value="<?php echo $alarm_almacen->id_alarm ?>"><?php echo $alarm_almacen->brand.' '.$alarm_almacen->code.' '.$alarm_almacen->alarm ?></option>
 				                        <?php
 				                        }
 				                        ?>		                                
@@ -226,7 +253,7 @@
 		                              	<?php
 		                        		foreach ($alarms_almacen as $alarm_almacen) {
 		                            	?>
-		                                	<option value="<?php echo $alarm_almacen->id_alarm ?>"><?php echo $alarm_almacen->brand. ' '.$alarm_almacen->alarm.' ['.$alarm_almacen->code.'/'.$alarm_almacen->type.']' ?></option>
+		                                	<option value="<?php echo $alarm_almacen->id_alarm ?>"><?php echo $alarm_almacen->brand.' '.$alarm_almacen->code.' '.$alarm_almacen->alarm ?></option>
 				                        <?php
 				                        }
 				                        ?>		                                
@@ -240,10 +267,10 @@
 		                              	<?php
 		                        		foreach ($alarms_almacen as $alarm_almacen) {
 		                            	?>
-		                                	<option value="<?php echo $alarm_almacen->id_alarm ?>"><?php echo $alarm_almacen->brand. ' '.$alarm_almacen->alarm.' ['.$alarm_almacen->code.'/'.$alarm_almacen->type.']' ?></option>
+		                                	<option value="<?php echo $alarm_almacen->id_alarm ?>"><?php echo $alarm_almacen->brand.' '.$alarm_almacen->code.' '.$alarm_almacen->alarm ?></option>
 				                        <?php
 				                        }
-				                        ?>		                                
+				                        ?>			                                
 		                                </select>
 		                                </td>
 		                                <td><input type="text" id="units_alarma_almacen_10" name="units_alarma_almacen_10" onkeypress='return event.charCode >= 48 && event.charCode <= 57'></input></td>
