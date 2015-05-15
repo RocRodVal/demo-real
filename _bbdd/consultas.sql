@@ -29,6 +29,7 @@ WHERE
 	(
     pds.reference IN (XXX,YYY) AND 
     ((devices_pds.id_display = XX) AND (devices_pds.id_device = XX) AND (devices_pds.position = XX)));
+
     
 /*
 Borrado muebles tienda
