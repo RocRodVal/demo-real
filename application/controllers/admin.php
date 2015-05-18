@@ -131,6 +131,47 @@ class Admin extends CI_Controller
     }
     
     
+    public function cierre_pdv()
+    {
+    	if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
+    		$data['id_pds'] = $this->session->userdata('id_pds');
+    		$data['sfid'] = $this->session->userdata('sfid');
+    
+    		$xcrud = xcrud_get_instance();
+    		$this->load->model(array('tienda_model', 'sfid_model'));
+    
+    		$data['tiendas'] =  $this->tienda_model->search_pds($this->input->post('sfid'));
+    
+    		$data['title'] = 'Cierre PdV';
+    
+    		$this->load->view('backend/header', $data);
+    		$this->load->view('backend/navbar', $data);
+    		$this->load->view('backend/cierre_pdv', $data);
+    		$this->load->view('backend/footer');
+    	} else {
+    		redirect('admin', 'refresh');
+    	}
+    } 
+     
+
+    public function update_cierre_pdv()
+    {
+    	if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10))
+    	{
+    		$this->load->model(array('tienda_model', 'sfid_model'));
+    		 
+    		$this->tienda_model->incidencia_update_sfid($this->input->post('sfid_old'),$this->input->post('sfid_new'));
+    		$this->tienda_model->incidencia_update_historico_sfid($historico_sfid);
+    
+    		redirect('admin/cierre_pdv', 'refresh');
+    	}
+    	else
+    	{
+    		redirect('admin', 'refresh');
+    	}
+    }    
+    
+    
     public function update_dispositivo()
     {
     	if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
@@ -570,6 +611,7 @@ class Admin extends CI_Controller
 
     	$this->tienda_model->incidencia_update_material($dipositivo_almacen_1);
     	$this->tienda_model->reservar_dispositivos($this->input->post('dipositivo_almacen_1'),2);
+    	$this->tienda_model->update_dispositivos($this->input->post('dipositivo_almacen_1'),$this->input->post('imei_1'),$this->input->post('mac_1'),$this->input->post('serial_1'),$this->input->post('barcode_1'));
     	}
     	
     	if ($this->input->post('units_dipositivo_almacen_2') <> '')
@@ -585,6 +627,8 @@ class Admin extends CI_Controller
     	
     	$this->tienda_model->incidencia_update_material($dipositivo_almacen_2);
     	$this->tienda_model->reservar_dispositivos($this->input->post('dipositivo_almacen_2'),2);
+    	$this->tienda_model->update_dispositivos($this->input->post('dipositivo_almacen_2'),$this->input->post('imei_2'),$this->input->post('mac_2'),$this->input->post('serial_2'),$this->input->post('barcode_2'));
+    	 
     	}
     	
     	if ($this->input->post('units_dipositivo_almacen_3') <> '')
@@ -600,6 +644,7 @@ class Admin extends CI_Controller
     		 
     		$this->tienda_model->incidencia_update_material($dipositivo_almacen_3);
     		$this->tienda_model->reservar_dispositivos($this->input->post('dipositivo_almacen_3'),2);
+    		$this->tienda_model->update_dispositivos($this->input->post('dipositivo_almacen_3'),$this->input->post('imei_3'),$this->input->post('mac_3'),$this->input->post('serial_3'),$this->input->post('barcode_3'));
     	}    	
     	
     	if ($this->input->post('units_alarma_almacen_1') <> '')

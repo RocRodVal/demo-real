@@ -65,12 +65,13 @@
                         </li>                        
                         <li><a <?=($this->uri->segment(2)==='facturacion')?'class="active"':''?> href="<?=site_url('admin/facturacion')?>"><i class="fa fa-money fa-fw"></i> Facturación</a></li>
                         <?php               
-                        $operaciones = array('operaciones','cambio_sfid','incidencias');
+                        $operaciones = array('operaciones','cierre_pdv','cambio_sfid','incidencias');
                         ?>                      
                         <li <?=(in_array($this->uri->segment(2), $operaciones))?'class="active"':''?>>
                             <a href="#"><i class="fa fa-wrench fa-fw"></i> Operaciones<span class="fa arrow"></span></a>
                             <ul class="nav nav-second-level"> 
                         		<!--<li><a <?=($this->uri->segment(2)==='operaciones')?'class="active"':''?> href="<?=site_url('admin/operaciones')?>">Operaciones &raquo;</a></li>-->
+                        		<li><a <?=($this->uri->segment(2)==='cierre_pdv')?'class="active"':''?> href="<?=site_url('admin/cierre_pdv')?>">Cierre PdV &raquo;</a></li>
                         		<li><a <?=($this->uri->segment(2)==='cambio_sfid')?'class="active"':''?> href="<?=site_url('admin/cambio_sfid')?>">Cambio de SFID &raquo;</a></li>                     		
                         		<li><a <?=($this->uri->segment(2)==='incidencias')?'class="active"':''?> href="<?=site_url('admin/incidencias')?>">Export incidencias &raquo;</a></li>                                               
                         	</ul>

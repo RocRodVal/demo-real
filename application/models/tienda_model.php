@@ -419,6 +419,16 @@ class Tienda_model extends CI_Model {
 		$this->db->update('devices_almacen');
 	}
 		
+	
+	public function update_dispositivos($id,$imei,$mac,$serial,$barcode)
+	{
+		$this->db->set('IMEI',$imei);
+		$this->db->set('mac',$mac);
+		$this->db->set('serial',$serial);
+		$this->db->set('barcode',$barcode);
+		$this->db->where('id_devices_almacen',$id);
+		$this->db->update('devices_almacen');
+	}	
 
 	public function get_devices_almacen_reserva() {
 	
