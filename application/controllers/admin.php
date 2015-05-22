@@ -946,6 +946,7 @@ class Admin extends CI_Controller
             $xcrud_SQL->table_name('Incidencias Demo Real');
             $xcrud_SQL->query('SELECT 
 					incidencias.id_incidencia AS Incidencia,
+            		intervenciones_incidencias.id_intervencion AS "Intervención",
 					incidencias.fecha AS Fecha,
             		type_pds.pds AS "Tipo Pds",
 					pds.reference AS Referencia,
@@ -970,7 +971,8 @@ class Admin extends CI_Controller
             		incidencias.status_pds AS "Estado tienda",
 					incidencias.status AS "Estado SAT"
 				FROM incidencias
-				JOIN pds ON incidencias.id_pds = pds.id_pds
+				JOIN intervenciones_incidencias ON incidencias.id_incidencia = intervenciones_incidencias.id_incidencia
+            	JOIN pds ON incidencias.id_pds = pds.id_pds
             	JOIN type_pds ON pds.type_pds = type_pds.id_type_pds
             	LEFT JOIN province ON pds.province = province.id_province
             	LEFT JOIN county ON pds.county = county.id_county

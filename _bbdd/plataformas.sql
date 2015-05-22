@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost:3306
--- Generation Time: May 18, 2015 at 10:53 AM
+-- Generation Time: May 22, 2015 at 05:16 PM
 -- Server version: 5.5.40
 -- PHP Version: 5.4.34
 
@@ -315,7 +315,18 @@ CREATE TABLE IF NOT EXISTS `chat` (
   `texto` text NOT NULL,
   `foto` varchar(200) DEFAULT NULL,
   `status` enum('Nuevo','Old','Privado') NOT NULL DEFAULT 'Nuevo'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `chat`
+--
+
+INSERT INTO `chat` (`id_chat`, `fecha`, `id_incidencia`, `agent`, `texto`, `foto`, `status`) VALUES
+(1, '2015-05-21 10:26:36', 1, '100001', 'El instalador ha venido esta mañana.', NULL, 'Nuevo'),
+(2, '2015-05-21 10:27:04', 2, '100001', 'El teléfono también presenta desperfectos en la pantalla.', NULL, 'Nuevo'),
+(3, '2015-05-21 10:44:44', 2, '100001', 'Seguimos esperando una resolución.', NULL, 'Nuevo'),
+(4, '2015-05-21 10:45:19', 2, '100001', 'Foto del terminal dañado.', NULL, 'Nuevo'),
+(5, '2015-05-21 11:13:47', 3, '100001', 'EStamos a la espera de la visita del técnico.', NULL, 'Nuevo');
 
 -- --------------------------------------------------------
 
@@ -336,10 +347,13 @@ CREATE TABLE IF NOT EXISTS `ci_sessions` (
 --
 
 INSERT INTO `ci_sessions` (`session_id`, `ip_address`, `user_agent`, `last_activity`, `user_data`) VALUES
-('10e84853d2dcdc87783fa1478c51d498', '85.62.13.196', 'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1; WOW64; Trident/4.0; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .N', 1431074749, 'a:5:{s:9:"user_data";s:0:"";s:4:"sfid";s:6:"100001";s:6:"id_pds";s:1:"1";s:4:"type";s:1:"1";s:9:"logged_in";b:1;}'),
-('d6786fba5d802c4fd2be2a7a2b4df977', '85.62.13.195', 'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1; WOW64; Trident/4.0; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .N', 1431016103, ''),
-('74a101ff48fb249d76e1b1448a4d0f54', '212.89.16.245', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36', 1430990282, 'a:4:{s:9:"user_data";s:0:"";s:4:"sfid";s:6:"100001";s:6:"id_pds";s:1:"1";s:4:"type";s:1:"1";}'),
-('20607bc6ed915020377d33617f9fe913', '85.62.13.194', 'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1; WOW64; Trident/4.0; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .N', 1430993099, 'a:5:{s:9:"user_data";s:0:"";s:4:"sfid";s:6:"100001";s:6:"id_pds";s:1:"1";s:4:"type";s:1:"1";s:9:"logged_in";b:1;}');
+('59ba710bf169594d8f740e44d5bab48e', '212.89.16.245', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.152 Safari/537.36', 1432295754, 'a:4:{s:9:"user_data";s:0:"";s:4:"sfid";s:6:"100001";s:6:"id_pds";s:1:"1";s:4:"type";s:1:"1";}'),
+('1da31607a607c80245b4073c4d7a7de1', '85.62.13.196', 'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1; WOW64; Trident/4.0; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .N', 1432281094, 'a:5:{s:9:"user_data";s:0:"";s:4:"sfid";s:6:"100001";s:6:"id_pds";s:1:"1";s:4:"type";s:1:"1";s:9:"logged_in";b:1;}'),
+('0c3b3b0d0f608bc0cf31e4cd8c170ffd', '85.62.13.196', 'Microsoft Office Protocol Discovery', 1432281093, ''),
+('27761a005f0adbdbb7367b634149d5e2', '85.62.13.196', 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.1; WOW64; Trident/4.0; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .N', 1432281093, ''),
+('a9f6559cdbbe7cc123cac604f2ec318d', '212.89.16.245', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36', 1432207090, 'a:4:{s:9:"user_data";s:0:"";s:4:"sfid";s:6:"100001";s:6:"id_pds";s:1:"1";s:4:"type";s:1:"1";}'),
+('5f89dca1627d8b35be7d3660fa350c6d', '212.89.16.245', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.152 Safari/537.36', 1432206175, 'a:5:{s:9:"user_data";s:0:"";s:4:"sfid";s:6:"100001";s:6:"id_pds";s:1:"1";s:4:"type";s:1:"1";s:9:"logged_in";b:1;}'),
+('72ae51d64f0685bc42bdac6a04167519', '212.89.16.245', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.152 Safari/537.36', 1432208949, 'a:4:{s:9:"user_data";s:0:"";s:4:"sfid";s:6:"100001";s:6:"id_pds";s:1:"1";s:4:"type";s:1:"1";}');
 
 -- --------------------------------------------------------
 
@@ -886,7 +900,7 @@ CREATE TABLE IF NOT EXISTS `display` (
 --
 
 INSERT INTO `display` (`id_display`, `client_display`, `display`, `picture_url`, `canvas_url`, `description`, `positions`, `status`) VALUES
-(1, 1, 'Paneles Televenta y Operaciones', '3ryx9doq5q0wkwksck.png', NULL, NULL, 16, 'Alta');
+(1, 1, 'Paneles Televenta y Operaciones', 'rgh0qusqdaoc4oos0w.png', NULL, NULL, 16, 'Alta');
 
 -- --------------------------------------------------------
 
@@ -1016,6 +1030,7 @@ CREATE TABLE IF NOT EXISTS `incidencias` (
   `alarm_display` tinyint(1) unsigned DEFAULT NULL,
   `alarm_device` tinyint(1) unsigned DEFAULT NULL,
   `alarm_garra` tinyint(1) unsigned DEFAULT NULL,
+  `alarm_adverts` tinyint(1) unsigned DEFAULT NULL,
   `description_1` text,
   `description_2` text,
   `description_3` text,
@@ -1031,7 +1046,18 @@ CREATE TABLE IF NOT EXISTS `incidencias` (
   `intervencion` int(10) unsigned DEFAULT NULL,
   `status_pds` enum('Alta realizada','En proceso','En visita','Finalizada','Cancelada') NOT NULL DEFAULT 'Alta realizada',
   `status` enum('Nueva','Revisada','Material asignado','Instalador asignado','Comunicada','Resuelta','Pendiente recogida','Cerrada','Cancelada') NOT NULL DEFAULT 'Nueva'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `incidencias`
+--
+
+INSERT INTO `incidencias` (`id_incidencia`, `fecha`, `id_pds`, `id_displays_pds`, `id_devices_pds`, `tipo_averia`, `fail_device`, `alarm_display`, `alarm_device`, `alarm_garra`, `alarm_adverts`, `description_1`, `description_2`, `description_3`, `parte_pdf`, `denuncia`, `foto_url`, `foto_url_2`, `foto_url_3`, `contacto`, `phone`, `email`, `id_operador`, `intervencion`, `status_pds`, `status`) VALUES
+(1, '2015-05-21 10:23:16', 1, 1, 11, 'Comunicación', 0, 0, 0, 1, 0, 'Se ha estropeado el soporte del mueble.', '', '', '', '', '', '', '', 'Abante Lugo', '986555555', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
+(2, '2015-05-21 10:26:11', 1, 1, 1, 'Avería', 1, 0, 0, 0, 0, 'El teléfono no carga.', '', '', '', '', '', '', '', 'Abante Lugo', '985555555', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
+(3, '2015-05-21 10:43:50', 1, 1, 16, 'Avería', 1, 0, 1, 1, 1, 'Han destrozado el mueble.', '', '', '', '', '', '', '', 'Abante Lugo', '985555555', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
+(4, '2015-05-21 11:16:05', 1, 1, 13, 'Avería', 1, 0, 0, 1, 0, 'El dispositivo ha dejado de funcionar y el anclaje está suelto.', '', '', '', '', '', '', '', 'Abante Lugo', '985 654 321', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
+(5, '2015-05-21 11:17:49', 1, 1, NULL, 'Avería', 0, 1, 0, 0, 0, 'La alarma central suena todos los días por espacio de 10 minutos.', '', '', '', '', '', '', '', 'Abante Lugo', '986 654 321', NULL, NULL, NULL, 'Alta realizada', 'Nueva');
 
 -- --------------------------------------------------------
 
@@ -1774,7 +1800,7 @@ MODIFY `id_brand_device` smallint(5) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCRE
 -- AUTO_INCREMENT for table `chat`
 --
 ALTER TABLE `chat`
-MODIFY `id_chat` int(10) unsigned NOT NULL AUTO_INCREMENT;
+MODIFY `id_chat` int(10) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=6;
 --
 -- AUTO_INCREMENT for table `client`
 --
@@ -1849,7 +1875,7 @@ MODIFY `id_historico` int(10) unsigned NOT NULL AUTO_INCREMENT;
 -- AUTO_INCREMENT for table `incidencias`
 --
 ALTER TABLE `incidencias`
-MODIFY `id_incidencia` int(10) unsigned NOT NULL AUTO_INCREMENT;
+MODIFY `id_incidencia` int(10) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=6;
 --
 -- AUTO_INCREMENT for table `intervenciones`
 --
