@@ -25,12 +25,12 @@
                         <li <?=(in_array($this->uri->segment(2), $maestros))?'class="active"':''?>>
                             <a href="#"><i class="fa fa-sitemap fa-fw"></i> Maestros<span class="fa arrow"></span></a>
                             <ul class="nav nav-second-level">
-                            	<li><a <?=($this->uri->segment(2)==='clientes')?'class="active"':''?> href="<?=site_url('admin/clientes')?>">Empresas &raquo;</a></li> 
-                                <li><a <?=($this->uri->segment(2)==='contactos')?'class="active"':''?> href="<?=site_url('admin/contactos')?>">Contactos &raquo;</a></li>        
-                                <li><a <?=($this->uri->segment(2)==='alarmas')?'class="active"':''?> href="<?=site_url('admin/alarmas')?>">Alarmas &raquo;</a></li>
-                                <li><a <?=($this->uri->segment(2)==='dispositivos')?'class="active"':''?> href="<?=site_url('admin/dispositivos')?>">Dispositivos &raquo;</a></li>
-                                <li><a <?=($this->uri->segment(2)==='muebles')?'class="active"':''?> href="<?=site_url('admin/muebles')?>">Muebles &raquo;</a></li>
-                                <li><a <?=($this->uri->segment(2)==='puntos_de_venta')?'class="active"':''?> href="<?=site_url('admin/puntos_de_venta')?>">Puntos de venta &raquo;</a></li>     
+                            	<li><a <?=($this->uri->segment(2)==='clientes')?'class="active"':''?> href="<?=site_url('admin/clientes')?>"> Empresas &raquo;</a></li> 
+                                <li><a <?=($this->uri->segment(2)==='contactos')?'class="active"':''?> href="<?=site_url('admin/contactos')?>"> Contactos &raquo;</a></li>        
+                                <li><a <?=($this->uri->segment(2)==='alarmas')?'class="active"':''?> href="<?=site_url('admin/alarmas')?>"> Alarmas &raquo;</a></li>
+                                <li><a <?=($this->uri->segment(2)==='dispositivos')?'class="active"':''?> href="<?=site_url('admin/dispositivos')?>"> Dispositivos &raquo;</a></li>
+                                <li><a <?=($this->uri->segment(2)==='muebles')?'class="active"':''?> href="<?=site_url('admin/muebles')?>"> Muebles &raquo;</a></li>
+                                <li><a <?=($this->uri->segment(2)==='puntos_de_venta')?'class="active"':''?> href="<?=site_url('admin/puntos_de_venta')?>"> Puntos de venta &raquo;</a></li>     
                             </ul>
                         </li>
                         <!--<li><a <?=($this->uri->segment(2)==='auditorias')?'class="active"':''?> href="<?=site_url('admin/auditorias')?>"><i class="fa fa-list-alt fa-fw"></i> Auditorías</a></li>-->
@@ -42,10 +42,10 @@
                         <li <?=(in_array($this->uri->segment(2), $almacenes))?'class="active"':''?>>
                             <a href="#"><i class="fa fa-cubes fa-fw"></i> Almacén<span class="fa arrow"></span></a>
                             <ul class="nav nav-second-level">                        
-                           		<li><a <?=($this->uri->segment(2)==='almacen')?'class="active"':''?> href="<?=site_url('admin/almacen')?>">Inventario &raquo;</a></li>
-                           		<li><a <?=($this->uri->segment(2)==='alta_dispositivos_almacen')?'class="active"':''?> href="<?=site_url('admin/alta_dispositivos_almacen')?>">Alta masiva dispositivos &raquo;</a></li>
-                           		<li><a <?=($this->uri->segment(2)==='baja_dispositivos_almacen')?'class="active"':''?> href="<?=site_url('admin/baja_dispositivos_almacen')?>">Baja masiva dispositivos &raquo;</a></li>
-                           		<li><a <?=($this->uri->segment(2)==='alarmas_almacen')?'class="active"':''?> href="<?=site_url('admin/alarmas_almacen')?>">Gestión alarmas &raquo;</a></li>
+                           		<li><a <?=($this->uri->segment(2)==='almacen')?'class="active"':''?> href="<?=site_url('admin/almacen')?>"> Inventario &raquo;</a></li>
+                           		<li><a <?=($this->uri->segment(2)==='alta_dispositivos_almacen')?'class="active"':''?> href="<?=site_url('admin/alta_dispositivos_almacen')?>"> Alta masiva dispositivos &raquo;</a></li>
+                           		<li><a <?=($this->uri->segment(2)==='baja_dispositivos_almacen')?'class="active"':''?> href="<?=site_url('admin/baja_dispositivos_almacen')?>"> Baja masiva dispositivos &raquo;</a></li>
+                           		<li><a <?=($this->uri->segment(2)==='alarmas_almacen')?'class="active"':''?> href="<?=site_url('admin/alarmas_almacen')?>"> Gestión alarmas &raquo;</a></li>
                         	</ul>
                         </li>		
                         <?php               
@@ -54,36 +54,41 @@
                         <li <?=(in_array($this->uri->segment(2), $exposicion))?'class="active"':''?>>
                             <a href="#"><i class="fa fa-building-o fa-fw"></i> Exposición<span class="fa arrow"></span></a>
                             <ul class="nav nav-second-level">
-                            	<li><a <?=($this->uri->segment(2)==='inventarios_panelados')?'class="active"':''?> href="<?=site_url('admin/inventarios_panelados')?>">Panelado genérico &raquo;</a></li>
-                                <li><a <?=($this->uri->segment(2)==='inventarios_planogramas')?'class="active"':''?> href="<?=site_url('admin/inventarios_planogramas')?>">Planograma genérico &raquo;</a></li>
+                            	<li><a <?=($this->uri->segment(2)==='inventarios_panelados')?'class="active"':''?> href="<?=site_url('admin/inventarios_panelados')?>"> Panelado genérico &raquo;</a></li>
+                                <li><a <?=($this->uri->segment(2)==='inventarios_planogramas')?'class="active"':''?> href="<?=site_url('admin/inventarios_planogramas')?>"> Planograma genérico &raquo;</a></li>
                             	<?php
                             	$descripcion = array('descripcion','exp_alta_incidencia','exp_alta_incidencia_mueble','exp_alta_incidencia_device');
                             	?>
-                            	<li><a <?=(in_array($this->uri->segment(2), $descripcion))?'class="active"':''?> href="<?=site_url('admin/descripcion')?>">Planograma tiendas &raquo;</a></li>
-                             	<li><a <?=($this->uri->segment(2)==='inventarios')?'class="active"':''?> href="<?=site_url('admin/inventarios')?>">Inventarios tiendas &raquo;</a></li>
+                            	<li><a <?=(in_array($this->uri->segment(2), $descripcion))?'class="active"':''?> href="<?=site_url('admin/descripcion')?>"> Planograma tiendas &raquo;</a></li>
+                             	<li><a <?=($this->uri->segment(2)==='inventarios')?'class="active"':''?> href="<?=site_url('admin/inventarios')?>"> Inventarios tiendas &raquo;</a></li>
                             </ul>
                         </li>                        
                         <li><a <?=($this->uri->segment(2)==='facturacion')?'class="active"':''?> href="<?=site_url('admin/facturacion')?>"><i class="fa fa-money fa-fw"></i> Facturación</a></li>
                         <?php               
-                        $operaciones = array('operaciones','cierre_pdv','cambio_sfid','incidencias');
+                        $operaciones = array('operaciones','cierre_pdv','cambio_sfid','incidencias','incidencias_exp');
                         ?>                      
                         <li <?=(in_array($this->uri->segment(2), $operaciones))?'class="active"':''?>>
                             <a href="#"><i class="fa fa-wrench fa-fw"></i> Operaciones<span class="fa arrow"></span></a>
                             <ul class="nav nav-second-level"> 
-                        		<!--<li><a <?=($this->uri->segment(2)==='operaciones')?'class="active"':''?> href="<?=site_url('admin/operaciones')?>">Operaciones &raquo;</a></li>-->
-                        		<li><a <?=($this->uri->segment(2)==='cierre_pdv')?'class="active"':''?> href="<?=site_url('admin/cierre_pdv')?>">Cierre PdV &raquo;</a></li>
-                        		<li><a <?=($this->uri->segment(2)==='cambio_sfid')?'class="active"':''?> href="<?=site_url('admin/cambio_sfid')?>">Cambio de SFID &raquo;</a></li>                     		
-                        		<li><a <?=($this->uri->segment(2)==='incidencias')?'class="active"':''?> href="<?=site_url('admin/incidencias')?>">Export incidencias &raquo;</a></li>                                               
+                        		<!--<li><a <?=($this->uri->segment(2)==='operaciones')?'class="active"':''?> href="<?=site_url('admin/operaciones')?>"> Operaciones &raquo;</a></li>-->
+                        		<!--<li><a <?=($this->uri->segment(2)==='cierre_pdv')?'class="active"':''?> href="<?=site_url('admin/cierre_pdv')?>"> Cierre PdV &raquo;</a></li>-->
+                        		<li><a <?=($this->uri->segment(2)==='cambio_sfid')?'class="active"':''?> href="<?=site_url('admin/cambio_sfid')?>"> Cambio de SFID &raquo;</a></li>                     		
+                        		<li><a <?=($this->uri->segment(2)==='incidencias')?'class="active"':''?> href="<?=site_url('admin/incidencias')?>"> Export incidencias &raquo;</a></li>  
+                        		<li><a <?=($this->uri->segment(2)==='incidencias_exp')?'class="active"':''?> href="<?=site_url('admin/incidencias_exp')?>"> Export incidencias SAT &raquo;</a></li>                                               
                         	</ul>
-                        </li>	                        
-                        <li <?=($this->uri->segment(2)==='ayuda')?'class="active"':''?>>
+                        </li>
+                        <?php 
+                        $ayuda = array('ayuda','manuales','muebles_fabricantes');
+                        ?>	                        
+                        <li <?=(in_array($this->uri->segment(2), $ayuda))?'class="active"':''?>>
                         <a href="#"><i class="fa fa-question-circle fa-fw"></i> Ayuda<span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level">
-                            <li><a <?=($this->uri->segment(3)==='1')?'class="active"':''?> href="<?=site_url('admin/ayuda/1')?>">Mis solicitudes &raquo;</a></li>
-                            <li><a <?=($this->uri->segment(3)==='2')?'class="active"':''?> href="<?=site_url('admin/ayuda/2')?>">Alta incidencia &raquo;</a></li>
-                            <li><a <?=($this->uri->segment(3)==='3')?'class="active"':''?> href="<?=site_url('admin/ayuda/3')?>">Alta incidencia sistema seguridad general del mueble &raquo;</a></li>
-                            <!--<li><a <?=($this->uri->segment(3)==='4')?'class="active"':''?> href="<?=site_url('admin/ayuda/4')?>">Incidencias frecuentes &raquo;</a></li>-->
-                            <li><a <?=($this->uri->segment(2)==='manuales')?'class="active"':''?> href="<?=site_url('admin/ayuda/5')?>">Manuales &raquo;</a></li>
+                            <li><a <?=($this->uri->segment(3)==='1')?'class="active"':''?> href="<?=site_url('admin/ayuda/1')?>"> Mis solicitudes &raquo;</a></li>
+                            <li><a <?=($this->uri->segment(3)==='2')?'class="active"':''?> href="<?=site_url('admin/ayuda/2')?>"> Alta incidencia &raquo;</a></li>
+                            <li><a <?=($this->uri->segment(3)==='3')?'class="active"':''?> href="<?=site_url('admin/ayuda/3')?>"> Alta incidencia sistema seguridad general del mueble &raquo;</a></li>
+                            <!--<li><a <?=($this->uri->segment(3)==='4')?'class="active"':''?> href="<?=site_url('admin/ayuda/4')?>"> Incidencias frecuentes &raquo;</a></li>-->
+                            <li><a <?=($this->uri->segment(2)==='manuales')?'class="active"':''?> href="<?=site_url('admin/ayuda/5')?>"> Manuales &raquo;</a></li>
+                            <li><a <?=($this->uri->segment(2)==='muebles_fabricantes')?'class="active"':''?> href="<?=site_url('admin/ayuda/6')?>"> Muebles fabricantes &raquo;</a></li>
                         </ul>
                         </li>
                     </ul>
