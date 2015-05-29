@@ -945,10 +945,65 @@ class Admin extends CI_Controller
             $xcrud_SQL = xcrud_get_instance();
             $xcrud_SQL->table_name('Incidencias Demo Real');
             $xcrud_SQL->query('SELECT 
-					incidencias.id_incidencia AS Incidencia,
+					count(incidencias.id_incidencia) AS "Número incidencias",
             		intervenciones_incidencias.id_intervencion AS "Intervención",
 					incidencias.fecha AS Fecha,
             		type_pds.pds AS "Tipo Pds",
+					pds.reference AS Referencia,
+            		pds.commercial AS "Nombre comercial",
+            		pds.address AS Dirección,
+            		pds.zip AS CP,
+            		pds.city AS Ciudad,
+            		province.province AS Provincia,
+            		county.county AS CCAA,
+					display.display AS Mueble,
+					device.device AS Dispositivo,
+					incidencias.tipo_averia AS Tipo,
+					count(incidencias.fail_device) AS "Fallo dispositivo",
+					count(incidencias.alarm_display) "Alarma mueble",
+					count(incidencias.alarm_device) "Alarma dispositivo",
+					count(incidencias.alarm_garra) "Sistema de alarma",
+					incidencias.description_1 AS "Comentarios",
+					incidencias.description_2 AS "Comentarios SAT",
+            		incidencias.description_3 AS "Comentarios Instalador",
+					incidencias.contacto,
+					incidencias.phone AS "Teléfono",
+            		incidencias.status_pds AS "Estado tienda",
+					incidencias.status AS "Estado SAT"
+				FROM incidencias
+				LEFT JOIN intervenciones_incidencias ON incidencias.id_incidencia = intervenciones_incidencias.id_incidencia
+            	JOIN pds ON incidencias.id_pds = pds.id_pds
+            	JOIN type_pds ON pds.type_pds = type_pds.id_type_pds
+            	LEFT JOIN province ON pds.province = province.id_province
+            	LEFT JOIN county ON pds.county = county.id_county
+				JOIN displays_pds ON incidencias.id_displays_pds = displays_pds.id_displays_pds
+				JOIN display ON displays_pds.id_display = display.id_display
+				LEFT JOIN devices_pds ON incidencias.id_devices_pds = devices_pds.id_devices_pds
+				LEFT JOIN device ON devices_pds.id_device = device.id_device
+            	GROUP BY intervenciones_incidencias.id_intervencion');
+            
+            $data['title'] = 'Export incidencias';
+            $data['content'] = $xcrud_SQL->render();
+
+            $this->load->view('backend/header', $data);
+            $this->load->view('backend/navbar', $data);
+            $this->load->view('backend/content', $data);
+            $this->load->view('backend/footer');
+        } else {
+            redirect('admin', 'refresh');
+        }
+    }
+    
+    
+    public function incidencias_exp()
+    {
+    	if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
+    
+    		$xcrud_SQL = xcrud_get_instance();
+    		$xcrud_SQL->table_name('Incidencias Demo Real');
+    		$xcrud_SQL->query('SELECT
+					incidencias.id_incidencia AS Incidencia,
+					incidencias.fecha AS Fecha,
 					pds.reference AS Referencia,
             		pds.commercial AS "Nombre comercial",
             		pds.address AS Dirección,
@@ -971,27 +1026,25 @@ class Admin extends CI_Controller
             		incidencias.status_pds AS "Estado tienda",
 					incidencias.status AS "Estado SAT"
 				FROM incidencias
-				JOIN intervenciones_incidencias ON incidencias.id_incidencia = intervenciones_incidencias.id_incidencia
-            	JOIN pds ON incidencias.id_pds = pds.id_pds
-            	JOIN type_pds ON pds.type_pds = type_pds.id_type_pds
+				JOIN pds ON incidencias.id_pds = pds.id_pds
             	LEFT JOIN province ON pds.province = province.id_province
             	LEFT JOIN county ON pds.county = county.id_county
 				JOIN displays_pds ON incidencias.id_displays_pds = displays_pds.id_displays_pds
 				JOIN display ON displays_pds.id_display = display.id_display
 				LEFT JOIN devices_pds ON incidencias.id_devices_pds = devices_pds.id_devices_pds
 				LEFT JOIN device ON devices_pds.id_device = device.id_device');
-            
-            $data['title'] = 'Export incidencias';
-            $data['content'] = $xcrud_SQL->render();
-
-            $this->load->view('backend/header', $data);
-            $this->load->view('backend/navbar', $data);
-            $this->load->view('backend/content', $data);
-            $this->load->view('backend/footer');
-        } else {
-            redirect('admin', 'refresh');
-        }
-    }
+    
+    		$data['title'] = 'Export incidencias';
+    		$data['content'] = $xcrud_SQL->render();
+    
+    		$this->load->view('backend/header', $data);
+    		$this->load->view('backend/navbar', $data);
+    		$this->load->view('backend/content', $data);
+    		$this->load->view('backend/footer');
+    	} else {
+    		redirect('admin', 'refresh');
+    	}
+    }    
     
     public function incidencias_master()
     {
@@ -2373,7 +2426,10 @@ class Admin extends CI_Controller
                     break;
                 case 5:
                    	redirect('admin/manuales','refresh');
-                   	break;                    
+                   	break;   
+               	case 6:
+               		redirect('admin/muebles_fabricantes','refresh');
+               		break;                   	                 
                 default:
                     $data['video'] = "ver_incidencias.mp4";
                     $data['ayuda_title'] = "Mis solicitudes";
@@ -2413,6 +2469,26 @@ class Admin extends CI_Controller
     	}
     }
         
+    public function muebles_fabricantes()
+    {
+    	if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10))
+    	{
+    		$xcrud = xcrud_get_instance();
+    
+    		$data['title']       = 'Ayuda';
+    		$data['ayuda_title'] = 'Muebles fabricantes';
+    
+    		$this->load->view('backend/header',$data);
+    		$this->load->view('backend/navbar',$data);
+    		$this->load->view('backend/muebles_fabricantes',$data);
+    		$this->load->view('backend/footer');
+    	}
+    	else
+    	{
+    		redirect('admin','refresh');
+    	}
+    }    
+    
 
     public function logout()
     {

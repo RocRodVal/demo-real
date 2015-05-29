@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost:3306
--- Generation Time: May 22, 2015 at 05:16 PM
+-- Generation Time: May 29, 2015 at 06:08 PM
 -- Server version: 5.5.40
 -- PHP Version: 5.4.34
 
@@ -28,30 +28,33 @@ SET time_zone = "+00:00";
 
 CREATE TABLE IF NOT EXISTS `agent` (
 `agent_id` int(10) unsigned NOT NULL,
+  `user` varchar(40) NOT NULL,
   `sfid` varchar(100) NOT NULL,
   `password` varchar(100) NOT NULL,
   `type` tinyint(3) NOT NULL DEFAULT '1'
-) ENGINE=InnoDB AUTO_INCREMENT=1000000 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1000002 DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `agent`
 --
 
-INSERT INTO `agent` (`agent_id`, `sfid`, `password`, `type`) VALUES
-(1, '100001', 'plataformas', 1),
-(2, '100002', 'plataformas', 1),
-(1561, '100003', 'plataformas', 1),
-(1562, '100004', 'plataformas', 1),
-(1563, '100005', 'plataformas', 1),
-(1564, '100006', 'plataformas', 1),
-(1565, '100007', 'plataformas', 1),
-(1566, '100008', 'plataformas', 1),
-(1567, '100009', 'plataformas', 1),
-(1568, '100010', 'plataformas', 1),
-(1569, '100011', 'plataformas', 1),
-(1570, '100012', 'plataformas', 1),
-(111111, 'direccion', 'plataformas', 9),
-(999999, 'altabox', 'plataformas', 10);
+INSERT INTO `agent` (`agent_id`, `user`, `sfid`, `password`, `type`) VALUES
+(1, 'conexion', '39440103', '39440103', 1),
+(2, 'conexion', '39140041', '39140041', 1),
+(1561, 'arvato', '18250018', '18250018', 1),
+(1562, 'sitel', '59140008', '59140008', 1),
+(1563, 'abante', '39994134', '39994134', 1),
+(1564, 'madison', '19140038', '19140038', 1),
+(1565, 'iccs', '59990015', '59990015', 1),
+(1566, 'bosch', '39990025', '39990025', 1),
+(1567, 'oest', '29140022', '29140022', 1),
+(1568, 'arvato', '18250048', '18250048', 1),
+(1569, 'sitel', '19990032', '19990032', 1),
+(1570, 'transcom', '19990200', '19990200', 1),
+(111111, 'direccion', 'direccion', 'plataformas', 9),
+(999999, 'altabox', 'altabox', 'plataformas', 10),
+(1000000, 'isgf', '19140109', '19140109', 1),
+(1000001, 'transcom', '19990205', '19990205', 1);
 
 -- --------------------------------------------------------
 
@@ -347,13 +350,14 @@ CREATE TABLE IF NOT EXISTS `ci_sessions` (
 --
 
 INSERT INTO `ci_sessions` (`session_id`, `ip_address`, `user_agent`, `last_activity`, `user_data`) VALUES
-('59ba710bf169594d8f740e44d5bab48e', '212.89.16.245', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.152 Safari/537.36', 1432295754, 'a:4:{s:9:"user_data";s:0:"";s:4:"sfid";s:6:"100001";s:6:"id_pds";s:1:"1";s:4:"type";s:1:"1";}'),
-('1da31607a607c80245b4073c4d7a7de1', '85.62.13.196', 'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1; WOW64; Trident/4.0; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .N', 1432281094, 'a:5:{s:9:"user_data";s:0:"";s:4:"sfid";s:6:"100001";s:6:"id_pds";s:1:"1";s:4:"type";s:1:"1";s:9:"logged_in";b:1;}'),
-('0c3b3b0d0f608bc0cf31e4cd8c170ffd', '85.62.13.196', 'Microsoft Office Protocol Discovery', 1432281093, ''),
-('27761a005f0adbdbb7367b634149d5e2', '85.62.13.196', 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.1; WOW64; Trident/4.0; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .N', 1432281093, ''),
-('a9f6559cdbbe7cc123cac604f2ec318d', '212.89.16.245', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36', 1432207090, 'a:4:{s:9:"user_data";s:0:"";s:4:"sfid";s:6:"100001";s:6:"id_pds";s:1:"1";s:4:"type";s:1:"1";}'),
-('5f89dca1627d8b35be7d3660fa350c6d', '212.89.16.245', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.152 Safari/537.36', 1432206175, 'a:5:{s:9:"user_data";s:0:"";s:4:"sfid";s:6:"100001";s:6:"id_pds";s:1:"1";s:4:"type";s:1:"1";s:9:"logged_in";b:1;}'),
-('72ae51d64f0685bc42bdac6a04167519', '212.89.16.245', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.152 Safari/537.36', 1432208949, 'a:4:{s:9:"user_data";s:0:"";s:4:"sfid";s:6:"100001";s:6:"id_pds";s:1:"1";s:4:"type";s:1:"1";}');
+('e88052925b4104c2310c3fb00caad0c1', '85.62.13.196', 'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1; WOW64; Trident/4.0; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .N', 1432551618, 'a:5:{s:9:"user_data";s:0:"";s:4:"sfid";s:6:"100001";s:6:"id_pds";s:1:"1";s:4:"type";s:1:"1";s:9:"logged_in";b:1;}'),
+('f2aa20cbb611e46ad468e058359d1982', '::1', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.65 Safari/537.36', 1432637016, 'a:5:{s:9:"user_data";s:0:"";s:4:"sfid";s:8:"39440103";s:6:"id_pds";s:1:"2";s:4:"type";s:1:"1";s:9:"logged_in";b:1;}'),
+('a41290cea658ad1f81d1fcddbfadc4c6', '85.62.13.196', 'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1; WOW64; Trident/4.0; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .N', 1432648952, ''),
+('8e7c0b0fda658610b19cad01c7af7996', '212.89.16.245', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.81 Safari/537.36', 1432649919, 'a:4:{s:9:"user_data";s:0:"";s:4:"sfid";s:8:"39440103";s:6:"id_pds";s:1:"2";s:4:"type";s:1:"1";}'),
+('fdc9bb4b2680920760a82bd82d4f5150', '85.62.13.196', 'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1; WOW64; Trident/4.0; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .N', 1432659793, 'a:5:{s:9:"user_data";s:0:"";s:4:"sfid";s:8:"19140038";s:6:"id_pds";s:1:"3";s:4:"type";s:1:"1";s:9:"logged_in";b:1;}'),
+('e4ba11afda3df6799a988de61fc9c588', '213.143.50.152', 'Mozilla/5.0 (iPhone; CPU iPhone OS 8_3 like Mac OS X) AppleWebKit/600.1.4 (KHTML, like Gecko) Version/8.0 Mobile/12F70 S', 1432742290, 'a:5:{s:9:"user_data";s:0:"";s:4:"sfid";s:8:"18250018";s:6:"id_pds";s:1:"7";s:4:"type";s:1:"1";s:9:"logged_in";b:1;}'),
+('83a0619c63bbc0f3bb7ca9950de63909', '85.62.13.194', 'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1; WOW64; Trident/4.0; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .N', 1432801114, 'a:4:{s:9:"user_data";s:0:"";s:4:"sfid";s:8:"39440103";s:6:"id_pds";s:1:"2";s:4:"type";s:1:"1";}'),
+('73ae9f1b0c67fc0c9904675d4f0350eb', '194.224.218.114', 'Mozilla/5.0 (Windows NT 6.2; WOW64; rv:38.0) Gecko/20100101 Firefox/38.0', 1432810747, 'a:5:{s:9:"user_data";s:0:"";s:4:"sfid";s:8:"39440103";s:6:"id_pds";s:1:"2";s:4:"type";s:1:"1";s:9:"logged_in";b:1;}');
 
 -- --------------------------------------------------------
 
@@ -1048,17 +1052,6 @@ CREATE TABLE IF NOT EXISTS `incidencias` (
   `status` enum('Nueva','Revisada','Material asignado','Instalador asignado','Comunicada','Resuelta','Pendiente recogida','Cerrada','Cancelada') NOT NULL DEFAULT 'Nueva'
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 
---
--- Dumping data for table `incidencias`
---
-
-INSERT INTO `incidencias` (`id_incidencia`, `fecha`, `id_pds`, `id_displays_pds`, `id_devices_pds`, `tipo_averia`, `fail_device`, `alarm_display`, `alarm_device`, `alarm_garra`, `alarm_adverts`, `description_1`, `description_2`, `description_3`, `parte_pdf`, `denuncia`, `foto_url`, `foto_url_2`, `foto_url_3`, `contacto`, `phone`, `email`, `id_operador`, `intervencion`, `status_pds`, `status`) VALUES
-(1, '2015-05-21 10:23:16', 1, 1, 11, 'Comunicación', 0, 0, 0, 1, 0, 'Se ha estropeado el soporte del mueble.', '', '', '', '', '', '', '', 'Abante Lugo', '986555555', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
-(2, '2015-05-21 10:26:11', 1, 1, 1, 'Avería', 1, 0, 0, 0, 0, 'El teléfono no carga.', '', '', '', '', '', '', '', 'Abante Lugo', '985555555', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
-(3, '2015-05-21 10:43:50', 1, 1, 16, 'Avería', 1, 0, 1, 1, 1, 'Han destrozado el mueble.', '', '', '', '', '', '', '', 'Abante Lugo', '985555555', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
-(4, '2015-05-21 11:16:05', 1, 1, 13, 'Avería', 1, 0, 0, 1, 0, 'El dispositivo ha dejado de funcionar y el anclaje está suelto.', '', '', '', '', '', '', '', 'Abante Lugo', '985 654 321', NULL, NULL, NULL, 'Alta realizada', 'Nueva'),
-(5, '2015-05-21 11:17:49', 1, 1, NULL, 'Avería', 0, 1, 0, 0, 0, 'La alarma central suena todos los días por espacio de 10 minutos.', '', '', '', '', '', '', '', 'Abante Lugo', '986 654 321', NULL, NULL, NULL, 'Alta realizada', 'Nueva');
-
 -- --------------------------------------------------------
 
 --
@@ -1183,18 +1176,18 @@ CREATE TABLE IF NOT EXISTS `pds` (
 --
 
 INSERT INTO `pds` (`id_pds`, `client_pds`, `reference`, `type_pds`, `territory`, `panelado_pds`, `dispo`, `commercial`, `cif`, `picture_url`, `m2_fo`, `m2_bo`, `m2_total`, `type_via`, `address`, `zip`, `city`, `province`, `county`, `schedule`, `phone`, `mobile`, `email`, `contact_contact_person`, `contact_in_charge`, `contact_supervisor`, `status`) VALUES
-(1, 1, '100001', 5, 6, 5, 'Normal', 'Abante Lugo', NULL, NULL, NULL, NULL, NULL, 6, 'Avda Infanta Elena, 300\nPoligono O´Ceao', '27003', 'Lugo', 28, 12, NULL, NULL, '663066255', 'anamaria.lopez@abantebpo.com', 9, NULL, NULL, 'Alta'),
-(2, 1, '100002', 5, 6, 5, 'Normal', 'Conexión Santander Nueva Montaña', NULL, NULL, NULL, NULL, NULL, 6, 'Avda. Nueva Montaña, 2G Parcela 28', '39011', 'Santander', 39, 6, NULL, NULL, '658835031', 'patricia.escudero@tiendasconexion.com', 10, NULL, NULL, 'Alta'),
-(3, 1, '100003', 5, 1, 5, 'Normal', 'Madison', NULL, NULL, NULL, NULL, NULL, 8, 'c/ Enrique Cubero, 32', '47014', 'Valladolid', 47, 7, NULL, NULL, '638919114', 'mar.hernandez@madisonmk.com', 11, NULL, NULL, 'Alta'),
-(4, 1, '100004', 5, 3, 5, 'Normal', 'Iccs Malaga', NULL, NULL, NULL, NULL, NULL, 8, 'C/ Don Cristian 2 2ª Planta', '29007', 'Málaga', 29, 1, NULL, NULL, '615641070', 'sandra.longhi@iccs.es', 17, NULL, NULL, 'Alta'),
-(5, 1, '100005', 3, 6, 3, 'Normal', 'Conexión Santander Ardazo', NULL, NULL, NULL, NULL, NULL, NULL, 'Alfredo Perez Guillen, 5', '39011', 'Santander', 39, 6, NULL, NULL, '658835031', 'monica.gonzalez@tiendasconexion.com', 13, NULL, NULL, 'Alta'),
-(6, 1, '100006', 1, 3, 1, 'Normal', 'Sitel Sevilla', NULL, NULL, NULL, NULL, NULL, 8, 'C/ República Argentina, 25 Planta 4ª', '41011', 'Sevilla', 41, 1, NULL, NULL, '629385565', 'Antonio.ramos@sitel.com', 14, NULL, NULL, 'Alta'),
-(7, 1, '100007', 2, 1, 2, 'Normal', 'Arvato Salamanca', NULL, NULL, NULL, NULL, NULL, NULL, 'Polígono el Montalvo I\nC/ Doctor Fleming 51', '37188', '(Carbajosa de la Sagrada) Salamanca', 37, 8, NULL, NULL, '615038089', 'Javier.sanz@arvato.es', 15, NULL, NULL, 'Alta'),
-(8, 1, '100008', 4, 6, 4, 'Normal', 'Oviedo OEST', NULL, NULL, NULL, NULL, NULL, NULL, 'Polígono Industrial Espíritu Santo\nCalle Dinamarca nº 8', '33010', 'Oviedo', 33, 3, NULL, NULL, '615087035', 'anafesordo.oest@orange.com', 16, NULL, NULL, 'Alta'),
-(9, 1, '100009', 4, 1, 4, 'Normal', 'Transcom San Fernando', NULL, NULL, NULL, NULL, NULL, NULL, 'Avda. Castilla, 2\nParque Empresarial de San Fernando\nEdificio Hungría', '28830', 'San Fernando de Henares, Madrid', 28, 13, NULL, NULL, '625919590', 'soraya.pizarro@transcom.com', 17, NULL, NULL, 'Alta'),
-(10, 1, '100010', 4, 3, 4, 'Normal', 'ISGF Murcia', NULL, NULL, NULL, NULL, NULL, NULL, 'C/ Faro S/N\nPoligono Industrial Cabezo Cortado', '30100', 'El Puntual', 30, 14, NULL, NULL, '625302376', 'patricia.asyn.tejeira@isgf.es', 18, NULL, NULL, 'Alta'),
-(11, 1, '100011', 4, 6, 4, 'Normal', 'Bosch Vigo', NULL, NULL, NULL, NULL, NULL, NULL, 'Avenida de Madrid, 183 4ª Pta', '36214', 'Vigo', 36, 12, NULL, '986917513', NULL, 'Adolfo.AlonsoArgibay@es.bosch.com', 19, NULL, NULL, 'Alta'),
-(12, 1, '100012', 4, 6, 4, 'Normal', 'Transcom León', NULL, NULL, NULL, NULL, NULL, NULL, 'Transcom Worldwide\nAv. Reyes Leoneses, 14, 2º\n(Edificio Europa)', '24008', 'León', 24, 7, NULL, NULL, '675797802', 'monica.gutierrez@transcom.com', 20, NULL, NULL, 'Alta');
+(1, 1, '39994134', 5, 6, 5, 'Normal', 'Abante Lugo', NULL, NULL, NULL, NULL, NULL, 6, 'Avda Infanta Elena, 300\nPoligono O´Ceao', '27003', 'Lugo', 28, 12, NULL, NULL, '663066255', 'anamaria.lopez@abantebpo.com', 9, NULL, NULL, 'Alta'),
+(2, 1, '39440103', 5, 6, 5, 'Normal', 'Conexión Santander Nueva Montaña', NULL, NULL, NULL, NULL, NULL, 6, 'Avda. Nueva Montaña, 2G Parcela 28', '39011', 'Santander', 39, 6, NULL, NULL, '658835031', 'patricia.escudero@tiendasconexion.com', 10, NULL, NULL, 'Alta'),
+(3, 1, '19140038', 5, 1, 5, 'Normal', 'Madison', NULL, NULL, NULL, NULL, NULL, 8, 'c/ Enrique Cubero, 32', '47014', 'Valladolid', 47, 7, NULL, NULL, '638919114', 'mar.hernandez@madisonmk.com', 11, NULL, NULL, 'Alta'),
+(4, 1, '59990015', 5, 3, 5, 'Normal', 'Iccs Malaga', NULL, NULL, NULL, NULL, NULL, 8, 'C/ Don Cristian 2 2ª Planta', '29007', 'Málaga', 29, 1, NULL, NULL, '615641070', 'sandra.longhi@iccs.es', 17, NULL, NULL, 'Alta'),
+(5, 1, '39140041', 3, 6, 3, 'Normal', 'Conexión Santander Ardazo', NULL, NULL, NULL, NULL, NULL, NULL, 'Alfredo Perez Guillen, 5', '39011', 'Santander', 39, 6, NULL, NULL, '658835031', 'monica.gonzalez@tiendasconexion.com', 13, NULL, NULL, 'Alta'),
+(6, 1, '59140008', 1, 3, 1, 'Normal', 'Sitel Sevilla', NULL, NULL, NULL, NULL, NULL, 8, 'C/ República Argentina, 25 Planta 4ª', '41011', 'Sevilla', 41, 1, NULL, NULL, '629385565', 'Antonio.ramos@sitel.com', 14, NULL, NULL, 'Alta'),
+(7, 1, '18250018', 2, 1, 2, 'Normal', 'Arvato Salamanca', NULL, NULL, NULL, NULL, NULL, NULL, 'Polígono el Montalvo I\nC/ Doctor Fleming 51', '37188', '(Carbajosa de la Sagrada) Salamanca', 37, 8, NULL, NULL, '615038089', 'Javier.sanz@arvato.es', 15, NULL, NULL, 'Alta'),
+(8, 1, '29140022', 4, 6, 4, 'Normal', 'Oviedo OEST', NULL, NULL, NULL, NULL, NULL, NULL, 'Polígono Industrial Espíritu Santo\nCalle Dinamarca nº 8', '33010', 'Oviedo', 33, 3, NULL, NULL, '615087035', 'anafesordo.oest@orange.com', 16, NULL, NULL, 'Alta'),
+(9, 1, '19990200', 4, 1, 4, 'Normal', 'Transcom San Fernando', NULL, NULL, NULL, NULL, NULL, NULL, 'Avda. Castilla, 2\nParque Empresarial de San Fernando\nEdificio Hungría', '28830', 'San Fernando de Henares, Madrid', 28, 13, NULL, NULL, '625919590', 'soraya.pizarro@transcom.com', 17, NULL, NULL, 'Alta'),
+(10, 1, '19140109', 4, 3, 4, 'Normal', 'ISGF Murcia', NULL, NULL, NULL, NULL, NULL, NULL, 'C/ Faro S/N\nPoligono Industrial Cabezo Cortado', '30100', 'El Puntual', 30, 14, NULL, NULL, '625302376', 'patricia.asyn.tejeira@isgf.es', 18, NULL, NULL, 'Alta'),
+(11, 1, '39990025', 4, 6, 4, 'Normal', 'Bosch Vigo', NULL, NULL, NULL, NULL, NULL, NULL, 'Avenida de Madrid, 183 4ª Pta', '36214', 'Vigo', 36, 12, NULL, '986917513', NULL, 'Adolfo.AlonsoArgibay@es.bosch.com', 19, NULL, NULL, 'Alta'),
+(12, 1, '19990205', 4, 6, 4, 'Normal', 'Transcom León', NULL, NULL, NULL, NULL, NULL, NULL, 'Transcom Worldwide\nAv. Reyes Leoneses, 14, 2º\n(Edificio Europa)', '24008', 'León', 24, 7, NULL, NULL, '675797802', 'monica.gutierrez@transcom.com', 20, NULL, NULL, 'Alta');
 
 --
 -- Triggers `pds`
@@ -1760,7 +1753,7 @@ ALTER TABLE `type_via`
 -- AUTO_INCREMENT for table `agent`
 --
 ALTER TABLE `agent`
-MODIFY `agent_id` int(10) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=1000000;
+MODIFY `agent_id` int(10) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=1000002;
 --
 -- AUTO_INCREMENT for table `alarms_almacen`
 --

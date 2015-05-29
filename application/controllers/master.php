@@ -911,9 +911,12 @@ class Master extends CI_Controller {
 					$data['video']="nuevo_robo.mp4";
 					$data['ayuda_title']="Incidencias frecuentes";
 					break;
-					case 5:
-						redirect('master/manuales','refresh');
-					break;					
+				case 5:
+					redirect('master/manuales','refresh');
+					break;	
+				case 6:
+					redirect('master/muebles_fabricantes','refresh');
+					break;									
 				default:
 					$data['video']="ver_incidencias.mp4";
 					$data['ayuda_title']="Mis solicitudes";
@@ -952,6 +955,26 @@ class Master extends CI_Controller {
 			redirect('master','refresh');
 		}
 	}
+
+	public function muebles_fabricantes()
+	{
+		if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 9))
+		{
+			$xcrud = xcrud_get_instance();
+	
+			$data['title']       = 'Ayuda';
+			$data['ayuda_title'] = 'Muebles fabricantes';
+	
+			$this->load->view('master/header',$data);
+			$this->load->view('master/navbar',$data);
+			$this->load->view('master/muebles_fabricantes',$data);
+			$this->load->view('master/footer');
+		}
+		else
+		{
+			redirect('master','refresh');
+		}
+	}	
 	
 	public function logout()
 	{
