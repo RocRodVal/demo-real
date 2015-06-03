@@ -7,10 +7,24 @@ FROM pds, displays_panelado
 WHERE pds.panelado_pds=displays_panelado.id_panelado
 AND pds.reference = SFID;
 
+
+/*
+Insertar un mueble en una posición
+*/
 INSERT INTO displays_pds (client_type_pds,id_type_pds,id_pds,id_panelado,id_display,position,description,status)
 SELECT pds.client_pds, pds.type_pds, pds.id_pds, pds.panelado_pds, XX, PP, '', 'Alta'
 FROM pds
 WHERE pds.reference IN (XXX,YYY);
+
+
+/*
+Borrar un mueble
+*/
+DELETE displays_pds FROM displays_pds
+INNER JOIN pds ON pds.id_pds = displays_pds.id_pds
+JOIN display ON display.id_display = displays_pds.id_display
+WHERE pds.reference IN (XXX,YYY)
+AND displays_pds.id_display IN (ZZ,WW);
 
 
 /*
@@ -23,12 +37,30 @@ WHERE pds.id_pds=displays_pds.id_pds
 AND displays_pds.id_display=devices_display.id_display
 AND pds.reference = SFID;
 
+
+/*
+Insertar dispositivos en un mueble
+*/
 INSERT INTO devices_pds (client_type_pds,id_pds,id_displays_pds,id_display,position,id_device,IMEI,mac,serial,barcode,id_color_device,id_complement_device,id_status_device,id_status_packaging_device,picture_url_1,picture_url_2,picture_url_3,description,status)
 SELECT pds.client_pds,pds.id_pds,displays_pds.id_displays_pds,displays_pds.id_display,devices_display.position,devices_display.id_device,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'Alta'
 FROM pds
 JOIN displays_pds ON displays_pds.id_pds = pds.id_pds
 JOIN devices_display ON devices_display.id_display = displays_pds.id_display
 WHERE ((pds.reference IN (XXX,YYY)) AND (displays_pds.id_display = XX));
+
+
+/*
+Borrar dispositivos en un mueble
+*/
+DELETE FROM devices_pds
+WHERE devices_pds.id_displays_pds IN ( 
+	SELECT displays_pds.id_displays_pds FROM displays_pds
+	INNER JOIN pds ON pds.id_pds = displays_pds.id_pds
+	JOIN display ON display.id_display = displays_pds.id_display
+	WHERE pds.reference IN (XXX,YYY)
+	AND displays_pds.id_display IN (ZZ,WW)
+	ORDER BY pds.reference
+);
 
 
 /*
@@ -89,7 +121,7 @@ SELECT pds.id_pds, pds.reference, type_pds.pds, panelado.panelado, pds.commercia
 FROM pds
 JOIN type_pds ON pds.type_pds = type_pds.id_type_pds
 JOIN panelado ON pds.panelado_pds = panelado.id_panelado
-WHERE reference IN (19990272,19440334,26360017,36000077,36000072,48810015,49440274,49990159,49440270,49990141,49990153,49990164,49440267,49440134,59440338,59990180,59990179,59990178,59990207,56000152);
+WHERE reference IN (XXX,YYY);
 
 
 /*
@@ -294,6 +326,7 @@ DELETE displays_pds FROM displays_pds
 INNER JOIN pds ON pds.id_pds = displays_pds.id_pds
 WHERE pds.reference IN (XXX,YYY);
 
+
 DELETE devices_pds FROM devices_pds
 INNER JOIN pds ON pds.id_pds = devices_pds.id_pds
 WHERE pds.reference IN (XXX,YYY);
@@ -304,6 +337,7 @@ SELECT pds.client_pds, pds.type_pds, pds.id_pds, pds.panelado_pds, displays_pane
 FROM pds, displays_panelado
 WHERE pds.panelado_pds=displays_panelado.id_panelado
 AND pds.reference IN (XXX,YYY);
+
 
 INSERT INTO devices_pds (client_type_pds,id_pds,id_displays_pds,id_display,position,id_device,IMEI,mac,serial,barcode,id_color_device,id_complement_device,id_status_device,id_status_packaging_device,picture_url_1,picture_url_2,picture_url_3,description,status)
 SELECT pds.client_pds,pds.id_pds,displays_pds.id_displays_pds,displays_pds.id_display,devices_display.position,devices_display.id_device,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'Alta'
