@@ -59,6 +59,59 @@ class Tienda_model extends CI_Model {
 		$this->db->update('alarm');
 	}	
 	
+	public function borrar_agente($sfid)
+	{
+		$this->db->where('sfid', $sfid);
+		$this->db->delete('agent');
+	}	
+	
+	public function borrar_dispositivos($sfid)
+	{
+		$sql = "DELETE devices_pds FROM devices_pds
+				INNER JOIN pds ON pds.id_pds = devices_pds.id_pds
+				WHERE pds.reference IN ('$sfid')";
+		
+		$this->db->query($sql);		
+	}
+
+	public function borrar_muebles($sfid)
+	{
+		$sql = "DELETE displays_pds FROM displays_pds
+				INNER JOIN pds ON pds.id_pds = displays_pds.id_pds
+				WHERE pds.reference IN ('$sfid')";
+		
+		$this->db->query($sql);	
+	}
+
+	public function alta_masiva_dispositivos($sfid)
+	{
+		$sql = "INSERT INTO devices_pds (client_type_pds,id_pds,id_displays_pds,id_display,position,id_device,IMEI,mac,serial,barcode,id_color_device,id_complement_device,id_status_device,id_status_packaging_device,picture_url_1,picture_url_2,picture_url_3,description,status)
+				SELECT pds.client_pds,pds.id_pds,displays_pds.id_displays_pds,displays_pds.id_display,devices_display.position,devices_display.id_device,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'Alta'
+				FROM pds,displays_pds,devices_display
+				WHERE pds.id_pds=displays_pds.id_pds
+				AND displays_pds.id_display=devices_display.id_display
+				AND pds.reference = '$sfid'";
+	
+		$this->db->query($sql);
+	}
+	
+	public function alta_masiva_muebles($sfid)
+	{
+		$sql = "INSERT INTO displays_pds (client_type_pds,id_type_pds,id_pds,id_panelado,id_display,position,description,status)
+				SELECT pds.client_pds, pds.type_pds, pds.id_pds, pds.panelado_pds, displays_panelado.id_display, displays_panelado.position, '', 'Alta'
+				FROM pds, displays_panelado
+				WHERE pds.panelado_pds=displays_panelado.id_panelado
+				AND pds.reference = '$sfid'";
+	
+		$this->db->query($sql);
+	}	
+	
+	public function borrar_pds($sfid)
+	{
+		$this->db->where('reference', $sfid);
+		$this->db->delete('pds');
+	}	
+	
 	
 	public function get_stock_cruzado() {
 	

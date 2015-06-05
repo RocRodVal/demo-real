@@ -2,9 +2,20 @@
         <div id="page-wrapper">
             <div class="row">
                 <div class="col-lg-12">
-                    <h1 class="page-header"><?php echo $title ?></h1>
+                    <h1 class="page-header"><?php echo $title ?> <font color="red">[Beta]</font></h1>
                 </div>
             </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <p>Este proceso es irreversible. Se procede al borrado de los dispositivos, muebles y punto de servicio de la app. También se elimina el acceso a la misma.</p>
+                    <p>Mientras se ajusta os recomendaría antes de realizar la operación:</p>
+                    <ul>
+                    <li>Cerrar las incidencias abiertas</li>
+                    <li>Exportar el listado de dispositivos de la tienda desde "Exposición &gt; Inventario tiendas" usando el SFID para filtrar</li>
+                    </ul>
+                    <p>&nbsp;</p>
+                </div>
+            </div>            
             <div class="row">
                 <div class="col-lg-6">
                 	<form action="<?=site_url('admin/cierre_pdv');?>" method="post" class="form-inline form-sfid">

@@ -348,6 +348,42 @@ AND pds.reference IN (XXX,YYY);
 
 
 /*
+Trazabilidad dispositivo
+*/
+
+SELECT 
+	devices_almacen.id_devices_almacen, 
+	device.device, 
+	devices_almacen.alta, 
+	devices_almacen.IMEI, 
+	devices_almacen.mac, 
+	devices_almacen.serial, 
+	devices_almacen.barcode, 
+	devices_almacen.status
+FROM orange.devices_almacen
+JOIN device ON device.id_device = devices_almacen.id_device
+WHERE devices_almacen.id_device = XX
+ORDER BY devices_almacen.alta;
+
+
+SELECT 
+	material_incidencias.id_devices_almacen, 
+	material_incidencias.cantidad,
+	device.device,
+	material_incidencias.fecha,
+	material_incidencias.id_incidencia, 
+	devices_almacen.IMEI,
+	devices_almacen.mac,
+	devices_almacen.serial,
+	devices_almacen.barcode,
+	devices_almacen.status 
+FROM material_incidencias
+JOIN devices_almacen ON devices_almacen.id_devices_almacen = material_incidencias.id_devices_almacen
+JOIN device ON device.id_device = devices_almacen.id_device
+WHERE device.id_device = XX;
+
+
+/*
 Varios acceso master
 */
 SELECT

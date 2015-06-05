@@ -160,8 +160,12 @@ class Admin extends CI_Controller
     	{
     		$this->load->model(array('tienda_model', 'sfid_model'));
     		 
-    		$this->tienda_model->incidencia_update_sfid($this->input->post('sfid_old'),$this->input->post('sfid_new'));
-    		$this->tienda_model->incidencia_update_historico_sfid($historico_sfid);
+    		/* TODO Gestionar cierre incidencias */    		
+    		$this->tienda_model->borrar_agente($this->input->post('reference'));
+    		/* TODO Listado material retorno */
+    		$this->tienda_model->borrar_dispositivos($this->input->post('reference'));
+    		$this->tienda_model->borrar_muebles($this->input->post('reference'));
+    		$this->tienda_model->borrar_pds($this->input->post('reference'));
     
     		redirect('admin/cierre_pdv', 'refresh');
     	}
@@ -170,6 +174,49 @@ class Admin extends CI_Controller
     		redirect('admin', 'refresh');
     	}
     }    
+    
+    
+    public function apertura_pdv()
+    {
+    	if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
+    		$data['id_pds'] = $this->session->userdata('id_pds');
+    		$data['sfid'] = $this->session->userdata('sfid');
+    
+    		$xcrud = xcrud_get_instance();
+    		$this->load->model(array('tienda_model', 'sfid_model'));
+    
+    		$data['tiendas'] =  $this->tienda_model->search_pds($this->input->post('sfid'));
+    
+    		$data['title'] = 'Apertura PdV';
+    
+    		$this->load->view('backend/header', $data);
+    		$this->load->view('backend/navbar', $data);
+    		$this->load->view('backend/apertura_pdv', $data);
+    		$this->load->view('backend/footer');
+    	} else {
+    		redirect('admin', 'refresh');
+    	}
+    }
+     
+    
+    public function update_apertura_pdv()
+    {
+    	if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10))
+    	{
+    		$this->load->model(array('tienda_model', 'sfid_model'));
+    		 
+    		/* TODO Alta de agente */
+    		$this->tienda_model->alta_masiva_muebles($this->input->post('reference'));
+    		$this->tienda_model->alta_masiva_dispositivos($this->input->post('reference'));
+    		    
+    		redirect('admin/apertura_pdv', 'refresh');
+    	}
+    	else
+    	{
+    		redirect('admin', 'refresh');
+    	}
+    }    
+    
     
     
     public function update_dispositivo()
