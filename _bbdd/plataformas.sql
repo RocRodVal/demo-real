@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost:3306
--- Generation Time: Jun 05, 2015 at 06:07 PM
+-- Generation Time: Jun 08, 2015 at 05:16 PM
 -- Server version: 5.5.40
 -- PHP Version: 5.4.34
 
@@ -351,6 +351,8 @@ CREATE TABLE IF NOT EXISTS `ci_sessions` (
 
 INSERT INTO `ci_sessions` (`session_id`, `ip_address`, `user_agent`, `last_activity`, `user_data`) VALUES
 ('0a4fc802fef5104b2a5e30fbb0c06cd7', '80.254.148.179', 'Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident/5.0)', 1433512121, ''),
+('bc332fbb3ee24784344d90e8b02909f7', '212.89.16.245', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.81 Safari/537.36', 1433758081, 'a:3:{s:9:"user_data";s:0:"";s:4:"sfid";s:7:"altabox";s:4:"type";s:2:"10";}'),
+('f2930173681b868ac2e75982a2f7ab56', '212.89.16.245', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.81 Safari/537.36', 1433766466, 'a:3:{s:9:"user_data";s:0:"";s:4:"sfid";s:7:"altabox";s:4:"type";s:2:"10";}'),
 ('1769335b34cf897dc266349ed29ed89b', '195.235.90.242', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_2) AppleWebKit/600.4.10 (KHTML, like Gecko) Version/8.0.4 Safari/600.4.10', 1433506681, 'a:5:{s:9:"user_data";s:0:"";s:4:"sfid";s:8:"19140109";s:6:"id_pds";s:2:"10";s:4:"type";s:1:"1";s:9:"logged_in";b:1;}'),
 ('f34b7bab6defd91d37e3ce9209adbce7', '37.18.240.91', 'Mozilla/5.0 (Windows NT 6.2; WOW64; rv:38.0) Gecko/20100101 Firefox/38.0', 1433510213, ''),
 ('b73dc73c4ca131fe6a4e6ac1638621ec', '194.140.177.204', 'Mozilla/5.0 (Windows NT 5.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.81 Safari/537.36', 1433511031, 'a:4:{s:4:"sfid";s:8:"19990205";s:6:"id_pds";s:2:"12";s:4:"type";s:1:"1";s:9:"logged_in";b:1;}'),

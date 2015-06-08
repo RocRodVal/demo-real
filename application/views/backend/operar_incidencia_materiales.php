@@ -150,7 +150,7 @@
 		                              	<?php
 		                        		foreach ($alarms_almacen as $alarm_almacen) {
 		                            	?>
-		                                	<option value="<?php echo $alarm_almacen->id_alarm ?>"><?php echo $alarm_almacen->brand.' '.$alarm_almacen->code.' '.$alarm_almacen->alarm ?></option>
+		                                	<option value="<?php echo $alarm_almacen->id_alarm ?>"><?php echo $alarm_almacen->client_alarm.' '.$alarm_almacen->brand.' '.$alarm_almacen->code.' '.$alarm_almacen->alarm ?></option>
 				                        <?php
 				                        }
 				                        ?>		                                

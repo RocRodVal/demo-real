@@ -1200,13 +1200,14 @@ class Admin extends CI_Controller
         $xcrud_3 = xcrud_get_instance();
         $xcrud_3->table('alarm');
         $xcrud_3->table_name('Modelo');
+        $xcrud_3->relation('client_alarm', 'client', 'id_client', 'client');
         $xcrud_3->relation('type_alarm', 'type_alarm', 'id_type_alarm', 'type');
         $xcrud_3->relation('brand_alarm', 'brand_alarm', 'id_brand_alarm', 'brand');
         $xcrud_3->change_type('picture_url', 'image');
         $xcrud_3->modal('picture_url');
-        $xcrud_3->label('brand_alarm', 'Fabricante')->label('type_alarm', 'Tipo')->label('code', 'Código')->label('alarm', 'Modelo')->label('picture_url', 'Foto')->label('description', 'Comentarios')->label('units', 'Unidades')->label('status', 'Estado');
-        $xcrud_3->columns('brand_alarm,type_alarm,code,alarm,picture_url,status');
-        $xcrud_3->fields('brand_alarm,type_alarm,code,alarm,picture_url,description,status');
+        $xcrud_3->label('client_alarm', 'Cliente')->label('brand_alarm', 'Fabricante')->label('type_alarm', 'Tipo')->label('code', 'Código')->label('alarm', 'Modelo')->label('picture_url', 'Foto')->label('description', 'Comentarios')->label('units', 'Unidades')->label('status', 'Estado');
+        $xcrud_3->columns('client_alarm,brand_alarm,type_alarm,code,alarm,picture_url,status');
+        $xcrud_3->fields('client_alarm,brand_alarm,type_alarm,code,alarm,picture_url,description,status');
 
         $xcrud_4 = xcrud_get_instance();
         $xcrud_4->table('alarms_display');
@@ -1249,13 +1250,14 @@ class Admin extends CI_Controller
     	$xcrud = xcrud_get_instance();
     	$xcrud->table('alarm');
     	$xcrud->table_name('Alarma');
+    	$xcrud->relation('client_alarm', 'client', 'id_client', 'client');
     	$xcrud->relation('type_alarm', 'type_alarm', 'id_type_alarm', 'type');
     	$xcrud->relation('brand_alarm', 'brand_alarm', 'id_brand_alarm', 'brand');
     	$xcrud->change_type('picture_url', 'image');
     	$xcrud->modal('picture_url');
-    	$xcrud->label('brand_alarm', 'Fabricante')->label('type_alarm', 'Tipo')->label('code', 'Código')->label('alarm', 'Modelo')->label('picture_url', 'Foto')->label('description', 'Comentarios')->label('units', 'Unidades')->label('status', 'Estado');
-    	$xcrud->columns('brand_alarm,type_alarm,code,alarm,picture_url,units,status');
-    	$xcrud->fields('brand_alarm,type_alarm,code,alarm,picture_url,description,units,status');
+    	$xcrud->label('client_alarm', 'Cliente')->label('brand_alarm', 'Fabricante')->label('type_alarm', 'Tipo')->label('code', 'Código')->label('alarm', 'Modelo')->label('picture_url', 'Foto')->label('description', 'Comentarios')->label('units', 'Unidades')->label('status', 'Estado');
+    	$xcrud->columns('client_alarm,brand_alarm,type_alarm,code,alarm,picture_url,units,status');
+    	$xcrud->fields('client_alarm,brand_alarm,type_alarm,code,alarm,picture_url,description,units,status');
     
     	$data['title'] = 'Gestión alarmas';
     	$data['content'] = $xcrud->render();

@@ -498,10 +498,11 @@ class Tienda_model extends CI_Model {
 	
 	public function get_alarms_almacen_reserva() {
 	
-		$query = $this->db->select('alarm.*, brand_alarm.brand, type_alarm.type')
+		$query = $this->db->select('client.client,alarm.*, brand_alarm.brand, type_alarm.type')
+		->join('client','alarm.client_alarm = client.id_client')
 		->join('brand_alarm','alarm.brand_alarm = brand_alarm.id_brand_alarm')
 		->join('type_alarm','alarm.type_alarm = type_alarm.id_type_alarm')
-		->where('status','Alta')
+		->where('alarm.status','Alta')
 		->order_by('brand')
 		->order_by('code')
 		->order_by('alarm')
