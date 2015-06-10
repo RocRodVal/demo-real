@@ -1020,11 +1020,11 @@ class Admin extends CI_Controller
 				FROM incidencias
 				LEFT JOIN intervenciones_incidencias ON incidencias.id_incidencia = intervenciones_incidencias.id_incidencia
             	JOIN pds ON incidencias.id_pds = pds.id_pds
-            	JOIN type_pds ON pds.type_pds = type_pds.id_type_pds
+            	LEFT JOIN type_pds ON pds.type_pds = type_pds.id_type_pds
             	LEFT JOIN province ON pds.province = province.id_province
             	LEFT JOIN county ON pds.county = county.id_county
-				JOIN displays_pds ON incidencias.id_displays_pds = displays_pds.id_displays_pds
-				JOIN display ON displays_pds.id_display = display.id_display
+				LEFT JOIN displays_pds ON incidencias.id_displays_pds = displays_pds.id_displays_pds
+				LEFT JOIN display ON displays_pds.id_display = display.id_display
 				LEFT JOIN devices_pds ON incidencias.id_devices_pds = devices_pds.id_devices_pds
 				LEFT JOIN device ON devices_pds.id_device = device.id_device
             	GROUP BY intervenciones_incidencias.id_intervencion');
@@ -1076,8 +1076,8 @@ class Admin extends CI_Controller
 				JOIN pds ON incidencias.id_pds = pds.id_pds
             	LEFT JOIN province ON pds.province = province.id_province
             	LEFT JOIN county ON pds.county = county.id_county
-				JOIN displays_pds ON incidencias.id_displays_pds = displays_pds.id_displays_pds
-				JOIN display ON displays_pds.id_display = display.id_display
+				LEFT JOIN displays_pds ON incidencias.id_displays_pds = displays_pds.id_displays_pds
+				LEFT JOIN display ON displays_pds.id_display = display.id_display
 				LEFT JOIN devices_pds ON incidencias.id_devices_pds = devices_pds.id_devices_pds
 				LEFT JOIN device ON devices_pds.id_device = device.id_device');
     
@@ -1123,11 +1123,11 @@ class Admin extends CI_Controller
             		incidencias.status_pds AS 'Estado tienda'
 				FROM incidencias
 				JOIN pds ON incidencias.id_pds = pds.id_pds
-    			JOIN type_pds ON pds.type_pds = type_pds.id_type_pds
+    			LEFT JOIN type_pds ON pds.type_pds = type_pds.id_type_pds
             	LEFT JOIN province ON pds.province = province.id_province
             	LEFT JOIN county ON pds.county = county.id_county
-				JOIN displays_pds ON incidencias.id_displays_pds = displays_pds.id_displays_pds
-				JOIN display ON displays_pds.id_display = display.id_display
+				LEFT JOIN displays_pds ON incidencias.id_displays_pds = displays_pds.id_displays_pds
+				LEFT JOIN display ON displays_pds.id_display = display.id_display
 				LEFT JOIN devices_pds ON incidencias.id_devices_pds = devices_pds.id_devices_pds
 				LEFT JOIN device ON devices_pds.id_device = device.id_device");
     

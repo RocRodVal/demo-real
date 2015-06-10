@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost:3306
--- Generation Time: Jun 08, 2015 at 05:16 PM
+-- Generation Time: Jun 10, 2015 at 02:17 PM
 -- Server version: 5.5.40
 -- PHP Version: 5.4.34
 
@@ -353,6 +353,7 @@ INSERT INTO `ci_sessions` (`session_id`, `ip_address`, `user_agent`, `last_activ
 ('0a4fc802fef5104b2a5e30fbb0c06cd7', '80.254.148.179', 'Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident/5.0)', 1433512121, ''),
 ('bc332fbb3ee24784344d90e8b02909f7', '212.89.16.245', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.81 Safari/537.36', 1433758081, 'a:3:{s:9:"user_data";s:0:"";s:4:"sfid";s:7:"altabox";s:4:"type";s:2:"10";}'),
 ('f2930173681b868ac2e75982a2f7ab56', '212.89.16.245', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.81 Safari/537.36', 1433766466, 'a:3:{s:9:"user_data";s:0:"";s:4:"sfid";s:7:"altabox";s:4:"type";s:2:"10";}'),
+('a2fb316dda0a0817418dce9b5b2bfd4a', '194.140.177.204', 'Mozilla/5.0 (Windows NT 5.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.81 Safari/537.36', 1433850900, 'a:5:{s:9:"user_data";s:0:"";s:4:"sfid";s:8:"19990205";s:6:"id_pds";s:2:"12";s:4:"type";s:1:"1";s:9:"logged_in";b:1;}'),
 ('1769335b34cf897dc266349ed29ed89b', '195.235.90.242', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_2) AppleWebKit/600.4.10 (KHTML, like Gecko) Version/8.0.4 Safari/600.4.10', 1433506681, 'a:5:{s:9:"user_data";s:0:"";s:4:"sfid";s:8:"19140109";s:6:"id_pds";s:2:"10";s:4:"type";s:1:"1";s:9:"logged_in";b:1;}'),
 ('f34b7bab6defd91d37e3ce9209adbce7', '37.18.240.91', 'Mozilla/5.0 (Windows NT 6.2; WOW64; rv:38.0) Gecko/20100101 Firefox/38.0', 1433510213, ''),
 ('b73dc73c4ca131fe6a4e6ac1638621ec', '194.140.177.204', 'Mozilla/5.0 (Windows NT 5.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.81 Safari/537.36', 1433511031, 'a:4:{s:4:"sfid";s:8:"19990205";s:6:"id_pds";s:2:"12";s:4:"type";s:1:"1";s:9:"logged_in";b:1;}'),
@@ -1050,7 +1051,14 @@ CREATE TABLE IF NOT EXISTS `incidencias` (
   `intervencion` int(10) unsigned DEFAULT NULL,
   `status_pds` enum('Alta realizada','En proceso','En visita','Finalizada','Cancelada') NOT NULL DEFAULT 'Alta realizada',
   `status` enum('Nueva','Revisada','Material asignado','Instalador asignado','Comunicada','Resuelta','Pendiente recogida','Cerrada','Cancelada') NOT NULL DEFAULT 'Nueva'
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `incidencias`
+--
+
+INSERT INTO `incidencias` (`id_incidencia`, `fecha`, `id_pds`, `id_displays_pds`, `id_devices_pds`, `tipo_averia`, `fail_device`, `alarm_display`, `alarm_device`, `alarm_garra`, `alarm_adverts`, `description_1`, `description_2`, `description_3`, `parte_pdf`, `denuncia`, `foto_url`, `foto_url_2`, `foto_url_3`, `contacto`, `phone`, `email`, `id_operador`, `intervencion`, `status_pds`, `status`) VALUES
+(6, '2015-06-09 10:45:36', 12, 12, NULL, 'Avería', 0, 1, 0, 0, 0, 'Necesitamos un duplicado del mando de activación y desastivación de las alarmas del armario. Saltan las alarmas y necesitamos que la persona de recepción pueda apagarlo, ya que el mando está en plataforma y hay veces que tardán en venir a apagarlo. En plataforma también lo necesitan ya que a partir de las 6 esta está  cerrada.\nSi necesitan cualquier aclaración no duden en ponerse en contacto conmigo.\nSaludos cordiales.\n\nMónica Gutiérrez', '', '', '', '', '', '', '', 'Mónica Gutiérrez Cristiano', '675797802', NULL, NULL, NULL, 'Alta realizada', 'Nueva');
 
 -- --------------------------------------------------------
 
@@ -1868,7 +1876,7 @@ MODIFY `id_historico` int(10) unsigned NOT NULL AUTO_INCREMENT;
 -- AUTO_INCREMENT for table `incidencias`
 --
 ALTER TABLE `incidencias`
-MODIFY `id_incidencia` int(10) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=6;
+MODIFY `id_incidencia` int(10) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=7;
 --
 -- AUTO_INCREMENT for table `intervenciones`
 --
