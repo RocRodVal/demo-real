@@ -612,12 +612,15 @@ class Tienda_model_new extends CI_Model {
 	}	
 	
 	
-	public function get_incidencias($page = 1, $cfg_pagination = NULL,$buscador=NULL) {
+	public function get_incidencias($page = 1, $cfg_pagination = NULL,$filtro=NULL,$buscador=NULL) {
         $this->db->select('incidencias.*,pds.reference as reference')
-                ->join('pds','incidencias.id_pds = pds.id_pds')
-                ->where('incidencias.status !=','Cerrada')
-                ->where('incidencias.status !=','Cancelada')
-                ->where('incidencias.status !=','Resuelta');
+                ->join('pds','incidencias.id_pds = pds.id_pds');
+
+        $this->db->where('(incidencias.status != "Cerrada" && incidencias.status != "Cancelada" && incidencias.status != "Resuelta")');
+
+        if (!is_null($filtro) && !empty($filtro)){
+            $this->db->where('incidencias.status', $filtro);
+        }
 
         if(! empty($buscador['buscar_incidencia']))
             $this->db->where('incidencias.id_incidencia',$buscador['buscar_incidencia']);
@@ -632,12 +635,15 @@ class Tienda_model_new extends CI_Model {
 			return $query->result();
 	}
 
-    public function get_incidencias_quantity($buscador=NULL) {
+    public function get_incidencias_quantity($filtro=NULL,$buscador=NULL) {
         $this->db->select('COUNT(incidencias.id_incidencia) AS cantidad')
-            ->join('pds','incidencias.id_pds = pds.id_pds')
-            ->where('incidencias.status !=','Cerrada')
-            ->where('incidencias.status !=','Cancelada')
-            ->where('incidencias.status !=','Resuelta');
+            ->join('pds','incidencias.id_pds = pds.id_pds');
+
+        $this->db->where('(incidencias.status != "Cerrada" && incidencias.status != "Cancelada" && incidencias.status != "Resuelta")');
+
+        if (!is_null($filtro) && !empty($filtro)){
+            $this->db->where('incidencias.status', $filtro);
+        }
 
         if(! empty($buscador['buscar_incidencia']))
             $this->db->where('incidencias.id_incidencia',$buscador['buscar_incidencia']);
@@ -676,19 +682,10 @@ class Tienda_model_new extends CI_Model {
         if(! empty($buscador['buscar_sfid']))
             $this->db->where('pds.reference',$buscador['buscar_sfid']);
 
+        $this->db->where('(incidencias.status = "Cerrada" || incidencias.status = "Cancelada" || incidencias.status = "Resuelta")');
 
-        if (is_null($filtro_finalizadas) || $filtro_finalizadas === ""){
-            $this->db->where('(incidencias.status = "Cerrada" || incidencias.status = "Cancelada" || incidencias.status = "Resuelta")');
-        }else {
-            if ($filtro_finalizadas === "Cerrada") {
-                $this->db->where('incidencias.status', 'Cerrada');
-            }
-            if ($filtro_finalizadas === "Cancelada") {
-                $this->db->where('incidencias.status', 'Cancelada');
-            }
-            if ($filtro_finalizadas === "Resuelta") {
-                $this->db->where('incidencias.status', 'Resuelta');
-            }
+        if (!is_null($filtro_finalizadas) && !empty($filtro_finalizadas)){
+             $this->db->where('incidencias.status', $filtro_finalizadas);
         }
 
 
@@ -713,18 +710,10 @@ class Tienda_model_new extends CI_Model {
         if(! empty($buscador['buscar_sfid']))
             $this->db->where('pds.reference',$buscador['buscar_sfid']);
 
-        if (is_null($filtro_finalizadas) || $filtro_finalizadas === ""){
-            $this->db->where('(incidencias.status = "Cerrada" || incidencias.status = "Cancelada" || incidencias.status = "Resuelta")');
-        }else {
-            if ($filtro_finalizadas === "Cerrada") {
-                $this->db->where('incidencias.status', 'Cerrada');
-            }
-            if ($filtro_finalizadas === "Cancelada") {
-                $this->db->where('incidencias.status', 'Cancelada');
-            }
-            if ($filtro_finalizadas === "Resuelta") {
-                $this->db->where('incidencias.status', 'Resuelta');
-            }
+        $this->db->where('(incidencias.status = "Cerrada" || incidencias.status = "Cancelada" || incidencias.status = "Resuelta")');
+
+        if (!is_null($filtro_finalizadas) && !empty($filtro_finalizadas)){
+            $this->db->where('incidencias.status', $filtro_finalizadas);
         }
 
 

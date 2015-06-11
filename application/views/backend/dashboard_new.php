@@ -77,6 +77,28 @@
                     <div class="row buscador">
                         <form action="<?=base_url()?>admin/dashboard_new/#incidencias_abiertas" method="post">
                             <div class="col-sm-2">
+                                <label for="filtrar">Mostrar: </label>
+                                <select name="filtrar" id="filtrar" class="form-control input-sm">
+                                    <option value="" <?php echo ($filtro==="") ? 'selected="selected"' : ''?>>Todas</option>
+                                    <option value="Nueva" <?php echo ($filtro==="Nueva") ? 'selected="selected"' : ''?>>Nuevas</option>
+                                    <option value="Revisada" <?php echo ($filtro==="Revisada") ? 'selected="selected"' : ''?>>Revisadas</option>
+                                    <option value="Comunicada" <?php echo ($filtro==="Comunicada") ? 'selected="selected"' : ''?>>Comunicadas</option>
+                                    <option value="Instalador asignado" <?php echo ($filtro==="Instalador asignado") ? 'selected="selected"' : ''?>>Instalador asignado</option>
+                                    <option value="Pendiente recogida" <?php echo ($filtro==="Pendiente recogida") ? 'selected="selected"' : ''?>>Pendiente recogida</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-1">
+                                <input type="submit" value="Aplicar" class="form-control input-sm">
+                            </div>
+                            <div class="col-sm-1">
+                                <?php if(! empty($filtro)) { ?>
+                                    <a href="<?=base_url()?>admin/dashboard_new/borrar_busqueda/#incidencias_abiertas" class="reiniciar_busqueda">Reiniciar</a>
+                                <?php } ?>
+
+
+                            </div>
+
+                            <div class="col-sm-2">
                                 <label for="buscar_incidencia">Buscar incidencia: </label>
                                 <input type="text" name="buscar_incidencia" id="buscar_incidencia" class="form-control input-sm" placeholder="Ref. incidencia" <?php echo (!empty($buscar_incidencia)) ? ' value="'.$buscar_incidencia.'" ' : ''?> />
                             </div>

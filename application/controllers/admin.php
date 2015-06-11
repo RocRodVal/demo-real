@@ -176,6 +176,7 @@ class Admin extends CI_Controller
             {
                 $this->session->unset_userdata('buscar_sfid');
                 $this->session->unset_userdata('buscar_incidencia');
+                $this->session->unset_userdata('filtro');
                 $this->session->unset_userdata('filtro_finalizadas');
             }
 
@@ -188,6 +189,11 @@ class Admin extends CI_Controller
             // Buscar en el POST si hay busqueda, y si la hay usarla y guardarla además en sesion
             $do_busqueda = $this->input->post('do_busqueda');
 
+            // Obtener el filtro, primero de Session y despues del post, si procede..
+            $filtro = NULL;
+            $sess_filtro = $this->session->userdata('filtro');
+            if(! empty($sess_filtro)) $filtro = $sess_filtro;
+
             if($do_busqueda=="si")
             {
                 $buscar_sfid = $this->input->post('buscar_sfid');
@@ -196,18 +202,35 @@ class Admin extends CI_Controller
                 $buscar_incidencia = $this->input->post('buscar_incidencia');
                 $this->session->set_userdata('buscar_incidencia', $buscar_incidencia);
 
+
+
+                $post_filtro =$this->input->post('filtrar');
+                if(! empty($post_filtro))
+                {
+                    $filtro = $post_filtro;
+                    $this->session->set_userdata('filtro',$filtro);
+                }
+
+
+
+
             }
+
+
+
             $buscador['buscar_sfid']        = $buscar_sfid;
             $buscador['buscar_incidencia']  = $buscar_incidencia;
 
             $data['buscar_sfid']        = $buscar_sfid;
             $data['buscar_incidencia']  = $buscar_incidencia;
 
+            $data["filtro"] = $filtro;
+
             $this->load->library('app/paginationlib');
 
             $data['title'] = 'Mis solicitudes';
             $per_page = 100;
-            $total_incidencias = $this->tienda_model_new->get_incidencias_quantity($buscador);   // Sacar el total de incidencias, para el paginador
+            $total_incidencias = $this->tienda_model_new->get_incidencias_quantity($filtro,$buscador);   // Sacar el total de incidencias, para el paginador
             $cfg_pagination = $this->paginationlib->init_pagination("admin/dashboard_new/incidencias/",$total_incidencias,$per_page,$segment);
 
 
@@ -220,7 +243,7 @@ class Admin extends CI_Controller
 
             $data["pagination_helper"]   = $this->pagination;
 
-            $incidencias = $this->tienda_model_new->get_incidencias($page,$cfg_pagination,$buscador);
+            $incidencias = $this->tienda_model_new->get_incidencias($page,$cfg_pagination,$filtro,$buscador);
 
 
 
