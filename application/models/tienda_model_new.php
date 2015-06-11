@@ -697,7 +697,7 @@ class Tienda_model_new extends CI_Model {
 
 
         $query = $this->db->get('incidencias',$cfg_pagination['per_page'], ($page-1) * $cfg_pagination['per_page']);
-        echo $this->db->last_query();
+        //echo $this->db->last_query();
         return $query->result();
     }
 

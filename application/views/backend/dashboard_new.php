@@ -80,7 +80,7 @@
 
 
                         <?php if(! empty($buscar_sfid) || ! empty($buscar_incidencia)) { ?>
-                            <a href="<?=base_url()?>admin/dashboard_new/" class="reiniciar_busqueda">Reiniciar</a>
+                            <a href="<?=base_url()?>admin/dashboard_new/borrar_busqueda" class="reiniciar_busqueda">Reiniciar</a>
                         <?php } ?>
 
 		            <? } else {
@@ -107,7 +107,7 @@
                                 </div>
                                 <div class="col-sm-1">
                                     <?php if(! empty($buscar_sfid) || ! empty($buscar_incidencia)) { ?>
-                                        <a href="<?=base_url()?>admin/dashboard_new/" class="reiniciar_busqueda">Reiniciar</a>
+                                        <a href="<?=base_url()?>admin/dashboard_new/borrar_busqueda" class="reiniciar_busqueda">Reiniciar</a>
                                     <?php } ?>
                                 </div>
                             </form>
@@ -251,7 +251,7 @@
                                     </div>
                                     <div class="col-sm-1">
                                         <?php if(! empty($buscar_sfid) || ! empty($buscar_incidencia)) { ?>
-                                            <a href="<?=base_url()?>admin/dashboard_new/" class="reiniciar_busqueda">Reiniciar</a>
+                                            <a href="<?=base_url()?>admin/dashboard_new/borrar_busqueda" class="reiniciar_busqueda">Reiniciar</a>
                                         <?php } ?>
                                     </div>
                                 </form>

@@ -147,7 +147,7 @@ class Admin extends CI_Controller
             }
 
             // Obtener datos del buscador de SFID/Incidencia
-            $buscador = array();
+            /*$buscador = array();
             $es_busqueda = $this->uri->segment(5);
             $buscar_incidencia = NULL;
             $buscar_sfid = NULL;
@@ -166,7 +166,45 @@ class Admin extends CI_Controller
             $buscador['buscar_incidencia']  = ($buscar_incidencia != 'false') ? $buscar_incidencia : '';
 
             $data['buscar_sfid']        = $buscador['buscar_sfid'];
-            $data['buscar_incidencia']  = $buscador['buscar_incidencia'];
+            $data['buscar_incidencia']  = $buscador['buscar_incidencia'];*/
+
+            $buscar_incidencia = NULL;
+            $buscar_sfid = NULL;
+
+            $borrar_busqueda = $this->uri->segment(3);
+            if($borrar_busqueda === "borrar_busqueda")
+            {
+                $this->session->unset_userdata('buscar_sfid');
+                $this->session->unset_userdata('buscar_incidencia');
+            }
+
+            // Consultar a la session si ya se ha buscado algo y guardado allí.
+            $sess_buscar_sfid = $this->session->userdata('buscar_sfid');
+            $sess_buscar_incidencia = $this->session->userdata('buscar_incidencia');
+            if(! empty($sess_buscar_sfid)) $buscar_sfid = $sess_buscar_sfid;
+            if(! empty($sess_buscar_incidencia)) $buscar_incidencia = $sess_buscar_incidencia;
+
+            // Buscar en el POST si hay busqueda, y si la hay usarla y guardarla además en sesion
+            $post_buscar_sfid = $this->input->post('buscar_sfid');
+            $post_buscar_incidencia = $this->input->post('buscar_incidencia');
+            if(! empty($post_buscar_sfid))
+            {
+                    $buscar_sfid = $post_buscar_sfid;
+                    $this->session->set_userdata('buscar_sfid',$post_buscar_sfid);
+
+
+            }
+            if(! empty($post_buscar_incidencia))
+            {
+                $buscar_incidencia = $post_buscar_incidencia;
+                $this->session->set_userdata('buscar_incidencia',$post_buscar_incidencia);
+            }
+
+            $buscador['buscar_sfid']        = $buscar_sfid;
+            $buscador['buscar_incidencia']  = $buscar_incidencia;
+
+            $data['buscar_sfid']        = $buscar_sfid;
+            $data['buscar_incidencia']  = $buscar_incidencia;
 
             $this->load->library('app/paginationlib');
 
@@ -214,14 +252,18 @@ class Admin extends CI_Controller
                 $segment_finalizadas = null;
             }
 
-            // Obtener el filtro, primero de GET y despues del post, si procede..
+            // Obtener el filtro, primero de Session y despues del post, si procede..
             $filtro_finalizadas = NULL;
 
-            $get_finalizadas =$this->uri->segment(9);
-            if(! empty($get_finalizadas)) $filtro_finalizadas = $get_finalizadas;
+            $sess_filtro_finalizadas = $this->session->userdata('filtro_finalizadas');
+            if(! empty($sess_filtro_finalizadas)) $filtro_finalizadas = $sess_filtro_finalizadas;
 
             $post_finalizadas =$this->input->post('filtrar_finalizadas');
-            if(! empty($post_finalizadas)) $filtro_finalizadas = $post_finalizadas;
+            if(! empty($post_finalizadas))
+            {
+                $filtro_finalizadas = $post_finalizadas;
+                $this->session->set_userdata('filtro_finalizadas',$filtro_finalizadas);
+            }
 
 
             $data["filtro_finalizadas"] = $filtro_finalizadas;
@@ -231,17 +273,8 @@ class Admin extends CI_Controller
             $total_incidencias = $this->tienda_model_new->get_incidencias_finalizadas_quantity($filtro_finalizadas,$buscador);   // Sacar el total de incidencias, para el paginador
             $cfg_pagination = $this->paginationlib->init_pagination("admin/dashboard_new/finalizadas/",$total_incidencias,$per_page,$segment_finalizadas);
 
-            $cfg_pagination["suffix"] = '';
 
-
-            if(!empty($buscador))
-                $cfg_pagination["suffix"] .= '/buscar/'.(!empty($buscador['buscar_incidencia'])?$buscador['buscar_incidencia']:'false').'/'.$buscador['buscar_sfid'];
-
-            if(!empty($filtro_finalizadas))
-                $cfg_pagination["suffix"] .= '/filtro/'.$filtro_finalizadas.'/';
-
-
-            $cfg_pagination["suffix"] .= '#incidencias_cerradas';
+            $cfg_pagination["suffix"] = '#incidencias_cerradas';
 
             $this->load->library('pagination',$cfg_pagination,'pagination_finalizadas');
             $this->pagination_finalizadas->initialize($cfg_pagination);
