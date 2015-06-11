@@ -3,12 +3,17 @@
 class Admin extends CI_Controller
 {
 
+
     function __construct()
     {
         parent::__construct();
         $this->load->database();
         $this->load->helper(array('email', 'text', 'xcrud'));
-        $this->load->library(array('email', 'encrypt', 'form_validation', 'session'));
+
+        $this->load->library(array('email', 'encrypt', 'form_validation', 'session','pagination'));
+        $this->load->library('uri');
+
+
     }
 
 
@@ -51,17 +56,17 @@ class Admin extends CI_Controller
             $this->load->model(array('intervencion_model', 'tienda_model', 'sfid_model','chat_model'));
 
             $data['tiendas'] = $this->tienda_model->search_pds($this->input->post('sfid'));
-            
+
             $sfid = $this->tienda_model->get_pds($data['id_pds']);
-            
+
             $data['id_pds']     = $sfid['id_pds'];
             $data['commercial'] = $sfid['commercial'];
             $data['territory']  = $sfid['territory'];
             $data['reference']  = $sfid['reference'];
             $data['address']    = $sfid['address'];
             $data['zip']        = $sfid['zip'];
-            $data['city']       = $sfid['city'];            
-            
+            $data['city']       = $sfid['city'];
+
             $incidencias = $this->tienda_model->get_incidencias();
 
             foreach ($incidencias as $incidencia) {
@@ -85,6 +90,190 @@ class Admin extends CI_Controller
     }
 
 
+    /**
+     *  Método que inicializa la paginación y devuelve el array de configuración de la misma
+     *
+     * @param $uri          URL Base que contendrá la paginación
+     * @param $total_rows   Total de filas a paginar
+     * @param int $per_page Numero de filas por página
+     * @param int $segment  Segmento de la URI que corresponderá al nº de página
+     * @return $config array con la configuración del paginador
+     */
+   /* public function init_pagination($uri,$total_rows,$per_page=10,$segment=4){
+
+        $ci                          =& get_instance();
+        $config['per_page']          = $per_page;
+        $config['uri_segment']       = $segment;
+        $config['base_url']          = base_url().$uri;
+        $config['total_rows']        = $total_rows;
+        $config['use_page_numbers']  = TRUE;
+
+        $ci->pagination->initialize($config);
+        return $config;
+    }*/
+
+    public function dashboard_new()
+    {
+        if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
+            $data['id_pds'] = $this->session->userdata('id_pds');
+            $data['sfid'] = $this->session->userdata('sfid');
+
+            $xcrud = xcrud_get_instance();
+
+
+            $this->load->model(array('intervencion_model', 'tienda_model_new', 'sfid_model','chat_model'));
+
+            $data['tiendas'] = $this->tienda_model_new->search_pds($this->input->post('sfid'));
+
+            $sfid = $this->tienda_model_new->get_pds($data['id_pds']);
+
+            $data['id_pds']     = $sfid['id_pds'];
+            $data['commercial'] = $sfid['commercial'];
+            $data['territory']  = $sfid['territory'];
+            $data['reference']  = $sfid['reference'];
+            $data['address']    = $sfid['address'];
+            $data['zip']        = $sfid['zip'];
+            $data['city']       = $sfid['city'];
+
+
+            // Comprobar si existe el segmento page en la URI..
+            $get_page = $this->uri->segment(4);
+            if( $this->uri->segment(3) == "incidencias") {
+                $page = ( ! empty($get_page) ) ? $get_page : 1 ;
+                $segment = 4;
+            }else{
+                $page = 1;
+                $segment = null;
+            }
+
+            // Obtener datos del buscador de SFID/Incidencia
+            $buscador = array();
+            $es_busqueda = $this->uri->segment(5);
+            $buscar_incidencia = NULL;
+            $buscar_sfid = NULL;
+
+            if($es_busqueda==="buscar"){
+                $buscar_incidencia = $this->uri->segment(6);
+                $buscar_sfid = $this->uri->segment(7);
+            }
+            $post_buscar_sfid = $this->input->post('buscar_sfid');
+            $post_buscar_incidencia = $this->input->post('buscar_incidencia');
+
+            if(! empty($post_buscar_sfid)) $buscar_sfid = $post_buscar_sfid;
+            if(! empty($post_buscar_incidencia)) $buscar_incidencia = $post_buscar_incidencia;
+
+            $buscador['buscar_sfid']        = ($buscar_sfid != 'false') ? $buscar_sfid : '';
+            $buscador['buscar_incidencia']  = ($buscar_incidencia != 'false') ? $buscar_incidencia : '';
+
+            $data['buscar_sfid']        = $buscador['buscar_sfid'];
+            $data['buscar_incidencia']  = $buscador['buscar_incidencia'];
+
+            $this->load->library('app/paginationlib');
+
+            $data['title'] = 'Mis solicitudes';
+            $per_page = 100;
+            $total_incidencias = $this->tienda_model_new->get_incidencias_quantity($buscador);   // Sacar el total de incidencias, para el paginador
+            $cfg_pagination = $this->paginationlib->init_pagination("admin/dashboard_new/incidencias/",$total_incidencias,$per_page,$segment);
+
+
+            $this->load->library('pagination',$cfg_pagination);
+            $this->pagination->initialize($cfg_pagination);
+
+            // Indicamos si habrá que mostrar el paginador en la vista
+            $data['show_paginator'] = false;
+            if($total_incidencias > $cfg_pagination['per_page']) $data['show_paginator'] = true;
+
+            $data["pagination_helper"]   = $this->pagination;
+
+            $incidencias = $this->tienda_model_new->get_incidencias($page,$cfg_pagination,$buscador);
+
+
+
+            foreach ($incidencias as $incidencia) {
+                $incidencia->device = $this->sfid_model->get_device($incidencia->id_devices_pds);
+                $incidencia->display = $this->sfid_model->get_display($incidencia->id_displays_pds);
+                $incidencia->nuevos  = $this->chat_model->contar_nuevos($incidencia->id_incidencia,$incidencia->reference);
+                $incidencia->intervencion = $this->intervencion_model->get_intervencion_incidencia($incidencia->id_incidencia);
+            }
+
+            $data['incidencias'] = $incidencias;
+
+            /**
+             * Sacar la info para la tabla de Incidencias Finalizadas.
+             */
+            $data['title_finalizadas'] = 'Incidencias finalizadas';
+
+
+            // Obtener la página actual del GET y si no existe, definirla a 1
+            $get_page = $this->uri->segment(4);
+            if( $this->uri->segment(3) == "finalizadas") {
+                $page_finalizadas = ( ! empty($get_page) ) ? $get_page : 1 ;
+                $segment_finalizadas = 4;
+            }else{
+                $page_finalizadas = 1;
+                $segment_finalizadas = null;
+            }
+
+            // Obtener el filtro, primero de GET y despues del post, si procede..
+            $filtro_finalizadas = NULL;
+
+            $get_finalizadas =$this->uri->segment(9);
+            if(! empty($get_finalizadas)) $filtro_finalizadas = $get_finalizadas;
+
+            $post_finalizadas =$this->input->post('filtrar_finalizadas');
+            if(! empty($post_finalizadas)) $filtro_finalizadas = $post_finalizadas;
+
+
+            $data["filtro_finalizadas"] = $filtro_finalizadas;
+
+            $per_page = 5;
+
+            $total_incidencias = $this->tienda_model_new->get_incidencias_finalizadas_quantity($filtro_finalizadas,$buscador);   // Sacar el total de incidencias, para el paginador
+            $cfg_pagination = $this->paginationlib->init_pagination("admin/dashboard_new/finalizadas/",$total_incidencias,$per_page,$segment_finalizadas);
+
+            $cfg_pagination["suffix"] = '';
+
+
+            if(!empty($buscador))
+                $cfg_pagination["suffix"] .= '/buscar/'.(!empty($buscador['buscar_incidencia'])?$buscador['buscar_incidencia']:'false').'/'.$buscador['buscar_sfid'];
+
+            if(!empty($filtro_finalizadas))
+                $cfg_pagination["suffix"] .= '/filtro/'.$filtro_finalizadas.'/';
+
+
+            $cfg_pagination["suffix"] .= '#incidencias_cerradas';
+
+            $this->load->library('pagination',$cfg_pagination,'pagination_finalizadas');
+            $this->pagination_finalizadas->initialize($cfg_pagination);
+            $data["pagination_finalizadas_helper"]   = $this->pagination_finalizadas;
+
+            // Indicamos si habrá que mostrar el paginador en la vista
+            $data['show_paginator_finalizadas'] = false;
+            if($total_incidencias > $cfg_pagination['per_page']) $data['show_paginator_finalizadas'] = true;
+
+            $incidencias_finalizadas = $this->tienda_model_new->get_incidencias_finalizadas($page_finalizadas,$cfg_pagination,$filtro_finalizadas,$buscador);
+
+            foreach ($incidencias_finalizadas as $incidencia) {
+                $incidencia->device = $this->sfid_model->get_device($incidencia->id_devices_pds);
+                $incidencia->display = $this->sfid_model->get_display($incidencia->id_displays_pds);
+                $incidencia->nuevos  = $this->chat_model->contar_nuevos($incidencia->id_incidencia,$incidencia->reference);
+                $incidencia->intervencion = $this->intervencion_model->get_intervencion_incidencia($incidencia->id_incidencia);
+            }
+
+            $data['incidencias_finalizadas'] = $incidencias_finalizadas;
+
+            $this->load->view('backend/header', $data);
+            $this->load->view('backend/navbar', $data);
+            $this->load->view('backend/dashboard_new', $data);
+            $this->load->view('backend/footer');
+        } else {
+            redirect('admin', 'refresh');
+        }
+    }
+
+
+
+
     public function material_retorno()
     {
         if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
@@ -106,21 +295,21 @@ class Admin extends CI_Controller
             redirect('admin', 'refresh');
         }
     }
-    
-    
+
+
     public function cambio_sfid()
     {
     	if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
     		$data['id_pds'] = $this->session->userdata('id_pds');
     		$data['sfid'] = $this->session->userdata('sfid');
-    
+
     		$xcrud = xcrud_get_instance();
     		$this->load->model(array('tienda_model', 'sfid_model'));
-    
+
 			$data['tiendas'] =  $this->tienda_model->search_pds($this->input->post('sfid'));
-    
+
     		$data['title'] = 'Cambio de SFID';
-    
+
     		$this->load->view('backend/header', $data);
     		$this->load->view('backend/navbar', $data);
     		$this->load->view('backend/cambio_sfid', $data);
@@ -129,21 +318,21 @@ class Admin extends CI_Controller
     		redirect('admin', 'refresh');
     	}
     }
-    
-    
+
+
     public function cierre_pdv()
     {
     	if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
     		$data['id_pds'] = $this->session->userdata('id_pds');
     		$data['sfid'] = $this->session->userdata('sfid');
-    
+
     		$xcrud = xcrud_get_instance();
     		$this->load->model(array('tienda_model', 'sfid_model'));
-    
+
     		$data['tiendas'] =  $this->tienda_model->search_pds($this->input->post('sfid'));
-    
+
     		$data['title'] = 'Cierre PdV';
-    
+
     		$this->load->view('backend/header', $data);
     		$this->load->view('backend/navbar', $data);
     		$this->load->view('backend/cierre_pdv', $data);
@@ -151,44 +340,44 @@ class Admin extends CI_Controller
     	} else {
     		redirect('admin', 'refresh');
     	}
-    } 
-     
+    }
+
 
     public function update_cierre_pdv()
     {
     	if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10))
     	{
     		$this->load->model(array('tienda_model', 'sfid_model'));
-    		 
-    		/* TODO Gestionar cierre incidencias */    		
+
+    		/* TODO Gestionar cierre incidencias */
     		$this->tienda_model->borrar_agente($this->input->post('reference'));
     		/* TODO Listado material retorno */
     		$this->tienda_model->borrar_dispositivos($this->input->post('reference'));
     		$this->tienda_model->borrar_muebles($this->input->post('reference'));
     		$this->tienda_model->borrar_pds($this->input->post('reference'));
-    
+
     		redirect('admin/cierre_pdv', 'refresh');
     	}
     	else
     	{
     		redirect('admin', 'refresh');
     	}
-    }    
-    
-    
+    }
+
+
     public function apertura_pdv()
     {
     	if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
     		$data['id_pds'] = $this->session->userdata('id_pds');
     		$data['sfid'] = $this->session->userdata('sfid');
-    
+
     		$xcrud = xcrud_get_instance();
     		$this->load->model(array('tienda_model', 'sfid_model'));
-    
+
     		$data['tiendas'] =  $this->tienda_model->search_pds($this->input->post('sfid'));
-    
+
     		$data['title'] = 'Apertura PdV';
-    
+
     		$this->load->view('backend/header', $data);
     		$this->load->view('backend/navbar', $data);
     		$this->load->view('backend/apertura_pdv', $data);
@@ -197,41 +386,41 @@ class Admin extends CI_Controller
     		redirect('admin', 'refresh');
     	}
     }
-     
-    
+
+
     public function update_apertura_pdv()
     {
     	if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10))
     	{
     		$this->load->model(array('tienda_model', 'sfid_model'));
-    		 
+
     		/* TODO Alta de agente */
     		$this->tienda_model->alta_masiva_muebles($this->input->post('reference'));
     		$this->tienda_model->alta_masiva_dispositivos($this->input->post('reference'));
-    		    
+
     		redirect('admin/apertura_pdv', 'refresh');
     	}
     	else
     	{
     		redirect('admin', 'refresh');
     	}
-    }    
-    
-    
-    
+    }
+
+
+
     public function update_dispositivo()
     {
     	if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
     		$data['id_pds'] = $this->session->userdata('id_pds');
     		$data['sfid'] = $this->session->userdata('sfid');
-    
+
     		$xcrud = xcrud_get_instance();
     		$this->load->model(array('tienda_model', 'sfid_model'));
-    
+
     		$data['dispositivos']    =  $this->tienda_model->search_dispositivo_id($this->input->post('dipositivo_almacen_1'));
-    
+
     		$data['title'] = 'Carga datos dispositivo';
-    
+
     		$this->load->view('backend/header', $data);
     		$this->load->view('backend/navbar', $data);
     		$this->load->view('backend/carga_datos_dispositivo_edit', $data);
@@ -240,14 +429,14 @@ class Admin extends CI_Controller
     		redirect('admin', 'refresh');
     	}
     }
-        
-    
+
+
     public function update_sfid()
     {
     	if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10))
     	{
     		$this->load->model(array('tienda_model', 'sfid_model'));
-    	
+
 	    	if ($this->input->post('sfid_new') <> '')
 	    	{
 	    		$historico_sfid = array(
@@ -256,20 +445,20 @@ class Admin extends CI_Controller
 	    				'sfid_old' => $this->input->post('sfid_old'),
 	    				'sfid_new' => $this->input->post('sfid_new')
 	    		);
-	    		
+
 	    		$this->tienda_model->incidencia_update_sfid($this->input->post('sfid_old'),$this->input->post('sfid_new'));
 	    		$this->tienda_model->incidencia_update_historico_sfid($historico_sfid);
 	    	}
-	    	
+
 	    	redirect('admin/cambio_sfid', 'refresh');
-	    } 
-	    else 
+	    }
+	    else
 	    {
 	    	redirect('admin', 'refresh');
-	    }	    		
-    }    
+	    }
+    }
 
-    
+
     public function operar_incidencia()
     {
         if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
@@ -290,15 +479,15 @@ class Admin extends CI_Controller
             $data['zip'] = $sfid['zip'];
             $data['city'] = $sfid['city'];
             $data['province'] = $sfid['province'];
-            $data['phone_pds'] = $sfid['phone'];      
-            
+            $data['phone_pds'] = $sfid['phone'];
+
             $data['id_pds_url'] = $id_pds;
             $data['id_inc_url'] = $id_inc;
-            
+
             $incidencia = $this->tienda_model->get_incidencia($id_inc);
-            
+
             $historico_material_asignado = $this->tienda_model->historico_fecha($id_inc,'Material asignado');
-            
+
             if (isset($historico_material_asignado['fecha']))
             {
             	$data['historico_material_asignado'] = $historico_material_asignado['fecha'];
@@ -307,9 +496,9 @@ class Admin extends CI_Controller
             {
             	$data['historico_material_asignado'] = '---';
             }
-                        
+
             $historico_fecha_comunicada = $this->tienda_model->historico_fecha($id_inc,'Comunicada');
-            
+
             if (isset($historico_fecha_comunicada['fecha']))
             {
             	$data['historico_fecha_comunicada'] = $historico_fecha_comunicada['fecha'];
@@ -317,22 +506,22 @@ class Admin extends CI_Controller
             else
             {
             	$data['historico_fecha_comunicada'] = '---';
-            }  
-            
+            }
+
             $incidencia['intervencion'] = $this->intervencion_model->get_intervencion_incidencia($id_inc);
             $incidencia['device'] = $this->sfid_model->get_device($incidencia['id_devices_pds']);
             $incidencia['display'] = $this->sfid_model->get_display($incidencia['id_displays_pds']);
             $data['incidencia'] = $incidencia;
-            
+
             $material_dispositivos = $this->tienda_model->get_material_dispositivos($incidencia['id_incidencia']);
-            $data['material_dispositivos'] = $material_dispositivos;            
-            
+            $data['material_dispositivos'] = $material_dispositivos;
+
             $material_alarmas = $this->tienda_model->get_material_alarmas($incidencia['id_incidencia']);
             $data['material_alarmas'] = $material_alarmas;
-                
+
             $chats = $this->chat_model->get_chat_incidencia_pds($incidencia['id_incidencia']);
             $leido = $this->chat_model->marcar_leido($incidencia['id_incidencia'],$sfid['reference']);
-            $data['chats'] = $chats;            
+            $data['chats'] = $chats;
 
             $data['title'] = 'Operativa incidencia Ref. '.$data['id_inc_url'];
 
@@ -344,20 +533,20 @@ class Admin extends CI_Controller
             redirect('admin', 'refresh');
         }
     }
-    
-    
+
+
     public function imprimir_incidencia()
     {
     	if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
     		$id_pds = $this->uri->segment(3);
     		$id_inc = $this->uri->segment(4);
-    
+
     		$xcrud = xcrud_get_instance();
     		$this->load->model(array('chat_model', 'intervencion_model', 'tienda_model', 'sfid_model'));
     		$this->load->helper(array('dompdf', 'file'));
-    
+
     		$sfid = $this->tienda_model->get_pds($id_pds);
-    
+
     		$data['id_pds'] = 'ABX/PDS-' . $sfid['id_pds'];
     		$data['commercial'] = $sfid['commercial'];
     		$data['territory'] = $sfid['territory'];
@@ -367,14 +556,14 @@ class Admin extends CI_Controller
     		$data['city'] = $sfid['city'];
     		$data['province'] = $sfid['province'];
     		$data['phone_pds'] = $sfid['phone'];
-    
+
     		$data['id_pds_url'] = $id_pds;
     		$data['id_inc_url'] = $id_inc;
-    
+
     		$incidencia = $this->tienda_model->get_incidencia($id_inc);
-    
+
     		$historico_material_asignado = $this->tienda_model->historico_fecha($id_inc,'Material asignado');
-    
+
     		if (isset($historico_material_asignado['fecha']))
     		{
     			$data['historico_material_asignado'] = $historico_material_asignado['fecha'];
@@ -383,9 +572,9 @@ class Admin extends CI_Controller
     		{
     			$data['historico_material_asignado'] = '---';
     		}
-    
+
     		$historico_fecha_comunicada = $this->tienda_model->historico_fecha($id_inc,'Comunicada');
-    
+
     		if (isset($historico_fecha_comunicada['fecha']))
     		{
     			$data['historico_fecha_comunicada'] = $historico_fecha_comunicada['fecha'];
@@ -394,35 +583,35 @@ class Admin extends CI_Controller
     		{
     			$data['historico_fecha_comunicada'] = '---';
     		}
-    
+
     		$incidencia['intervencion'] = $this->intervencion_model->get_intervencion_incidencia($id_inc);
     		$incidencia['device'] = $this->sfid_model->get_device($incidencia['id_devices_pds']);
     		$incidencia['display'] = $this->sfid_model->get_display($incidencia['id_displays_pds']);
     		$data['incidencia'] = $incidencia;
-    
+
     		$material_dispositivos = $this->tienda_model->get_material_dispositivos($incidencia['id_incidencia']);
     		$data['material_dispositivos'] = $material_dispositivos;
-    
+
     		$material_alarmas = $this->tienda_model->get_material_alarmas($incidencia['id_incidencia']);
     		$data['material_alarmas'] = $material_alarmas;
-    
+
     		$chats = $this->chat_model->get_chat_incidencia_pds($incidencia['id_incidencia']);
     		$leido = $this->chat_model->marcar_leido($incidencia['id_incidencia'],$sfid['reference']);
     		$data['chats'] = $chats;
-    
+
     		$data['title'] = 'DOCUMENTACIÓN DE RESOLUCIÓN DE INCIDENCIA';
-    
+
     		// Salida PDF
     		$html = $this->load->view('backend/imprimir_incidencia', $data, true);
     		pdf_create($html, 'intervencion-'.$incidencia['intervencion'].'_incidencia-'.$incidencia['id_incidencia']);
-    				
+
     		// Salida HTML
     		// $this->load->view('backend/imprimir_incidencia', $data);
-    		
+
     	} else {
     		redirect('admin', 'refresh');
     	}
-    }    
+    }
 
     public function insert_chat($id_incidencia)
     {
@@ -450,10 +639,10 @@ class Admin extends CI_Controller
             } else {
                 echo 'Ha fallado la carga de la foto.';
             }
-            
+
             $texto_chat = $this->input->post('texto_chat');
             $texto_chat = $this->strip_html_tags($texto_chat);
-            
+
             if ($foto != '' || $texto_chat != '' && $texto_chat != ' ') {
 
                 $data = array(
@@ -559,24 +748,24 @@ class Admin extends CI_Controller
         $this->tienda_model->incidencia_update($id_inc, $status_pds, $status);
 
         $incidencia = $this->tienda_model->get_incidencia($id_inc);
-        
+
         if ($status == 2) {
-            
+
             if ($incidencia['fail_device'] == 1) {
                 $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'], 2);
             }
         }
-        
+
         if ($status == 5) {
         	$intervencion = $this->intervencion_model->get_intervencion_incidencia($id_inc);
-        	        	
+
         	$this->tienda_model->reservar_dispositivos($this->input->post('dipositivo_almacen_1'),3);
         	$this->tienda_model->reservar_dispositivos($this->input->post('dipositivo_almacen_2'),3);
         	$this->tienda_model->reservar_dispositivos($this->input->post('dipositivo_almacen_3'),3);
-        	
+
         	$dispositivos = $this->tienda_model->get_devices_incidencia($id_inc);
         	$alarmas = $this->tienda_model->get_alarms_incidencia($id_inc);
-        	
+
         	$facturacion_data= array(
         			'fecha' => date('Y-m-d H:i:s'),
         			'id_pds' => $id_pds,
@@ -586,10 +775,10 @@ class Admin extends CI_Controller
         			'units_device' => $dispositivos['dispositivos'],
         			'units_alarma' => $alarmas['alarmas'],
         			'description' => NULL
-        	);   
-     	        	
+        	);
+
         	$this->tienda_model->facturacion($facturacion_data);
-        }        
+        }
 
         $data = array(
             'fecha' => date('Y-m-d H:i:s'),
@@ -602,36 +791,36 @@ class Admin extends CI_Controller
         );
 
         $this->tienda_model->historico($data);
-        
+
         if ($status == 6)
         {
         	$fecha_cierre = $this->input->post('fecha_cierre');
         	$this->tienda_model->incidencia_update_cierre($id_inc, $fecha_cierre);
         	if ($incidencia['fail_device'] == 1) {
         		$this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'], 1);
-        	}        	
-        	
-        }        
+        	}
+
+        }
 
         if (($status == 8) AND ($status_ext == 'ext'))
         {
         	if ($incidencia['fail_device'] == 1) {
         		$this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'], 1);
         	}
-        	 
-        }        
-        
-        
-        if ($status == 5) 
+
+        }
+
+
+        if ($status == 5)
         {
         	redirect('admin/imprimir_incidencia/'.$id_pds.'/'.$id_inc, 'refresh');
         }
         else
-        {	
+        {
         	redirect('admin/operar_incidencia/'.$id_pds.'/'.$id_inc, 'refresh');
         }
-   
-        
+
+
     }
 
     public function update_materiales_incidencia()
@@ -640,13 +829,13 @@ class Admin extends CI_Controller
     	$id_inc = $this->uri->segment(4);
     	$status_pds = $this->uri->segment(5);
     	$status = $this->uri->segment(6);
-    
+
     	$xcrud = xcrud_get_instance();
     	$this->load->model('tienda_model');
-    
-    	
+
+
     	if ($this->input->post('units_dipositivo_almacen_1') <> '')
-    	{	
+    	{
     	$dipositivo_almacen_1 = array(
     			'fecha' => date('Y-m-d H:i:s'),
     			'id_incidencia' => $id_inc,
@@ -660,9 +849,9 @@ class Admin extends CI_Controller
     	$this->tienda_model->reservar_dispositivos($this->input->post('dipositivo_almacen_1'),2);
     	$this->tienda_model->update_dispositivos($this->input->post('dipositivo_almacen_1'),$this->input->post('imei_1'),$this->input->post('mac_1'),$this->input->post('serial_1'),$this->input->post('barcode_1'));
     	}
-    	
+
     	if ($this->input->post('units_dipositivo_almacen_2') <> '')
-    	{    	
+    	{
     	$dipositivo_almacen_2 = array(
     			'fecha' => date('Y-m-d H:i:s'),
     			'id_incidencia' => $id_inc,
@@ -670,14 +859,14 @@ class Admin extends CI_Controller
     			'id_alarm' => NULL,
     			'id_devices_almacen' => $this->input->post('dipositivo_almacen_2'),
     			'cantidad' => $this->input->post('units_dipositivo_almacen_2')
-    	);    	
-    	
+    	);
+
     	$this->tienda_model->incidencia_update_material($dipositivo_almacen_2);
     	$this->tienda_model->reservar_dispositivos($this->input->post('dipositivo_almacen_2'),2);
     	$this->tienda_model->update_dispositivos($this->input->post('dipositivo_almacen_2'),$this->input->post('imei_2'),$this->input->post('mac_2'),$this->input->post('serial_2'),$this->input->post('barcode_2'));
-    	 
+
     	}
-    	
+
     	if ($this->input->post('units_dipositivo_almacen_3') <> '')
     	{
     		$dipositivo_almacen_3 = array(
@@ -688,14 +877,14 @@ class Admin extends CI_Controller
     				'id_devices_almacen' => $this->input->post('dipositivo_almacen_3'),
     				'cantidad' => $this->input->post('units_dipositivo_almacen_3')
     		);
-    		 
+
     		$this->tienda_model->incidencia_update_material($dipositivo_almacen_3);
     		$this->tienda_model->reservar_dispositivos($this->input->post('dipositivo_almacen_3'),2);
     		$this->tienda_model->update_dispositivos($this->input->post('dipositivo_almacen_3'),$this->input->post('imei_3'),$this->input->post('mac_3'),$this->input->post('serial_3'),$this->input->post('barcode_3'));
-    	}    	
-    	
+    	}
+
     	if ($this->input->post('units_alarma_almacen_1') <> '')
-    	{  
+    	{
 	    	$alarma_almacen_1 = array(
 	    			'fecha' => date('Y-m-d H:i:s'),
 	    			'id_incidencia' => $id_inc,
@@ -703,14 +892,14 @@ class Admin extends CI_Controller
 	    			'id_alarm' => $this->input->post('alarma_almacen_1'),
 	    			'id_devices_almacen' => NULL,
 	    			'cantidad' => $this->input->post('units_alarma_almacen_1')
-	    	);    	
-	    	
+	    	);
+
 	    	$this->tienda_model->incidencia_update_material($alarma_almacen_1);
 	    	$this->tienda_model->borrar_alarmas($this->input->post('alarma_almacen_1'),$this->input->post('units_alarma_almacen_1'));
     	}
-    	 
+
     	if ($this->input->post('units_alarma_almacen_2') <> '')
-    	{  	
+    	{
 	    	$alarma_almacen_2 = array(
 	    			'fecha' => date('Y-m-d H:i:s'),
 	    			'id_incidencia' => $id_inc,
@@ -719,13 +908,13 @@ class Admin extends CI_Controller
 	    			'id_devices_almacen' => NULL,
 	    			'cantidad' => $this->input->post('units_alarma_almacen_2'),
 	    	);
-	    	
+
 	    	$this->tienda_model->incidencia_update_material($alarma_almacen_2);
 	    	$this->tienda_model->borrar_alarmas($this->input->post('alarma_almacen_2'),$this->input->post('units_alarma_almacen_2'));
     	}
-    	 
+
     	if ($this->input->post('units_alarma_almacen_3') <> '')
-    	{    	
+    	{
 	    	$alarma_almacen_3 = array(
 	    			'fecha' => date('Y-m-d H:i:s'),
 	    			'id_incidencia' => $id_inc,
@@ -734,13 +923,13 @@ class Admin extends CI_Controller
 	    			'id_devices_almacen' => NULL,
 	    			'cantidad' => $this->input->post('units_alarma_almacen_3'),
 	    	);
-	
-	    	$this->tienda_model->incidencia_update_material($alarma_almacen_3);    
+
+	    	$this->tienda_model->incidencia_update_material($alarma_almacen_3);
 	    	$this->tienda_model->borrar_alarmas($this->input->post('alarma_almacen_3'),$this->input->post('units_alarma_almacen_3'));
     	}
-    	 
+
     	if ($this->input->post('units_alarma_almacen_4') <> '')
-    	{    	
+    	{
 	    	$alarma_almacen_4 = array(
 	    			'fecha' => date('Y-m-d H:i:s'),
 	    			'id_incidencia' => $id_inc,
@@ -748,14 +937,14 @@ class Admin extends CI_Controller
 	    			'id_alarm' => $this->input->post('alarma_almacen_4'),
 	    			'id_devices_almacen' => NULL,
 	    			'cantidad' => $this->input->post('units_alarma_almacen_4'),
-	    	);    	
-	    	
-	    	$this->tienda_model->incidencia_update_material($alarma_almacen_4);    
+	    	);
+
+	    	$this->tienda_model->incidencia_update_material($alarma_almacen_4);
 	    	$this->tienda_model->borrar_alarmas($this->input->post('alarma_almacen_4'),$this->input->post('units_alarma_almacen_4'));
     	}
-    	 
+
     	if ($this->input->post('units_alarma_almacen_5') <> '')
-    	{    	
+    	{
 	    	$alarma_almacen_5 = array(
 	    			'fecha' => date('Y-m-d H:i:s'),
 	    			'id_incidencia' => $id_inc,
@@ -764,11 +953,11 @@ class Admin extends CI_Controller
 	    			'id_devices_almacen' => NULL,
 	    			'cantidad' => $this->input->post('units_alarma_almacen_5'),
 	    	);
-	    	 
-	    	$this->tienda_model->incidencia_update_material($alarma_almacen_5);    
+
+	    	$this->tienda_model->incidencia_update_material($alarma_almacen_5);
 	    	$this->tienda_model->borrar_alarmas($this->input->post('alarma_almacen_5'),$this->input->post('units_alarma_almacen_5'));
     	}
-    	
+
     	if ($this->input->post('units_alarma_almacen_6') <> '')
     	{
     		$alarma_almacen_6 = array(
@@ -779,11 +968,11 @@ class Admin extends CI_Controller
     				'id_devices_almacen' => NULL,
     				'cantidad' => $this->input->post('units_alarma_almacen_6'),
     		);
-    	
+
     		$this->tienda_model->incidencia_update_material($alarma_almacen_6);
     		$this->tienda_model->borrar_alarmas($this->input->post('alarma_almacen_6'),$this->input->post('units_alarma_almacen_6'));
-    	}    	
-    	
+    	}
+
     	if ($this->input->post('units_alarma_almacen_7') <> '')
     	{
     		$alarma_almacen_7 = array(
@@ -794,11 +983,11 @@ class Admin extends CI_Controller
     				'id_devices_almacen' => NULL,
     				'cantidad' => $this->input->post('units_alarma_almacen_7'),
     		);
-    	
+
     		$this->tienda_model->incidencia_update_material($alarma_almacen_7);
     		$this->tienda_model->borrar_alarmas($this->input->post('alarma_almacen_7'),$this->input->post('units_alarma_almacen_7'));
-    	}    	
-    	
+    	}
+
     	if ($this->input->post('units_alarma_almacen_8') <> '')
     	{
     		$alarma_almacen_8 = array(
@@ -809,11 +998,11 @@ class Admin extends CI_Controller
     				'id_devices_almacen' => NULL,
     				'cantidad' => $this->input->post('units_alarma_almacen_8'),
     		);
-    	
+
     		$this->tienda_model->incidencia_update_material($alarma_almacen_8);
     		$this->tienda_model->borrar_alarmas($this->input->post('alarma_almacen_8'),$this->input->post('units_alarma_almacen_8'));
-    	}    	
-    	
+    	}
+
     	if ($this->input->post('units_alarma_almacen_9') <> '')
     	{
     		$alarma_almacen_9 = array(
@@ -824,7 +1013,7 @@ class Admin extends CI_Controller
     				'id_devices_almacen' => NULL,
     				'cantidad' => $this->input->post('units_alarma_almacen_9'),
     		);
-    	
+
     		$this->tienda_model->incidencia_update_material($alarma_almacen_9);
     		$this->tienda_model->borrar_alarmas($this->input->post('alarma_almacen_9'),$this->input->post('units_alarma_almacen_9'));
     	}
@@ -839,13 +1028,13 @@ class Admin extends CI_Controller
     				'id_devices_almacen' => NULL,
     				'cantidad' => $this->input->post('units_alarma_almacen_10'),
     		);
-    	
+
     		$this->tienda_model->incidencia_update_material($alarma_almacen_10);
     		$this->tienda_model->borrar_alarmas($this->input->post('alarma_almacen_10'),$this->input->post('units_alarma_almacen_10'));
-    	}    	
-    	    	
-    	$this->tienda_model->incidencia_update($id_inc, $status_pds, $status);    	
-    	
+    	}
+
+    	$this->tienda_model->incidencia_update($id_inc, $status_pds, $status);
+
     	$data = array(
     			'fecha' => date('Y-m-d H:i:s'),
     			'id_incidencia' => $id_inc,
@@ -855,44 +1044,44 @@ class Admin extends CI_Controller
     			'status_pds' => $status_pds,
     			'status' => $status
     	);
-    	    	
-    	
+
+
     	$this->tienda_model->historico($data);
-    
+
     	redirect('admin/operar_incidencia/'.$id_pds.'/'.$id_inc, 'refresh');
-    }   
-    
-    
+    }
+
+
     public function insert_comentario_incidencia()
     {
     	$id_pds = $this->uri->segment(3);
     	$id_inc = $this->uri->segment(4);
-    
+
     	$xcrud = xcrud_get_instance();
     	$this->load->model('tienda_model');
-    
+
         $description_2 = $this->input->post('description_2');
         $description_2 = $this->strip_html_tags($description_2);
     	$this->tienda_model->comentario_incidencia_update($id_inc, $description_2);
-    
+
     	redirect('admin/operar_incidencia/'.$id_pds.'/'.$id_inc, 'refresh');
-    }    
+    }
 
     public function insert_comentario_incidencia_instalador()
     {
     	$id_pds = $this->uri->segment(3);
     	$id_inc = $this->uri->segment(4);
-    
+
     	$xcrud = xcrud_get_instance();
     	$this->load->model('tienda_model');
-    
+
     	$description_3 = $this->input->post('description_3');
     	$description_3 = $this->strip_html_tags($description_3);
     	$this->tienda_model->comentario_incidencia_instalador_update($id_inc, $description_3);
-    
+
     	redirect('admin/operar_incidencia/'.$id_pds.'/'.$id_inc, 'refresh');
     }
-    
+
     public function update_incidencia_materiales()
     {
         if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
@@ -939,21 +1128,21 @@ class Admin extends CI_Controller
             redirect('admin', 'refresh');
         }
     }
-    
+
     public function carga_datos_dispositivo()
     {
     	if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
     		$data['id_pds'] = $this->session->userdata('id_pds');
     		$data['sfid'] = $this->session->userdata('sfid');
-    
+
     		$xcrud = xcrud_get_instance();
     		$this->load->model(array('tienda_model', 'sfid_model'));
-    
+
     		$data['dispositivos']    =  $this->tienda_model->search_dispositivo($this->input->post('codigo'));
     		$data['devices_almacen'] = $this->tienda_model->get_devices_almacen_reserva();
-    
+
     		$data['title'] = 'Carga datos dispositivo';
-    
+
     		$this->load->view('backend/header', $data);
     		$this->load->view('backend/navbar', $data);
     		$this->load->view('backend/carga_datos_dispositivo', $data);
@@ -961,9 +1150,9 @@ class Admin extends CI_Controller
     	} else {
     		redirect('admin', 'refresh');
     	}
-    }    
-    
-    
+    }
+
+
     public function clientes()
     {
         $xcrud = xcrud_get_instance();
@@ -991,7 +1180,7 @@ class Admin extends CI_Controller
 
             $xcrud_SQL = xcrud_get_instance();
             $xcrud_SQL->table_name('Incidencias Demo Real');
-            $xcrud_SQL->query('SELECT 
+            $xcrud_SQL->query('SELECT
 					count(incidencias.id_incidencia) AS "Número incidencias",
             		intervenciones_incidencias.id_intervencion AS "Intervención",
 					incidencias.fecha AS Fecha,
@@ -1020,15 +1209,15 @@ class Admin extends CI_Controller
 				FROM incidencias
 				LEFT JOIN intervenciones_incidencias ON incidencias.id_incidencia = intervenciones_incidencias.id_incidencia
             	JOIN pds ON incidencias.id_pds = pds.id_pds
-            	LEFT JOIN type_pds ON pds.type_pds = type_pds.id_type_pds
+            	JOIN type_pds ON pds.type_pds = type_pds.id_type_pds
             	LEFT JOIN province ON pds.province = province.id_province
             	LEFT JOIN county ON pds.county = county.id_county
-				LEFT JOIN displays_pds ON incidencias.id_displays_pds = displays_pds.id_displays_pds
-				LEFT JOIN display ON displays_pds.id_display = display.id_display
+				JOIN displays_pds ON incidencias.id_displays_pds = displays_pds.id_displays_pds
+				JOIN display ON displays_pds.id_display = display.id_display
 				LEFT JOIN devices_pds ON incidencias.id_devices_pds = devices_pds.id_devices_pds
 				LEFT JOIN device ON devices_pds.id_device = device.id_device
             	GROUP BY intervenciones_incidencias.id_intervencion');
-            
+
             $data['title'] = 'Export incidencias';
             $data['content'] = $xcrud_SQL->render();
 
@@ -1040,12 +1229,12 @@ class Admin extends CI_Controller
             redirect('admin', 'refresh');
         }
     }
-    
-    
+
+
     public function incidencias_exp()
     {
     	if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
-    
+
     		$xcrud_SQL = xcrud_get_instance();
     		$xcrud_SQL->table_name('Incidencias Demo Real');
     		$xcrud_SQL->query('SELECT
@@ -1076,14 +1265,14 @@ class Admin extends CI_Controller
 				JOIN pds ON incidencias.id_pds = pds.id_pds
             	LEFT JOIN province ON pds.province = province.id_province
             	LEFT JOIN county ON pds.county = county.id_county
-				LEFT JOIN displays_pds ON incidencias.id_displays_pds = displays_pds.id_displays_pds
-				LEFT JOIN display ON displays_pds.id_display = display.id_display
+				JOIN displays_pds ON incidencias.id_displays_pds = displays_pds.id_displays_pds
+				JOIN display ON displays_pds.id_display = display.id_display
 				LEFT JOIN devices_pds ON incidencias.id_devices_pds = devices_pds.id_devices_pds
 				LEFT JOIN device ON devices_pds.id_device = device.id_device');
-    
+
     		$data['title'] = 'Export incidencias';
     		$data['content'] = $xcrud_SQL->render();
-    
+
     		$this->load->view('backend/header', $data);
     		$this->load->view('backend/navbar', $data);
     		$this->load->view('backend/content', $data);
@@ -1091,12 +1280,12 @@ class Admin extends CI_Controller
     	} else {
     		redirect('admin', 'refresh');
     	}
-    }    
-    
+    }
+
     public function incidencias_master()
     {
     	if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
-    
+
     		$xcrud_SQL = xcrud_get_instance();
     		$xcrud_SQL->table_name('Incidencias Demo Real Orange');
     		$xcrud_SQL->query("SELECT
@@ -1123,11 +1312,11 @@ class Admin extends CI_Controller
             		incidencias.status_pds AS 'Estado tienda'
 				FROM incidencias
 				JOIN pds ON incidencias.id_pds = pds.id_pds
-    			LEFT JOIN type_pds ON pds.type_pds = type_pds.id_type_pds
+    			JOIN type_pds ON pds.type_pds = type_pds.id_type_pds
             	LEFT JOIN province ON pds.province = province.id_province
             	LEFT JOIN county ON pds.county = county.id_county
-				LEFT JOIN displays_pds ON incidencias.id_displays_pds = displays_pds.id_displays_pds
-				LEFT JOIN display ON displays_pds.id_display = display.id_display
+				JOIN displays_pds ON incidencias.id_displays_pds = displays_pds.id_displays_pds
+				JOIN display ON displays_pds.id_display = display.id_display
 				LEFT JOIN devices_pds ON incidencias.id_devices_pds = devices_pds.id_devices_pds
 				LEFT JOIN device ON devices_pds.id_device = device.id_device");
     

@@ -26,3 +26,12 @@ $(function() {
         }
     });
 });
+
+
+
+
+
+$(document).ready(function(){
+    $("nav div.sidebar").show();
+    $("#page-wrapper div.row").show();
+});
