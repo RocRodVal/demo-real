@@ -677,7 +677,7 @@ class Tienda_model_new extends CI_Model {
             $this->db->where('pds.reference',$buscador['buscar_sfid']);
 
 
-        if (is_null($filtro_finalizadas) || $filtro_finalizadas === "Todas"){
+        if (is_null($filtro_finalizadas) || $filtro_finalizadas === ""){
             $this->db->where('(incidencias.status = "Cerrada" || incidencias.status = "Cancelada" || incidencias.status = "Resuelta")');
         }else {
             if ($filtro_finalizadas === "Cerrada") {
@@ -713,7 +713,7 @@ class Tienda_model_new extends CI_Model {
         if(! empty($buscador['buscar_sfid']))
             $this->db->where('pds.reference',$buscador['buscar_sfid']);
 
-        if (is_null($filtro_finalizadas) || $filtro_finalizadas === "Todas"){
+        if (is_null($filtro_finalizadas) || $filtro_finalizadas === ""){
             $this->db->where('(incidencias.status = "Cerrada" || incidencias.status = "Cancelada" || incidencias.status = "Resuelta")');
         }else {
             if ($filtro_finalizadas === "Cerrada") {

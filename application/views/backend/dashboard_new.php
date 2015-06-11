@@ -74,13 +74,35 @@
             ?>                
             <div class="row" >
                 <div class="col-lg-12">
+                    <div class="row buscador">
+                        <form action="<?=base_url()?>admin/dashboard_new/#incidencias_abiertas" method="post">
+                            <div class="col-sm-2">
+                                <label for="buscar_incidencia">Buscar incidencia: </label>
+                                <input type="text" name="buscar_incidencia" id="buscar_incidencia" class="form-control input-sm" placeholder="Ref. incidencia" <?php echo (!empty($buscar_incidencia)) ? ' value="'.$buscar_incidencia.'" ' : ''?> />
+                            </div>
+                            <div class="col-sm-2">
+                                <label for="buscar_sfid">Buscar SFID: </label>
+                                <input type="text" name="buscar_sfid" id="buscar_sfid" class="form-control input-sm" placeholder="SFID" <?php echo (!empty($buscar_sfid)) ? ' value="'.$buscar_sfid.'" ' : ''?> />
+                            </div>
+                            <div class="col-sm-1">
+                                <input type="hidden" name="do_busqueda" value="si">
+                                <input type="submit" value="Buscar" class="form-control input-sm">
+                            </div>
+                            <div class="col-sm-1">
+                                <?php if(! empty($buscar_sfid) || ! empty($buscar_incidencia)) { ?>
+                                    <a href="<?=base_url()?>admin/dashboard_new/borrar_busqueda/#incidencias_abiertas" class="reiniciar_busqueda">Reiniciar</a>
+                                <?php } ?>
+                            </div>
+                        </form>
+                    </div>
+
 		            <?php
 		            if (empty($incidencias)) {
 		                echo '<p>No hay incidencias.</p>'; ?>
 
 
                         <?php if(! empty($buscar_sfid) || ! empty($buscar_incidencia)) { ?>
-                            <a href="<?=base_url()?>admin/dashboard_new/borrar_busqueda" class="reiniciar_busqueda">Reiniciar</a>
+                            <a href="<?=base_url()?>admin/dashboard_new/borrar_busqueda/#incidencias_abiertas" class="reiniciar_busqueda">Reiniciar</a>
                         <?php } ?>
 
 		            <? } else {
@@ -92,26 +114,7 @@
                                 </ul>
                             </div>
                         <?php } ?>
-                        <div class="row buscador">
-                            <form action="<?=base_url()?>admin/dashboard_new/#incidencias_abiertas" method="post">
-                                <div class="col-sm-2">
-                                    <label for="buscar_incidencia">Buscar incidencia: </label>
-                                    <input type="text" name="buscar_incidencia" id="buscar_incidencia" class="form-control input-sm" placeholder="Ref. incidencia" <?php echo (!empty($buscar_incidencia)) ? ' value="'.$buscar_incidencia.'" ' : ''?> />
-                                </div>
-                                <div class="col-sm-2">
-                                    <label for="buscar_sfid">Buscar SFID: </label>
-                                    <input type="text" name="buscar_sfid" id="buscar_sfid" class="form-control input-sm" placeholder="SFID" <?php echo (!empty($buscar_sfid)) ? ' value="'.$buscar_sfid.'" ' : ''?> />
-                                </div>
-                                <div class="col-sm-1">
-                                    <input type="submit" value="Buscar" class="form-control input-sm">
-                                </div>
-                                <div class="col-sm-1">
-                                    <?php if(! empty($buscar_sfid) || ! empty($buscar_incidencia)) { ?>
-                                        <a href="<?=base_url()?>admin/dashboard_new/borrar_busqueda" class="reiniciar_busqueda">Reiniciar</a>
-                                    <?php } ?>
-                                </div>
-                            </form>
-                        </div>
+
 		                <div class="table-responsive">
 		                    <table class="table table-striped table-bordered table-hover" id="table_incidencias_dashboard">
 		                        <thead>
@@ -203,6 +206,49 @@
 
                 <div class="row">
                     <div class="col-lg-12">
+                        <div class="row filtro">
+                            <form action="<?=base_url()?>admin/dashboard_new/#incidencias_cerradas" method="post">
+                                <div class="col-sm-2">
+                                    <label for="filtrar_finalizadas">Mostrar: </label>
+                                    <select name="filtrar_finalizadas" id="filtrar_finalizadas" class="form-control input-sm">
+                                        <option value="" <?php echo ($filtro_finalizadas==="") ? 'selected="selected"' : ''?>>Todas</option>
+                                        <option value="Cerrada" <?php echo ($filtro_finalizadas==="Cerrada") ? 'selected="selected"' : ''?>>Cerradas</option>
+                                        <option value="Resuelta" <?php echo ($filtro_finalizadas==="Resuelta") ? 'selected="selected"' : ''?>>Resueltas</option>
+                                        <option value="Cancelada" <?php echo ($filtro_finalizadas==="Cancelada") ? 'selected="selected"' : ''?>>Canceladas</option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-1">
+                                    <input type="submit" value="Aplicar" class="form-control input-sm">
+                                </div>
+                                <div class="col-sm-1">
+                                    <?php if(! empty($filtro_finalizadas)) { ?>
+                                        <a href="<?=base_url()?>admin/dashboard_new/borrar_busqueda/#incidencias_cerradas" class="reiniciar_busqueda">Reiniciar</a>
+                                    <?php } ?>
+
+
+                                </div>
+
+                                <div class="col-sm-2">
+                                    <label for="buscar_incidencia_finalizadas">Buscar incidencia: </label>
+                                    <input type="text" name="buscar_incidencia" id="buscar_incidencia_finalizadas" class="form-control input-sm" placeholder="Ref. incidencia" <?php echo (!empty($buscar_incidencia)) ? ' value="'.$buscar_incidencia.'" ' : ''?> />
+                                </div>
+                                <div class="col-sm-2">
+                                    <label for="buscar_sfid_finalizadas">Buscar SFID: </label>
+                                    <input type="text" name="buscar_sfid" id="buscar_sfid_finalizadas" class="form-control input-sm" placeholder="SFID" <?php echo (!empty($buscar_sfid)) ? ' value="'.$buscar_sfid.'" ' : ''?> />
+                                </div>
+                                <div class="col-sm-1">
+                                    <input type="hidden" name="do_busqueda" value="si">
+                                    <input type="submit" value="Buscar" class="form-control input-sm">
+                                </div>
+                                <div class="col-sm-1">
+                                    <?php if(! empty($buscar_sfid) || ! empty($buscar_incidencia)) { ?>
+                                        <a href="<?=base_url()?>admin/dashboard_new/borrar_busqueda/#incidencias_cerradas" class="reiniciar_busqueda">Reiniciar</a>
+                                    <?php } ?>
+                                </div>
+                            </form>
+                        </div>
+
+
                         <?php
                         if (empty($incidencias_finalizadas)) {
                             echo '<p>No hay incidencias.</p>';
@@ -216,46 +262,7 @@
                                     </ul>
                                 </div>
                              <?php }?>
-                            <div class="row filtro">
-                                <form action="<?=base_url()?>admin/dashboard_new/#incidencias_cerradas" method="post">
 
-
-
-                                    <div class="col-sm-2">
-                                        <label for="filtrar_finalizadas">Mostrar: </label>
-                                        <select name="filtrar_finalizadas" id="filtrar_finalizadas" class="form-control input-sm">
-                                            <option value="Todas" <?php echo ($filtro_finalizadas==="Todas") ? 'selected="selected"' : ''?>>Todas</option>
-                                            <option value="Cerrada" <?php echo ($filtro_finalizadas==="Cerrada") ? 'selected="selected"' : ''?>>Cerradas</option>
-                                            <option value="Resuelta" <?php echo ($filtro_finalizadas==="Resuelta") ? 'selected="selected"' : ''?>>Resueltas</option>
-                                            <option value="Cancelada" <?php echo ($filtro_finalizadas==="Cancelada") ? 'selected="selected"' : ''?>>Canceladas</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-sm-1">
-                                        <input type="submit" value="Aplicar" class="form-control input-sm">
-                                    </div>
-                                    <div class="col-sm-1"></div>
-
-                                    <div class="col-sm-2">
-                                        <label for="buscar_incidencia_finalizadas">Buscar incidencia: </label>
-                                        <input type="text" name="buscar_incidencia" id="buscar_incidencia_finalizadas" class="form-control input-sm" placeholder="Ref. incidencia" <?php echo (!empty($buscar_incidencia)) ? ' value="'.$buscar_incidencia.'" ' : ''?> />
-                                    </div>
-                                    <div class="col-sm-2">
-                                        <label for="buscar_sfid_finalizadas">Buscar SFID: </label>
-                                        <input type="text" name="buscar_sfid" id="buscar_sfid_finalizadas" class="form-control input-sm" placeholder="SFID" <?php echo (!empty($buscar_sfid)) ? ' value="'.$buscar_sfid.'" ' : ''?> />
-                                    </div>
-                                    <div class="col-sm-1">
-                                        <input type="submit" value="Buscar" class="form-control input-sm">
-
-
-
-                                    </div>
-                                    <div class="col-sm-1">
-                                        <?php if(! empty($buscar_sfid) || ! empty($buscar_incidencia)) { ?>
-                                            <a href="<?=base_url()?>admin/dashboard_new/borrar_busqueda" class="reiniciar_busqueda">Reiniciar</a>
-                                        <?php } ?>
-                                    </div>
-                                </form>
-                            </div>
 
                             <div class="table-responsive">
                                 <table class="table table-striped table-bordered table-hover" id="table_incidencias_dashboard">

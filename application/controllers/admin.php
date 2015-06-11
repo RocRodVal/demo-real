@@ -176,6 +176,7 @@ class Admin extends CI_Controller
             {
                 $this->session->unset_userdata('buscar_sfid');
                 $this->session->unset_userdata('buscar_incidencia');
+                $this->session->unset_userdata('filtro_finalizadas');
             }
 
             // Consultar a la session si ya se ha buscado algo y guardado allí.
@@ -185,21 +186,17 @@ class Admin extends CI_Controller
             if(! empty($sess_buscar_incidencia)) $buscar_incidencia = $sess_buscar_incidencia;
 
             // Buscar en el POST si hay busqueda, y si la hay usarla y guardarla además en sesion
-            $post_buscar_sfid = $this->input->post('buscar_sfid');
-            $post_buscar_incidencia = $this->input->post('buscar_incidencia');
-            if(! empty($post_buscar_sfid))
-            {
-                    $buscar_sfid = $post_buscar_sfid;
-                    $this->session->set_userdata('buscar_sfid',$post_buscar_sfid);
+            $do_busqueda = $this->input->post('do_busqueda');
 
+            if($do_busqueda=="si")
+            {
+                $buscar_sfid = $this->input->post('buscar_sfid');
+                $this->session->set_userdata('buscar_sfid', $buscar_sfid);
+
+                $buscar_incidencia = $this->input->post('buscar_incidencia');
+                $this->session->set_userdata('buscar_incidencia', $buscar_incidencia);
 
             }
-            if(! empty($post_buscar_incidencia))
-            {
-                $buscar_incidencia = $post_buscar_incidencia;
-                $this->session->set_userdata('buscar_incidencia',$post_buscar_incidencia);
-            }
-
             $buscador['buscar_sfid']        = $buscar_sfid;
             $buscador['buscar_incidencia']  = $buscar_incidencia;
 

@@ -230,6 +230,6 @@ ESTILO DEL TIMELINE
 .filtro label,
 .buscador label{ width:100%; font-size: 12px; text-align: left; }
 .filtro input[type=submit],
-.buscador input[type=submit]{ margin: 22px 0 0 0;}
+.buscador input[type=submit]{ margin: 28px 0 0 0;}
 
-a.reiniciar_busqueda{ color:#000; font-size: 12px; margin: 30px 0 0 0; display: inline-block; }
+a.reiniciar_busqueda{ color:#000; font-size: 12px; margin: 35px 0 0 0; display: inline-block; }
