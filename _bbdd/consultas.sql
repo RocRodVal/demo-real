@@ -1,4 +1,18 @@
 /*
+Incoming
+*/
+
+SELECT displays_pds.* 
+FROM `displays_pds` 
+JOIN pds ON displays_pds.id_pds = pds.id_pds 
+WHERE pds.reference IN (10070003,20070000,50070001,50070011,70070002);
+
+SELECT devices_pds.* 
+FROM `devices_pds` 
+JOIN pds ON devices_pds.id_pds = pds.id_pds 
+WHERE pds.reference IN (10070003,20070000,50070001,50070011,70070002);
+
+/*
 Muebles por PdS
 */
 INSERT INTO displays_pds (client_type_pds,id_type_pds,id_pds,id_panelado,id_display,position,description,status)
@@ -12,7 +26,8 @@ AND pds.reference = SFID;
 Insertar un mueble en una posición
 */
 INSERT INTO displays_pds (client_type_pds,id_type_pds,id_pds,id_panelado,id_display,position,description,status)
-SELECT pds.client_pds, pds.type_pds, pds.id_pds, pds.panelado_pds, XX, PP, '', 'Alta'
+SELECT pds.clien
+t_pds, pds.type_pds, pds.id_pds, pds.panelado_pds, XX, PP, '', 'Alta'
 FROM pds
 WHERE pds.reference IN (XXX,YYY);
 
