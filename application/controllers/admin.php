@@ -136,7 +136,7 @@ class Admin extends CI_Controller
             $data['city']       = $sfid['city'];
 
 
-            // Comprobar si existe el segmento page en la URI..
+            // Comprobar si existe el segmento PAGE en la URI, si no inicializar a 1..
             $get_page = $this->uri->segment(4);
             if( $this->uri->segment(3) == "incidencias") {
                 $page = ( ! empty($get_page) ) ? $get_page : 1 ;
@@ -146,28 +146,8 @@ class Admin extends CI_Controller
                 $segment = null;
             }
 
-            // Obtener datos del buscador de SFID/Incidencia
-            /*$buscador = array();
-            $es_busqueda = $this->uri->segment(5);
-            $buscar_incidencia = NULL;
-            $buscar_sfid = NULL;
 
-            if($es_busqueda==="buscar"){
-                $buscar_incidencia = $this->uri->segment(6);
-                $buscar_sfid = $this->uri->segment(7);
-            }
-            $post_buscar_sfid = $this->input->post('buscar_sfid');
-            $post_buscar_incidencia = $this->input->post('buscar_incidencia');
-
-            if(! empty($post_buscar_sfid)) $buscar_sfid = $post_buscar_sfid;
-            if(! empty($post_buscar_incidencia)) $buscar_incidencia = $post_buscar_incidencia;
-
-            $buscador['buscar_sfid']        = ($buscar_sfid != 'false') ? $buscar_sfid : '';
-            $buscador['buscar_incidencia']  = ($buscar_incidencia != 'false') ? $buscar_incidencia : '';
-
-            $data['buscar_sfid']        = $buscador['buscar_sfid'];
-            $data['buscar_incidencia']  = $buscador['buscar_incidencia'];*/
-
+            // Realizar búsqueda por INCIDENCIA o SFID
             $buscar_incidencia = NULL;
             $buscar_sfid = NULL;
 
@@ -202,23 +182,13 @@ class Admin extends CI_Controller
                 $buscar_incidencia = $this->input->post('buscar_incidencia');
                 $this->session->set_userdata('buscar_incidencia', $buscar_incidencia);
 
-
-
                 $post_filtro =$this->input->post('filtrar');
                 if(! empty($post_filtro))
                 {
                     $filtro = $post_filtro;
                     $this->session->set_userdata('filtro',$filtro);
                 }
-
-
-
-
             }
-
-
-
-
             $buscador['buscar_sfid']        = $buscar_sfid;
             $buscador['buscar_incidencia']  = $buscar_incidencia;
 
@@ -239,10 +209,11 @@ class Admin extends CI_Controller
 
             // viene del form de ordenacion
             $do_orden = $this->input->post('ordenar');
+
             if($do_orden==='true') {
 
-                $post_orden_form = $this->input->post('form');
 
+                $post_orden_form = $this->input->post('form');
 
                 $campo_orden_activas = $this->input->post($post_orden_form.'_campo');
                 $orden_activas = $this->input->post($post_orden_form.'_orden');
@@ -276,7 +247,8 @@ class Admin extends CI_Controller
 
 
 
-            foreach ($incidencias as $incidencia) {
+
+             foreach ($incidencias as $incidencia) {
                 $incidencia->device = $this->sfid_model->get_device($incidencia->id_devices_pds);
                 $incidencia->display = $this->sfid_model->get_display($incidencia->id_displays_pds);
                 $incidencia->nuevos  = $this->chat_model->contar_nuevos($incidencia->id_incidencia,$incidencia->reference);
@@ -319,11 +291,34 @@ class Admin extends CI_Controller
             $per_page = 5;
 
 
+            // Obtener el campo a ordenar, primero de Session y despues del post, si procede..
+            $campo_orden_cerradas = NULL;
+            $orden_cerradas = NULL;
 
+            $sess_campo_orden_cerradas =  $this->session->userdata('campo_orden_cerradas');
+            if(! empty($sess_campo_orden_cerradas)) $campo_orden_cerradas = $sess_campo_orden_cerradas;
+            $sess_orden_cerradas =  $this->session->userdata('orden_cerradas');
+            if(! empty($sess_orden_cerradas)) $orden_cerradas = $sess_orden_cerradas;
+
+            // viene del form de ordenacion
+            $do_orden = $this->input->post('ordenar_cerradas');
+            if($do_orden==='true') {
+
+                $post_orden_form = $this->input->post('form');
+
+                $campo_orden_cerradas = $this->input->post($post_orden_form.'_campo');
+                $orden_cerradas = $this->input->post($post_orden_form.'_orden');
+
+                $this->session->set_userdata('campo_orden_cerradas', $campo_orden_cerradas);
+                $this->session->set_userdata('orden_cerradas', $orden_cerradas);
+
+            }
+
+            $data["campo_orden_cerradas"] = $campo_orden_cerradas;
+            $data["orden_cerradas"] = $orden_cerradas;
 
             $total_incidencias = $this->tienda_model_new->get_incidencias_finalizadas_quantity($filtro_finalizadas,$buscador);   // Sacar el total de incidencias, para el paginador
             $cfg_pagination = $this->paginationlib->init_pagination("admin/dashboard_new/finalizadas/",$total_incidencias,$per_page,$segment_finalizadas);
-
 
             $cfg_pagination["suffix"] = '#incidencias_cerradas';
 
@@ -335,7 +330,7 @@ class Admin extends CI_Controller
             $data['show_paginator_finalizadas'] = false;
             if($total_incidencias > $cfg_pagination['per_page']) $data['show_paginator_finalizadas'] = true;
 
-            $incidencias_finalizadas = $this->tienda_model_new->get_incidencias_finalizadas($page_finalizadas,$cfg_pagination,$filtro_finalizadas,$buscador);
+            $incidencias_finalizadas = $this->tienda_model_new->get_incidencias_finalizadas($page_finalizadas,$cfg_pagination,$filtro_finalizadas,$buscador,$campo_orden_cerradas,$orden_cerradas);
 
             foreach ($incidencias_finalizadas as $incidencia) {
                 $incidencia->device = $this->sfid_model->get_device($incidencia->id_devices_pds);
