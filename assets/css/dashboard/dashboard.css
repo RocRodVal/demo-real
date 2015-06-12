@@ -58,6 +58,7 @@ a.reiniciar_busqueda{ color:#000; font-size: 12px; margin: 35px 0 0 0; display: 
     margin-top:-8px;
 }
 .table>thead>tr>th{vertical-align: middle}
+.table>thead>tr>td{ background-color: #fff;}
 table thead th.sorting{ position:relative; padding-right: 25px; vertical-align: middle;
     cursor: pointer;
 }
