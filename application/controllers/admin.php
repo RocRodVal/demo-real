@@ -288,7 +288,7 @@ class Admin extends CI_Controller
 
             $data["filtro_finalizadas"] = $filtro_finalizadas;
 
-            $per_page = 5;
+            $per_page = 100;
 
 
             // Obtener el campo a ordenar, primero de Session y despues del post, si procede..

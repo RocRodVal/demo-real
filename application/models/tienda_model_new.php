@@ -617,7 +617,7 @@ class Tienda_model_new extends CI_Model {
         $this->db->select('incidencias.*,pds.reference as reference')
         ->join('pds','incidencias.id_pds = pds.id_pds');
 
-
+        $this->db->where('(incidencias.status != "Cerrada" && incidencias.status != "Cancelada" && incidencias.status != "Resuelta")');
 
         if (!is_null($filtro) && !empty($filtro)){
             $this->db->where('incidencias.status', $filtro);
