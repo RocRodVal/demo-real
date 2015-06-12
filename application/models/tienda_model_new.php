@@ -613,10 +613,11 @@ class Tienda_model_new extends CI_Model {
 	
 	
 	public function get_incidencias($page = 1, $cfg_pagination = NULL,$campo_orden=NULL,$orden=NULL,$filtro=NULL,$buscador=NULL) {
-        $this->db->select('incidencias.*,pds.reference as reference')
-                ->join('pds','incidencias.id_pds = pds.id_pds');
 
-        $this->db->where('(incidencias.status != "Cerrada" && incidencias.status != "Cancelada" && incidencias.status != "Resuelta")');
+        $this->db->select('incidencias.*,pds.reference as reference')
+        ->join('pds','incidencias.id_pds = pds.id_pds');
+
+
 
         if (!is_null($filtro) && !empty($filtro)){
             $this->db->where('incidencias.status', $filtro);
@@ -628,18 +629,16 @@ class Tienda_model_new extends CI_Model {
         if(! empty($buscador['buscar_sfid']))
             $this->db->where('pds.reference',$buscador['buscar_sfid']);
 
-
         if(!is_null($campo_orden) && !empty($campo_orden) && !is_null($orden) && !empty($orden)) {
-                $s_orden = $campo_orden . " " .$orden;
+            $s_orden = $campo_orden. " ".$orden;
             $this->db->order_by($s_orden);
-
         }else{
             $this->db->order_by('fecha DESC');
         }
 
-		$query =   $this->db->get('incidencias',$cfg_pagination['per_page'], ($page-1) * $cfg_pagination['per_page']);
-	
-			return $query->result();
+        $query =   $this->db->get('incidencias',$cfg_pagination['per_page'], ($page-1) * $cfg_pagination['per_page']);
+
+		return $query->result();
 	}
 
     public function get_incidencias_quantity($filtro=NULL,$buscador=NULL) {
@@ -672,7 +671,7 @@ class Tienda_model_new extends CI_Model {
 		->where('incidencias.status != "Cancelada"')
 		->order_by('fecha ASC')
 		->get('incidencias');
-	
+
 		return $query->result();
 	}
 
@@ -685,10 +684,11 @@ class Tienda_model_new extends CI_Model {
      * @param null $buscador
      * @return mixed
      */
-    public function get_incidencias_finalizadas($page = 1, $cfg_pagination = NULL,$filtro_finalizadas=NULL,$buscador=NULL)
+    public function get_incidencias_finalizadas($page = 1, $cfg_pagination = NULL,$filtro_finalizadas=NULL,$buscador=NULL,$campo_orden=NULL,$orden=NULL)
     {
         $this->db->select('incidencias.*,pds.reference as reference')
             ->join('pds', 'incidencias.id_pds = pds.id_pds');
+
 
         if(! empty($buscador['buscar_incidencia']))
             $this->db->where('incidencias.id_incidencia',$buscador['buscar_incidencia']);
@@ -700,6 +700,13 @@ class Tienda_model_new extends CI_Model {
 
         if (!is_null($filtro_finalizadas) && !empty($filtro_finalizadas)){
              $this->db->where('incidencias.status', $filtro_finalizadas);
+        }
+
+        if(!is_null($campo_orden) && !empty($campo_orden) && !is_null($orden) && !empty($orden)) {
+            $s_orden = $campo_orden. " ".$orden;
+            $this->db->order_by($s_orden);
+        }else{
+            $this->db->order_by('fecha DESC');
         }
 
 
@@ -747,198 +754,198 @@ class Tienda_model_new extends CI_Model {
 			$query = $this->db->select('incidencias.*')
 			->where('incidencias.id_incidencia',$id)
 			->get('incidencias');
-	
+
 			return $query->row_array();
 		}
 		else {
 			return FALSE;
 		}
-	}	
-	
+	}
+
 	public function historico_fecha($id,$status) {
 		if($id != FALSE) {
 			$query = $this->db->select('historico.fecha')
 			->where('historico.id_incidencia',$id)
 			->where('historico.status',$status)
 			->get('historico');
-	
+
 			return $query->row_array();
 		}
 		else {
 			return FALSE;
 		}
-	}	
-	
-	
+	}
+
+
 	public function incidencia_update($id,$status_pds,$status)
 	{
 		$this->db->set('status_pds', $status_pds, FALSE);
 		$this->db->set('status', $status, FALSE);
 		$this->db->where('id_incidencia',$id);
 		$this->db->update('incidencias');
-	}	
+	}
 
 	public function incidencia_update_cierre($id,$fecha_cierre)
 	{
 		$this->db->set('fecha_cierre', $fecha_cierre);
 		$this->db->where('id_incidencia',$id);
 		$this->db->update('incidencias');
-	}	
-	
-	
+	}
+
+
 	public function comentario_incidencia_update($id,$texto)
 	{
 		$this->db->set('description_2', $texto);
 		$this->db->where('id_incidencia',$id);
 		$this->db->update('incidencias');
-	}	
-	
+	}
+
 	public function comentario_incidencia_instalador_update($id,$texto)
 	{
 		$this->db->set('description_3', $texto);
 		$this->db->where('id_incidencia',$id);
 		$this->db->update('incidencias');
 	}
-		
-	
+
+
 	public function incidencia_update_device_pds($id_devices_pds,$status)
 	{
 		$this->db->set('status', $status, FALSE);
 		$this->db->where('id_devices_pds',$id_devices_pds);
 		$this->db->update('devices_pds');
 	}
-		
-	
+
+
 	public function get_alarms_display($id) {
 		if($id != FALSE) {
 			$query = $this->db->select('alarms_display_pds.*,alarm.*')
 			->join('alarm','alarms_display_pds.id_alarm = alarm.id_alarm')
 			->where('alarms_display_pds.id_displays_pds',$id)
 			->get('alarms_display_pds');
-	
+
 			return $query->result();
 		}
 		else {
 			return FALSE;
 		}
 	}
-	
+
 	public function get_alarms_device($id) {
 		if($id != FALSE) {
 			$query = $this->db->select('alarms_device_pds.*,alarm.*')
 			->join('alarm', 'alarms_device_pds.id_alarm = alarm.id_alarm')
 			->where('alarms_device_pds.id_devices_pds',$id)
 			->get('alarms_device_pds');
-	
+
 			return $query->result();
 		}
 		else {
 			return FALSE;
 		}
-	}	
-	
-	
+	}
+
+
 	public function get_all_displays($id) {
 			$query = $this->db->select('*')
 				   ->where('id_pds',$id)
 				   ->get('displays_pds');
-			
-			return $query->num_rows();
-	}	
 
-	
+			return $query->num_rows();
+	}
+
+
 	public function get_all_devices($id) {
 			$query = $this->db->select('*')
 				   ->where('id_pds',$id)
 				   ->get('devices_pds');
-				
+
 			return $query->num_rows();
 	}
 
-	
+
 	public function insert_incidencia($data)
 	{
 		$this->db->insert('incidencias',$data);
 		$id=$this->db->insert_id();
 		return array('add' => (isset($id)) ? $id : FALSE, 'id' => $id);
-	}	
-	
-	
+	}
+
+
 	public function historico($data)
 	{
 		$this->db->insert('historico',$data);
 		$id=$this->db->insert_id();
-	}	
-	
+	}
+
 	public function incidencia_update_material($data)
 	{
 		$this->db->insert('material_incidencias',$data);
 		$id=$this->db->insert_id();
-	}	
-	
+	}
+
 	public function facturacion($data)
 	{
 		$this->db->insert('facturacion',$data);
 		$id=$this->db->insert_id();
 	}
-		
-	
+
+
 	public function incidencia_update_historico_sfid($data)
 	{
 		$this->db->insert('historico_sfid',$data);
 		$id=$this->db->insert_id();
 	}
-		
+
 	public function incidencia_update_sfid($sfid_old,$sfid_new)
 	{
 		$this->db->set('sfid',$sfid_new);
 		$this->db->where('sfid',$sfid_old);
 		$this->db->update('agent');
-		
+
 		$this->db->set('reference',$sfid_new);
 		$this->db->where('reference',$sfid_old);
-		$this->db->update('pds');		
-	}	
-	
+		$this->db->update('pds');
+	}
+
 	public function get_alarms_incidencia($id) {
 		if($id != FALSE) {
 			$query = $this->db->select('COUNT(id_alarm) as alarmas')
 			->where('material_incidencias.id_incidencia',$id)
 			->get('material_incidencias');
-	
+
 			return $query->row_array();
 		}
 		else {
 			return FALSE;
 		}
-	}	
-	
-	
+	}
+
+
 	public function get_devices_incidencia($id) {
 		if($id != FALSE) {
 			$query = $this->db->select('COUNT(id_devices_almacen) as dispositivos')
 			->where('material_incidencias.id_incidencia',$id)
 			->get('material_incidencias');
-	
+
 			return $query->row_array();
 		}
 		else {
 			return FALSE;
 		}
-	}	
-	
+	}
+
 	public function login($data)
 	{
 		$sfid     = $data['sfid'];
 		$password = $data['password'];
-	
+
 		$this->db->select('agent_id,sfid,password,type');
 		$this->db->from('agent');
 		$this->db->where('sfid',$sfid);
 		$this->db->where('password',$password);
 		$this->db->limit(1);
 		$query=$this->db->get();
-	
+
 		if($query->num_rows()==1)
 		{
 			$row = $query->row();
@@ -955,8 +962,8 @@ class Tienda_model_new extends CI_Model {
 		{
 			return FALSE;
 		}
-	}	
-	
+	}
+
 }
 
 ?>
