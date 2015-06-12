@@ -1,22 +1,11 @@
-		<!-- #page-wrapper -->
+<!-- #page-wrapper -->
         <div id="page-wrapper">
             <div class="row" id="incidencias_abiertas">
                 <div class="col-lg-12">
                     <h1 class="page-header"><?php echo $title ?> <a href="#incidencias_cerradas">Cerradas</a></h1>
                 </div>
-            <!-- 
-            <div class="row">
-                <div class="col-lg-6">
-                	<form action="<?=site_url('admin/dashboard');?>" method="post" class="form-inline form-sfid">
-                        <div class="form-group">
-                            <label>SFID</label>
-                            <input class="form-control" placeholder="SFID" name="sfid" id="sfid">
-                            <button type="submit" class="btn btn-default">Buscar</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-            -->
+
+
             <?php 
             if (isset($_POST['sfid']))
             {	
@@ -127,7 +116,7 @@
                             <a href="<?=base_url()?>admin/dashboard_new/borrar_busqueda/#incidencias_abiertas" class="reiniciar_busqueda">Reiniciar</a>
                         <?php } ?>
 
-		            <? } else {
+		            <?php } else {
 		                ?>
                         <?php if($show_paginator) { ?>
                             <div class="pagination">
@@ -161,7 +150,7 @@
 		                        <?php
 		                        foreach ($incidencias as $incidencia) {
 		                            ?>
-		                            <tr onClick="window.location.href='<?=site_url('admin/operar_incidencia/'.$incidencia->id_pds.'/'.$incidencia->id_incidencia)?>'">
+		                            <tr>
 		                                <td><a href="<?=site_url('admin/operar_incidencia/'.$incidencia->id_pds.'/'.$incidencia->id_incidencia)?>"><?php echo $incidencia->id_incidencia?></a></td>
 		                                <!--<td><a href="<?=site_url('tienda/detalle_incidencia/'.$incidencia->id_incidencia)?>">#<?php echo $incidencia->id_incidencia ?></a></td>-->
 		                                <td><?php echo $incidencia->reference ?></td>
@@ -201,7 +190,7 @@
                                         </td>		                                
 		                                <td><strong><?php echo $incidencia->status_pds ?></strong></td>
 		                                <td><strong><?php echo $incidencia->status ?></strong></td>
-		                                <td><a href="<?=site_url('admin/operar_incidencia/'.$incidencia->id_pds.'/'.$incidencia->id_incidencia)?>#chat"><strong><i class="fa fa-whatsapp <?=($incidencia->nuevos['nuevos']<>'0')?'chat_nuevo':'chat_leido'?>"></i></strong></a></td>
+		                                <td  onClick="window.location.href='<?=site_url('admin/operar_incidencia/'.$incidencia->id_pds.'/'.$incidencia->id_incidencia)?>'"><a href="<?=site_url('admin/operar_incidencia/'.$incidencia->id_pds.'/'.$incidencia->id_incidencia)?>#chat"><strong><i class="fa fa-whatsapp <?=($incidencia->nuevos['nuevos']<>'0')?'chat_nuevo':'chat_leido'?>"></i></strong></a></td>
 		                            </tr>
 		                        <?php
 		                        }
@@ -218,7 +207,7 @@
                             <script>
                                 <?php if(!empty($campo_orden_activas) && !empty($orden_activas)) {?>
                                     marcarOrdenacion('table_incidencias_dashboard','<?=$campo_orden_activas?>','<?=$orden_activas ?>');
-                                <? } ?>
+                                <?php } ?>
                             </script>
 		                </div>
 
@@ -323,7 +312,7 @@
                                     <?php
                                     foreach ($incidencias_finalizadas as $incidencia) {
                                         ?>
-                                        <tr onClick="window.location.href='<?=site_url('admin/operar_incidencia/'.$incidencia->id_pds.'/'.$incidencia->id_incidencia)?>'">
+                                        <tr>
                                             <td><a href="<?=site_url('admin/operar_incidencia/'.$incidencia->id_pds.'/'.$incidencia->id_incidencia)?>"><?php echo $incidencia->id_incidencia?></a></td>
                                             <!--<td><a href="<?=site_url('tienda/detalle_incidencia/'.$incidencia->id_incidencia)?>">#<?php echo $incidencia->id_incidencia ?></a></td>-->
                                             <td><?php echo $incidencia->reference ?></td>
@@ -363,7 +352,7 @@
                                             </td>
                                             <td><strong><?php echo $incidencia->status_pds ?></strong></td>
                                             <td><strong><?php echo $incidencia->status ?></strong></td>
-                                            <td><a href="<?=site_url('admin/operar_incidencia/'.$incidencia->id_pds.'/'.$incidencia->id_incidencia)?>#chat"><strong><i class="fa fa-whatsapp <?=($incidencia->nuevos['nuevos']<>'0')?'chat_nuevo':'chat_leido'?>"></i></strong></a></td>
+                                            <td  onClick="window.location.href='<?=site_url('admin/operar_incidencia/'.$incidencia->id_pds.'/'.$incidencia->id_incidencia)?>'"><a href="<?=site_url('admin/operar_incidencia/'.$incidencia->id_pds.'/'.$incidencia->id_incidencia)?>#chat"><strong><i class="fa fa-whatsapp <?=($incidencia->nuevos['nuevos']<>'0')?'chat_nuevo':'chat_leido'?>"></i></strong></a></td>
                                         </tr>
                                     <?php
                                     }
@@ -379,8 +368,8 @@
                                 </form>
                                 <script>
                                     <?php if(!empty($campo_orden_cerradas) && !empty($orden_cerradas)) {?>
-                                    marcarOrdenacion('table_incidencias_cerradas_dashboard','<?=$campo_orden_cerradas?>','<?=$orden_cerradas ?>');
-                                    <? } ?>
+                                        marcarOrdenacion('table_incidencias_cerradas_dashboard','<?=$campo_orden_cerradas?>','<?=$orden_cerradas ?>');
+                                    <?php } ?>
                                 </script>
                             </div>
                             <div class="pagination">
@@ -392,7 +381,7 @@
                         }
                         ?>
                     </div>
+
         </div>
         <!-- /#page-wrapper -->
-
         <?php $this->load->view('backend/intervenciones/ver_intervencion_incidencia');?>
