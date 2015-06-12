@@ -137,22 +137,23 @@
                             </div>
                         <?php } ?>
 
+
 		                <div class="table-responsive">
-		                    <table class="table table-striped table-bordered table-hover" id="table_incidencias_dashboard">
+		                    <table class="table table-striped table-bordered table-hover table-sorting" id="table_incidencias_dashboard" data-order-form="form_orden_activas">
 		                        <thead>
 		                        <tr>
-		                            <th>Ref.</th>
-		                            <th>SFID</th>
-		                            <th>Fecha alta</th>
-		                            <th>Elemento afectado</th>
-		                            <th>Sistema general de seguridad</th>
-		                            <th>Dispositivo</th>
-		                        	<th>Alarma dispositivo cableado</th>
-		                            <th>Soporte sujección</th>
-		                            <th>Tipo incidencia</th>
-		                            <th>Interv.</th>
-		                            <th>Estado</th>
-		                            <th>Estado SAT</th>
+		                            <th class="sorting" data-rel="incidencias.id_incidencia"    data-order="">Ref.</th>
+		                            <th class="sorting" data-rel="pds.reference"                data-order="">SFID</th>
+		                            <th class="sorting" data-rel="incidencias.fecha"            data-order="desc">Fecha alta</th>
+		                            <th                                                                         >Elemento afectado</th>
+		                            <th class="sorting" data-rel="incidencias.alarm_display"    data-order="">Sistema general de seguridad</th>
+		                            <th class="sorting" data-rel="incidencias.fail_device"    data-order="">Dispositivo</th>
+		                        	<th class="sorting" data-rel="incidencias.alarm_device"    data-order="">Alarma dispositivo cableado</th>
+		                            <th class="sorting" data-rel="incidencias.alarm_garra"    data-order="">Soporte sujección</th>
+		                            <th class="sorting" data-rel="incidencias.tipo_averia"    data-order="">Tipo incidencia</th>
+		                            <th                                                                     >Interv.</th>
+		                            <th class="sorting" data-rel="incidencias.status_pds"    data-order="">Estado</th>
+		                            <th class="sorting" data-rel="incidencias.status"    data-order="">Estado SAT</th>
 		                            <th>Chat offline</th>
 		                        </tr>
 		                        </thead>
@@ -207,7 +208,19 @@
 		                        ?>
 		                        </tbody>
 		                    </table>
+                            <form action="<?=base_url()?>admin/dashboard_new/#incidencias_abiertas" method="post" id="form_orden_activas">
+                                <input type="hidden" name="form_orden_activas_campo"  value="">
+                                <input type="hidden" name="form_orden_activas_orden" value="">
+                                <input type="hidden" name="form"  value="">
+                                <input type="hidden" name="ordenar" value="true">
+                            </form>
+                            <script>
+                                <?php if(!empty($campo_orden_activas) && !empty($orden_activas)) {?>
+                                    marcarOrdenacion('table_incidencias_dashboard','<?=$campo_orden_activas?>','<?=$orden_activas ?>');
+                                <? } ?>
+                            </script>
 		                </div>
+
                         <div class="pagination">
                             <ul class="pagination">
                                 <?php echo "".$pagination_helper->create_links(); ?>
@@ -287,21 +300,21 @@
 
 
                             <div class="table-responsive">
-                                <table class="table table-striped table-bordered table-hover" id="table_incidencias_dashboard">
+                                <table class="table table-striped table-bordered table-hover" id="table_incidencias_cerradas_dashboard">
                                     <thead>
                                     <tr>
-                                        <th>Ref.</th>
-                                        <th>SFID</th>
-                                        <th>Fecha alta</th>
-                                        <th>Elemento afectado</th>
-                                        <th>Sistema general de seguridad</th>
-                                        <th>Dispositivo</th>
-                                        <th>Alarma dispositivo cableado</th>
-                                        <th>Soporte sujección</th>
-                                        <th>Tipo incidencia</th>
-                                        <th>Interv.</th>
-                                        <th>Estado</th>
-                                        <th>Estado SAT</th>
+                                        <th class="sorting">Ref.</th>
+                                        <th class="sorting">SFID</th>
+                                        <th class="sorting">Fecha alta</th>
+                                        <th class="sorting">Elemento afectado</th>
+                                        <th class="sorting">Sistema general de seguridad</th>
+                                        <th class="sorting">Dispositivo</th>
+                                        <th class="sorting">Alarma dispositivo cableado</th>
+                                        <th class="sorting">Soporte sujección</th>
+                                        <th class="sorting">Tipo incidencia</th>
+                                        <th class="sorting">Interv.</th>
+                                        <th class="sorting">Estado</th>
+                                        <th class="sorting">Estado SAT</th>
                                         <th>Chat offline</th>
                                     </tr>
                                     </thead>
@@ -370,3 +383,5 @@
         <!-- /#page-wrapper -->
 
         <?php $this->load->view('backend/intervenciones/ver_intervencion_incidencia');?>
+
+        

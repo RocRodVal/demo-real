@@ -32,3 +32,55 @@ Estilos de las tabla
 .chat_leido{
     color:#000;
 }
+
+
+/**
+**  FILTRO DASHBOARD
+**/
+.filtro,
+.buscador{ margin-bottom: 20px; }
+.filtro label,
+.buscador label{ width:100%; font-size: 12px; text-align: left; }
+.filtro input[type=submit],
+.buscador input[type=submit]{ margin: 28px 0 0 0;}
+
+a.reiniciar_busqueda{ color:#000; font-size: 12px; margin: 35px 0 0 0; display: inline-block; }
+
+
+.table-sorting th:before,
+.table-sorting th:after {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    margin-top:-8px;
+}
+.table>thead>tr>th{vertical-align: middle}
+table thead th.sorting{ position:relative; padding-right: 25px; vertical-align: middle;
+    cursor: pointer;
+}
+table thead th.sorting:hover{ background-color: #e15f09;}
+
+table thead th.sorting:after {
+    content: "\f0dc";
+    float: right;
+    font-family: fontawesome;
+    color: rgba(50,50,50,.5);
+}
+table thead th.sorting_desc:after {
+    content: "\f0dd";
+    float: right;
+    font-family: fontawesome;
+    color:#000;
+}
+
+table thead th.sorting_asc:after {
+    content: "\f0de";
+    float: right;
+    font-family: fontawesome;
+    color:#000;
+}
+
+

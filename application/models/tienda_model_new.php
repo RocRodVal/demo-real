@@ -612,7 +612,7 @@ class Tienda_model_new extends CI_Model {
 	}	
 	
 	
-	public function get_incidencias($page = 1, $cfg_pagination = NULL,$filtro=NULL,$buscador=NULL) {
+	public function get_incidencias($page = 1, $cfg_pagination = NULL,$campo_orden=NULL,$orden=NULL,$filtro=NULL,$buscador=NULL) {
         $this->db->select('incidencias.*,pds.reference as reference')
                 ->join('pds','incidencias.id_pds = pds.id_pds');
 
@@ -628,7 +628,14 @@ class Tienda_model_new extends CI_Model {
         if(! empty($buscador['buscar_sfid']))
             $this->db->where('pds.reference',$buscador['buscar_sfid']);
 
-        $this->db->order_by('fecha DESC');
+
+        if(!is_null($campo_orden) && !empty($campo_orden) && !is_null($orden) && !empty($orden)) {
+                $s_orden = $campo_orden . " " .$orden;
+            $this->db->order_by($s_orden);
+
+        }else{
+            $this->db->order_by('fecha DESC');
+        }
 
 		$query =   $this->db->get('incidencias',$cfg_pagination['per_page'], ($page-1) * $cfg_pagination['per_page']);
 	
@@ -670,7 +677,14 @@ class Tienda_model_new extends CI_Model {
 	}
 
 
-
+    /**
+     * Obtiene las filas de las incidencias finalizadas, aplicando filtro y buscador si procede.
+     * @param int $page
+     * @param null $cfg_pagination
+     * @param null $filtro_finalizadas
+     * @param null $buscador
+     * @return mixed
+     */
     public function get_incidencias_finalizadas($page = 1, $cfg_pagination = NULL,$filtro_finalizadas=NULL,$buscador=NULL)
     {
         $this->db->select('incidencias.*,pds.reference as reference')
@@ -698,6 +712,14 @@ class Tienda_model_new extends CI_Model {
         return $query->result();
     }
 
+    /**
+     * Devuelve la cantidad de líneas de incidencias finalizadas, teniendo en cuenta filtro y buscador.
+     * Útil para el paginador
+     *
+     * @param null $filtro_finalizadas
+     * @param null $buscador
+     * @return mixed
+     */
     public function get_incidencias_finalizadas_quantity($filtro_finalizadas=NULL,$buscador=NULL)
     {
         $this->db->select('COUNT(incidencias.id_incidencia) AS cantidad')
@@ -715,8 +737,6 @@ class Tienda_model_new extends CI_Model {
         if (!is_null($filtro_finalizadas) && !empty($filtro_finalizadas)){
             $this->db->where('incidencias.status', $filtro_finalizadas);
         }
-
-
 
         $query = $this->db->get('incidencias');
         return $query->result()[0]->cantidad;

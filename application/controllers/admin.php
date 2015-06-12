@@ -218,6 +218,7 @@ class Admin extends CI_Controller
 
 
 
+
             $buscador['buscar_sfid']        = $buscar_sfid;
             $buscador['buscar_incidencia']  = $buscar_incidencia;
 
@@ -225,6 +226,34 @@ class Admin extends CI_Controller
             $data['buscar_incidencia']  = $buscar_incidencia;
 
             $data["filtro"] = $filtro;
+
+
+            // Obtener el campo a ordenar, primero de Session y despues del post, si procede..
+            $campo_orden_activas = NULL;
+            $orden_activas = NULL;
+
+            $sess_campo_orden_activas =  $this->session->userdata('campo_orden_activas');
+            if(! empty($sess_campo_orden_activas)) $campo_orden_activas = $sess_campo_orden_activas;
+            $sess_orden_activas =  $this->session->userdata('orden_activas');
+            if(! empty($sess_orden_activas)) $orden_activas = $sess_orden_activas;
+
+            // viene del form de ordenacion
+            $do_orden = $this->input->post('ordenar');
+            if($do_orden==='true') {
+
+                $post_orden_form = $this->input->post('form');
+
+
+                $campo_orden_activas = $this->input->post($post_orden_form.'_campo');
+                $orden_activas = $this->input->post($post_orden_form.'_orden');
+
+                $this->session->set_userdata('campo_orden_activas', $campo_orden_activas);
+                $this->session->set_userdata('orden_activas', $orden_activas);
+
+            }
+
+            $data["campo_orden_activas"] = $campo_orden_activas;
+            $data["orden_activas"] = $orden_activas;
 
             $this->load->library('app/paginationlib');
 
@@ -243,7 +272,7 @@ class Admin extends CI_Controller
 
             $data["pagination_helper"]   = $this->pagination;
 
-            $incidencias = $this->tienda_model_new->get_incidencias($page,$cfg_pagination,$filtro,$buscador);
+            $incidencias = $this->tienda_model_new->get_incidencias($page,$cfg_pagination,$campo_orden_activas,$orden_activas,$filtro,$buscador);
 
 
 
@@ -285,10 +314,12 @@ class Admin extends CI_Controller
                 $this->session->set_userdata('filtro_finalizadas',$filtro_finalizadas);
             }
 
-
             $data["filtro_finalizadas"] = $filtro_finalizadas;
 
             $per_page = 5;
+
+
+
 
             $total_incidencias = $this->tienda_model_new->get_incidencias_finalizadas_quantity($filtro_finalizadas,$buscador);   // Sacar el total de incidencias, para el paginador
             $cfg_pagination = $this->paginationlib->init_pagination("admin/dashboard_new/finalizadas/",$total_incidencias,$per_page,$segment_finalizadas);
