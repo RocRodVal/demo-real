@@ -123,7 +123,7 @@
                                 <ul class="pagination">
                                     <?php echo "".$pagination_helper->create_links(); ?>
                                 </ul>
-                                <?php /*<p>Encontrados <?=$num_resultados?> resultados. Mostrando del <?=$n_inicial?> al <?=$n_final?>.</p> */ ?>
+                                <p>Encontrados <?=$num_resultados?> resultados. Mostrando del <?=$n_inicial?> al <?=$n_final?>.</p>
                             </div>
                         <?php } ?>
 
@@ -213,11 +213,11 @@
 		                </div>
 
                         <div class="pagination">
+                            <p>Encontrados <?=$num_resultados?> resultados. Mostrando del <?=$n_inicial?> al <?=$n_final?>.</p>
                             <ul class="pagination">
                                 <?php echo "".$pagination_helper->create_links(); ?>
 
                             </ul>
-                           <?php /* <p>Encontrados <?=$num_resultados?> resultados. Mostrando del <?=$n_inicial?> al <?=$n_final?>.</p>*/ ?>
                         </div>
 		            <?php
 		            }
@@ -288,7 +288,7 @@
                                     <ul class="pagination">
                                         <?php echo "".$pagination_finalizadas_helper->create_links(); ?>
                                     </ul>
-                                    <?php /* <p>Encontrados <?=$num_resultados_finalizadas?> resultados. Mostrando del <?=$n_inicial_finalizadas?> al <?=$n_final_finalizadas?>.</p>*/ ?>
+                                    <p>Encontrados <?=$num_resultados_finalizadas?> resultados. Mostrando del <?=$n_inicial_finalizadas?> al <?=$n_final_finalizadas?>.</p>
                                 </div>
                              <?php }?>
 
@@ -377,11 +377,10 @@
                                 </script>
                             </div>
                             <div class="pagination">
+                                <p>Encontrados <?=$num_resultados_finalizadas?> resultados. Mostrando del <?=$n_inicial_finalizadas?> al <?=$n_final_finalizadas?>.</p>
                                 <ul class="pagination">
                                     <?php echo "".$pagination_finalizadas_helper->create_links(); ?>
                                 </ul>
-                                <?php /* <p>Encontrados <?=$num_resultados_finalizadas?> resultados. Mostrando del <?=$n_inicial_finalizadas?> al <?=$n_final_finalizadas?>.</p> */ ?>
-
                             </div>
                         <?php
                         }

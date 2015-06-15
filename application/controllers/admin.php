@@ -224,9 +224,16 @@ class Admin extends CI_Controller
 
             // Mostrar párrafo de info páginas
             $data['num_resultados'] = $total_incidencias;
-            $data['n_inicial'] = ($page - 1) * $per_page + 1;
-            $n_final = ($page) * $per_page ;
-            $data['n_final'] = ($total_incidencias < $n_final) ? $total_incidencias : $n_final;
+
+                $n_inicial = ($page - 1) * $per_page + 1;
+                $n_inicial = ($n_inicial == 0) ? 1 : $n_inicial;
+
+            $data['n_inicial'] = $n_inicial;
+
+                $n_final = ($n_inicial) + $per_page -1 ;
+                $n_final = ($total_incidencias < $n_final) ? $total_incidencias : $n_final;
+
+            $data['n_final'] = $n_final;
 
             $data["pagination_helper"]   = $this->pagination;
 
@@ -319,10 +326,16 @@ class Admin extends CI_Controller
             if($total_incidencias > $cfg_pagination['per_page']) $data['show_paginator_finalizadas'] = true;
 
             // Mostrar párrafo de info páginas
+
             $data['num_resultados_finalizadas'] = $total_incidencias;
-            $data['n_inicial_finalizadas'] = ($page_finalizadas - 1) * $per_page + 1;
-            $n_final = ($page_finalizadas) * $per_page+1;
-            $data['n_final_finalizadas'] = ($total_incidencias < $n_final) ? $total_incidencias : $n_final;
+            $n_inicial_finalizadas = ($page_finalizadas - 1) * $per_page + 1;
+            $n_inicial_finalizadas = ($n_inicial_finalizadas == 0) ? 1 : $n_inicial_finalizadas;
+
+            $data['n_inicial_finalizadas'] = $n_inicial_finalizadas;
+
+            $n_final_finalizadas = ($n_inicial_finalizadas) + $per_page -1 ;
+            $n_final_finalizadas = ($total_incidencias < $n_final_finalizadas) ? $total_incidencias : $n_final_finalizadas;
+            $data['n_final_finalizadas'] = ($total_incidencias < $n_final_finalizadas) ? $total_incidencias : $n_final_finalizadas;
 
             $incidencias_finalizadas = $this->tienda_model_new->get_incidencias_finalizadas($page_finalizadas,$cfg_pagination,$filtro_finalizadas,$buscador,$campo_orden_cerradas,$orden_cerradas);
 
@@ -679,6 +692,9 @@ class Admin extends CI_Controller
     		$html = $this->load->view('backend/imprimir_incidencia', $data, true);
     		pdf_create($html, 'intervencion-'.$incidencia['intervencion'].'_incidencia-'.$incidencia['id_incidencia']);
 
+            // ENVIAR EMAIL CON EL PDF AL INSTALADOR: Subj = Parte incidencia nº {{PARTE_INCIDENCIA_NUM}}
+
+            
     		// Salida HTML
     		// $this->load->view('backend/imprimir_incidencia', $data);
 
