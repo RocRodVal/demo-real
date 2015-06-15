@@ -42,7 +42,8 @@
 		                            <th>SFID</th>
 		                            <th>Tipo</th>
 		                            <th>Intervención</th>
-		                            <th>Mueble</th>
+		                            <th>Incidencias</th>
+		                            <th>Instalador</th>
 		                            <th>Dispositivos</th>
 		                            <th>Alarmas</th>
 		                        </tr>
@@ -56,7 +57,8 @@
 		                                <td><?php echo $item_facturacion->SFID ?></td>
 		                                <td><?php echo $item_facturacion->pds ?></td>
 		                                <td><?php echo $item_facturacion->visita ?></td>
-		                                <td><?php echo $item_facturacion->display ?></td>
+		                                <td><?php echo $item_facturacion->incidencias ?></td>
+		                                <td><?php echo $item_facturacion->instalador ?></td>
 		                                <td><?php echo $item_facturacion->dispositivos ?></td>
 		                                <td><?php echo $item_facturacion->otros ?></td>
 		                            </tr>

@@ -289,11 +289,13 @@ class Tienda_model extends CI_Model {
 	
 	
 	public function facturacion_estado($fecha_inicio,$fecha_fin) {
-		$query = $this->db->select('facturacion.fecha, pds.reference AS SFID, type_pds.pds, facturacion.id_intervencion AS visita, display.display, SUM(facturacion.units_device) AS dispositivos, SUM(facturacion.units_alarma) AS otros')
+		$query = $this->db->select('facturacion.fecha, pds.reference AS SFID, type_pds.pds, facturacion.id_intervencion AS visita, COUNT(facturacion.id_incidencia) AS incidencias, contact.contact AS instalador, SUM(facturacion.units_device) AS dispositivos, SUM(facturacion.units_alarma) AS otros')
 		->join('pds','facturacion.id_pds = pds.id_pds')
 		->join('type_pds','pds.type_pds = type_pds.id_type_pds')
 		->join('displays_pds','facturacion.id_displays_pds = displays_pds.id_displays_pds')
 		->join('display','displays_pds.id_display = display.id_display')
+		->join('intervenciones','facturacion.id_intervencion = intervenciones.id_intervencion', 'left')
+		->join('contact','intervenciones.id_operador = contact.id_contact', 'left')
 		->where('facturacion.fecha >=',$fecha_inicio)
 		->where('facturacion.fecha <=',$fecha_fin)	
 		->group_by('facturacion.id_intervencion')
@@ -310,11 +312,13 @@ class Tienda_model extends CI_Model {
 		$this->load->helper('file');
 		$this->load->helper('download');
 		
-		$query = $this->db->select('facturacion.fecha, pds.reference AS SFID, type_pds.pds, facturacion.id_intervencion AS visita, display.display, SUM(facturacion.units_device) AS dispositivos, SUM(facturacion.units_alarma) AS otros')
+		$query = $this->db->select('facturacion.fecha, pds.reference AS SFID, type_pds.pds, facturacion.id_intervencion AS visita, COUNT(facturacion.id_incidencia) AS incidencias, contact.contact AS instalador, SUM(facturacion.units_device) AS dispositivos, SUM(facturacion.units_alarma) AS otros')
 		->join('pds','facturacion.id_pds = pds.id_pds')
 		->join('type_pds','pds.type_pds = type_pds.id_type_pds')
 		->join('displays_pds','facturacion.id_displays_pds = displays_pds.id_displays_pds')
 		->join('display','displays_pds.id_display = display.id_display')
+		->join('intervenciones','facturacion.id_intervencion = intervenciones.id_intervencion', 'left')
+		->join('contact','intervenciones.id_operador = contact.id_contact', 'left')		
 		->where('facturacion.fecha >=',$fecha_inicio)
 		->where('facturacion.fecha <=',$fecha_fin)		
 		->group_by('facturacion.id_intervencion')

@@ -142,12 +142,14 @@ WHERE reference IN (XXX,YYY);
 /*
 Facturación
 */
-SELECT facturacion.fecha, pds.reference AS SFID, type_pds.pds, facturacion.id_intervencion AS visita, display.display, SUM(facturacion.units_device) AS dispositivos, SUM(facturacion.units_alarma) AS otros
+SELECT facturacion.fecha, pds.reference AS SFID, type_pds.pds, COUNT(facturacion.id_incidencia) AS incidencias, contact.contact AS instalador, SUM(facturacion.units_device) AS dispositivos, SUM(facturacion.units_alarma) AS otros
 FROM facturacion
 JOIN pds ON facturacion.id_pds = pds.id_pds
 JOIN type_pds ON pds.type_pds = type_pds.id_type_pds
 JOIN displays_pds ON facturacion.id_displays_pds = displays_pds.id_displays_pds
 JOIN display ON displays_pds.id_display = display.id_display
+LEFT JOIN intervenciones ON facturacion.id_intervencion = intervenciones.id_intervencion
+LEFT JOIN contact ON intervenciones.id_operador = contact.id_contact
 GROUP BY facturacion.id_intervencion
 ORDER BY facturacion.fecha ASC;
 
