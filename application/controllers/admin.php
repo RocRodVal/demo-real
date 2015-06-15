@@ -222,6 +222,12 @@ class Admin extends CI_Controller
             $data['show_paginator'] = false;
             if($total_incidencias > $cfg_pagination['per_page']) $data['show_paginator'] = true;
 
+            // Mostrar párrafo de info páginas
+            $data['num_resultados'] = $total_incidencias;
+            $data['n_inicial'] = ($page - 1) * $per_page + 1;
+            $n_final = ($page) * $per_page ;
+            $data['n_final'] = ($total_incidencias < $n_final) ? $total_incidencias : $n_final;
+
             $data["pagination_helper"]   = $this->pagination;
 
             $incidencias = $this->tienda_model_new->get_incidencias($page,$cfg_pagination,$campo_orden_activas,$orden_activas,$filtro,$buscador);
@@ -311,6 +317,12 @@ class Admin extends CI_Controller
             // Indicamos si habrá que mostrar el paginador en la vista
             $data['show_paginator_finalizadas'] = false;
             if($total_incidencias > $cfg_pagination['per_page']) $data['show_paginator_finalizadas'] = true;
+
+            // Mostrar párrafo de info páginas
+            $data['num_resultados_finalizadas'] = $total_incidencias;
+            $data['n_inicial_finalizadas'] = ($page_finalizadas - 1) * $per_page + 1;
+            $n_final = ($page_finalizadas) * $per_page+1;
+            $data['n_final_finalizadas'] = ($total_incidencias < $n_final) ? $total_incidencias : $n_final;
 
             $incidencias_finalizadas = $this->tienda_model_new->get_incidencias_finalizadas($page_finalizadas,$cfg_pagination,$filtro_finalizadas,$buscador,$campo_orden_cerradas,$orden_cerradas);
 

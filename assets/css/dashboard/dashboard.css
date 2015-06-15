@@ -45,7 +45,8 @@ h1.page-header a:hover{ text-decoration: none;}
 div.pagination{padding: 0; margin:0 0 20px 0;
     }
 div.pagination ul.pagination{
-    margin: 0;}
+    margin: 0 0 15px 0;}
+div.pagination p{ width: 100%; margin:0; padding:0;}
 
 .filtro,
 .buscador{ margin-bottom: 20px; }
