@@ -27,21 +27,44 @@ class Tienda extends CI_Controller {
 			);
 		}
 		
-		if ($this->form_validation->run() == true && $this->user_model->login($data))
+		if ($this->form_validation->run() == true )
 		{
-			redirect('tienda/dashboard');
+            $this->form_validation->set_rules('sfid','SFID','callback_do_login');
+
+            if($this->form_validation->run() == true){
+                redirect('tienda/dashboard');
+            }else{
+                $data['message'] = (validation_errors() ? validation_errors() : ($this->session->flashdata('message')));
+            }
+
+
 		}
-		else
-		{
-			$this->data['message'] = (validation_errors() ? validation_errors() : ($this->session->flashdata('message')));
+
+			$data['message'] = (validation_errors() ? validation_errors() : ($this->session->flashdata('message')));
 						
 			$data['title'] = 'Login';
 			
 			$this->load->view('tienda/header',$data);
 			$this->load->view('tienda/login',$data);
 			$this->load->view('tienda/footer');
-		}		
+
 	}
+
+
+    public function do_login(){
+
+        $this->load->model('user_model');
+        $data = array(
+            'sfid' => strtolower($this->input->post('sfid')),
+            'password' => $this->input->post('password'),
+        );
+        if($this->user_model->login($data)){
+            return true;
+        }else{
+            $this->form_validation->set_message('do_login','"SFID" or "password" are incorrect.');
+            return false;
+        }
+    }
 	
 	
 	public function dashboard()

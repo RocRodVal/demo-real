@@ -24,6 +24,7 @@ class Admin extends CI_Controller
 
         $this->form_validation->set_rules('sfid', 'SFID', 'required|xss_clean');
         $this->form_validation->set_rules('password', 'password', 'required|xss_clean');
+        $this->form_validation->set_message('login_error', '"Username" or "Password" are incorrect.');
 
         if ($this->form_validation->run() == true) {
             $data = array(
@@ -32,19 +33,42 @@ class Admin extends CI_Controller
             );
         }
 
-        if ($this->form_validation->run() == true && $this->user_model->login_admin($data)) {
-            redirect('admin/dashboard');
-        } else {
-            $this->data['message'] = (validation_errors() ? validation_errors() : ($this->session->flashdata('message')));
+        if ($this->form_validation->run() == true) {
+            $this->form_validation->set_rules('sfid','SFID','callback_do_login');
 
-            $data['title'] = 'Login';
+            if($this->form_validation->run() == true){
+                redirect('admin/dashboard');
+            }else{
+                $data['message'] = (validation_errors() ? validation_errors() : ($this->session->flashdata('message')));
+            }
 
-            $this->load->view('backend/header', $data);
-            $this->load->view('backend/login', $data);
-            $this->load->view('backend/footer');
         }
+
+        $data['message'] = (validation_errors() ? validation_errors() : ($this->session->flashdata('message')));
+
+        $data['title'] = 'Login';
+
+        $this->load->view('backend/header', $data);
+        $this->load->view('backend/login', $data);
+        $this->load->view('backend/footer');
+
     }
 
+
+    public function do_login(){
+
+        $this->load->model('user_model');
+        $data = array(
+            'sfid' => strtolower($this->input->post('sfid')),
+            'password' => $this->input->post('password'),
+        );
+        if($this->user_model->login_admin($data)){
+            return true;
+        }else{
+            $this->form_validation->set_message('do_login','"Username" or "password" are incorrect.');
+            return false;
+        }
+    }
 
     public function dashboard()
     {
