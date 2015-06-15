@@ -24,6 +24,7 @@ class Admin extends CI_Controller
 
         $this->form_validation->set_rules('sfid', 'SFID', 'required|xss_clean');
         $this->form_validation->set_rules('password', 'password', 'required|xss_clean');
+        $this->form_validation->set_message('login_error', '"Username" or "Password" are incorrect.');
 
         if ($this->form_validation->run() == true) {
             $data = array(
@@ -32,19 +33,42 @@ class Admin extends CI_Controller
             );
         }
 
-        if ($this->form_validation->run() == true && $this->user_model->login_admin($data)) {
-            redirect('admin/dashboard');
-        } else {
-            $this->data['message'] = (validation_errors() ? validation_errors() : ($this->session->flashdata('message')));
+        if ($this->form_validation->run() == true) {
+            $this->form_validation->set_rules('sfid','SFID','callback_do_login');
 
-            $data['title'] = 'Login';
+            if($this->form_validation->run() == true){
+                redirect('admin/dashboard');
+            }else{
+                $data['message'] = (validation_errors() ? validation_errors() : ($this->session->flashdata('message')));
+            }
 
-            $this->load->view('backend/header', $data);
-            $this->load->view('backend/login', $data);
-            $this->load->view('backend/footer');
         }
+
+        $data['message'] = (validation_errors() ? validation_errors() : ($this->session->flashdata('message')));
+
+        $data['title'] = 'Login';
+
+        $this->load->view('backend/header', $data);
+        $this->load->view('backend/login', $data);
+        $this->load->view('backend/footer');
+
     }
 
+
+    public function do_login(){
+
+        $this->load->model('user_model');
+        $data = array(
+            'sfid' => strtolower($this->input->post('sfid')),
+            'password' => $this->input->post('password'),
+        );
+        if($this->user_model->login_admin($data)){
+            return true;
+        }else{
+            $this->form_validation->set_message('do_login','"Username" or "password" are incorrect.');
+            return false;
+        }
+    }
 
     public function dashboard()
     {
@@ -90,6 +114,27 @@ class Admin extends CI_Controller
     }
 
 
+    /**
+     *  Método que inicializa la paginación y devuelve el array de configuración de la misma
+     *
+     * @param $uri          URL Base que contendrá la paginación
+     * @param $total_rows   Total de filas a paginar
+     * @param int $per_page Numero de filas por página
+     * @param int $segment  Segmento de la URI que corresponderá al nº de página
+     * @return $config array con la configuración del paginador
+     */
+   /* public function init_pagination($uri,$total_rows,$per_page=10,$segment=4){
+
+        $ci                          =& get_instance();
+        $config['per_page']          = $per_page;
+        $config['uri_segment']       = $segment;
+        $config['base_url']          = base_url().$uri;
+        $config['total_rows']        = $total_rows;
+        $config['use_page_numbers']  = TRUE;
+
+        $ci->pagination->initialize($config);
+        return $config;
+    }*/
 
     public function dashboard_new()
     {
@@ -209,12 +254,11 @@ class Admin extends CI_Controller
 
             $data['title']           = 'Mis solicitudes';
             $data['title_iniciadas'] = 'Incidencias abiertas';
+
             $per_page = 100;
             $total_incidencias = $this->tienda_model_new->get_incidencias_quantity($filtro,$buscador);   // Sacar el total de incidencias, para el paginador
             $cfg_pagination = $this->paginationlib->init_pagination("admin/dashboard_new/incidencias/",$total_incidencias,$per_page,$segment);
 
-            $cfg_pagination["suffix"] = '#incidencias_abiertas';
-            $cfg_pagination["first_url"] = base_url().'/admin/dashboard_new/finalizadas/#incidencias_abiertas';
 
             $this->load->library('pagination',$cfg_pagination);
             $this->pagination->initialize($cfg_pagination);
@@ -222,17 +266,16 @@ class Admin extends CI_Controller
             // Indicamos si habrá que mostrar el paginador en la vista
             $data['show_paginator'] = false;
             if($total_incidencias > $cfg_pagination['per_page']) $data['show_paginator'] = true;
-
             // Mostrar párrafo de info páginas
             $data['num_resultados'] = $total_incidencias;
 
-                $n_inicial = ($page - 1) * $per_page + 1;
-                $n_inicial = ($n_inicial == 0) ? 1 : $n_inicial;
+            $n_inicial = ($page - 1) * $per_page + 1;
+            $n_inicial = ($n_inicial == 0) ? 1 : $n_inicial;
 
             $data['n_inicial'] = $n_inicial;
 
-                $n_final = ($n_inicial) + $per_page -1 ;
-                $n_final = ($total_incidencias < $n_final) ? $total_incidencias : $n_final;
+            $n_final = ($n_inicial) + $per_page -1 ;
+            $n_final = ($total_incidencias < $n_final) ? $total_incidencias : $n_final;
 
             $data['n_final'] = $n_final;
 
@@ -253,9 +296,9 @@ class Admin extends CI_Controller
             $data['incidencias'] = $incidencias;
 
             /**
-             * Sacar la info para la tabla html de Incidencias Cerradas.
+             * Sacar la info para la tabla de Incidencias Finalizadas.
              */
-            $data['title_finalizadas'] = 'Incidencias cerradas';
+            $data['title_finalizadas'] = 'Incidencias finalizadas';
 
 
             // Obtener la página actual del GET y si no existe, definirla a 1
@@ -316,7 +359,6 @@ class Admin extends CI_Controller
             $cfg_pagination = $this->paginationlib->init_pagination("admin/dashboard_new/finalizadas/",$total_incidencias,$per_page,$segment_finalizadas);
 
             $cfg_pagination["suffix"] = '#incidencias_cerradas';
-            $cfg_pagination["first_url"] = base_url().'/admin/dashboard_new/finalizadas/#incidencias_cerradas';
 
             $this->load->library('pagination',$cfg_pagination,'pagination_finalizadas');
             $this->pagination_finalizadas->initialize($cfg_pagination);
@@ -325,7 +367,6 @@ class Admin extends CI_Controller
             // Indicamos si habrá que mostrar el paginador en la vista
             $data['show_paginator_finalizadas'] = false;
             if($total_incidencias > $cfg_pagination['per_page']) $data['show_paginator_finalizadas'] = true;
-
             // Mostrar párrafo de info páginas
 
             $data['num_resultados_finalizadas'] = $total_incidencias;
@@ -336,7 +377,8 @@ class Admin extends CI_Controller
 
             $n_final_finalizadas = ($n_inicial_finalizadas) + $per_page -1 ;
             $n_final_finalizadas = ($total_incidencias < $n_final_finalizadas) ? $total_incidencias : $n_final_finalizadas;
-            $data['n_final_finalizadas'] = ($total_incidencias < $n_final_finalizadas) ? $total_incidencias : $n_final_finalizadas;
+            $data['n_final_finalizadas'] = $n_final_finalizadas;
+
 
             $incidencias_finalizadas = $this->tienda_model_new->get_incidencias_finalizadas($page_finalizadas,$cfg_pagination,$filtro_finalizadas,$buscador,$campo_orden_cerradas,$orden_cerradas);
 
@@ -357,7 +399,6 @@ class Admin extends CI_Controller
             redirect('admin', 'refresh');
         }
     }
-
 
 
 
@@ -694,9 +735,6 @@ class Admin extends CI_Controller
     		$html = $this->load->view('backend/imprimir_incidencia', $data, true);
     		pdf_create($html, 'intervencion-'.$incidencia['intervencion'].'_incidencia-'.$incidencia['id_incidencia']);
 
-            // ENVIAR EMAIL CON EL PDF AL INSTALADOR: Subj = Parte incidencia nº {{PARTE_INCIDENCIA_NUM}}
-
-            
     		// Salida HTML
     		// $this->load->view('backend/imprimir_incidencia', $data);
 
