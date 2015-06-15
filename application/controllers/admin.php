@@ -442,7 +442,8 @@ class Admin extends CI_Controller
     		/* TODO Listado material retorno */
     		$this->tienda_model->borrar_dispositivos($this->input->post('reference'));
     		$this->tienda_model->borrar_muebles($this->input->post('reference'));
-    		$this->tienda_model->borrar_pds($this->input->post('reference'));
+    		$this->tienda_model->cerrar_pds($this->input->post('reference'));
+    		//$this->tienda_model->borrar_pds($this->input->post('reference'));
 
     		redirect('admin/cierre_pdv', 'refresh');
     	}

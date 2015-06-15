@@ -5,12 +5,12 @@ Incoming
 SELECT displays_pds.* 
 FROM `displays_pds` 
 JOIN pds ON displays_pds.id_pds = pds.id_pds 
-WHERE pds.reference IN (10070003,20070000,50070001,50070011,70070002);
+WHERE pds.reference IN (XXX,YYY);
 
 SELECT devices_pds.* 
 FROM `devices_pds` 
 JOIN pds ON devices_pds.id_pds = pds.id_pds 
-WHERE pds.reference IN (10070003,20070000,50070001,50070011,70070002);
+WHERE pds.reference IN (XXX,YYY);
 
 /*
 Muebles por PdS

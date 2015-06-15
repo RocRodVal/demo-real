@@ -112,6 +112,14 @@ class Tienda_model extends CI_Model {
 		$this->db->delete('pds');
 	}	
 	
+
+	public function cerrar_pds($sfid)
+	{
+		$this->db->set('status','Baja');
+		$this->db->set('reference','X-'.$sfid);
+		$this->db->where('reference', $sfid);
+		$this->db->update('pds');
+	}	
 	
 	public function get_stock_cruzado() {
 	
