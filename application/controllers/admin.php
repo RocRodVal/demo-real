@@ -252,7 +252,9 @@ class Admin extends CI_Controller
 
             $this->load->library('app/paginationlib');
 
-            $data['title'] = 'Mis solicitudes';
+            $data['title']           = 'Mis solicitudes';
+            $data['title_iniciadas'] = 'Incidencias abiertas';
+
             $per_page = 100;
             $total_incidencias = $this->tienda_model_new->get_incidencias_quantity($filtro,$buscador);   // Sacar el total de incidencias, para el paginador
             $cfg_pagination = $this->paginationlib->init_pagination("admin/dashboard_new/incidencias/",$total_incidencias,$per_page,$segment);

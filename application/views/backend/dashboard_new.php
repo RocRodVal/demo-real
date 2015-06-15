@@ -2,7 +2,10 @@
         <div id="page-wrapper">
             <div class="row" id="incidencias_abiertas">
                 <div class="col-lg-12">
-                    <h1 class="page-header"><?php echo $title ?> <a href="#incidencias_cerradas" id="link_incidencias_abiertas" rel="link_incidencias_cerradas" class="scrollTo">Cerradas <span>&#9660;</span></a></h1>
+                    <h1 class="page-header"><?php echo  $title ?></h1>
+                 </div>
+                <div class="col-lg-12">
+                    <h1 class="page-header"><?php echo $title_iniciadas ?> <a href="#incidencias_cerradas" id="link_incidencias_abiertas" rel="link_incidencias_cerradas" class="scrollTo">Cerradas <span>&#9660;</span></a></h1>
                 </div>
             <?php 
             if (isset($_POST['sfid']))
