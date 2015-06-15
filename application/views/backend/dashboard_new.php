@@ -2,7 +2,7 @@
         <div id="page-wrapper">
             <div class="row" id="incidencias_abiertas">
                 <div class="col-lg-12">
-                    <h1 class="page-header"><?php echo $title ?> <a href="#incidencias_cerradas">Cerradas</a></h1>
+                    <h1 class="page-header"><?php echo $title ?> <a href="#incidencias_cerradas" id="link_incidencias_abiertas" rel="link_incidencias_cerradas" class="scrollTo">Cerradas <span>&#9660;</span></a></h1>
                 </div>
 
 
@@ -123,6 +123,7 @@
                                 <ul class="pagination">
                                     <?php echo "".$pagination_helper->create_links(); ?>
                                 </ul>
+                                <p>Encontrados <?=$num_resultados?> resultados. Mostrando del <?=$n_inicial?> al <?=$n_final?>.</p>
                             </div>
                         <?php } ?>
 
@@ -134,7 +135,7 @@
 		                            <th class="sorting" data-rel="incidencias.id_incidencia"    data-order="">Ref.</th>
 		                            <th class="sorting" data-rel="pds.reference"                data-order="">SFID</th>
 		                            <th class="sorting" data-rel="incidencias.fecha"            data-order="desc">Fecha alta</th>
-		                            <th                                                                     >Elemento afectado</th>
+		                            <th class="principal"                                                             >Elemento afectado</th>
 		                            <th class="sorting" data-rel="incidencias.alarm_display"    data-order="">Sistema general de seguridad</th>
 		                            <th class="sorting" data-rel="incidencias.fail_device"    data-order="">Dispositivo</th>
 		                        	<th class="sorting" data-rel="incidencias.alarm_device"    data-order="">Alarma dispositivo cableado</th>
@@ -173,7 +174,7 @@
 		                                	$mueble = $incidencia->display['display'];
 		                                }		                                		
 		                                ?>
-		                                <td><?=($incidencia->alarm_display==1)?'Mueble: '.$mueble:'Dispositivo: '.$dispositivo?></td>	
+		                                <td class="principal"><?=($incidencia->alarm_display==1)?'Mueble: '.$mueble:'Dispositivo: '.$dispositivo?></td>
 		                                <td><?=($incidencia->alarm_display==1)?'&#x25cf;':''?></td>
 		                                <td><?=($incidencia->fail_device==1)?'&#x25cf;':''?></td>
 		                                <td><?=($incidencia->alarm_device==1)?'&#x25cf;':''?></td>
@@ -212,8 +213,10 @@
 		                </div>
 
                         <div class="pagination">
+                            <p>Encontrados <?=$num_resultados?> resultados. Mostrando del <?=$n_inicial?> al <?=$n_final?>.</p>
                             <ul class="pagination">
                                 <?php echo "".$pagination_helper->create_links(); ?>
+
                             </ul>
                         </div>
 		            <?php
@@ -222,9 +225,9 @@
             	</div>
             </div>
 
-                <div class="row"  id="incidencias_cerradas">
+                <div  id="incidencias_cerradas">
                     <div class="col-lg-12" >
-                        <h1 class="page-header"><?php echo $title_finalizadas ?> <a href="#incidencias_abiertas">Abiertas</a></h1>
+                        <h1 class="page-header"><?php echo $title_finalizadas ?> <a href="#incidencias_abiertas" id="link_incidencias_cerradas" rel="link_incidencias_abiertas" class="scrollTo">Abiertas <span>&#9650;</span></a></h1>
 
                     </div>
                 </div>
@@ -285,6 +288,7 @@
                                     <ul class="pagination">
                                         <?php echo "".$pagination_finalizadas_helper->create_links(); ?>
                                     </ul>
+                                    <p>Encontrados <?=$num_resultados_finalizadas?> resultados. Mostrando del <?=$n_inicial_finalizadas?> al <?=$n_final_finalizadas?>.</p>
                                 </div>
                              <?php }?>
 
@@ -296,7 +300,7 @@
                                         <th class="sorting" data-rel="incidencias.id_incidencia"    data-order="">Ref.</th>
                                         <th class="sorting" data-rel="pds.reference"                data-order="">SFID</th>
                                         <th class="sorting" data-rel="incidencias.fecha"            data-order="desc">Fecha alta</th>
-                                        <th                                                                     >Elemento afectado</th>
+                                        <th class="principal"                                                                   >Elemento afectado</th>
                                         <th class="sorting" data-rel="incidencias.alarm_display"    data-order="">Sistema general de seguridad</th>
                                         <th class="sorting" data-rel="incidencias.fail_device"    data-order="">Dispositivo</th>
                                         <th class="sorting" data-rel="incidencias.alarm_device"    data-order="">Alarma dispositivo cableado</th>
@@ -335,7 +339,7 @@
                                                 $mueble = $incidencia->display['display'];
                                             }
                                             ?>
-                                            <td><?=($incidencia->alarm_display==1)?'Mueble: '.$mueble:'Dispositivo: '.$dispositivo?></td>
+                                            <td class="principal"><?=($incidencia->alarm_display==1)?'Mueble: '.$mueble:'Dispositivo: '.$dispositivo?></td>
                                             <td><?=($incidencia->alarm_display==1)?'&#x25cf;':''?></td>
                                             <td><?=($incidencia->fail_device==1)?'&#x25cf;':''?></td>
                                             <td><?=($incidencia->alarm_device==1)?'&#x25cf;':''?></td>
@@ -373,6 +377,7 @@
                                 </script>
                             </div>
                             <div class="pagination">
+                                <p>Encontrados <?=$num_resultados_finalizadas?> resultados. Mostrando del <?=$n_inicial_finalizadas?> al <?=$n_final_finalizadas?>.</p>
                                 <ul class="pagination">
                                     <?php echo "".$pagination_finalizadas_helper->create_links(); ?>
                                 </ul>
