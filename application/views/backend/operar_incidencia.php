@@ -47,7 +47,7 @@
                         <div class="col-lg-7 labelText grey">Asignar material</div>
                         <div class="col-lg-5 labelBtn grey">
                             <a href="<?= site_url('admin/update_incidencia_materiales/' . $id_pds_url . '/' . $id_inc_url . '/2/3') ?>"
-                               classBtn="status" class="btn btn-success" <?php if ($incidencia['status'] != 'Instalador asignado') {
+                               classBtn="status" class="btn btn-success" <?php if (count($material_dispositivos) > 0 || count($material_alarmas) > 0) {
                                 echo 'disabled';
                             } ?>>Asignar mat.</a></td>
                         </div>                       
@@ -210,19 +210,21 @@
 		                    <table class="table table-striped table-bordered table-hover" id="table_incidencias_dashboard">
 		                        <thead>
 		                        <tr>
-									<th width="30%">Código</th>
+									<th width="20%">Código</th>
 		                        	<th width="60%">Dispositivo</th>
 		                        	<th width="10%">Unidades</th>
+                                    <th width="10%">Desasignar</th>
 		                        </tr>
 		                        </thead>
 		                        <tbody>
 		                        <?php
 		                        foreach ($material_dispositivos as $material_dispositivos_item) {
-		                            ?>
+                                    ?>
 		                            <tr>
 		                                <td><?php echo $material_dispositivos_item->barcode ?></td>
 		                                <td><?php echo $material_dispositivos_item->device ?></td>
 		                                <td><?php echo $material_dispositivos_item->cantidad ?></td>
+                                        <td><a href="<?= site_url('admin/desasignar_incidencia_materiales/' . $id_pds_url . '/' . $id_inc_url.'/device/'.$material_dispositivos_item->id_material_incidencias) ?>"><i class="glyphicon glyphicon-remove"></i></a></td>
 		                            </tr>
 		                        <?php
 		                        }
@@ -240,9 +242,10 @@
 		                    <table class="table table-striped table-bordered table-hover" id="table_incidencias_dashboard">
 		                        <thead>
 		                        <tr>
-		                        	<th width="30%">Código</th>
+		                        	<th width="20%">Código</th>
 		                            <th width="60%">Alarma</th>
 		                        	<th width="10%">Unidades</th>
+                                    <th width="10%">Desasignar</th>
 		                        </tr>
 		                        </thead>
 		                        <tbody>
@@ -253,6 +256,7 @@
 		                            	<td><?php echo $material_alarmas_item->code ?></td>
 		                                <td><?php echo $material_alarmas_item->alarm ?></td>
 		                                <td><?php echo $material_alarmas_item->cantidad ?></td>
+                                        <td><a href="<?= site_url('admin/desasignar_incidencia_materiales/' . $id_pds_url . '/' . $id_inc_url.'/alarm/'.$material_alarmas_item->id_material_incidencias) ?>"><i class="glyphicon glyphicon-remove"></i></a></td>
 		                            </tr>
 		                        <?php
 		                        }

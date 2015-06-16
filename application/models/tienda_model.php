@@ -452,7 +452,8 @@ class Tienda_model extends CI_Model {
 	
 	public function get_material_dispositivos($id) {
 	
-		$query = $this->db->select('device.device AS device, devices_almacen.barcode AS barcode, material_incidencias.cantidad AS cantidad')
+		$query = $this->db->select('material_incidencias.id_material_incidencias AS id_material_incidencias,
+		        devices_almacen.id_devices_almacen AS id_devices_almacen, device.device AS device, devices_almacen.barcode AS barcode, material_incidencias.cantidad AS cantidad')
 		->join('devices_almacen','devices_almacen.id_devices_almacen = material_incidencias.id_devices_almacen')
 		->join('device','devices_almacen.id_device = device.id_device')
 		->where('material_incidencias.id_incidencia',$id)
@@ -466,7 +467,9 @@ class Tienda_model extends CI_Model {
 	
 	public function get_material_alarmas($id) {
 	
-		$query = $this->db->select('alarm.code AS code, alarm.alarm AS alarm, material_incidencias.cantidad AS cantidad')
+		$query = $this->db->select('material_incidencias.id_material_incidencias AS id_material_incidencias,
+		material_incidencias.id_alarm AS id_alarm, alarm.code AS code, alarm.alarm AS alarm,
+		material_incidencias.cantidad AS cantidad')
 		->join('alarm','material_incidencias.id_alarm = alarm.id_alarm')
 		->where('material_incidencias.id_incidencia',$id)
 		->where('material_incidencias.id_alarm <>','')

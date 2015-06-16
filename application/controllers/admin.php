@@ -643,6 +643,9 @@ class Admin extends CI_Controller
             $incidencia['display'] = $this->sfid_model->get_display($incidencia['id_displays_pds']);
             $data['incidencia'] = $incidencia;
 
+
+
+
             $material_dispositivos = $this->tienda_model->get_material_dispositivos($incidencia['id_incidencia']);
             $data['material_dispositivos'] = $material_dispositivos;
 
@@ -1330,6 +1333,73 @@ class Admin extends CI_Controller
             redirect('admin', 'refresh');
         }
     }
+
+
+    public function desasignar_incidencia_materiales()
+    {
+        if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
+            $id_pds = $this->uri->segment(3);
+            $id_inc = $this->uri->segment(4);
+            $tipo_dispositivo = $this->uri->segment(5);
+            $id_material_incidencia = $this->uri->segment(6);
+
+            $xcrud = xcrud_get_instance();
+            $this->load->model(array('intervencion_model', 'tienda_model', 'sfid_model'));
+
+            $sfid = $this->tienda_model->get_pds($id_pds);
+
+            // TERMINAL
+            if($tipo_dispositivo==="device")
+            {
+                $material_dispositivos = $this->tienda_model->get_material_dispositivos($id_inc);
+                if (!empty($material_dispositivos)) {
+                    foreach ($material_dispositivos as $material) {
+
+                        if($material->id_material_incidencias == $id_material_incidencia)
+                        {
+                            // Poner el dispositivo de nuevo "En stock"
+                            $id_devices_almacen = $material->id_devices_almacen;
+                            $sql = "UPDATE devices_almacen SET status = 'En stock' WHERE id_devices_almacen = '" . $id_devices_almacen . "'";
+                            $this->db->query($sql);
+
+                            // Desvincular el dispositivo del material de la incidencia.
+                            $id_material_incidencias = $material->id_material_incidencias;
+                            $sql = "DELETE FROM material_incidencias WHERE id_material_incidencias = '$id_material_incidencias' ";
+                            $this->db->query($sql);
+                        }
+                    }
+                }
+            }
+
+            if($tipo_dispositivo==="alarm")
+            {
+                $material_alarmas = $this->tienda_model->get_material_alarmas($id_inc);
+                if (!empty($material_alarmas)) {
+                    foreach ($material_alarmas as $alarma) {
+                        if($alarma->id_material_incidencias == $id_material_incidencia)
+                        {
+                            // Incrementar la cantidad (stock a devolver), en la tabla ALARM, campo units.
+                            $sql = "UPDATE alarm SET units = units +" . $alarma->cantidad . " WHERE id_alarm='" . $alarma->id_alarm . "'";
+                            $this->db->query($sql);
+
+                            // Borrar la alarma vinculada a material_incidencias
+                            $id_material_incidencias = $alarma->id_material_incidencias;
+                            $sql = "DELETE FROM material_incidencias WHERE id_material_incidencias = '$id_material_incidencias' ";
+                            $this->db->query($sql);
+                        }
+                    }
+                }
+            }
+
+
+            $this->operar_incidencia();
+
+        } else {
+            redirect('admin', 'refresh');
+        }
+    }
+
+
 
     public function carga_datos_dispositivo()
     {
