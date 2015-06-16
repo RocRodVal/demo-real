@@ -203,7 +203,7 @@
                     <h3>Material asignado</h3>
  					<?php
 		            if (empty($material_dispositivos)) {
-		                echo '<p>No hay dipositivos asociados.</p>';
+		                echo '<p class="message"><i class="glyphicon glyphicon-remove"></i> No hay dispositivos asociados.</p>';
 		            } else {
 		                ?>
 		                <div class="table-responsive">
@@ -235,7 +235,7 @@
 		            <?php
 		            }
 		            if (empty($material_alarmas)) {
-		                echo '<p>No hay alarmas asociadas.</p>';
+		                echo '<p class="message"><i class="glyphicon glyphicon-remove"></i> No hay alarmas asociadas.</p>';
 		            } else {
 		                ?>
 		                <div class="table-responsive">
