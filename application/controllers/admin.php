@@ -719,6 +719,7 @@ class Admin extends CI_Controller
     		$incidencia['display'] = $this->sfid_model->get_display($incidencia['id_displays_pds']);
     		$data['incidencia'] = $incidencia;
 
+
     		$material_dispositivos = $this->tienda_model->get_material_dispositivos($incidencia['id_incidencia']);
     		$data['material_dispositivos'] = $material_dispositivos;
 
@@ -741,52 +742,59 @@ class Admin extends CI_Controller
 
 
             /** ENVIO DEL EMAIL al operador*/
+            $info_intervencion = $this->intervencion_model->get_info_intervencion($incidencia['intervencion']);
+            $mail_operador = $info_intervencion->operador->email;
 
-            $config['protocol'] = 'smtp';
-            $config['smtp_host'] = 'smtp.gmail.com';
-            $config['smtp_user'] = 'dbourgon@altabox.net';
-            $config['smtp_pass'] = 'Dbourgon7535';
-            $config['smtp_port'] = '587';
-            $config['smtp_crypto'] = 'tls';
-
-            $config['wordwrap'] = FALSE;
-
-            $this->email->initialize($config);
-
-            $message_operador = '<strong>Se ha generado la documentación para una nueva intervención.</strong>' . "\r\n\r\n";
-            $message_operador .= '<p>Aquí se adjunta el parte para la incidencia ['.$incidencia['id_incidencia'].'] de la tienda con SFID [' .$sfid['reference'] . '].</p> '."\r\n";
-            $message_operador .= '<p>En http://demoreal.focusonemotions.com/ podrás revisar la misma.</p>' . "\r\n\r\n";
-            $message_operador .= '<p>Atentamente,' . "\r\n\r\n";
-            $message_operador .= 'Demo Real</p>' . "\r\n";
-            $message_operador .= '<p>http://demoreal.focusonemotions.com/</p>' . "\r\n";
-
-            $this->email->from('no-reply@altabox.net', 'Demo Real');
-            $this->email->to('dbourgon@altabox.net');
-            //$this->email->bcc('demoreal@focusonemotions.com');
-            $this->email->attach($attach);
-            $this->email->set_mailtype('html');
-            $this->email->subject('Demo Real - Parte incidencia nº ['.$incidencia['id_incidencia'].']');
-            $this->email->message($message_operador);
-
-            if($this->email->send()){
-                $data['email_sent'] = TRUE;
-            }else{
+            if(empty($mail_operador))
+            {
                 $data['email_sent'] = FALSE;
             }
-            $this->email->clear();
+            else {
+                $config['protocol'] = 'smtp';
+                $config['smtp_host'] = 'smtp.gmail.com';
+                $config['smtp_user'] = 'dbourgon@altabox.net';
+                $config['smtp_pass'] = 'Dbourgon7535';
+                $config['smtp_port'] = '587';
+                $config['smtp_crypto'] = 'tls';
 
+                $config['wordwrap'] = FALSE;
+
+                $this->email->initialize($config);
+
+                $message_operador = '<strong>Se ha generado la documentación para una nueva intervención.</strong>' . "\r\n\r\n";
+                $message_operador .= '<p>Aquí se adjunta el parte para la incidencia [' . $incidencia['id_incidencia'] . '] de la tienda con SFID [' . $sfid['reference'] . '].</p> ' . "\r\n";
+                $message_operador .= '<p>En http://demoreal.focusonemotions.com/ podrás revisar la misma.</p>' . "\r\n\r\n";
+                $message_operador .= '<p>Atentamente,' . "\r\n\r\n";
+                $message_operador .= 'Demo Real</p>' . "\r\n";
+                $message_operador .= '<p>http://demoreal.focusonemotions.com/</p>' . "\r\n";
+
+                $this->email->from('no-reply@altabox.net', 'Demo Real');
+                $this->email->to($mail_operador);
+                //$this->email->bcc('demoreal@focusonemotions.com');
+                $this->email->attach($attach);
+                $this->email->set_mailtype('html');
+                $this->email->subject('Demo Real - Parte incidencia nº [' . $incidencia['id_incidencia'] . ']');
+                $this->email->message($message_operador);
+
+                if ($this->email->send()) {
+                    $data['email_sent'] = TRUE;
+                } else {
+                    $data['email_sent'] = FALSE;
+                }
+                $this->email->clear();
+            }
+            /** FIN ENVIO DEL EMAIL al operador*/
+
+            // Paso a vista
             $data['title'] = 'Generación del parte para la incidencia ['.$incidencia['id_incidencia'].']';
             $data['filename_pdf'] = $filename_pdf;
-            /** FIN ENVIO DEL EMAIL al operador*/
+
 
             $this->load->view('backend/header', $data);
             $this->load->view('backend/navbar', $data);
             $this->load->view('backend/descargar_parte', $data);
             $this->load->view('backend/footer');
-            //pdf_create($html, $filename_pdf);       // Crear el PDF para descarga desde el navegador
 
-    		// Salida HTML
-    		// $this->load->view('backend/imprimir_incidencia', $data);
 
     	} else {
     		redirect('admin', 'refresh');
