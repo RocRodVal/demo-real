@@ -760,24 +760,39 @@ class Admin extends CI_Controller
                 $config['smtp_port'] = '587';
                 $config['smtp_crypto'] = 'tls';
 
+                $config['text'] = FALSE;
                 $config['wordwrap'] = FALSE;
+
+                //$this->email->set_mailtype('html-attach');
 
                 $this->email->initialize($config);
 
-                $message_operador = '<strong>Se ha generado la documentación para una nueva intervención.</strong>' . "\r\n\r\n";
-                $message_operador .= '<p>Aquí se adjunta el parte para la incidencia [' . $incidencia['id_incidencia'] . '] de la tienda con SFID [' . $sfid['reference'] . '].</p> ' . "\r\n";
-                $message_operador .= '<p>En http://demoreal.focusonemotions.com/ podrás revisar la misma.</p>' . "\r\n\r\n";
-                $message_operador .= '<p>Atentamente,' . "\r\n\r\n";
-                $message_operador .= 'Demo Real</p>' . "\r\n";
-                $message_operador .= '<p>http://demoreal.focusonemotions.com/</p>' . "\r\n";
+                /**
+                 * El asunto al ir en los headers del email, no puede pasar de 62 caracteres. Ahora hay margen pero si en el futuro el email
+                 * se ve raramente, revisad que el asunto no haya crecido más de 62 chars, en primer lugar.
+                 */
+                $subject = "DEMOREAL / SFID ".$sfid['reference'] ." / INC " . $incidencia['id_incidencia']. " / INT ".$incidencia['intervencion'];
 
-                $this->email->from('no-reply@altabox.net', 'Demo Real');
+                $message_operador = "Asunto: ".$subject."\r\n\r\n";
+                $message_operador .= "En referencia a los datos indicados en Asunto, adjunto remitimos parte para la intervención.". "\r\n";
+                $message_operador .= "Recordamos los pasos principales del procedimiento:" . "\r\n\r\n";
+                $message_operador .= "1) Realizar intervención dentro de las 48h siguientes a la recepción del email." . "\r\n";
+                $message_operador .= "2) Enviar el presente parte rellenado y con la firma de la persona encargada de la tienda al email demoreal@focusonemotions.com." . "\r\n";
+                $message_operador .= "3) Preparar en bolsa independiente todo el material sobrante y defectuoso separado por incidencia." . "\r\n";
+                $message_operador .= "4) Enviar email con el material preparado a demoreal@focusonemotions.com." . "\r\n";
+                $message_operador .= "Demo Real" . "\r\n";
+                $message_operador .= "http://demoreal.focusonemotions.com/" . "\r\n";
+
+
+                $this->email->from('demoreal@focusonemotions.com', 'Demo Real');
                 $this->email->to($mail_operador);
                 //$this->email->bcc('demoreal@focusonemotions.com');
-                $this->email->attach($attach);
-                $this->email->set_mailtype('html');
-                $this->email->subject('Demo Real - Parte incidencia nº [' . $incidencia['id_incidencia'] . ']');
+
+
+                $this->email->subject($subject);
                 $this->email->message($message_operador);
+
+                $this->email->attach($attach);
 
                 if ($this->email->send()) {
                     $data['email_sent'] = TRUE;
