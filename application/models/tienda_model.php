@@ -288,8 +288,9 @@ class Tienda_model extends CI_Model {
 	}	
 	
 	
-	public function facturacion_estado($fecha_inicio,$fecha_fin) {
-		$query = $this->db->select('facturacion.fecha, pds.reference AS SFID, type_pds.pds, facturacion.id_intervencion AS visita, COUNT(facturacion.id_incidencia) AS incidencias, contact.contact AS instalador, SUM(facturacion.units_device) AS dispositivos, SUM(facturacion.units_alarma) AS otros')
+	public function facturacion_estado($fecha_inicio,$fecha_fin,$instalador = NULL) {
+
+        $query = $this->db->select('facturacion.fecha, pds.reference AS SFID, type_pds.pds, facturacion.id_intervencion AS visita, COUNT(facturacion.id_incidencia) AS incidencias, contact.contact AS instalador, SUM(facturacion.units_device) AS dispositivos, SUM(facturacion.units_alarma) AS otros')
 		->join('pds','facturacion.id_pds = pds.id_pds')
 		->join('type_pds','pds.type_pds = type_pds.id_type_pds')
 		->join('displays_pds','facturacion.id_displays_pds = displays_pds.id_displays_pds')
@@ -297,8 +298,12 @@ class Tienda_model extends CI_Model {
 		->join('intervenciones','facturacion.id_intervencion = intervenciones.id_intervencion', 'left')
 		->join('contact','intervenciones.id_operador = contact.id_contact', 'left')
 		->where('facturacion.fecha >=',$fecha_inicio)
-		->where('facturacion.fecha <=',$fecha_fin)	
-		->group_by('facturacion.id_intervencion')
+		->where('facturacion.fecha <=',$fecha_fin);
+
+        if(!is_null($instalador) && !empty($instalador)){
+            $query = $this->db->where('intervenciones.id_operador',$instalador);
+        }
+		$query = $this->db->group_by('facturacion.id_intervencion')
 		->order_by('facturacion.fecha')
 		->get('facturacion');
 		
@@ -306,7 +311,7 @@ class Tienda_model extends CI_Model {
 	}	
 
 	
-	function facturacion_estado_csv($fecha_inicio,$fecha_fin)
+	function facturacion_estado_csv($fecha_inicio,$fecha_fin,$instalador = NULL)
 	{
 		$this->load->dbutil();
 		$this->load->helper('file');
@@ -320,8 +325,13 @@ class Tienda_model extends CI_Model {
 		->join('intervenciones','facturacion.id_intervencion = intervenciones.id_intervencion', 'left')
 		->join('contact','intervenciones.id_operador = contact.id_contact', 'left')		
 		->where('facturacion.fecha >=',$fecha_inicio)
-		->where('facturacion.fecha <=',$fecha_fin)		
-		->group_by('facturacion.id_intervencion')
+		->where('facturacion.fecha <=',$fecha_fin);
+
+        if(!is_null($instalador) && !empty($instalador)){
+            $query = $this->db->where('intervenciones.id_operador',$instalador);
+        }
+
+        $query = $this->db->group_by('facturacion.id_intervencion')
 		->order_by('facturacion.fecha')
 		->get('facturacion');
 		
