@@ -2986,11 +2986,18 @@ class Admin extends CI_Controller
     
     		$fecha_inicio = $this->input->post('fecha_inicio');
     		$fecha_fin    = $this->input->post('fecha_fin');
+            $instalador = $this->input->post('instalador');
+
+            $instaladores = $this->db->query("SELECT id_contact, contact FROM contact WHERE type_profile_contact = 1")->result();
+
+
     		
-    		$data['facturacion'] = $this->tienda_model->facturacion_estado($fecha_inicio,$fecha_fin);
+    		$data['facturacion'] = $this->tienda_model->facturacion_estado($fecha_inicio,$fecha_fin,$instalador);
     		
     		$data['fecha_inicio'] = $fecha_inicio;
     		$data['fecha_fin']   = $fecha_fin;
+            $data['instalador'] = $instalador;
+            $data['select_instaladores'] = $instaladores;
     		
     		$data['title'] = 'Facturación';
     
@@ -3012,11 +3019,12 @@ class Admin extends CI_Controller
     		
     		$fecha_inicio = $this->uri->segment(3);
     		$fecha_fin    = $this->uri->segment(4);
-    		
+    		$instalador   = $this->uri->segment(5);
+
     		$xcrud = xcrud_get_instance();
     		$this->load->model(array('tienda_model','sfid_model'));
   
-       		$data['facturacion_csv'] = $this->tienda_model->facturacion_estado_csv($fecha_inicio,$fecha_fin);
+       		$data['facturacion_csv'] = $this->tienda_model->facturacion_estado_csv($fecha_inicio,$fecha_fin,$instalador);
 
     	} else {
     		redirect('admin', 'refresh');
