@@ -23,6 +23,17 @@
                     </form>
                 </div>
             </div>
+            <?php if(isset($alta_sfid) && !empty($alta_sfid)) { ?>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <p>&nbsp;</p>
+                        <p class="message success"><i class="glyphicon glyphicon-ok"></i> Se han añadido automáticamente, muebles y dispositivos para el PdS <?=$alta_sfid?></p>
+                        <p class="message"><a href="<?=site_url('admin/get_inventarios_sfid/'.$alta_sfid.'/alta')?>"><i class="fa fa-file-pdf-o"></i> Descargar informe de alta</a></p>
+                        <p>&nbsp;</p>
+                    </div>
+                </div>
+            <? } ?>
+
             <?php 
             if (isset($_POST['sfid']))
             {	

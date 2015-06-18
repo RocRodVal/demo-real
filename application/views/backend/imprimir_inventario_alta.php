@@ -8,22 +8,18 @@
 		h1 {font: 16px;}
 		h2 {font: 14px;}
 		h3 {font: 12px;}
-        table{ width:100%; font-family: 'Helvetica',arial, sans-serif; border:none; border-collapse: collapse; }
-        table th{ background:#dc291e; color:#fff;text-align: center; padding:5px; }
+        table{ width:100%; font-family: 'Helvetica',arial, sans-serif; }
+        table th{ background:#dc291e; color:#fff;text-align: center; padding:5px; border:none; border-collapse:collapse; }
         table td{ padding:5px; }
-        table th:nth-child(2n+1) td{ background-color: #e9e9e9;}
     </style>
 </head>
-
 <body>
-
 <table width="100%">
 <tr>
 	<td width="20%"><img src="<?=site_url('assets/images/logo-focus_white.png')?>" width="200" height="24" /></td>
     <td width="80%" align="right"><h1><?=$title?></h1></td>
 </tr>
 </table>
-   	            	
 <p style="font-family: 'Helvetica'">
 <strong>SFID:</strong> <?php echo $reference ?><br />
 <?php echo $commercial ?><br />
@@ -37,9 +33,8 @@ Tel. <?php echo $phone_pds ?>
 <?php 
 }
 ?>
-</p>	
-
-<h3 style="font-family: 'Helvetica'">INVENTARIO DE DISPOSITIVOS</h3>
+</p>
+<h3 style="font-family: 'Helvetica'">INVENTARIO DE DISPOSITIVOS (ALTA)</h3>
 <?=$content?>
 </body>
 </html>

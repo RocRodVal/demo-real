@@ -459,6 +459,7 @@ class Admin extends CI_Controller
     		$this->load->model(array('tienda_model', 'sfid_model'));
 
     		$data['tiendas'] =  $this->tienda_model->search_pds($this->input->post('sfid'));
+            $data['baja_sfid'] = $this->input->post('sfid');
 
     		$data['title'] = 'Cierre PdV';
 
@@ -494,12 +495,21 @@ class Admin extends CI_Controller
     	}
     }
 
-
+    /**
+     * Operación de apertura de PDV, dándole un SFID. Una vez indicado, pasa al form de update_apertura_pdv.
+     * Y desde allí, vuelve de nuevo aquí.
+     */
     public function apertura_pdv()
     {
     	if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
     		$data['id_pds'] = $this->session->userdata('id_pds');
     		$data['sfid'] = $this->session->userdata('sfid');
+
+            $accion = $this->uri->segment(3);
+
+            if($accion=="alta"){
+                $data['alta_sfid'] = $this->uri->segment(4);
+            }
 
     		$xcrud = xcrud_get_instance();
     		$this->load->model(array('tienda_model', 'sfid_model'));
@@ -517,7 +527,9 @@ class Admin extends CI_Controller
     	}
     }
 
-
+    /**
+     * Una vez se aporta el SFID, ésta le asigna los muebles y dispositivos que correspondan.
+     */
     public function update_apertura_pdv()
     {
     	if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10))
@@ -525,10 +537,15 @@ class Admin extends CI_Controller
     		$this->load->model(array('tienda_model', 'sfid_model'));
 
     		/* TODO Alta de agente */
+            $this->tienda_model->borrar_dispositivos($this->input->post('reference'));
+            $this->tienda_model->borrar_muebles($this->input->post('reference'));
+
     		$this->tienda_model->alta_masiva_muebles($this->input->post('reference'));
     		$this->tienda_model->alta_masiva_dispositivos($this->input->post('reference'));
 
-    		redirect('admin/apertura_pdv', 'refresh');
+            //redirect('admin/get_inventarios_sfid/'.$this->input->post('reference').'/alta/volver/apertura_pdv');
+
+    		redirect('admin/apertura_pdv/alta/'.$this->input->post('reference'), 'refresh');
     	}
     	else
     	{
@@ -2020,110 +2037,117 @@ class Admin extends CI_Controller
      */
     public function get_inventarios_sfid()
     {
-        $id_sfid = $this->uri->segment(3);
+        $reference = $this->uri->segment(3);
         $accion = $this->uri->segment(4);
 
-        if(empty($accion)) $accion = "Alta";
-        else $accion = ucwords($accion);
-
-        if(!empty($id_sfid))
-        {
-
-            $this->load->helper(array('dompdf', 'file'));
-
-            $query = $this->db->select('id_pds')->where('reference',$id_sfid)->get('pds');
+        if(!empty($reference)) {
+            $query = $this->db->select('*')->where('reference', $reference)->get('pds');
             $pds = $query->result()[0];
-
-            $this->load->model(array('tienda_model', 'sfid_model'));
-
-            $sfid = $this->tienda_model->get_pds($pds->id_pds);
-
-            $data['id_pds'] = 'ABX/PDS-' . $sfid['id_pds'];
-            $data['commercial'] = $sfid['commercial'];
-
-            $data['reference'] = $sfid['reference'];
-            $data['address'] = $sfid['address'];
-            $data['zip'] = $sfid['zip'];
-            $data['city'] = $sfid['city'];
-            $data['province'] = $sfid['province'];
-            $data['phone_pds'] = $sfid['phone'];
-
-
-            if(!empty($pds)) {
-                $xcrud = xcrud_get_instance();
-                $xcrud->table('devices_pds');
-                $xcrud->table_name('');
-                $xcrud->relation('client_type_pds', 'client', 'id_client', 'client');
-                $xcrud->relation('id_pds', 'pds', 'id_pds', 'reference');
-                $xcrud->relation('id_displays_pds', 'displays_pds', 'id_displays_pds', 'id_displays_pds');
-                $xcrud->relation('id_display', 'display', 'id_display', 'display');
-                $xcrud->relation('id_device', 'device', 'id_device', 'device');
-                $xcrud->relation('id_color_device', 'color_device', 'id_color_device', 'color_device');
-                $xcrud->relation('id_complement_device', 'complement_device', 'id_complement_device', 'complement_device');
-                $xcrud->relation('id_status_device', 'status_device', 'id_status_device', 'status_device');
-                $xcrud->relation('id_status_packaging_device', 'status_packaging_device', 'id_status_packaging_device', 'status_packaging_device');
-                $xcrud->change_type('picture_url_1', 'image');
-                $xcrud->change_type('picture_url_2', 'image');
-                $xcrud->change_type('picture_url_3', 'image');
-                $xcrud->modal('picture_url_1');
-                $xcrud->modal('picture_url_2');
-                $xcrud->modal('picture_url_3');
-                $xcrud->label('client_type_pds', 'Cliente')->label('id_devices_pds', 'REF.')->label('id_pds', 'SFID')->label('id_displays_pds', 'Cod. mueble')->label('id_display', 'Mueble')->label('alta', 'Fecha de alta')->label('position', 'Posición')->label('id_device', 'Dispositivo')->label('IMEI', 'IMEI')->label('mac', 'MAC')->label('serial', 'Nº de serie')->label('barcode', 'Código de barras')->label('id_color_device', 'Color')->label('id_complement_device', 'Complementos')->label('id_status_device', 'Estado dispositivo')->label('id_status_packaging_device', 'Estado packaging')->label('picture_url_1', 'Foto #1')->label('picture_url_2', 'Foto #2')->label('picture_url_3', 'Foto #3')->label('description', 'Comentarios')->label('status', 'Estado');
-                $xcrud->columns('client_type_pds,id_devices_pds,id_pds,id_displays_pds,id_display,id_device,position,IMEI,mac');
-                $xcrud->fields('client_type_pds,id_devices_pds,id_pds,id_displays_pds,id_display,alta,id_device,position,serial,IMEI,mac,barcode,id_color_device,id_complement_device,id_status_device,id_status_packaging_device,picture_url_1,picture_url_2,picture_url_3,description');
-                $xcrud->where('id_pds', $pds->id_pds);
-                $xcrud->order_by('id_pds', 'asc');
-                $xcrud->order_by('id_displays_pds', 'asc');
-                $xcrud->order_by('position', 'asc');
-
-
-                $xcrud->limit('all');
-                $xcrud->show_primary_ai_column(true);
-                $xcrud->unset_numbers();
-                $xcrud->start_minimized(false);
-                $xcrud->unset_add();
-                $xcrud->unset_edit();
-                $xcrud->unset_view();
-                $xcrud->unset_csv();
-                $xcrud->unset_print();
-                $xcrud->unset_search();
-                $xcrud->unset_remove();
-                $xcrud->unset_pagination();
-                $xcrud->unset_limitlist();
-
-
-
-
-
-                $data['content'] = $xcrud->render();
-
-                if($accion === "Alta")
-                {
-                    $data['title'] = "Alta Inventario dispositivos SFID [" . $id_sfid . "]";
-                    $html = $this->load->view('backend/imprimir_inventario_alta_baja', $data, TRUE);
-                    $filename_pdf = "ALTA_SFID_" . $id_sfid;
-                }
-                else
-                {
-                    $data['title'] = "Baja Inventario dispositivos SFID [" . $id_sfid . "]";
-                    $html = $this->load->view('backend/imprimir_inventario_alta_baja', $data, TRUE);
-                    $filename_pdf = "BAJA_SFID_" . $id_sfid;
-                }
-                pdf_create($html, $filename_pdf);
-
-
-            }
-            else
-            {
-                return FALSE;
-            }
         }
-        else
+
+        if(!empty($pds))
         {
-            return FALSE;
+            if(empty($accion) || $accion=="alta"){
+                $this->get_inventarios_sfid_alta($pds);
+            }else{
+                $this->get_inventarios_sfid_baja($pds);
+            }
         }
+
     }
 
+    public function get_inventarios_sfid_alta($pds='')
+    {
+        $this->load->helper(array('dompdf','file'));
+        if(!empty($pds))
+        {
+            $data = $this->get_info_inventarios_pds($pds);
+            $data['title'] = "Alta Inventario dispositivos SFID [" . $pds->reference . "]";
+            $data['content'] = $this->get_inventarios($pds);
+            $html = $this->load->view('backend/imprimir_inventario_alta', $data, TRUE);
+            $this->load->view('backend/imprimir_inventario_alta', $data);
+
+            $filename_pdf = "ALTA_SFID_" . $pds->reference;
+            pdf_create($html, $filename_pdf,true);
+        }
+
+    }
+
+    public function get_inventarios_sfid_baja($pds='')
+    {
+        $this->load->helper(array('dompdf','file'));
+
+        if(!empty($pds))
+        {
+            $data = $this->get_info_inventarios_pds($pds);
+            $data['title'] = "Baja Inventario dispositivos SFID [" . $pds->reference . "]";
+            $data['content'] = $this->get_inventarios($pds);
+            $html = $this->load->view('backend/imprimir_inventario_baja', $data, TRUE);
+            $filename_pdf = "BAJA_SFID_" . $pds->reference;
+            pdf_create($html, $filename_pdf,true);
+        }
+
+    }
+
+
+    public function get_info_inventarios_pds($pds)
+    {
+
+
+        $data['id_pds'] = 'ABX/PDS-' . $pds->id_pds;
+        $data['commercial'] = $pds->commercial;
+
+        $data['reference'] = $pds->reference;
+        $data['address'] = $pds->address;
+        $data['zip'] = $pds->zip;
+        $data['city'] = $pds->city;
+        $data['province'] = $pds->province;
+        $data['phone_pds'] = $pds->phone;
+
+        return $data;
+    }
+
+    public function get_inventarios($pds){
+
+        if(!empty($pds)) {
+            $xcrud = xcrud_get_instance();
+            $xcrud->table('devices_pds');
+            $xcrud->table_name(' ');
+            $xcrud->relation('client_type_pds', 'client', 'id_client', 'client');
+            $xcrud->relation('id_pds', 'pds', 'id_pds', 'reference');
+            $xcrud->relation('id_displays_pds', 'displays_pds', 'id_displays_pds', 'id_displays_pds');
+            $xcrud->relation('id_display', 'display', 'id_display', 'display');
+            $xcrud->relation('id_device', 'device', 'id_device', 'device');
+            $xcrud->relation('id_color_device', 'color_device', 'id_color_device', 'color_device');
+            $xcrud->relation('id_complement_device', 'complement_device', 'id_complement_device', 'complement_device');
+            $xcrud->relation('id_status_device', 'status_device', 'id_status_device', 'status_device');
+            $xcrud->relation('id_status_packaging_device', 'status_packaging_device', 'id_status_packaging_device', 'status_packaging_device');
+            $xcrud->label('client_type_pds', 'Cliente')->label('id_devices_pds', 'REF.')->label('id_pds', 'SFID')->label('id_displays_pds', 'Cod. mueble')->label('id_display', 'Mueble')->label('alta', 'Fecha de alta')->label('position', 'Posición')->label('id_device', 'Dispositivo')->label('IMEI', 'IMEI')->label('mac', 'MAC')->label('serial', 'Nº de serie')->label('barcode', 'Código de barras')->label('id_color_device', 'Color')->label('id_complement_device', 'Complementos')->label('id_status_device', 'Estado dispositivo')->label('id_status_packaging_device', 'Estado packaging')->label('picture_url_1', 'Foto #1')->label('picture_url_2', 'Foto #2')->label('picture_url_3', 'Foto #3')->label('description', 'Comentarios')->label('status', 'Estado');
+            $xcrud->columns('client_type_pds,id_devices_pds,id_pds,id_displays_pds,id_display,id_device,position,IMEI,mac');
+            $xcrud->fields('client_type_pds,id_devices_pds,id_pds,id_displays_pds,id_display,alta,id_device,position,serial,IMEI,mac,barcode,id_color_device,id_complement_device,id_status_device,id_status_packaging_device,picture_url_1,picture_url_2,picture_url_3,description');
+            $xcrud->where('id_pds', $pds->id_pds);
+            $xcrud->order_by('id_displays_pds', 'asc');
+            $xcrud->order_by('position', 'asc');
+
+            $xcrud->limit('all');
+            $xcrud->show_primary_ai_column(true);
+            $xcrud->unset_numbers();
+            $xcrud->start_minimized(false);
+            $xcrud->unset_add();
+            $xcrud->unset_edit();
+            $xcrud->unset_view();
+            $xcrud->unset_csv();
+            $xcrud->unset_print();
+            $xcrud->unset_search();
+            $xcrud->unset_remove();
+            $xcrud->unset_pagination();
+            $xcrud->unset_limitlist();
+
+            return ($xcrud->render());
+
+        }
+
+    }
     public function inventarios_panelados()
     {
         $this->load->model('tienda_model');
