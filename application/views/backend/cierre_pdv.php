@@ -29,8 +29,21 @@
             </div>
             <?php 
             if (isset($_POST['sfid']))
-            {	
+            {
+
             ?>
+
+            <?php if(isset($baja_sfid) && !empty($baja_sfid)) { ?>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <p>&nbsp;</p>
+                        <p class="message warning"><i class="glyphicon glyphicon-warning-sign"></i> Se va a proceder al borrado de dispositivos, muebles y punto de servicio de la app.</p>
+                        <p class="message"><a href="<?=site_url('admin/get_inventarios_sfid/'.$baja_sfid.'/baja')?>"><i class="fa fa-file-pdf-o"></i>  Descargar informe de baja</a></p>
+                        <p>&nbsp;</p>
+                    </div>
+                </div>
+            <?php } ?>
+
             <div class="row">
                 <div class="col-lg-12">
  					<?php

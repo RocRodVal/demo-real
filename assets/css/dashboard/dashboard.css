@@ -85,3 +85,8 @@ h1.page-header a{ padding:8px 10px 8px 10px; background-color: #e9e9e9; text-dec
 
 .fa-eye{ cursor: pointer; padding:3px;}
 .fa-eye:hover{ background-color: #d9d9d9;}
+
+
+form.filtros{
+    background:#e9e9e9;
+}
