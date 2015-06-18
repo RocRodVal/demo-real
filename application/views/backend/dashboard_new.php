@@ -65,7 +65,7 @@
             <div class="row" >
                 <div class="col-lg-12">
                     <div class="row buscador">
-                        <form action="<?=base_url()?>admin/dashboard_new/#incidencias_abiertas" method="post">
+                        <form action="<?=base_url()?>admin/dashboard_new/#incidencias_abiertas" method="post" class="filtros">
                             <div class="col-sm-2">
                                 <label for="filtrar">Estado SAT: </label>
                                 <select name="filtrar" id="filtrar" class="form-control input-sm">
@@ -94,7 +94,7 @@
                             </div>
                             <div class="col-sm-1">
                                 <?php if(! empty($filtro) || ! empty($filtro_pds)) { ?>
-                                    <a href="<?=base_url()?>admin/dashboard_new/borrar_busqueda/#incidencias_abiertas" class="reiniciar_busqueda">Reiniciar</a>
+                                    <a href="<?=base_url()?>admin/dashboard_new/borrar_busqueda/#incidencias_abiertas" class="reiniciar_busqueda"><i class="glyphicon glyphicon-remove"></i>  Reiniciar</a>
                                 <?php } ?>
 
 
@@ -114,7 +114,7 @@
                             </div>
                             <div class="col-sm-1">
                                 <?php if(! empty($buscar_sfid) || ! empty($buscar_incidencia)) { ?>
-                                    <a href="<?=base_url()?>admin/dashboard_new/borrar_busqueda/#incidencias_abiertas" class="reiniciar_busqueda">Reiniciar</a>
+                                    <a href="<?=base_url()?>admin/dashboard_new/borrar_busqueda/#incidencias_abiertas" class="reiniciar_busqueda"> <i class="glyphicon glyphicon-remove"></i>  Reiniciar</a>
                                 <?php } ?>
                             </div>
                         </form>
@@ -122,11 +122,11 @@
 
 		            <?php
 		            if (empty($incidencias)) {
-		                echo '<p>No hay incidencias.</p>'; ?>
+                        echo '<p class="message warning"><i class="glyphicon glyphicon-warning-sign"></i> No hay incidencias abiertas.</p>'; ?>
 
 
                         <?php if(! empty($buscar_sfid) || ! empty($buscar_incidencia)) { ?>
-                            <a href="<?=base_url()?>admin/dashboard_new/borrar_busqueda/#incidencias_abiertas" class="reiniciar_busqueda">Reiniciar</a>
+                            <a href="<?=base_url()?>admin/dashboard_new/borrar_busqueda/#incidencias_abiertas" class="reiniciar_busqueda"> <i class="glyphicon glyphicon-remove"></i> Reiniciar</a>
                         <?php } ?>
 
 		            <?php } else {
@@ -240,6 +240,7 @@
             </div>
 
                 <div  id="incidencias_cerradas">
+                    <hr>
                     <div class="col-lg-12" >
                         <h1 class="page-header"><?php echo $title_finalizadas ?> <a href="#incidencias_abiertas" id="link_incidencias_cerradas" rel="link_incidencias_abiertas" class="scrollTo">Abiertas <span>&#9650;</span></a></h1>
 
@@ -249,7 +250,7 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="row filtro">
-                            <form action="<?=base_url()?>admin/dashboard_new/#incidencias_cerradas" method="post">
+                            <form action="<?=base_url()?>admin/dashboard_new/#incidencias_cerradas" method="post" class="filtros">
 
                                 <div class="col-sm-2">
                                     <label for="filtrar_finalizadas">Estado SAT: </label>
@@ -277,7 +278,7 @@
                                 </div>
                                 <div class="col-sm-1">
                                     <?php if(! empty($filtro_finalizadas) || ! empty($filtro_finalizadas_pds)) { ?>
-                                        <a href="<?=base_url()?>admin/dashboard_new/borrar_busqueda/#incidencias_cerradas" class="reiniciar_busqueda">Reiniciar</a>
+                                        <a href="<?=base_url()?>admin/dashboard_new/borrar_busqueda/#incidencias_cerradas" class="reiniciar_busqueda"><i class="glyphicon glyphicon-remove"></i>  Reiniciar</a>
                                     <?php } ?>
 
 
@@ -297,16 +298,17 @@
                                 </div>
                                 <div class="col-sm-1">
                                     <?php if(! empty($buscar_sfid) || ! empty($buscar_incidencia)) { ?>
-                                        <a href="<?=base_url()?>admin/dashboard_new/borrar_busqueda/#incidencias_cerradas" class="reiniciar_busqueda">Reiniciar</a>
+                                        <a href="<?=base_url()?>admin/dashboard_new/borrar_busqueda/#incidencias_cerradas" class="reiniciar_busqueda"><i class="glyphicon glyphicon-remove"></i>  Reiniciar</a>
                                     <?php } ?>
                                 </div>
+
                             </form>
                         </div>
 
 
                         <?php
                         if (empty($incidencias_finalizadas)) {
-                            echo '<p>No hay incidencias.</p>';
+                            echo '<p class="message warning"><i class="glyphicon glyphicon-warning-sign"></i> No hay incidencias finalizadas.</p>';
                         } else {
                             ?>
 
