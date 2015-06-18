@@ -19,7 +19,54 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-lg-6 col-md-6">
+        <div class="col-lg-12 col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Información de la incidencia
+                </div>
+                <div class="panel-body">
+                    <strong>Tipo tienda:</strong> <?php echo $type_pds ?><br/>
+                    <strong>Fecha alta:</strong> <?php echo $incidencia['fecha'] ?><br/>
+                    <strong>Estado:</strong> <?php echo $incidencia['status'] ?><br/>
+                    <strong>Tipo:</strong> <?php echo $incidencia['tipo_averia'] ?>
+                    <?php
+                    if ($incidencia['tipo_averia'] == 'Robo') {
+                        ?>
+                        [<a href="<?= site_url('uploads/' . $incidencia['denuncia']) ?>" target="_blank">ver denuncia</a>]
+                    <?php
+                    }
+                    ?>
+                    <br />
+                    <?php
+                    if (!isset($incidencia['device']['device'])) {$dispositivo = 'Retirado';}
+                    else { $dispositivo = $incidencia['device']['device']; }
+                    if (!isset($incidencia['display']['display'])) { $mueble = 'Retirado'; }
+                    else { $mueble = $incidencia['display']['display']; }
+                    ?>
+                    <strong>Mueble:</strong> <?php echo $mueble ?><br/>
+                    <strong>Dispositivo:</strong> <?php echo $dispositivo ?><br/>
+                    <strong>Contacto:</strong> <?php echo $incidencia['contacto'].' Tel. '.$incidencia['phone'] ?><br/>
+                    <strong>Intervención:</strong>
+                    <?php
+                    //Si el estado es superior a Instalador asignado e intervención!=null->Esto nunca debería darse pero se contempla
+                    if (($incidencia['status'] == 'Comunicada' || $incidencia['status'] == 'Resuelta' ||
+                            $incidencia['status'] == 'Instalador asignado' || $incidencia['status'] == 'Material asignado') && $incidencia['intervencion'] != null)
+                    {
+                        ?>
+                        <a onClick="showModalViewIntervencion(<?php echo $incidencia['intervencion']; ?>)">
+                            #<?php echo $incidencia['intervencion']; ?></a>
+                    <?php
+                    } else {
+                        echo "-";
+                    }
+
+                    ?><br/>
+                    <strong>Comentario:</strong> <?php echo $incidencia['description_1'] ?>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-12 col-md-12">
             <div class="panel panel-default">
                 <div class="panel-heading">
                     Asignación de material para la incidencia
@@ -41,87 +88,68 @@
 		                        <tr>
 		                            <th>Dispositivo</th>
 		                            <th>Unidades</th>
+                                    <th>IMEI</th>
+                                    <th>MAC</th>
+                                    <th>Serial</th>
+                                    <th>Barcode</th>
 		                        </tr>
 		                        </thead>
 		                        <tbody>
 		                            <tr>
 		                                <td>
-		                                <select id="dipositivo_almacen_1" name="dipositivo_almacen_1" width="500" style="width:500px">
-		                              	<?php
-		                        		foreach ($devices_almacen as $device_almacen) {
-		                            	?>
-		                                	<option value="<?php echo $device_almacen->id_devices_almacen ?>"><?php echo $device_almacen->device ?> [<?php echo $device_almacen->serial ?>] (<?php echo $device_almacen->owner ?>)</option>
-				                        <?php
-				                        }
-				                        ?>		                                
-		                                </select>
+                                            <select id="dipositivo_almacen_1" name="dipositivo_almacen_1" width="375" style="width:375px">
+                                            <?php
+                                            foreach ($devices_almacen as $device_almacen) {
+                                            ?>
+                                                <option value="<?php echo $device_almacen->id_devices_almacen ?>"><?php echo $device_almacen->device ?> [<?php echo $device_almacen->serial ?>] (<?php echo $device_almacen->owner ?>)</option>
+                                            <?php
+                                            }
+                                            ?>
+                                            </select>
 		                                </td>
-		                                <td><input type="text" id="units_dipositivo_almacen_1" name="units_dipositivo_almacen_1" onkeypress='return event.charCode >= 48 && event.charCode <= 57'></input></td>
+		                                <td><input type="text" size="2" maxlength="1" id="units_dipositivo_almacen_1" name="units_dipositivo_almacen_1" onkeypress='this.value=1' /></td>
+                                        <td><input type="text" size="15" maxlength="15" id="imei_1" name="imei_1" /></td>
+                                        <td><input type="text" size="15" id="mac_1" name="mac_1" /></td>
+                                        <td><input type="text" size="15" id="serial_1" name="serial_1" /></td>
+                                        <td><input type="text" size="15" id="barcode_1" name="barcode_1" /></td>
 		                            </tr>
-			                        <tr>
-			                            <td colspan="3" style="text-align:left">
-			                            	IMEI <input type="text" id="imei_1" name="imei_1"></input>
-			                            	MAC <input type="text" id="mac_1" name="mac_1"></input>
-			                            </td>
-			                        </tr>
-			                        <tr>
-			                            <td colspan="3" style="text-align:left">
-			                            	Serial <input type="text" id="serial_1" name="serial_1"></input>
-			                            	Barcode <input type="text" id="barcode_1" name="barcode_1"></input>
-			                            </td>
-			                        </tr>			                        
+
 		                            <tr>
 		                                <td>
-		                                <select id="dipositivo_almacen_2" name="dipositivo_almacen_2" width="500" style="width:500px">
-		                              	<?php
-		                        		foreach ($devices_almacen as $device_almacen) {
-		                            	?>
-		                                	<option value="<?php echo $device_almacen->id_devices_almacen ?>"><?php echo $device_almacen->device ?> [<?php echo $device_almacen->serial ?>] (<?php echo $device_almacen->owner ?>)</option>
-				                        <?php
-				                        }
-				                        ?>	                                
-		                                </select>
+                                            <select id="dipositivo_almacen_2" name="dipositivo_almacen_2" width="375" style="width:375px">
+                                            <?php
+                                            foreach ($devices_almacen as $device_almacen) {
+                                            ?>
+                                                <option value="<?php echo $device_almacen->id_devices_almacen ?>"><?php echo $device_almacen->device ?> [<?php echo $device_almacen->serial ?>] (<?php echo $device_almacen->owner ?>)</option>
+                                            <?php
+                                            }
+                                            ?>
+                                            </select>
 		                                </td>
-		                                <td><input type="text" id="units_dipositivo_almacen_2" name="units_dipositivo_almacen_2" onkeypress='return event.charCode >= 48 && event.charCode <= 57'></input></td>
+		                                <td><input type="text" size="2" maxlength="1" id="units_dipositivo_almacen_2" name="units_dipositivo_almacen_2" onkeypress='this.value=1' /></td>
+                                        <td><input type="text" size="15" maxlength="15" name="imei_2" /></td>
+                                        <td><input type="text" size="15" id="mac_2" name="mac_2" /></td>
+                                        <td><input type="text" size="15" id="serial_2" name="serial_2" /></td>
+                                        <td><input type="text" size="15" id="barcode_2" name="barcode_2" /></td>
 		                            </tr>
-			                        <tr>
-			                            <td colspan="3" style="text-align:left">
-			                            	IMEI <input type="text" id="imei_2" name="imei_2"></input>
-			                         		MAC <input type="text" id="mac_2" name="mac_2"></input>
-			                            </td>
-			                        </tr>
-			                        <tr>
-			                            <td colspan="3" style="text-align:left">
-			                            	Serial <input type="text" id="serial_2" name="serial_2"></input>
-			                            	Barcode <input type="text" id="barcode_2" name="barcode_2"></input>
-			                            </td>
-			                        </tr>			                        
 		                            <tr>
 		                                <td>
-		                                <select id="dipositivo_almacen_3" name="dipositivo_almacen_3" width="500" style="width:500px">
-		                              	<?php
-		                        		foreach ($devices_almacen as $device_almacen) {
-		                            	?>
-		                                	<option value="<?php echo $device_almacen->id_devices_almacen ?>"><?php echo $device_almacen->device ?> [<?php echo $device_almacen->serial ?>] (<?php echo $device_almacen->owner ?>)</option>
-				                        <?php
-				                        }
-				                        ?>	                                
-		                                </select>
+                                            <select id="dipositivo_almacen_3" name="dipositivo_almacen_3" width="375" style="width:375px">
+                                            <?php
+                                            foreach ($devices_almacen as $device_almacen) {
+                                            ?>
+                                                <option value="<?php echo $device_almacen->id_devices_almacen ?>"><?php echo $device_almacen->device ?> [<?php echo $device_almacen->serial ?>] (<?php echo $device_almacen->owner ?>)</option>
+                                            <?php
+                                            }
+                                            ?>
+                                            </select>
 		                                </td>
-		                                <td><input type="text" id="units_dipositivo_almacen_3" name="units_dipositivo_almacen_3" onkeypress='return event.charCode >= 48 && event.charCode <= 57'></input></td>
+		                                <td><input type="text" size="2" maxlength="1" id="units_dipositivo_almacen_3" name="units_dipositivo_almacen_3" onkeypress='this.value=1' /></td>
+                                        <td><input type="text"  size="15" maxlength="15" id="imei_3" name="imei_3" /></td>
+                                        <td><input type="text" size="15" id="mac_3" name="mac_3" /></td>
+                                        <td><input type="text" size="15" id="serial_3" name="serial_3" /></td>
+                                        <td><input type="text" size="15" id="barcode_3" name="barcode_3" /></td>
 		                            </tr>
-			                        <tr>
-			                            <td colspan="3" style="text-align:left">
-			                            	IMEI <input type="text" id="imei_3" name="imei_3"></input>
-			                            	MAC <input type="text" id="mac_3" name="mac_3"></input>
-			                            </td>
-			                        </tr>    
-			                        <tr>
-			                            <td colspan="3" style="text-align:left">
-			                            	Serial <input type="text" id="serial_3" name="serial_3"></input>
-			                            	Barcode <input type="text" id="barcode_3" name="barcode_3"></input>
-			                            </td>
-			                        </tr> 			                                            		                            
 		                        </tbody>
 		                    </table>
 		                </div>
@@ -299,51 +327,9 @@
                 </form>
             </div>
         </div>
-        <div class="col-lg-6 col-md-6">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    Información de la incidencia
-                </div>
-                <div class="panel-body">
-                	<strong>Tipo tienda:</strong> <?php echo $type_pds ?><br/>
-                    <strong>Fecha alta:</strong> <?php echo $incidencia['fecha'] ?><br/>
-                    <strong>Estado:</strong> <?php echo $incidencia['status'] ?><br/>
-                    <strong>Tipo:</strong> <?php echo $incidencia['tipo_averia'] ?>
-                    <?php
-                    if ($incidencia['tipo_averia'] == 'Robo') {
-                    ?>
-                    [<a href="<?= site_url('uploads/' . $incidencia['denuncia']) ?>" target="_blank">ver denuncia</a>]
-                    <?php
-                    }
-                    ?>
-                    <br />   
-		            <?php 
-		            if (!isset($incidencia['device']['device'])) {$dispositivo = 'Retirado';}
-		            else { $dispositivo = $incidencia['device']['device']; }
-		            if (!isset($incidencia['display']['display'])) { $mueble = 'Retirado'; }
-		            else { $mueble = $incidencia['display']['display']; }		                                		
-		            ?>                    
-                    <strong>Mueble:</strong> <?php echo $mueble ?><br/>
-                    <strong>Dispositivo:</strong> <?php echo $dispositivo ?><br/>                                     
-                    <strong>Contacto:</strong> <?php echo $incidencia['contacto'].' Tel. '.$incidencia['phone'] ?><br/>
-                    <strong>Intervención:</strong>
-                    <?php
-                    //Si el estado es superior a Instalador asignado e intervención!=null->Esto nunca debería darse pero se contempla
-                    if (($incidencia['status'] == 'Comunicada' || $incidencia['status'] == 'Resuelta' ||
-                            $incidencia['status'] == 'Instalador asignado' || $incidencia['status'] == 'Material asignado') && $incidencia['intervencion'] != null) 
-					{
-                        ?>
-                        <a onClick="showModalViewIntervencion(<?php echo $incidencia['intervencion']; ?>)">
-                            #<?php echo $incidencia['intervencion']; ?></a>
-                    <?php
-                    } else {
-                        echo "-";
-                    }
 
-                    ?><br/>
-                    <strong>Comentario:</strong> <?php echo $incidencia['description_1'] ?>
-                </div>
-            </div>
+
+            <div class="col-lg-12 col-md-12">
             <div class="panel panel-default">
                 <div class="panel-heading">
                     Notas incidencia

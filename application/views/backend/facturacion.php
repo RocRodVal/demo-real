@@ -16,7 +16,20 @@
                         <div class="form-group">
                             <label>Fin</label>
                             <input type="date" name="fecha_fin" id="fecha_fin" value="<?php echo date('Y-m-d'); ?>">
-                        </div>						
+                        </div>
+                        <div class="form-group">
+                            <label>Instalador</label>
+
+                            <select name="instalador" id="instalador">
+                                <option value="">Todos</option>
+                                <?php
+                                    foreach($select_instaladores as $inst){
+                                        $option_selected = ($instalador == $inst->id_contact) ? 'selected ="selected" ' : '';
+                                        echo '<option value="'.$inst->id_contact.'" '.$option_selected.'>'.$inst->contact.'</option>';
+                                    }
+                                ?>
+                            </select>
+                        </div>
                         <div class="form-group">
                             <button type="submit" class="btn btn-default">Buscar</button>
                         </div>				  
@@ -32,9 +45,12 @@
 		                echo '<p>No hay información sobre facturación.</p>';
 		            } else {
 		            ?>
-		            	<h1 class="page-header">Intervenciones [descargar <a href="<?=site_url('admin/facturacion_csv/'.$fecha_inicio.'/'.$fecha_fin)?>" target="_blank">CSV</a>]</h1>
+		            	<h1 class="page-header">Intervenciones [descargar <a href="<?=site_url('admin/facturacion_csv/'.$fecha_inicio.'/'.$fecha_fin.'/'.$instalador)?>" target="_blank">CSV</a>]</h1>
 		                <div class="table-responsive">
 		                	<p>Rango: <?php echo $fecha_inicio ?>/<?php echo $fecha_fin ?></p>
+                            <?php if($instalador) { ?>
+                                <p>Instalador: <?=$facturacion[0]->instalador?></p>
+                            <?php } ?>
 		                    <table class="table table-striped table-bordered table-hover" id="dataTables-dashboard">
 		                        <thead>
 		                        <tr>
@@ -42,7 +58,8 @@
 		                            <th>SFID</th>
 		                            <th>Tipo</th>
 		                            <th>Intervención</th>
-		                            <th>Mueble</th>
+		                            <th>Incidencias</th>
+		                            <th>Instalador</th>
 		                            <th>Dispositivos</th>
 		                            <th>Alarmas</th>
 		                        </tr>
@@ -56,7 +73,8 @@
 		                                <td><?php echo $item_facturacion->SFID ?></td>
 		                                <td><?php echo $item_facturacion->pds ?></td>
 		                                <td><?php echo $item_facturacion->visita ?></td>
-		                                <td><?php echo $item_facturacion->display ?></td>
+		                                <td><?php echo $item_facturacion->incidencias ?></td>
+		                                <td><?php echo $item_facturacion->instalador ?></td>
 		                                <td><?php echo $item_facturacion->dispositivos ?></td>
 		                                <td><?php echo $item_facturacion->otros ?></td>
 		                            </tr>

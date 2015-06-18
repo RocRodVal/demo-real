@@ -112,6 +112,14 @@ class Tienda_model extends CI_Model {
 		$this->db->delete('pds');
 	}	
 	
+
+	public function cerrar_pds($sfid)
+	{
+		$this->db->set('status','Baja');
+		$this->db->set('reference','X-'.$sfid);
+		$this->db->where('reference', $sfid);
+		$this->db->update('pds');
+	}	
 	
 	public function get_stock_cruzado() {
 	
@@ -280,15 +288,22 @@ class Tienda_model extends CI_Model {
 	}	
 	
 	
-	public function facturacion_estado($fecha_inicio,$fecha_fin) {
-		$query = $this->db->select('facturacion.fecha, pds.reference AS SFID, type_pds.pds, facturacion.id_intervencion AS visita, display.display, SUM(facturacion.units_device) AS dispositivos, SUM(facturacion.units_alarma) AS otros')
+	public function facturacion_estado($fecha_inicio,$fecha_fin,$instalador = NULL) {
+
+        $query = $this->db->select('facturacion.fecha, pds.reference AS SFID, type_pds.pds, facturacion.id_intervencion AS visita, COUNT(facturacion.id_incidencia) AS incidencias, contact.contact AS instalador, SUM(facturacion.units_device) AS dispositivos, SUM(facturacion.units_alarma) AS otros')
 		->join('pds','facturacion.id_pds = pds.id_pds')
 		->join('type_pds','pds.type_pds = type_pds.id_type_pds')
 		->join('displays_pds','facturacion.id_displays_pds = displays_pds.id_displays_pds')
 		->join('display','displays_pds.id_display = display.id_display')
+		->join('intervenciones','facturacion.id_intervencion = intervenciones.id_intervencion', 'left')
+		->join('contact','intervenciones.id_operador = contact.id_contact', 'left')
 		->where('facturacion.fecha >=',$fecha_inicio)
-		->where('facturacion.fecha <=',$fecha_fin)	
-		->group_by('facturacion.id_intervencion')
+		->where('facturacion.fecha <=',$fecha_fin);
+
+        if(!is_null($instalador) && !empty($instalador)){
+            $query = $this->db->where('intervenciones.id_operador',$instalador);
+        }
+		$query = $this->db->group_by('facturacion.id_intervencion')
 		->order_by('facturacion.fecha')
 		->get('facturacion');
 		
@@ -296,20 +311,27 @@ class Tienda_model extends CI_Model {
 	}	
 
 	
-	function facturacion_estado_csv($fecha_inicio,$fecha_fin)
+	function facturacion_estado_csv($fecha_inicio,$fecha_fin,$instalador = NULL)
 	{
 		$this->load->dbutil();
 		$this->load->helper('file');
 		$this->load->helper('download');
 		
-		$query = $this->db->select('facturacion.fecha, pds.reference AS SFID, type_pds.pds, facturacion.id_intervencion AS visita, display.display, SUM(facturacion.units_device) AS dispositivos, SUM(facturacion.units_alarma) AS otros')
+		$query = $this->db->select('facturacion.fecha, pds.reference AS SFID, type_pds.pds, facturacion.id_intervencion AS visita, COUNT(facturacion.id_incidencia) AS incidencias, contact.contact AS instalador, SUM(facturacion.units_device) AS dispositivos, SUM(facturacion.units_alarma) AS otros')
 		->join('pds','facturacion.id_pds = pds.id_pds')
 		->join('type_pds','pds.type_pds = type_pds.id_type_pds')
 		->join('displays_pds','facturacion.id_displays_pds = displays_pds.id_displays_pds')
 		->join('display','displays_pds.id_display = display.id_display')
+		->join('intervenciones','facturacion.id_intervencion = intervenciones.id_intervencion', 'left')
+		->join('contact','intervenciones.id_operador = contact.id_contact', 'left')		
 		->where('facturacion.fecha >=',$fecha_inicio)
-		->where('facturacion.fecha <=',$fecha_fin)		
-		->group_by('facturacion.id_intervencion')
+		->where('facturacion.fecha <=',$fecha_fin);
+
+        if(!is_null($instalador) && !empty($instalador)){
+            $query = $this->db->where('intervenciones.id_operador',$instalador);
+        }
+
+        $query = $this->db->group_by('facturacion.id_intervencion')
 		->order_by('facturacion.fecha')
 		->get('facturacion');
 		
@@ -440,7 +462,8 @@ class Tienda_model extends CI_Model {
 	
 	public function get_material_dispositivos($id) {
 	
-		$query = $this->db->select('device.device AS device, devices_almacen.barcode AS barcode, material_incidencias.cantidad AS cantidad')
+		$query = $this->db->select('material_incidencias.id_material_incidencias AS id_material_incidencias,
+		        devices_almacen.id_devices_almacen AS id_devices_almacen, device.device AS device, devices_almacen.barcode AS barcode, material_incidencias.cantidad AS cantidad')
 		->join('devices_almacen','devices_almacen.id_devices_almacen = material_incidencias.id_devices_almacen')
 		->join('device','devices_almacen.id_device = device.id_device')
 		->where('material_incidencias.id_incidencia',$id)
@@ -454,7 +477,9 @@ class Tienda_model extends CI_Model {
 	
 	public function get_material_alarmas($id) {
 	
-		$query = $this->db->select('alarm.code AS code, alarm.alarm AS alarm, material_incidencias.cantidad AS cantidad')
+		$query = $this->db->select('material_incidencias.id_material_incidencias AS id_material_incidencias,
+		material_incidencias.id_alarm AS id_alarm, alarm.code AS code, alarm.alarm AS alarm,
+		material_incidencias.cantidad AS cantidad')
 		->join('alarm','material_incidencias.id_alarm = alarm.id_alarm')
 		->where('material_incidencias.id_incidencia',$id)
 		->where('material_incidencias.id_alarm <>','')
