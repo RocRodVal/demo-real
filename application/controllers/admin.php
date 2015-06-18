@@ -180,7 +180,10 @@ class Admin extends CI_Controller
             {
                 $this->session->unset_userdata('buscar_sfid');
                 $this->session->unset_userdata('buscar_incidencia');
+
                 $this->session->unset_userdata('filtro');
+                $this->session->unset_userdata('filtro_pds');
+
                 $this->session->unset_userdata('filtro_finalizadas');
             }
 
@@ -193,10 +196,14 @@ class Admin extends CI_Controller
             // Buscar en el POST si hay busqueda, y si la hay usarla y guardarla además en sesion
             $do_busqueda = $this->input->post('do_busqueda');
 
-            // Obtener el filtro, primero de Session y despues del post, si procede..
+            // Obtener los filtros: status SAT y stats PDS, primero de Session y despues del post, si procede..
             $filtro = NULL;
             $sess_filtro = $this->session->userdata('filtro');
             if(! empty($sess_filtro)) $filtro = $sess_filtro;
+
+            $filtro_pds = NULL;
+            $sess_filtro_pds = $this->session->userdata('filtro_pds');
+            if(! empty($sess_filtro_pds)) $filtro_pds = $sess_filtro_pds;
 
             if($do_busqueda=="si")
             {
@@ -207,11 +214,14 @@ class Admin extends CI_Controller
                 $this->session->set_userdata('buscar_incidencia', $buscar_incidencia);
 
                 $post_filtro =$this->input->post('filtrar');
-                if(! empty($post_filtro))
-                {
                     $filtro = $post_filtro;
                     $this->session->set_userdata('filtro',$filtro);
-                }
+
+
+                $post_filtro_pds =$this->input->post('filtrar_pds');
+                    $filtro_pds = $post_filtro_pds;
+                    $this->session->set_userdata('filtro',$filtro_pds);
+
             }
             $buscador['buscar_sfid']        = $buscar_sfid;
             $buscador['buscar_incidencia']  = $buscar_incidencia;
@@ -220,6 +230,12 @@ class Admin extends CI_Controller
             $data['buscar_incidencia']  = $buscar_incidencia;
 
             $data["filtro"] = $filtro;
+            $data["filtro_pds"] = $filtro_pds;
+
+            $filtros = array();
+
+            if($filtro != NULL) $filtros["status"] = $filtro;
+            if($filtro_pds != NULL) $filtros["status_pds"] = $filtro_pds;
 
 
             // Obtener el campo a ordenar, primero de Session y despues del post, si procede..
@@ -235,8 +251,6 @@ class Admin extends CI_Controller
             $do_orden = $this->input->post('ordenar');
 
             if($do_orden==='true') {
-
-
                 $post_orden_form = $this->input->post('form');
 
                 $campo_orden_activas = $this->input->post($post_orden_form.'_campo');
@@ -244,7 +258,6 @@ class Admin extends CI_Controller
 
                 $this->session->set_userdata('campo_orden_activas', $campo_orden_activas);
                 $this->session->set_userdata('orden_activas', $orden_activas);
-
             }
 
             $data["campo_orden_activas"] = $campo_orden_activas;
@@ -256,7 +269,7 @@ class Admin extends CI_Controller
             $data['title_iniciadas'] = 'Incidencias abiertas';
 
             $per_page = 100;
-            $total_incidencias = $this->tienda_model_new->get_incidencias_quantity($filtro,$buscador);   // Sacar el total de incidencias, para el paginador
+            $total_incidencias = $this->tienda_model_new->get_incidencias_quantity($filtros,$buscador);   // Sacar el total de incidencias, para el paginador
             $cfg_pagination = $this->paginationlib->init_pagination("admin/dashboard_new/incidencias/",$total_incidencias,$per_page,$segment);
 
 
@@ -281,10 +294,7 @@ class Admin extends CI_Controller
 
             $data["pagination_helper"]   = $this->pagination;
 
-            $incidencias = $this->tienda_model_new->get_incidencias($page,$cfg_pagination,$campo_orden_activas,$orden_activas,$filtro,$buscador);
-
-
-
+            $incidencias = $this->tienda_model_new->get_incidencias($page,$cfg_pagination,$campo_orden_activas,$orden_activas,$filtros,$buscador);
 
              foreach ($incidencias as $incidencia) {
                 $incidencia->device = $this->sfid_model->get_device($incidencia->id_devices_pds);
@@ -295,9 +305,9 @@ class Admin extends CI_Controller
 
             $data['incidencias'] = $incidencias;
 
-            /**
-             * Sacar la info para la tabla de Incidencias Finalizadas.
-             */
+        /** *****************************************************************************************************
+         *          Sacar la info para la tabla de Incidencias Finalizadas.
+         * *****************************************************************************************************/
             $data['title_finalizadas'] = 'Incidencias finalizadas';
 
 
@@ -313,18 +323,32 @@ class Admin extends CI_Controller
 
             // Obtener el filtro, primero de Session y despues del post, si procede..
             $filtro_finalizadas = NULL;
+            $filtro_finalizadas_pds = NULL;
 
             $sess_filtro_finalizadas = $this->session->userdata('filtro_finalizadas');
             if(! empty($sess_filtro_finalizadas)) $filtro_finalizadas = $sess_filtro_finalizadas;
 
+            $sess_filtro_finalizadas_pds = $this->session->userdata('filtro_finalizadas_pds');
+            if(! empty($sess_filtro_finalizadas_pds)) $filtro_finalizadas_pds = $sess_filtro_finalizadas_pds;
+
             $post_finalizadas =$this->input->post('filtrar_finalizadas');
-            if(! empty($post_finalizadas))
-            {
+            $post_finalizadas_pds =$this->input->post('filtrar_finalizadas_pds');
+
                 $filtro_finalizadas = $post_finalizadas;
                 $this->session->set_userdata('filtro_finalizadas',$filtro_finalizadas);
-            }
+
+                $filtro_finalizadas_pds = $post_finalizadas_pds;
+                $this->session->set_userdata('filtro_finalizadas_pds',$filtro_finalizadas_pds);
+
 
             $data["filtro_finalizadas"] = $filtro_finalizadas;
+            $data["filtro_finalizadas_pds"] = $filtro_finalizadas_pds;
+
+            $filtros_finalizadas = array();
+
+            if($filtro_finalizadas != NULL) $filtros_finalizadas["status"] = $filtro_finalizadas;
+            if($filtro_finalizadas_pds != NULL) $filtros_finalizadas["status_pds"] = $filtro_finalizadas_pds;
+
 
             $per_page = 100;
 
@@ -355,7 +379,7 @@ class Admin extends CI_Controller
             $data["campo_orden_cerradas"] = $campo_orden_cerradas;
             $data["orden_cerradas"] = $orden_cerradas;
 
-            $total_incidencias = $this->tienda_model_new->get_incidencias_finalizadas_quantity($filtro_finalizadas,$buscador);   // Sacar el total de incidencias, para el paginador
+            $total_incidencias = $this->tienda_model_new->get_incidencias_finalizadas_quantity($filtros_finalizadas,$buscador);   // Sacar el total de incidencias, para el paginador
             $cfg_pagination = $this->paginationlib->init_pagination("admin/dashboard_new/finalizadas/",$total_incidencias,$per_page,$segment_finalizadas);
 
             $cfg_pagination["suffix"] = '#incidencias_cerradas';
@@ -380,7 +404,7 @@ class Admin extends CI_Controller
             $data['n_final_finalizadas'] = $n_final_finalizadas;
 
 
-            $incidencias_finalizadas = $this->tienda_model_new->get_incidencias_finalizadas($page_finalizadas,$cfg_pagination,$filtro_finalizadas,$buscador,$campo_orden_cerradas,$orden_cerradas);
+            $incidencias_finalizadas = $this->tienda_model_new->get_incidencias_finalizadas($page_finalizadas,$cfg_pagination,$filtros_finalizadas,$buscador,$campo_orden_cerradas,$orden_cerradas);
 
             foreach ($incidencias_finalizadas as $incidencia) {
                 $incidencia->device = $this->sfid_model->get_device($incidencia->id_devices_pds);

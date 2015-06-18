@@ -67,21 +67,33 @@
                     <div class="row buscador">
                         <form action="<?=base_url()?>admin/dashboard_new/#incidencias_abiertas" method="post">
                             <div class="col-sm-2">
-                                <label for="filtrar">Mostrar: </label>
+                                <label for="filtrar">Estado SAT: </label>
                                 <select name="filtrar" id="filtrar" class="form-control input-sm">
-                                    <option value="" <?php echo ($filtro==="") ? 'selected="selected"' : ''?>>Todas</option>
+                                    <option value="" <?php echo ($filtro==="") ? 'selected="selected"' : ''?>>Cualquier estado</option>
                                     <option value="Nueva" <?php echo ($filtro==="Nueva") ? 'selected="selected"' : ''?>>Nuevas</option>
                                     <option value="Revisada" <?php echo ($filtro==="Revisada") ? 'selected="selected"' : ''?>>Revisadas</option>
-                                    <option value="Comunicada" <?php echo ($filtro==="Comunicada") ? 'selected="selected"' : ''?>>Comunicadas</option>
                                     <option value="Instalador asignado" <?php echo ($filtro==="Instalador asignado") ? 'selected="selected"' : ''?>>Instalador asignado</option>
-                                    <option value="Pendiente recogida" <?php echo ($filtro==="Pendiente recogida") ? 'selected="selected"' : ''?>>Pendiente recogida</option>
+                                    <option value="Material asignado" <?php echo ($filtro==="Material asignado") ? 'selected="selected"' : ''?>>Material asignado</option>
+                                    <option value="Comunicada" <?php echo ($filtro==="Comunicada") ? 'selected="selected"' : ''?>>Comunicadas</option>
+
+
+                                </select>
+                            </div>
+                            <div class="col-sm-2">
+                                <label for="filtrar_pds">Estado PDS: </label>
+                                <select name="filtrar_pds" id="filtrar_pds" class="form-control input-sm">
+                                    <option value="" <?php echo ($filtro_pds==="") ? 'selected="selected"' : ''?>>Cualquier estado</option>
+
+                                    <option value="Alta realizada" <?php echo ($filtro_pds==="Alta realizada") ? 'selected="selected"' : ''?>>Alta realizada</option>
+                                    <option value="En proceso" <?php echo ($filtro_pds==="En proceso") ? 'selected="selected"' : ''?>>En proceso</option>
+                                    <option value="En visita" <?php echo ($filtro_pds==="En visita") ? 'selected="selected"' : ''?>>En visita</option>
                                 </select>
                             </div>
                             <div class="col-sm-1">
                                 <input type="submit" value="Aplicar" class="form-control input-sm">
                             </div>
                             <div class="col-sm-1">
-                                <?php if(! empty($filtro)) { ?>
+                                <?php if(! empty($filtro) || ! empty($filtro_pds)) { ?>
                                     <a href="<?=base_url()?>admin/dashboard_new/borrar_busqueda/#incidencias_abiertas" class="reiniciar_busqueda">Reiniciar</a>
                                 <?php } ?>
 
@@ -143,8 +155,8 @@
 		                            <th class="sorting" data-rel="incidencias.alarm_garra"    data-order="">Soporte sujección</th>
 		                            <th class="sorting" data-rel="incidencias.tipo_averia"    data-order="">Tipo incidencia</th>
 		                            <th                                                                     >Interv.</th>
-		                            <th class="sorting" data-rel="incidencias.status_pds"    data-order="">Estado</th>
 		                            <th class="sorting" data-rel="incidencias.status"    data-order="">Estado SAT</th>
+                                    <th class="sorting" data-rel="incidencias.status_pds"    data-order="">Estado PDS</th>
 		                            <th>Chat offline</th>
 		                        </tr>
 		                        </thead>
@@ -189,9 +201,10 @@
 	                                        echo "-";
 	                                        }
 	                                        ?>
-                                        </td>		                                
+                                        </td>
+                                        <td><strong><?php echo $incidencia->status ?></strong></td>
 		                                <td><strong><?php echo $incidencia->status_pds ?></strong></td>
-		                                <td><strong><?php echo $incidencia->status ?></strong></td>
+
 		                                <td  onClick="window.location.href='<?=site_url('admin/operar_incidencia/'.$incidencia->id_pds.'/'.$incidencia->id_incidencia)?>'"><a href="<?=site_url('admin/operar_incidencia/'.$incidencia->id_pds.'/'.$incidencia->id_incidencia)?>#chat"><strong><i class="fa fa-whatsapp <?=($incidencia->nuevos['nuevos']<>'0')?'chat_nuevo':'chat_leido'?>"></i></strong></a></td>
 		                            </tr>
 		                        <?php
@@ -237,20 +250,33 @@
                     <div class="col-lg-12">
                         <div class="row filtro">
                             <form action="<?=base_url()?>admin/dashboard_new/#incidencias_cerradas" method="post">
+
                                 <div class="col-sm-2">
-                                    <label for="filtrar_finalizadas">Mostrar: </label>
+                                    <label for="filtrar_finalizadas">Estado SAT: </label>
                                     <select name="filtrar_finalizadas" id="filtrar_finalizadas" class="form-control input-sm">
-                                        <option value="" <?php echo ($filtro_finalizadas==="") ? 'selected="selected"' : ''?>>Todas</option>
-                                        <option value="Cerrada" <?php echo ($filtro_finalizadas==="Cerrada") ? 'selected="selected"' : ''?>>Cerradas</option>
-                                        <option value="Resuelta" <?php echo ($filtro_finalizadas==="Resuelta") ? 'selected="selected"' : ''?>>Resueltas</option>
-                                        <option value="Cancelada" <?php echo ($filtro_finalizadas==="Cancelada") ? 'selected="selected"' : ''?>>Canceladas</option>
+                                        <option value="" <?php echo ($filtro_finalizadas==="") ? 'selected="selected"' : ''?>>Cualquier estado</option>
+
+                                        <option value="Resuelta" <?php echo ($filtro_finalizadas==="Resuelta") ? 'selected="selected"' : ''?>>Resuelta</option>
+                                        <option value="Pendiente recogida" <?php echo ($filtro_finalizadas==="Pendiente recogida") ? 'selected="selected"' : ''?>>Pendiente recogida</option>
+                                        <option value="Cerrada" <?php echo ($filtro_finalizadas==="Cerrada") ? 'selected="selected"' : ''?>>Cerrada</option>
+                                        <option value="Cancelada" <?php echo ($filtro_finalizadas==="Cancelada") ? 'selected="selected"' : ''?>>Cancelada</option>
                                     </select>
                                 </div>
+                                <div class="col-sm-2">
+                                    <label for="filtrar_finalizadas_pds">Estado PDS: </label>
+                                    <select name="filtrar_finalizadas_pds" id="filtrar_finalizadas_pds" class="form-control input-sm">
+                                        <option value="" <?php echo ($filtro_finalizadas_pds==="") ? 'selected="selected"' : ''?>>Cualquier estado</option>
+
+                                        <option value="Finalizada" <?php echo ($filtro_finalizadas_pds==="Finalizada") ? 'selected="selected"' : ''?>>Finalizada</option>
+                                        <option value="Cancelada" <?php echo ($filtro_finalizadas_pds==="Cancelada") ? 'selected="selected"' : ''?>>Cancelada</option>
+                                    </select>
+                                </div>
+
                                 <div class="col-sm-1">
                                     <input type="submit" value="Aplicar" class="form-control input-sm">
                                 </div>
                                 <div class="col-sm-1">
-                                    <?php if(! empty($filtro_finalizadas)) { ?>
+                                    <?php if(! empty($filtro_finalizadas) || ! empty($filtro_finalizadas_pds)) { ?>
                                         <a href="<?=base_url()?>admin/dashboard_new/borrar_busqueda/#incidencias_cerradas" class="reiniciar_busqueda">Reiniciar</a>
                                     <?php } ?>
 
@@ -308,8 +334,8 @@
                                         <th class="sorting" data-rel="incidencias.alarm_garra"    data-order="">Soporte sujección</th>
                                         <th class="sorting" data-rel="incidencias.tipo_averia"    data-order="">Tipo incidencia</th>
                                         <th                                                                     >Interv.</th>
-                                        <th class="sorting" data-rel="incidencias.status_pds"    data-order="">Estado</th>
                                         <th class="sorting" data-rel="incidencias.status"    data-order="">Estado SAT</th>
+                                        <th class="sorting" data-rel="incidencias.status_pds"    data-order="">Estado PDS</th>
                                         <th>Chat offline</th>
                                     </tr>
                                     </thead>
@@ -355,8 +381,9 @@
                                                 }
                                                 ?>
                                             </td>
-                                            <td><strong><?php echo $incidencia->status_pds ?></strong></td>
                                             <td><strong><?php echo $incidencia->status ?></strong></td>
+                                            <td><strong><?php echo $incidencia->status_pds ?></strong></td>
+
                                             <td  onClick="window.location.href='<?=site_url('admin/operar_incidencia/'.$incidencia->id_pds.'/'.$incidencia->id_incidencia)?>'"><a href="<?=site_url('admin/operar_incidencia/'.$incidencia->id_pds.'/'.$incidencia->id_incidencia)?>#chat"><strong><i class="fa fa-whatsapp <?=($incidencia->nuevos['nuevos']<>'0')?'chat_nuevo':'chat_leido'?>"></i></strong></a></td>
                                         </tr>
                                     <?php
