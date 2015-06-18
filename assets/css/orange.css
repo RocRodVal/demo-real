@@ -228,3 +228,4 @@ p.message{border-radius:3px; padding:7px 20px 7px 20px;}
 
 p.success{ background-color:#009900;color:#fff; }
 p.error{ background-color:#aa0000;color:#fff;   }
+p.warning{ background-color:#F7CF07;color:#000;   }
