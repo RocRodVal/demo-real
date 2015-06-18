@@ -1629,7 +1629,8 @@ class Admin extends CI_Controller
         $xcrud_1->label('type', 'Tipo');
         $xcrud_1->columns('type');
         $xcrud_1->fields('type');
-
+        $xcrud_1->order_by('type');
+        
         $xcrud_2 = xcrud_get_instance();
         $xcrud_2->table('contact');
         $xcrud_2->table_name('Contacto');
@@ -1643,7 +1644,7 @@ class Admin extends CI_Controller
         $xcrud_2->label('client_contact', 'Empresa')->label('type_profile_contact', 'Tipo')->label('contact', 'Contacto')->label('type_via', 'Tipo vía')->label('address', 'Dirección')->label('zip', 'C.P.')->label('city', 'Ciudad')->label('province', 'Provincia')->label('county', 'CC.AA.')->label('schedule', 'Horario')->label('phone', 'Teléfono')->label('mobile', 'Móvil')->label('email', 'Email')->label('status', 'Estado');
         $xcrud_2->columns('client_contact,type_profile_contact,contact,email');
         $xcrud_2->fields('client_contact,type_profile_contact,contact,type_via,address,zip,city,province,county,schedule,phone,mobile,email,status');
-
+        $xcrud_2->order_by('contact');
 
         $data['title'] = 'Contactos';
         //$data['content'] = $xcrud_1->render();
@@ -1666,6 +1667,7 @@ class Admin extends CI_Controller
         $xcrud_1->label('brand', 'Fabricante');
         $xcrud_1->columns('brand');
         $xcrud_1->fields('brand');
+        $xcrud_1->order_by('brand');
 
         $xcrud_2 = xcrud_get_instance();
         $xcrud_2->table('type_alarm');
@@ -1673,6 +1675,7 @@ class Admin extends CI_Controller
         $xcrud_2->label('type', 'Tipo');
         $xcrud_2->columns('type');
         $xcrud_2->fields('type');
+        $xcrud_2->order_by('type');
 
         $xcrud_3 = xcrud_get_instance();
         $xcrud_3->table('alarm');
@@ -1685,7 +1688,8 @@ class Admin extends CI_Controller
         $xcrud_3->label('client_alarm', 'Cliente')->label('brand_alarm', 'Fabricante')->label('type_alarm', 'Tipo')->label('code', 'Código')->label('alarm', 'Modelo')->label('picture_url', 'Foto')->label('description', 'Comentarios')->label('units', 'Unidades')->label('status', 'Estado');
         $xcrud_3->columns('client_alarm,brand_alarm,type_alarm,code,alarm,picture_url,status');
         $xcrud_3->fields('client_alarm,brand_alarm,type_alarm,code,alarm,picture_url,description,status');
-
+        $xcrud_3->order_by('code');
+        
         $xcrud_4 = xcrud_get_instance();
         $xcrud_4->table('alarms_display');
         $xcrud_4->table_name('Relación alarmas mueble');
@@ -1695,7 +1699,7 @@ class Admin extends CI_Controller
         $xcrud_4->label('client_type_pds', 'Cliente')->label('id_display', 'Mueble')->label('id_alarm', 'Alarma')->label('description', 'Comentarios')->label('status', 'Estado');
         $xcrud_4->columns('client_type_pds,id_display,id_alarm,status');
         $xcrud_4->fields('client_type_pds,id_display,id_alarm,description,status');
-
+        
         $xcrud_5 = xcrud_get_instance();
         $xcrud_5->table('alarms_device_display');
         $xcrud_5->table_name('Relación alarmas dispositivo');
@@ -2987,11 +2991,18 @@ class Admin extends CI_Controller
     
     		$fecha_inicio = $this->input->post('fecha_inicio');
     		$fecha_fin    = $this->input->post('fecha_fin');
+            $instalador = $this->input->post('instalador');
+
+            $instaladores = $this->db->query("SELECT id_contact, contact FROM contact WHERE type_profile_contact = 1")->result();
+
+
     		
-    		$data['facturacion'] = $this->tienda_model->facturacion_estado($fecha_inicio,$fecha_fin);
+    		$data['facturacion'] = $this->tienda_model->facturacion_estado($fecha_inicio,$fecha_fin,$instalador);
     		
     		$data['fecha_inicio'] = $fecha_inicio;
     		$data['fecha_fin']   = $fecha_fin;
+            $data['instalador'] = $instalador;
+            $data['select_instaladores'] = $instaladores;
     		
     		$data['title'] = 'Facturación';
     
@@ -3013,11 +3024,12 @@ class Admin extends CI_Controller
     		
     		$fecha_inicio = $this->uri->segment(3);
     		$fecha_fin    = $this->uri->segment(4);
-    		
+    		$instalador   = $this->uri->segment(5);
+
     		$xcrud = xcrud_get_instance();
     		$this->load->model(array('tienda_model','sfid_model'));
   
-       		$data['facturacion_csv'] = $this->tienda_model->facturacion_estado_csv($fecha_inicio,$fecha_fin);
+       		$data['facturacion_csv'] = $this->tienda_model->facturacion_estado_csv($fecha_inicio,$fecha_fin,$instalador);
 
     	} else {
     		redirect('admin', 'refresh');
