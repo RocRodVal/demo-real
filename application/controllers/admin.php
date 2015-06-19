@@ -70,7 +70,7 @@ class Admin extends CI_Controller
         }
     }
 
-    public function dashboard()
+    public function dashboard_old()
     {
         if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
             $data['id_pds'] = $this->session->userdata('id_pds');
@@ -106,7 +106,7 @@ class Admin extends CI_Controller
 
             $this->load->view('backend/header', $data);
             $this->load->view('backend/navbar', $data);
-            $this->load->view('backend/dashboard', $data);
+            $this->load->view('backend/dashboard_old', $data);
             $this->load->view('backend/footer');
         } else {
             redirect('admin', 'refresh');
@@ -136,7 +136,7 @@ class Admin extends CI_Controller
         return $config;
     }*/
 
-    public function dashboard_new()
+    public function dashboard()
     {
         if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
             $data['id_pds'] = $this->session->userdata('id_pds');
@@ -145,11 +145,11 @@ class Admin extends CI_Controller
             $xcrud = xcrud_get_instance();
 
 
-            $this->load->model(array('intervencion_model', 'tienda_model_new', 'sfid_model','chat_model'));
+            $this->load->model(array('intervencion_model', 'tienda_model', 'sfid_model','chat_model'));
 
-            $data['tiendas'] = $this->tienda_model_new->search_pds($this->input->post('sfid'));
+            $data['tiendas'] = $this->tienda_model->search_pds($this->input->post('sfid'));
 
-            $sfid = $this->tienda_model_new->get_pds($data['id_pds']);
+            $sfid = $this->tienda_model->get_pds($data['id_pds']);
 
             $data['id_pds']     = $sfid['id_pds'];
             $data['commercial'] = $sfid['commercial'];
@@ -187,7 +187,7 @@ class Admin extends CI_Controller
                 $this->session->unset_userdata('filtro_finalizadas');
                 $this->session->unset_userdata('filtro_finalizadas_pds');
 
-                redirect(site_url("/admin/dashboard_new"),'refresh');
+                redirect(site_url("/admin/dashboard"),'refresh');
             }
 
             // Consultar a la session si ya se ha buscado algo y guardado allí.
@@ -307,8 +307,8 @@ class Admin extends CI_Controller
             $data['title_iniciadas'] = 'Incidencias abiertas';
 
             $per_page = 100;
-            $total_incidencias = $this->tienda_model_new->get_incidencias_quantity($filtros,$buscador);   // Sacar el total de incidencias, para el paginador
-            $cfg_pagination = $this->paginationlib->init_pagination("admin/dashboard_new/incidencias/",$total_incidencias,$per_page,$segment);
+            $total_incidencias = $this->tienda_model->get_incidencias_quantity($filtros,$buscador);   // Sacar el total de incidencias, para el paginador
+            $cfg_pagination = $this->paginationlib->init_pagination("admin/dashboard/incidencias/",$total_incidencias,$per_page,$segment);
 
 
             $this->load->library('pagination',$cfg_pagination);
@@ -332,7 +332,7 @@ class Admin extends CI_Controller
 
             $data["pagination_helper"]   = $this->pagination;
 
-            $incidencias = $this->tienda_model_new->get_incidencias($page,$cfg_pagination,$campo_orden_activas,$orden_activas,$filtros,$buscador);
+            $incidencias = $this->tienda_model->get_incidencias($page,$cfg_pagination,$campo_orden_activas,$orden_activas,$filtros,$buscador);
 
              foreach ($incidencias as $incidencia) {
                 $incidencia->device = $this->sfid_model->get_device($incidencia->id_devices_pds);
@@ -391,8 +391,8 @@ class Admin extends CI_Controller
             $data["campo_orden_cerradas"] = $campo_orden_cerradas;
             $data["orden_cerradas"] = $orden_cerradas;
 
-            $total_incidencias = $this->tienda_model_new->get_incidencias_finalizadas_quantity($filtros_finalizadas,$buscador);   // Sacar el total de incidencias, para el paginador
-            $cfg_pagination = $this->paginationlib->init_pagination("admin/dashboard_new/finalizadas/",$total_incidencias,$per_page,$segment_finalizadas);
+            $total_incidencias = $this->tienda_model->get_incidencias_finalizadas_quantity($filtros_finalizadas,$buscador);   // Sacar el total de incidencias, para el paginador
+            $cfg_pagination = $this->paginationlib->init_pagination("admin/dashboard/finalizadas/",$total_incidencias,$per_page,$segment_finalizadas);
 
             $cfg_pagination["suffix"] = '#incidencias_cerradas';
 
@@ -416,7 +416,7 @@ class Admin extends CI_Controller
             $data['n_final_finalizadas'] = $n_final_finalizadas;
 
 
-            $incidencias_finalizadas = $this->tienda_model_new->get_incidencias_finalizadas($page_finalizadas,$cfg_pagination,$filtros_finalizadas,$buscador,$campo_orden_cerradas,$orden_cerradas);
+            $incidencias_finalizadas = $this->tienda_model->get_incidencias_finalizadas($page_finalizadas,$cfg_pagination,$filtros_finalizadas,$buscador,$campo_orden_cerradas,$orden_cerradas);
 
             foreach ($incidencias_finalizadas as $incidencia) {
                 $incidencia->device = $this->sfid_model->get_device($incidencia->id_devices_pds);
@@ -429,7 +429,7 @@ class Admin extends CI_Controller
 
             $this->load->view('backend/header', $data);
             $this->load->view('backend/navbar', $data);
-            $this->load->view('backend/dashboard_new', $data);
+            $this->load->view('backend/dashboard', $data);
             $this->load->view('backend/footer');
         } else {
             redirect('admin', 'refresh');

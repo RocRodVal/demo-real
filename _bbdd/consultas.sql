@@ -513,3 +513,50 @@ WHERE incidencias.status != 'Cancelada'
 GROUP BY 
 	YEAR(incidencias.fecha),
 	MONTH(incidencias.fecha);
+    
+
+/*
+Filtro 72 h. v3 
+*/    
+
+    
+### CREAR VISTA (BORRAR PRIMERO SI YA EXISTE, PARA ACTUALIZARLA) CON LOS DATOS QUE NECESITAN CÁLCULO DE TAL MANERA QUE EN LA 
+###  QUERY PRINCIPAL No REQUIERA CALCULO.
+
+DROP VIEW IF EXISTS view_historico_incidencia_revisada;
+CREATE VIEW view_historico_incidencia_revisada AS 
+(
+	SELECT  historico.id_historico, DATE_ADD( historico.fecha, INTERVAL 72 HOUR) as fecha_inc, historico.fecha as fecha
+	FROM historico, incidencias
+	WHERE
+    (
+		(historico.status = 'Revisada') AND
+		(historico.id_incidencia = incidencias.id_incidencia)
+	)
+);
+    
+
+
+SELECT	YEAR(incidencias.fecha) AS Year,  MONTH(incidencias.fecha) AS Mes, 	COUNT(id_incidencia) AS Incidencias,
+	(
+		SELECT COUNT(id_historico) FROM historico
+		WHERE
+			(
+				(	(historico.status_pds = 'Cancelada' AND historico.status = 'Cancelada') OR (historico.status_pds = 'Finalizada' AND historico.status = 'Resuelta') ) 
+                AND	(historico.id_historico IN ( SELECT 	id_historico FROM view_historico_incidencia_revisada WHERE fecha >= fecha_inc) 
+                AND (YEAR(historico.fecha) = Year AND MONTH(historico.fecha) = Mes)
+			)
+	)
+) as '<72h',           
+	(
+		SELECT
+			COUNT(id_incidencia) 
+			FROM incidencias
+			WHERE 
+			(
+				(incidencias.status_pds = 'Finalizada' OR incidencias.status_pds = 'Cancelada') AND
+				(YEAR(incidencias.fecha) = Year AND MONTH(incidencias.fecha) = Mes)
+			)
+	) AS Cerradas
+    
+FROM incidencias GROUP BY Year,	Mes;    
