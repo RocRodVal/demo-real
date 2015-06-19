@@ -201,6 +201,9 @@
                     <br clear="all" />
                     
                     <h3>Material asignado</h3>
+                    <?php  if($material_editable && (count($material_alarmas) > 0 || count($material_dispositivos) > 0)) { ?>
+                        <p class="message"><td><a href="<?= site_url('admin/desasignar_incidencia_materiales/' . $id_pds_url . '/' . $id_inc_url.'/todo') ?>"><i class="glyphicon glyphicon-remove"></i> Desasignar todos los materiales</a></td></p>
+                    <?php } ?>
  					<?php
 		            if (empty($material_dispositivos)) {
 		                echo '<p class="message"><i class="glyphicon glyphicon-remove"></i> No hay dispositivos asociados.</p>';
@@ -224,7 +227,12 @@
 		                                <td><?php echo $material_dispositivos_item->barcode ?></td>
 		                                <td><?php echo $material_dispositivos_item->device ?></td>
 		                                <td><?php echo $material_dispositivos_item->cantidad ?></td>
-                                        <td><a href="<?= site_url('admin/desasignar_incidencia_materiales/' . $id_pds_url . '/' . $id_inc_url.'/device/'.$material_dispositivos_item->id_material_incidencias) ?>"><i class="glyphicon glyphicon-remove"></i></a></td>
+                                        <?php if($material_editable) { ?>
+                                            <td><a href="<?= site_url('admin/desasignar_incidencia_materiales/' . $id_pds_url . '/' . $id_inc_url.'/device/'.$material_dispositivos_item->id_material_incidencias) ?>"><i class="glyphicon glyphicon-remove"></i></a></td>
+                                        <?php }else{ ?>
+                                            <td>-</td>
+                                        <?php  } ?>
+
 		                            </tr>
 		                        <?php
 		                        }
@@ -256,17 +264,26 @@
 		                            	<td><?php echo $material_alarmas_item->code ?></td>
 		                                <td><?php echo $material_alarmas_item->alarm ?></td>
 		                                <td><?php echo $material_alarmas_item->cantidad ?></td>
-                                        <td><a href="<?= site_url('admin/desasignar_incidencia_materiales/' . $id_pds_url . '/' . $id_inc_url.'/alarm/'.$material_alarmas_item->id_material_incidencias) ?>"><i class="glyphicon glyphicon-remove"></i></a></td>
+                                        <?php if($material_editable) { ?>
+                                            <td><a href="<?= site_url('admin/desasignar_incidencia_materiales/' . $id_pds_url . '/' . $id_inc_url.'/alarm/'.$material_alarmas_item->id_material_incidencias) ?>"><i class="glyphicon glyphicon-remove"></i></a></td>
+                                        <?php }else{ ?>
+                                                <td>-</td>
+                                        <?php } ?>
 		                            </tr>
 		                        <?php
 		                        }
 		                        ?>
+
 		                        </tbody>
 		                    </table>
+
+
 		                </div>
 		            <?php
 		            }
-		            ?>                     
+
+
+		          ?>
                 </div>
             </div>
             <div class="panel panel-default">

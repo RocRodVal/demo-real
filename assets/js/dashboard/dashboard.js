@@ -44,10 +44,10 @@ $(document).ready(function () {
 });
 
 function createDataTable(){
-    $("#table_incidencias_dashboard").dataTable( {
+   /* $("#table_incidencias_dashboard").dataTable( {
         stateSave: true,
         "pageLength": 100
-    } );
+    } );*/
 }
 
 function avisoChat(){
