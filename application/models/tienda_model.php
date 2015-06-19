@@ -38,6 +38,12 @@ class Tienda_model extends CI_Model {
 		$id=$this->db->insert_id();
 	}	
 	
+	public function alta_agente($data)
+	{
+		$this->db->insert('agent',$data);
+		$id=$this->db->insert_id();
+	}	
+	
 	
 	public function baja_dispositivos_almacen_update($id_device,$owner,$units)
 	{

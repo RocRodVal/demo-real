@@ -572,7 +572,14 @@ class Admin extends CI_Controller
     	{
     		$this->load->model(array('tienda_model', 'sfid_model'));
 
-    		/* TODO Alta de agente */
+    		/* FIXME: revisar alta correcta en tabla de agentes */
+    		$data = array(
+    				'sfid'      => $this->input->post('reference'),
+    				'password'  => 'demoreal',
+    				'type'      => 1
+    		);    		
+    		
+    		$this->tienda_model->alta_agente($data);
             $this->tienda_model->borrar_dispositivos($this->input->post('reference'));
             $this->tienda_model->borrar_muebles($this->input->post('reference'));
 
@@ -806,20 +813,6 @@ class Admin extends CI_Controller
                 $data['email_sent'] = FALSE;
             }
             else {
-                $config['protocol'] = 'smtp';
-                $config['smtp_host'] = 'smtp.gmail.com';
-                $config['smtp_user'] = 'dbourgon@altabox.net';
-                $config['smtp_pass'] = 'Dbourgon7535';
-                $config['smtp_port'] = '587';
-                $config['smtp_crypto'] = 'tls';
-
-                $config['text'] = FALSE;
-                $config['wordwrap'] = FALSE;
-
-                //$this->email->set_mailtype('html-attach');
-
-                $this->email->initialize($config);
-
                 /**
                  * El asunto al ir en los headers del email, no puede pasar de 62 caracteres. Ahora hay margen pero si en el futuro el email
                  * se ve raramente, revisad que el asunto no haya crecido más de 62 chars, en primer lugar.
@@ -834,13 +827,11 @@ class Admin extends CI_Controller
                 $message_operador .= "3) Preparar en bolsa independiente todo el material sobrante y defectuoso separado por incidencia." . "\r\n";
                 $message_operador .= "4) Enviar email con el material preparado a demoreal@focusonemotions.com." . "\r\n";
                 $message_operador .= "Demo Real" . "\r\n";
-                $message_operador .= "http://demoreal.focusonemotions.com/" . "\r\n";
-
+                $message_operador .= "http://demoreal.focusonemotions.com/" . "\r\n\n";
 
                 $this->email->from('demoreal@focusonemotions.com', 'Demo Real');
                 $this->email->to($mail_operador);
-                //$this->email->bcc('demoreal@focusonemotions.com');
-
+                $this->email->bcc('demoreal@focusonemotions.com');
 
                 $this->email->subject($subject);
                 $this->email->message($message_operador);
