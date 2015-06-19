@@ -422,6 +422,10 @@ GROUP BY
 	YEAR(fecha),
 	MONTH(fecha);
 
+/*
+Filtro 72 h. v1 
+*/
+
 
 SELECT
 	YEAR(incidencias.fecha) AS Year, 
@@ -462,6 +466,50 @@ SELECT
 			)
 	) AS Cerradas
 FROM incidencias
+GROUP BY 
+	YEAR(incidencias.fecha),
+	MONTH(incidencias.fecha);
+    
+/*
+Filtro 72 h. v2 
+*/    
+
+SELECT
+	YEAR(incidencias.fecha) AS Year, 
+	MONTH(incidencias.fecha) AS Mes, 
+	COUNT(*) AS Incidencias,
+    (
+		SELECT
+			COUNT(*) 
+			FROM historico
+			WHERE
+			(
+				(historico.status_pds = 'Finalizada' AND historico.status = 'Resuelta') AND
+				(
+					DATE_ADD(
+					(
+						SELECT 
+							historico.fecha
+							FROM historico
+							WHERE
+                            ((historico.status = 'Revisada') AND
+							(historico.id_incidencia = incidencias.id_incidencia))
+					), INTERVAL 72 HOUR) <= historico.fecha) AND
+					(YEAR(historico.fecha) = Year AND MONTH(historico.fecha) = Mes)
+			)
+	) AS "PKI",           
+	(
+		SELECT
+			COUNT(*) 
+			FROM incidencias
+			WHERE 
+			(
+				(incidencias.status = 'Cerrada') AND
+				(YEAR(incidencias.fecha) = Year AND MONTH(incidencias.fecha) = Mes)
+			)
+	) AS Cerradas
+FROM incidencias
+WHERE incidencias.status != 'Cancelada'
 GROUP BY 
 	YEAR(incidencias.fecha),
 	MONTH(incidencias.fecha);

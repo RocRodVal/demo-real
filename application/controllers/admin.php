@@ -185,6 +185,9 @@ class Admin extends CI_Controller
                 $this->session->unset_userdata('filtro_pds');
 
                 $this->session->unset_userdata('filtro_finalizadas');
+                $this->session->unset_userdata('filtro_finalizadas_pds');
+
+                redirect(site_url("/admin/dashboard_new"),'refresh');
             }
 
             // Consultar a la session si ya se ha buscado algo y guardado allí.
@@ -205,7 +208,25 @@ class Admin extends CI_Controller
             $sess_filtro_pds = $this->session->userdata('filtro_pds');
             if(! empty($sess_filtro_pds)) $filtro_pds = $sess_filtro_pds;
 
-            if($do_busqueda=="si")
+
+            // Obtener el filtro, primero de Session y despues del post, si procede..
+            $do_busqueda_finalizadas = $this->input->post('do_busqueda_finalizadas');
+
+            $filtro_finalizadas = NULL;
+            $filtro_finalizadas_pds = NULL;
+
+            $sess_filtro_finalizadas = $this->session->userdata('filtro_finalizadas');
+            if(! empty($sess_filtro_finalizadas)) $filtro_finalizadas = $sess_filtro_finalizadas;
+
+            $sess_filtro_finalizadas_pds = $this->session->userdata('filtro_finalizadas_pds');
+            if(! empty($sess_filtro_finalizadas_pds)) $filtro_finalizadas_pds = $sess_filtro_finalizadas_pds;
+
+            $post_finalizadas =$this->input->post('filtrar_finalizadas');
+            $post_finalizadas_pds =$this->input->post('filtrar_finalizadas_pds');
+
+
+
+            if($do_busqueda==="si")
             {
                 $buscar_sfid = $this->input->post('buscar_sfid');
                 $this->session->set_userdata('buscar_sfid', $buscar_sfid);
@@ -220,7 +241,16 @@ class Admin extends CI_Controller
 
                 $post_filtro_pds =$this->input->post('filtrar_pds');
                     $filtro_pds = $post_filtro_pds;
-                    $this->session->set_userdata('filtro',$filtro_pds);
+                    $this->session->set_userdata('filtro_pds',$filtro_pds);
+
+
+                $filtro_finalizadas = $post_finalizadas;
+                $this->session->set_userdata('filtro_finalizadas',$filtro_finalizadas);
+
+                $filtro_finalizadas_pds = $post_finalizadas_pds;
+                $this->session->set_userdata('filtro_finalizadas_pds',$filtro_finalizadas_pds);
+
+
 
             }
             $buscador['buscar_sfid']        = $buscar_sfid;
@@ -236,6 +266,14 @@ class Admin extends CI_Controller
 
             if($filtro != NULL) $filtros["status"] = $filtro;
             if($filtro_pds != NULL) $filtros["status_pds"] = $filtro_pds;
+
+            $data["filtro_finalizadas"] = $filtro_finalizadas;
+            $data["filtro_finalizadas_pds"] = $filtro_finalizadas_pds;
+
+            $filtros_finalizadas = array();
+
+            if($filtro_finalizadas != NULL) $filtros_finalizadas["status"] = $filtro_finalizadas;
+            if($filtro_finalizadas_pds != NULL) $filtros_finalizadas["status_pds"] = $filtro_finalizadas_pds;
 
 
             // Obtener el campo a ordenar, primero de Session y despues del post, si procede..
@@ -321,33 +359,7 @@ class Admin extends CI_Controller
                 $segment_finalizadas = null;
             }
 
-            // Obtener el filtro, primero de Session y despues del post, si procede..
-            $filtro_finalizadas = NULL;
-            $filtro_finalizadas_pds = NULL;
 
-            $sess_filtro_finalizadas = $this->session->userdata('filtro_finalizadas');
-            if(! empty($sess_filtro_finalizadas)) $filtro_finalizadas = $sess_filtro_finalizadas;
-
-            $sess_filtro_finalizadas_pds = $this->session->userdata('filtro_finalizadas_pds');
-            if(! empty($sess_filtro_finalizadas_pds)) $filtro_finalizadas_pds = $sess_filtro_finalizadas_pds;
-
-            $post_finalizadas =$this->input->post('filtrar_finalizadas');
-            $post_finalizadas_pds =$this->input->post('filtrar_finalizadas_pds');
-
-                $filtro_finalizadas = $post_finalizadas;
-                $this->session->set_userdata('filtro_finalizadas',$filtro_finalizadas);
-
-                $filtro_finalizadas_pds = $post_finalizadas_pds;
-                $this->session->set_userdata('filtro_finalizadas_pds',$filtro_finalizadas_pds);
-
-
-            $data["filtro_finalizadas"] = $filtro_finalizadas;
-            $data["filtro_finalizadas_pds"] = $filtro_finalizadas_pds;
-
-            $filtros_finalizadas = array();
-
-            if($filtro_finalizadas != NULL) $filtros_finalizadas["status"] = $filtro_finalizadas;
-            if($filtro_finalizadas_pds != NULL) $filtros_finalizadas["status_pds"] = $filtro_finalizadas_pds;
 
 
             $per_page = 100;
