@@ -32,7 +32,7 @@
                         <p>&nbsp;</p>
                     </div>
                 </div>
-            <? } ?>
+            <?php } ?>
 
             <?php 
             if (isset($_POST['sfid']))
