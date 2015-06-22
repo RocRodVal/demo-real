@@ -439,6 +439,20 @@ class Admin extends CI_Controller
 
 
 
+    /**
+     * Método que comprueba si una incidencia ya está comunicada, o en un paso posterior.
+     * Devuelve true si lo está y false en caso contrario.
+     */
+
+    public function material_editable($status=''){
+        $resultado = TRUE;
+        $estadosNoEditables = array("Comunicada","Resuelta","Pendiente recogida","Finalizada","Cancelada");
+        if(in_array($status,$estadosNoEditables)) $resultado = FALSE;
+        return $resultado;
+    }
+
+
+
     public function material_retorno()
     {
         if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
@@ -704,7 +718,10 @@ class Admin extends CI_Controller
             $data['incidencia'] = $incidencia;
 
 
+            print_r($incidencia['status']);
 
+            $material_editable = $this->material_editable($incidencia['status']);
+            $data['material_editable'] = $material_editable;
 
             $material_dispositivos = $this->tienda_model->get_material_dispositivos($incidencia['id_incidencia']);
             $data['material_dispositivos'] = $material_dispositivos;
@@ -716,7 +733,9 @@ class Admin extends CI_Controller
             $leido = $this->chat_model->marcar_leido($incidencia['id_incidencia'],$sfid['reference']);
             $data['chats'] = $chats;
 
+
             $data['title'] = 'Operativa incidencia Ref. '.$data['id_inc_url'];
+
 
             $this->load->view('backend/header', $data);
             $this->load->view('backend/navbar', $data);
@@ -1408,13 +1427,13 @@ class Admin extends CI_Controller
             $sfid = $this->tienda_model->get_pds($id_pds);
 
             // TERMINAL
-            if($tipo_dispositivo==="device")
+            if($tipo_dispositivo==="device" || $tipo_dispositivo==="todo")
             {
                 $material_dispositivos = $this->tienda_model->get_material_dispositivos($id_inc);
                 if (!empty($material_dispositivos)) {
                     foreach ($material_dispositivos as $material) {
 
-                        if($material->id_material_incidencias == $id_material_incidencia)
+                        if($material->id_material_incidencias == $id_material_incidencia || $tipo_dispositivo==="todo")
                         {
                             // Poner el dispositivo de nuevo "En stock"
                             $id_devices_almacen = $material->id_devices_almacen;
@@ -1430,12 +1449,12 @@ class Admin extends CI_Controller
                 }
             }
 
-            if($tipo_dispositivo==="alarm")
+            if($tipo_dispositivo==="alarm" || $tipo_dispositivo==="todo")
             {
                 $material_alarmas = $this->tienda_model->get_material_alarmas($id_inc);
                 if (!empty($material_alarmas)) {
                     foreach ($material_alarmas as $alarma) {
-                        if($alarma->id_material_incidencias == $id_material_incidencia)
+                        if($alarma->id_material_incidencias == $id_material_incidencia || $tipo_dispositivo==="todo")
                         {
                             // Incrementar la cantidad (stock a devolver), en la tabla ALARM, campo units.
                             $sql = "UPDATE alarm SET units = units +" . $alarma->cantidad . " WHERE id_alarm='" . $alarma->id_alarm . "'";
@@ -3199,6 +3218,7 @@ class Admin extends CI_Controller
         }
         redirect('admin', 'refresh');
     }
+
 
 }
 /* End of file admin.php */
