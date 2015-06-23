@@ -61,8 +61,12 @@
 		            if (empty($facturacion)) {
 		                echo '<p>No hay información sobre facturación.</p>';
 		            } else {
+                        if(empty($instalador)) $instalador = "false";
+                        if(empty($dueno)) $dueno = "false";
+
+
 		            ?>
-		            	<h1 class="page-header">Intervenciones [descargar <a href="<?=site_url('admin/facturacion_csv/'.$fecha_inicio.'/'.$fecha_fin.'/'.$instalador)?>" target="_blank">CSV</a>]</h1>
+		            	<h1 class="page-header">Intervenciones [descargar <a href="<?=site_url('admin/facturacion_csv/'.$fecha_inicio.'/'.$fecha_fin.'/'.$instalador.'/'.$dueno);?>" target="_blank">CSV</a>]</h1>
 		                <div class="table-responsive">
 		                	<p><strong>Rango:</strong> <?php echo $fecha_inicio ?>/<?php echo $fecha_fin ?></p>
 
@@ -82,6 +86,7 @@
 		                            <th>Intervención</th>
 		                            <th>Incidencias</th>
 		                            <th>Instalador</th>
+                                    <th>Dueño</th>
 		                            <th>Dispositivos</th>
 		                            <th>Alarmas</th>
 		                        </tr>
@@ -97,6 +102,7 @@
 		                                <td><?php echo $item_facturacion->visita ?></td>
 		                                <td><?php echo $item_facturacion->incidencias ?></td>
 		                                <td><?php echo $item_facturacion->instalador ?></td>
+                                        <td><?php echo $item_facturacion->dueno  ?></td>
 		                                <td><?php echo $item_facturacion->dispositivos ?></td>
 		                                <td><?php echo $item_facturacion->otros ?></td>
 		                            </tr>
