@@ -446,8 +446,23 @@ class Admin extends CI_Controller
 
     public function material_editable($status=''){
         $resultado = TRUE;
-        $estadosNoEditables = array("Comunicada","Resuelta","Pendiente recogida","Finalizada","Cancelada");
-        if(in_array($status,$estadosNoEditables)) $resultado = FALSE;
+
+        /**
+         * Orden numérico de estados del SAT, para poder usar en la vista.
+         */
+        $n_status_sat = array();
+        $n_status_sat["Nueva"] = 1;
+        $n_status_sat["Revisada"] = 2;
+        $n_status_sat["Instalador asignado"] = 3;
+        $n_status_sat["Material asignado"] = 4;
+        $n_status_sat["Comunicada"] = 5;
+        $n_status_sat["Resuelta"] = 6;
+        $n_status_sat["Pendiente recogida"] = 7;
+        $n_status_sat["Cerrada"] = 8;
+        $n_status_sat["Cancelada"] = 9;
+
+
+        if($n_status_sat[$status] >= $n_status_sat["Comunicada"]) $resultado = FALSE;
         return $resultado;
     }
 
@@ -688,6 +703,10 @@ class Admin extends CI_Controller
             $data['id_pds_url'] = $id_pds;
             $data['id_inc_url'] = $id_inc;
 
+
+
+
+
             $incidencia = $this->tienda_model->get_incidencia($id_inc);
 
             $historico_material_asignado = $this->tienda_model->historico_fecha($id_inc,'Material asignado');
@@ -717,8 +736,6 @@ class Admin extends CI_Controller
             $incidencia['display'] = $this->sfid_model->get_display($incidencia['id_displays_pds']);
             $data['incidencia'] = $incidencia;
 
-
-            print_r($incidencia['status']);
 
             $material_editable = $this->material_editable($incidencia['status']);
             $data['material_editable'] = $material_editable;
@@ -752,6 +769,9 @@ class Admin extends CI_Controller
     	if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
     		$id_pds = $this->uri->segment(3);
     		$id_inc = $this->uri->segment(4);
+            $envio_mail=$this->uri->segment(5);
+
+
 
     		$xcrud = xcrud_get_instance();
     		$this->load->model(array('chat_model', 'intervencion_model', 'tienda_model', 'sfid_model'));
@@ -824,48 +844,54 @@ class Admin extends CI_Controller
 
 
             /** ENVIO DEL EMAIL al operador*/
-            $info_intervencion = $this->intervencion_model->get_info_intervencion($incidencia['intervencion']);
-            $mail_operador = $info_intervencion->operador->email;
 
-            if(empty($mail_operador))
-            {
-                $data['email_sent'] = FALSE;
-            }
-            else {
-                /**
-                 * El asunto al ir en los headers del email, no puede pasar de 62 caracteres. Ahora hay margen pero si en el futuro el email
-                 * se ve raramente, revisad que el asunto no haya crecido más de 62 chars, en primer lugar.
-                 */
-                $subject = "DEMOREAL / SFID ".$sfid['reference'] ." / INC " . $incidencia['id_incidencia']. " / INT ".$incidencia['intervencion'];
+            if($envio_mail === "notificacion") {
 
-                $message_operador = "Asunto: ".$subject."\r\n\r\n";
-                $message_operador .= "En referencia a los datos indicados en Asunto, adjunto remitimos parte para la intervención.". "\r\n";
-                $message_operador .= "Recordamos los pasos principales del procedimiento:" . "\r\n\r\n";
-                $message_operador .= "1) Realizar intervención dentro de las 48h siguientes a la recepción del email." . "\r\n";
-                $message_operador .= "2) Enviar el presente parte rellenado y con la firma de la persona encargada de la tienda al email demoreal@focusonemotions.com." . "\r\n";
-                $message_operador .= "3) Preparar en bolsa independiente todo el material sobrante y defectuoso separado por incidencia." . "\r\n";
-                $message_operador .= "4) Enviar email con el material preparado a demoreal@focusonemotions.com." . "\r\n";
-                $message_operador .= "Demo Real" . "\r\n";
-                $message_operador .= "http://demoreal.focusonemotions.com/" . "\r\n\n";
+                $info_intervencion = $this->intervencion_model->get_info_intervencion($incidencia['intervencion']);
+                //print_r($info_intervencion);
+                $mail_operador = $info_intervencion->operador->email;
 
-                $this->email->from('demoreal@focusonemotions.com', 'Demo Real');
-                $this->email->to($mail_operador);
-                $this->email->bcc('demoreal@focusonemotions.com');
-
-                $this->email->subject($subject);
-                $this->email->message($message_operador);
-
-                $this->email->attach($attach);
-
-                if ($this->email->send()) {
-                    $data['email_sent'] = TRUE;
-                } else {
+                if (empty($mail_operador)) {
                     $data['email_sent'] = FALSE;
-                }
-                $this->email->clear();
-            }
-            /** FIN ENVIO DEL EMAIL al operador*/
+                } else {
+                    /**
+                     * El asunto al ir en los headers del email, no puede pasar de 62 caracteres. Ahora hay margen pero si en el futuro el email
+                     * se ve raramente, revisad que el asunto no haya crecido más de 62 chars, en primer lugar.
+                     */
+                    $subject = "DEMOREAL / SFID " . $sfid['reference'] . " / INC " . $incidencia['id_incidencia'] . " / INT " . $incidencia['intervencion'];
 
+                    $message_operador = "Asunto: " . $subject . "\r\n\r\n";
+                    $message_operador .= "En referencia a los datos indicados en Asunto, adjunto remitimos parte para la intervención." . "\r\n";
+                    $message_operador .= "Recordamos los pasos principales del procedimiento:" . "\r\n\r\n";
+                    $message_operador .= "1) Realizar intervención dentro de las 48h siguientes a la recepción del email." . "\r\n";
+                    $message_operador .= "2) Enviar el presente parte rellenado y con la firma de la persona encargada de la tienda al email demoreal@focusonemotions.com." . "\r\n";
+                    $message_operador .= "3) Preparar en bolsa independiente todo el material sobrante y defectuoso separado por incidencia." . "\r\n";
+                    $message_operador .= "4) Enviar email con el material preparado a demoreal@focusonemotions.com." . "\r\n";
+                    $message_operador .= "Demo Real" . "\r\n";
+                    $message_operador .= "http://demoreal.focusonemotions.com/" . "\r\n\n";
+
+                    $this->email->from('demoreal@focusonemotions.com', 'Demo Real');
+                    $this->email->to($mail_operador);
+
+                    /** COMENTADO AVISO COPIA */
+                    $this->email->bcc('demoreal@focusonemotions.com');
+
+                    $this->email->subject($subject);
+                    $this->email->message($message_operador);
+
+                    $this->email->attach($attach);
+
+                    if ($this->email->send()) {
+                        $data['email_sent'] = TRUE;
+                    } else {
+                        $data['email_sent'] = FALSE;
+                    }
+                    $this->email->clear();
+                }
+                /** FIN ENVIO DEL EMAIL al operador*/
+            }else{
+                $data['email_sent'] = NULL; // Descarga sin notificacion
+            }
             // Paso a vista
             $data['title'] = 'Generación del parte para la incidencia ['.$incidencia['id_incidencia'].']';
             $data['filename_pdf'] = $filename_pdf;
@@ -1012,6 +1038,7 @@ class Admin extends CI_Controller
         $status = $this->uri->segment(6);
         $status_ext = $this->uri->segment(7);
 
+
         $xcrud = xcrud_get_instance();
         $this->load->model(array('tienda_model','intervencion_model'));
 
@@ -1096,7 +1123,11 @@ class Admin extends CI_Controller
 
         if ($status == 5)
         {
-        	redirect('admin/imprimir_incidencia/'.$id_pds.'/'.$id_inc, 'refresh');
+            $envio_mail = $this->uri->segment(7);
+
+
+
+        	redirect('admin/imprimir_incidencia/'.$id_pds.'/'.$id_inc.'/'.$envio_mail, 'refresh');
         }
         else
         {
@@ -1398,7 +1429,22 @@ class Admin extends CI_Controller
             $incidencia['display'] = $this->sfid_model->get_display($incidencia['id_displays_pds']);
             $data['incidencia'] = $incidencia;
 
-            $data['alarms_almacen'] = $this->tienda_model->get_alarms_almacen_reserva();
+            //$data['alarms_almacen'] = $this->tienda_model->get_alarms_almacen_reserva();
+
+            // Sacamos los dueños, y para cada uno de ellos sus alarmas, si existen y lo pasamos a la vista
+            $duenos_alarm = $this->tienda_model->get_duenos();
+
+            $data['alarms_almacen'] = array();
+            foreach($duenos_alarm as $key=>$dueno){
+                $alarms_dueno = $this->tienda_model->get_alarms_almacen_reserva($dueno->id_client);
+                if(count($alarms_dueno) > 0){
+                    $data['alarms_almacen'][$dueno->client] = $alarms_dueno;
+                }else{
+                    unset($duenos_alarm[$key]); // Si no tiene alarmas, lo eliminamos del array de dueños, para que no salgan en la vista.
+                }
+            }
+
+            $data['duenos_alarm'] = $duenos_alarm;
             $data['devices_almacen'] = $this->tienda_model->get_devices_almacen_reserva();
 
             $data['title'] = 'Operativa incidencia Ref. '.$data['id_inc_url'];
@@ -1799,9 +1845,20 @@ class Admin extends CI_Controller
     	$xcrud->relation('brand_alarm', 'brand_alarm', 'id_brand_alarm', 'brand');
     	$xcrud->change_type('picture_url', 'image');
     	$xcrud->modal('picture_url');
-    	$xcrud->label('client_alarm', 'Cliente')->label('brand_alarm', 'Fabricante')->label('type_alarm', 'Tipo')->label('code', 'Código')->label('alarm', 'Modelo')->label('picture_url', 'Foto')->label('description', 'Comentarios')->label('units', 'Unidades')->label('status', 'Estado');
+
+    	$xcrud->label('client_alarm', 'Dueño')
+                ->label('brand_alarm', 'Fabricante')
+                ->label('type_alarm', 'Tipo')
+                ->label('code', 'Código')
+                ->label('alarm', 'Modelo')
+                ->label('picture_url', 'Foto')
+                ->label('description', 'Comentarios')
+                ->label('units', 'Unidades')
+                ->label('status', 'Estado');
+        $xcrud->order_by('client_alarm');
     	$xcrud->columns('client_alarm,brand_alarm,type_alarm,code,alarm,picture_url,units,status');
-    	$xcrud->fields('client_alarm,brand_alarm,type_alarm,code,alarm,picture_url,description,units,status');
+        $xcrud->fields('client_alarm,brand_alarm,type_alarm,code,alarm,picture_url,description,units,status');
+
     
     	$data['title'] = 'Gestión alarmas';
     	$data['content'] = $xcrud->render();
@@ -3062,17 +3119,24 @@ class Admin extends CI_Controller
     		$fecha_inicio = $this->input->post('fecha_inicio');
     		$fecha_fin    = $this->input->post('fecha_fin');
             $instalador = $this->input->post('instalador');
+            $dueno = $this->input->post('dueno');
 
             $instaladores = $this->db->query("SELECT id_contact, contact FROM contact WHERE type_profile_contact = 1")->result();
+            $duenos = $this->db->query("SELECT id_client, client FROM client WHERE status='Alta' AND facturable = 1")->result();
+
 
 
     		
-    		$data['facturacion'] = $this->tienda_model->facturacion_estado($fecha_inicio,$fecha_fin,$instalador);
+    		$data['facturacion'] = $this->tienda_model->facturacion_estado($fecha_inicio,$fecha_fin,$instalador,$dueno);
     		
     		$data['fecha_inicio'] = $fecha_inicio;
     		$data['fecha_fin']   = $fecha_fin;
-            $data['instalador'] = $instalador;
+
             $data['select_instaladores'] = $instaladores;
+            $data['instalador'] = $instalador;
+
+            $data['select_duenos'] = $duenos;
+            $data['dueno'] = $dueno;
     		
     		$data['title'] = 'Facturación';
     
