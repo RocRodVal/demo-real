@@ -1510,9 +1510,9 @@ class Admin extends CI_Controller
         $xcrud->table_name('Empresa');
         $xcrud->relation('type_profile_client', 'type_profile', 'id_type_profile', 'type');
         $xcrud->change_type('picture_url', 'image');
-        $xcrud->label('client', 'Empresa')->label('type_profile_client', 'Tipo')->label('picture_url', 'Foto')->label('description', 'Comentarios')->label('status', 'Estado');
-        $xcrud->columns('client,type_profile_client');
-        $xcrud->fields('client,type_profile_client,picture_url,description,status');
+        $xcrud->label('client', 'Empresa')->label('type_profile_client', 'Tipo')->label('picture_url', 'Foto')->label('description', 'Comentarios')->label('facturable', 'Facturable')->label('status', 'Estado');
+        $xcrud->columns('client,type_profile_client,facturable');
+        $xcrud->fields('client,type_profile_client,picture_url,description,facturable,status');
         $xcrud->order_by('client');
 
         $data['title'] = 'Empresas';
