@@ -122,7 +122,8 @@ class Tienda_model extends CI_Model {
 	public function cerrar_pds($sfid)
 	{
 		$this->db->set('status','Baja');
-		$this->db->set('reference','X-'.$sfid);
+		/**$this->db->set('reference','X-'.$sfid);**/
+        $this->db->set('reference',''.$sfid.'-'.time());
 		$this->db->where('reference', $sfid);
 		$this->db->update('pds');
 	}	
@@ -294,20 +295,24 @@ class Tienda_model extends CI_Model {
 	}	
 	
 	
-	public function facturacion_estado($fecha_inicio,$fecha_fin,$instalador = NULL) {
+	public function facturacion_estado($fecha_inicio,$fecha_fin,$instalador = NULL,$dueno=NULL) {
 
-        $query = $this->db->select('facturacion.fecha, pds.reference AS SFID, type_pds.pds, facturacion.id_intervencion AS visita, COUNT(facturacion.id_incidencia) AS incidencias, contact.contact AS instalador, SUM(facturacion.units_device) AS dispositivos, SUM(facturacion.units_alarma) AS otros')
+        $query = $this->db->select('facturacion.fecha, pds.reference AS SFID, type_pds.pds, facturacion.id_intervencion AS visita, COUNT(facturacion.id_incidencia) AS incidencias, contact.contact AS instalador, client.client as dueno, SUM(facturacion.units_device) AS dispositivos, SUM(facturacion.units_alarma) AS otros')
 		->join('pds','facturacion.id_pds = pds.id_pds')
 		->join('type_pds','pds.type_pds = type_pds.id_type_pds')
 		->join('displays_pds','facturacion.id_displays_pds = displays_pds.id_displays_pds')
 		->join('display','displays_pds.id_display = display.id_display')
 		->join('intervenciones','facturacion.id_intervencion = intervenciones.id_intervencion', 'left')
 		->join('contact','intervenciones.id_operador = contact.id_contact', 'left')
+        ->join('client','display.client_display= client.id_client', 'left')
 		->where('facturacion.fecha >=',$fecha_inicio)
 		->where('facturacion.fecha <=',$fecha_fin);
 
         if(!is_null($instalador) && !empty($instalador)){
             $query = $this->db->where('intervenciones.id_operador',$instalador);
+        }
+        if(!is_null($dueno) && !empty($dueno)){
+            $query = $this->db->where('display.client_display',$dueno);
         }
 		$query = $this->db->group_by('facturacion.id_intervencion')
 		->order_by('facturacion.fecha')
@@ -485,8 +490,9 @@ class Tienda_model extends CI_Model {
 	
 		$query = $this->db->select('material_incidencias.id_material_incidencias AS id_material_incidencias,
 		material_incidencias.id_alarm AS id_alarm, alarm.code AS code, alarm.alarm AS alarm,
-		material_incidencias.cantidad AS cantidad')
+		material_incidencias.cantidad AS cantidad, client.client as dueno')
 		->join('alarm','material_incidencias.id_alarm = alarm.id_alarm')
+            ->join('client','alarm.client_alarm= client.id_client')
 		->where('material_incidencias.id_incidencia',$id)
 		->where('material_incidencias.id_alarm <>','')
 		->order_by('alarm.alarm')
@@ -522,28 +528,47 @@ class Tienda_model extends CI_Model {
 		->order_by('device.device')
 		->order_by('devices_almacen.serial')
 		->get('devices_almacen');
+
 	
 		return $query->result();
 	}
-		
+
+
+    /**
+     * Método que devuelve una lista con los Dueños, con estado Alta
+     * @return mixed
+     */
+    public function get_duenos(){
+        $query = $this->db->select('id_client,client')
+            ->where('status','Alta')
+            ->order_by('client')
+            ->get('client');
+
+        return $query->result();
+
+    }
 	
-	public function get_alarms_almacen_reserva() {
+	public function get_alarms_almacen_reserva($dueno = NULL) {
 	
 		$query = $this->db->select('client.client,alarm.*, brand_alarm.brand, type_alarm.type')
 		->join('client','alarm.client_alarm = client.id_client')
 		->join('brand_alarm','alarm.brand_alarm = brand_alarm.id_brand_alarm')
 		->join('type_alarm','alarm.type_alarm = type_alarm.id_type_alarm')
-		->where('alarm.status','Alta')
 		->order_by('brand')
 		->order_by('code')
 		->order_by('alarm')
-		->get('alarm');
+        ->where('alarm.status','Alta');
+
+            if(! is_null($dueno)){
+                $query->where('alarm.client_alarm',$dueno);
+            }
+		$query = $this->db->get('alarm');
+
 	
 		return $query->result();
-	}	
-	
-	
-	public function get_alarms_almacen() {
+	}
+
+    public function get_alarms_almacen() {
 	
 		$query = $this->db->select('alarms_almacen.*,alarm.*, COUNT(alarms_almacen.id_alarm) AS unidades')
 		->join('alarm','alarms_almacen.id_alarm = alarm.id_alarm')
