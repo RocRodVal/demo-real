@@ -886,13 +886,10 @@ class Admin extends CI_Controller
 
                     $this->email->from('demoreal@focusonemotions.com', 'Demo Real');
                     $this->email->to($mail_operador);
- 
+
                     if(!empty($mail_cc)){
                         $this->email->cc($mail_cc);
                     }
-
-
-
                     /** COMENTADO AVISO COPIA */
                     $this->email->bcc('demoreal@focusonemotions.com');
 
@@ -915,7 +912,6 @@ class Admin extends CI_Controller
             // Paso a vista
             $data['title'] = 'Generación del parte para la incidencia ['.$incidencia['id_incidencia'].']';
             $data['filename_pdf'] = $filename_pdf;
-
 
             $this->load->view('backend/header', $data);
             $this->load->view('backend/navbar', $data);
@@ -1879,7 +1875,8 @@ class Admin extends CI_Controller
     	$xcrud->columns('client_alarm,brand_alarm,type_alarm,code,alarm,picture_url,units,status');
         $xcrud->fields('client_alarm,brand_alarm,type_alarm,code,alarm,picture_url,description,units,status');
 
-    
+        $xcrud->before_update("historico_IO_alarmas_before_update","../libraries/diario_almacen.php");
+
     	$data['title'] = 'Gestión alarmas';
     	$data['content'] = $xcrud->render();
     
@@ -1888,7 +1885,11 @@ class Admin extends CI_Controller
     	$this->load->view('backend/content', $data);
     	$this->load->view('backend/footer');
     }
-    
+
+
+
+
+
 
     public function dispositivos()
     {
@@ -2150,6 +2151,45 @@ class Admin extends CI_Controller
         $this->load->view('backend/inventario', $data);
         $this->load->view('backend/footer');
     }
+
+    /**
+     * Método de entrada a Diario Almacén (Histórico de E/S de Alarmas).
+     *  Por una parte, existe histórico de alarmas masivas
+     *  Por otra, histórico sobre las alarmas asignadas para incidencias.
+     */
+    public function diario_almacen()
+    {
+        $this->load->model('tienda_model');
+
+        /*$data['displays'] = $this->tienda_model->get_displays_total();
+        $data['devices'] = $this->tienda_model->get_devices_total();*/
+        $xcrud_1 = xcrud_get_instance();
+        $xcrud_1->table('historico_IO_alarmas');
+        $xcrud_1->table_name('Histórico de alarmas');
+        $xcrud_1->relation('id_alarm', 'alarm', 'id_alarm', 'alarm');
+        $xcrud_1->relation('id_client', 'client', 'id_client', 'client');
+
+        $xcrud_1->label('id_historico_alarma','Ref.')->label('id_alarm', 'Alarma')->label('id_client', 'Dueño')->label('fecha', 'Fecha')->label('unidades', 'Unidades');
+        $xcrud_1->columns('id_historico_alarma,id_alarm,id_client,fecha,unidades');
+        $xcrud_1->order_by('fecha', 'desc');
+        $xcrud_1->show_primary_ai_column(true);
+        $xcrud_1->unset_add();
+        $xcrud_1->unset_edit();
+        $xcrud_1->unset_view();
+        $xcrud_1->unset_remove();
+        $xcrud_1->unset_numbers();
+        $xcrud_1->start_minimized(false);
+
+        $data["title"] = "Diario de almacén";
+        $data["content"] = $xcrud_1->render();
+
+        $this->load->view('backend/header', $data);
+        $this->load->view('backend/navbar', $data);
+        $this->load->view('backend/diario_almacen', $data);
+        $this->load->view('backend/footer');
+
+    }
+
 
     /**
      * Método que crea un listado del inventario de dispositivos que habrá en una tienda de SFID
