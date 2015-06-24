@@ -44,19 +44,31 @@
                                 echo 'disabled';
                             } ?>>Asignar instalador</a>
                         </div>                        
-                        <div class="col-lg-7 labelText grey">Asignar material</div>
+                        <div class="col-lg-7 labelText grey">Asignar material <?$incidencia['status']?> </div>
                         <div class="col-lg-5 labelBtn grey">
                             <a href="<?= site_url('admin/update_incidencia_materiales/' . $id_pds_url . '/' . $id_inc_url . '/2/3') ?>"
-                               classBtn="status" class="btn btn-success" <?php if (count($material_dispositivos) > 0 || count($material_alarmas) > 0) {
+                               classBtn="status" class="btn btn-success" <?php if ($incidencia['status'] != 'Instalador asignado') {
                                 echo 'disabled';
                             } ?>>Asignar mat.</a></td>
                         </div>                       
                         <div class="col-lg-7 labelText white">Imprimir documentación</div>
-                        <div class="col-lg-5 labelBtn white">
-                            <a href="<?= site_url('admin/update_incidencia/' . $id_pds_url . '/' . $id_inc_url . '/3/5') ?>"
+
+
+                            <?php if($incidencia['status']==='Comunicada'){ ?>
+                                <div class="col-lg-5 labelBtn white">
+                                    <a href="<?= site_url('admin/update_incidencia/' . $id_pds_url . '/' . $id_inc_url . '/3/5') ?>" classBtn="status" class="btn btn-success">Volver a imprimir</a>
+                                </div>
+                                <div class="col-lg-7 labelText white">&nbsp;</div>
+                                <div class="col-lg-5 labelBtn white">
+                                    <a href="<?= site_url('admin/update_incidencia/' . $id_pds_url . '/' . $id_inc_url . '/3/5/notificacion') ?>" classBtn="status" class="btn btn-success">Volver a notificar</a>
+                                </div>
+                            <?php }else{ ?>
+
+                            <div class="col-lg-5 labelBtn white">
+                            <a href="<?= site_url('admin/update_incidencia/' . $id_pds_url . '/' . $id_inc_url . '/3/5/notificacion') ?>"
                                classBtn="status" class="btn btn-success"
-                                <?php if (($incidencia['status'] == 'Material asignado') ||
-                                		 ($incidencia['status'] == 'Comunicada'))
+                                <?php if (($incidencia['status'] === 'Material asignado') ||
+                                		 ($incidencia['status'] === 'Comunicada'))
                                 {
                                     echo '';
                                 }
@@ -65,18 +77,21 @@
                                     echo 'disabled';
                             	}
                             	?>
-                            	target="_blank">
+                            	>
                                 <?php if ($incidencia['status'] == 'Comunicada')
                                 {
                                     echo 'Volver a imprimir';
                                 }
                                 else
 								{
-                                    echo 'Imprimir';
+                                    echo 'Imprimir y notificar';
                             	}
                             	?>
                             	</a>
-                        </div>                    
+                            </div>
+
+                                <?php } ?>
+
                         <div class="col-lg-7 labelText grey">Resolver incidencia<br /><br /></div>
 		                <form action="<?= site_url('admin/update_incidencia/' . $id_pds_url . '/' . $id_inc_url . '/4/6') ?>" method="post">
 		                <div class="col-lg-5 labelBtn grey">
@@ -252,8 +267,9 @@
 		                        <tr>
 		                        	<th width="20%">Código</th>
 		                            <th width="60%">Alarma</th>
-		                        	<th width="10%">Unidades</th>
-                                    <th width="10%">Desasignar</th>
+                                    <th width="20%">Dueño</th>
+		                        	<th width="5%">Unidades</th>
+                                    <th width="5%">Desasignar</th>
 		                        </tr>
 		                        </thead>
 		                        <tbody>
@@ -263,6 +279,7 @@
 		                            <tr>
 		                            	<td><?php echo $material_alarmas_item->code ?></td>
 		                                <td><?php echo $material_alarmas_item->alarm ?></td>
+                                        <td><?php echo $material_alarmas_item->dueno ?></td>
 		                                <td><?php echo $material_alarmas_item->cantidad ?></td>
                                         <?php if($material_editable) { ?>
                                             <td><a href="<?= site_url('admin/desasignar_incidencia_materiales/' . $id_pds_url . '/' . $id_inc_url.'/alarm/'.$material_alarmas_item->id_material_incidencias) ?>"><i class="glyphicon glyphicon-remove"></i></a></td>

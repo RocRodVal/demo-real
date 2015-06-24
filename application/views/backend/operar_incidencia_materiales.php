@@ -172,146 +172,31 @@
 		                        </tr>
 		                        </thead>
 		                        <tbody>
-		                            <tr>
-		                                <td>
-		                                <select id="alarma_almacen_1" name="alarma_almacen_1" width="500" style="width:500px">
-		                              	<?php
-		                        		foreach ($alarms_almacen as $alarm_almacen) {
-		                            	?>
-		                                	<option value="<?php echo $alarm_almacen->id_alarm ?>"><?php echo $alarm_almacen->client_alarm.' '.$alarm_almacen->brand.' '.$alarm_almacen->code.' '.$alarm_almacen->alarm ?></option>
-				                        <?php
-				                        }
-				                        ?>		                                
-		                                </select>
-		                                </td>
-		                                <td><input type="text" id="units_alarma_almacen_1" name="units_alarma_almacen_1" onkeypress='return event.charCode >= 48 && event.charCode <= 57'></input></td>
-		                            </tr>
-		                            <tr>
-		                                <td>
-		                                <select id="alarma_almacen_2" name="alarma_almacen_2" width="500" style="width:500px">
-		                              	<?php
-		                        		foreach ($alarms_almacen as $alarm_almacen) {
-		                            	?>
-		                                	<option value="<?php echo $alarm_almacen->id_alarm ?>"><?php echo $alarm_almacen->client_alarm.' '.$alarm_almacen->brand.' '.$alarm_almacen->code.' '.$alarm_almacen->alarm ?></option>
-				                        <?php
-				                        }
-				                        ?>		                                
-		                                </select>
-		                                </td>
-		                                <td><input type="text" id="units_alarma_almacen_2" name="units_alarma_almacen_2" onkeypress='return event.charCode >= 48 && event.charCode <= 57'></input></td>
-		                            </tr>
-		                            <tr>
-		                                <td>
-		                                <select id="alarma_almacen_3" name="alarma_almacen_3" width="500" style="width:500px">
-		                              	<?php
-		                        		foreach ($alarms_almacen as $alarm_almacen) {
-		                            	?>
-		                                	<option value="<?php echo $alarm_almacen->id_alarm ?>"><?php echo $alarm_almacen->client_alarm.' '.$alarm_almacen->brand.' '.$alarm_almacen->code.' '.$alarm_almacen->alarm ?></option>
-				                        <?php
-				                        }
-				                        ?>			                                
-		                                </select>
-		                                </td>
-		                                <td><input type="text" id="units_alarma_almacen_3" name="units_alarma_almacen_3" onkeypress='return event.charCode >= 48 && event.charCode <= 57'></input></td>
-		                            </tr>
-		                            <tr>
-		                                <td>
-		                                <select id="alarma_almacen_4" name="alarma_almacen_4" width="500" style="width:500px">
-		                              	<?php
-		                        		foreach ($alarms_almacen as $alarm_almacen) {
-		                            	?>
-		                                	<option value="<?php echo $alarm_almacen->id_alarm ?>"><?php echo $alarm_almacen->client_alarm.' '.$alarm_almacen->brand.' '.$alarm_almacen->code.' '.$alarm_almacen->alarm ?></option>
-				                        <?php
-				                        }
-				                        ?>			                                
-		                                </select>
-		                                </td>
-		                                <td><input type="text" id="units_alarma_almacen_4" name="units_alarma_almacen_4" onkeypress='return event.charCode >= 48 && event.charCode <= 57'></input></td>
-		                            </tr>
-		                            <tr>
-		                                <td>
-		                                <select id="alarma_almacen_5" name="alarma_almacen_5" width="500" style="width:500px">
-		                              	<?php
-		                        		foreach ($alarms_almacen as $alarm_almacen) {
-		                            	?>
-		                                	<option value="<?php echo $alarm_almacen->id_alarm ?>"><?php echo $alarm_almacen->client_alarm.' '.$alarm_almacen->brand.' '.$alarm_almacen->code.' '.$alarm_almacen->alarm ?></option>
-				                        <?php
-				                        }
-				                        ?>		                                
-		                                </select>
-		                                </td>
-		                                <td><input type="text" id="units_alarma_almacen_5" name="units_alarma_almacen_5" onkeypress='return event.charCode >= 48 && event.charCode <= 57'></input></td>
-		                            </tr>
-		                            <tr>
-		                                <td>
-		                                <select id="alarma_almacen_6" name="alarma_almacen_6" width="500" style="width:500px">
-		                              	<?php
-		                        		foreach ($alarms_almacen as $alarm_almacen) {
-		                            	?>
-		                                	<option value="<?php echo $alarm_almacen->id_alarm ?>"><?php echo $alarm_almacen->client_alarm.' '.$alarm_almacen->brand.' '.$alarm_almacen->code.' '.$alarm_almacen->alarm ?></option>
-				                        <?php
-				                        }
-				                        ?>		                                
-		                                </select>
-		                                </td>
-		                                <td><input type="text" id="units_alarma_almacen_6" name="units_alarma_almacen_6" onkeypress='return event.charCode >= 48 && event.charCode <= 57'></input></td>
-		                            </tr>
-		                            <tr>
-		                                <td>
-		                                <select id="alarma_almacen_7" name="alarma_almacen_7" width="500" style="width:500px">
-		                              	<?php
-		                        		foreach ($alarms_almacen as $alarm_almacen) {
-		                            	?>
-		                                	<option value="<?php echo $alarm_almacen->id_alarm ?>"><?php echo $alarm_almacen->client_alarm.' '.$alarm_almacen->brand.' '.$alarm_almacen->code.' '.$alarm_almacen->alarm ?></option>
-				                        <?php
-				                        }
-				                        ?>		                                
-		                                </select>
-		                                </td>
-		                                <td><input type="text" id="units_alarma_almacen_7" name="units_alarma_almacen_7" onkeypress='return event.charCode >= 48 && event.charCode <= 57'></input></td>
-		                            </tr>	
-		                            <tr>
-		                                <td>
-		                                <select id="alarma_almacen_8" name="alarma_almacen_8" width="500" style="width:500px">
-		                              	<?php
-		                        		foreach ($alarms_almacen as $alarm_almacen) {
-		                            	?>
-		                                	<option value="<?php echo $alarm_almacen->id_alarm ?>"><?php echo $alarm_almacen->client_alarm.' '.$alarm_almacen->brand.' '.$alarm_almacen->code.' '.$alarm_almacen->alarm ?></option>
-				                        <?php
-				                        }
-				                        ?>		                                
-		                                </select>
-		                                </td>
-		                                <td><input type="text" id="units_alarma_almacen_8" name="units_alarma_almacen_8" onkeypress='return event.charCode >= 48 && event.charCode <= 57'></input></td>
-		                            </tr>
-		                            <tr>
-		                                <td>
-		                                <select id="alarma_almacen_9" name="alarma_almacen_9" width="500" style="width:500px">
-		                              	<?php
-		                        		foreach ($alarms_almacen as $alarm_almacen) {
-		                            	?>
-		                                	<option value="<?php echo $alarm_almacen->id_alarm ?>"><?php echo $alarm_almacen->client_alarm.' '.$alarm_almacen->brand.' '.$alarm_almacen->code.' '.$alarm_almacen->alarm ?></option>
-				                        <?php
-				                        }
-				                        ?>		                                
-		                                </select>
-		                                </td>
-		                                <td><input type="text" id="units_alarma_almacen_9" name="units_alarma_almacen_9" onkeypress='return event.charCode >= 48 && event.charCode <= 57'></input></td>
-		                            </tr>	
-		                            <tr>
-		                                <td>
-		                                <select id="alarma_almacen_10" name="alarma_almacen_10" width="500" style="width:500px">
-		                              	<?php
-		                        		foreach ($alarms_almacen as $alarm_almacen) {
-		                            	?>
-		                                	<option value="<?php echo $alarm_almacen->id_alarm ?>"><?php echo $alarm_almacen->client_alarm.' '.$alarm_almacen->brand.' '.$alarm_almacen->code.' '.$alarm_almacen->alarm ?></option>
-				                        <?php
-				                        }
-				                        ?>			                                
-		                                </select>
-		                                </td>
-		                                <td><input type="text" id="units_alarma_almacen_10" name="units_alarma_almacen_10" onkeypress='return event.charCode >= 48 && event.charCode <= 57'></input></td>
-		                            </tr>			                            			                            		                            
+                                <?php
+
+                                // GENERACION DINAMICA DE 10 CAMPOS ALARMA, SELECTOR DE ALARMA + CAMPO UNIDADES
+                                    for($i = 1; $i <= 10; $i++){ ?>
+                                        <tr>
+                                            <td>
+                                                <select id="alarma_almacen_<?=$i?>" name="alarma_almacen_<?=$i?>" width="500" style="width:500px">
+                                                    <?php // Optgroups de dueños
+                                                        foreach($duenos_alarm as $dueno_alarm){?>
+                                                            <optgroup label="<?=$dueno_alarm->client?>">
+                                                                <?php // Listado de alarmas del dueño actual...
+                                                                    foreach($alarms_almacen[$dueno_alarm->client] as $alarm_almacen){ ?>
+                                                                        <option value="<?php echo $alarm_almacen->id_alarm ?>"><?php echo $alarm_almacen->client_alarm.' '.$alarm_almacen->brand.' '.$alarm_almacen->code.' '.$alarm_almacen->alarm?></option>
+                                                                    <?php }
+                                                                ?>
+                                                            </optgroup>
+                                                        <?php }
+                                                    ?>
+                                                </select>
+                                            </td>
+                                            <td><input type="text" id="units_alarma_almacen_<?=$i?>" name="units_alarma_almacen_<?=$i?>" onkeypress='return event.charCode >= 48 && event.charCode <= 57' /></td>
+                                        </tr>
+
+
+                                <?php } // End For ?>
 		                        </tbody>
 		                    </table>
 		                </div>

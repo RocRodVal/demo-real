@@ -514,7 +514,6 @@ GROUP BY
 	YEAR(incidencias.fecha),
 	MONTH(incidencias.fecha);
     
-
 /*
 Filtro 72 h. v3 
 */    
