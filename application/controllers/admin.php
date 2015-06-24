@@ -850,6 +850,20 @@ class Admin extends CI_Controller
                 $info_intervencion = $this->intervencion_model->get_info_intervencion($incidencia['intervencion']);
                 //print_r($info_intervencion);
                 $mail_operador = $info_intervencion->operador->email;
+                $mail_cc = $info_intervencion->operador->email_cc;
+
+
+                if(!empty($mail_cc)){
+                    $a_mail_cc = explode(",",$mail_cc);
+                    foreach($a_mail_cc as $key=>$mail){
+                        $a_mail_cc[$key] = trim($mail);
+                    }
+                    $mail_cc = implode(",",$a_mail_cc);
+                }
+
+
+
+
 
                 if (empty($mail_operador)) {
                     $data['email_sent'] = FALSE;
@@ -872,6 +886,12 @@ class Admin extends CI_Controller
 
                     $this->email->from('demoreal@focusonemotions.com', 'Demo Real');
                     $this->email->to($mail_operador);
+ 
+                    if(!empty($mail_cc)){
+                        $this->email->cc($mail_cc);
+                    }
+
+
 
                     /** COMENTADO AVISO COPIA */
                     $this->email->bcc('demoreal@focusonemotions.com');

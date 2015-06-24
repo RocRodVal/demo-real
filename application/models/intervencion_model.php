@@ -59,7 +59,7 @@ class Intervencion_model extends MY_Model
         $this->load->model('VO/ContactVO');
         $this->load->model('VO/PdsVO');
         $this->db->select('intervenciones.*,
-                contact.id_contact,contact.email,contact.contact,contact.phone,
+                contact.id_contact,contact.email,contact.email_cc, contact.contact,contact.phone,
                 pds.id_pds,pds.reference, pds.commercial');
         $this->db->from('intervenciones');
         $this->db->join('contact', 'intervenciones.id_operador=contact.id_contact');
@@ -77,6 +77,7 @@ class Intervencion_model extends MY_Model
             $c = new ContactVO();
             $c->__set('id_contact', $row->id_contact);
             $c->__set('email', $row->email);
+            $c->__set('email_cc', $row->email_cc);
             $c->__set('contact', $row->contact);
             $c->__set('phone', $row->phone);
             $intervencion->__set('operador', $c);
