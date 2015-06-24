@@ -102,10 +102,28 @@ $(document).ready(function () {
 
     /** Efecto HOVER  en filas **/
     $("table.table tr td").on("mouseover",function(){
-        $(this).parent().children().css("background-color","#e9e9e9");
+        $(this).parent().children().each(function(){
+            if($.isNumeric($(this).text()) && $(this).text() < 0){
+                $(this).css("background-color", "#aa0000");
+                $(this).css("color", "#ffffff");
+            }else {
+                $(this).css("background-color", "#e9e9e9");
+                $(this).css("color", "#000000");
+            }
+        });
     });
     $("table.table  tr td").on("mouseout",function(){
-        $(this).parent().children().css("background-color",colorCeldaOriginal);
+        $(this).parent().children().each(function(){
+
+            if($.isNumeric($(this).text()) && $(this).text() < 0){
+                $(this).css("background-color", "#ff0000");
+                $(this).css("color", "#ffffff");
+            }else {
+                $(this).css("background-color", "#ffffff");
+                $(this).css("color", "#000000");
+            }
+
+        });
     });
 
     /** Click en TH para ordenar **/
