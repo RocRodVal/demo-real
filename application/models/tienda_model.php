@@ -148,9 +148,61 @@ class Tienda_model extends CI_Model {
 										->get('device');
 	
 		return $query->result();
-	}	
-	
-	public function get_cdm_alarmas() {
+	}
+
+    /*
+     * Generar CSV con el stock cruzado (Balance de activos).
+     */
+    public function get_stock_cruzado_csv() {
+
+        $this->load->dbutil();
+        $this->load->helper('file');
+        $this->load->helper('download');
+
+        $query = $this->db->select('device.id_device, brand_device.brand, device.device,
+									(
+										SELECT COUNT(*)
+										FROM devices_pds
+								        WHERE (devices_pds.id_device = device.id_device) AND
+										(devices_pds.status = "Alta")
+								    ) AS unidades_pds,
+									(SELECT  COUNT(*)
+										FROM devices_almacen
+										WHERE (devices_almacen.id_device = device.id_device) AND
+										(devices_almacen.status = "En stock")
+									) AS unidades_almacen,
+
+                                    ROUND((SELECT  COUNT(*)
+										FROM devices_almacen
+										WHERE (devices_almacen.id_device = device.id_device) AND
+										(devices_almacen.status = "En stock")
+									)
+									-
+									(SELECT COUNT(*)
+										FROM devices_pds
+								        WHERE (devices_pds.id_device = device.id_device) AND
+										(devices_pds.status = "Alta"))* 0.05 -2 ) as Balance
+
+                                    ')
+
+            ->join('brand_device','device.brand_device = brand_device.id_brand_device')
+            ->order_by('brand_device.brand', 'ASC')
+            ->order_by('device.device', 'ASC')
+            ->get('device');
+
+
+
+
+        $delimiter = ",";
+        $newline = "\r\n";
+        $data = $this->dbutil->csv_from_result($query, $delimiter, $newline);
+        force_download('Demo_Real-Balance_Activos.csv', $data);
+
+
+    }
+
+
+    public function get_cdm_alarmas() {
 	
 		$query = $this->db->select('brand_alarm.brand, alarm.alarm, COUNT(*) as incidencias')
 		->join('alarm','alarm.id_alarm = material_incidencias.id_alarm')
