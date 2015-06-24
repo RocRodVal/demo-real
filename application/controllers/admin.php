@@ -3159,11 +3159,15 @@ class Admin extends CI_Controller
     		$fecha_inicio = $this->uri->segment(3);
     		$fecha_fin    = $this->uri->segment(4);
     		$instalador   = $this->uri->segment(5);
+            $dueno   = $this->uri->segment(6);
+
+            if($instalador==="false") $instalador = NULL;
+            if($dueno==="false") $dueno = NULL;
 
     		$xcrud = xcrud_get_instance();
     		$this->load->model(array('tienda_model','sfid_model'));
-  
-       		$data['facturacion_csv'] = $this->tienda_model->facturacion_estado_csv($fecha_inicio,$fecha_fin,$instalador);
+
+       		$data['facturacion_csv'] = $this->tienda_model->facturacion_estado_csv($fecha_inicio,$fecha_fin,$instalador,$dueno);
 
     	} else {
     		redirect('admin', 'refresh');
