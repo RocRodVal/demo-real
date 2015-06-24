@@ -1750,9 +1750,9 @@ class Admin extends CI_Controller
         $xcrud_2->relation('type_via', 'type_via', 'id_type_via', 'via');
         $xcrud_2->relation('province', 'province', 'id_province', 'province');
         $xcrud_2->relation('county', 'county', 'id_county', 'county');
-        $xcrud_2->label('client_contact', 'Empresa')->label('type_profile_contact', 'Tipo')->label('contact', 'Contacto')->label('type_via', 'Tipo vía')->label('address', 'Dirección')->label('zip', 'C.P.')->label('city', 'Ciudad')->label('province', 'Provincia')->label('county', 'CC.AA.')->label('schedule', 'Horario')->label('phone', 'Teléfono')->label('mobile', 'Móvil')->label('email', 'Email')->label('status', 'Estado');
+        $xcrud_2->label('client_contact', 'Empresa')->label('type_profile_contact', 'Tipo')->label('contact', 'Contacto')->label('type_via', 'Tipo vía')->label('address', 'Dirección')->label('zip', 'C.P.')->label('city', 'Ciudad')->label('province', 'Provincia')->label('county', 'CC.AA.')->label('schedule', 'Horario')->label('phone', 'Teléfono')->label('mobile', 'Móvil')->label('email', 'Email')->label('email_cc', 'Copia email')->label('status', 'Estado');
         $xcrud_2->columns('client_contact,type_profile_contact,contact,email');
-        $xcrud_2->fields('client_contact,type_profile_contact,contact,type_via,address,zip,city,province,county,schedule,phone,mobile,email,status');
+        $xcrud_2->fields('client_contact,type_profile_contact,contact,type_via,address,zip,city,province,county,schedule,phone,mobile,email,email_cc,status');
         $xcrud_2->order_by('contact');
 
         $data['title'] = 'Contactos';
