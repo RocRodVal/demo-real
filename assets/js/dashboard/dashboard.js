@@ -83,8 +83,23 @@ function avisoChat(){
 
 
 
+
 $(document).ready(function () {
     var colorCeldaOriginal = "#ffffff";
+
+
+    $("table.table  tr td").each(function(){
+            if($.isNumeric($(this).text()) && $(this).text() < 0){
+                $(this).css("background-color", "#ff0000");
+                $(this).css("color", "#ffffff");
+            }else {
+                $(this).css("background-color", "#ffffff");
+                $(this).css("color", "#000000");
+            }
+
+        });
+    
+
 
     /** Efecto HOVER  en columnas **/
     $(".table-sorting th.sorting").on("mouseover",function(){
@@ -154,7 +169,6 @@ $(document).ready(function () {
 
 
 });
-
 
 /**
  * Aplica la clase CSS apropiada para mostrar el icono adecuado, en cuanto a la ordenación por ese campo.

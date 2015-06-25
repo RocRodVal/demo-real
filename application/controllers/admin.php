@@ -891,7 +891,7 @@ class Admin extends CI_Controller
                         $this->email->cc($mail_cc);
                     }
                     /** COMENTADO AVISO COPIA */
-                    $this->email->bcc('demoreal@focusonemotions.com');
+                    //$this->email->bcc('demoreal@focusonemotions.com');
 
                     $this->email->subject($subject);
                     $this->email->message($message_operador);
@@ -1141,7 +1141,9 @@ class Admin extends CI_Controller
         {
             $envio_mail = $this->uri->segment(7);
 
-
+            // Se va a proceder a la notificación de la incidencia por lo que el material asignado ya será inamovible
+            // Y por tanto deberá procesarse (procesado=1) y así verse en el histórico Diario de almacén.
+            $this->tienda_model->procesar_historico_incidencia($id_inc);
 
         	redirect('admin/imprimir_incidencia/'.$id_pds.'/'.$id_inc.'/'.$envio_mail, 'refresh');
         }
@@ -1506,6 +1508,9 @@ class Admin extends CI_Controller
                             $id_material_incidencias = $material->id_material_incidencias;
                             $sql = "DELETE FROM material_incidencias WHERE id_material_incidencias = '$id_material_incidencias' ";
                             $this->db->query($sql);
+
+                            // Borrar del histórico de dispositivo (diario almacen)
+                            $this->tienda_model->baja_historico_IO($id_material_incidencias);
                         }
                     }
                 }
@@ -1526,6 +1531,9 @@ class Admin extends CI_Controller
                             $id_material_incidencias = $alarma->id_material_incidencias;
                             $sql = "DELETE FROM material_incidencias WHERE id_material_incidencias = '$id_material_incidencias' ";
                             $this->db->query($sql);
+
+                            // Borrar del histórico de alarmas (diario almacen)
+                            $this->tienda_model->baja_historico_IO($id_material_incidencias);
                         }
                     }
                 }
@@ -2163,14 +2171,22 @@ class Admin extends CI_Controller
 
         /*$data['displays'] = $this->tienda_model->get_displays_total();
         $data['devices'] = $this->tienda_model->get_devices_total();*/
-        $xcrud_1 = xcrud_get_instance();
-        $xcrud_1->table('historico_IO_alarmas');
-        $xcrud_1->table_name('Histórico de alarmas');
-        $xcrud_1->relation('id_alarm', 'alarm', 'id_alarm', 'alarm');
-        $xcrud_1->relation('id_client', 'client', 'id_client', 'client');
+        $data["title"] = "Diario de almacén";
 
-        $xcrud_1->label('id_historico_alarma','Ref.')->label('id_alarm', 'Alarma')->label('id_client', 'Dueño')->label('fecha', 'Fecha')->label('unidades', 'Unidades');
-        $xcrud_1->columns('id_historico_alarma,id_alarm,id_client,fecha,unidades');
+        $xcrud_1 = xcrud_get_instance();
+        $xcrud_1->table('historico_IO');
+        $xcrud_1->table_name('Histórico de dispositivos');
+        $xcrud_1->relation('id_client', 'client', 'id_client', 'client');
+        $xcrud_1->relation('id_device', 'device', 'id_device', 'device');
+
+
+
+        $xcrud_1->label('id_historico_almacen','Ref.')->label('id_device', 'Dispositivo maestro')->label('id_devices_almacen', 'Id. Dispositivo almacén')->label('id_client', 'Dueño')->label('fecha', 'Fecha')
+            ->label('unidades', 'Unidades');
+        $xcrud_1->columns('id_historico_almacen,id_device,id_devices_almacen,id_client,fecha,unidades');
+        $xcrud_1->where('procesado',1);
+        $xcrud_1->where('id_alarm IS NULL');
+
         $xcrud_1->order_by('fecha', 'desc');
         $xcrud_1->show_primary_ai_column(true);
         $xcrud_1->unset_add();
@@ -2180,8 +2196,31 @@ class Admin extends CI_Controller
         $xcrud_1->unset_numbers();
         $xcrud_1->start_minimized(false);
 
-        $data["title"] = "Diario de almacén";
-        $data["content"] = $xcrud_1->render();
+        $data["content_dispositivos"] = $xcrud_1->render();
+
+
+        $xcrud_2 = xcrud_get_instance();
+        $xcrud_2->table('historico_IO');
+        $xcrud_2->table_name('Histórico de alarmas');
+        $xcrud_2->relation('id_alarm', 'alarm', 'id_alarm', 'alarm');
+        $xcrud_2->relation('id_client', 'client', 'id_client', 'client');
+
+        $xcrud_2->label('id_historico_almacen','Ref.')->label('id_alarm', 'Alarma')->label('id_client', 'Dueño')->label('fecha', 'Fecha')->label('unidades', 'Unidades');
+        $xcrud_2->columns('id_historico_almacen,id_alarm,id_client,fecha,unidades');
+        $xcrud_2->where('procesado',1);
+        $xcrud_2->where('id_devices_almacen IS NULL');
+
+        $xcrud_2->order_by('fecha', 'desc');
+        $xcrud_2->show_primary_ai_column(true);
+        $xcrud_2->unset_add();
+        $xcrud_2->unset_edit();
+        $xcrud_2->unset_view();
+        $xcrud_2->unset_remove();
+        $xcrud_2->unset_numbers();
+        $xcrud_2->start_minimized(false);
+
+
+        $data["content_alarmas"] = $xcrud_2->render();
 
         $this->load->view('backend/header', $data);
         $this->load->view('backend/navbar', $data);

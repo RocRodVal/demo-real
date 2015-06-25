@@ -1039,8 +1039,114 @@ class Tienda_model extends CI_Model {
 	{
 		$this->db->insert('material_incidencias',$data);
 		$id=$this->db->insert_id();
-	}	
-	
+
+        $this->alta_historico_IO($data,$id);
+
+	}
+
+
+    /**
+     * Inserción de la Salida (No procesada hasta que no sea definitivo el material de la intervención,
+     * al cambiar de estado la incidencia).
+     *
+     */
+    public function alta_historico_IO($data,$id){
+
+        $tipo = (is_null($data['id_alarm'])) ? "device" : "alarm";
+
+
+        if($tipo==="device")            // ES DE TIPO TERMINAL
+        {
+
+            /**BACKUP SQL BUENA
+             * $q_dueno = $this->db->query("SELECT DISTINCT(client_display) as id_client FROM display
+                                          JOIN displays_pds ON display.id_display = displays_pds.id_display
+                                          JOIN incidencias ON displays_pds.id_displays_pds = incidencias.id_displays_pds
+                                          JOIN material_incidencias ON incidencias.id_incidencia = material_incidencias.id_incidencia
+                                          WHERE material_incidencias.id_devices_almacen=".$data['id_devices_almacen'])->result()[0]; **/
+
+            $q_dueno = $this->db->query("SELECT DISTINCT(client_display) as id_client, device.id_device as id_device FROM display
+                                          JOIN displays_pds ON display.id_display = displays_pds.id_display
+                                          JOIN incidencias ON displays_pds.id_displays_pds = incidencias.id_displays_pds
+                                          JOIN material_incidencias ON incidencias.id_incidencia = material_incidencias.id_incidencia
+                                          JOIN devices_almacen ON devices_almacen.id_devices_almacen = material_incidencias.id_devices_almacen
+                                          JOIN device ON devices_almacen.id_device = device.id_device
+                                          WHERE material_incidencias.id_devices_almacen=".$data['id_devices_almacen'])->result()[0];
+
+            $elemento = array(
+                'id_material_incidencia' => $id,
+                'id_alarm' => NULL,
+                'id_device'=>$q_dueno->id_device,
+                'id_devices_almacen' => $data['id_devices_almacen'],
+                'id_incidencia' => $data['id_incidencia'],
+                'id_client' => $q_dueno->id_client,
+                'fecha' => $data['fecha'],
+                'unidades' => ($data['cantidad'] * (-1)),
+                'procesado' => 0
+            );
+
+
+            $this->db->insert('historico_IO',$elemento);
+
+
+        }
+        elseif($tipo==="alarm")         // ES DE TIPO ALARMA
+        {
+            $q_dueno = $this->db->query("SELECT client_alarm as id_client FROM alarm WHERE id_alarm=" . $data['id_alarm'])->result()[0];
+            $elemento = array(
+                'id_material_incidencia' => $id,
+                'id_alarm' => $data['id_alarm'],
+                'id_device'=>NULL,
+                'id_devices_almacen' => NULL,
+                'id_incidencia' => $data['id_incidencia'],
+                'id_client' => $q_dueno->id_client,
+                'fecha' => $data['fecha'],
+                'unidades' => ($data['cantidad'] * (-1)),
+                'procesado' => 0
+            );
+
+
+            $this->db->insert('historico_IO',$elemento);
+        }
+
+
+
+    }
+
+    /**
+ * Método que da de baja unba alarma de la tabla de historico_IO, porque se ha desasignado de una incidencia.
+ *
+ * @param $id_material
+ */
+    public function baja_historico_IO($id_material=NULL)
+    {
+        if(! is_null($id_material))
+        {
+            $this->db->where('id_material_incidencia',$id_material);
+            $this->db->delete('historico_IO');
+        }
+
+    }
+
+
+    /**
+     * Método que da por procesadas  las alarma de la tabla de historico_IO, porque se han
+     * desasignado definitivamente a una incidencia, y ya deben aparecer en el histórico.
+     *
+     * @param $id_material
+     */
+    public function procesar_historico_incidencia($id_incidencia=NULL)
+    {
+        if(! is_null($id_incidencia))
+        {
+            $historico_IO['procesado'] = 1;
+
+            $this->db->where('id_incidencia',$id_incidencia);
+            $this->db->update('historico_IO',$historico_IO);
+        }
+
+    }
+
 	public function facturacion($data)
 	{
 		$this->db->insert('facturacion',$data);
