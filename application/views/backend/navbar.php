@@ -57,9 +57,7 @@
                             <ul class="nav nav-second-level">
                             	<li><a <?=($this->uri->segment(2)==='inventarios_panelados')?'class="active"':''?> href="<?=site_url('admin/inventarios_panelados')?>"> Panelado genérico &raquo;</a></li>
                                 <li><a <?=($this->uri->segment(2)==='inventarios_planogramas')?'class="active"':''?> href="<?=site_url('admin/inventarios_planogramas')?>"> Planograma genérico &raquo;</a></li>
-                            	<?php
-                            	$descripcion = array('descripcion','exp_alta_incidencia','exp_alta_incidencia_mueble','exp_alta_incidencia_device');
-                            	?>
+                            	<?php $descripcion = array('descripcion','exp_alta_incidencia','exp_alta_incidencia_mueble','exp_alta_incidencia_device');	?>
                             	<li><a <?=(in_array($this->uri->segment(2), $descripcion))?'class="active"':''?> href="<?=site_url('admin/descripcion')?>"> Planograma tiendas &raquo;</a></li>
                              	<li><a <?=($this->uri->segment(2)==='inventarios')?'class="active"':''?> href="<?=site_url('admin/inventarios')?>"> Inventarios tiendas &raquo;</a></li>
                             </ul>

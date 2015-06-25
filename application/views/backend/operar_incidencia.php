@@ -47,7 +47,7 @@
                         <div class="col-lg-7 labelText grey">Asignar material <?$incidencia['status']?> </div>
                         <div class="col-lg-5 labelBtn grey">
                             <a href="<?= site_url('admin/update_incidencia_materiales/' . $id_pds_url . '/' . $id_inc_url . '/2/3') ?>"
-                               classBtn="status" class="btn btn-success" <?php if ($incidencia['status'] != 'Instalador asignado') {
+                               classBtn="status" class="btn btn-success" <?php if (!$material_editable) {
                                 echo 'disabled';
                             } ?>>Asignar mat.</a></td>
                         </div>                       

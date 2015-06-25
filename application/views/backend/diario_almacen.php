@@ -8,7 +8,13 @@
 
             <div class="row">
                 <div class="col-lg-12">
-                    <?php echo $content ?>
+                    <?php echo $content_dispositivos ?>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <?php echo $content_alarmas ?>
                 </div>
             </div>
 
