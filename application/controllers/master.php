@@ -707,33 +707,39 @@ class Master extends CI_Controller {
 
             $b_filtrar_tipo = $this->input->post("filtrar_tipo");
             $tipo_tienda = '';
+            $estado_incidencia = '';
+
             if($b_filtrar_tipo === "si"){
                 $tipo_tienda = $this->input->post("tipo_tienda");
+                $estado_incidencia  = $this->input->post("estado_incidencia");
             }
 
             $data["tipo_tienda"] = $tipo_tienda;
+            $data["estado_incidencia"] = $estado_incidencia;
 
             // Saco los tipos de tienda, pero sólo aquellos cuyos PDS tienen algun tipo de incidencia.
             $tipos_tienda = $this->db->query("SELECT id_type_pds as id_tipo, pds as tipo FROM type_pds
                                               WHERE status='Alta' AND client_type_pds !=2  AND id_type_pds IN (
                                                   SELECT DISTINCT(pds.type_pds) FROM pds INNER JOIN incidencias ON incidencias.id_pds = pds.id_pds
                                               )");
-
-
-
-
             $data["tipos_tienda"] = $tipos_tienda->result();
 
 
+            // Saco los tipos de tienda, pero sólo aquellos cuyos PDS tienen algun tipo de incidencia.
+            $estados_incidencia = $this->db->query("SELECT DISTINCT(status_pds) FROM incidencias ");
+            $data["estados_incidencia"] = $estados_incidencia->result();
 
 
 			$xcrud_1 = xcrud_get_instance();
 			$xcrud_1->table_name('Incidencias');
 
 
-            $s_where = '';
+            $s_where = $s_where_incidencia= '';
             if(!empty($tipo_tienda)){
                 $s_where = " AND pds.type_pds = ".$tipo_tienda;
+            }
+            if(!empty($estado_incidencia)){
+                $s_where_incidencia .= " AND incidencias.status_pds LIKE '".$estado_incidencia."'";
             }
 
 
@@ -773,7 +779,7 @@ class Master extends CI_Controller {
 							FROM incidencias
 							INNER JOIN pds ON pds.id_pds = incidencias.id_pds
                             INNER JOIN type_pds ON type_pds.id_type_pds = pds.type_pds
-                            WHERE 1=1 $s_where
+                            WHERE 1=1 $s_where_incidencia
 							GROUP BY 
 								YEAR(incidencias.fecha),
 								MONTH(incidencias.fecha)");

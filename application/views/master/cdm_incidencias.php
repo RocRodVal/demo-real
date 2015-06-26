@@ -18,6 +18,19 @@
                                 echo '<option value="'.$tipo->id_tipo.'" '.$selected.'>'.$tipo->tipo.'</option>';
                             }?>
                         </select>
+
+                        <label for="estado_incidencia">
+                            Estado de la incidencia:
+                        </label>
+                        <select name="estado_incidencia" id ="estado_incidencia">
+                            <option value="">Cualquier tipo</option>
+                            <?php foreach($estados_incidencia as $estado){
+                                $selected = ($estado->status_pds === $estado_incidencia) ? ' selected="selected" ' : '';
+                                echo '<option value="'.$estado->status_pds.'" '.$selected.'>'.$estado->status_pds.'</option>';
+                            }?>
+                        </select>
+
+
                         <input type="hidden" name="filtrar_tipo" value="si">
                         <input type="submit" value="Enviar">
                     </div>
