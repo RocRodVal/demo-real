@@ -15,7 +15,7 @@
 		                        <tr>
 		                            <th>Dispositivo</th>
 		                            <th>Unidades</th>
-		                            <th>Dueño</th>
+		                            <th>Dpto.</th>
 		                        </tr>
 		                        </thead>
 		                        <tbody>

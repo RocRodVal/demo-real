@@ -891,7 +891,7 @@ class Admin extends CI_Controller
                         $this->email->cc($mail_cc);
                     }
                     /** COMENTADO AVISO COPIA */
-                    //$this->email->bcc('demoreal@focusonemotions.com');
+                    $this->email->bcc('demoreal@focusonemotions.com');
 
                     $this->email->subject($subject);
                     $this->email->message($message_operador);
@@ -2209,6 +2209,7 @@ class Admin extends CI_Controller
         $xcrud_2->columns('id_historico_almacen,id_alarm,id_client,fecha,unidades');
         $xcrud_2->where('procesado',1);
         $xcrud_2->where('id_devices_almacen IS NULL');
+        $xcrud_2->where('id_device IS NULL');
 
         $xcrud_2->order_by('fecha', 'desc');
         $xcrud_2->show_primary_ai_column(true);
@@ -2568,18 +2569,58 @@ class Admin extends CI_Controller
     
     		while ($i < $this->input->post('units_dipositivo_almacen'))
     		{
-    			$this->tienda_model->alta_dispositivos_almacen_update($data);
+    			$this->tienda_model->alta_dispositivos_almacen_update($data,$this->input->post('units_dipositivo_almacen'));
     			$i = $i + 1;
     		}
-    
-    		redirect('admin/alta_dispositivos_almacen', 'refresh');
+
+
+
+
+
+            $this->session->set_flashdata("id_device",$this->input->post('dipositivo_almacen'));
+            $this->session->set_flashdata("num",$this->input->post('units_dipositivo_almacen'));
+
+            redirect('admin/alta_dispositivos_ok', 'refresh');
     	}
     	else
     	{
     		redirect('admin', 'refresh');
     	}
     }    
-    
+
+
+    public function alta_dispositivos_ok()
+    {
+        if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10))
+        {
+            $this->load->model('tienda_model');
+            $xcrud = xcrud_get_instance();
+
+            $id_device = $this->session->flashdata("id_device");
+            $num = $this->session->flashdata("num");
+
+
+            if(!empty($id_device) && !empty($num)) {
+                $device = $this->tienda_model->get_device($id_device);
+
+                $data["title"] = "Alta masiva dispositivos";
+
+                $data["num"] = $num;
+                $data["modelo"] = $device["device"];
+
+                $this->load->view('backend/header', $data);
+                $this->load->view('backend/navbar', $data);
+                $this->load->view('backend/alta_dispositivos_almacen_ok', $data);
+                $this->load->view('backend/footer');
+            }else{
+                redirect('admin/alta_dispositivos_almacen', 'refresh');
+            }
+        }
+        else
+        {
+            redirect('admin', 'refresh');
+        }
+    }
     
     public function baja_dispositivos_almacen()
     {
@@ -2609,16 +2650,94 @@ class Admin extends CI_Controller
     	{
     		$this->load->model('tienda_model');
     		 
-			$this->tienda_model->baja_dispositivos_almacen_update($this->input->post('dipositivo_almacen'),$this->input->post('owner_dipositivo_almacen'),$this->input->post('units_dipositivo_almacen'));
-    
-    		redirect('admin/baja_dispositivos_almacen', 'refresh');
+			$num = $this->tienda_model->baja_dispositivos_almacen_update($this->input->post('dipositivo_almacen'),$this->input->post('owner_dipositivo_almacen'),$this->input->post('units_dipositivo_almacen'));
+
+            $this->session->set_flashdata("id_device", $this->input->post('dipositivo_almacen'));
+
+            if($num >= 0) {
+                $this->session->set_flashdata("num", $num);
+                redirect('admin/baja_dispositivos_ok', 'refresh');
+            }else{
+                $this->session->set_flashdata("num", $this->input->post('units_dipositivo_almacen'));
+                redirect('admin/baja_dispositivos_ko', 'refresh');
+            }
     	}
     	else
     	{
     		redirect('admin', 'refresh');
     	}
     }
-  
+
+
+
+    public function baja_dispositivos_ok()
+    {
+        if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10))
+        {
+            $this->load->model('tienda_model');
+            $xcrud = xcrud_get_instance();
+
+
+            $id_device = $this->session->flashdata("id_device");
+            $num = $this->session->flashdata("num");
+
+
+            if(!empty($id_device) && !empty($num)) {
+                $device = $this->tienda_model->get_device($id_device);
+
+                $data["title"] = "Baja masiva dispositivos";
+
+                $data["num"] = $num;
+                $data["modelo"] = $device["device"];
+
+                $this->load->view('backend/header', $data);
+                $this->load->view('backend/navbar', $data);
+                $this->load->view('backend/baja_dispositivos_almacen_ok', $data);
+                $this->load->view('backend/footer');
+            }else{
+                redirect('admin/alta_dispositivos_almacen', 'refresh');
+            }
+        }
+        else
+        {
+            redirect('admin', 'refresh');
+        }
+    }
+
+
+    public function baja_dispositivos_ko()
+    {
+        if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10))
+        {
+            $this->load->model('tienda_model');
+            $xcrud = xcrud_get_instance();
+
+
+            $id_device = $this->session->flashdata("id_device");
+            $num = $this->session->flashdata("num");
+
+
+            if(!empty($id_device) && !empty($num)) {
+                $device = $this->tienda_model->get_device($id_device);
+
+                $data["title"] = "Baja masiva dispositivos";
+
+                $data["num"] = $num;
+                $data["modelo"] = $device["device"];
+
+                $this->load->view('backend/header', $data);
+                $this->load->view('backend/navbar', $data);
+                $this->load->view('backend/baja_dispositivos_almacen_ko', $data);
+                $this->load->view('backend/footer');
+            }else{
+                redirect('admin/alta_dispositivos_almacen', 'refresh');
+            }
+        }
+        else
+        {
+            redirect('admin', 'refresh');
+        }
+    }
     
     public function listado_incidencias()
     {

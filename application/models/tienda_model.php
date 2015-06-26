@@ -36,24 +36,84 @@ class Tienda_model extends CI_Model {
 	{
 		$this->db->insert('devices_almacen',$data);
 		$id=$this->db->insert_id();
+
+
+        // Insertar operación de baja en el histórico
+        $elemento = array(
+            'id_material_incidencia' => NULL,
+            'id_devices_almacen' => NULL,
+            'id_devices_almacen_new' => $id,
+            'id_alarm' => NULL,
+            'id_device'=>$data["id_device"],
+            'id_incidencia' => NULL,
+            'id_cliente' => NULL,
+            'fecha' => $data["alta"],
+            'cantidad' => (-1), // En negativo porque luego la función lo multiplica por -1
+            'procesado' => 1
+        );
+        $this->alta_historico_IO($elemento,NULL);
+
 	}	
 	
 	public function alta_agente($data)
 	{
 		$this->db->insert('agent',$data);
 		$id=$this->db->insert_id();
+
+
+
 	}	
 	
 	
 	public function baja_dispositivos_almacen_update($id_device,$owner,$units)
 	{
-		$this->db->set('status',4, FALSE);
-		$this->db->where('id_device',$id_device);
-		$this->db->where('owner',$owner);
-		$this->db->where('status',1);
-		$this->db->limit($units);
-		
-		$this->db->update('devices_almacen');		
+        $contar = $this->db->query("SELECT COUNT(id_device) as contador FROM devices_almacen WHERE id_device=$id_device AND owner='$owner' AND status = 1")->result()[0];
+
+        if($contar->contador > 0) {
+
+
+            $this->db->select("id_devices_almacen,id_device");
+            $this->db->where("id_device",$id_device);
+            $this->db->where('id_device', $id_device);
+            $this->db->where('owner', $owner);
+            $this->db->limit($units);
+            $dispositivos_a_borrar = $this->db->get("devices_almacen")->result();
+            $total_baja =  $this->db->affected_rows();
+
+            // Recorremos los dispositivos a borrar.
+            foreach($dispositivos_a_borrar as $dispositivo_baja){
+                $id_device = $dispositivo_baja->id_device;
+                $id_devices_almacen = $dispositivo_baja->id_devices_almacen;
+
+                // Borrado lógico del dispositivo.
+                $this->db->set('status', 4, FALSE);
+                $this->db->where('id_devices_almacen', $id_device);
+                $this->db->update('devices_almacen');
+
+                // Insertar operación de baja en el histórico
+                $data = array(
+                    'id_material_incidencia' => NULL,
+                    'id_devices_almacen' => NULL,
+                    'id_devices_almacen_new' => $id_devices_almacen,
+                    'id_alarm' => NULL,
+                    'id_device'=>$id_device,
+                    'id_incidencia' => NULL,
+                    'id_cliente' => NULL,
+                    'fecha' => date('Y-m-d H:i:s'),
+                    'cantidad' => (1), // En positivo porque luego la función lo pasará a negativo
+                    'procesado' => 1
+                );
+                $this->alta_historico_IO($data,NULL);
+
+            }
+
+           return $total_baja;
+
+        }else{
+            return -1;
+        }
+
+
 	}
 		
 	
@@ -1064,30 +1124,40 @@ class Tienda_model extends CI_Model {
                                           JOIN incidencias ON displays_pds.id_displays_pds = incidencias.id_displays_pds
                                           JOIN material_incidencias ON incidencias.id_incidencia = material_incidencias.id_incidencia
                                           WHERE material_incidencias.id_devices_almacen=".$data['id_devices_almacen'])->result()[0]; **/
-
-            $q_dueno = $this->db->query("SELECT DISTINCT(client_display) as id_client, device.id_device as id_device FROM display
+            if(!empty($data['id_devices_almacen'])) {
+                $q_dueno = $this->db->query("SELECT DISTINCT(client_display) as id_client, device.id_device as id_device FROM display
                                           JOIN displays_pds ON display.id_display = displays_pds.id_display
                                           JOIN incidencias ON displays_pds.id_displays_pds = incidencias.id_displays_pds
                                           JOIN material_incidencias ON incidencias.id_incidencia = material_incidencias.id_incidencia
                                           JOIN devices_almacen ON devices_almacen.id_devices_almacen = material_incidencias.id_devices_almacen
                                           JOIN device ON devices_almacen.id_device = device.id_device
-                                          WHERE material_incidencias.id_devices_almacen=".$data['id_devices_almacen'])->result()[0];
+                                          WHERE material_incidencias.id_devices_almacen=" . $data['id_devices_almacen'])->result()[0];
+                $id_device = $q_dueno->id_device;
+                $dueno = $q_dueno->id_client;
+                $procesado = 0;
+                $id_devices_almacen = $data['id_devices_almacen'];
+
+            }else{
+                $id_device = $data["id_device"];
+                $dueno = NULL;
+                $procesado = $data["procesado"];
+                $id_devices_almacen = $data['id_devices_almacen_new'];
+            }
 
             $elemento = array(
                 'id_material_incidencia' => $id,
                 'id_alarm' => NULL,
-                'id_device'=>$q_dueno->id_device,
-                'id_devices_almacen' => $data['id_devices_almacen'],
+                'id_device'=>$id_device,
+                'id_devices_almacen' => $id_devices_almacen,
                 'id_incidencia' => $data['id_incidencia'],
-                'id_client' => $q_dueno->id_client,
+                'id_client' => $dueno,
                 'fecha' => $data['fecha'],
                 'unidades' => ($data['cantidad'] * (-1)),
-                'procesado' => 0
+                'procesado' => $procesado
             );
 
 
             $this->db->insert('historico_IO',$elemento);
-
 
         }
         elseif($tipo==="alarm")         // ES DE TIPO ALARMA
