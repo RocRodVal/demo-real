@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost:3306
--- Generation Time: Jun 25, 2015 at 05:40 PM
+-- Generation Time: Jun 26, 2015 at 01:58 PM
 -- Server version: 5.5.40
 -- PHP Version: 5.4.34
 
@@ -356,6 +356,8 @@ INSERT INTO `ci_sessions` (`session_id`, `ip_address`, `user_agent`, `last_activ
 ('b7039f3ad161a3d3a6faa5a310b491b4', '62.14.244.221', 'Mozilla/5.0 (Windows NT 5.1; rv:30.0) Gecko/20100101 Firefox/30.0', 1435244702, ''),
 ('1f82053d5a929be7819b2a65a72e16ea', '62.14.244.221', 'Mozilla/5.0 (Windows NT 5.1; rv:30.0) Gecko/20100101 Firefox/30.0', 1435245079, ''),
 ('ae13da8692d9488dcf2c816feada3417', '62.14.244.221', 'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1; Trident/4.0; .NET CLR 2.0.50727; .NET CLR 3.0.04506.648; .NET CLR 3.5', 1435245154, ''),
+('c853ad0f8c0c519975c1c9f4a61b8c16', '46.105.156.90', 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:34.0) Gecko/20100101 Firefox/34.0', 1435305868, ''),
+('b77995e962761c16942d1e012aab8fa6', '46.105.156.90', 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:34.0) Gecko/20100101 Firefox/34.0', 1435306045, ''),
 ('5f17853155b242f481ca2e30ba05c6ee', '62.14.244.221', 'Mozilla/5.0 (Windows NT 5.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.130 Safari/537.36', 1435236084, ''),
 ('b959ae9fca601d661c144c4234559b5a', '62.14.244.221', 'Mozilla/5.0 (Windows NT 5.1; rv:30.0) Gecko/20100101 Firefox/30.0', 1435236372, ''),
 ('17ac5dc46e19a9ca7ecd7cf546740146', '66.249.79.163', 'Mediapartners-Google', 1435236073, '');
@@ -1017,6 +1019,26 @@ INSERT INTO `historico` (`id_historico`, `fecha`, `id_incidencia`, `id_pds`, `de
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `historico_io`
+--
+
+CREATE TABLE IF NOT EXISTS `historico_io` (
+`id_historico_almacen` int(11) NOT NULL,
+  `id_devices_almacen` int(11) DEFAULT NULL COMMENT 'Id. del dispositivo del almacén afectado en el histórico por Entrada/Salida',
+  `id_device` int(11) DEFAULT NULL COMMENT 'Id. del dispositivo del maestro afectado en el histórico por Entrada/Salida',
+  `id_alarm` int(11) DEFAULT NULL COMMENT 'Id. de la alarma  afectada en el histórico por Entrada/Salida',
+  `id_client` int(11) DEFAULT NULL COMMENT 'Dueño de la alarma',
+  `fecha` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Fecha de la operación de Entrada o Salida',
+  `unidades` int(11) DEFAULT '0' COMMENT 'Unidades de la operación: si el valor es positivo, se trata de una entrada; y por contra, si es negativo se trata de una salida de alarma/s',
+  `id_incidencia` int(11) DEFAULT NULL COMMENT 'Se usará cuando el control sea sobre el material asignado en incidencia.',
+  `id_intervencion` int(11) DEFAULT NULL COMMENT 'Id. de la intervención correspondiente a la alarma asignada como material a la misma. Dato quizá redundante, pero tal como se monta la relación incidencia-intervención; nos facilitará la búsqueda por uno u otro valor en este histórico.',
+  `procesado` tinyint(1) DEFAULT '1' COMMENT 'Se utilizará para marcar las entradas/salidas como definitivas. En el caso de alarmas asignadas para una intervención, además de indicar a qué incidencia pertenecen, hay que marcar como procesado=0, de tal manera que no saldrán en el histórico de mano. Ya que pueden editarse los materiales asignados hasta que la incidencia no pase al siguiente paso; donde ya no se puede editar el material asignado y entonces éstas pasarían a estado procesado=1, ya mostrándose en el histórico.',
+  `id_material_incidencia` int(11) DEFAULT NULL COMMENT 'Id. del material asociado a la incidencia ya que no se controla si ya existe la misma al asociarlo a la intervención. Se requiere esto aquí por lo mismo.'
+) ENGINE=InnoDB AUTO_INCREMENT=76 DEFAULT CHARSET=utf8 COMMENT='Tabla que guarda el histórico de Entrada/Salida de alarmas masivas. También de dispositivos y alarmas asignadas a incidencias/intervenciones (sólo Salida).';
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `historico_sfid`
 --
 
@@ -1670,6 +1692,12 @@ ALTER TABLE `historico`
  ADD PRIMARY KEY (`id_historico`);
 
 --
+-- Indexes for table `historico_io`
+--
+ALTER TABLE `historico_io`
+ ADD PRIMARY KEY (`id_historico_almacen`);
+
+--
 -- Indexes for table `historico_sfid`
 --
 ALTER TABLE `historico_sfid`
@@ -1884,6 +1912,11 @@ MODIFY `id_facturacion` int(10) unsigned NOT NULL AUTO_INCREMENT;
 --
 ALTER TABLE `historico`
 MODIFY `id_historico` int(10) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2;
+--
+-- AUTO_INCREMENT for table `historico_io`
+--
+ALTER TABLE `historico_io`
+MODIFY `id_historico_almacen` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=76;
 --
 -- AUTO_INCREMENT for table `incidencias`
 --
