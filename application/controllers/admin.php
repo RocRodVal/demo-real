@@ -891,7 +891,7 @@ class Admin extends CI_Controller
                         $this->email->cc($mail_cc);
                     }
                     /** COMENTADO AVISO COPIA */
-                    //$this->email->bcc('demoreal@focusonemotions.com');
+                    $this->email->bcc('demoreal@focusonemotions.com');
 
                     $this->email->subject($subject);
                     $this->email->message($message_operador);
