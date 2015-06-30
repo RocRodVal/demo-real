@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost:3306
--- Generation Time: Jun 26, 2015 at 01:58 PM
+-- Generation Time: Jun 30, 2015 at 10:12 AM
 -- Server version: 5.5.40
 -- PHP Version: 5.4.34
 
@@ -351,16 +351,8 @@ CREATE TABLE IF NOT EXISTS `ci_sessions` (
 --
 
 INSERT INTO `ci_sessions` (`session_id`, `ip_address`, `user_agent`, `last_activity`, `user_data`) VALUES
-('5d9c46fb9f916a8a88314fe90e679cb7', '89.145.95.41', 'Mozilla/5.0 (compatible; GrapeshotCrawler/2.0; +http://www.grapeshot.co.uk/crawler.php)', 1435236379, ''),
-('9b5cc55535f086143c6b56062b10a6fa', '62.14.244.221', 'Mozilla/5.0 (Windows NT 5.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.130 Safari/537.36', 1435244685, ''),
-('b7039f3ad161a3d3a6faa5a310b491b4', '62.14.244.221', 'Mozilla/5.0 (Windows NT 5.1; rv:30.0) Gecko/20100101 Firefox/30.0', 1435244702, ''),
-('1f82053d5a929be7819b2a65a72e16ea', '62.14.244.221', 'Mozilla/5.0 (Windows NT 5.1; rv:30.0) Gecko/20100101 Firefox/30.0', 1435245079, ''),
-('ae13da8692d9488dcf2c816feada3417', '62.14.244.221', 'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1; Trident/4.0; .NET CLR 2.0.50727; .NET CLR 3.0.04506.648; .NET CLR 3.5', 1435245154, ''),
-('c853ad0f8c0c519975c1c9f4a61b8c16', '46.105.156.90', 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:34.0) Gecko/20100101 Firefox/34.0', 1435305868, ''),
-('b77995e962761c16942d1e012aab8fa6', '46.105.156.90', 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:34.0) Gecko/20100101 Firefox/34.0', 1435306045, ''),
-('5f17853155b242f481ca2e30ba05c6ee', '62.14.244.221', 'Mozilla/5.0 (Windows NT 5.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.130 Safari/537.36', 1435236084, ''),
-('b959ae9fca601d661c144c4234559b5a', '62.14.244.221', 'Mozilla/5.0 (Windows NT 5.1; rv:30.0) Gecko/20100101 Firefox/30.0', 1435236372, ''),
-('17ac5dc46e19a9ca7ecd7cf546740146', '66.249.79.163', 'Mediapartners-Google', 1435236073, '');
+('c9f6cee8fccbdcae2c5ea50dab3d43de', '54.145.91.208', 'voltron', 1435360848, ''),
+('e9895232f4bd3f89d218d7ed49b71c5c', '66.249.64.175', 'Mediapartners-Google', 1435467872, '');
 
 -- --------------------------------------------------------
 
