@@ -137,7 +137,7 @@
                             </div>
                         <?php } ?>
 
-
+                        <p><a href="<?=base_url()?>tienda/dashboard_exportar/abiertas" class="btn exportar"><i class="glyphicon glyphicon-file"></i> Exportar CSV</a></p>
 		                <div class="table-responsive">
 		                    <table class="table table-striped table-bordered table-hover table-sorting" id="table_incidencias_dashboard" data-order-form="form_orden_activas">
 		                        <thead>
@@ -285,7 +285,7 @@
                                     <label for="buscar_incidencia_finalizadas">Buscar incidencia: </label>
                                     <input type="text" name="buscar_incidencia" id="buscar_incidencia_finalizadas" class="form-control input-sm" placeholder="Ref. incidencia" <?php echo (!empty($buscar_incidencia)) ? ' value="'.$buscar_incidencia.'" ' : ''?> />
                                 </div>
-                               
+
                                 <div class="col-sm-1">
                                     <input type="hidden" name="do_busqueda" value="si">
                                     <input type="submit" value="Buscar" class="form-control input-sm">
@@ -316,6 +316,7 @@
                              <?php }?>
 
 
+                            <p><a href="<?=base_url()?>tienda/dashboard_exportar/cerradas" class="btn exportar"><i class="glyphicon glyphicon-file"></i> Exportar CSV</a></p>
                             <div class="table-responsive">
                                 <table class="table table-striped table-bordered table-hover table-sorting" id="table_incidencias_cerradas_dashboard"  data-order-form="form_orden_cerradas">
                                     <thead>

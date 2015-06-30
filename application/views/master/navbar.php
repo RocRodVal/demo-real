@@ -32,8 +32,8 @@
                         if ($this->session->userdata('type') == 9)
                         {
                         ?>                                                 
+                        <?php /*<li><a <?=($this->uri->segment(2)==='dashboard')?'class="active"':''?> href="<?=site_url('master/dashboard')?>"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a></li>*/ ?>
                         <li><a <?=($this->uri->segment(2)==='dashboard')?'class="active"':''?> href="<?=site_url('master/dashboard')?>"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a></li>
-                        <li><a <?=($this->uri->segment(2)==='dashboard_new')?'class="active"':''?> href="<?=site_url('master/dashboard_new')?>"><i class="fa fa-dashboard fa-fw"></i> Dashboard NEW *</a></li>
 
                         <?php               
                         $cdm = array('cdm_incidencias','cdm_tipo_incidencia','cdm_inventario','cdm_alarmas','cdm_dispositivos');

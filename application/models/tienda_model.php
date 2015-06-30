@@ -826,6 +826,128 @@ class Tienda_model extends CI_Model {
 		return $query->result();
 	}
 
+
+/**
+*  Devuelve conjunto de registros de incidencias abiertas, para generar CSV
+*  filtradas si procede
+*
+* */
+    public function get_incidencias_csv($campo_orden=NULL,$orden=NULL,$filtros=NULL,$buscador=NULL,$tipo="abiertas") {
+        $this->load->dbutil();
+        $this->load->helper('file');
+        $this->load->helper('download');
+
+        $acceso = $this->uri->segment(1);
+
+        $sql = 'SELECT incidencias.id_incidencia,
+                            pds.reference as `SFID`,
+                            incidencias.fecha,
+                            incidencias.fecha_cierre,
+
+
+
+                            (CASE incidencias.alarm_display WHEN 1 THEN ( CONCAT("Mueble: ",
+                                (CASE ISNULL(display.display) WHEN TRUE THEN "Retirado" ELSE display.display END)
+                            )) ELSE (CONCAT("Dispositivo: ",
+                                (CASE ISNULL(device.device) WHEN TRUE THEN "Retirado" ELSE device.device END)
+                            )) END) as elemento,
+
+
+                            incidencias.tipo_averia,
+
+                            (CASE incidencias.fail_device WHEN 1 THEN ("Sí") ELSE ("No") END) AS `Fallo dispositivo`,
+                            (CASE incidencias.alarm_display WHEN 1 THEN ("Sí") ELSE ("No") END) AS `Alarma mueble`,
+                            (CASE incidencias.alarm_device WHEN 1 THEN ("Sí") ELSE ("No") END) AS `Alarma dispositivo`,
+                            (CASE incidencias.alarm_garra WHEN 1 THEN ("Sí") ELSE ("No") END) AS `Alarma anclaje`,
+
+                            REPLACE(REPLACE(incidencias.description_1,CHAR(10),CHAR(32)),CHAR(13),CHAR(32)),
+                            REPLACE(REPLACE(incidencias.description_2,CHAR(10),CHAR(32)),CHAR(13),CHAR(32)),
+                            REPLACE(REPLACE(incidencias.description_3,CHAR(10),CHAR(32)),CHAR(13),CHAR(32)),
+                            incidencias.parte_pdf,
+                            incidencias.denuncia,
+                            incidencias.foto_url,
+                            incidencias.foto_url_2,
+                            incidencias.foto_url_3,
+                            incidencias.contacto,
+                            incidencias.phone,
+                            incidencias.email,
+                            incidencias.id_operador,
+                            incidencias.intervencion,';
+
+                if($acceso==="admin"){
+                    $sql .= 'incidencias.status_pds AS `Estado SAT`,';
+                }
+
+        $sql .='incidencias.status  AS `Estado`
+
+                FROM incidencias
+                JOIN pds ON incidencias.id_pds = pds.id_pds
+                LEFT JOIN displays_pds ON incidencias.id_displays_pds = displays_pds.id_displays_pds
+                LEFT JOIN display ON displays_pds.id_display = display.id_display
+                LEFT JOIN devices_pds ON incidencias.id_devices_pds = devices_pds.id_devices_pds
+                LEFT JOIN device ON devices_pds.id_device = device.id_device
+                LEFT JOIN type_device ON device.type_device = type_device.id_type_device
+                WHERE 1 = 1';
+
+
+        if($tipo==="abiertas") {
+
+            $sql .=
+                '
+                AND (incidencias.status != "Resuelta" AND incidencias.status != "Pendiente recogida" AND incidencias.status != "Cerrada" AND incidencias.status != "Cancelada")
+                AND (incidencias.status_pds != "Finalizada" && incidencias.status_pds != "Cancelada")
+                ';
+            $sTitleFilename = "Incidencias_abiertas";
+        }else{
+            $sql .=
+                '
+                AND (incidencias.status = "Resuelta" OR incidencias.status = "Pendiente recogida" OR incidencias.status = "Cerrada" OR incidencias.status = "Cancelada")
+                AND (incidencias.status_pds = "Finalizada" OR incidencias.status_pds = "Cancelada")
+                ';
+            $sTitleFilename = "Incidencias_cerradas";
+        }
+
+
+        // Montamos las cláusulas where filtro, según el array pasado como param.
+        $sFiltrosFilename = "-";
+
+
+        if (!is_null($filtros) && !empty($filtros)){
+            foreach($filtros as $k=>$f) {
+                $sql  .= (' AND incidencias.'.$k.'="'.$f.'" ');
+                $sFiltrosFilename .= ($f."-");
+            }
+        }
+
+        if(! empty($buscador['buscar_incidencia'])) {
+            $sql .= (' AND incidencias.id_incidencia = "'.$buscador['buscar_incidencia'].'"');
+            $sFiltrosFilename .= ($buscador['buscar_incidencia']."-");
+        }
+
+        if(! empty($buscador['buscar_sfid'])) {
+            $sql .= (' AND pds.reference ="'.$buscador['buscar_sfid'].'"');
+            $sFiltrosFilename .= ($buscador['buscar_sfid']."-");
+        }
+
+        if(!is_null($campo_orden) && !empty($campo_orden) && !is_null($orden) && !empty($orden)) {
+            $sql .=  ' ORDER BY '.$campo_orden. ' '.$orden;
+
+        }else{
+            $sql .=  ' ORDER BY fecha DESC';
+        }
+
+
+        $query = $this->db->query($sql);
+
+
+        $delimiter = ",";
+        $newline = "\r\n";
+        $data = $this->dbutil->csv_from_result($query, $delimiter, $newline);
+        force_download('Demo_Real-'.$sTitleFilename.$sFiltrosFilename.date("d-m-Y").'T'.date("H:i:s").'.csv', $data);
+
+
+    }
+
     public function get_incidencias_quantity($filtros=NULL,$buscador=NULL) {
         $this->db->select('COUNT(incidencias.id_incidencia) AS cantidad')
             ->join('pds','incidencias.id_pds = pds.id_pds');
@@ -956,6 +1078,8 @@ class Tienda_model extends CI_Model {
         }
 
         $query = $this->db->get('incidencias');
+
+
         return $query->result()[0]->cantidad;
     }
 

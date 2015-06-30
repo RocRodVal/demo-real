@@ -439,6 +439,94 @@ class Admin extends CI_Controller
 
 
 
+    public function dashboard_exportar()
+    {
+        if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
+            $xcrud = xcrud_get_instance();
+
+
+            $this->load->model(array('intervencion_model', 'tienda_model', 'sfid_model','chat_model'));
+            $tipo = $this->uri->segment(3); // TIPO DE INCIDENCIA
+
+
+            // Realizar búsqueda por INCIDENCIA o SFID
+            $buscar_incidencia = NULL;
+            $buscar_sfid = NULL;
+            // Consultar a la session si ya se ha buscado algo y guardado allí.
+            $sess_buscar_sfid = $this->session->userdata('buscar_sfid');
+            $sess_buscar_incidencia = $this->session->userdata('buscar_incidencia');
+            if(! empty($sess_buscar_sfid)) $buscar_sfid = $sess_buscar_sfid;
+            if(! empty($sess_buscar_incidencia)) $buscar_incidencia = $sess_buscar_incidencia;
+
+
+            // Obtener los filtros: status SAT y stats PDS, primero de Session y despues del post, si procede..
+            $filtro = NULL;
+            $sess_filtro = $this->session->userdata('filtro');
+            if(! empty($sess_filtro)) $filtro = $sess_filtro;
+
+            $filtro_pds = NULL;
+            $sess_filtro_pds = $this->session->userdata('filtro_pds');
+            if(! empty($sess_filtro_pds)) $filtro_pds = $sess_filtro_pds;
+
+            $buscador['buscar_sfid']        = $buscar_sfid;
+            $buscador['buscar_incidencia']  = $buscar_incidencia;
+
+            $filtros = array();
+
+            if($filtro != NULL) $filtros["status"] = $filtro;
+            if($filtro_pds != NULL) $filtros["status_pds"] = $filtro_pds;
+
+            // Obtener el campo a ordenar, primero de Session y despues del post, si procede..
+            $campo_orden_activas = NULL;
+            $orden_activas = NULL;
+
+            $sess_campo_orden_activas =  $this->session->userdata('campo_orden_activas');
+            if(! empty($sess_campo_orden_activas)) $campo_orden_activas = $sess_campo_orden_activas;
+            $sess_orden_activas =  $this->session->userdata('orden_activas');
+            if(! empty($sess_orden_activas)) $orden_activas = $sess_orden_activas;
+
+
+
+
+
+
+
+            // Obtener el campo a ordenar, primero de Session y despues del post, si procede..
+            $campo_orden_cerradas = NULL;
+            $orden_cerradas = NULL;
+
+            $sess_campo_orden_cerradas =  $this->session->userdata('campo_orden_cerradas');
+            if(! empty($sess_campo_orden_cerradas)) $campo_orden_cerradas = $sess_campo_orden_cerradas;
+            $sess_orden_cerradas =  $this->session->userdata('orden_cerradas');
+            if(! empty($sess_orden_cerradas)) $orden_cerradas = $sess_orden_cerradas;
+
+            $filtro_finalizadas = NULL;
+            $filtro_finalizadas_pds = NULL;
+
+            $sess_filtro_finalizadas = $this->session->userdata('filtro_finalizadas');
+            if(! empty($sess_filtro_finalizadas)) $filtro_finalizadas = $sess_filtro_finalizadas;
+
+            $sess_filtro_finalizadas_pds = $this->session->userdata('filtro_finalizadas_pds');
+            if(! empty($sess_filtro_finalizadas_pds)) $filtro_finalizadas_pds = $sess_filtro_finalizadas_pds;
+
+            $filtros_finalizadas = array();
+            if($filtro_finalizadas != NULL) $filtros_finalizadas["status"] = $filtro_finalizadas;
+            if($filtro_finalizadas_pds != NULL) $filtros_finalizadas["status_pds"] = $filtro_finalizadas_pds;
+
+
+            if($tipo === "abiertas") {
+                $this->tienda_model->get_incidencias_csv($campo_orden_activas, $orden_activas, $filtros, $buscador, "abiertas");
+            }else {
+                $this->tienda_model->get_incidencias_csv($campo_orden_cerradas, $orden_cerradas, $filtros_finalizadas, $buscador, "cerradas");
+            }
+
+
+        } else {
+            redirect('admin', 'refresh');
+        }
+    }
+
+
     /**
      * Método que comprueba si una incidencia ya está comunicada, o en un paso posterior.
      * Devuelve true si lo está y false en caso contrario.

@@ -93,11 +93,9 @@
                                 <input type="submit" value="Aplicar" class="form-control input-sm">
                             </div>
                             <div class="col-sm-1">
-                                <?php if(! empty($filtro) || ! empty($filtro_pds)) { ?>
+                                <?php /*if(! empty($filtro) || ! empty($filtro_pds)) { ?>
                                     <a href="<?=base_url()?>admin/dashboard/borrar_busqueda/#incidencias_abiertas" class="reiniciar_busqueda"><i class="glyphicon glyphicon-remove"></i>  Reiniciar</a>
-                                <?php } ?>
-
-
+                                <?php }*/ ?>
                             </div>
 
                             <div class="col-sm-2">
@@ -113,9 +111,9 @@
                                 <input type="submit" value="Buscar" class="form-control input-sm">
                             </div>
                             <div class="col-sm-1">
-                                <?php if(! empty($buscar_sfid) || ! empty($buscar_incidencia)) { ?>
+                                <?php /*if(! empty($buscar_sfid) || ! empty($buscar_incidencia)) { ?>
                                     <a href="<?=base_url()?>admin/dashboard/borrar_busqueda/#incidencias_abiertas" class="reiniciar_busqueda"> <i class="glyphicon glyphicon-remove"></i>  Reiniciar</a>
-                                <?php } ?>
+                                <?php }*/ ?>
                             </div>
                         </form>
                     </div>
@@ -125,9 +123,9 @@
                         echo '<p class="message warning"><i class="glyphicon glyphicon-warning-sign"></i> No hay incidencias abiertas.</p>'; ?>
 
 
-                        <?php if(! empty($buscar_sfid) || ! empty($buscar_incidencia)) { ?>
+                        <?php  /*if(! empty($buscar_sfid) || ! empty($buscar_incidencia)) { ?>
                             <a href="<?=base_url()?>admin/dashboard/borrar_busqueda/#incidencias_abiertas" class="reiniciar_busqueda"> <i class="glyphicon glyphicon-remove"></i> Reiniciar</a>
-                        <?php } ?>
+                        <?php }*/  ?>
 
 		            <?php } else {
 		                ?>
@@ -140,7 +138,7 @@
                             </div>
                         <?php } ?>
 
-
+                        <p><a href="<?=base_url()?>admin/dashboard_exportar/abiertas" class="btn exportar"><i class="glyphicon glyphicon-file"></i> Exportar CSV</a></p>
 		                <div class="table-responsive">
 		                    <table class="table table-striped table-bordered table-hover table-sorting" id="table_incidencias_dashboard" data-order-form="form_orden_activas">
 		                        <thead>
@@ -277,9 +275,9 @@
                                     <input type="submit" value="Aplicar" class="form-control input-sm">
                                 </div>
                                 <div class="col-sm-1">
-                                    <?php if(! empty($filtro_finalizadas) || ! empty($filtro_finalizadas_pds)) { ?>
+                                    <?php /* if(! empty($filtro_finalizadas) || ! empty($filtro_finalizadas_pds)) { ?>
                                         <a href="<?=base_url()?>admin/dashboard/borrar_busqueda/#incidencias_cerradas" class="reiniciar_busqueda"><i class="glyphicon glyphicon-remove"></i>  Reiniciar</a>
-                                    <?php } ?>
+                                    <?php }*/ ?>
 
 
                                 </div>
@@ -297,9 +295,9 @@
                                     <input type="submit" value="Buscar" class="form-control input-sm">
                                 </div>
                                 <div class="col-sm-1">
-                                    <?php if(! empty($buscar_sfid) || ! empty($buscar_incidencia)) { ?>
+                                    <?php /* if(! empty($buscar_sfid) || ! empty($buscar_incidencia)) { ?>
                                         <a href="<?=base_url()?>admin/dashboard/borrar_busqueda/#incidencias_cerradas" class="reiniciar_busqueda"><i class="glyphicon glyphicon-remove"></i>  Reiniciar</a>
-                                    <?php } ?>
+                                    <?php }*/ ?>
                                 </div>
 
                             </form>
@@ -321,7 +319,7 @@
                                 </div>
                              <?php }?>
 
-
+                            <p><a href="<?=base_url()?>admin/dashboard_exportar/cerradas" class="btn exportar"><i class="glyphicon glyphicon-file"></i> Exportar CSV</a></p>
                             <div class="table-responsive">
                                 <table class="table table-striped table-bordered table-hover table-sorting" id="table_incidencias_cerradas_dashboard"  data-order-form="form_orden_cerradas">
                                     <thead>
