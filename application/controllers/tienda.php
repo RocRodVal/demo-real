@@ -65,9 +65,396 @@ class Tienda extends CI_Controller {
             return false;
         }
     }
+
+
+
+    public function dashboard()
+    {
+        if ($this->session->userdata('logged_in')) {
+            $data['id_pds'] = $this->session->userdata('id_pds');
+            $data['sfid'] = $this->session->userdata('sfid');
+
+            $xcrud = xcrud_get_instance();
+
+
+            $this->load->model(array('intervencion_model', 'tienda_model', 'sfid_model','chat_model'));
+
+            $data['tiendas'] = $this->tienda_model->search_pds($this->input->post('sfid'));
+
+            $sfid = $this->tienda_model->get_pds($data['id_pds']);
+
+            $data['id_pds']     = $sfid['id_pds'];
+            $data['commercial'] = $sfid['commercial'];
+            $data['territory']  = $sfid['territory'];
+            $data['reference']  = $sfid['reference'];
+            $data['address']    = $sfid['address'];
+            $data['zip']        = $sfid['zip'];
+            $data['city']       = $sfid['city'];
+
+
+            // Comprobar si existe el segmento PAGE en la URI, si no inicializar a 1..
+            $get_page = $this->uri->segment(4);
+            if( $this->uri->segment(3) == "incidencias") {
+                $page = ( ! empty($get_page) ) ? $get_page : 1 ;
+                $segment = 4;
+            }else{
+                $page = 1;
+                $segment = null;
+            }
+
+
+            // Realizar búsqueda por INCIDENCIA o SFID
+            $buscar_incidencia = NULL;
+            $buscar_sfid = NULL;
+
+            $borrar_busqueda = $this->uri->segment(3);
+            if($borrar_busqueda === "borrar_busqueda")
+            {
+                $this->session->unset_userdata('buscar_incidencia');
+
+                $this->session->unset_userdata('filtro');
+                $this->session->unset_userdata('filtro_pds');
+
+                $this->session->unset_userdata('filtro_finalizadas');
+                $this->session->unset_userdata('filtro_finalizadas_pds');
+
+                redirect(site_url("/dashboard"),'refresh');
+            }
+
+            // Consultar a la session si ya se ha buscado algo y guardado allí.
+            $sess_buscar_incidencia = $this->session->userdata('buscar_incidencia');
+            if(! empty($sess_buscar_incidencia)) $buscar_incidencia = $sess_buscar_incidencia;
+
+            // Buscar en el POST si hay busqueda, y si la hay usarla y guardarla además en sesion
+            $do_busqueda = $this->input->post('do_busqueda');
+
+            // Obtener los filtros: status SAT y stats PDS, primero de Session y despues del post, si procede..
+            $filtro = NULL;
+            $sess_filtro = $this->session->userdata('filtro');
+            if(! empty($sess_filtro)) $filtro = $sess_filtro;
+
+            $filtro_pds = NULL;
+            $sess_filtro_pds = $this->session->userdata('filtro_pds');
+            if(! empty($sess_filtro_pds)) $filtro_pds = $sess_filtro_pds;
+
+
+            // Obtener el filtro, primero de Session y despues del post, si procede..
+            $do_busqueda_finalizadas = $this->input->post('do_busqueda_finalizadas');
+
+            $filtro_finalizadas = NULL;
+            $filtro_finalizadas_pds = NULL;
+
+            $sess_filtro_finalizadas = $this->session->userdata('filtro_finalizadas');
+            if(! empty($sess_filtro_finalizadas)) $filtro_finalizadas = $sess_filtro_finalizadas;
+
+            $sess_filtro_finalizadas_pds = $this->session->userdata('filtro_finalizadas_pds');
+            if(! empty($sess_filtro_finalizadas_pds)) $filtro_finalizadas_pds = $sess_filtro_finalizadas_pds;
+
+            $post_finalizadas =$this->input->post('filtrar_finalizadas');
+            $post_finalizadas_pds =$this->input->post('filtrar_finalizadas_pds');
+
+
+
+            if($do_busqueda==="si")
+            {
+
+                $buscar_incidencia = $this->input->post('buscar_incidencia');
+                $this->session->set_userdata('buscar_incidencia', $buscar_incidencia);
+
+                $post_filtro =$this->input->post('filtrar');
+                $filtro = $post_filtro;
+                $this->session->set_userdata('filtro',$filtro);
+
+                $post_filtro_pds =$this->input->post('filtrar_pds');
+                $filtro_pds = $post_filtro_pds;
+                $this->session->set_userdata('filtro_pds',$filtro_pds);
+
+
+                $filtro_finalizadas = $post_finalizadas;
+                $this->session->set_userdata('filtro_finalizadas',$filtro_finalizadas);
+
+                $filtro_finalizadas_pds = $post_finalizadas_pds;
+                $this->session->set_userdata('filtro_finalizadas_pds',$filtro_finalizadas_pds);
+
+
+
+            }
+            $buscador['buscar_sfid']        = $data['sfid']; // Filtramso la tabla por el SFID en sesión
+            $buscador['buscar_incidencia']  = $buscar_incidencia;
+
+            $data['buscar_sfid']        = $data['sfid']; // Filtramso la tabla por el SFID en sesión
+            $data['buscar_incidencia']  = $buscar_incidencia;
+
+            $data["filtro"] = $filtro;
+            $data["filtro_pds"] = $filtro_pds;
+
+            $filtros = array();
+
+            if($filtro != NULL) $filtros["status"] = $filtro;
+            if($filtro_pds != NULL) $filtros["status_pds"] = $filtro_pds;
+
+            $data["filtro_finalizadas"] = $filtro_finalizadas;
+            $data["filtro_finalizadas_pds"] = $filtro_finalizadas_pds;
+
+            $filtros_finalizadas = array();
+
+            if($filtro_finalizadas != NULL) $filtros_finalizadas["status"] = $filtro_finalizadas;
+            if($filtro_finalizadas_pds != NULL) $filtros_finalizadas["status_pds"] = $filtro_finalizadas_pds;
+
+
+            // Obtener el campo a ordenar, primero de Session y despues del post, si procede..
+            $campo_orden_activas = NULL;
+            $orden_activas = NULL;
+
+            $sess_campo_orden_activas =  $this->session->userdata('campo_orden_activas');
+            if(! empty($sess_campo_orden_activas)) $campo_orden_activas = $sess_campo_orden_activas;
+            $sess_orden_activas =  $this->session->userdata('orden_activas');
+            if(! empty($sess_orden_activas)) $orden_activas = $sess_orden_activas;
+
+            // viene del form de ordenacion
+            $do_orden = $this->input->post('ordenar');
+
+            if($do_orden==='true') {
+                $post_orden_form = $this->input->post('form');
+
+                $campo_orden_activas = $this->input->post($post_orden_form.'_campo');
+                $orden_activas = $this->input->post($post_orden_form.'_orden');
+
+                $this->session->set_userdata('campo_orden_activas', $campo_orden_activas);
+                $this->session->set_userdata('orden_activas', $orden_activas);
+            }
+
+            $data["campo_orden_activas"] = $campo_orden_activas;
+            $data["orden_activas"] = $orden_activas;
+
+            $this->load->library('app/paginationlib');
+
+            $data['title']           = 'Mis solicitudes';
+            $data['title_iniciadas'] = 'Incidencias abiertas';
+
+            $per_page = 100;
+            $total_incidencias = $this->tienda_model->get_incidencias_quantity($filtros,$buscador);   // Sacar el total de incidencias, para el paginador
+            $cfg_pagination = $this->paginationlib->init_pagination("dashboard/incidencias/",$total_incidencias,$per_page,$segment);
+
+
+            $this->load->library('pagination',$cfg_pagination);
+            $this->pagination->initialize($cfg_pagination);
+
+            // Indicamos si habrá que mostrar el paginador en la vista
+            $data['show_paginator'] = false;
+            if($total_incidencias > $cfg_pagination['per_page']) $data['show_paginator'] = true;
+            // Mostrar párrafo de info páginas
+            $data['num_resultados'] = $total_incidencias;
+
+            $n_inicial = ($page - 1) * $per_page + 1;
+            $n_inicial = ($n_inicial == 0) ? 1 : $n_inicial;
+
+            $data['n_inicial'] = $n_inicial;
+
+            $n_final = ($n_inicial) + $per_page -1 ;
+            $n_final = ($total_incidencias < $n_final) ? $total_incidencias : $n_final;
+
+            $data['n_final'] = $n_final;
+
+            $data["pagination_helper"]   = $this->pagination;
+
+            $incidencias = $this->tienda_model->get_incidencias($page,$cfg_pagination,$campo_orden_activas,$orden_activas,$filtros,$buscador);
+
+            foreach ($incidencias as $incidencia) {
+                $incidencia->device = $this->sfid_model->get_device($incidencia->id_devices_pds);
+                $incidencia->display = $this->sfid_model->get_display($incidencia->id_displays_pds);
+                $incidencia->nuevos  = $this->chat_model->contar_nuevos($incidencia->id_incidencia,$incidencia->reference);
+                $incidencia->intervencion = $this->intervencion_model->get_intervencion_incidencia($incidencia->id_incidencia);
+            }
+
+            $data['incidencias'] = $incidencias;
+
+            /** *****************************************************************************************************
+             *          Sacar la info para la tabla de Incidencias Finalizadas.
+             * *****************************************************************************************************/
+            $data['title_finalizadas'] = 'Incidencias finalizadas';
+
+
+            // Obtener la página actual del GET y si no existe, definirla a 1
+            $get_page = $this->uri->segment(4);
+            if( $this->uri->segment(3) == "finalizadas") {
+                $page_finalizadas = ( ! empty($get_page) ) ? $get_page : 1 ;
+                $segment_finalizadas = 4;
+            }else{
+                $page_finalizadas = 1;
+                $segment_finalizadas = null;
+            }
+
+
+
+
+            $per_page = 100;
+
+
+            // Obtener el campo a ordenar, primero de Session y despues del post, si procede..
+            $campo_orden_cerradas = NULL;
+            $orden_cerradas = NULL;
+
+            $sess_campo_orden_cerradas =  $this->session->userdata('campo_orden_cerradas');
+            if(! empty($sess_campo_orden_cerradas)) $campo_orden_cerradas = $sess_campo_orden_cerradas;
+            $sess_orden_cerradas =  $this->session->userdata('orden_cerradas');
+            if(! empty($sess_orden_cerradas)) $orden_cerradas = $sess_orden_cerradas;
+
+            // viene del form de ordenacion
+            $do_orden = $this->input->post('ordenar_cerradas');
+            if($do_orden==='true') {
+
+                $post_orden_form = $this->input->post('form');
+
+                $campo_orden_cerradas = $this->input->post($post_orden_form.'_campo');
+                $orden_cerradas = $this->input->post($post_orden_form.'_orden');
+
+                $this->session->set_userdata('campo_orden_cerradas', $campo_orden_cerradas);
+                $this->session->set_userdata('orden_cerradas', $orden_cerradas);
+
+            }
+
+            $data["campo_orden_cerradas"] = $campo_orden_cerradas;
+            $data["orden_cerradas"] = $orden_cerradas;
+
+            $total_incidencias = $this->tienda_model->get_incidencias_finalizadas_quantity($filtros_finalizadas,$buscador);   // Sacar el total de incidencias, para el paginador
+            $cfg_pagination = $this->paginationlib->init_pagination("dashboard/finalizadas/",$total_incidencias,$per_page,$segment_finalizadas);
+
+            $cfg_pagination["suffix"] = '#incidencias_cerradas';
+
+            $this->load->library('pagination',$cfg_pagination,'pagination_finalizadas');
+            $this->pagination_finalizadas->initialize($cfg_pagination);
+            $data["pagination_finalizadas_helper"]   = $this->pagination_finalizadas;
+
+            // Indicamos si habrá que mostrar el paginador en la vista
+            $data['show_paginator_finalizadas'] = false;
+            if($total_incidencias > $cfg_pagination['per_page']) $data['show_paginator_finalizadas'] = true;
+            // Mostrar párrafo de info páginas
+
+            $data['num_resultados_finalizadas'] = $total_incidencias;
+            $n_inicial_finalizadas = ($page_finalizadas - 1) * $per_page + 1;
+            $n_inicial_finalizadas = ($n_inicial_finalizadas == 0) ? 1 : $n_inicial_finalizadas;
+
+            $data['n_inicial_finalizadas'] = $n_inicial_finalizadas;
+
+            $n_final_finalizadas = ($n_inicial_finalizadas) + $per_page -1 ;
+            $n_final_finalizadas = ($total_incidencias < $n_final_finalizadas) ? $total_incidencias : $n_final_finalizadas;
+            $data['n_final_finalizadas'] = $n_final_finalizadas;
+
+
+            $incidencias_finalizadas = $this->tienda_model->get_incidencias_finalizadas($page_finalizadas,$cfg_pagination,$filtros_finalizadas,$buscador,$campo_orden_cerradas,$orden_cerradas);
+
+            foreach ($incidencias_finalizadas as $incidencia) {
+                $incidencia->device = $this->sfid_model->get_device($incidencia->id_devices_pds);
+                $incidencia->display = $this->sfid_model->get_display($incidencia->id_displays_pds);
+                $incidencia->nuevos  = $this->chat_model->contar_nuevos($incidencia->id_incidencia,$incidencia->reference);
+                $incidencia->intervencion = $this->intervencion_model->get_intervencion_incidencia($incidencia->id_incidencia);
+            }
+
+            $data['incidencias_finalizadas'] = $incidencias_finalizadas;
+
+            $this->load->view('tienda/header', $data);
+            $this->load->view('tienda/navbar', $data);
+            $this->load->view('tienda/dashboard', $data);
+            $this->load->view('tienda/footer');
+        } else {
+            redirect('', 'refresh');
+        }
+    }
+
+
+    public function dashboard_exportar()
+    {
+        if ($this->session->userdata('logged_in')) {
+            $xcrud = xcrud_get_instance();
+
+
+            $this->load->model(array('intervencion_model', 'tienda_model', 'sfid_model','chat_model'));
+            $acceso = $this->uri->segment(1); // TIPO DE INCIDENCIA
+            $tipo = $this->uri->segment(3); // TIPO DE INCIDENCIA
+
+
+            // Realizar búsqueda por INCIDENCIA o SFID
+            $buscar_incidencia = NULL;
+            $buscar_sfid = NULL;
+            // Consultar a la session si ya se ha buscado algo y guardado allí.
+            $sess_buscar_sfid = $this->session->userdata('buscar_sfid');
+            $sess_buscar_incidencia = $this->session->userdata('buscar_incidencia');
+            if(! empty($sess_buscar_sfid)) $buscar_sfid = $sess_buscar_sfid;
+            if(! empty($sess_buscar_incidencia)) $buscar_incidencia = $sess_buscar_incidencia;
+
+
+            // Obtener los filtros: status SAT y stats PDS, primero de Session y despues del post, si procede..
+            $filtro = NULL;
+            $sess_filtro = $this->session->userdata('filtro');
+            if(! empty($sess_filtro)) $filtro = $sess_filtro;
+
+            $filtro_pds = NULL;
+            $sess_filtro_pds = $this->session->userdata('filtro_pds');
+            if(! empty($sess_filtro_pds)) $filtro_pds = $sess_filtro_pds;
+
+
+            if($acceso === "tienda") $buscar_sfid = $this->session->userdata('sfid');
+            $buscador['buscar_sfid']        = $buscar_sfid;
+            $buscador['buscar_incidencia']  = $buscar_incidencia;
+
+            $filtros = array();
+
+            if($filtro != NULL) $filtros["status"] = $filtro;
+            if($filtro_pds != NULL) $filtros["status_pds"] = $filtro_pds;
+
+            // Obtener el campo a ordenar, primero de Session y despues del post, si procede..
+            $campo_orden_activas = NULL;
+            $orden_activas = NULL;
+
+            $sess_campo_orden_activas =  $this->session->userdata('campo_orden_activas');
+            if(! empty($sess_campo_orden_activas)) $campo_orden_activas = $sess_campo_orden_activas;
+            $sess_orden_activas =  $this->session->userdata('orden_activas');
+            if(! empty($sess_orden_activas)) $orden_activas = $sess_orden_activas;
+
+
+
+
+
+
+
+            // Obtener el campo a ordenar, primero de Session y despues del post, si procede..
+            $campo_orden_cerradas = NULL;
+            $orden_cerradas = NULL;
+
+            $sess_campo_orden_cerradas =  $this->session->userdata('campo_orden_cerradas');
+            if(! empty($sess_campo_orden_cerradas)) $campo_orden_cerradas = $sess_campo_orden_cerradas;
+            $sess_orden_cerradas =  $this->session->userdata('orden_cerradas');
+            if(! empty($sess_orden_cerradas)) $orden_cerradas = $sess_orden_cerradas;
+
+            $filtro_finalizadas = NULL;
+            $filtro_finalizadas_pds = NULL;
+
+            $sess_filtro_finalizadas = $this->session->userdata('filtro_finalizadas');
+            if(! empty($sess_filtro_finalizadas)) $filtro_finalizadas = $sess_filtro_finalizadas;
+
+            $sess_filtro_finalizadas_pds = $this->session->userdata('filtro_finalizadas_pds');
+            if(! empty($sess_filtro_finalizadas_pds)) $filtro_finalizadas_pds = $sess_filtro_finalizadas_pds;
+
+            $filtros_finalizadas = array();
+            if($filtro_finalizadas != NULL) $filtros_finalizadas["status"] = $filtro_finalizadas;
+            if($filtro_finalizadas_pds != NULL) $filtros_finalizadas["status_pds"] = $filtro_finalizadas_pds;
+
+
+            if($tipo === "abiertas") {
+                $this->tienda_model->get_incidencias_csv($campo_orden_activas, $orden_activas, $filtros, $buscador, "abiertas");
+            }else {
+                $this->tienda_model->get_incidencias_csv($campo_orden_cerradas, $orden_cerradas, $filtros_finalizadas, $buscador, "cerradas");
+            }
+
+
+        } else {
+            redirect('tienda', 'refresh');
+        }
+    }
+
 	
-	
-	public function dashboard()
+	public function dashboard_OLD()
 	{
 		if($this->session->userdata('logged_in'))
 		{
