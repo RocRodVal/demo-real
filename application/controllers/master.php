@@ -507,8 +507,9 @@ class Master extends CI_Controller {
 			$xcrud = xcrud_get_instance();
 			$this->load->model('sfid_model');
 			$this->load->model(array('chat_model','sfid_model'));
-	
-			$sfid = $this->sfid_model->get_pds($this->uri->segment(4));
+
+            $id_incidencia = $this->uri->segment(4);
+			$sfid = $this->sfid_model->get_pds($this->uri->segment(3));
 	
 			$data['id_pds']     = $sfid['id_pds'];
 			$data['commercial'] = $sfid['commercial'];

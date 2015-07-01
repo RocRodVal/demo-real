@@ -686,7 +686,7 @@ class Tienda extends CI_Controller {
 	
 			$xcrud = xcrud_get_instance();
 			$this->load->model(array('chat_model','sfid_model'));
-	
+
 			$sfid = $this->sfid_model->get_pds($data['id_pds']);
 	
 			$data['id_pds']     = $sfid['id_pds'];
@@ -696,6 +696,8 @@ class Tienda extends CI_Controller {
 			$data['address']    = $sfid['address'];
 			$data['zip']        = $sfid['zip'];
 			$data['city']       = $sfid['city'];
+
+            $id_incidencia = $this->uri->segment(4);
 
 			$incidencia = $this->sfid_model->get_incidencia($id_incidencia,$data['id_pds']);
 			
