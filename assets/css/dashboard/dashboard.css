@@ -96,13 +96,14 @@ form.filtros{
 form.form-mini label{ width: 100%; display: block; clear: both;}
 form.form-mini .form-group{ margin-bottom:20px; }
 #page-wrapper form.form-mini input[type="submit"]{ margin-top:10px;
-    float: left; }
+    float: left;  }
 
 
 #page-wrapper form.form-mini,
 .form-mini .form-control{ font-size:11px; }
 .form-group #submit_button{ margin-top:20px;
-    float: left; }
+    float: left; height: 34px; }
+
 .form-mini a.reiniciar_busqueda{ margin-top:20px ;}
 @media (min-width: 768px) {
 
