@@ -137,7 +137,7 @@
                             </div>
                         <?php } ?>
 
-                        <p><a href="<?=base_url()?>tienda/dashboard_exportar/abiertas" class="btn exportar"><i class="glyphicon glyphicon-file"></i> Exportar CSV</a></p>
+                        <p><a href="<?=base_url()?>tienda/dashboard_exportar/abiertas" class="btn exportar"><i class="glyphicon glyphicon-file"></i> Exportar Excel</a></p>
 		                <div class="table-responsive">
 		                    <table class="table table-striped table-bordered table-hover table-sorting" id="table_incidencias_dashboard" data-order-form="form_orden_activas">
 		                        <thead>
@@ -316,7 +316,7 @@
                              <?php }?>
 
 
-                            <p><a href="<?=base_url()?>tienda/dashboard_exportar/cerradas" class="btn exportar"><i class="glyphicon glyphicon-file"></i> Exportar CSV</a></p>
+                            <p><a href="<?=base_url()?>tienda/dashboard_exportar/cerradas" class="btn exportar"><i class="glyphicon glyphicon-file"></i> Exportar Excel</a></p>
                             <div class="table-responsive">
                                 <table class="table table-striped table-bordered table-hover table-sorting" id="table_incidencias_cerradas_dashboard"  data-order-form="form_orden_cerradas">
                                     <thead>
