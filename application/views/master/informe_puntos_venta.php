@@ -117,7 +117,7 @@
 
                          <h3>Informe generado</h3>
 
-                         <p><a href="<?=base_url()?>master/informe_pdv_exportar" class="btn exportar"><i class="glyphicon glyphicon-file"></i> Exportar CSV</a></p>
+                         <p><a href="<?=base_url()?>master/informe_pdv_exportar" class="btn exportar"><i class="glyphicon glyphicon-file"></i> Exportar Excel</a></p>
                          <table class="table table-striped table-bordered table-hover table-sorting" id="table_incidencias_dashboard" data-order-form="form_orden_activas">
                             <thead>
                             <tr>
@@ -134,9 +134,9 @@
                          {?>
                              <tr>
                                  <td><?=$resultado->sfid?></td>
-                                 <td>(<?=$resultado->id_type_pds?>) <?=$resultado->tipo_tienda?></td>
-                                 <td>(<?=$resultado->id_panelado ?>) <?=$resultado->panelado?></td>
-                                 <td>(Id.<?=$resultado->id_displays_pds?>) <?=$resultado->mueble?></td>
+                                 <td><?php /*(<?=$resultado->id_type_pds?>)*/?> <?=$resultado->tipo_tienda?></td>
+                                 <td><?php /*(<?=$resultado->id_panelado ?>)*/?> <?=$resultado->panelado?></td>
+                                 <td><?php /*(Id.<?=$resultado->id_displays_pds?>)*/?> <?=$resultado->mueble?></td>
                                  <td><?=$resultado->position?></td>
                                  <td><?=$resultado->terminal?></td>
                              </tr>
@@ -144,7 +144,7 @@
                          ?>
                              </tbody>
                          </table>
-                         <p><a href="<?=base_url()?>master/informe_pdv_exportar" class="btn exportar"><i class="glyphicon glyphicon-file"></i> Exportar CSV</a></p>
+                         <p><a href="<?=base_url()?>master/informe_pdv_exportar" class="btn exportar"><i class="glyphicon glyphicon-file"></i> Exportar Excel</a></p>
                          <?php if($pag["show_paginator"]) {
 
                              ?>
