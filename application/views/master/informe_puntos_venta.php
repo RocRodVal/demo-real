@@ -13,7 +13,7 @@
                 <div class="col-sm-12">
                     <div class="form-group">
                          <label for="tipo_tienda">Tipo de tienda</label>
-                        <select id="tipo_tienda" name="tipo_tienda"><option value="">Escoge el tipo de tienda...</option>
+                        <select id="tipo_tienda" name="tipo_tienda" class="form-control"><option value="">Escoge el tipo de tienda...</option>
 
                             <?php foreach($tipos_tienda as $tipo)
                             {
@@ -26,7 +26,7 @@
 
                     <div class="form-group">
                         <label for="panelado">Panelado</label>
-                        <select id="panelado" name="panelado"><option value="">Escoge el panelado...</option>
+                        <select id="panelado" name="panelado" class="form-control"><option value="">Escoge el panelado...</option>
 
                             <?php foreach($panelados as $panel)
                             {
@@ -39,7 +39,7 @@
 
                     <div class="form-group">
                         <label for="mueble">Mueble</label>
-                        <select id="mueble" name="mueble"><option value="">Cualquiera...</option>
+                        <select id="mueble" name="mueble" class="form-control"><option value="">Cualquiera...</option>
 
                             <?php foreach($muebles as $display)
                             {
@@ -52,7 +52,7 @@
 
                     <div class="form-group">
                         <label for="terminal">Terminal</label>
-                        <select id="terminal" name="terminal"><option value="">Cualquiera...</option>
+                        <select id="terminal" name="terminal" class="form-control"><option value="">Cualquiera...</option>
 
                             <?php foreach($terminales as $term)
                             {
