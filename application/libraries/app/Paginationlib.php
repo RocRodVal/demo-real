@@ -39,4 +39,21 @@ class Paginationlib {
         return $config;
     }
 
+
+    public function get_bounds($total_registros, $page = 1, $per_page=100){
+        $bounds = array();
+        $bounds["num_resultados"] = $total_registros;
+        $bounds["show_paginator"] = ($total_registros > $per_page) ? true : false;
+            $n_inicial = ($page - 1) * $per_page + 1;
+            $n_inicial = ($n_inicial == 0) ? 1 : $n_inicial;
+        $bounds['n_inicial'] = $n_inicial;
+            $n_final = ($n_inicial) + $per_page -1 ;
+            $n_final = ($total_registros < $n_final) ? $total_registros : $n_final;
+        $bounds['n_final'] = $n_final;
+
+        return $bounds;
+    }
+
+
+
 }

@@ -163,7 +163,23 @@ class Sfid_model extends CI_Model {
 		$this->db->insert('incidencias',$data);
 		$id=$this->db->insert_id();
 		return array('add' => (isset($id)) ? $id : FALSE, 'id' => $id);
-	}	
+	}
+
+
+    /*
+     * Devuelve los tipos de tiendas
+     */
+
+    public function get_types_pds()
+    {
+        $query = $this->db->select("id_type_pds, pds")
+                ->where("client_type_pds",1)
+                ->where("status","Alta")
+                ->get("type_pds");
+
+        return $query->result();
+
+    }
 
 }
 

@@ -40,7 +40,7 @@
                         <div class="col-lg-7 labelText white">Asignar instalador e intervención</div>
                         <div class="col-lg-5 labelBtn white">
                             <a onClick="showModalNewIntervencion(<?php echo $id_pds_url . ',' . $id_inc_url ?>)"
-                               classBtn="status" class="btn btn-success" <?php if ($incidencia['status'] != 'Revisada') {
+                               classBtn="status" class="btn btn-success" <?php if (!$material_editable) {
                                 echo 'disabled';
                             } ?>>Asignar instalador</a>
                         </div>                        
@@ -67,8 +67,9 @@
                             <div class="col-lg-5 labelBtn white">
                             <a href="<?= site_url('admin/update_incidencia/' . $id_pds_url . '/' . $id_inc_url . '/3/5/notificacion') ?>"
                                classBtn="status" class="btn btn-success"
-                                <?php if (($incidencia['status'] === 'Material asignado') ||
-                                		 ($incidencia['status'] === 'Comunicada'))
+                                <?php
+
+                                if (($incidencia['status'] === 'Instalador asignado') || ($incidencia['status'] === 'Material asignado' || $incidencia['status'] === 'Comunicada') && (isset($incidencia['intervencion']) && !empty($incidencia['intervencion'])))
                                 {
                                     echo '';
                                 }
@@ -78,7 +79,7 @@
                             	}
                             	?>
                             	>
-                                <?php if ($incidencia['status'] == 'Comunicada')
+                                <?php if ($incidencia['status'] === 'Comunicada')
                                 {
                                     echo 'Volver a imprimir';
                                 }

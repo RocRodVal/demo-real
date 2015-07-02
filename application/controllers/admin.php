@@ -550,7 +550,7 @@ class Admin extends CI_Controller
         $n_status_sat["Cancelada"] = 9;
 
 
-        if($n_status_sat[$status] >= $n_status_sat["Comunicada"]) $resultado = FALSE;
+        if($n_status_sat[$status] == 1 || $n_status_sat[$status] >= $n_status_sat["Comunicada"]) $resultado = FALSE;
         return $resultado;
     }
 
@@ -820,6 +820,7 @@ class Admin extends CI_Controller
             }
 
             $incidencia['intervencion'] = $this->intervencion_model->get_intervencion_incidencia($id_inc);
+
             $incidencia['device'] = $this->sfid_model->get_device($incidencia['id_devices_pds']);
             $incidencia['display'] = $this->sfid_model->get_display($incidencia['id_displays_pds']);
             $data['incidencia'] = $incidencia;
@@ -880,7 +881,13 @@ class Admin extends CI_Controller
     		$data['id_pds_url'] = $id_pds;
     		$data['id_inc_url'] = $id_inc;
 
+
+
     		$incidencia = $this->tienda_model->get_incidencia($id_inc);
+
+
+
+
 
     		$historico_material_asignado = $this->tienda_model->historico_fecha($id_inc,'Material asignado');
 
@@ -935,65 +942,63 @@ class Admin extends CI_Controller
 
             if($envio_mail === "notificacion") {
 
-                $info_intervencion = $this->intervencion_model->get_info_intervencion($incidencia['intervencion']);
-                //print_r($info_intervencion);
-                $mail_operador = $info_intervencion->operador->email;
-                $mail_cc = $info_intervencion->operador->email_cc;
+                    $info_intervencion = $this->intervencion_model->get_info_intervencion($incidencia['intervencion']);
+                    $mail_operador = $info_intervencion->operador->email;
+                    $mail_cc = $info_intervencion->operador->email_cc;
 
 
-                if(!empty($mail_cc)){
-                    $a_mail_cc = explode(",",$mail_cc);
-                    foreach($a_mail_cc as $key=>$mail){
-                        $a_mail_cc[$key] = trim($mail);
+                    if (!empty($mail_cc)) {
+                        $a_mail_cc = explode(",", $mail_cc);
+                        foreach ($a_mail_cc as $key => $mail) {
+                            $a_mail_cc[$key] = trim($mail);
+                        }
+                        $mail_cc = implode(",", $a_mail_cc);
                     }
-                    $mail_cc = implode(",",$a_mail_cc);
-                }
 
 
-
-
-
-                if (empty($mail_operador)) {
-                    $data['email_sent'] = FALSE;
-                } else {
-                    /**
-                     * El asunto al ir en los headers del email, no puede pasar de 62 caracteres. Ahora hay margen pero si en el futuro el email
-                     * se ve raramente, revisad que el asunto no haya crecido más de 62 chars, en primer lugar.
-                     */
-                    $subject = "DEMOREAL / SFID " . $sfid['reference'] . " / INC " . $incidencia['id_incidencia'] . " / INT " . $incidencia['intervencion'];
-
-                    $message_operador = "Asunto: " . $subject . "\r\n\r\n";
-                    $message_operador .= "En referencia a los datos indicados en Asunto, adjunto remitimos parte para la intervención." . "\r\n";
-                    $message_operador .= "Recordamos los pasos principales del procedimiento:" . "\r\n\r\n";
-                    $message_operador .= "1) Realizar intervención dentro de las 48h siguientes a la recepción del email." . "\r\n";
-                    $message_operador .= "2) Enviar el presente parte rellenado y con la firma de la persona encargada de la tienda al email demoreal@focusonemotions.com." . "\r\n";
-                    $message_operador .= "3) Preparar en bolsa independiente todo el material sobrante y defectuoso separado por incidencia." . "\r\n";
-                    $message_operador .= "4) Enviar email con el material preparado a demoreal@focusonemotions.com." . "\r\n";
-                    $message_operador .= "Demo Real" . "\r\n";
-                    $message_operador .= "http://demoreal.focusonemotions.com/" . "\r\n\n";
-
-                    $this->email->from('demoreal@focusonemotions.com', 'Demo Real');
-                    $this->email->to($mail_operador);
-
-                    if(!empty($mail_cc)){
-                        $this->email->cc($mail_cc);
-                    }
-                    /** COMENTADO AVISO COPIA */
-                    $this->email->bcc('demoreal@focusonemotions.com');
-
-                    $this->email->subject($subject);
-                    $this->email->message($message_operador);
-
-                    $this->email->attach($attach);
-
-                    if ($this->email->send()) {
-                        $data['email_sent'] = TRUE;
-                    } else {
+                    if (empty($mail_operador)) {
                         $data['email_sent'] = FALSE;
+                    } else {
+                        /**
+                         * El asunto al ir en los headers del email, no puede pasar de 62 caracteres. Ahora hay margen pero si en el futuro el email
+                         * se ve raramente, revisad que el asunto no haya crecido más de 62 chars, en primer lugar.
+                         */
+                        $subject = "DEMOREAL / SFID " . $sfid['reference'] . " / INC " . $incidencia['id_incidencia'] . " / INT " . $incidencia['intervencion'];
+
+                        $message_operador = "Asunto: " . $subject . "\r\n\r\n";
+                        $message_operador .= "En referencia a los datos indicados en Asunto, adjunto remitimos parte para la intervención." . "\r\n";
+                        $message_operador .= "Recordamos los pasos principales del procedimiento:" . "\r\n\r\n";
+                        $message_operador .= "1) Realizar intervención dentro de las 48h siguientes a la recepción del email." . "\r\n";
+                        $message_operador .= "2) Enviar el presente parte rellenado y con la firma de la persona encargada de la tienda al email demoreal@focusonemotions.com." . "\r\n";
+                        $message_operador .= "3) Preparar en bolsa independiente todo el material sobrante y defectuoso separado por incidencia." . "\r\n";
+                        $message_operador .= "4) Enviar email con el material preparado a demoreal@focusonemotions.com." . "\r\n";
+                        $message_operador .= "Demo Real" . "\r\n";
+                        $message_operador .= "http://demoreal.focusonemotions.com/" . "\r\n\n";
+
+                        $this->email->from('demoreal@focusonemotions.com', 'Demo Real');
+                        $this->email->to($mail_operador);
+
+                        if (!empty($mail_cc)) {
+                            $this->email->cc($mail_cc);
+                        }
+                        /** COMENTADO AVISO COPIA */
+                        $this->email->bcc('demoreal@focusonemotions.com');
+
+                        $this->email->subject($subject);
+                        $this->email->message($message_operador);
+
+                        $this->email->attach($attach);
+
+                        if ($this->email->send()) {
+                            $data['email_sent'] = TRUE;
+                        } else {
+                            $data['email_sent'] = FALSE;
+                        }
+                        $this->email->clear();
                     }
-                    $this->email->clear();
-                }
-                /** FIN ENVIO DEL EMAIL al operador*/
+                    /** FIN ENVIO DEL EMAIL al operador*/
+
+
             }else{
                 $data['email_sent'] = NULL; // Descarga sin notificacion
             }
@@ -1005,6 +1010,7 @@ class Admin extends CI_Controller
             $this->load->view('backend/navbar', $data);
             $this->load->view('backend/descargar_parte', $data);
             $this->load->view('backend/footer');
+
 
 
     	} else {

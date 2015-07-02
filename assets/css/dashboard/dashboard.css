@@ -90,3 +90,20 @@ h1.page-header a{ padding:8px 10px 8px 10px; background-color: #e9e9e9; text-dec
 form.filtros{
     background:#e9e9e9;
 }
+
+
+
+form.form-mini label{ width: 100%; display: block; clear: both;}
+form.form-mini .form-group{ margin-bottom:20px; }
+#page-wrapper form.form-mini input[type="submit"]{ margin-top:10px;
+    float: left; }
+
+
+#page-wrapper form.form-mini,
+.form-mini .form-control{ font-size:11px; }
+.form-group #submit_button{ margin-top:20px;
+    float: left; }
+.form-mini a.reiniciar_busqueda{ margin-top:20px ;}
+@media (min-width: 768px) {
+
+}

@@ -8,7 +8,9 @@ class Master extends CI_Controller {
 		$this->load->database();
 		$this->load->helper(array('email','text','xcrud'));
 		$this->load->library(array('email','encrypt','form_validation','session'));
-	}
+        $this->load->library('uri');
+
+    }
 		
 	
 	public function index()
@@ -1332,25 +1334,25 @@ class Master extends CI_Controller {
 	public function inventarios_planogramas()
 	{
 		if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 9))
-		{	
+		{
 			$xcrud = xcrud_get_instance();
 			$this->load->model('tienda_model');
-		
+
 			$id_display = $this->input->post('id_display');
 			$devices    = $this->tienda_model->get_devices_display($id_display);
-		
+
 			$data['displays'] = $this->tienda_model->get_displays();
 			$data['devices']  = $devices;
-		
+
 			if ($id_display != '')
 			{
 				$display = $this->tienda_model->get_display($id_display);
 				$data['display_name'] = $display['display'];
 				$data['picture_url']  = $display['picture_url'];
 			}
-		
+
 			$data['title']   = 'Planograma mueble';
-		
+
 			$this->load->view('master/header',$data);
 			$this->load->view('master/navbar',$data);
 			$this->load->view('master/inventario_planogramas',$data);
@@ -1359,9 +1361,263 @@ class Master extends CI_Controller {
 		else
 		{
 			redirect('master','refresh');
-		}	
+		}
 	}
-		
+
+
+
+    public function informe_pdv()
+    {
+        if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 9)) {
+            $xcrud = xcrud_get_instance();
+            $this->load->model('sfid_model');
+            $this->load->model('tienda_model');
+            $this->load->model('informe_model');
+
+            $data["title"] = "Informe de Puntos de Venta";
+
+            $tipo_tienda = "";
+            $panelado = "";
+            $mueble = "";
+            $terminal = "";
+            $sfid = "";
+
+            $data["tipo_tienda"] = $tipo_tienda;
+            $data["panelado"] = $panelado;
+            $data["mueble"] = $mueble;
+            $data["terminal"] = $terminal;
+            $data["sfid"] = $sfid;
+
+
+            $campo_orden = NULL;
+            $ordenacion = NULL;
+
+            $total_registros = 0;
+            $generado = FALSE;
+
+            $resultados = array();
+
+            if ($this->input->post("generar_informe") === "si") {
+                $tipo_tienda = $this->input->post("tipo_tienda");
+                $panelado = $this->input->post("panelado");
+                $mueble = $this->input->post("mueble");
+                $terminal = $this->input->post("terminal");
+                $sfid = $this->input->post("sfid");
+
+
+                $data["tipo_tienda"] = $tipo_tienda;
+                $data["panelado"] = $panelado;
+                $data["mueble"] = $mueble;
+                $data["terminal"] = $terminal;
+                $data["sfid"] = $sfid;
+                $data["generado"] = TRUE;
+
+
+
+
+                $total_registros = $this->informe_model->get_informe_pdv_quantity($data);
+                $data["total_registros"] = $total_registros;
+
+
+                $this->session->set_userdata($data);
+                $generado = TRUE;
+            }else{
+
+                // OBTENER DE LA SESION, SI EXISTE
+                if( $this->session->userdata("generado")!==NULL  && $this->session->userdata("generado")===TRUE){
+
+
+
+                    $tipo_tienda = $this->session->userdata("tipo_tienda");
+                    $panelado = $this->session->userdata("panelado");
+                    $mueble = $this->session->userdata("mueble");
+                    $terminal = $this->session->userdata("terminal");
+                    $sfid = $this->session->userdata("sfid");
+                    $generado = $this->session->userdata("generado");
+                    $total_registros = $this->session->userdata("total_registros");
+
+                    $data["tipo_tienda"] = $tipo_tienda;
+                    $data["panelado"] = $panelado;
+                    $data["mueble"] = $mueble;
+                    $data["terminal"] = $terminal;
+                    $data["sfid"] = $sfid;
+                    $data["generado"] = TRUE;
+                    $data["total_registros"] = $total_registros;
+
+
+
+                }
+            }
+
+
+
+            $data["generado"] = $generado;
+
+
+            // Comprobar si existe el segmento PAGE en la URI, si no inicializar a 1..
+            $get_page = $this->uri->segment(3);
+
+            if($get_page==="reset"){
+                $this->session->unset_userdata("tipo_tienda");
+                $this->session->unset_userdata("panelado");
+                $this->session->unset_userdata("mueble");
+                $this->session->unset_userdata("terminal");
+                $this->session->unset_userdata("sfid");
+                $this->session->unset_userdata("generado");
+
+                redirect("master/informe_pdv","refresh");
+
+            }
+
+            if( $this->uri->segment(2) === "informe_pdv") {
+                $page = ( ! empty($get_page) ) ? $get_page : 1 ;
+                $segment = 3;
+            }else{
+                $page = 1;
+                $segment = null;
+            }
+
+            $this->load->library('app/paginationlib');
+            $per_page = 100;
+
+
+            $cfg_pagination = $this->paginationlib->init_pagination("master/informe_pdv/",$total_registros,$per_page,$segment);
+            $this->load->library('pagination',$cfg_pagination);
+            $this->pagination->initialize($cfg_pagination);
+
+            // Indicamos si habrá que mostrar el paginador en la vista
+
+            $data["pag"]  = $this->paginationlib->get_bounds($total_registros,$page,$per_page);
+
+
+            $data["pagination_helper"]   = $this->pagination;
+
+
+            if($generado) {
+                $resultados = $this->informe_model->get_informe_pdv($page,$cfg_pagination,$campo_orden,$ordenacion,$data);
+            }
+
+
+
+            $data["resultados"] = $resultados;
+
+
+            $tipos_tienda = $this->sfid_model->get_types_pds();
+            $data["tipos_tienda"] = $tipos_tienda;
+
+
+            $panelados = $this->tienda_model->get_panelados_maestros();
+            $data["panelados"] = $panelados;
+
+
+            $muebles = $this->tienda_model->get_displays();
+            $data["muebles"] = $muebles;
+
+
+            $terminales = $this->tienda_model->get_devices();
+            $data["terminales"] = $terminales;
+
+
+            $this->load->view('master/header', $data);
+            $this->load->view('master/navbar', $data);
+            $this->load->view('master/informe_puntos_venta', $data);
+            $this->load->view('master/footer');
+        }
+        else
+        {
+            redirect('master','refresh');
+        }
+    }
+
+
+
+    public function informe_pdv_exportar()
+    {
+        if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 9)) {
+            $xcrud = xcrud_get_instance();
+            $this->load->model('sfid_model');
+            $this->load->model('tienda_model');
+            $this->load->model('informe_model');
+
+            $data["title"] = "Informe de Puntos de Venta";
+
+            $tipo_tienda = "";
+            $panelado = "";
+            $mueble = "";
+            $terminal = "";
+
+
+            $campo_orden = NULL;
+            $ordenacion = NULL;
+
+            $total_registros = 0;
+            $generado = FALSE;
+
+            $resultados = array();
+
+            if ($this->input->post("generar_informe") === "si") {
+                $tipo_tienda = $this->input->post("tipo_tienda");
+                $panelado = $this->input->post("panelado");
+                $mueble = $this->input->post("mueble");
+                $terminal = $this->input->post("terminal");
+                $sfid = $this->input->post("sfid");
+
+
+                $data["tipo_tienda"] = $tipo_tienda;
+                $data["panelado"] = $panelado;
+                $data["mueble"] = $mueble;
+                $data["terminal"] = $terminal;
+                $data["sfid"] = $sfid;
+                $data["generado"] = TRUE;
+
+
+
+
+                $total_registros = $this->informe_model->get_informe_pdv_quantity($data);
+                $data["total_registros"] = $total_registros;
+
+
+                $this->session->set_userdata($data);
+                $generado = TRUE;
+            }else{
+
+                // OBTENER DE LA SESION, SI EXISTE
+                if( $this->session->userdata("generado")!==NULL  && $this->session->userdata("generado")===TRUE){
+
+
+
+                    $tipo_tienda = $this->session->userdata("tipo_tienda");
+                    $panelado = $this->session->userdata("panelado");
+                    $mueble = $this->session->userdata("mueble");
+                    $terminal = $this->session->userdata("terminal");
+                    $sfid = $this->session->userdata("sfid");
+                    $generado = $this->session->userdata("generado");
+                    $total_registros = $this->session->userdata("total_registros");
+
+                    $data["tipo_tienda"] = $tipo_tienda;
+                    $data["panelado"] = $panelado;
+                    $data["mueble"] = $mueble;
+                    $data["terminal"] = $terminal;
+                    $data["sfid"] = $sfid;
+                    $data["generado"] = TRUE;
+                    $data["total_registros"] = $total_registros;
+
+
+
+                }
+            }
+
+
+
+            $data["generado"] = $generado;
+
+            $this->informe_model->get_informe_csv($campo_orden,$ordenacion,$data);
+        }
+        else
+        {
+            redirect('master','refresh');
+        }
+    }
 	
 	public function ayuda($tipo)
 	{

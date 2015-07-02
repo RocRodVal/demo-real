@@ -8,7 +8,9 @@ class Tienda extends CI_Controller {
 		$this->load->database();
 		$this->load->helper(array('email','text','xcrud'));
 		$this->load->library(array('email','encrypt','form_validation','session'));
-	}
+        $this->load->library('uri');
+
+    }
 	
 	
 	public function index()
