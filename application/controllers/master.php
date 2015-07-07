@@ -129,14 +129,15 @@ class Master extends CI_Controller {
 
             $sfid = $this->tienda_model->get_pds($data['id_pds']);
 
-            $data['id_pds']     = $sfid['id_pds'];
-            $data['commercial'] = $sfid['commercial'];
-            $data['territory']  = $sfid['territory'];
-            $data['reference']  = $sfid['reference'];
-            $data['address']    = $sfid['address'];
-            $data['zip']        = $sfid['zip'];
-            $data['city']       = $sfid['city'];
-
+            if(!empty($sfid)){
+                $data['id_pds']     = $sfid['id_pds'];
+                $data['commercial'] = $sfid['commercial'];
+                $data['territory']  = $sfid['territory'];
+                $data['reference']  = $sfid['reference'];
+                $data['address']    = $sfid['address'];
+                $data['zip']        = $sfid['zip'];
+                $data['city']       = $sfid['city'];
+            }
 
             // Comprobar si existe el segmento PAGE en la URI, si no inicializar a 1..
             $get_page = $this->uri->segment(4);
@@ -1405,6 +1406,10 @@ class Master extends CI_Controller {
                 $sfid = $this->input->post("sfid");
 
 
+               if(empty($tipo_tienda)&&empty($panelado)&&empty($mueble)&&empty($terminal)&&empty($sfid)){
+                   redirect(base_url()."master/informe_pdv");
+               }
+
                 $data["tipo_tienda"] = $tipo_tienda;
                 $data["panelado"] = $panelado;
                 $data["mueble"] = $mueble;
@@ -1426,8 +1431,6 @@ class Master extends CI_Controller {
                 // OBTENER DE LA SESION, SI EXISTE
                 if( $this->session->userdata("generado")!==NULL  && $this->session->userdata("generado")===TRUE){
 
-
-
                     $tipo_tienda = $this->session->userdata("tipo_tienda");
                     $panelado = $this->session->userdata("panelado");
                     $mueble = $this->session->userdata("mueble");
@@ -1443,8 +1446,6 @@ class Master extends CI_Controller {
                     $data["sfid"] = $sfid;
                     $data["generado"] = TRUE;
                     $data["total_registros"] = $total_registros;
-
-
 
                 }
             }
@@ -1502,19 +1503,19 @@ class Master extends CI_Controller {
             $data["resultados"] = $resultados;
 
 
-            $tipos_tienda = $this->sfid_model->get_types_pds();
+            $tipos_tienda = $this->sfid_model->get_types_pds_demoreal();
             $data["tipos_tienda"] = $tipos_tienda;
 
 
-            $panelados = $this->tienda_model->get_panelados_maestros();
+            $panelados = $this->tienda_model->get_panelados_maestros_demoreal();
             $data["panelados"] = $panelados;
 
 
-            $muebles = $this->tienda_model->get_displays();
+            $muebles = $this->tienda_model->get_displays_demoreal();
             $data["muebles"] = $muebles;
 
 
-            $terminales = $this->tienda_model->get_devices();
+            $terminales = $this->tienda_model->get_devices_demoreal();
             $data["terminales"] = $terminales;
 
 
@@ -1618,6 +1619,373 @@ class Master extends CI_Controller {
             redirect('master','refresh');
         }
     }
+
+    /**
+     * Punto de entrada del Informe sobre planogramas.
+     * Mostrará la vista principal con el formulario de filtrado, y recogerá los datos enviados y los procesará
+     * como corresponda.
+     */
+    public function informe_planogramas()
+    {
+        if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 9)) {
+
+            /* Incluir los modelos */
+            $xcrud = xcrud_get_instance();
+            $this->load->model('sfid_model');
+            $this->load->model('tienda_model');
+            $this->load->model('informe_model');
+
+            $mueble = "";
+            $sfid = "";
+            $generado_planograma = "";
+
+            $data["mueble"] = $mueble;
+            $data["sfid"] = $sfid;
+            $data["generado_planograma"] = FALSE;
+
+
+            $data["title"] = "Informe de Planogramas";
+
+            $vista = 0;
+
+            if ($this->input->post("generar_informe") === "si") {
+                $mueble = $this->input->post("mueble");
+                $sfid = $this->input->post("sfid");
+                $data["mueble"] = $mueble;
+                $data["sfid"] = $sfid;
+                $data["generado_planograma"] = TRUE;
+            } else {
+                // OBTENER DE LA SESION, SI EXISTE
+                if ($this->session->userdata("generado_planograma") !== NULL && $this->session->userdata("generado_planograma") === TRUE) {
+                    $mueble = $this->session->userdata("mueble");
+                    $sfid = $this->session->userdata("sfid");
+                    $generado_planograma = $this->session->userdata("generado_planograma");
+
+                    $data["mueble"] = $mueble;
+                    $data["sfid"] = $sfid;
+                    $data["generado_planograma"] = TRUE;
+
+                }
+            }
+
+
+            if (empty($mueble) && empty($sfid)) {
+                // Debe escoger algun valor, form vacio
+
+                $vista = 0;
+
+            } else {
+                if (!empty($mueble) && !empty($sfid)) {
+                    //Mostrar planograma del mueble en el SFID indicado
+                    $tiendas = $this->tienda_model->search_pds($sfid);
+
+
+                    if (!empty($tiendas) && count($tiendas) == 1) {
+
+                        $tienda = NULL;
+                        foreach ($tiendas as $tienda_1) {
+                            $tienda = $tienda_1;
+                        }
+
+
+                        $id_pds = $tienda->id_pds;
+
+                        $sfid = $this->tienda_model->get_pds($id_pds);
+                        $data['id_pds']     = 'ABX/PDS-'.$sfid['id_pds'];
+                        $data['commercial'] = $sfid['commercial'];
+                        $data['territory']  = $sfid['territory'];
+                        $data['reference']  = $sfid['reference'];
+                        $data['address']    = $sfid['address'];
+                        $data['zip']        = $sfid['zip'];
+                        $data['city']       = $sfid['city'];
+                        $data['id_pds_url'] = $id_pds;
+
+
+                        $arr_displays_pds = $this->sfid_model->get_id_displays_pds($id_pds,$mueble);
+
+                        $displays = array();
+                        $data['display'] = "";
+
+                        $display_maestro = $this->tienda_model->get_display($mueble);
+                        $data['display'] = " - " .$display_maestro["display"];
+                        $data['picture_url'] = $display_maestro["picture_url"];
+
+                        if(!empty($arr_displays_pds)) {
+                            $id_displays_pds = $arr_displays_pds[0]->id_displays_pds;
+
+                            $displays = $this->sfid_model->get_devices_displays_pds($id_displays_pds);
+                            $data["id_dis_url"] = $id_displays_pds;
+
+                            foreach ($displays as $key => $display) {
+                                $num_devices = $this->tienda_model->count_devices_display($display->id_display);
+                                $display->devices_count = $num_devices;
+                            }
+
+                            $devices = $this->sfid_model->get_devices_displays_pds($id_displays_pds);
+                            $data['devices'] = $devices;
+                            $data['displays'] = $displays;
+
+                        }
+
+
+                    }
+
+
+
+                    $data['subtitle'] = 'Planograma tienda: SFID-' . $sfid["reference"] . '  '.$data['display'];
+                    $vista = 1;
+
+                } else {
+                    if (!empty($mueble)) {
+                        //Mostrar planograma genérico (maestro) del mueble
+                        $devices = $this->tienda_model->get_devices_display($mueble);
+                        $data['displays'] = $this->tienda_model->get_displays();
+                        $data['devices'] = $devices;
+
+                        if (!empty($mueble)) {
+                            $display = $this->tienda_model->get_display($mueble);
+                            $data['display_name'] = $display['display'];
+                            $data['picture_url'] = $display['picture_url'];
+
+                        }
+
+                        $data['subtitle'] = 'Planograma mueble: ' . $display['display'];
+                        $vista = 2;
+
+                    } else {
+                        //Mostrar planograma tienda.
+
+                        $tiendas = $this->tienda_model->search_pds($sfid);
+
+
+                        if (!empty($tiendas) && count($tiendas) == 1) {
+
+                            $tienda = NULL;
+                            foreach ($tiendas as $tienda_1) {
+                                $tienda = $tienda_1;
+                            }
+
+
+                            $id_pds = $tienda->id_pds;
+
+                            $sfid = $this->tienda_model->get_pds($id_pds);
+
+                            $data['id_pds'] = 'ABX/PDS-' . $sfid['id_pds'];
+                            $data['commercial'] = $sfid['commercial'];
+                            $data['territory'] = $sfid['territory'];
+                            $data['reference'] = $sfid['reference'];
+                            $data['address'] = $sfid['address'];
+                            $data['zip'] = $sfid['zip'];
+                            $data['city'] = $sfid['city'];
+                            $data['id_pds_url'] = $id_pds;
+
+                            $displays = $this->sfid_model->get_displays_pds($id_pds);
+
+                            foreach ($displays as $key => $display) {
+                                $num_devices = $this->tienda_model->count_devices_display($display->id_display);
+                                $display->devices_count = $num_devices;
+                            }
+
+                            $data['displays'] = $displays;
+                        }
+                        $data['subtitle'] = 'Planograma tienda: SFID-' . $data['reference'] . '';
+                        $vista = 3;
+                    }
+                }
+            }
+
+
+            $this->session->set_userdata($data);
+
+
+
+
+        $data["generado_planograma"] = $generado_planograma;
+
+
+        // Comprobar si existe el segmento PAGE en la URI, si no inicializar a 1..
+        $get_page = $this->uri->segment(3);
+
+        if ($get_page === "reset") {
+            $this->session->unset_userdata("mueble");
+            $this->session->unset_userdata("sfid");
+            $this->session->unset_userdata("generado_planograma");
+
+            redirect("master/informe_planogramas", "refresh");
+
+        }
+
+
+        /* Obtener los tipos de tienda para el select */
+        $muebles = $this->tienda_model->get_displays_demoreal();
+        $data["muebles"] = $muebles;
+
+        $data["vista"] = $vista;
+
+
+        /* Pasar a la vista */
+        $this->load->view('master/header', $data);
+        $this->load->view('master/navbar', $data);
+        $this->load->view('master/informe_planograma_form', $data);
+
+        switch ($vista) {
+            case 1:
+                $this->load->view('master/informe_planograma_mueble_sfid',$data);
+                break;
+            case 2:
+                $this->load->view('master/informe_planograma_mueble', $data);
+                break;
+            case 3:
+                $this->load->view('master/informe_planograma_sfid', $data);
+                break;
+            default:
+                $this->load->view('master/informe_planograma', $data);
+
+        }
+
+        $this->load->view('master/footer');
+    }
+        else
+        {
+            redirect('master','refresh');
+        }
+    }
+
+
+
+    public function informe_planograma_mueble_pds(){
+        if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 9))
+        {
+            $id_pds   = $this->uri->segment(3);
+            $id_dis   = $this->uri->segment(4);
+
+            $xcrud = xcrud_get_instance();
+            $this->load->model('tienda_model');
+            $this->load->model('sfid_model');
+
+            $sfid = $this->tienda_model->get_pds($id_pds);
+
+            $data['id_pds']     = 'ABX/PDS-'.$sfid['id_pds'];
+            $data['commercial'] = $sfid['commercial'];
+            $data['territory']  = $sfid['territory'];
+            $data['reference']  = $sfid['reference'];
+            $data['address']    = $sfid['address'];
+            $data['zip']        = $sfid['zip'];
+            $data['city']       = $sfid['city'];
+
+            $display = $this->sfid_model->get_display($this->uri->segment(4));
+
+            $data['id_display']  = $display['id_display'];
+            $data['display']     = $display['display'];
+            $data['picture_url'] = $display['picture_url'];
+
+            $data['devices'] = $this->sfid_model->get_devices_displays_pds($id_dis);
+
+            $data['id_pds_url']  = $id_pds;
+            $data['id_dis_url']  = $id_dis;
+
+            // OBTENER DE LA SESION, SI EXISTE
+            if ($this->session->userdata("generado_planograma") !== NULL && $this->session->userdata("generado_planograma") === TRUE) {
+                $mueble = $this->session->userdata("mueble");
+                $sfid = $this->session->userdata("sfid");
+                $generado_planograma = $this->session->userdata("generado_planograma");
+
+                $data["mueble"] = $mueble;
+                $data["sfid"] = $sfid;
+                $data["generado_planograma"] = TRUE;
+
+            }
+
+            $data["muebles"] = $this->tienda_model->get_displays_demoreal();
+            $data['title'] = 'Planograma tienda';
+            $data['subtitle'] = 'Planograma tienda [SFID-'.$data['reference'].'] - '.$data['display'];
+
+            $this->load->view('master/header',$data);
+            $this->load->view('master/navbar',$data);
+            $this->load->view('master/informe_planograma_form',$data);
+            $this->load->view('master/informe_planograma_ficha_mueble',$data);
+            $this->load->view('master/footer');
+        }
+        else
+        {
+            redirect('master','refresh');
+        }
+
+    }
+
+
+    public function informe_planograma_terminal(){
+        if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 9))
+        {
+        $id_pds   = $this->uri->segment(3);
+        $id_dis   = $this->uri->segment(4);
+        $id_dev   = $this->uri->segment(5);
+
+        $xcrud = xcrud_get_instance();
+        $this->load->model('tienda_model');
+        $this->load->model('sfid_model');
+
+        $sfid = $this->tienda_model->get_pds($id_pds);
+
+        $data['id_pds']     = 'ABX/PDS-'.$sfid['id_pds'];
+        $data['commercial'] = $sfid['commercial'];
+        $data['territory']  = $sfid['territory'];
+        $data['reference']  = $sfid['reference'];
+        $data['address']    = $sfid['address'];
+        $data['zip']        = $sfid['zip'];
+        $data['city']       = $sfid['city'];
+
+        $display = $this->sfid_model->get_display($this->uri->segment(4));
+
+        $data['id_display']      = $display['id_display'];
+        $data['display']         = $display['display'];
+        $data['picture_url_dis'] = $display['picture_url'];
+
+
+        $device = $this->sfid_model->get_device($this->uri->segment(5));
+
+        $data['id_device']      		  = $device['id_device'];
+        $data['device']        		 	  = $device['device'];
+        $data['brand_name']   			  = $device['brand_name'];
+        $data['IMEI']          		 	  = $device['IMEI'];
+        $data['mac']            		  = $device['mac'];
+        $data['serial']          		  = $device['serial'];
+        $data['barcode']                  = $device['barcode'];
+        $data['description']    	      = $device['description'];
+        $data['owner']          		  = $device['owner'];
+        $data['picture_url_dev'] 		  = $device['picture_url'];
+
+        $data['id_pds_url']  = $id_pds;
+        $data['id_dis_url']  = $id_dis;
+        $data['id_dev_url']  = $id_dev;
+
+            // OBTENER DE LA SESION, SI EXISTE
+            if ($this->session->userdata("generado_planograma") !== NULL && $this->session->userdata("generado_planograma") === TRUE) {
+                $mueble = $this->session->userdata("mueble");
+                $sfid = $this->session->userdata("sfid");
+                $generado_planograma = $this->session->userdata("generado_planograma");
+
+                $data["mueble"] = $mueble;
+                $data["sfid"] = $sfid;
+                $data["generado_planograma"] = TRUE;
+
+            }
+
+        $data["muebles"] = $this->tienda_model->get_displays_demoreal();
+        $data['title'] = 'Planograma tienda [SFID-'.$data['reference'].']';
+        $data['subtitle'] = $data["display"] .' - '. $data["device"];
+
+        $this->load->view('master/header',$data);
+        $this->load->view('master/navbar',$data);
+        $this->load->view('master/informe_planograma_form',$data);
+        $this->load->view('master/informe_planograma_ficha_terminal',$data);
+        $this->load->view('master/footer');
+        }
+        else
+        {
+            redirect('master','refresh');
+        }
+}
 	
 	public function ayuda($tipo)
 	{

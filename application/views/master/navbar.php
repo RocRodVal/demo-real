@@ -85,12 +85,21 @@
                         *
                         */
                         ?>
-                        <?php $inf = array('informes','informe_pdv','informe_planogramas','informe_visual'); ?>
+                        <?php $inf = array('informes',
+                                                'informe_pdv',
+                                                'informe_planogramas',
+                                                    'informe_planograma_mueble_pds',
+                                                    'informe_planograma_terminal',
+                                                'informe_visual'); ?>
+
                         <li <?=(in_array($this->uri->segment(2), $inf))?'class="active"':''?>>
                             <a href="#"><i class="fa fa-sitemap fa-file"></i> Informes <span class="fa arrow"></span></a>
                             <ul class="nav nav-second-level">
                                 <li><a <?=($this->uri->segment(2)==='informe_pdv')?'class="active"':''?> href="<?=site_url('master/informe_pdv')?>"> Puntos de Venta &raquo;</a></li>
-                                <li><a <?=($this->uri->segment(2)==='informe_planogramas')?'class="active"':''?> href="<?=site_url('master/informe_planogramas')?>"> Planogramas &raquo;</a></li>
+                                <li><a <?=(in_array($this->uri->segment(2),
+                                        array( 'informe_planogramas',
+                                        'informe_planograma_mueble_pds',
+                                        'informe_planograma_terminal')))?'class="active"':''?> href="<?=site_url('master/informe_planogramas')?>"> Planogramas &raquo;</a></li>
                                 <li><a <?=($this->uri->segment(2)==='informe_visual')?'class="active"':''?> href="<?=site_url('master/informe_visual')?>"> Visual &raquo;</a></li>
                             </ul>
                         </li>

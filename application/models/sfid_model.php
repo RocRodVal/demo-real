@@ -134,7 +134,27 @@ class Sfid_model extends CI_Model {
 		{
 			return FALSE;
 		}
-	}	
+	}
+
+    public function get_id_displays_pds($id_pds=FALSE,$id_display=FALSE)
+    {
+        if($id_pds != FALSE && $id_display != FALSE)
+        {
+            $query = $this->db->select('displays_pds.id_displays_pds')
+                ->join('display','displays_pds.id_display = display.id_display')
+                ->where('displays_pds.id_pds',$id_pds)
+                ->where('displays_pds.id_display',$id_display)
+                ->where('displays_pds.status = "Alta"')
+                ->order_by('displays_pds.position')
+                ->get('displays_pds');
+
+            return $query->result();
+        }
+        else
+        {
+            return FALSE;
+        }
+    }
 	
 	
 	public function get_devices_displays_pds($id_displays_pds)
@@ -176,6 +196,37 @@ class Sfid_model extends CI_Model {
                 ->where("client_type_pds",1)
                 ->where("status","Alta")
                 ->get("type_pds");
+
+        return $query->result();
+
+    }
+
+
+    /*
+     * Devuelve los tipos de tiendas que tienen demoreal
+     */
+
+    public function get_types_pds_demoreal()
+    {
+
+
+        $panelados = $this->tienda_model->get_panelados_maestros_demoreal();
+        $arr_panelados_id = array();
+        foreach($panelados as $panel){
+            $arr_panelados_id[] = $panel->id_panelado;
+        }
+        $s_panelados = implode(",",$arr_panelados_id);
+
+
+        $query = $this->db->query("SELECT distinct(id_type_pds),pds
+                                    FROM type_pds type
+                                    LEFT joIN pds ON  pds.type_pds = type.id_type_pds
+
+
+                                    WHERE   client_type_pds = 1
+                                            AND pds.panelado_pds IN ($s_panelados)
+                                            AND type.status= 'Alta'
+                                    ORDER BY pds ASC");
 
         return $query->result();
 

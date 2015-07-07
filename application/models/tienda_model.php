@@ -516,10 +516,53 @@ class Tienda_model extends CI_Model {
 		->get('display');
 	
 		return $query->result();
-	}	
-	
-	
-	public function get_devices_pds($id) {
+	}
+
+
+    public function get_displays_demoreal() {
+        $query = $this->db->query('
+                    SELECT *
+                    FROM display d
+                    WHERE (
+                      SELECT COUNT(id_devices_pds) FROM devices_pds p
+                      WHERE p.id_display = d.id_display
+                      AND p.status = "Alta"
+                    ) >= 1 ORDER BY display');
+
+
+        return $query->result();
+    }
+
+    public function get_devices_demoreal() {
+        $query = $this->db->query('
+                    SELECT *
+                    FROM device d
+                    WHERE (
+                      SELECT COUNT(id_devices_pds) FROM devices_pds p
+                      WHERE p.id_device = d.id_device
+                      AND p.status = "Alta"
+                    ) >= 1 ORDER BY device');
+
+
+        return $query->result();
+    }
+
+    public function get_panelados_maestros_demoreal() {
+        $query = $this->db->query('SELECT * FROM panelado
+  WHERE id_panelado IN(
+            SELECT DISTINCT(panel.id_panelado)
+                    FROM display d
+                    INNER JOIN displays_pds panel ON d.id_display = panel.id_display
+                    WHERE (
+                      SELECT COUNT(id_devices_pds) FROM devices_pds p
+                      WHERE p.id_display = d.id_display
+                      AND p.status = "Alta"
+                    ) >= 1 ORDER BY panelado ASC);');
+
+        return $query->result();
+    }
+
+    public function get_devices_pds($id) {
 
 		if($id != FALSE) {
 			$query = $this->db->select('devices_pds.*,device.*, COUNT(devices_pds.id_device) AS unidades')
