@@ -66,56 +66,65 @@ class Tienda_model extends CI_Model {
 	
 	
 	public function baja_dispositivos_almacen_update($id_device,$owner,$units)
-	{
-        $contar = $this->db->query("SELECT COUNT(id_device) as contador FROM devices_almacen WHERE id_device=$id_device AND owner='$owner' AND status = 1")->result()[0];
-
-        if($contar->contador > 0) {
+{
+    $contar = $this->db->query("SELECT COUNT(id_device) as contador FROM devices_almacen WHERE id_device=$id_device AND owner='$owner' AND status = 1")->result()[0];
 
 
-            $this->db->select("id_devices_almacen,id_device");
-            $this->db->where("id_device",$id_device);
-            $this->db->where('id_device', $id_device);
-            $this->db->where('owner', $owner);
-            $this->db->limit($units);
-            $dispositivos_a_borrar = $this->db->get("devices_almacen")->result();
-            $total_baja =  $this->db->affected_rows();
+    if($contar->contador > 0) {
 
-            // Recorremos los dispositivos a borrar.
-            foreach($dispositivos_a_borrar as $dispositivo_baja){
-                $id_device = $dispositivo_baja->id_device;
-                $id_devices_almacen = $dispositivo_baja->id_devices_almacen;
+        $units = ($units > $contar->contador) ? $contar->contador : $units;
 
-                // Borrado lógico del dispositivo.
-                $this->db->set('status', 4, FALSE);
-                $this->db->where('id_devices_almacen', $id_device);
-                $this->db->update('devices_almacen');
+        $this->db->select("id_devices_almacen,id_device");
+        $this->db->where("id_device",$id_device);
+        $this->db->where('owner', $owner);
+        $this->db->where('status', 1);
+        $this->db->limit($units);
+        $dispositivos_a_borrar = $this->db->get("devices_almacen")->result();
+        $total_baja =  $this->db->affected_rows();
 
-                // Insertar operación de baja en el histórico
-                $data = array(
-                    'id_material_incidencia' => NULL,
-                    'id_devices_almacen' => NULL,
-                    'id_devices_almacen_new' => $id_devices_almacen,
-                    'id_alarm' => NULL,
-                    'id_device'=>$id_device,
-                    'id_incidencia' => NULL,
-                    'id_cliente' => NULL,
-                    'fecha' => date('Y-m-d H:i:s'),
-                    'cantidad' => (1), // En positivo porque luego la función lo pasará a negativo
-                    'procesado' => 1
-                );
-                $this->alta_historico_IO($data,NULL);
 
-            }
+        $cont = 0;
+        // Recorremos los dispositivos a borrar.
+        foreach($dispositivos_a_borrar as $dispositivo_baja){
+            $id_device = $dispositivo_baja->id_device;
+            $id_devices_almacen = $dispositivo_baja->id_devices_almacen;
 
-           return $total_baja;
+            // Borrado lógico del dispositivo.
+            $this->db->set('status', 4, FALSE);
+            $this->db->where('id_devices_almacen', $id_devices_almacen);
+            $this->db->update('devices_almacen');
 
-        }else{
-            return -1;
+            // Insertar operación de baja en el histórico
+            $data = array(
+                'id_material_incidencia' => NULL,
+                'id_devices_almacen' => NULL,
+                'id_devices_almacen_new' => $id_devices_almacen,
+                'id_alarm' => NULL,
+                'id_device'=>$id_device,
+                'id_incidencia' => NULL,
+                'id_cliente' => NULL,
+                'fecha' => date('Y-m-d H:i:s'),
+                'cantidad' => (1), // En positivo porque luego la función lo pasará a negativo
+                'procesado' => 1
+            );
+            $this->alta_historico_IO($data,NULL);
+            $cont++;
         }
 
 
-	}
-		
+
+
+        return $total_baja;
+
+    }else{
+        return -1;
+    }
+
+
+}
+
+
+
 	
 	public function borrar_alarmas($id_alarm,$units)
 	{
@@ -293,6 +302,8 @@ class Tienda_model extends CI_Model {
 
 	
 	public function search_pds($id) {
+
+
 		if($id != FALSE) {
 			$query = $this->db->select('pds.*,type_pds.pds,panelado.panelado,territory.territory')
 				   ->join('type_pds','pds.type_pds = type_pds.id_type_pds')
@@ -300,7 +311,7 @@ class Tienda_model extends CI_Model {
 				   ->join('territory','pds.territory = territory.id_territory')
 				   ->like('pds.reference',$id)
 			       ->get('pds');
-	
+
 			return $query->result();
 		}
 		else {
@@ -360,9 +371,18 @@ class Tienda_model extends CI_Model {
 			   ->get('panelado');
 	
 		return $query->result();
-	}	
-	
-	public function get_displays_panelado_maestros($id_panelado) {
+	}
+
+    public function get_panelado_maestro($id) {
+        $query = $this->db->select('id_panelado,panelado,panelado_abx')
+            ->where("id_panelado",$id)
+            ->order_by('panelado_abx')
+            ->get('panelado');
+
+        return $query->result()[0];
+    }
+
+    public function get_displays_panelado_maestros($id_panelado) {
 		if($id_panelado != FALSE) {
 			$query = $this->db->select('displays_panelado.*,display.*')
 			->join('display','displays_panelado.id_display = display.id_display')
@@ -440,7 +460,7 @@ class Tienda_model extends CI_Model {
 		$this->load->helper('file');
 		$this->load->helper('download');
 		
-		$query = $this->db->select('facturacion.fecha, pds.reference AS SFID, type_pds.pds, facturacion.id_intervencion AS visita, COUNT(facturacion.id_incidencia) AS incidencias, contact.contact AS instalador, client.client AS dueno, SUM(facturacion.units_device) AS dispositivos, SUM(facturacion.units_alarma) AS otros')
+		$query = $this->db->select('facturacion.fecha, MONTH(facturacion.fecha) as mes, pds.reference AS SFID, type_pds.pds, facturacion.id_intervencion AS visita, COUNT(facturacion.id_incidencia) AS incidencias, contact.contact AS instalador, client.client AS dueno, SUM(facturacion.units_device) AS dispositivos, SUM(facturacion.units_alarma) AS otros')
 		->join('pds','facturacion.id_pds = pds.id_pds')
 		->join('type_pds','pds.type_pds = type_pds.id_type_pds')
 		->join('displays_pds','facturacion.id_displays_pds = displays_pds.id_displays_pds')
@@ -547,17 +567,30 @@ class Tienda_model extends CI_Model {
         return $query->result();
     }
 
-    public function get_panelados_maestros_demoreal() {
-        $query = $this->db->query('SELECT * FROM panelado
-  WHERE id_panelado IN(
-            SELECT DISTINCT(panel.id_panelado)
-                    FROM display d
-                    INNER JOIN displays_pds panel ON d.id_display = panel.id_display
-                    WHERE (
-                      SELECT COUNT(id_devices_pds) FROM devices_pds p
-                      WHERE p.id_display = d.id_display
-                      AND p.status = "Alta"
-                    ) >= 1 ORDER BY panelado ASC);');
+    public function get_panelados_maestros_demoreal($tipo=NULL) {
+
+            $sql = 'SELECT * FROM panelado
+                         WHERE 1= 1 '
+                         ;
+                        if(!is_null($tipo)) {
+                            $sql .= ' AND type_pds = ' . $tipo;
+                            $sql .=  ' ORDER BY panelado ASC' ;
+                        }else{
+
+                            $sql .= 'AND id_panelado IN(
+                                 SELECT DISTINCT(panel.id_panelado)
+                                FROM display d
+                                INNER JOIN displays_pds panel ON d.id_display = panel.id_display
+                                WHERE (
+                                  SELECT COUNT(id_devices_pds) FROM devices_pds p
+                                  WHERE p.id_display = d.id_display
+                                  AND p.status = "Alta"
+                                ) >= 1  ORDER BY panelado ASC);';
+
+                        }
+
+
+        $query = $this->db->query($sql);
 
         return $query->result();
     }
@@ -768,12 +801,20 @@ class Tienda_model extends CI_Model {
 	
 	public function get_pds($id) {
 		if($id != FALSE) {
-			$query = $this->db->select('pds.*,type_pds.pds, province.province, territory.territory')
+			$query = $this->db->select('pds.*,type_pds.pds as pds, province.province, territory.territory')
 			->join('type_pds','pds.type_pds = type_pds.id_type_pds')
 			->join('province','pds.province = province.id_province')
 			->join('territory','pds.territory = territory.id_territory')
 			->where('pds.id_pds',$id)
 			->get('pds');
+
+			/*$query = $this->db->query("
+            SELECT pds.*,type_pds.pds as pds, province.province, territory.territory
+                FROM pds
+                LEFT JOIN  type_pds ON pds.type_pds = type_pds.id_type_pds
+                LEFT JOIN  province ON pds.province = province.id_province
+                LEFT JOIN  territory ON pds.territory = territory.id_territory
+                WHERE pds.id_pds=$id");*/
 	
 			return $query->row_array();
 		}

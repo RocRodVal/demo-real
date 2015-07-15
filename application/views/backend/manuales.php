@@ -10,7 +10,8 @@
             <div class="row">
                 <div class="col-lg-12">
                     <a href="<?php echo base_url(); ?>assets/manuales/manual_incidencia_de_alarmado_iphone.pdf" target="_blank">Manual incidencia de alarmado iPhone</a><br />
-                    <a href="<?php echo base_url(); ?>assets/manuales/manual_desactivacion_alarma_tablet_lg_gpad_8_0.pdf" target="_blank">Manual desactivación alarma Tablet LG GPAD 8.0</a>
+                    <a href="<?php echo base_url(); ?>assets/manuales/manual_desactivacion_alarma_tablet_lg_gpad_8_0.pdf" target="_blank">Manual desactivación alarma Tablet LG GPAD 8.0</a><br />
+                    <a href="<?php echo base_url(); ?>assets/manuales/manual_sustitucion_cable_carga-iphone_tablets.pdf" target="_blank">Manual sustitución cable de carga iPhone y Tablets</a><br />
                 </div>
             </div>
         </div>

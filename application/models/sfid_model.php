@@ -161,7 +161,7 @@ class Sfid_model extends CI_Model {
 	{
 		if($id_displays_pds != FALSE) 
 		{
-			$query = $this->db->select('devices_pds.*,devices_pds.status as estado, device.*')
+			$query = $this->db->select('devices_pds.*,devices_pds.status as estado, device.*, devices_pds.id_devices_pds')
 				->join('device','devices_pds.id_device = device.id_device')
 				->where('devices_pds.id_displays_pds',$id_displays_pds)
 				->where('devices_pds.status != "SAT"')
@@ -201,6 +201,21 @@ class Sfid_model extends CI_Model {
 
     }
 
+    /*
+     * Devuelve el tipo $id de tienda
+     */
+
+    public function get_type_pds($id)
+    {
+        $query = $this->db->select("id_type_pds, pds")
+            ->where("client_type_pds",1)
+            ->where("id_type_pds",$id)
+            ->where("status","Alta")
+            ->get("type_pds");
+
+        return $query->result()[0];
+
+    }
 
     /*
      * Devuelve los tipos de tiendas que tienen demoreal
@@ -220,9 +235,7 @@ class Sfid_model extends CI_Model {
 
         $query = $this->db->query("SELECT distinct(id_type_pds),pds
                                     FROM type_pds type
-                                    LEFT joIN pds ON  pds.type_pds = type.id_type_pds
-
-
+                                    LEFT JOIN pds ON  pds.type_pds = type.id_type_pds
                                     WHERE   client_type_pds = 1
                                             AND pds.panelado_pds IN ($s_panelados)
                                             AND type.status= 'Alta'

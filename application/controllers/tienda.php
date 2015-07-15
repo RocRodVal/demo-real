@@ -76,14 +76,17 @@ class Tienda extends CI_Controller {
             $data['id_pds'] = $this->session->userdata('id_pds');
             $data['sfid'] = $this->session->userdata('sfid');
 
+
+
             $xcrud = xcrud_get_instance();
 
 
             $this->load->model(array('intervencion_model', 'tienda_model', 'sfid_model','chat_model'));
 
-            $data['tiendas'] = $this->tienda_model->search_pds($this->input->post('sfid'));
+            $data['tiendas'] = $this->tienda_model->search_pds($data['sfid']);
 
             $sfid = $this->tienda_model->get_pds($data['id_pds']);
+
 
             $data['id_pds']     = $sfid['id_pds'];
             $data['commercial'] = $sfid['commercial'];
@@ -1165,6 +1168,18 @@ class Tienda extends CI_Controller {
 		}	
 		redirect('tienda','refresh');
 	}
+
+
+    public function mantenimiento()
+    {
+
+        $data['bg_image'] = "bg-tienda.jpg";
+        $data['title'] = 'Parada por mantenimiento';
+
+        $this->load->view('backend/header', $data);
+        $this->load->view('common/mantenimiento', $data);
+        $this->load->view('backend/footer');
+    }
 			
 }
 /* End of file admin.php */

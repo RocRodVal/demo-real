@@ -29,39 +29,105 @@ class Informe_model extends CI_Model
             return NULL;
         }
 
-        $sql = "SELECT pds.reference as sfid,
-                       type_pds.pds as tipo_tienda,
-                       type_pds.id_type_pds as id_type_pds,
-                       panelado.panelado as panelado,
-                       panelado.id_panelado as id_panelado,
-                       devices_pds.id_displays_pds as id_displays_pds,
-                       display.display as mueble,
-                       device.device as terminal,
-                       devices_pds.position as position
-                FROM pds
-                LEFT JOIN type_pds 		ON pds.type_pds 			= type_pds.id_type_pds
-                LEFT JOIN panelado 		ON panelado.id_panelado 	= pds.panelado_pds
-                LEFT JOIN devices_pds 	ON devices_pds.id_pds 		= pds.id_pds
-                LEFT JOIN display 		ON devices_pds.id_display 	= display.id_display
-                LEFT JOIN device 		ON devices_pds.id_device 	= device.id_device
-                LEFT JOIN displays_panelado ON devices_pds.id_display = displays_panelado.id_display
-                WHERE 1=1 AND devices_pds.status = 'Alta'
-                ";
 
-        if(!is_null($tipo_tienda)) $sql .= (" AND pds.type_pds ='$tipo_tienda' ");
-        if(!is_null($panelado)) $sql .= (" AND displays_panelado.id_panelado ='$panelado' ");
-        if(!is_null($mueble)) $sql .= (" AND display.id_display ='$mueble' ");
-        if(!is_null($terminal)) $sql .= (" AND device.id_device ='$terminal' ");
-        if(!is_null($sfid)) $sql .= (" AND pds.reference LIKE '$sfid' ");
 
-        if(!is_null($campo_orden) && !empty($campo_orden) && !is_null($ordenacion) && !empty($ordenacion)){
-            $sql .= " ORDER BY $campo_orden $ordenacion ";
-        }else {
-            $sql .= (" ORDER BY sfid ASC, id_type_pds ASC, id_panelado ASC, id_displays_pds ASC, position ASC ");
+        $sql_campos = "";
+        $sql_where = "";
+        $sql_join = "";
+        $sql_order = " ";
+        $sql_group = " GROUP BY pds.reference  ";
+
+        if(!is_null($tipo_tienda)){
+            $sql_where .= (" AND pds.type_pds ='$tipo_tienda' ");
+        }
+        if(!is_null($panelado)){
+            $sql_where .= (" AND pds.panelado_pds ='$panelado' ");
+        }
+        if(!is_null($mueble)){
+            $sql_where .= (" AND display.id_display ='$mueble' ");
+        }
+        if(!is_null($terminal)){
+            $sql_where .= (" AND device.id_device ='$terminal' ");
+        }
+        if(!is_null($sfid)) {
+            $sql_where = (" AND pds.reference LIKE '$sfid' ");
+            $sql_group = "";
         }
 
-            $offset = (($page-1) * $cfg_pag["per_page"]);
-            $sql .= ("LIMIT ".$offset.",".$cfg_pag["per_page"]);
+
+        if(!is_null($campo_orden) && !empty($campo_orden) && !is_null($ordenacion) && !empty($ordenacion)){
+            $sql_order = " ORDER BY $campo_orden $ordenacion ";
+        }else {
+            $sql_order = ("  ORDER BY  sfid ASC, id_type_pds ASC, id_panelado ASC, id_displays_pds ASC, position ASC $sql_order  ");
+        }
+
+        $offset = (($page-1) * $cfg_pag["per_page"]);
+        $sql_limit = ("LIMIT ".$offset.",".$cfg_pag["per_page"]);
+
+
+        if(is_null($sfid)) {
+            $sql = "SELECT  pds.reference as sfid,
+                        type_pds.pds as tipo_tienda,
+                        type_pds.id_type_pds as id_type_pds,
+                        panelado.panelado as panelado,
+                        pds.panelado_pds as id_panelado,
+                        display.display as mueble,
+                        devices_pds.id_displays_pds as id_displays_pds,
+                        ''  as position,
+                        '' as terminal
+                FROM pds
+
+                    INNER JOIN devices_pds ON pds.id_pds = devices_pds.id_pds
+                    INNER JOIN device ON devices_pds.id_device = device.id_device
+
+                    INNER JOIN displays_pds ON pds.id_pds = displays_pds.id_pds
+                    INNER JOIN display ON displays_pds.id_display = display.id_display
+
+                    INNER JOIN panelado ON pds.panelado_pds = panelado.id_panelado
+                    INNER JOIN type_pds ON pds.type_pds = type_pds.id_type_pds
+
+                WHERE 1=1 AND devices_pds.status ='Alta'
+                $sql_where
+                $sql_group
+                $sql_order
+                $sql_limit                ";
+        }else{
+
+
+            $sql= "SELECT pds.reference AS sfid,
+                          type_pds.pds AS tipo_tienda,
+                          CONCAT(display.display,' ',displays_pds.id_displays_pds) AS mueble,
+                          panelado.panelado AS panelado,
+                          devices_pds.id_device AS id_terminal,
+                          displays_pds.position AS position_mueble,
+                          devices_pds.position AS position,
+                          device.device AS terminal
+
+
+                    FROM pds, display, displays_pds, type_pds, panelado, device, devices_pds
+
+                    WHERE display.id_display = displays_pds.id_display
+
+                    AND displays_pds.id_displays_pds IN (SELECT id_displays_pds FROM displays_pds WHERE id_pds = pds.id_pds AND id_panelado = pds.panelado_pds AND status='Alta')
+                    AND device.id_device = devices_pds.id_device
+
+                    AND devices_pds.id_pds = pds.id_pds
+                    AND devices_pds.id_displays_pds = displays_pds.id_displays_pds
+                    AND devices_pds.id_display = displays_pds.id_display
+                    AND devices_pds.id_device = device.id_device
+                    ANd devices_pds.status = 'Alta'
+
+                    AND type_pds.id_type_pds = pds.type_pds
+                    AND panelado.id_panelado = pds.panelado_pds
+
+
+
+                $sql_where
+
+                ORDER BY sfid ASC, tipo_tienda ASC,  panelado ASC, position_mueble ASC, mueble ASC, position ASC
+                $sql_limit    ";
+
+        }
 
 
         $query = $this->db->query($sql);
@@ -101,36 +167,102 @@ class Informe_model extends CI_Model
             return NULL;
         }
 
-        $sql = "SELECT pds.reference as sfid,
-                       type_pds.pds as tipo_tienda,
-                       type_pds.id_type_pds as id_type_pds,
-                       panelado.panelado as panelado,
-                       panelado.id_panelado as id_panelado,
-                       devices_pds.id_displays_pds as id_displays_pds,
-                       display.display as mueble,
-                       device.device as terminal,
-                       devices_pds.position as position
+        $sql_campos = "";
+        $sql_where = "";
+        $sql_join = "";
+        $sql_order = " ";
+        $sql_group = " GROUP BY pds.reference  ";
+
+        if(!is_null($tipo_tienda)){
+            $sql_where .= (" AND pds.type_pds ='$tipo_tienda' ");
+        }
+        if(!is_null($panelado)){
+            $sql_where .= (" AND pds.panelado_pds ='$panelado' ");
+        }
+        if(!is_null($mueble)){
+            $sql_where .= (" AND display.id_display ='$mueble' ");
+        }
+        if(!is_null($terminal)){
+            $sql_where .= (" AND device.id_device ='$terminal' ");
+        }
+        if(!is_null($sfid)) {
+            $sql_where = (" AND pds.reference LIKE '$sfid' ");
+            $sql_group = "";
+        }
+
+
+        if(!is_null($campo_orden) && !empty($campo_orden) && !is_null($ordenacion) && !empty($ordenacion)){
+            $sql_order = " ORDER BY $campo_orden $ordenacion ";
+        }else {
+            $sql_order = ("  ORDER BY  sfid ASC, id_type_pds ASC, id_panelado ASC, id_displays_pds ASC, position ASC $sql_order  ");
+        }
+
+
+
+
+        if(is_null($sfid)) {
+            $sql = "SELECT  pds.reference as sfid,
+                        type_pds.pds as tipo_tienda,
+                        type_pds.id_type_pds as id_type_pds,
+                        panelado.panelado as panelado,
+                        pds.panelado_pds as id_panelado,
+                        display.display as mueble,
+                        devices_pds.id_displays_pds as id_displays_pds,
+                        '' as position,
+                       '' as terminal
                 FROM pds
-                LEFT JOIN type_pds 		ON pds.type_pds 			= type_pds.id_type_pds
-                LEFT JOIN panelado 		ON panelado.id_panelado 	= pds.panelado_pds
-                LEFT JOIN devices_pds 	ON devices_pds.id_pds 		= pds.id_pds
-                LEFT JOIN display 		ON devices_pds.id_display 	= display.id_display
-                LEFT JOIN device 		ON devices_pds.id_device 	= device.id_device
-                LEFT JOIN displays_panelado ON devices_pds.id_display = displays_panelado.id_display
-                WHERE 1=1 AND devices_pds.status = 'Alta'
+
+                    INNER JOIN devices_pds ON pds.id_pds = devices_pds.id_pds
+                    INNER JOIN device ON devices_pds.id_device = device.id_device
+
+                    INNER JOIN displays_pds ON pds.id_pds = displays_pds.id_pds
+                    INNER JOIN display ON displays_pds.id_display = display.id_display
+
+                    INNER JOIN panelado ON pds.panelado_pds = panelado.id_panelado
+                    INNER JOIN type_pds ON pds.type_pds = type_pds.id_type_pds
+
+                WHERE 1=1 AND devices_pds.status ='Alta'
+                $sql_where
+                $sql_group
+                $sql_order
+                                ";
+        }else{
+
+
+            $sql= "SELECT pds.reference AS sfid,
+                          type_pds.pds AS tipo_tienda,
+                          CONCAT(display.display,' ',displays_pds.id_displays_pds) AS mueble,
+                          panelado.panelado AS panelado,
+                          devices_pds.id_device AS id_terminal,
+                          displays_pds.position AS position_mueble,
+                          devices_pds.position AS position,
+                          device.device AS terminal
+
+
+                    FROM pds, display, displays_pds, type_pds, panelado, device, devices_pds
+
+                    WHERE display.id_display = displays_pds.id_display
+
+                    AND displays_pds.id_displays_pds IN (SELECT id_displays_pds FROM displays_pds WHERE id_pds = pds.id_pds AND id_panelado = pds.panelado_pds AND status='Alta')
+                    AND device.id_device = devices_pds.id_device
+
+                    AND devices_pds.id_pds = pds.id_pds
+                    AND devices_pds.id_displays_pds = displays_pds.id_displays_pds
+                    AND devices_pds.id_display = displays_pds.id_display
+                    AND devices_pds.id_device = device.id_device
+                    ANd devices_pds.status = 'Alta'
+
+                    AND type_pds.id_type_pds = pds.type_pds
+                    AND panelado.id_panelado = pds.panelado_pds
+
+
+
+                $sql_where
+
+                ORDER BY sfid ASC, tipo_tienda ASC,  panelado ASC, position_mueble ASC, mueble ASC, position ASC
                 ";
 
-        if(!is_null($tipo_tienda)) $sql .= (" AND pds.type_pds ='$tipo_tienda' ");
-        if(!is_null($panelado)) $sql .= (" AND displays_panelado.id_panelado ='$panelado' ");
-        if(!is_null($mueble)) $sql .= (" AND display.id_display ='$mueble' ");
-        if(!is_null($terminal)) $sql .= (" AND device.id_device ='$terminal' ");
-        if(!is_null($sfid)) $sql .= (" AND pds.reference LIKE '$sfid' ");
-
-        /*if(!is_null($campo_orden) && !empty($campo_orden) && !is_null($ordenacion) && !empty($ordenacion)){
-            $sql .= " ORDER BY $campo_orden $ordenacion ";
-        }else {*/
-            $sql .= (" ORDER BY sfid ASC, id_type_pds ASC, id_panelado ASC, id_displays_pds ASC, position ASC ");
-        //}
+        }
 
 
         $query = $this->db->query($sql);
@@ -157,37 +289,105 @@ class Informe_model extends CI_Model
         $sfid = (isset($data["sfid"])  && !empty($data["sfid"])) ? $data["sfid"] : NULL;
 
 
-        $sql = "SELECT pds.reference as sfid,
-                       type_pds.pds as tipo_tienda,
-                       type_pds.id_type_pds as id_type_pds,
-                       panelado.panelado as panelado,
-                       panelado.id_panelado as id_panelado,
-                       devices_pds.id_displays_pds as id_displays_pds,
-                       display.display as mueble,
-                       device.device as terminal,
-                       devices_pds.position as position
+        if(is_null($tipo_tienda) && is_null($panelado) && is_null($mueble) && is_null($terminal) && is_null($sfid)){
+            return NULL;
+        }
+
+
+
+        $sql_campos = "";
+        $sql_where = "";
+        $sql_join = "";
+        $sql_order = " ";
+        $sql_group = "  GROUP BY sfid ";
+
+        $sql_where = "";
+        if(!is_null($tipo_tienda)){
+            $sql_where .= (" AND pds.type_pds ='$tipo_tienda' ");
+        }
+        if(!is_null($panelado)){
+            $sql_where .= (" AND pds.panelado_pds ='$panelado' ");
+        }
+        if(!is_null($mueble)){
+            $sql_where .= (" AND display.id_display ='$mueble' ");
+        }
+        if(!is_null($terminal)){
+            $sql_where .= (" AND device.id_device ='$terminal' ");
+        }
+        if(!is_null($sfid)) {
+            $sql_where = (" AND pds.reference LIKE '$sfid' ");
+            $sql_group = "";
+        }
+
+
+
+        if(is_null($sfid)) {
+            $sql = "SELECT  pds.reference as sfid,
+                        type_pds.pds as tipo_tienda,
+                        type_pds.id_type_pds as id_type_pds,
+                        panelado.panelado as panelado,
+                        pds.panelado_pds as id_panelado,
+                        display.display as mueble,
+                        devices_pds.id_displays_pds as id_displays_pds,
+                        devices_pds.position  as position,
+                        device.device as terminal
                 FROM pds
-                LEFT JOIN type_pds 		ON pds.type_pds 			= type_pds.id_type_pds
-                LEFT JOIN panelado 		ON panelado.id_panelado 	= pds.panelado_pds
-                LEFT JOIN devices_pds 	ON devices_pds.id_pds 		= pds.id_pds
-                LEFT JOIN display 		ON devices_pds.id_display 	= display.id_display
-                LEFT JOIN device 		ON devices_pds.id_device 	= device.id_device
-                LEFT JOIN displays_panelado ON devices_pds.id_display = displays_panelado.id_display
-                WHERE 1=1 AND devices_pds.status = 'Alta'
+
+                    INNER JOIN devices_pds ON pds.id_pds = devices_pds.id_pds
+                    INNER JOIN device ON devices_pds.id_device = device.id_device
+
+                    INNER JOIN displays_pds ON pds.id_pds = displays_pds.id_pds
+                    INNER JOIN display ON displays_pds.id_display = display.id_display
+
+                    INNER JOIN panelado ON pds.panelado_pds = panelado.id_panelado
+                    INNER JOIN type_pds ON pds.type_pds = type_pds.id_type_pds
+
+                WHERE 1=1 AND devices_pds.status ='Alta'
+                $sql_where
+                $sql_group
+                $sql_order
+                                ";
+        }else{
+
+
+            $sql= "SELECT pds.reference AS sfid,
+                          type_pds.pds AS tipo_tienda,
+                          CONCAT(display.display,' ',displays_pds.id_displays_pds) AS mueble,
+                          panelado.panelado AS panelado,
+                          devices_pds.id_device AS id_terminal,
+                          displays_pds.position AS position_mueble,
+                          devices_pds.position AS position,
+                          device.device AS terminal
+
+
+                    FROM pds, display, displays_pds, type_pds, panelado, device, devices_pds
+
+                    WHERE display.id_display = displays_pds.id_display
+
+                    AND displays_pds.id_displays_pds IN (SELECT id_displays_pds FROM displays_pds WHERE id_pds = pds.id_pds AND id_panelado = pds.panelado_pds AND status='Alta')
+                    AND device.id_device = devices_pds.id_device
+
+                    AND devices_pds.id_pds = pds.id_pds
+                    AND devices_pds.id_displays_pds = displays_pds.id_displays_pds
+                    AND devices_pds.id_display = displays_pds.id_display
+                    AND devices_pds.id_device = device.id_device
+                    ANd devices_pds.status = 'Alta'
+
+                    AND type_pds.id_type_pds = pds.type_pds
+                    AND panelado.id_panelado = pds.panelado_pds
+
+
+
+                $sql_where
+
+
                 ";
 
-        if(!is_null($tipo_tienda)) $sql .= (" AND pds.type_pds ='$tipo_tienda' ");
-        if(!is_null($panelado)) $sql .= (" AND displays_panelado.id_panelado ='$panelado' ");
-        if(!is_null($mueble)) $sql .= (" AND display.id_display ='$mueble' ");
-        if(!is_null($terminal)) $sql .= (" AND device.id_device ='$terminal' ");
-        if(!is_null($sfid)) $sql .= (" AND pds.reference LIKE '$sfid' ");
+        }
 
 
 
         $query = $this->db->query($sql);
-
-
-
         return count($query->result());
     }
 

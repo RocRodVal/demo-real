@@ -1,6 +1,6 @@
 		<!-- #container -->
 		<div id="bg">
-  			<img src="<?=site_url('assets/images/bg-tienda.jpg')?>" alt="">
+  			<img src="<?=site_url('assets/images/')?>" alt="">
 		</div>		
 	    <div class="container">
 	        <div class="row">

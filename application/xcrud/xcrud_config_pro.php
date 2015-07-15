@@ -166,7 +166,7 @@ class Xcrud_config
     public static $plugins_uri = 'assets/xcrud/plugins'; // scripts and libraries
     public static $themes_uri = 'assets/xcrud/themes'; // css, images
     public static $lang_uri = 'assets/xcrud/languages'; // js files
-    public static $ajax_uri = 'index.php/xcrud_ajax'; // main ajax file or url
+    public static $ajax_uri = 'xcrud_ajax'; // main ajax file or url
     // paths (relative to xcrud's folder)
     public static $themes_path = 'themes'; // php and ini files
     public static $lang_path = 'languages'; // ini files

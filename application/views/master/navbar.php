@@ -90,7 +90,10 @@
                                                 'informe_planogramas',
                                                     'informe_planograma_mueble_pds',
                                                     'informe_planograma_terminal',
-                                                'informe_visual'); ?>
+                                                'informe_visual',
+                                                    'informe_visual_mueble_sfid',
+                                                    'informe_visual_terminal',
+                                                    'informe_visual_ficha_terminal'); ?>
 
                         <li <?=(in_array($this->uri->segment(2), $inf))?'class="active"':''?>>
                             <a href="#"><i class="fa fa-sitemap fa-file"></i> Informes <span class="fa arrow"></span></a>
@@ -100,7 +103,12 @@
                                         array( 'informe_planogramas',
                                         'informe_planograma_mueble_pds',
                                         'informe_planograma_terminal')))?'class="active"':''?> href="<?=site_url('master/informe_planogramas')?>"> Planogramas &raquo;</a></li>
-                                <li><a <?=($this->uri->segment(2)==='informe_visual')?'class="active"':''?> href="<?=site_url('master/informe_visual')?>"> Visual &raquo;</a></li>
+                                <li><a <?=(
+                                        in_array($this->uri->segment(2),
+                                            array('informe_visual',
+                                                'informe_visual_mueble_sfid',
+                                                'informe_visual_terminal',
+                                                'informe_visual_ficha_terminal')))?'class="active"':''?> href="<?=site_url('master/informe_visual')?>"> Visual &raquo;</a></li>
                             </ul>
                         </li>
 

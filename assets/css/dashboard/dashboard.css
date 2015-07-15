@@ -108,3 +108,15 @@ form.form-mini .form-group{ margin-bottom:20px; }
 @media (min-width: 768px) {
 
 }
+
+
+
+/**
+** MANTENIMIENTO
+**/
+div.mantenimiento{
+    text-align: center;}
+div.mantenimiento h2{ font-size:22px; margin:0 0 15px 0; padding: 0; text-align: center;
+    color:#f60; font-weight: bold;}
+
+div.mantenimiento p.desc{ margin-bottom: 10px; font-size: 14px; text-align:center;}

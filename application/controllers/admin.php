@@ -147,7 +147,7 @@ class Admin extends CI_Controller
 
             $this->load->model(array('intervencion_model', 'tienda_model', 'sfid_model','chat_model'));
 
-            $data['tiendas'] = $this->tienda_model->search_pds($this->input->post('sfid'));
+            /*$data['tiendas'] = $this->tienda_model->search_pds($this->input->post('sfid'));
 
             $sfid = $this->tienda_model->get_pds($data['id_pds']);
 
@@ -157,8 +157,7 @@ class Admin extends CI_Controller
             $data['reference']  = $sfid['reference'];
             $data['address']    = $sfid['address'];
             $data['zip']        = $sfid['zip'];
-            $data['city']       = $sfid['city'];
-
+            $data['city']       = $sfid['city'];*/
 
             // Comprobar si existe el segmento PAGE en la URI, si no inicializar a 1..
             $get_page = $this->uri->segment(4);
@@ -769,6 +768,9 @@ class Admin extends CI_Controller
     public function operar_incidencia()
     {
         if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
+            /*$id_pds = $this->uri->segment(3);
+            $id_inc = $this->uri->segment(4);*/
+
             $id_pds = $this->uri->segment(3);
             $id_inc = $this->uri->segment(4);
 
@@ -2119,7 +2121,9 @@ class Admin extends CI_Controller
         $xcrud_2->label('client_pds', 'Cliente')->label('reference', 'SFID')->label('type_pds', 'Tipo')->label('territory', 'Zona')->label('panelado_pds', 'Panelado')->label('dispo', 'Disposición')->label('commercial', 'Nombre comercial')->label('cif', 'CIF')->label('picture_url', 'Foto')->label('m2_fo', 'M2 front-office')->label('m2_bo', 'M2 back-office')->label('m2_total', 'M2 total')->label('type_via', 'Tipo vía')->label('address', 'Dirección')->label('zip', 'C.P.')->label('city', 'Ciudad')->label('province', 'Provincia')->label('county', 'CC.AA.')->label('schedule', 'Horario')->label('phone', 'Teléfono')->label('mobile', 'Móvil')->label('email', 'Email')->label('contact_contact_person', 'Contacto')->label('contact_in_charge', 'Encargado')->label('contact_supervisor', 'Supervisor')->label('status', 'Estado');
         $xcrud_2->columns('client_pds,reference,type_pds,panelado_pds,commercial,territory,status');
         $xcrud_2->fields('client_pds,reference,type_pds,panelado_pds,dispo,commercial,cif,territory,picture_url,m2_fo,m2_bo,m2_total,type_via,address,zip,city,province,county,schedule,phone,mobile,email,contact_contact_person,contact_in_charge,contact_supervisor,status');
-        
+
+
+        $xcrud_2->validation_required('province');
         
         $data['title'] = 'Puntos de venta';
         $data['content'] = $xcrud_1->render();
@@ -2747,6 +2751,8 @@ class Admin extends CI_Controller
 			$num = $this->tienda_model->baja_dispositivos_almacen_update($this->input->post('dipositivo_almacen'),$this->input->post('owner_dipositivo_almacen'),$this->input->post('units_dipositivo_almacen'));
 
             $this->session->set_flashdata("id_device", $this->input->post('dipositivo_almacen'));
+
+
 
             if($num >= 0) {
                 $this->session->set_flashdata("num", $num);
@@ -3599,6 +3605,18 @@ class Admin extends CI_Controller
         redirect('admin', 'refresh');
     }
 
+
+
+    public function mantenimiento()
+    {
+
+        $data['bg_image'] = "bg-admin.jpg";
+        $data['title'] = 'Parada por mantenimiento';
+
+        $this->load->view('backend/header', $data);
+        $this->load->view('common/mantenimiento', $data);
+        $this->load->view('backend/footer');
+    }
 
 }
 /* End of file admin.php */

@@ -14,21 +14,20 @@
 
                     <div class="form-group">
                         <label for="mueble">Mueble</label>
-                        <select id="mueble" name="mueble" class="form-control"><option value="">Cualquiera...</option>
+                        <select id="mueble_plano" name="mueble_plano" class="form-control"><option value="">Cualquiera...</option>
 
                             <?php foreach($muebles as $display)
                             {
-                                $selected = ($display->id_display== $mueble) ? ' selected = "selected" ' : '';
+                                $selected = ($display->id_display== $mueble_plano) ? ' selected = "selected" ' : '';
                                 echo '<option value="'.$display->id_display.'" '.$selected.'>'.$display->display.'</option>';
                             }
                             ?>
                         </select>
                     </div>
 
-
                     <div class="form-group">
                         <label for="sfid">SFID</label>
-                        <input id="sfid" name="sfid" value="<?=$sfid?>" placeholder="Cualquiera..." class="form-control">
+                        <input id="sfid_plano" name="sfid_plano" value="<?=$sfid_plano?>" placeholder="Cualquiera..." class="form-control">
                     </div>
 
                     <div class="form-group">

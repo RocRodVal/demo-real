@@ -1,7 +1,7 @@
 
             
             <?php 
-            if (isset($_POST['mueble']))
+            if (isset($_POST['mueble_plano']))
             {	
             ?>
             <div class="row">
