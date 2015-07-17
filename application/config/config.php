@@ -14,7 +14,7 @@
 | path to your installation.
 |
 */
-$config['base_url']	= 'http://localhost/orange';
+$config['base_url']	= 'http://demoreal.focusonemotions.com/orange';
 
 /*
 |--------------------------------------------------------------------------

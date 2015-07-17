@@ -45,7 +45,7 @@
 | the active record class
 */
 
-$active_group = 'dev';
+$active_group = 'pro';
 $active_record = TRUE;
 
 $db['dev']['hostname'] = 'localhost';
@@ -65,8 +65,8 @@ $db['dev']['autoinit'] = TRUE;
 $db['dev']['stricton'] = FALSE;
 
 $db['pre']['hostname'] = 'localhost';
-$db['pre']['username'] = 'root';
-$db['pre']['password'] = 'Aoz8kQ_9c%j8';
+$db['pre']['username'] = 'demoreal';
+$db['pre']['password'] = 'arf2t24t23r13$12';
 $db['pre']['database'] = 'demoreal';
 $db['pre']['dbdriver'] = 'mysql';
 $db['pre']['dbprefix'] = '';
@@ -81,8 +81,8 @@ $db['pre']['autoinit'] = TRUE;
 $db['pre']['stricton'] = FALSE;
 
 $db['pro']['hostname'] = 'localhost';
-$db['pro']['username'] = 'root';
-$db['pro']['password'] = 'Aoz8kQ_9c%j8';
+$db['pro']['username'] = 'demoreal';
+$db['pro']['password'] = 'arf2t24t23r13$12';
 $db['pro']['database'] = 'orange';
 $db['pro']['dbdriver'] = 'mysql';
 $db['pro']['dbprefix'] = '';

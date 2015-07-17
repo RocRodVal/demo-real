@@ -60,6 +60,8 @@
 $login = $this->uri->segment(2);
 if (empty($login)) { echo '<body class="login">'; } 
 else { echo '<body>'; }
+
+$this->load->view("common/env");
 ?>
 
 <!-- /#header -->
