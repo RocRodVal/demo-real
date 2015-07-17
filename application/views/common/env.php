@@ -6,7 +6,7 @@
  * Time: 12:48
  */
 
-define("IP_LOCAL","192.168.33.10");
+define("IP_LOCAL","192.168.106.11");
 define("IP_DEV","85.10.197.10");
 define("IP_PRE","");
 define("IP_PROD","85.10.199.43");
