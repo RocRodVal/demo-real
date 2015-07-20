@@ -702,7 +702,7 @@ class Tienda extends CI_Controller {
 			$data['zip']        = $sfid['zip'];
 			$data['city']       = $sfid['city'];
 
-            $id_incidencia = $this->uri->segment(4);
+
 
 			$incidencia = $this->sfid_model->get_incidencia($id_incidencia,$data['id_pds']);
 			

@@ -16,10 +16,19 @@
             <div class="navbar-default sidebar" role="navigation">
                 <div class="sidebar-nav navbar-collapse">
                     <ul class="nav" id="side-menu" style="margin-top:20px;">
-                        <li><a <?=($this->uri->segment(2)==='dashboard')?'class="active"':''?> href="<?=site_url('admin/dashboard')?>"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a></li>
-                        <!--<li><a <?=($this->uri->segment(2)==='carga_datos_dispositivo')?'class="active"':''?> href="<?=site_url('admin/carga_datos_dispositivo')?>"><i class="fa fa-retweet fa-fw"></i> Carga datos dispositivo</a></li>-->
-                        <!--<li><a <?=($this->uri->segment(2)==='material_retorno')?'class="active"':''?> href="<?=site_url('admin/material_retorno')?>"><i class="fa fa-mobile fa-fw"></i> Material retorno</a></li>-->
-                        <?php               
+                        <?php $estado_incidencias = array("estado_incidencias_abiertas","estado_incidencias_cerradas"); ?>
+
+                        <li <?=(in_array($this->uri->segment(2), $estado_incidencias)? ' class="active" ' :'')?>>
+                            <a href="#"><i class="fa fa-dashboard fa-fw"></i> Estado incidencias <span class="fa arrow"></span></a>
+
+                            <ul class="nav nav-second-level">
+                                <li><a <?=($this->uri->segment(2)==='estado_incidencias_abiertas')?'class="active"':''?> href="<?=site_url('admin/estado_incidencias_abiertas')?>"> Incidencias abiertas &raquo;</a></li>
+                                <li><a <?=($this->uri->segment(2)==='estado_incidencias_cerradas')?'class="active"':''?> href="<?=site_url('admin/estado_incidencias_cerradas')?>"> Incidencias cerradas &raquo;</a></li>
+                            </ul>
+
+                        </li>
+
+                        <?php
                         $maestros = array('clientes','contactos','alarmas','dispositivos','muebles','puntos_de_venta');
                         ?>
                         <li <?=(in_array($this->uri->segment(2), $maestros))?'class="active"':''?>>

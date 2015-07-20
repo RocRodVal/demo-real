@@ -387,7 +387,7 @@ class Tienda_model extends CI_Model {
             ->order_by('panelado_abx')
             ->get('panelado');
 
-        return $query->result()[0];
+        return $query->result_array()[0];
     }
 
     public function get_displays_panelado_maestros($id_panelado) {
@@ -1090,7 +1090,7 @@ class Tienda_model extends CI_Model {
      * @param null $buscador
      * @return mixed
      */
-    public function get_incidencias_finalizadas($page = 1, $cfg_pagination = NULL,$filtros_finalizadas=NULL,$buscador=NULL,$campo_orden=NULL,$orden=NULL)
+    public function get_incidencias_cerradas($page = 1, $cfg_pagination = NULL,$filtros_finalizadas=NULL,$buscador=NULL,$campo_orden=NULL,$orden=NULL)
     {
         $this->db->select('incidencias.*,pds.reference as reference')
             ->join('pds', 'incidencias.id_pds = pds.id_pds');
@@ -1142,7 +1142,7 @@ class Tienda_model extends CI_Model {
      * @param null $buscador
      * @return mixed
      */
-    public function get_incidencias_finalizadas_quantity($filtros_finalizadas=NULL,$buscador=NULL)
+    public function get_incidencias_cerradas_quantity($filtros_finalizadas=NULL,$buscador=NULL)
     {
         $this->db->select('COUNT(incidencias.id_incidencia) AS cantidad')
             ->join('pds', 'incidencias.id_pds = pds.id_pds');
