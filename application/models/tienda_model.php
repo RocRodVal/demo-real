@@ -66,8 +66,16 @@ class Tienda_model extends CI_Model {
 	
 	
 	public function baja_dispositivos_almacen_update($id_device,$owner,$units)
-{
-    $contar = $this->db->query("SELECT COUNT(id_device) as contador FROM devices_almacen WHERE id_device=$id_device AND owner='$owner' AND status = 1")->result()[0];
+    {
+
+
+    $contar = $this->db->query("SELECT COUNT(id_device) as contador FROM devices_almacen WHERE id_device=$id_device AND owner='$owner' AND status = 1")->result();
+
+
+        if(is_array($contar) && count($contar) > 0){
+            $contar = $contar[0];
+        }
+
 
 
     if($contar->contador > 0) {

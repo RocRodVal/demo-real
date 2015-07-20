@@ -48,4 +48,12 @@ module.exports = function (grunt) {
       grunt.task.run('sshexec:deploy');
   });
 
+
+    grunt.registerTask('test', function(){
+        grunt.task.run('sshexec:test');
+    });
+
+
+
+
 };
