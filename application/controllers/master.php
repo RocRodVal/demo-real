@@ -503,7 +503,7 @@ class Master extends CI_Controller {
     }
 
 
-	public function detalle_incidencia($id_incidencia)
+	public function detalle_incidencia($id_incidencia,$id_pds)
 	{
 		if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 9))
 		{
@@ -511,11 +511,11 @@ class Master extends CI_Controller {
 			$this->load->model('sfid_model');
 			$this->load->model(array('chat_model','sfid_model'));
 
-            $id_incidencia = $this->uri->segment(3);
 
 
 
-			$sfid = $this->sfid_model->get_pds($this->uri->segment(4));
+
+			$sfid = $this->sfid_model->get_pds($id_pds);
 	
 			$data['id_pds']     = $sfid['id_pds'];
 			$data['commercial'] = $sfid['commercial'];
@@ -528,7 +528,7 @@ class Master extends CI_Controller {
 
 
 
-			$incidencia = $this->sfid_model->get_incidencia($id_incidencia,$data['id_pds']);
+			$incidencia = $this->sfid_model->get_incidencia($id_incidencia,$id_pds);
 
 
 			if($incidencia == FALSE)

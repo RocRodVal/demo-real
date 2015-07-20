@@ -98,19 +98,15 @@ class Sfid_model extends CI_Model {
 	}	
 	
 	
-	public function get_incidencia($id_incidencia,$id_pds=NULL)
+	public function get_incidencia($id_incidencia)
 	{
 
 
 		if($id_incidencia != FALSE)
 		{
 			$query = $this->db->select('incidencias.*')
-				->where('incidencias.id_incidencia',$id_incidencia);
-
-            if(!is_null($id_pds)) {
-                $query->where('incidencias.id_pds', $id_pds);
-            }
-				$query->where('incidencias.status != "Cancelada"')
+				->where('incidencias.id_incidencia',$id_incidencia)
+                ->where('incidencias.status != "Cancelada"')
 				->get('incidencias');
 
 
