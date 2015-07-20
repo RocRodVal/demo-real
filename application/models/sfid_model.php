@@ -214,9 +214,14 @@ class Sfid_model extends CI_Model {
             ->where("client_type_pds",1)
             ->where("id_type_pds",$id)
             ->where("status","Alta")
-            ->get("type_pds");
+            ->get("type_pds")->result();
 
-        return $query->result()[0];
+        if(is_array($query) && count($query) > 0) {
+            return $query[0];
+
+        }else{
+            return NULL;
+        }
 
     }
 
