@@ -385,9 +385,14 @@ class Tienda_model extends CI_Model {
         $query = $this->db->select('id_panelado,panelado,panelado_abx')
             ->where("id_panelado",$id)
             ->order_by('panelado_abx')
-            ->get('panelado');
+            ->get('panelado')->result();
 
-        return $query->result_array()[0];
+        if(is_array($query) && count($query)>0){
+            return $query[0];
+        }else{
+            return NULL;
+        }
+
     }
 
     public function get_displays_panelado_maestros($id_panelado) {
@@ -1065,10 +1070,16 @@ class Tienda_model extends CI_Model {
         if(! empty($buscador['buscar_sfid']))
             $this->db->where('pds.reference',$buscador['buscar_sfid']);
 
-        $query =  $this->db->get('incidencias');
+        $query =  $this->db->get('incidencias')->result();
 
 
-        return $query->result()[0]->cantidad;
+        if(is_array($query) && count($query)>0){
+            return $query[0]->cantidad;
+        }else{
+            return NULL;
+        }
+
+
     }
 	public function get_incidencias_pds($id) {
 		$query = $this->db->select('incidencias.*,pds.reference as reference')
@@ -1169,10 +1180,15 @@ class Tienda_model extends CI_Model {
             }
         }
 
-        $query = $this->db->get('incidencias');
+        $query = $this->db->get('incidencias')->result();
 
+        if(is_array($query) && count($query)>0){
+            return $query[0]->cantidad;
+        }else{
+            return NULL;
+        }
 
-        return $query->result()[0]->cantidad;
+        
     }
 
 

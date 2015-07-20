@@ -161,7 +161,7 @@
 		                            ?>
 		                            <tr>
 		                                <td>
-                                           
+
                                             <a href="<?=site_url('admin/operar_incidencia/'.$incidencia->id_pds.'/'.$incidencia->id_incidencia)?>">
                                                 <?php echo $incidencia->id_incidencia?></a></td>
 
