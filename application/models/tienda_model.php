@@ -1188,7 +1188,7 @@ class Tienda_model extends CI_Model {
             return NULL;
         }
 
-        
+
     }
 
 
@@ -1363,7 +1363,11 @@ class Tienda_model extends CI_Model {
                                           JOIN material_incidencias ON incidencias.id_incidencia = material_incidencias.id_incidencia
                                           JOIN devices_almacen ON devices_almacen.id_devices_almacen = material_incidencias.id_devices_almacen
                                           JOIN device ON devices_almacen.id_device = device.id_device
-                                          WHERE material_incidencias.id_devices_almacen=" . $data['id_devices_almacen'])->result()[0];
+                                          WHERE material_incidencias.id_devices_almacen=" . $data['id_devices_almacen'])->result();
+                if(is_array($q_dueno) && count($q_dueno) > 0){
+                    $q_dueno = $q_dueno[0];
+                }
+
                 $id_device = $q_dueno->id_device;
                 $dueno = $q_dueno->id_client;
                 $procesado = 0;
@@ -1394,7 +1398,11 @@ class Tienda_model extends CI_Model {
         }
         elseif($tipo==="alarm")         // ES DE TIPO ALARMA
         {
-            $q_dueno = $this->db->query("SELECT client_alarm as id_client FROM alarm WHERE id_alarm=" . $data['id_alarm'])->result()[0];
+            $q_dueno = $this->db->query("SELECT client_alarm as id_client FROM alarm WHERE id_alarm=" . $data['id_alarm'])->result();
+
+            if(is_array($q_dueno) && count($q_dueno) > 0){
+                $q_dueno = $q_dueno[0];
+            }
             $elemento = array(
                 'id_material_incidencia' => $id,
                 'id_alarm' => $data['id_alarm'],
