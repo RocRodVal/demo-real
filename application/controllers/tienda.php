@@ -322,7 +322,7 @@ class Tienda extends CI_Controller {
             $data["campo_orden_cerradas"] = $campo_orden_cerradas;
             $data["orden_cerradas"] = $orden_cerradas;
 
-            $total_incidencias = $this->tienda_model->get_incidencias_finalizadas_quantity($filtros_finalizadas,$buscador);   // Sacar el total de incidencias, para el paginador
+            $total_incidencias = $this->tienda_model->get_incidencias_cerradas_quantity($filtros_finalizadas,$buscador);   // Sacar el total de incidencias, para el paginador
             $cfg_pagination = $this->paginationlib->init_pagination("dashboard/finalizadas/",$total_incidencias,$per_page,$segment_finalizadas);
 
             $cfg_pagination["suffix"] = '#incidencias_cerradas';
@@ -347,7 +347,7 @@ class Tienda extends CI_Controller {
             $data['n_final_finalizadas'] = $n_final_finalizadas;
 
 
-            $incidencias_finalizadas = $this->tienda_model->get_incidencias_finalizadas($page_finalizadas,$cfg_pagination,$filtros_finalizadas,$buscador,$campo_orden_cerradas,$orden_cerradas);
+            $incidencias_finalizadas = $this->tienda_model->get_incidencias_cerradas($page_finalizadas,$cfg_pagination,$filtros_finalizadas,$buscador,$campo_orden_cerradas,$orden_cerradas);
 
             foreach ($incidencias_finalizadas as $incidencia) {
                 $incidencia->device = $this->sfid_model->get_device($incidencia->id_devices_pds);
