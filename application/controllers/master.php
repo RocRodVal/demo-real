@@ -511,8 +511,11 @@ class Master extends CI_Controller {
 			$this->load->model('sfid_model');
 			$this->load->model(array('chat_model','sfid_model'));
 
-            $id_incidencia = $this->uri->segment(4);
-			$sfid = $this->sfid_model->get_pds($this->uri->segment(3));
+            $id_incidencia = $this->uri->segment(3);
+
+
+
+			$sfid = $this->sfid_model->get_pds($this->uri->segment(4));
 	
 			$data['id_pds']     = $sfid['id_pds'];
 			$data['commercial'] = $sfid['commercial'];
@@ -522,8 +525,12 @@ class Master extends CI_Controller {
 			$data['zip']        = $sfid['zip'];
 			$data['city']       = $sfid['city'];
 
+
+
+
 			$incidencia = $this->sfid_model->get_incidencia($id_incidencia,$data['id_pds']);
-			
+
+
 			if($incidencia == FALSE)
 			{
 				redirect('master/dashboard','refresh');
