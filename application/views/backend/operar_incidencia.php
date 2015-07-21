@@ -26,6 +26,9 @@
                 </div>
                 <div class="panel-body incidenciaEstado">
                     <div class="row">
+                        <div class="col-lg-7 labelText grey">Última modificación:</div>
+                        <div class="col-lg-5 labelBtn grey"><?php echo $last_updated ?></div>
+
                         <div class="col-lg-7 labelText grey">Revisión de incidencia</div>
                         <div class="col-lg-5 labelBtn grey">
                             <a href="<?= site_url('admin/update_incidencia/' . $id_pds_url . '/' . $id_inc_url . '/2/2') ?>"

@@ -20,4 +20,5 @@ class IncidenciaVO extends VO
     var $tipo_averia;
     var $device;
     var $display;
+    var $last_updated;
 }

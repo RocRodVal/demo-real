@@ -898,8 +898,10 @@ class Tienda extends CI_Controller {
 			}	
 		
 			$description_1 = $this->input->post('description_1');
-			$description_1 = $this->strip_html_tags($description_1);			
-			
+			$description_1 = $this->strip_html_tags($description_1);
+
+            $ahora = date("Y-m-d H:i:s");
+
 			$data = array(
 					'fecha'    	        => date('Y-m-d H:i:s'),
 					'fecha_cierre'    	=> NULL,
@@ -926,6 +928,7 @@ class Tienda extends CI_Controller {
 					'intervencion'  	=> NULL,
 					'status_pds'	    => 1,
 					'status'	        => 1,
+                    'last_updated' => $ahora,
 			);
 				
 			$incidencia = $this->sfid_model->insert_incidencia($data);

@@ -18,7 +18,7 @@
 							<strong>SFID:</strong> <?php echo $reference ?> [<?php echo $id_pds ?>]<br/>
 							<strong>Nombre comercial:</strong> <?php echo $commercial ?><br/>
 							<strong>Dirección:</strong> <?php echo $address ?>, <?php echo $zip ?> -  <?php echo $city ?><br/>
-							<strong>Zona:</strong> <?php echo $territory ?>
+							<strong>Territorio:</strong> <?php echo $territory ?>
 						</div>
 					</div>
 				</div>

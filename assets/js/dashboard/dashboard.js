@@ -150,8 +150,9 @@ $(document).ready(function () {
         else{ ordenCampo = 'desc'}
 
         var idFormOrdenar = $(this).parent().parent().parent().attr("data-order-form");
-        $("#"+idFormOrdenar).find("input[name="+idFormOrdenar+"_campo]").val(campoOrdenar);
-        $("#"+idFormOrdenar).find("input[name="+idFormOrdenar+"_orden]").val(ordenCampo);
+        //alert(idFormOrdenar);
+        $("#"+idFormOrdenar).find("input[name="+idFormOrdenar+"_campo_orden]").val(campoOrdenar);
+        $("#"+idFormOrdenar).find("input[name="+idFormOrdenar+"_orden_campo]").val(ordenCampo);
         $("#"+idFormOrdenar).find("input[name=form]").val(idFormOrdenar);
         $("#"+idFormOrdenar).submit();
     });

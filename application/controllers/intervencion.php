@@ -107,6 +107,8 @@ class Intervencion extends CI_Controller
                 $status = 4;
                 $result = $this->intervencion_model->change_status_incidencia($incidencia_id, $status);
                 $this->data['data'] = $result;
+
+
             }
         }
         else{
@@ -128,6 +130,9 @@ class Intervencion extends CI_Controller
                 $status=4;
                 $result=$this->intervencion_model->change_status_incidencia($incidencia_id,$status);
                 $this->data['data']=$result;
+
+
+
             }
             else{
                 $this->data['data']=$result;
@@ -137,6 +142,8 @@ class Intervencion extends CI_Controller
 
             $this->data['data']=false;
         }
+
+
         $this->load->view('backend/dataJSON', $this->data);
     }
 

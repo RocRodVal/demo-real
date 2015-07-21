@@ -83,7 +83,7 @@
                                 </div>
                              <?php }?>
 
-                            <p><a href="<?=base_url()?>admin/exportar_incidencias_cerradas" class="btn exportar"><i class="glyphicon glyphicon-file"></i> Exportar CSV</a></p>
+                            <p><a href="<?=base_url()?>admin/exportar_incidencias/cerradas" class="btn exportar"><i class="glyphicon glyphicon-file"></i> Exportar Excel</a></p>
                             <div class="table-responsive">
                                 <table class="table table-striped table-bordered table-hover table-sorting" id="table_incidencias_cerradas"  data-order-form="form_orden_cerradas">
                                     <thead>
@@ -92,10 +92,13 @@
                                         <th class="sorting" data-rel="pds.reference"                data-order="">SFID</th>
                                         <th class="sorting" data-rel="incidencias.fecha"            data-order="desc">Fecha alta</th>
                                         <th class="principal"                                                                   >Elemento afectado</th>
-                                        <th class="sorting" data-rel="incidencias.alarm_display"    data-order="">Sistema general de seguridad</th>
+                                        <?php
+                                        /*<th class="sorting" data-rel="incidencias.alarm_display"    data-order="">Sistema general de seguridad</th>
                                         <th class="sorting" data-rel="incidencias.fail_device"    data-order="">Dispositivo</th>
                                         <th class="sorting" data-rel="incidencias.alarm_device"    data-order="">Alarma dispositivo cableado</th>
-                                        <th class="sorting" data-rel="incidencias.alarm_garra"    data-order="">Soporte sujección</th>
+                                        <th class="sorting" data-rel="incidencias.alarm_garra"    data-order="">Soporte sujección</th> */ ?>
+
+                                        <th>Última modificación</th>
                                         <th class="sorting" data-rel="incidencias.tipo_averia"    data-order="">Tipo incidencia</th>
                                         <th                                                                     >Interv.</th>
                                         <th class="sorting" data-rel="incidencias.status"    data-order="">Estado SAT</th>
@@ -130,10 +133,18 @@
                                             }
                                             ?>
                                             <td class="principal"><?=($incidencia->alarm_display==1)?'Mueble: '.$mueble:'Dispositivo: '.$dispositivo?></td>
-                                            <td><?=($incidencia->alarm_display==1)?'&#x25cf;':''?></td>
-                                            <td><?=($incidencia->fail_device==1)?'&#x25cf;':''?></td>
-                                            <td><?=($incidencia->alarm_device==1)?'&#x25cf;':''?></td>
-                                            <td><?=($incidencia->alarm_garra==1)?'&#x25cf;':''?></td>
+                                            <?php /*
+
+		                                <td><?=($incidencia->alarm_display==1)?'&#x25cf;':''?></td>
+		                                <td><?=($incidencia->fail_device==1)?'&#x25cf;':''?></td>
+		                                <td><?=($incidencia->alarm_device==1)?'&#x25cf;':''?></td>
+		                                <td><?=($incidencia->alarm_garra==1)?'&#x25cf;':''?></td> */?>
+
+                                            <td>
+                                                <?php $last_updated = $incidencia->last_updated;
+                                                echo (is_null($last_updated)) ? "-" : date("d/m/Y", strtotime($last_updated));
+                                                ?>
+                                            </td>
                                             <td><?php echo $incidencia->tipo_averia ?></td>
                                             <td>
                                                 <?php if($incidencia->intervencion != NULL){?>

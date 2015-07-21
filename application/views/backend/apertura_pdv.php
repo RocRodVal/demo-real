@@ -58,7 +58,7 @@
                                             <th>Tipo</th>
                                             <th>Panelado</th>
                                             <th>Nombre comercial</th>
-                                            <th>Zona</th>
+                                            <th>Territorio</th>
                                             <th>Operaciones</th>
                                         </tr>
                                     </thead>                                

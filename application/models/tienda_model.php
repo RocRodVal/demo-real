@@ -308,8 +308,22 @@ class Tienda_model extends CI_Model {
 	}	
 	
 
-	
-	public function search_pds($id) {
+	public function get_territorios(){
+        $query = $this->db->select('territory.*')
+                 ->order_by('id_territory','asc')
+                ->get('territory');
+        return $query->result();
+    }
+
+    public function get_fabricantes(){
+        $query = $this->db->select('brand_device.*')
+            ->order_by('brand','asc')
+            ->get('brand_device');
+        return $query->result();
+    }
+
+
+    public function search_pds($id) {
 
 
 		if($id != FALSE) {
@@ -884,10 +898,31 @@ class Tienda_model extends CI_Model {
 	 *  filtradas si procede, y el subconjunto limitado paginado si procede
 	 *
 	 * */
-	public function get_incidencias($page = 1, $cfg_pagination = NULL,$campo_orden=NULL,$orden=NULL,$filtros=NULL,$buscador=NULL) {
+	public function get_incidencias($page = 1, $cfg_pagination = NULL,$array_orden= NULL,$filtros=NULL) {
 
-        $this->db->select('incidencias.*,pds.reference as reference')
-        ->join('pds','incidencias.id_pds = pds.id_pds');
+        $this->db->select('incidencias.*,pds.reference as reference, device.brand_device as fabricante,
+                            territory.territory as territory,
+                       (SELECT brand_device.brand from brand_device  WHERE id_brand_device = fabricante
+                            ) as brand')
+        ->join('pds','incidencias.id_pds = pds.id_pds','left')
+        ->join('devices_pds','incidencias.id_devices_pds=devices_pds.id_devices_pds','left')
+        ->join('device','devices_pds.id_device=device.id_device','left')
+            ->join('territory','territory.id_territory=pds.territory','left')
+       ;
+
+
+
+        /** Aplicar filtros desde el array, de manera manual **/
+        if(isset($filtros["status"]) && !empty($filtros["status"])) $this->db->where('incidencias.status',$filtros['status']);
+        if(isset($filtros["status_pds"]) && !empty($filtros["status_pds"])) $this->db->where('incidencias.status_pds',$filtros['status_pds']);
+        if(isset($filtros["id_incidencia"]) && !empty($filtros["id_incidencia"])) $this->db->where('id_incidencia',$filtros['id_incidencia']);
+        if(isset($filtros["territory"]) && !empty($filtros["territory"])) $this->db->where('pds.territory',$filtros['territory']);
+        if(isset($filtros["brand_device"]) && !empty($filtros["brand_device"])) {
+            $this->db->where('incidencias.fail_device','1');
+            $this->db->where('device.brand_device',$filtros['brand_device']);
+        }
+        if(isset($filtros["reference"]) && !empty($filtros["reference"])) $this->db->where('reference',$filtros['reference']);
+
 
         /*  ESTADOS ABIERTOS SAT: Nueva, Revisada, Instalador asignado, Material asignado, Comunicada
             ESTADOS CERRADOS SAT: Resuelta, Pendiente recogida, Cerrada, Cancelada */
@@ -897,19 +932,13 @@ class Tienda_model extends CI_Model {
             ESTADOS CERRADOS PDS: Finalizada, Cancelada */
         $this->db->where('(incidencias.status_pds != "Finalizada" && incidencias.status_pds != "Cancelada")');
 
-        // Montamos las cláusulas where filtro, según el array pasado como param.
-        if (!is_null($filtros) && !empty($filtros)){
-            foreach($filtros as $k=>$f) {
-                $this->db->where('incidencias.'.$k, $f);
+        $campo_orden = $orden = NULL;
+        if(count($array_orden) > 0) {
+            foreach ($array_orden as $key=>$value){
+                $campo_orden = $key;
+                $orden = $value;
             }
         }
-
-        if(! empty($buscador['buscar_incidencia']))
-            $this->db->where('incidencias.id_incidencia',$buscador['buscar_incidencia']);
-
-        if(! empty($buscador['buscar_sfid']))
-            $this->db->where('pds.reference',$buscador['buscar_sfid']);
-
         if(!is_null($campo_orden) && !empty($campo_orden) && !is_null($orden) && !empty($orden)) {
             $s_orden = $campo_orden. " ".$orden;
             $this->db->order_by($s_orden);
@@ -918,7 +947,7 @@ class Tienda_model extends CI_Model {
         }
 
         $query =   $this->db->get('incidencias',$cfg_pagination['per_page'], ($page-1) * $cfg_pagination['per_page']);
-        //echo $this->db->last_query();
+       // echo $this->db->last_query();
 
 		return $query->result();
 	}
@@ -929,7 +958,7 @@ class Tienda_model extends CI_Model {
 *  filtradas si procede
 *
 * */
-    public function get_incidencias_csv($campo_orden=NULL,$orden=NULL,$filtros=NULL,$buscador=NULL,$tipo="abiertas") {
+    public function get_incidencias_csv($array_orden = NULL,$filtros=NULL,$tipo="abiertas") {
         $this->load->dbutil();
         $this->load->helper('file');
         $this->load->helper('download');
@@ -950,16 +979,18 @@ class Tienda_model extends CI_Model {
                             )) END) as elemento,
 
 
-                            incidencias.tipo_averia,
+                            incidencias.tipo_averia,';
 
-                            (CASE incidencias.fail_device WHEN 1 THEN ("Sí") ELSE ("No") END) AS `Fallo dispositivo`,
+
+        /*                    (CASE incidencias.fail_device WHEN 1 THEN ("Sí") ELSE ("No") END) AS `Fallo dispositivo`,
                             (CASE incidencias.alarm_display WHEN 1 THEN ("Sí") ELSE ("No") END) AS `Alarma mueble`,
                             (CASE incidencias.alarm_device WHEN 1 THEN ("Sí") ELSE ("No") END) AS `Alarma dispositivo`,
-                            (CASE incidencias.alarm_garra WHEN 1 THEN ("Sí") ELSE ("No") END) AS `Alarma anclaje`,
+                            (CASE incidencias.alarm_garra WHEN 1 THEN ("Sí") ELSE ("No") END) AS `Alarma anclaje`,*/
 
-                            REPLACE(REPLACE(incidencias.description_1,CHAR(10),CHAR(32)),CHAR(13),CHAR(32)),
-                            REPLACE(REPLACE(incidencias.description_2,CHAR(10),CHAR(32)),CHAR(13),CHAR(32)),
-                            REPLACE(REPLACE(incidencias.description_3,CHAR(10),CHAR(32)),CHAR(13),CHAR(32)),
+        $sql .='
+                           REPLACE(REPLACE(incidencias.description_1,CHAR(10),CHAR(32)),CHAR(13),CHAR(32)) as description_1,
+                            REPLACE(REPLACE(incidencias.description_2,CHAR(10),CHAR(32)),CHAR(13),CHAR(32))  as description_2,
+                            REPLACE(REPLACE(incidencias.description_3,CHAR(10),CHAR(32)),CHAR(13),CHAR(32))  as description_3,
                             incidencias.parte_pdf,
                             incidencias.denuncia,
                             incidencias.foto_url,
@@ -987,6 +1018,9 @@ class Tienda_model extends CI_Model {
                 WHERE 1 = 1';
 
 
+
+
+
         if($tipo==="abiertas") {
 
             $sql .=
@@ -1009,28 +1043,30 @@ class Tienda_model extends CI_Model {
         $sFiltrosFilename = "-";
 
 
-        if (!is_null($filtros) && !empty($filtros)){
-            foreach($filtros as $k=>$f) {
-                $sql  .= (' AND incidencias.'.$k.'="'.$f.'" ');
-                $sFiltrosFilename .= ($f."-");
+        /** Aplicar filtros desde el array, de manera manual **/
+        if(isset($filtros["status"]) && !empty($filtros["status"]))                 $sql .= (' AND incidencias.status ="' .$filtros['status']. '"');
+        if(isset($filtros["status_pds"]) && !empty($filtros["status_pds"]))         $sql .= (' AND incidencias.status_pds ="'.$filtros['status_pds'].'"');
+        if(isset($filtros["id_incidencia"]) && !empty($filtros["id_incidencia"]))   $sql .= (' AND id_incidencia ='.$filtros['id_incidencia']);
+        if(isset($filtros["territory"]) && !empty($filtros["territory"]))           $sql .= (' AND pds.territory = '.$filtros['territory']);
+        if(isset($filtros["brand_device"]) && !empty($filtros["brand_device"]))
+        {
+             $sql .= (' AND incidencias.fail_device=1');
+             $sql .= (' AND device.brand_device='.$filtros['brand_device']);
+        }
+        if(isset($filtros["reference"]) && !empty($filtros["reference"])) $sql .=(' AND reference= '.$filtros['reference']);
+
+        $campo_orden = $orden = NULL;
+        if(count($array_orden) > 0) {
+            foreach ($array_orden as $key=>$value){
+                $campo_orden = $key;
+                $orden = $value;
             }
         }
-
-        if(! empty($buscador['buscar_incidencia'])) {
-            $sql .= (' AND incidencias.id_incidencia = "'.$buscador['buscar_incidencia'].'"');
-            $sFiltrosFilename .= ($buscador['buscar_incidencia']."-");
-        }
-
-        if(! empty($buscador['buscar_sfid'])) {
-            $sql .= (' AND pds.reference ="'.$buscador['buscar_sfid'].'"');
-            $sFiltrosFilename .= ($buscador['buscar_sfid']."-");
-        }
-
         if(!is_null($campo_orden) && !empty($campo_orden) && !is_null($orden) && !empty($orden)) {
-            $sql .=  ' ORDER BY '.$campo_orden. ' '.$orden;
-
+            $s_orden = $campo_orden. " ".$orden;
+            $sql .= " ORDER BY ".($s_orden);
         }else{
-            $sql .=  ' ORDER BY fecha DESC';
+            $sql .= " ORDER BY fecha DESC";
         }
 
 
@@ -1045,9 +1081,24 @@ class Tienda_model extends CI_Model {
 
     }
 
-    public function get_incidencias_quantity($filtros=NULL,$buscador=NULL) {
+    public function get_incidencias_quantity($filtros=NULL) {
         $this->db->select('COUNT(incidencias.id_incidencia) AS cantidad')
             ->join('pds','incidencias.id_pds = pds.id_pds');
+
+
+
+        /** Aplicar filtros desde el array, de manera manual **/
+        if(isset($filtros["status"]) && !empty($filtros["status"])) $this->db->where('incidencias.status',$filtros['status']);
+        if(isset($filtros["status_pds"]) && !empty($filtros["status_pds"])) $this->db->where('incidencias.status_pds',$filtros['status_pds']);
+        if(isset($filtros["id_incidencia"]) && !empty($filtros["id_incidencia"])) $this->db->where('id_incidencia',$filtros['id_incidencia']);
+        if(isset($filtros["territory"]) && !empty($filtros["territory"])) $this->db->where('pds.territory',$filtros['territory']);
+        if(isset($filtros["brand_device"]) && !empty($filtros["brand_device"])) {
+            $this->db->join('devices_pds','incidencias.id_devices_pds = devices_pds.id_devices_pds');
+            $this->db->join('device','devices_pds.id_device=device.id_device');
+            $this->db->where('incidencias.fail_device','1');
+            $this->db->where('device.brand_device',$filtros['brand_device']);
+        }
+        if(isset($filtros["reference"]) && !empty($filtros["reference"])) $this->db->where('reference',$filtros['reference']);
 
         /*  ESTADOS ABIERTOS SAT: Nueva, Revisada, Instalador asignado, Material asignado, Comunicada
             ESTADOS CERRADOS SAT: Resuelta, Pendiente recogida, Cerrada, Cancelada */
@@ -1057,18 +1108,6 @@ class Tienda_model extends CI_Model {
             ESTADOS CERRADOS PDS: Finalizada, Cancelada */
         $this->db->where('(incidencias.status_pds != "Finalizada" && incidencias.status_pds != "Cancelada")');
 
-        // Montamos las cláusulas where filtro, según el array pasado como param.
-        if (!is_null($filtros) && !empty($filtros)){
-            foreach($filtros as $k=>$f) {
-                $this->db->where('incidencias.'.$k, $f);
-            }
-        }
-
-        if(! empty($buscador['buscar_incidencia']))
-            $this->db->where('incidencias.id_incidencia',$buscador['buscar_incidencia']);
-
-        if(! empty($buscador['buscar_sfid']))
-            $this->db->where('pds.reference',$buscador['buscar_sfid']);
 
         $query =  $this->db->get('incidencias')->result();
 
@@ -1212,6 +1251,8 @@ class Tienda_model extends CI_Model {
 
 
 	}
+
+
 	public function historico_fecha($id,$status) {
 		if($id != FALSE) {
 			$query = $this->db->select('historico.fecha')
@@ -1229,15 +1270,20 @@ class Tienda_model extends CI_Model {
 	
 	public function incidencia_update($id,$status_pds,$status)
 	{
+        $ahora = date("Y-m-d H:i:s");
+
 		$this->db->set('status_pds', $status_pds, FALSE);
 		$this->db->set('status', $status, FALSE);
+        $this->db->set('last_updated', "'$ahora'", FALSE);
 		$this->db->where('id_incidencia',$id);
 		$this->db->update('incidencias');
 	}	
 
 	public function incidencia_update_cierre($id,$fecha_cierre)
 	{
+        $ahora = date("Y-m-d H:i:s");
 		$this->db->set('fecha_cierre', $fecha_cierre);
+        $this->db->set('last_updated', "'$ahora'", FALSE);
 		$this->db->where('id_incidencia',$id);
 		$this->db->update('incidencias');
 	}	
@@ -1258,11 +1304,23 @@ class Tienda_model extends CI_Model {
 	}
 		
 	
-	public function incidencia_update_device_pds($id_devices_pds,$status)
+	public function incidencia_update_device_pds($id_devices_pds,$status,$id_incidencia = NULL)
 	{
 		$this->db->set('status', $status, FALSE);
 		$this->db->where('id_devices_pds',$id_devices_pds);
 		$this->db->update('devices_pds');
+
+        /**
+         * Cambiar last_updated
+         */
+        if(!is_null($id_incidencia)){
+            $ahora = date("Y-m-d H:i:s");
+            $this->db->set('last_updated', "'$ahora'", FALSE);
+            $this->db->where('id_incidencia',$id_incidencia);
+            $this->db->update('incidencias');
+        }
+
+
 	}
 		
 	

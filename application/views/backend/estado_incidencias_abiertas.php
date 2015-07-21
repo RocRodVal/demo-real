@@ -28,7 +28,7 @@
                                             <th>Tipo</th>
                                             <th>Panelado</th>
                                             <th>Nombre comercial</th>
-                                            <th>Zona</th>
+                                            <th>Territorio</th>
                                         </tr>
                                     </thead>                                
                                     <tbody>
@@ -62,50 +62,71 @@
             <div class="row" >
                 <div class="col-lg-12">
                     <div class="row buscador">
-                        <form action="<?=base_url()?>admin/dashboard/#incidencias_abiertas" method="post" class="filtros">
+                        <form action="<?=base_url()?>admin/estado_incidencias_abiertas" method="post" class="filtros form-mini">
                             <div class="col-sm-2">
-                                <label for="filtrar">Estado SAT: </label>
-                                <select name="filtrar" id="filtrar" class="form-control input-sm">
-                                    <option value="" <?php echo ($filtro==="") ? 'selected="selected"' : ''?>>Cualquier estado</option>
-                                    <option value="Nueva" <?php echo ($filtro==="Nueva") ? 'selected="selected"' : ''?>>Nuevas</option>
-                                    <option value="Revisada" <?php echo ($filtro==="Revisada") ? 'selected="selected"' : ''?>>Revisadas</option>
-                                    <option value="Instalador asignado" <?php echo ($filtro==="Instalador asignado") ? 'selected="selected"' : ''?>>Instalador asignado</option>
-                                    <option value="Material asignado" <?php echo ($filtro==="Material asignado") ? 'selected="selected"' : ''?>>Material asignado</option>
-                                    <option value="Comunicada" <?php echo ($filtro==="Comunicada") ? 'selected="selected"' : ''?>>Comunicadas</option>
+                                <label for="status">Estado SAT: </label>
+                                <select name="status" id="status" class="form-control input-sm">
+                                    <option value="" <?php echo ($status==="") ? 'selected="selected"' : ''?>>Cualquier estado</option>
+                                    <option value="Nueva" <?php echo ($status==="Nueva") ? 'selected="selected"' : ''?>>Nuevas</option>
+                                    <option value="Revisada" <?php echo ($status==="Revisada") ? 'selected="selected"' : ''?>>Revisadas</option>
+                                    <option value="Instalador asignado" <?php echo ($status==="Instalador asignado") ? 'selected="selected"' : ''?>>Instalador asignado</option>
+                                    <option value="Material asignado" <?php echo ($status==="Material asignado") ? 'selected="selected"' : ''?>>Material asignado</option>
+                                    <option value="Comunicada" <?php echo ($status==="Comunicada") ? 'selected="selected"' : ''?>>Comunicadas</option>
 
 
                                 </select>
                             </div>
                             <div class="col-sm-2">
-                                <label for="filtrar_pds">Estado PDS: </label>
-                                <select name="filtrar_pds" id="filtrar_pds" class="form-control input-sm">
-                                    <option value="" <?php echo ($filtro_pds==="") ? 'selected="selected"' : ''?>>Cualquier estado</option>
+                                <label for="status_pds">Estado PDS: </label>
+                                <select name="status_pds" id="status_pds" class="form-control input-sm">
+                                    <option value="" <?php echo ($status_pds==="") ? 'selected="selected"' : ''?>>Cualquier estado</option>
 
-                                    <option value="Alta realizada" <?php echo ($filtro_pds==="Alta realizada") ? 'selected="selected"' : ''?>>Alta realizada</option>
-                                    <option value="En proceso" <?php echo ($filtro_pds==="En proceso") ? 'selected="selected"' : ''?>>En proceso</option>
-                                    <option value="En visita" <?php echo ($filtro_pds==="En visita") ? 'selected="selected"' : ''?>>En visita</option>
+                                    <option value="Alta realizada" <?php echo ($status_pds==="Alta realizada") ? 'selected="selected"' : ''?>>Alta realizada</option>
+                                    <option value="En proceso" <?php echo ($status_pds==="En proceso") ? 'selected="selected"' : ''?>>En proceso</option>
+                                    <option value="En visita" <?php echo ($status_pds==="En visita") ? 'selected="selected"' : ''?>>En visita</option>
                                 </select>
                             </div>
-                            <div class="col-sm-1">
-                                <input type="submit" value="Aplicar" class="form-control input-sm">
-                            </div>
-                            <div class="col-sm-1">
-                                <?php /*if(! empty($filtro) || ! empty($filtro_pds)) { ?>
-                                    <a href="<?=base_url()?>admin/dashboard/borrar_busqueda/#incidencias_abiertas" class="reiniciar_busqueda"><i class="glyphicon glyphicon-remove"></i>  Reiniciar</a>
-                                <?php }*/ ?>
+                            <div class="col-sm-2">
+                                <label for="territory">Territorio: </label>
+                                <select name="territory" id="territory" class="form-control input-sm">
+                                    <option value="" <?php echo ($territory==="") ? 'selected="selected"' : ''?>>Cualquier territorio</option>
+                                    <?php
+                                        foreach($territorios as $territorio)
+                                        {
+                                            $attr = ($territorio->id_territory === $territory) ? ' selected="selected" ' :'';
+                                            echo '<option value="'.$territorio->id_territory.'" '.$attr.'>'.$territorio->territory.'</option>';
+                                        }
+                                    ?>
+                                </select>
                             </div>
 
                             <div class="col-sm-2">
-                                <label for="buscar_incidencia">Buscar incidencia: </label>
-                                <input type="text" name="buscar_incidencia" id="buscar_incidencia" class="form-control input-sm" placeholder="Ref. incidencia" <?php echo (!empty($buscar_incidencia)) ? ' value="'.$buscar_incidencia.'" ' : ''?> />
+                                <label for="brand_device">Fabricante: </label>
+                                <select name="brand_device" id="brand_device" class="form-control input-sm">
+                                    <option value="" <?php echo ($brand_device==="") ? 'selected="selected"' : ''?>>Cualquier fabricante</option>
+                                    <?php
+                                    foreach($fabricantes as $fabricante)
+                                    {
+                                        $attr = ($fabricante->id_brand_device === $brand_device) ? ' selected="selected" ' :'';
+                                        echo '<option value="'.$fabricante->id_brand_device.'" '.$attr.'>'.$fabricante->brand.'</option>';
+                                    }
+                                    ?>
+                                </select>
                             </div>
-                            <div class="col-sm-2">
-                                <label for="buscar_sfid">Buscar SFID: </label>
-                                <input type="text" name="buscar_sfid" id="buscar_sfid" class="form-control input-sm" placeholder="SFID" <?php echo (!empty($buscar_sfid)) ? ' value="'.$buscar_sfid.'" ' : ''?> />
+
+                            <div class="col-sm-1">
+                                <label for="id_incidencia">Id. Incidencia: </label>
+                                <input type="text" name="id_incidencia" id="id_incidencia" class="form-control input-sm" placeholder="Id. incidencia" <?php echo (!empty($id_incidencia)) ? ' value="'.$id_incidencia.'" ' : ''?> />
                             </div>
                             <div class="col-sm-1">
-                                <input type="hidden" name="do_busqueda" value="si">
-                                <input type="submit" value="Buscar" class="form-control input-sm">
+                                <label for="reference">SFID: </label>
+                                <input type="text" name="reference" id="reference" class="form-control input-sm" placeholder="SFID" <?php echo (!empty($reference)) ? ' value="'.$reference.'" ' : ''?> />
+                            </div>
+                            <div class="col-sm-1">
+                                <div class="form-group">
+                                    <input type="hidden" name="do_busqueda" value="si">
+                                    <input type="submit" value="Buscar" id="submit_button" class="form-control input-sm">
+                                    </div>
                             </div>
                             <div class="col-sm-1">
                                 <?php /*if(! empty($buscar_sfid) || ! empty($buscar_incidencia)) { ?>
@@ -135,20 +156,28 @@
                             </div>
                         <?php } ?>
 
-                        <p><a href="<?=base_url()?>admin/dashboard_exportar/abiertas" class="btn exportar"><i class="glyphicon glyphicon-file"></i> Exportar CSV</a></p>
+                        <p><a href="<?=base_url()?>admin/exportar_incidencias/abiertas" class="btn exportar"><i class="glyphicon glyphicon-file"></i> Exportar Excel</a></p>
 		                <div class="table-responsive">
-		                    <table class="table table-striped table-bordered table-hover table-sorting" id="table_incidencias_dashboard" data-order-form="form_orden_activas">
+		                    <table class="table table-striped table-bordered table-hover table-sorting" id="table_incidencias_dashboard" data-order-form="form_orden">
 		                        <thead>
 		                        <tr>
 		                            <th class="sorting" data-rel="incidencias.id_incidencia"    data-order="">Ref.</th>
 		                            <th class="sorting" data-rel="pds.reference"                data-order="">SFID</th>
 		                            <th class="sorting" data-rel="incidencias.fecha"            data-order="desc">Fecha alta</th>
 		                            <th class="principal"                                                             >Elemento afectado</th>
-		                            <th class="sorting" data-rel="incidencias.alarm_display"    data-order="">Sistema general de seguridad</th>
-		                            <th class="sorting" data-rel="incidencias.fail_device"    data-order="">Dispositivo</th>
-		                        	<th class="sorting" data-rel="incidencias.alarm_device"    data-order="">Alarma dispositivo cableado</th>
-		                            <th class="sorting" data-rel="incidencias.alarm_garra"    data-order="">Soporte sujección</th>
-		                            <th class="sorting" data-rel="incidencias.tipo_averia"    data-order="">Tipo incidencia</th>
+
+
+                                    <?php /*
+                                    <th class="sorting" data-rel="incidencias.alarm_display"    data-order="">Sistema general de seguridad</th>
+                                    <th class="sorting" data-rel="incidencias.fail_device"    data-order="">Dispositivo</th>
+                                    <th class="sorting" data-rel="incidencias.alarm_device"    data-order="">Alarma dispositivo cableado</th>
+                                    <th class="sorting" data-rel="incidencias.alarm_garra"    data-order="">Soporte sujección</th>*/?>
+                                    <th class=""                                                             >Territorio</th>
+                                    <th class=""                                                             >Fabricante</th>
+
+
+                                    <th>Última modificación</th>
+                                    <th class="sorting" data-rel="incidencias.tipo_averia"    data-order="">Tipo incidencia</th>
 		                            <th                                                                     >Interv.</th>
 		                            <th class="sorting" data-rel="incidencias.status"    data-order="">Estado SAT</th>
                                     <th class="sorting" data-rel="incidencias.status_pds"    data-order="">Estado PDS</th>
@@ -185,11 +214,25 @@
 		                                	$mueble = $incidencia->display['display'];
 		                                }		                                		
 		                                ?>
-		                                <td class="principal"><?=($incidencia->alarm_display==1)?'Mueble: '.$mueble:'Dispositivo: '.$dispositivo?></td>
-		                                <td><?=($incidencia->alarm_display==1)?'&#x25cf;':''?></td>
+
+                                        <td class="principal"><?=($incidencia->alarm_display==1)?'Mueble: '.$mueble:'Dispositivo: '.$dispositivo?></td>
+                                        <td><?=(!empty($incidencia->territory)? $incidencia->territory : '-')?></td>
+                                        <td><?=(!empty($incidencia->brand)? $incidencia->brand : '-')?></td>
+
+
+                                        <?php
+                                        /*<td><?=($incidencia->alarm_display==1)?'&#x25cf;':''?></td>
 		                                <td><?=($incidencia->fail_device==1)?'&#x25cf;':''?></td>
 		                                <td><?=($incidencia->alarm_device==1)?'&#x25cf;':''?></td>
-		                                <td><?=($incidencia->alarm_garra==1)?'&#x25cf;':''?></td>
+		                                <td><?=($incidencia->alarm_garra==1)?'&#x25cf;':''?></td>*/?>
+
+                                        <td>
+                                            <?php $last_updated = $incidencia->last_updated;
+                                            echo (is_null($last_updated)) ? "-" : date("d/m/Y", strtotime($last_updated));
+                                            ?>
+                                        </td>
+
+
 		                                <td><?php echo $incidencia->tipo_averia ?></td>
                                         <td>
 	                                        <?php if($incidencia->intervencion != NULL){?>
@@ -210,16 +253,16 @@
 		                        ?>
 		                        </tbody>
 		                    </table>
-                            <form action="<?=base_url()?>admin/dashboard/#incidencias_abiertas" method="post" id="form_orden_activas">
-                                <input type="hidden" name="form_orden_activas_campo"  value="">
-                                <input type="hidden" name="form_orden_activas_orden" value="">
+                            <form action="<?=base_url()?>admin/estado_incidencias_abiertas" method="post" id="form_orden">
+                                <input type="hidden" name="form_orden_campo_orden"  value="">
+                                <input type="hidden" name="form_orden_orden_campo" value="">
                                 <input type="hidden" name="form"  value="">
                                 <input type="hidden" name="ordenar" value="true">
                                 <?php //<input type="submit"> ?>
                             </form>
                             <script>
-                                <?php if(!empty($campo_orden_activas) && !empty($orden_activas)) {?>
-                                    marcarOrdenacion('table_incidencias_dashboard','<?=$campo_orden_activas?>','<?=$orden_activas ?>');
+                                <?php if(!empty($campo_orden) && !empty($orden_campo)) {?>
+                                    marcarOrdenacion('table_incidencias_dashboard','<?=$campo_orden?>','<?=$orden_campo?>');
                                 <?php } ?>
                             </script>
 		                </div>

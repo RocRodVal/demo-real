@@ -39,7 +39,7 @@
                                             <th>Tipo</th>
                                             <th>Panelado</th>
                                             <th>Nombre comercial</th>
-                                            <th>Zona</th>
+                                            <th>Territorio</th>
                                         </tr>
                                     </thead>                                
                                     <tbody>

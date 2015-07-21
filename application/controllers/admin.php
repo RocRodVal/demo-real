@@ -94,6 +94,94 @@ class Admin extends CI_Controller
     }*/
 
     /**
+     * Función que guarda en sesión el valor de los filtros del POST, al venir de un form de filtrado
+     * @param $array_filtros
+     */
+    public function set_filtros($array_filtros){
+        $array_valores = NULL;
+        if(is_array($array_filtros))
+        {
+            $array_valores = array();
+            foreach ($array_filtros as $filter)
+            {
+                $valor_filter = $this->input->post($filter);
+                $this->session->set_userdata($filter, $valor_filter);
+                $array_valores[$filter] = $valor_filter;
+            }
+
+        }
+        return $array_valores;
+    }
+
+
+    /**
+     * Método que borra de la sesión, X variables, pasado sus nombres en un array
+     * Si el parámetro es un array (de variables), lo recorremos y eliminamos de la sesión cualquier valor que tenga
+     * la variable de sesión de ese nombre
+     */
+    public function delete_filtros($array_filtros){
+        if(is_array($array_filtros)){
+            foreach($array_filtros as $filtro){
+                $this->session->unset_userdata($filtro);
+            }
+        }
+    }
+
+    /**
+     * Recibe el array de filtros (campos del buscador/filtrador) y buscará su valor en la sesión, y cargará otro array
+     * con los pares VARIABLE=>VALOR SESION.
+     * @param $array_filtros
+     * @return array|null
+     */
+    public function get_filtros($array_filtros){
+        $array_session = NULL;
+
+        if(is_array($array_filtros)){
+            $array_session = array();
+            foreach($array_filtros as $filter){
+
+                $sess_filter = $this->session->userdata($filter);
+                $array_session[$filter] = (!empty($sess_filter)) ? $sess_filter : NULL;
+
+            }
+        }
+        return $array_session;
+    }
+
+    public function set_orden($formulario)
+    {
+
+        $array_orden = array();
+        $campo_orden = $this->input->post($formulario . '_campo_orden');
+        $orden_campo = $this->input->post($formulario . '_orden_campo');
+
+        $this->session->set_userdata('campo_orden', $campo_orden);
+        $this->session->set_userdata('orden_campo', $orden_campo);
+
+        $array_orden[$campo_orden]= $orden_campo;
+
+        return $array_orden;
+
+    }
+
+
+    public function get_orden()
+    {
+        $sess_campo_orden = $this->session->userdata('campo_orden');
+        $sess_orden_campo = $this->session->userdata('orden_campo');
+        $array_orden = NULL;
+        if(!empty($sess_campo_orden)){
+            $array_orden = array();
+            if(!empty($sess_orden_campo)){
+                $array_orden[$sess_campo_orden] = $sess_orden_campo;
+            }else{
+                $array_orden[$sess_campo_orden] = "ASC";
+            }
+        }
+        return $array_orden;
+    }
+
+    /**
      * Tabla de incidencias abiertas
      * (Antiguo dashboard)
      */
@@ -107,6 +195,8 @@ class Admin extends CI_Controller
 
 
             $this->load->model(array('intervencion_model', 'tienda_model', 'sfid_model','chat_model'));
+            $this->load->library('app/paginationlib');
+
 
 
             // Comprobar si existe el segmento PAGE en la URI, si no inicializar a 1..
@@ -119,114 +209,64 @@ class Admin extends CI_Controller
                 $segment = null;
             }
 
+            /**
+             * Crear los filtros
+             */
+            $array_filtros = array(
+                'status',
+                'status_pds',
+                'territory',
+                'brand_device',
+                'id_incidencia',
+                'reference'
+            );
 
-            // Realizar búsqueda por INCIDENCIA o SFID
-            $buscar_incidencia = NULL;
-            $buscar_sfid = NULL;
-
+            /* BORRAR BUSQUEDA */
             $borrar_busqueda = $this->uri->segment(3);
             if($borrar_busqueda === "borrar_busqueda")
             {
-                $this->session->unset_userdata('buscar_sfid');
-                $this->session->unset_userdata('buscar_incidencia');
-
-                $this->session->unset_userdata('filtro');
-                $this->session->unset_userdata('filtro_pds');
-
+                $this->delete_filtros($array_filtros);
                 redirect(site_url("/admin/estado_incidencias_abiertas"),'refresh');
             }
-
             // Consultar a la session si ya se ha buscado algo y guardado allí.
-            $sess_buscar_sfid = $this->session->userdata('buscar_sfid');
-            $sess_buscar_incidencia = $this->session->userdata('buscar_incidencia');
-            if(! empty($sess_buscar_sfid)) $buscar_sfid = $sess_buscar_sfid;
-            if(! empty($sess_buscar_incidencia)) $buscar_incidencia = $sess_buscar_incidencia;
+            $array_sesion = $this->get_filtros($array_filtros);
+             // Buscar en el POST si hay busqueda, y si la hay usarla y guardarla además en sesion
 
-            // Buscar en el POST si hay busqueda, y si la hay usarla y guardarla además en sesion
-            $do_busqueda = $this->input->post('do_busqueda');
+            if($this->input->post('do_busqueda')==="si") $array_sesion = $this->set_filtros($array_filtros);
 
-            // Obtener los filtros: status SAT y stats PDS, primero de Session y despues del post, si procede..
-            $filtro = NULL;
-            $sess_filtro = $this->session->userdata('filtro');
-            if(! empty($sess_filtro)) $filtro = $sess_filtro;
-
-            $filtro_pds = NULL;
-            $sess_filtro_pds = $this->session->userdata('filtro_pds');
-            if(! empty($sess_filtro_pds)) $filtro_pds = $sess_filtro_pds;
-
-            // Obtener el filtro, primero de Session y despues del post, si procede..
-
-
-
-
-            if($do_busqueda==="si")
-            {
-                $buscar_sfid = $this->input->post('buscar_sfid');
-                $this->session->set_userdata('buscar_sfid', $buscar_sfid);
-
-                $buscar_incidencia = $this->input->post('buscar_incidencia');
-                $this->session->set_userdata('buscar_incidencia', $buscar_incidencia);
-
-                $post_filtro =$this->input->post('filtrar');
-                    $filtro = $post_filtro;
-                    $this->session->set_userdata('filtro',$filtro);
-
-
-                $post_filtro_pds =$this->input->post('filtrar_pds');
-                    $filtro_pds = $post_filtro_pds;
-                    $this->session->set_userdata('filtro_pds',$filtro_pds);
-
-
+            /* Creamos al vuelo las variables que vienen de los filtros */
+            foreach($array_filtros as $filtro){
+                $$filtro = $array_sesion[$filtro];
+                $data[$filtro] = $array_sesion[$filtro]; // Pasamos los valores a la vista.
             }
-            $buscador['buscar_sfid']        = $buscar_sfid;
-            $buscador['buscar_incidencia']  = $buscar_incidencia;
 
-            $data['buscar_sfid']        = $buscar_sfid;
-            $data['buscar_incidencia']  = $buscar_incidencia;
-
-            $data["filtro"] = $filtro;
-            $data["filtro_pds"] = $filtro_pds;
-
-            $filtros = array();
-
-            if($filtro != NULL) $filtros["status"] = $filtro;
-            if($filtro_pds != NULL) $filtros["status_pds"] = $filtro_pds;
-
-
-
-
-            // Obtener el campo a ordenar, primero de Session y despues del post, si procede..
-            $campo_orden_activas = NULL;
-            $orden_activas = NULL;
-
-            $sess_campo_orden_activas =  $this->session->userdata('campo_orden_activas');
-            if(! empty($sess_campo_orden_activas)) $campo_orden_activas = $sess_campo_orden_activas;
-            $sess_orden_activas =  $this->session->userdata('orden_activas');
-            if(! empty($sess_orden_activas)) $orden_activas = $sess_orden_activas;
 
             // viene del form de ordenacion
             $do_orden = $this->input->post('ordenar');
-
             if($do_orden==='true') {
-                $post_orden_form = $this->input->post('form');
-
-                $campo_orden_activas = $this->input->post($post_orden_form.'_campo');
-                $orden_activas = $this->input->post($post_orden_form.'_orden');
-
-                $this->session->set_userdata('campo_orden_activas', $campo_orden_activas);
-                $this->session->set_userdata('orden_activas', $orden_activas);
+                $array_orden = $this->set_orden($this->input->post('form'));
             }
 
-            $data["campo_orden_activas"] = $campo_orden_activas;
-            $data["orden_activas"] = $orden_activas;
+            // Obtener el campo a ordenar, primero de Session y despues del post, si procede..
+            $array_orden = $this->get_orden();
+            if(count($array_orden) > 0) {
+                foreach ($array_orden as $key => $value) {
+                    $data["campo_orden"] = $key;
+                    $data["orden_campo"] = $value;
+                }
+            }else{
+                $data["campo_orden"] = NULL;
+                $data["orden_campo"] = NULL;
+            }
 
-            $this->load->library('app/paginationlib');
+
+
 
             $data['title']           = 'Mis incidencias';
             $data['title_iniciadas'] = 'Incidencias abiertas';
 
             $per_page = 100;
-            $total_incidencias = $this->tienda_model->get_incidencias_quantity($filtros,$buscador);   // Sacar el total de incidencias, para el paginador
+            $total_incidencias = $this->tienda_model->get_incidencias_quantity($array_sesion);   // Sacar el total de incidencias, para el paginador
             $cfg_pagination = $this->paginationlib->init_pagination("admin/estado_incidencias_abiertas/page/",$total_incidencias,$per_page,$segment);
 
 
@@ -238,13 +278,11 @@ class Admin extends CI_Controller
             // Indicamos si habrá que mostrar el paginador en la vista
             $data['show_paginator'] = $bounds["show_paginator"];
             $data['num_resultados'] = $bounds["num_resultados"];
-
             $data['n_inicial'] = $bounds["n_inicial"];
             $data['n_final'] = $bounds["n_final"];
-
             $data["pagination_helper"]   = $this->pagination;
 
-            $incidencias = $this->tienda_model->get_incidencias($page,$cfg_pagination,$campo_orden_activas,$orden_activas,$filtros,$buscador);
+            $incidencias = $this->tienda_model->get_incidencias($page,$cfg_pagination,$array_orden,$array_sesion);
 
              foreach ($incidencias as $incidencia) {
                 $incidencia->device = $this->sfid_model->get_device($incidencia->id_devices_pds);
@@ -255,7 +293,10 @@ class Admin extends CI_Controller
 
             $data['incidencias'] = $incidencias;
 
-
+            /* LISTADO DE TERRITORIOS PARA EL SELECT */
+            $data["territorios"] = $this->tienda_model->get_territorios();
+            /* LISTADO DE FABRICANTES PARA EL SELECT */
+            $data["fabricantes"] = $this->tienda_model->get_fabricantes();
 
             $this->load->view('backend/header', $data);
             $this->load->view('backend/navbar', $data);
@@ -459,7 +500,7 @@ class Admin extends CI_Controller
 
 
 
-    public function dashboard_exportar()
+    public function exportar_incidencias()
     {
         if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
             $xcrud = xcrud_get_instance();
@@ -468,76 +509,26 @@ class Admin extends CI_Controller
             $this->load->model(array('intervencion_model', 'tienda_model', 'sfid_model','chat_model'));
             $tipo = $this->uri->segment(3); // TIPO DE INCIDENCIA
 
-
-            // Realizar búsqueda por INCIDENCIA o SFID
-            $buscar_incidencia = NULL;
-            $buscar_sfid = NULL;
-            // Consultar a la session si ya se ha buscado algo y guardado allí.
-            $sess_buscar_sfid = $this->session->userdata('buscar_sfid');
-            $sess_buscar_incidencia = $this->session->userdata('buscar_incidencia');
-            if(! empty($sess_buscar_sfid)) $buscar_sfid = $sess_buscar_sfid;
-            if(! empty($sess_buscar_incidencia)) $buscar_incidencia = $sess_buscar_incidencia;
-
-
-            // Obtener los filtros: status SAT y stats PDS, primero de Session y despues del post, si procede..
-            $filtro = NULL;
-            $sess_filtro = $this->session->userdata('filtro');
-            if(! empty($sess_filtro)) $filtro = $sess_filtro;
-
-            $filtro_pds = NULL;
-            $sess_filtro_pds = $this->session->userdata('filtro_pds');
-            if(! empty($sess_filtro_pds)) $filtro_pds = $sess_filtro_pds;
-
-            $buscador['buscar_sfid']        = $buscar_sfid;
-            $buscador['buscar_incidencia']  = $buscar_incidencia;
-
-            $filtros = array();
-
-            if($filtro != NULL) $filtros["status"] = $filtro;
-            if($filtro_pds != NULL) $filtros["status_pds"] = $filtro_pds;
-
-            // Obtener el campo a ordenar, primero de Session y despues del post, si procede..
-            $campo_orden_activas = NULL;
-            $orden_activas = NULL;
-
-            $sess_campo_orden_activas =  $this->session->userdata('campo_orden_activas');
-            if(! empty($sess_campo_orden_activas)) $campo_orden_activas = $sess_campo_orden_activas;
-            $sess_orden_activas =  $this->session->userdata('orden_activas');
-            if(! empty($sess_orden_activas)) $orden_activas = $sess_orden_activas;
-
-
-
-
-
+            // Filtros abiertas
+            $array_filtros = array(
+                'status',
+                'status_pds',
+                'territory',
+                'brand_device',
+                'id_incidencia',
+                'reference'
+            );
+           $array_sesion = $this->get_filtros($array_filtros);
 
 
             // Obtener el campo a ordenar, primero de Session y despues del post, si procede..
-            $campo_orden_cerradas = NULL;
-            $orden_cerradas = NULL;
-
-            $sess_campo_orden_cerradas =  $this->session->userdata('campo_orden_cerradas');
-            if(! empty($sess_campo_orden_cerradas)) $campo_orden_cerradas = $sess_campo_orden_cerradas;
-            $sess_orden_cerradas =  $this->session->userdata('orden_cerradas');
-            if(! empty($sess_orden_cerradas)) $orden_cerradas = $sess_orden_cerradas;
-
-            $filtro_finalizadas = NULL;
-            $filtro_finalizadas_pds = NULL;
-
-            $sess_filtro_finalizadas = $this->session->userdata('filtro_finalizadas');
-            if(! empty($sess_filtro_finalizadas)) $filtro_finalizadas = $sess_filtro_finalizadas;
-
-            $sess_filtro_finalizadas_pds = $this->session->userdata('filtro_finalizadas_pds');
-            if(! empty($sess_filtro_finalizadas_pds)) $filtro_finalizadas_pds = $sess_filtro_finalizadas_pds;
-
-            $filtros_finalizadas = array();
-            if($filtro_finalizadas != NULL) $filtros_finalizadas["status"] = $filtro_finalizadas;
-            if($filtro_finalizadas_pds != NULL) $filtros_finalizadas["status_pds"] = $filtro_finalizadas_pds;
+            $array_orden = $this->get_orden();
 
 
             if($tipo === "abiertas") {
-                $this->tienda_model->get_incidencias_csv($campo_orden_activas, $orden_activas, $filtros, $buscador, "abiertas");
+                $this->tienda_model->get_incidencias_csv($array_orden, $array_sesion, "abiertas");
             }else {
-                $this->tienda_model->get_incidencias_csv($campo_orden_cerradas, $orden_cerradas, $filtros_finalizadas, $buscador, "cerradas");
+                $this->tienda_model->get_incidencias_csv($array_orden, $array_sesion, "cerradas");
             }
 
 
@@ -862,7 +853,7 @@ class Admin extends CI_Controller
             $data['chats'] = $chats;
 
             $data['title'] = 'Operativa incidencia Ref. '.$data['id_inc_url'];
-
+            $data['last_updated'] = $incidencia['last_updated'];
 
             $this->load->view('backend/header', $data);
             $this->load->view('backend/navbar', $data);
@@ -1170,6 +1161,8 @@ class Admin extends CI_Controller
         $status_ext = $this->uri->segment(7);
 
 
+
+
         $xcrud = xcrud_get_instance();
         $this->load->model(array('tienda_model','intervencion_model'));
 
@@ -1197,6 +1190,9 @@ class Admin extends CI_Controller
             }
         }
 
+        /**
+         * Botón Asignar material
+         */
         if ($status == 5) {
         	$intervencion = $this->intervencion_model->get_intervencion_incidencia($id_inc);
 
@@ -1221,6 +1217,37 @@ class Admin extends CI_Controller
         	$this->tienda_model->facturacion($facturacion_data);
         }
 
+
+
+
+        /**
+         * Botón resolver Incidencia : Recoge fecha de resolución y hace la operación
+         */
+        if ($status == 6)
+        {
+        	$fecha_cierre = $this->input->post('fecha_cierre');
+        	$this->tienda_model->incidencia_update_cierre($id_inc, $fecha_cierre);
+
+        	if ($incidencia['fail_device'] == 1) {
+        		$this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'], 1);
+        	}
+
+        }
+
+        /**
+         * CIERRE FORZOSO
+         */
+        if (($status == 8) AND ($status_ext == 'ext'))
+        {
+        	if ($incidencia['fail_device'] == 1) {
+        		$this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'], 1,$id_inc);
+        	}
+
+        }
+
+        /**
+         * Guardar incidcencia en el histórico
+         */
         $data = array(
             'fecha' => date('Y-m-d H:i:s'),
             'id_incidencia' => $id_inc,
@@ -1233,25 +1260,10 @@ class Admin extends CI_Controller
 
         $this->tienda_model->historico($data);
 
-        if ($status == 6)
-        {
-        	$fecha_cierre = $this->input->post('fecha_cierre');
-        	$this->tienda_model->incidencia_update_cierre($id_inc, $fecha_cierre);
-        	if ($incidencia['fail_device'] == 1) {
-        		$this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'], 1);
-        	}
 
-        }
-
-        if (($status == 8) AND ($status_ext == 'ext'))
-        {
-        	if ($incidencia['fail_device'] == 1) {
-        		$this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'], 1);
-        	}
-
-        }
-
-
+        /**
+         * Notificación a instalador
+         */
         if ($status == 5)
         {
             $envio_mail = $this->uri->segment(7);
@@ -2137,7 +2149,7 @@ class Admin extends CI_Controller
         //$xcrud_2->readonly('reference');
         $xcrud_2->disabled('reference','edit');
         $xcrud_2->sum('m2_total', 'm2_fo', 'm2_bo');
-        $xcrud_2->label('client_pds', 'Cliente')->label('reference', 'SFID')->label('type_pds', 'Tipo')->label('territory', 'Zona')->label('panelado_pds', 'Panelado')->label('dispo', 'Disposición')->label('commercial', 'Nombre comercial')->label('cif', 'CIF')->label('picture_url', 'Foto')->label('m2_fo', 'M2 front-office')->label('m2_bo', 'M2 back-office')->label('m2_total', 'M2 total')->label('type_via', 'Tipo vía')->label('address', 'Dirección')->label('zip', 'C.P.')->label('city', 'Ciudad')->label('province', 'Provincia')->label('county', 'CC.AA.')->label('schedule', 'Horario')->label('phone', 'Teléfono')->label('mobile', 'Móvil')->label('email', 'Email')->label('contact_contact_person', 'Contacto')->label('contact_in_charge', 'Encargado')->label('contact_supervisor', 'Supervisor')->label('status', 'Estado');
+        $xcrud_2->label('client_pds', 'Cliente')->label('reference', 'SFID')->label('type_pds', 'Tipo')->label('territory', 'Territorio')->label('panelado_pds', 'Panelado')->label('dispo', 'Disposición')->label('commercial', 'Nombre comercial')->label('cif', 'CIF')->label('picture_url', 'Foto')->label('m2_fo', 'M2 front-office')->label('m2_bo', 'M2 back-office')->label('m2_total', 'M2 total')->label('type_via', 'Tipo vía')->label('address', 'Dirección')->label('zip', 'C.P.')->label('city', 'Ciudad')->label('province', 'Provincia')->label('county', 'CC.AA.')->label('schedule', 'Horario')->label('phone', 'Teléfono')->label('mobile', 'Móvil')->label('email', 'Email')->label('contact_contact_person', 'Contacto')->label('contact_in_charge', 'Encargado')->label('contact_supervisor', 'Supervisor')->label('status', 'Estado');
         $xcrud_2->columns('client_pds,reference,type_pds,panelado_pds,commercial,territory,status');
         $xcrud_2->fields('client_pds,reference,type_pds,panelado_pds,dispo,commercial,cif,territory,picture_url,m2_fo,m2_bo,m2_total,type_via,address,zip,city,province,county,schedule,phone,mobile,email,contact_contact_person,contact_in_charge,contact_supervisor,status');
 
@@ -3319,7 +3331,10 @@ class Admin extends CI_Controller
 
         $description_1 = $this->input->post('description_1');
         $description_1 = $this->strip_html_tags($description_1);        
-        
+
+
+        $ahora = date("Y-m-d H:i:s");
+
         $data = array(
             'fecha' => date('Y-m-d H:i:s'),
         	'fecha_cierre'    	=> NULL,
@@ -3345,6 +3360,7 @@ class Admin extends CI_Controller
             'intervencion' => NULL,
             'status_pds' => 1,
             'status' => 1,
+            'last_updated' => $ahora,
         );
 
         //}
@@ -3390,7 +3406,7 @@ class Admin extends CI_Controller
             //$this->email->subject('Demo Real - Registro de incidencia #'.$incidencia['id']);
             $this->email->subject('Demo Real - Registro de incidencia');
             $this->email->message($message_pds);
-            $this->email->send();
+            //$this->email->send();
 
             redirect('admin/alta_incidencia_gracias');
         } else {

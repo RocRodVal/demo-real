@@ -203,6 +203,8 @@ class Intervencion_model extends MY_Model
                 "id_incidencia" => $incidencia_id
             );
             $this->db->insert('intervenciones_incidencias', $data);
+
+
             return true;
         }
     }
@@ -222,9 +224,19 @@ class Intervencion_model extends MY_Model
 
     public function change_status_incidencia($incidencia_id, $status)
     {
-        $data = array("status" => $status);
+
+        // Actualizamos el campo last_updated de la incidencia
+        $ahora = date("Y-m-d H:i:s");
+
+        $data = array(
+            "status" => $status,
+            "last_updated"=> $ahora
+        );
+
+
         $this->db->where('id_incidencia', $incidencia_id);
         $this->db->update('incidencias', $data);
+
         if ($this->db->affected_rows() > 0)
             return true;
         else
