@@ -21,7 +21,7 @@
         $query = $CI->db->query("SELECT units as unidades_previas FROM alarm WHERE id_alarm=$id_alarm");
 
         $unidades_actuales = $postdata->get('units');
-        $unidades_previas = $query->result()[0]->unidades_previas;
+        $unidades_previas = $query->row()->unidades_previas;
 
 
         $incremento = $unidades_actuales - $unidades_previas; // Valor positivo: entrada, Valor negativo: salida.

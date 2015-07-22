@@ -2,7 +2,7 @@
         <div id="page-wrapper">
             <div class="row" id="incidencias_abiertas">
                 <div class="col-lg-12">
-                    <h1 class="page-header"><?php echo $title_iniciadas ?></h1>
+                    <h1 class="page-header"><?php echo $title ?></h1>
                 </div>
             <?php 
             if (isset($_POST['sfid']))
@@ -62,7 +62,7 @@
             <div class="row" >
                 <div class="col-lg-12">
                     <div class="row buscador">
-                        <form action="<?=base_url()?>admin/estado_incidencias_abiertas" method="post" class="filtros form-mini">
+                        <form action="<?=base_url()?>admin/estado_incidencias/abiertas" method="post" class="filtros form-mini">
                             <div class="col-sm-2">
                                 <label for="status">Estado SAT: </label>
                                 <select name="status" id="status" class="form-control input-sm">
@@ -253,7 +253,7 @@
 		                        ?>
 		                        </tbody>
 		                    </table>
-                            <form action="<?=base_url()?>admin/estado_incidencias_abiertas" method="post" id="form_orden">
+                            <form action="<?=base_url()?>admin/estado_incidencias/abiertas" method="post" id="form_orden">
                                 <input type="hidden" name="form_orden_campo_orden"  value="">
                                 <input type="hidden" name="form_orden_orden_campo" value="">
                                 <input type="hidden" name="form"  value="">

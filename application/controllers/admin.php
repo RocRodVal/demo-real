@@ -182,6 +182,134 @@ class Admin extends CI_Controller
     }
 
     /**
+     * Tabla de incidencias cuyo tipo son "abiertas" o "cerradas"
+     * (Antiguo dashboard)
+     */
+    public function estado_incidencias($tipo)
+    {
+        if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
+            $data['id_pds'] = $this->session->userdata('id_pds');
+            $data['sfid'] = $this->session->userdata('sfid');
+
+            $xcrud = xcrud_get_instance();
+
+
+            $this->load->model(array('intervencion_model', 'incidencia_model', 'tienda_model', 'sfid_model','chat_model'));
+            $this->load->library('app/paginationlib');
+
+            // Comprobar si existe el segmento PAGE en la URI, si no inicializar a 1..
+            $get_page = $this->uri->segment(5);
+            if( $this->uri->segment(4) == "page") {
+                $page = ( ! empty($get_page) ) ? $get_page : 1 ;
+                $segment = 5;
+            }else{
+                $page = 1;
+                $segment = null;
+            }
+
+            /**
+             * Crear los filtros
+             */
+            $array_filtros = array(
+                'status',
+                'status_pds',
+                'territory',
+                'brand_device',
+                'id_incidencia',
+                'reference'
+            );
+
+            /* BORRAR BUSQUEDA */
+            $borrar_busqueda = $this->uri->segment(4);
+            if($borrar_busqueda === "borrar_busqueda")
+            {
+                $this->delete_filtros($array_filtros);
+                redirect(site_url("/admin/estado_incidencias/".$tipo),'refresh');
+            }
+            // Consultar a la session si ya se ha buscado algo y guardado allí.
+            $array_sesion = $this->get_filtros($array_filtros);
+            // Buscar en el POST si hay busqueda, y si la hay usarla y guardarla además en sesion
+
+            if($this->input->post('do_busqueda')==="si") $array_sesion = $this->set_filtros($array_filtros);
+
+            /* Creamos al vuelo las variables que vienen de los filtros */
+            foreach($array_filtros as $filtro){
+                $$filtro = $array_sesion[$filtro];
+                $data[$filtro] = $array_sesion[$filtro]; // Pasamos los valores a la vista.
+            }
+
+
+            // viene del form de ordenacion
+            $do_orden = $this->input->post('ordenar');
+            if($do_orden==='true') {
+                $array_orden = $this->set_orden($this->input->post('form'));
+            }
+
+            // Obtener el campo a ordenar, primero de Session y despues del post, si procede..
+            $array_orden = $this->get_orden();
+            if(count($array_orden) > 0) {
+                foreach ($array_orden as $key => $value) {
+                    $data["campo_orden"] = $key;
+                    $data["orden_campo"] = $value;
+                }
+            }else{
+                $data["campo_orden"] = NULL;
+                $data["orden_campo"] = NULL;
+            }
+
+
+            if($tipo==="abiertas")
+            {
+                $data['title'] = 'Incidencias abiertas';
+            }
+            else
+            {
+                $data['title'] = 'Incidencias cerradas';
+            }
+
+            $per_page = 100;
+            $total_incidencias = $this->incidencia_model->get_estado_incidencias_quantity($array_sesion,$tipo);   // Sacar el total de incidencias, para el paginador
+            $cfg_pagination = $this->paginationlib->init_pagination("admin/estado_incidencias/$tipo/page/",$total_incidencias,$per_page,$segment);
+
+
+            $this->load->library('pagination',$cfg_pagination);
+            $this->pagination->initialize($cfg_pagination);
+
+            $bounds = $this->paginationlib->get_bounds($total_incidencias,$page,$per_page);
+
+            // Indicamos si habrá que mostrar el paginador en la vista
+            $data['show_paginator'] = $bounds["show_paginator"];
+            $data['num_resultados'] = $bounds["num_resultados"];
+            $data['n_inicial'] = $bounds["n_inicial"];
+            $data['n_final'] = $bounds["n_final"];
+            $data["pagination_helper"]   = $this->pagination;
+
+            $incidencias = $this->incidencia_model->get_estado_incidencias($page,$cfg_pagination,$array_orden,$array_sesion,$tipo);
+
+            foreach ($incidencias as $incidencia) {
+                $incidencia->device = $this->sfid_model->get_device($incidencia->id_devices_pds);
+                $incidencia->display = $this->sfid_model->get_display($incidencia->id_displays_pds);
+                $incidencia->nuevos  = $this->chat_model->contar_nuevos($incidencia->id_incidencia,$incidencia->reference);
+                $incidencia->intervencion = $this->intervencion_model->get_intervencion_incidencia($incidencia->id_incidencia);
+            }
+
+            $data['incidencias'] = $incidencias;
+
+            /* LISTADO DE TERRITORIOS PARA EL SELECT */
+            $data["territorios"] = $this->tienda_model->get_territorios();
+            /* LISTADO DE FABRICANTES PARA EL SELECT */
+            $data["fabricantes"] = $this->tienda_model->get_fabricantes();
+
+            $this->load->view('backend/header', $data);
+            $this->load->view('backend/navbar', $data);
+            $this->load->view('backend/estado_incidencias_'.$tipo, $data);
+            $this->load->view('backend/footer');
+        } else {
+            redirect('admin', 'refresh');
+        }
+    }
+
+    /**
      * Tabla de incidencias abiertas
      * (Antiguo dashboard)
      */
@@ -2374,7 +2502,7 @@ class Admin extends CI_Controller
 
         if(!empty($reference)) {
             $query = $this->db->select('*')->where('reference', $reference)->get('pds');
-            $pds = $query->result()[0];
+            $pds = $query->row();
         }
 
         if(!empty($pds))

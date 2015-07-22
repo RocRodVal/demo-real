@@ -16,14 +16,16 @@
             <div class="navbar-default sidebar" role="navigation">
                 <div class="sidebar-nav navbar-collapse">
                     <ul class="nav" id="side-menu" style="margin-top:20px;">
-                        <?php $estado_incidencias = array("estado_incidencias_abiertas","estado_incidencias_cerradas"); ?>
+                        <?php $estado_incidencias = array("estado_incidencias");
+                              $estado_incidencias_inner = array();
+                        ?>
 
                         <li <?=(in_array($this->uri->segment(2), $estado_incidencias)? ' class="active" ' :'')?>>
                             <a href="#"><i class="fa fa-dashboard fa-fw"></i> Estado incidencias <span class="fa arrow"></span></a>
 
                             <ul class="nav nav-second-level">
-                                <li><a <?=($this->uri->segment(2)==='estado_incidencias_abiertas')?'class="active"':''?> href="<?=site_url('admin/estado_incidencias_abiertas')?>"> Incidencias abiertas &raquo;</a></li>
-                                <li><a <?=($this->uri->segment(2)==='estado_incidencias_cerradas')?'class="active"':''?> href="<?=site_url('admin/estado_incidencias_cerradas')?>"> Incidencias cerradas &raquo;</a></li>
+                                <li><a <?=($this->uri->segment(3)==='abiertas')?'class="active"':''?> href="<?=site_url('admin/estado_incidencias/abiertas')?>"> Incidencias abiertas &raquo;</a></li>
+                                <li><a <?=($this->uri->segment(3)==='cerradas')?'class="active"':''?> href="<?=site_url('admin/estado_incidencias/cerradas')?>"> Incidencias cerradas &raquo;</a></li>
                             </ul>
 
                         </li>

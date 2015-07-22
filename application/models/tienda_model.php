@@ -69,12 +69,8 @@ class Tienda_model extends CI_Model {
     {
 
 
-    $contar = $this->db->query("SELECT COUNT(id_device) as contador FROM devices_almacen WHERE id_device=$id_device AND owner='$owner' AND status = 1")->result();
+    $contar = $this->db->query("SELECT COUNT(id_device) as contador FROM devices_almacen WHERE id_device=$id_device AND owner='$owner' AND status = 1")->row();
 
-
-        if(is_array($contar) && count($contar) > 0){
-            $contar = $contar[0];
-        }
 
 
 
@@ -399,13 +395,11 @@ class Tienda_model extends CI_Model {
         $query = $this->db->select('id_panelado,panelado,panelado_abx')
             ->where("id_panelado",$id)
             ->order_by('panelado_abx')
-            ->get('panelado')->result();
+            ->get('panelado')->row();
 
-        if(is_array($query) && count($query)>0){
-            return $query[0];
-        }else{
-            return NULL;
-        }
+
+            return $query;
+
 
     }
 
@@ -898,7 +892,7 @@ class Tienda_model extends CI_Model {
 	 *  filtradas si procede, y el subconjunto limitado paginado si procede
 	 *
 	 * */
-	public function get_incidencias($page = 1, $cfg_pagination = NULL,$array_orden= NULL,$filtros=NULL) {
+	public function get_incidencias($page = 1, $cfg_pagination = NULL,$array_orden= NULL,$filtros=NULL, $tipo="abiertas") {
 
         $this->db->select('incidencias.*,pds.reference as reference, device.brand_device as fabricante,
                             territory.territory as territory,
@@ -924,13 +918,8 @@ class Tienda_model extends CI_Model {
         if(isset($filtros["reference"]) && !empty($filtros["reference"])) $this->db->where('reference',$filtros['reference']);
 
 
-        /*  ESTADOS ABIERTOS SAT: Nueva, Revisada, Instalador asignado, Material asignado, Comunicada
-            ESTADOS CERRADOS SAT: Resuelta, Pendiente recogida, Cerrada, Cancelada */
-        $this->db->where('(incidencias.status != "Resuelta" && incidencias.status != "Pendiente recogida"
-                        && incidencias.status != "Cerrada" && incidencias.status != "Cancelada")');
-        /*  ESTADOS ABIERTOS PDS: Alta realizada, En proceso, En visita
-            ESTADOS CERRADOS PDS: Finalizada, Cancelada */
-        $this->db->where('(incidencias.status_pds != "Finalizada" && incidencias.status_pds != "Cancelada")');
+        /* Obtenemos la condición por tipo de incidencia */
+        $this->db->where($this->get_condition_tipo_incidencia($tipo));
 
         $campo_orden = $orden = NULL;
         if(count($array_orden) > 0) {
@@ -978,8 +967,15 @@ class Tienda_model extends CI_Model {
                                 (CASE ISNULL(device.device) WHEN TRUE THEN "Retirado" ELSE device.device END)
                             )) END) as elemento,
 
+                            device.brand_device as fabr,
+                            territory.territory as `Territorio`,
+                            ';
 
-                            incidencias.tipo_averia,';
+
+        $sql .= ' (SELECT brand_device.brand from brand_device  WHERE id_brand_device = fabr
+                            ) as `Fabricante` ,';
+
+        $sql .= 'incidencias.tipo_averia,';
 
 
         /*                    (CASE incidencias.fail_device WHEN 1 THEN ("Sí") ELSE ("No") END) AS `Fallo dispositivo`,
@@ -1003,6 +999,7 @@ class Tienda_model extends CI_Model {
                             incidencias.intervencion,';
 
                 if($acceso==="admin"){
+                    $sql .= 'incidencias.last_updated AS `Última modificación`, ';
                     $sql .= 'incidencias.status_pds AS `Estado SAT`,';
                 }
 
@@ -1015,29 +1012,17 @@ class Tienda_model extends CI_Model {
                 LEFT JOIN devices_pds ON incidencias.id_devices_pds = devices_pds.id_devices_pds
                 LEFT JOIN device ON devices_pds.id_device = device.id_device
                 LEFT JOIN type_device ON device.type_device = type_device.id_type_device
+                LEFT JOIN territory ON territory.id_territory=pds.territory
                 WHERE 1 = 1';
 
 
 
 
 
-        if($tipo==="abiertas") {
+        if($tipo==="abiertas")  $sTitleFilename = "Incidencias_abiertas";
+        else  $sTitleFilename = "Incidencias_cerradas";
 
-            $sql .=
-                '
-                AND (incidencias.status != "Resuelta" AND incidencias.status != "Pendiente recogida" AND incidencias.status != "Cerrada" AND incidencias.status != "Cancelada")
-                AND (incidencias.status_pds != "Finalizada" && incidencias.status_pds != "Cancelada")
-                ';
-            $sTitleFilename = "Incidencias_abiertas";
-        }else{
-            $sql .=
-                '
-                AND (incidencias.status = "Resuelta" OR incidencias.status = "Pendiente recogida" OR incidencias.status = "Cerrada" OR incidencias.status = "Cancelada")
-                AND (incidencias.status_pds = "Finalizada" OR incidencias.status_pds = "Cancelada")
-                ';
-            $sTitleFilename = "Incidencias_cerradas";
-        }
-
+        $sql  .= ' && '.$this->get_condition_tipo_incidencia($tipo);
 
         // Montamos las cláusulas where filtro, según el array pasado como param.
         $sFiltrosFilename = "-";
@@ -1069,7 +1054,6 @@ class Tienda_model extends CI_Model {
             $sql .= " ORDER BY fecha DESC";
         }
 
-
         $query = $this->db->query($sql);
 
 
@@ -1081,11 +1065,38 @@ class Tienda_model extends CI_Model {
 
     }
 
-    public function get_incidencias_quantity($filtros=NULL) {
+    /**
+     * Función que devuelve la condición a usar en un where para determinar si la incidencia/s son abiertas o cerradas
+     * según los estados status y status_pds
+     * @param string $tipo
+     * @return mixed
+     */
+    public function get_condition_tipo_incidencia($tipo = "abiertas"){
+
+        /*  ESTADOS ABIERTOS SAT: Nueva, Revisada, Instalador asignado, Material asignado, Comunicada
+           ESTADOS CERRADOS SAT: Resuelta, Pendiente recogida, Cerrada, Cancelada */
+
+        /*  ESTADOS ABIERTOS PDS: Alta realizada, En proceso, En visita
+            ESTADOS CERRADOS PDS: Finalizada, Cancelada */
+
+        if($tipo === "abiertas" )
+        {
+            $cond = '((incidencias.status != "Resuelta" && incidencias.status != "Pendiente recogida" && incidencias.status != "Cerrada" && incidencias.status != "Cancelada")
+                        &&  (incidencias.status_pds != "Finalizada" && incidencias.status_pds != "Cancelada"))';
+        }
+        else
+        {
+            $cond = '((incidencias.status = "Resuelta" || incidencias.status = "Pendiente recogida" || incidencias.status = "Cerrada" || incidencias.status = "Cancelada")
+                    && (incidencias.status_pds = "Finalizada" || incidencias.status_pds = "Cancelada")) ';
+        }
+
+        return $cond;
+    }
+
+    public function get_incidencias_quantity($filtros=NULL, $tipo="abiertas") {
+
         $this->db->select('COUNT(incidencias.id_incidencia) AS cantidad')
             ->join('pds','incidencias.id_pds = pds.id_pds');
-
-
 
         /** Aplicar filtros desde el array, de manera manual **/
         if(isset($filtros["status"]) && !empty($filtros["status"])) $this->db->where('incidencias.status',$filtros['status']);
@@ -1100,23 +1111,20 @@ class Tienda_model extends CI_Model {
         }
         if(isset($filtros["reference"]) && !empty($filtros["reference"])) $this->db->where('reference',$filtros['reference']);
 
-        /*  ESTADOS ABIERTOS SAT: Nueva, Revisada, Instalador asignado, Material asignado, Comunicada
-            ESTADOS CERRADOS SAT: Resuelta, Pendiente recogida, Cerrada, Cancelada */
-        $this->db->where('(incidencias.status != "Resuelta" && incidencias.status != "Pendiente recogida"
-                        && incidencias.status != "Cerrada" && incidencias.status != "Cancelada")');
-        /*  ESTADOS ABIERTOS PDS: Alta realizada, En proceso, En visita
-            ESTADOS CERRADOS PDS: Finalizada, Cancelada */
-        $this->db->where('(incidencias.status_pds != "Finalizada" && incidencias.status_pds != "Cancelada")');
 
+        /**
+         * Determinado el tipo por parámetro añadir distinción de tipo: abiertas o cerradas.
+         */
 
-        $query =  $this->db->get('incidencias')->result();
+        $this->db->where($this->get_condition_tipo_incidencia($tipo));
 
+        //echo $this->db->last_query();
+        /* Obtener el resultado */
+        $query =  $this->db->get('incidencias')->row();
 
-        if(is_array($query) && count($query)>0){
-            return $query[0]->cantidad;
-        }else{
-            return NULL;
-        }
+        //echo $this->db->last_query();
+        return $query->cantidad;
+
 
 
     }
@@ -1127,108 +1135,11 @@ class Tienda_model extends CI_Model {
 		->where('incidencias.status != "Cancelada"')
 		->order_by('fecha ASC')
 		->get('incidencias');
-	
+
 		return $query->result();
-	}	
-	
-	
-/**
-     * Obtiene las filas de las incidencias finalizadas, aplicando filtro y buscador si procede.
-     * @param int $page
-     * @param null $cfg_pagination
-     * @param null $filtro_finalizadas
-     * @param null $buscador
-     * @return mixed
-     */
-    public function get_incidencias_cerradas($page = 1, $cfg_pagination = NULL,$filtros_finalizadas=NULL,$buscador=NULL,$campo_orden=NULL,$orden=NULL)
-    {
-        $this->db->select('incidencias.*,pds.reference as reference')
-            ->join('pds', 'incidencias.id_pds = pds.id_pds');
+	}
 
 
-        if(! empty($buscador['buscar_incidencia']))
-            $this->db->where('incidencias.id_incidencia',$buscador['buscar_incidencia']);
-
-        if(! empty($buscador['buscar_sfid']))
-            $this->db->where('pds.reference',$buscador['buscar_sfid']);
-
-        /*  ESTADOS ABIERTOS SAT: Nueva, Revisada, Instalador asignado, Material asignado, Comunicada
-            ESTADOS CERRADOS SAT: Resuelta, Pendiente recogida, Cerrada, Cancelada */
-        $this->db->where('(incidencias.status = "Resuelta" || incidencias.status = "Pendiente recogida"
-                        || incidencias.status = "Cerrada" || incidencias.status = "Cancelada")');
-        /*  ESTADOS ABIERTOS PDS: Alta realizada, En proceso, En visita
-            ESTADOS CERRADOS PDS: Finalizada, Cancelada */
-        $this->db->where('(incidencias.status_pds = "Finalizada" || incidencias.status_pds = "Cancelada")');
-
-        // Montamos las cláusulas where filtro, según el array pasado como param.
-        if (!is_null($filtros_finalizadas) && !empty($filtros_finalizadas)){
-            foreach($filtros_finalizadas as $k=>$f) {
-                $this->db->where('incidencias.'.$k, $f);
-            }
-        }
-
-        if(!is_null($campo_orden) && !empty($campo_orden) && !is_null($orden) && !empty($orden)) {
-            $s_orden = $campo_orden. " ".$orden;
-            $this->db->order_by($s_orden);
-        }else{
-            $this->db->order_by('fecha DESC');
-        }
-
-
-
-        $this->db->order_by('fecha ASC');
-
-
-        $query = $this->db->get('incidencias',$cfg_pagination['per_page'], ($page-1) * $cfg_pagination['per_page']);
-        //echo $this->db->last_query();
-        return $query->result();
-    }
-
-    /**
-     * Devuelve la cantidad de líneas de incidencias finalizadas, teniendo en cuenta filtro y buscador.
-     * Útil para el paginador
-     *
-     * @param null $filtro_finalizadas
-     * @param null $buscador
-     * @return mixed
-     */
-    public function get_incidencias_cerradas_quantity($filtros_finalizadas=NULL,$buscador=NULL)
-    {
-        $this->db->select('COUNT(incidencias.id_incidencia) AS cantidad')
-            ->join('pds', 'incidencias.id_pds = pds.id_pds');
-
-
-        if(! empty($buscador['buscar_incidencia']))
-            $this->db->where('incidencias.id_incidencia',$buscador['buscar_incidencia']);
-
-        if(! empty($buscador['buscar_sfid']))
-            $this->db->where('pds.reference',$buscador['buscar_sfid']);
-
-        /*  ESTADOS ABIERTOS SAT: Nueva, Revisada, Instalador asignado, Material asignado, Comunicada
-            ESTADOS CERRADOS SAT: Resuelta, Pendiente recogida, Cerrada, Cancelada */
-        $this->db->where('(incidencias.status = "Resuelta" || incidencias.status = "Pendiente recogida"
-                        || incidencias.status = "Cerrada" || incidencias.status = "Cancelada")');
-        /*  ESTADOS ABIERTOS PDS: Alta realizada, En proceso, En visita
-            ESTADOS CERRADOS PDS: Finalizada, Cancelada */
-        $this->db->where('(incidencias.status_pds = "Finalizada" || incidencias.status_pds = "Cancelada")');
-
-        // Montamos las cláusulas where filtro, según el array pasado como param.
-        if (!is_null($filtros_finalizadas) && !empty($filtros_finalizadas)){
-            foreach($filtros_finalizadas as $k=>$f) {
-                $this->db->where('incidencias.'.$k, $f);
-            }
-        }
-
-        $query = $this->db->get('incidencias')->result();
-
-        if(is_array($query) && count($query)>0){
-            return $query[0]->cantidad;
-        }else{
-            return NULL;
-        }
-
-
-    }
 
 
     /**
@@ -1421,10 +1332,9 @@ class Tienda_model extends CI_Model {
                                           JOIN material_incidencias ON incidencias.id_incidencia = material_incidencias.id_incidencia
                                           JOIN devices_almacen ON devices_almacen.id_devices_almacen = material_incidencias.id_devices_almacen
                                           JOIN device ON devices_almacen.id_device = device.id_device
-                                          WHERE material_incidencias.id_devices_almacen=" . $data['id_devices_almacen'])->result();
-                if(is_array($q_dueno) && count($q_dueno) > 0){
-                    $q_dueno = $q_dueno[0];
-                }
+                                          WHERE material_incidencias.id_devices_almacen=" . $data['id_devices_almacen'])->row();
+
+
 
                 $id_device = $q_dueno->id_device;
                 $dueno = $q_dueno->id_client;
@@ -1456,11 +1366,9 @@ class Tienda_model extends CI_Model {
         }
         elseif($tipo==="alarm")         // ES DE TIPO ALARMA
         {
-            $q_dueno = $this->db->query("SELECT client_alarm as id_client FROM alarm WHERE id_alarm=" . $data['id_alarm'])->result();
+            $q_dueno = $this->db->query("SELECT client_alarm as id_client FROM alarm WHERE id_alarm=" . $data['id_alarm'])->row();
 
-            if(is_array($q_dueno) && count($q_dueno) > 0){
-                $q_dueno = $q_dueno[0];
-            }
+
             $elemento = array(
                 'id_material_incidencia' => $id,
                 'id_alarm' => $data['id_alarm'],
