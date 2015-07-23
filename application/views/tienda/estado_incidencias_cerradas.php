@@ -108,7 +108,7 @@
                                     foreach ($incidencias as $incidencia) {
                                         ?>
                                         <tr>
-                                            <td><a href="<?=site_url('tienda/detalle_incidencia/'.$incidencia->id_pds.'/'.$incidencia->id_incidencia)?>">
+                                            <td><a href="<?=site_url('tienda/detalle_incidencia/'.$incidencia->id_incidencia.'/'.$incidencia->id_pds)?>">
                                                     <?php echo $incidencia->id_incidencia?></a></td>
                                             <td><?php echo $incidencia->reference ?></td>
                                             <td><?php echo date_format(date_create($incidencia->fecha), 'd/m/Y'); ?></td>
@@ -158,7 +158,7 @@
                                             <td><strong><?php echo $incidencia->status ?></strong></td>
                                             <td><strong><?php echo $incidencia->status_pds ?></strong></td>
 
-                                            <td  onClick="window.location.href='<?=site_url('tienda/detalle_incidencia/'.$incidencia->id_pds.'/'.$incidencia->id_incidencia)?>'"><a href="<?=site_url('tienda/detalle_incidencia/'.$incidencia->id_pds.'/'.$incidencia->id_incidencia)?>#chat"><strong><i class="fa fa-whatsapp <?=($incidencia->nuevos['nuevos']<>'0')?'chat_nuevo':'chat_leido'?>"></i></strong></a></td>
+                                            <td><a href="<?=site_url('tienda/detalle_incidencia/'.$incidencia->id_incidencia.'/'.$incidencia->id_pds)?>#chat"><strong><i class="fa fa-whatsapp <?=($incidencia->nuevos['nuevos']<>'0')?'chat_nuevo':'chat_leido'?>"></i></strong></a></td>
                                         </tr>
                                     <?php
                                     }

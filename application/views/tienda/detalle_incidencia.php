@@ -162,8 +162,14 @@
                             <div class="panel panel-default">
                                 <?php
                                 if ($device == NULL) {
-                                    $name = $display;
-                                    $imagen = $picture_url_dis;
+
+                                    if($display != NULL) {
+                                        $name = $display;
+                                        $imagen = $picture_url_dis;
+                                    }else{
+                                        $name = '';
+                                        $imagen = '';
+                                    }
                                 } else {
                                     $name = $device;
                                     $imagen = $picture_url_dev;

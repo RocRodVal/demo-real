@@ -106,10 +106,7 @@ class Sfid_model extends CI_Model {
 		{
 			$query = $this->db->select('incidencias.*')
 				->where('incidencias.id_incidencia',$id_incidencia)
-                ->where('incidencias.status != "Cancelada"')
 				->get('incidencias');
-
-
 
 			return $query->row_array();
 		}

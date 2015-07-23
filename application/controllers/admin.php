@@ -620,7 +620,6 @@ class Admin extends CI_Controller
 
             $sfid = $this->tienda_model->get_pds($id_pds);
 
-            print_r($id_pds);
 
             $data['id_pds'] = 'ABX/PDS-' . $sfid['id_pds'];
             $data['type_pds'] = $sfid['pds'];

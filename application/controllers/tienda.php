@@ -996,7 +996,7 @@ class Tienda extends CI_Controller {
 			
 			if($incidencia == FALSE)
 			{
-				redirect('tienda/dashboard','refresh');
+				redirect('tienda','refresh');
 			}
 			else
 			{
@@ -1019,22 +1019,31 @@ class Tienda extends CI_Controller {
 				$data['status_pds']      = $incidencia['status_pds'];
 				
 				$display = $this->sfid_model->get_display($incidencia['id_displays_pds']);
-		
-				$data['display']         = $display['display'];
-				$data['picture_url_dis'] = $display['picture_url'];
-					
+
+                if(!empty($display)) {
+                    $data['display'] = $display['display'];
+                    $data['picture_url_dis'] = $display['picture_url'];
+
+                }else{
+                    $data['display'] = NULL;
+                }
+
 				$device = $this->sfid_model->get_device($incidencia['id_devices_pds']);
 
-				$data['device']        		 	  = $device['device'];
-				$data['brand_name']   			  = $device['brand_name'];
-				$data['IMEI']          		 	  = $device['IMEI'];
-				$data['mac']            		  = $device['mac'];
-				$data['serial']          		  = $device['serial'];
-				$data['barcode']                  = $device['barcode'];
-				$data['description']    	      = $device['description'];
-				$data['owner']          		  = $device['owner'];
-				$data['picture_url_dev'] 		  = $device['picture_url'];				
-				
+                if(!empty($device)) {
+                    $data['device'] = $device['device'];
+                    $data['brand_name'] = $device['brand_name'];
+                    $data['IMEI'] = $device['IMEI'];
+                    $data['mac'] = $device['mac'];
+                    $data['serial'] = $device['serial'];
+                    $data['barcode'] = $device['barcode'];
+                    $data['description'] = $device['description'];
+                    $data['owner'] = $device['owner'];
+                    $data['picture_url_dev'] = $device['picture_url'];
+
+                }else{
+                    $data['device'] = NULL;
+                }
 				$chats = $this->chat_model->get_chat_incidencia_pds($incidencia['id_incidencia']);
 				$leido = $this->chat_model->marcar_leido($incidencia['id_incidencia'],'altabox');
 				$data['chats'] = $chats;

@@ -399,7 +399,7 @@ class Master extends CI_Controller {
 
 			if($incidencia == FALSE)
 			{
-				redirect('master/dashboard','refresh');
+				redirect('master','refresh');
 			}
 			else
 			{
