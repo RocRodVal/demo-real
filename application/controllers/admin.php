@@ -1469,7 +1469,7 @@ class Admin extends CI_Controller
                             $this->db->query($sql);
 
                             // Borrar del histórico de dispositivo (diario almacen)
-                            $this->tienda_model->baja_historico_IO($id_material_incidencias);
+                            $this->tienda_model->baja_historico_io($id_material_incidencias);
                         }
                     }
                 }
@@ -1492,7 +1492,7 @@ class Admin extends CI_Controller
                             $this->db->query($sql);
 
                             // Borrar del histórico de alarmas (diario almacen)
-                            $this->tienda_model->baja_historico_IO($id_material_incidencias);
+                            $this->tienda_model->baja_historico_io($id_material_incidencias);
                         }
                     }
                 }
@@ -1842,7 +1842,7 @@ class Admin extends CI_Controller
     	$xcrud->columns('client_alarm,brand_alarm,type_alarm,code,alarm,picture_url,units,status');
         $xcrud->fields('client_alarm,brand_alarm,type_alarm,code,alarm,picture_url,description,units,status');
 
-        $xcrud->before_update("historico_IO_alarmas_before_update","../libraries/diario_almacen.php");
+        $xcrud->before_update("historico_io_alarmas_before_update","../libraries/diario_almacen.php");
 
     	$data['title'] = 'Gestión alarmas';
     	$data['content'] = $xcrud->render();
@@ -2135,7 +2135,7 @@ class Admin extends CI_Controller
         $data["title"] = "Diario de almacén";
 
         $xcrud_1 = xcrud_get_instance();
-        $xcrud_1->table('historico_IO');
+        $xcrud_1->table('historico_io');
         $xcrud_1->table_name('Histórico de dispositivos');
         $xcrud_1->relation('id_client', 'client', 'id_client', 'client');
         $xcrud_1->relation('id_device', 'device', 'id_device', 'device');
@@ -2161,7 +2161,7 @@ class Admin extends CI_Controller
 
 
         $xcrud_2 = xcrud_get_instance();
-        $xcrud_2->table('historico_IO');
+        $xcrud_2->table('historico_io');
         $xcrud_2->table_name('Histórico de alarmas');
         $xcrud_2->relation('id_alarm', 'alarm', 'id_alarm', 'alarm');
         $xcrud_2->relation('id_client', 'client', 'id_client', 'client');

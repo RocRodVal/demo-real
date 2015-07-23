@@ -1,4 +1,4 @@
-CREATE TABLE `historico_IO` (
+CREATE TABLE `historico_io` (
   `id_historico_almacen` int(11) NOT NULL AUTO_INCREMENT,
   `id_devices_almacen` int(11) DEFAULT NULL COMMENT 'Id. del dispositivo del almacén afectado en el histórico por Entrada/Salida',
   `id_device` int(11) DEFAULT NULL COMMENT 'Id. del dispositivo del maestro afectado en el histórico por Entrada/Salida',

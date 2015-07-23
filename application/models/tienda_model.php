@@ -51,7 +51,7 @@ class Tienda_model extends CI_Model {
             'cantidad' => (-1), // En negativo porque luego la función lo multiplica por -1
             'procesado' => 1
         );
-        $this->alta_historico_IO($elemento,NULL);
+        $this->alta_historico_io($elemento,NULL);
 
 	}	
 	
@@ -111,7 +111,7 @@ class Tienda_model extends CI_Model {
                 'cantidad' => (1), // En positivo porque luego la función lo pasará a negativo
                 'procesado' => 1
             );
-            $this->alta_historico_IO($data,NULL);
+            $this->alta_historico_io($data,NULL);
             $cont++;
         }
 
@@ -1378,7 +1378,7 @@ class Tienda_model extends CI_Model {
 		$this->db->insert('material_incidencias',$data);
 		$id=$this->db->insert_id();
 
-        $this->alta_historico_IO($data,$id);
+        $this->alta_historico_io($data,$id);
 
 	}
 
@@ -1388,7 +1388,7 @@ class Tienda_model extends CI_Model {
      * al cambiar de estado la incidencia).
      *
      */
-    public function alta_historico_IO($data,$id){
+    public function alta_historico_io($data,$id){
 
         $tipo = (is_null($data['id_alarm'])) ? "device" : "alarm";
 
@@ -1438,7 +1438,7 @@ class Tienda_model extends CI_Model {
             );
 
 
-            $this->db->insert('historico_IO',$elemento);
+            $this->db->insert('historico_io',$elemento);
 
         }
         elseif($tipo==="alarm")         // ES DE TIPO ALARMA
@@ -1459,7 +1459,7 @@ class Tienda_model extends CI_Model {
             );
 
 
-            $this->db->insert('historico_IO',$elemento);
+            $this->db->insert('historico_io',$elemento);
         }
 
 
@@ -1467,23 +1467,23 @@ class Tienda_model extends CI_Model {
     }
 
     /**
- * Método que da de baja unba alarma de la tabla de historico_IO, porque se ha desasignado de una incidencia.
+ * Método que da de baja unba alarma de la tabla de historico_io, porque se ha desasignado de una incidencia.
  *
  * @param $id_material
  */
-    public function baja_historico_IO($id_material=NULL)
+    public function baja_historico_io($id_material=NULL)
     {
         if(! is_null($id_material))
         {
             $this->db->where('id_material_incidencia',$id_material);
-            $this->db->delete('historico_IO');
+            $this->db->delete('historico_io');
         }
 
     }
 
 
     /**
-     * Método que da por procesadas  las alarma de la tabla de historico_IO, porque se han
+     * Método que da por procesadas  las alarma de la tabla de historico_io, porque se han
      * desasignado definitivamente a una incidencia, y ya deben aparecer en el histórico.
      *
      * @param $id_material
@@ -1492,10 +1492,10 @@ class Tienda_model extends CI_Model {
     {
         if(! is_null($id_incidencia))
         {
-            $historico_IO['procesado'] = 1;
+            $historico_io['procesado'] = 1;
 
             $this->db->where('id_incidencia',$id_incidencia);
-            $this->db->update('historico_IO',$historico_IO);
+            $this->db->update('historico_io',$historico_io);
         }
 
     }

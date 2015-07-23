@@ -11,7 +11,7 @@
     /**
      * Callback para el xcrud, previo a actualización de alarma masiva.
      */
-    function historico_IO_alarmas_before_update($postdata, $primary)
+    function historico_io_alarmas_before_update($postdata, $primary)
 
     {
         $id_alarm = $primary;      // Clave primaria del XCrud
@@ -27,7 +27,7 @@
         $incremento = $unidades_actuales - $unidades_previas; // Valor positivo: entrada, Valor negativo: salida.
 
         $fecha = time();
-        $sql = "INSERT INTO historico_IO (id_alarm, id_client, unidades) VALUES($id_alarm,$id_client,$incremento)";
+        $sql = "INSERT INTO historico_io (id_alarm, id_client, unidades) VALUES($id_alarm,$id_client,$incremento)";
         $CI->db->query($sql);
 
     }
