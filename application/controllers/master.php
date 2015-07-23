@@ -423,24 +423,36 @@ class Master extends CI_Controller {
 				$data['status_pds']      = $incidencia['status_pds'];
 				
 				$display = $this->sfid_model->get_display($incidencia['id_displays_pds']);
-		
-				$data['id_display']      = $display['id_display'];
-				$data['display']         = $display['display'];
-				$data['picture_url_dis'] = $display['picture_url'];
+
+
+
+                if(!empty($display)) {
+                    $data['id_display']      = $display['id_display'];
+                    $data['display']         = $display['display'];
+                    $data['picture_url_dis'] = $display['picture_url'];
+                }else{
+                    $data['display'] = NULL;
+                    $data['picture_url_dis']  = NULL;
+                }
+
+
 					
 				$device = $this->sfid_model->get_device($incidencia['id_devices_pds']);
-				
-				$data['id_device']      		  = $device['id_device'];
-				$data['device']        		 	  = $device['device'];
-				$data['brand_name']   			  = $device['brand_name'];
-				$data['IMEI']          		 	  = $device['IMEI'];
-				$data['mac']            		  = $device['mac'];
-				$data['serial']          		  = $device['serial'];
-				$data['barcode']                  = $device['barcode'];
-				$data['description']    	      = $device['description'];
-				$data['owner']          		  = $device['owner'];
-				$data['picture_url_dev'] 		  = $device['picture_url'];
 
+                if(!empty($device)) {
+                    $data['id_device'] = $device['id_device'];
+                    $data['device'] = $device['device'];
+                    $data['brand_name'] = $device['brand_name'];
+                    $data['IMEI'] = $device['IMEI'];
+                    $data['mac'] = $device['mac'];
+                    $data['serial'] = $device['serial'];
+                    $data['barcode'] = $device['barcode'];
+                    $data['description'] = $device['description'];
+                    $data['owner'] = $device['owner'];
+                    $data['picture_url_dev'] = $device['picture_url'];
+                }else{
+                    $data["device"] = NULL;
+                }
 				$chats = $this->chat_model->get_chat_incidencia_pds($incidencia['id_incidencia']);
 				$data['chats'] = $chats;
 		
