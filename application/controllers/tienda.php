@@ -1456,6 +1456,7 @@ class Tienda extends CI_Controller {
 		if($this->session->userdata('logged_in'))
 		{		
 			$this->session->unset_userdata('logged_in');
+            $this->session->sess_destroy();
 		}	
 		redirect('tienda','refresh');
 	}
