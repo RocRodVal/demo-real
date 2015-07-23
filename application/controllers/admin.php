@@ -26,6 +26,11 @@ class Admin extends CI_Controller
         $this->form_validation->set_rules('password', 'password', 'required|xss_clean');
         $this->form_validation->set_message('login_error', '"Username" or "Password" are incorrect.');
 
+        $entrada = "admin/estado_incidencias/abiertas";
+
+        // Ya está logueado....
+        if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) redirect($entrada);
+
         if ($this->form_validation->run() == true) {
             $data = array(
                 'sfid' => strtolower($this->input->post('sfid')),
@@ -37,7 +42,7 @@ class Admin extends CI_Controller
             $this->form_validation->set_rules('sfid','SFID','callback_do_login');
 
             if($this->form_validation->run() == true){
-                redirect('admin/estado_incidencias_abiertas');
+                redirect($entrada);
             }else{
                 $data['message'] = (validation_errors() ? validation_errors() : ($this->session->flashdata('message')));
             }
@@ -65,6 +70,10 @@ class Admin extends CI_Controller
         if($this->user_model->login_admin($data)){
             return true;
         }else{
+            // Redirigir al entorno adecuado al usuario logueado...
+            $entorno =$this->user_model->login_entorno($data);
+            if($entorno != FALSE) redirect($entorno,"refresh");
+
             $this->form_validation->set_message('do_login','"Username" or "password" are incorrect.');
             return false;
         }
@@ -102,9 +111,13 @@ class Admin extends CI_Controller
         if(is_array($array_filtros))
         {
             $array_valores = array();
-            foreach ($array_filtros as $filter)
+            foreach ($array_filtros as $filter=>$value)
             {
-                $valor_filter = $this->input->post($filter);
+                if(empty($value)) {
+                    $valor_filter = $this->input->post($filter);
+                }else{
+                    $valor_filter  = $value;
+                }
                 $this->session->set_userdata($filter, $valor_filter);
                 $array_valores[$filter] = $valor_filter;
             }
@@ -119,10 +132,12 @@ class Admin extends CI_Controller
      * Si el parámetro es un array (de variables), lo recorremos y eliminamos de la sesión cualquier valor que tenga
      * la variable de sesión de ese nombre
      */
-    public function delete_filtros($array_filtros){
+    public function delete_filtros($array_filtros,$array_excepciones=array()){
         if(is_array($array_filtros)){
             foreach($array_filtros as $filtro){
-                $this->session->unset_userdata($filtro);
+                if(!in_array($filtro,$array_excepciones)) {
+                    $this->session->unset_userdata($filtro);
+                }
             }
         }
     }
@@ -138,9 +153,13 @@ class Admin extends CI_Controller
 
         if(is_array($array_filtros)){
             $array_session = array();
-            foreach($array_filtros as $filter){
+            foreach($array_filtros as $filter=>$value){
 
-                $sess_filter = $this->session->userdata($filter);
+                if(!empty($value)){
+                    $sess_filter = $value;
+                }else {
+                    $sess_filter = $this->session->userdata($filter);
+                }
                 $array_session[$filter] = (!empty($sess_filter)) ? $sess_filter : NULL;
 
             }
@@ -211,12 +230,12 @@ class Admin extends CI_Controller
              * Crear los filtros
              */
             $array_filtros = array(
-                'status',
-                'status_pds',
-                'territory',
-                'brand_device',
-                'id_incidencia',
-                'reference'
+                'status' => '',
+                'status_pds' => '',
+                'territory' => '',
+                'brand_device' => '',
+                'id_incidencia' => '',
+                'reference' => ''
             );
 
             /* BORRAR BUSQUEDA */
@@ -233,7 +252,7 @@ class Admin extends CI_Controller
             if($this->input->post('do_busqueda')==="si") $array_sesion = $this->set_filtros($array_filtros);
 
             /* Creamos al vuelo las variables que vienen de los filtros */
-            foreach($array_filtros as $filtro){
+            foreach($array_filtros as $filtro=>$value){
                 $$filtro = $array_sesion[$filtro];
                 $data[$filtro] = $array_sesion[$filtro]; // Pasamos los valores a la vista.
             }
@@ -303,323 +322,6 @@ class Admin extends CI_Controller
             $this->load->view('backend/header', $data);
             $this->load->view('backend/navbar', $data);
             $this->load->view('backend/estado_incidencias_'.$tipo, $data);
-            $this->load->view('backend/footer');
-        } else {
-            redirect('admin', 'refresh');
-        }
-    }
-
-    /**
-     * Tabla de incidencias abiertas
-     * (Antiguo dashboard)
-     */
-    public function estado_incidencias_abiertas()
-    {
-        if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
-            $data['id_pds'] = $this->session->userdata('id_pds');
-            $data['sfid'] = $this->session->userdata('sfid');
-
-            $xcrud = xcrud_get_instance();
-
-
-            $this->load->model(array('intervencion_model', 'tienda_model', 'sfid_model','chat_model'));
-            $this->load->library('app/paginationlib');
-
-
-
-            // Comprobar si existe el segmento PAGE en la URI, si no inicializar a 1..
-            $get_page = $this->uri->segment(4);
-            if( $this->uri->segment(3) == "page") {
-                $page = ( ! empty($get_page) ) ? $get_page : 1 ;
-                $segment = 4;
-            }else{
-                $page = 1;
-                $segment = null;
-            }
-
-            /**
-             * Crear los filtros
-             */
-            $array_filtros = array(
-                'status',
-                'status_pds',
-                'territory',
-                'brand_device',
-                'id_incidencia',
-                'reference'
-            );
-
-            /* BORRAR BUSQUEDA */
-            $borrar_busqueda = $this->uri->segment(3);
-            if($borrar_busqueda === "borrar_busqueda")
-            {
-                $this->delete_filtros($array_filtros);
-                redirect(site_url("/admin/estado_incidencias_abiertas"),'refresh');
-            }
-            // Consultar a la session si ya se ha buscado algo y guardado allí.
-            $array_sesion = $this->get_filtros($array_filtros);
-             // Buscar en el POST si hay busqueda, y si la hay usarla y guardarla además en sesion
-
-            if($this->input->post('do_busqueda')==="si") $array_sesion = $this->set_filtros($array_filtros);
-
-            /* Creamos al vuelo las variables que vienen de los filtros */
-            foreach($array_filtros as $filtro){
-                $$filtro = $array_sesion[$filtro];
-                $data[$filtro] = $array_sesion[$filtro]; // Pasamos los valores a la vista.
-            }
-
-
-            // viene del form de ordenacion
-            $do_orden = $this->input->post('ordenar');
-            if($do_orden==='true') {
-                $array_orden = $this->set_orden($this->input->post('form'));
-            }
-
-            // Obtener el campo a ordenar, primero de Session y despues del post, si procede..
-            $array_orden = $this->get_orden();
-            if(count($array_orden) > 0) {
-                foreach ($array_orden as $key => $value) {
-                    $data["campo_orden"] = $key;
-                    $data["orden_campo"] = $value;
-                }
-            }else{
-                $data["campo_orden"] = NULL;
-                $data["orden_campo"] = NULL;
-            }
-
-
-
-
-            $data['title']           = 'Mis incidencias';
-            $data['title_iniciadas'] = 'Incidencias abiertas';
-
-            $per_page = 100;
-            $total_incidencias = $this->tienda_model->get_incidencias_quantity($array_sesion);   // Sacar el total de incidencias, para el paginador
-            $cfg_pagination = $this->paginationlib->init_pagination("admin/estado_incidencias_abiertas/page/",$total_incidencias,$per_page,$segment);
-
-
-            $this->load->library('pagination',$cfg_pagination);
-            $this->pagination->initialize($cfg_pagination);
-
-            $bounds = $this->paginationlib->get_bounds($total_incidencias,$page,$per_page);
-
-            // Indicamos si habrá que mostrar el paginador en la vista
-            $data['show_paginator'] = $bounds["show_paginator"];
-            $data['num_resultados'] = $bounds["num_resultados"];
-            $data['n_inicial'] = $bounds["n_inicial"];
-            $data['n_final'] = $bounds["n_final"];
-            $data["pagination_helper"]   = $this->pagination;
-
-            $incidencias = $this->tienda_model->get_incidencias($page,$cfg_pagination,$array_orden,$array_sesion);
-
-             foreach ($incidencias as $incidencia) {
-                $incidencia->device = $this->sfid_model->get_device($incidencia->id_devices_pds);
-                $incidencia->display = $this->sfid_model->get_display($incidencia->id_displays_pds);
-                $incidencia->nuevos  = $this->chat_model->contar_nuevos($incidencia->id_incidencia,$incidencia->reference);
-                $incidencia->intervencion = $this->intervencion_model->get_intervencion_incidencia($incidencia->id_incidencia);
-            }
-
-            $data['incidencias'] = $incidencias;
-
-            /* LISTADO DE TERRITORIOS PARA EL SELECT */
-            $data["territorios"] = $this->tienda_model->get_territorios();
-            /* LISTADO DE FABRICANTES PARA EL SELECT */
-            $data["fabricantes"] = $this->tienda_model->get_fabricantes();
-
-            $this->load->view('backend/header', $data);
-            $this->load->view('backend/navbar', $data);
-            $this->load->view('backend/estado_incidencias_abiertas', $data);
-            $this->load->view('backend/footer');
-        } else {
-            redirect('admin', 'refresh');
-        }
-    }
-
-
-    public function estado_incidencias_cerradas()
-    {
-        if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
-            $data['id_pds'] = $this->session->userdata('id_pds');
-            $data['sfid'] = $this->session->userdata('sfid');
-
-            $xcrud = xcrud_get_instance();
-
-            $this->load->model(array('intervencion_model', 'tienda_model', 'sfid_model','chat_model'));
-
-
-            // Realizar búsqueda por INCIDENCIA o SFID
-            $buscar_incidencia = NULL;
-            $buscar_sfid = NULL;
-
-            $borrar_busqueda = $this->uri->segment(3);
-            if($borrar_busqueda === "borrar_busqueda")
-            {
-                $this->session->unset_userdata('buscar_sfid');
-                $this->session->unset_userdata('buscar_incidencia');
-
-                $this->session->unset_userdata('filtro_finalizadas');
-                $this->session->unset_userdata('filtro_finalizadas_pds');
-
-                redirect(site_url("/admin/estado_incidencias_cerradas"),'refresh');
-            }
-
-            // Consultar a la session si ya se ha buscado algo y guardado allí.
-            $sess_buscar_sfid = $this->session->userdata('buscar_sfid');
-            $sess_buscar_incidencia = $this->session->userdata('buscar_incidencia');
-            if(! empty($sess_buscar_sfid)) $buscar_sfid = $sess_buscar_sfid;
-            if(! empty($sess_buscar_incidencia)) $buscar_incidencia = $sess_buscar_incidencia;
-
-            // Buscar en el POST si hay busqueda, y si la hay usarla y guardarla además en sesion
-            $do_busqueda = $this->input->post('do_busqueda');
-
-            // Obtener el filtro, primero de Session y despues del post, si procede..
-            $do_busqueda_finalizadas = $this->input->post('do_busqueda_finalizadas');
-
-            $filtro_cerradas = NULL;
-            $filtro_cerradas_pds = NULL;
-
-            $sess_filtro_cerradas = $this->session->userdata('filtro_cerradas');
-            if(! empty($sess_filtro_cerradas)) $filtro_cerradas = $sess_filtro_cerradas;
-
-            $sess_filtro_cerradas_pds = $this->session->userdata('filtro_cerradas_pds');
-            if(! empty($sess_filtro_cerradas_pds)) $filtro_cerradas_pds = $sess_filtro_cerradas_pds;
-
-            $post_cerradas =$this->input->post('filtrar_cerradas');
-            $post_cerradas_pds =$this->input->post('filtrar_cerradas_pds');
-
-            if($do_busqueda==="si")
-            {
-                $buscar_sfid = $this->input->post('buscar_sfid');
-                $this->session->set_userdata('buscar_sfid', $buscar_sfid);
-
-                $buscar_incidencia = $this->input->post('buscar_incidencia');
-                $this->session->set_userdata('buscar_incidencia', $buscar_incidencia);
-
-                $filtro_cerradas = $post_cerradas;
-                $this->session->set_userdata('filtro_cerradas',$filtro_cerradas);
-
-                $filtro_cerradas_pds = $post_cerradas_pds;
-                $this->session->set_userdata('filtro_cerradas_pds',$filtro_cerradas_pds);
-
-            }
-            $buscador['buscar_sfid']        = $buscar_sfid;
-            $buscador['buscar_incidencia']  = $buscar_incidencia;
-
-            $data['buscar_sfid']        = $buscar_sfid;
-            $data['buscar_incidencia']  = $buscar_incidencia;
-
-            $data["filtro_cerradas"] = $filtro_cerradas;
-            $data["filtro_cerradas_pds"] = $filtro_cerradas_pds;
-
-            $filtros_cerradas = array();
-
-            if($filtro_cerradas != NULL) $filtros_cerradas["status"] = $filtro_cerradas;
-            if($filtro_cerradas_pds != NULL) $filtros_cerradas["status_pds"] = $filtro_cerradas_pds;
-
-
-            // Obtener el campo a ordenar, primero de Session y despues del post, si procede..
-            $campo_orden_activas = NULL;
-            $orden_activas = NULL;
-
-            $sess_campo_orden_activas =  $this->session->userdata('campo_orden_activas');
-            if(! empty($sess_campo_orden_activas)) $campo_orden_activas = $sess_campo_orden_activas;
-            $sess_orden_activas =  $this->session->userdata('orden_activas');
-            if(! empty($sess_orden_activas)) $orden_activas = $sess_orden_activas;
-
-            // viene del form de ordenacion
-            $do_orden = $this->input->post('ordenar');
-
-            if($do_orden==='true') {
-                $post_orden_form = $this->input->post('form');
-
-                $campo_orden_activas = $this->input->post($post_orden_form.'_campo');
-                $orden_activas = $this->input->post($post_orden_form.'_orden');
-
-                $this->session->set_userdata('campo_orden_activas', $campo_orden_activas);
-                $this->session->set_userdata('orden_activas', $orden_activas);
-            }
-
-            $data["campo_orden_activas"] = $campo_orden_activas;
-            $data["orden_activas"] = $orden_activas;
-
-            $this->load->library('app/paginationlib');
-
-
-            /** *****************************************************************************************************
-             *          Sacar la info para la tabla de Incidencias cerradas.
-             * *****************************************************************************************************/
-            $data['title_cerradas'] = 'Incidencias cerradas';
-
-
-            // Obtener la página actual del GET y si no existe, definirla a 1
-            $get_page = $this->uri->segment(4);
-            if( $this->uri->segment(3) == "page") {
-                $page = ( ! empty($get_page) ) ? $get_page : 1 ;
-                $segment = 4;
-            }else{
-                $page = 1;
-                $segment = null;
-            }
-
-            $per_page = 100;
-
-
-            // Obtener el campo a ordenar, primero de Session y despues del post, si procede..
-            $campo_orden_cerradas = NULL;
-            $orden_cerradas = NULL;
-
-            $sess_campo_orden_cerradas =  $this->session->userdata('campo_orden_cerradas');
-            if(! empty($sess_campo_orden_cerradas)) $campo_orden_cerradas = $sess_campo_orden_cerradas;
-            $sess_orden_cerradas =  $this->session->userdata('orden_cerradas');
-            if(! empty($sess_orden_cerradas)) $orden_cerradas = $sess_orden_cerradas;
-
-            // viene del form de ordenacion
-            $do_orden = $this->input->post('ordenar_cerradas');
-            if($do_orden==='true') {
-
-                $post_orden_form = $this->input->post('form');
-
-                $campo_orden_cerradas = $this->input->post($post_orden_form.'_campo');
-                $orden_cerradas = $this->input->post($post_orden_form.'_orden');
-
-                $this->session->set_userdata('campo_orden_cerradas', $campo_orden_cerradas);
-                $this->session->set_userdata('orden_cerradas', $orden_cerradas);
-
-            }
-
-            $data["campo_orden_cerradas"] = $campo_orden_cerradas;
-            $data["orden_cerradas"] = $orden_cerradas;
-
-            $total = $this->tienda_model->get_incidencias_cerradas_quantity($filtros_cerradas,$buscador);   // Sacar el total de incidencias, para el paginador
-            $cfg_pagination = $this->paginationlib->init_pagination("admin/estado_incidencias_cerradas/page/",$total,$per_page,$segment);
-            $bounds = $this->paginationlib->get_bounds($total,$page,$per_page);
-
-            $cfg_pagination["suffix"] = '#incidencias_cerradas';
-
-            $this->load->library('pagination',$cfg_pagination,'pagination_cerradas');
-            $this->pagination_cerradas->initialize($cfg_pagination);
-            $data["pagination_helper"]   = $this->pagination_cerradas;
-
-            // Indicamos si habrá que mostrar el paginador en la vista
-            $data['show_paginator'] = $bounds["show_paginator"];
-            $data['num_resultados'] = $bounds["num_resultados"];
-            $data['n_inicial']  = $bounds["n_inicial"];
-            $data['n_final'] = $bounds["n_final"];
-
-            $incidencias_cerradas = $this->tienda_model->get_incidencias_cerradas($page,$cfg_pagination,$filtros_cerradas,$buscador,$campo_orden_cerradas,$orden_cerradas);
-
-            foreach ($incidencias_cerradas as $incidencia) {
-                $incidencia->device = $this->sfid_model->get_device($incidencia->id_devices_pds);
-                $incidencia->display = $this->sfid_model->get_display($incidencia->id_displays_pds);
-                $incidencia->nuevos  = $this->chat_model->contar_nuevos($incidencia->id_incidencia,$incidencia->reference);
-                $incidencia->intervencion = $this->intervencion_model->get_intervencion_incidencia($incidencia->id_incidencia);
-            }
-
-            $data['incidencias_cerradas'] = $incidencias_cerradas;
-
-            $this->load->view('backend/header', $data);
-            $this->load->view('backend/navbar', $data);
-            $this->load->view('backend/estado_incidencias_cerradas', $data);
             $this->load->view('backend/footer');
         } else {
             redirect('admin', 'refresh');
@@ -917,6 +619,8 @@ class Admin extends CI_Controller
             $this->load->model(array('chat_model', 'intervencion_model', 'tienda_model', 'sfid_model'));
 
             $sfid = $this->tienda_model->get_pds($id_pds);
+
+            print_r($id_pds);
 
             $data['id_pds'] = 'ABX/PDS-' . $sfid['id_pds'];
             $data['type_pds'] = $sfid['pds'];
@@ -3667,6 +3371,1156 @@ class Admin extends CI_Controller
         $this->load->view('backend/content', $data);
         $this->load->view('backend/footer');
     }
+
+
+
+    public function informe_pdv()
+    {
+        if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
+            $xcrud = xcrud_get_instance();
+            $this->load->model('sfid_model');
+            $this->load->model('tienda_model');
+            $this->load->model('informe_model');
+
+
+            $data["title"] = "Informe de Puntos de Venta";
+
+            $tipo_tienda = "";
+            $panelado = "";
+            $mueble = "";
+            $terminal = "";
+            $sfid = "";
+
+            $data["tipo_tienda"] = $tipo_tienda;
+            $data["panelado"] = $panelado;
+            $data["mueble"] = $mueble;
+            $data["terminal"] = $terminal;
+            $data["sfid"] = $sfid;
+
+
+            $campo_orden = NULL;
+            $ordenacion = NULL;
+
+            $total_registros = 0;
+            $generado = FALSE;
+
+            $resultados = array();
+
+            if ($this->input->post("generar_informe") === "si") {
+                $tipo_tienda = $this->input->post("tipo_tienda");
+                $panelado = $this->input->post("panelado");
+                $mueble = $this->input->post("mueble");
+                $terminal = $this->input->post("terminal");
+                $sfid = $this->input->post("sfid");
+
+
+                if(empty($tipo_tienda)&&empty($panelado)&&empty($mueble)&&empty($terminal)&&empty($sfid)){
+                    redirect(base_url()."admin/informe_pdv");
+                }
+
+                $data["tipo_tienda"] = $tipo_tienda;
+                $data["panelado"] = $panelado;
+                $data["mueble"] = $mueble;
+                $data["terminal"] = $terminal;
+                $data["sfid"] = $sfid;
+                $data["generado"] = TRUE;
+
+
+
+
+                $total_registros = $this->informe_model->get_informe_pdv_quantity($data);
+
+
+                $data["total_registros"] = $total_registros;
+
+
+                $this->session->set_userdata($data);
+                $generado = TRUE;
+            }else{
+
+                // OBTENER DE LA SESION, SI EXISTE
+                if( $this->session->userdata("generado")!==NULL  && $this->session->userdata("generado")===TRUE){
+
+                    $tipo_tienda = $this->session->userdata("tipo_tienda");
+                    $panelado = $this->session->userdata("panelado");
+                    $mueble = $this->session->userdata("mueble");
+                    $terminal = $this->session->userdata("terminal");
+                    $sfid = $this->session->userdata("sfid");
+                    $generado = $this->session->userdata("generado");
+                    $total_registros = $this->session->userdata("total_registros");
+
+                    $data["tipo_tienda"] = $tipo_tienda;
+                    $data["panelado"] = $panelado;
+                    $data["mueble"] = $mueble;
+                    $data["terminal"] = $terminal;
+                    $data["sfid"] = $sfid;
+                    $data["generado"] = TRUE;
+                    $data["total_registros"] = $total_registros;
+
+                }
+            }
+
+
+
+            $data["generado"] = $generado;
+
+            // Comprobar si existe el segmento PAGE en la URI, si no inicializar a 1..
+            $get_page = $this->uri->segment(3);
+
+            if($get_page==="reset"){
+                $this->session->unset_userdata("tipo_tienda");
+                $this->session->unset_userdata("panelado");
+                $this->session->unset_userdata("mueble");
+                $this->session->unset_userdata("terminal");
+                $this->session->unset_userdata("sfid");
+                $this->session->unset_userdata("generado");
+
+                redirect("admin/informe_pdv","refresh");
+
+            }
+
+            if( $this->uri->segment(2) === "informe_pdv") {
+                $page = ( ! empty($get_page) ) ? $get_page : 1 ;
+                $segment = 3;
+            }else{
+                $page = 1;
+                $segment = null;
+            }
+
+            $this->load->library('app/paginationlib');
+            $per_page = 100;
+
+
+            $cfg_pagination = $this->paginationlib->init_pagination("admin/informe_pdv/",$total_registros,$per_page,$segment);
+            $this->load->library('pagination',$cfg_pagination);
+            $this->pagination->initialize($cfg_pagination);
+
+            // Indicamos si habrá que mostrar el paginador en la vista
+
+            $data["pag"]  = $this->paginationlib->get_bounds($total_registros,$page,$per_page);
+
+
+            $data["pagination_helper"]   = $this->pagination;
+
+
+            if($generado) {
+                $resultados = $this->informe_model->get_informe_pdv($page,$cfg_pagination,$campo_orden,$ordenacion,$data);
+            }
+
+
+
+            $data["resultados"] = $resultados;
+
+
+            /** COMENTADO SELECT DEMOREAL $data["tipos_tienda"] = $this->sfid_model->get_types_pds_demoreal(); */
+            $data["tipos_tienda"] = $this->sfid_model->get_types_pds();
+
+            /** COMENTADO SELECT DEMOREAL $panelados = $this->tienda_model->get_panelados_maestros_demoreal(); */
+            $panelados = $this->tienda_model->get_panelados_maestros();
+            $data["panelados"] = $panelados;
+
+
+            /** COMENTADO SELECT DEMOREAL $muebles = $this->tienda_model->get_displays_demoreal(); */
+            $muebles = $this->tienda_model->get_displays();
+            $data["muebles"] = $muebles;
+
+
+
+            /** COMENTADO SELECT DEMOREAL $terminales = $this->tienda_model->get_devices_demoreal(); */
+            $terminales = $this->tienda_model->get_devices();
+            $data["terminales"] = $terminales;
+
+
+            $this->load->view('backend/header', $data);
+            $this->load->view('backend/navbar', $data);
+            $this->load->view('backend/informes/informe_puntos_venta', $data);
+            $this->load->view('backend/footer');
+        }
+        else
+        {
+            redirect('admin','refresh');
+        }
+    }
+
+
+
+    public function informe_pdv_exportar()
+    {
+        if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
+            $xcrud = xcrud_get_instance();
+            $this->load->model('sfid_model');
+            $this->load->model('tienda_model');
+            $this->load->model('informe_model');
+
+            $data["title"] = "Informe de Puntos de Venta";
+
+            $tipo_tienda = "";
+            $panelado = "";
+            $mueble = "";
+            $terminal = "";
+
+
+            $campo_orden = NULL;
+            $ordenacion = NULL;
+
+            $total_registros = 0;
+            $generado = FALSE;
+
+            $resultados = array();
+
+            if ($this->input->post("generar_informe") === "si") {
+                $tipo_tienda = $this->input->post("tipo_tienda");
+                $panelado = $this->input->post("panelado");
+                $mueble = $this->input->post("mueble");
+                $terminal = $this->input->post("terminal");
+                $sfid = $this->input->post("sfid");
+
+
+                $data["tipo_tienda"] = $tipo_tienda;
+                $data["panelado"] = $panelado;
+                $data["mueble"] = $mueble;
+                $data["terminal"] = $terminal;
+                $data["sfid"] = $sfid;
+                $data["generado"] = TRUE;
+
+
+
+
+                $total_registros = $this->informe_model->get_informe_pdv_quantity($data);
+                $data["total_registros"] = $total_registros;
+
+
+                $this->session->set_userdata($data);
+                $generado = TRUE;
+            }else{
+
+                // OBTENER DE LA SESION, SI EXISTE
+                if( $this->session->userdata("generado")!==NULL  && $this->session->userdata("generado")===TRUE){
+
+
+
+                    $tipo_tienda = $this->session->userdata("tipo_tienda");
+                    $panelado = $this->session->userdata("panelado");
+                    $mueble = $this->session->userdata("mueble");
+                    $terminal = $this->session->userdata("terminal");
+                    $sfid = $this->session->userdata("sfid");
+                    $generado = $this->session->userdata("generado");
+                    $total_registros = $this->session->userdata("total_registros");
+
+                    $data["tipo_tienda"] = $tipo_tienda;
+                    $data["panelado"] = $panelado;
+                    $data["mueble"] = $mueble;
+                    $data["terminal"] = $terminal;
+                    $data["sfid"] = $sfid;
+                    $data["generado"] = TRUE;
+                    $data["total_registros"] = $total_registros;
+
+
+
+                }
+            }
+
+
+
+            $data["generado"] = $generado;
+
+            $this->informe_model->get_informe_csv($campo_orden,$ordenacion,$data);
+        }
+        else
+        {
+            redirect('admin','refresh');
+        }
+    }
+
+    /**
+     * Punto de entrada del Informe sobre planogramas.
+     * Mostrará la vista principal con el formulario de filtrado, y recogerá los datos enviados y los procesará
+     * como corresponda.
+     */
+    public function informe_planogramas()
+    {
+        if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
+
+            /* Incluir los modelos */
+            $xcrud = xcrud_get_instance();
+            $this->load->model('sfid_model');
+            $this->load->model('tienda_model');
+            $this->load->model('informe_model');
+
+            $mueble_plano = "";
+            $sfid_plano = "";
+            $generado_planograma = "";
+
+            $data["mueble_plano"] = $mueble_plano;
+            $data["sfid_plano"] = $sfid_plano;
+            $data["generado_planograma"] = FALSE;
+
+
+            $data["title"] = "Informe de Planogramas";
+
+            $vista = 0;
+
+            if ($this->input->post("generar_informe") === "si") {
+                $mueble_plano = $this->input->post("mueble_plano");
+                $sfid_plano = $this->input->post("sfid_plano");
+                $generado_planograma = TRUE;
+
+                $data["mueble_plano"] = $mueble_plano;
+                $data["sfid_plano"] = $sfid_plano;
+                $data["generado_planograma"] = TRUE;
+
+                $this->session->set_userdata(array(
+                    "mueble_plano" => $mueble_plano,
+                    "sfid_plano" => $sfid_plano,
+                    "generado_planograma" => $generado_planograma
+                ));
+
+            } else {
+                // OBTENER DE LA SESION, SI EXISTE
+                if ($this->session->userdata("generado_planograma") !== NULL && $this->session->userdata("generado_planograma") === TRUE) {
+                    $mueble_plano = $this->session->userdata("mueble_plano");
+                    $sfid_plano = $this->session->userdata("sfid_plano");
+                    $generado_planograma = $this->session->userdata("generado_planograma");
+
+                    $data["mueble_plano"] = $mueble_plano;
+                    $data["sfid_plano"] = $sfid_plano;
+                    $data["generado_planograma"] = TRUE;
+
+                }
+            }
+
+
+
+            if(!empty($sfid_plano)){
+                if(!empty($mueble_plano)){
+                    /*
+                     *  Planograma del mueble para el sfid indicado
+                     */
+                    $display_maestro = $this->tienda_model->get_display($mueble_plano);
+                    $data['display'] = " - " .$display_maestro["display"];
+                    $data['picture_url'] = $display_maestro["picture_url"];
+
+
+                    $tiendas = $this->tienda_model->search_pds($sfid_plano);
+                    if (!empty($tiendas) && count($tiendas) == 1) {
+
+                        $tienda = NULL;
+                        foreach ($tiendas as $tienda_1) {
+                            $tienda = $tienda_1;
+                        }
+
+
+                        $id_pds = $tienda->id_pds;
+
+                        $sfid = $this->tienda_model->get_pds($id_pds);
+                        $data['id_pds']     = 'ABX/PDS-'.$sfid['id_pds'];
+                        $data['commercial'] = $sfid['commercial'];
+                        $data['territory']  = $sfid['territory'];
+                        $data['reference']  = $sfid['reference'];
+                        $data['address']    = $sfid['address'];
+                        $data['zip']        = $sfid['zip'];
+                        $data['city']       = $sfid['city'];
+                        $data['id_pds_url'] = $id_pds;
+
+
+                        $arr_displays_pds = $this->sfid_model->get_id_displays_pds($id_pds,$mueble_plano);
+
+                        $displays = array();
+                        $data['display'] = "";
+
+
+                        if(!empty($arr_displays_pds)) {
+                            $id_displays_pds = $arr_displays_pds[0]->id_displays_pds;
+
+                            $displays = $this->sfid_model->get_devices_displays_pds($id_displays_pds);
+                            $data["id_dis_url"] = $id_displays_pds;
+
+                            foreach ($displays as $key => $display) {
+                                $num_devices = $this->tienda_model->count_devices_display($display->id_display);
+                                $display->devices_count = $num_devices;
+                            }
+
+                            $devices = $this->sfid_model->get_devices_displays_pds($id_displays_pds);
+                            $data['devices'] = $devices;
+                            $data['displays'] = $displays;
+
+
+
+                        }
+
+
+                    }
+
+                    $data['subtitle'] = 'Planograma tienda: SFID-' . $sfid_plano . ' - '.$display_maestro['display'];
+                    $vista = 1;
+
+                }else{
+                    /*
+                     *  Panelado de la tienda
+                     */
+                    $tiendas = $this->tienda_model->search_pds($sfid_plano);
+
+
+
+                    if (!empty($tiendas) && count($tiendas) == 1) {
+
+                        $tienda = NULL;
+                        foreach ($tiendas as $tienda_1) {
+                            $tienda = $tienda_1;
+                        }
+
+
+                        $id_pds = $tienda->id_pds;
+
+                        $sfid = $this->tienda_model->get_pds($id_pds);
+
+                        $data['id_pds'] = 'ABX/PDS-' . $sfid['id_pds'];
+                        $data['commercial'] = $sfid['commercial'];
+                        $data['territory'] = $sfid['territory'];
+                        $data['reference'] = $sfid['reference'];
+                        $data['address'] = $sfid['address'];
+                        $data['zip'] = $sfid['zip'];
+                        $data['city'] = $sfid['city'];
+                        $data['id_pds_url'] = $id_pds;
+
+                        $displays = $this->sfid_model->get_displays_pds($id_pds);
+
+                        foreach ($displays as $key => $display) {
+                            $num_devices = $this->tienda_model->count_devices_display($display->id_display);
+                            $display->devices_count = $num_devices;
+                        }
+
+                        $data['displays'] = $displays;
+
+                        $data['subtitle'] = 'Panelado tienda: SFID-' . $sfid_plano. '';
+                        $vista = 3;
+                    }
+
+                }
+
+            }else{
+                if(!empty($mueble_plano)){
+                    /*
+                     *      Maestro del mueble
+                     */
+                    $devices = $this->tienda_model->get_devices_display($mueble_plano);
+                    $data['displays'] = $this->tienda_model->get_displays();
+                    $data['devices'] = $devices;
+
+
+                    $display = $this->tienda_model->get_display($mueble_plano);
+                    $data['display_name'] = $display['display'];
+                    $data['picture_url'] = $display['picture_url'];
+
+
+                    $data['subtitle'] = 'Planograma mueble: ' . $display['display'];
+                    $vista = 2;
+
+                }else{
+                    // Form vacio
+                    $vista = 0;
+                }
+            }
+
+
+
+
+
+
+
+
+            $data["generado_planograma"] = $generado_planograma;
+
+
+            // Comprobar si existe el segmento PAGE en la URI, si no inicializar a 1..
+            $get_page = $this->uri->segment(3);
+
+            if ($get_page === "reset") {
+                $this->session->unset_userdata("mueble_plano");
+                $this->session->unset_userdata("sfid_plano");
+                $this->session->unset_userdata("generado_planograma");
+
+                redirect("admin/informes/informe_planogramas", "refresh");
+
+            }
+
+
+            /** COMENTADO SELECT DEMOREAL $muebles = $this->tienda_model->get_displays_demoreal(); */
+            $muebles = $this->tienda_model->get_displays();
+            $data["muebles"] = $muebles;
+
+            $data["vista"] = $vista;
+
+
+
+
+
+
+            /* Pasar a la vista */
+            $this->load->view('backend/header', $data);
+            $this->load->view('backend/navbar', $data);
+            $this->load->view('backend/informes/informe_planograma_form', $data);
+
+            switch ($vista) {
+                case 1:
+                    $this->load->view('backend/informes/informe_planograma_mueble_sfid',$data);
+                    break;
+                case 2:
+                    $this->load->view('backend/informes/informe_planograma_mueble', $data);
+                    break;
+                case 3:
+                    $this->load->view('backend/informes/informe_planograma_sfid', $data);
+                    break;
+                default:
+                    $this->load->view('backend/informes/informe_planograma', $data);
+
+            }
+
+
+            $this->load->view('backend/footer');
+
+
+        }
+        else
+        {
+            redirect('admin','refresh');
+        }
+    }
+
+
+
+    public function informe_planograma_mueble_pds(){
+        if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10))
+        {
+            $id_pds   = $this->uri->segment(3);
+            $id_dis   = $this->uri->segment(4);
+
+            $xcrud = xcrud_get_instance();
+            $this->load->model('tienda_model');
+            $this->load->model('sfid_model');
+
+            $sfid = $this->tienda_model->get_pds($id_pds);
+
+            $data["generado_planograma"] = FALSE;
+
+
+            $data['id_pds']     = 'ABX/PDS-'.$sfid['id_pds'];
+            $data['commercial'] = $sfid['commercial'];
+            $data['territory']  = $sfid['territory'];
+            $data['reference']  = $sfid['reference'];
+            $data['address']    = $sfid['address'];
+            $data['zip']        = $sfid['zip'];
+            $data['city']       = $sfid['city'];
+
+            $display = $this->sfid_model->get_display($this->uri->segment(4));
+
+            $data['id_display']  = $display['id_display'];
+            $data['display']     = $display['display'];
+            $data['picture_url'] = $display['picture_url'];
+
+            $data['devices'] = $this->sfid_model->get_devices_displays_pds($id_dis);
+
+            $data['id_pds_url']  = $id_pds;
+            $data['id_dis_url']  = $id_dis;
+
+            // OBTENER DE LA SESION, SI EXISTE
+            if ($this->session->userdata("generado_planograma") !== NULL && $this->session->userdata("generado_planograma") === TRUE) {
+                $mueble_plano = $this->session->userdata("mueble_plano");
+                $sfid_plano = $this->session->userdata("sfid_plano");
+                $generado_planograma = $this->session->userdata("generado_planograma");
+
+                $data["mueble_plano"] = $mueble_plano;
+                $data["sfid_plano"] = $sfid_plano;
+                $data["generado_planograma"] = TRUE;
+
+            }
+
+            /** COMENTADO SELECT DEMOREAL $muebles = $this->tienda_model->get_displays_demoreal(); */
+            $muebles = $this->tienda_model->get_displays();
+            $data["muebles"] = $muebles;
+            $data['title'] = 'Planograma tienda';
+            $data['subtitle'] = 'Planograma tienda [SFID-'.$data['reference'].'] - '.$data['display'];
+
+            $this->load->view('backend/header',$data);
+            $this->load->view('backend/navbar',$data);
+            $this->load->view('backend/informes/informe_planograma_form',$data);
+            $this->load->view('backend/informes/informe_planograma_ficha_mueble',$data);
+            $this->load->view('backend/footer');
+        }
+        else
+        {
+            redirect('admin','refresh');
+        }
+
+    }
+
+
+    public function informe_planograma_terminal(){
+        if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10))
+        {
+            $data["generado_planograma"] = FALSE;
+
+            $id_pds   = $this->uri->segment(3);
+            $id_dis   = $this->uri->segment(4);
+            $id_dev   = $this->uri->segment(5);
+
+            $xcrud = xcrud_get_instance();
+            $this->load->model('tienda_model');
+            $this->load->model('sfid_model');
+
+            $sfid = $this->tienda_model->get_pds($id_pds);
+
+            $data['id_pds']     = 'ABX/PDS-'.$sfid['id_pds'];
+            $data['commercial'] = $sfid['commercial'];
+            $data['territory']  = $sfid['territory'];
+            $data['reference']  = $sfid['reference'];
+            $data['address']    = $sfid['address'];
+            $data['zip']        = $sfid['zip'];
+            $data['city']       = $sfid['city'];
+
+            $display = $this->sfid_model->get_display($this->uri->segment(4));
+
+            $data['id_display']      = $display['id_display'];
+            $data['display']         = $display['display'];
+            $data['picture_url_dis'] = $display['picture_url'];
+
+
+            $device = $this->sfid_model->get_device($this->uri->segment(5));
+
+            $data['id_device']      		  = $device['id_device'];
+            $data['device']        		 	  = $device['device'];
+            $data['brand_name']   			  = $device['brand_name'];
+            $data['IMEI']          		 	  = $device['IMEI'];
+            $data['mac']            		  = $device['mac'];
+            $data['serial']          		  = $device['serial'];
+            $data['barcode']                  = $device['barcode'];
+            $data['description']    	      = $device['description'];
+            $data['owner']          		  = $device['owner'];
+            $data['picture_url_dev'] 		  = $device['picture_url'];
+
+            $data['id_pds_url']  = $id_pds;
+            $data['id_dis_url']  = $id_dis;
+            $data['id_dev_url']  = $id_dev;
+
+            // OBTENER DE LA SESION, SI EXISTE
+            if ($this->session->userdata("generado_planograma") !== NULL && $this->session->userdata("generado_planograma") === TRUE) {
+                $mueble_plano = $this->session->userdata("mueble_plano");
+                $sfid_plano = $this->session->userdata("sfid_plano");
+                $generado_planograma = $this->session->userdata("generado_planograma");
+
+                $data["mueble_plano"] = $mueble_plano;
+                $data["sfid_plano"] = $sfid_plano;
+                $data["generado_planograma"] = TRUE;
+
+            }
+
+            /** COMENTADO SELECT DEMOREAL $muebles = $this->tienda_model->get_displays_demoreal(); */
+            $muebles = $this->tienda_model->get_displays();
+            $data["muebles"] = $muebles;
+            $data['title'] = 'Planograma tienda [SFID-'.$data['reference'].']';
+            $data['subtitle'] = $data["display"] .' - '. $data["device"];
+
+            $this->load->view('backend/header',$data);
+            $this->load->view('backend/navbar',$data);
+            $this->load->view('backend/informes/informe_planograma_form',$data);
+            $this->load->view('backend/informes/informe_planograma_ficha_terminal',$data);
+            $this->load->view('backend/footer');
+        }
+        else
+        {
+            redirect('admin','refresh');
+        }
+    }
+
+
+    /**
+     * Tercer informe: visual (panelado)
+     */
+
+    /**
+     * Punto de entrada del Informe sobre planogramas.
+     * Mostrará la vista principal con el formulario de filtrado, y recogerá los datos enviados y los procesará
+     * como corresponda.
+     */
+    public function informe_visual()
+    {
+        if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
+
+            /* Incluir los modelos */
+            $xcrud = xcrud_get_instance();
+
+            $this->load->model('sfid_model');
+            $this->load->model('tienda_model');
+            $this->load->model('informe_model');
+
+            $tipo_tienda_visual = "";
+            $panelado_visual = "";
+            $sfid_visual = "";
+            $generado_visual = FALSE;
+
+            $data["title"] = "Informe Visual";
+
+
+            // Comprobar si existe el segmento PAGE en la URI, si no inicializar a 1..
+            $get_page = $this->uri->segment(3);
+
+            if ($get_page === "reset") {
+                $this->session->unset_userdata("tipo_tienda_visual");
+                $this->session->unset_userdata("panelado_visual");
+                $this->session->unset_userdata("sfid_visual");
+                $this->session->unset_userdata("generado_visual");
+                redirect("admin/informe_visual", "refresh");
+            }
+
+
+            if ($this->input->post("generar_informe") === "si") {
+                $tipo_tienda_visual = $this->input->post("tipo_tienda_visual");
+                $panelado_visual = $this->input->post("panelado_visual");
+                $sfid_visual = $this->input->post("sfid_visual");
+
+                $data["tipo_tienda_visual"] = $tipo_tienda_visual;
+                $data["panelado_visual"] = $panelado_visual;
+                $data["sfid_visual"] = $sfid_visual;
+                $data["generado_visual"] = TRUE;
+                $this->session->set_userdata($data);
+
+            } else {
+                // OBTENER DE LA SESION, SI EXISTE
+                if ($this->session->userdata("generado_visual") !== NULL && $this->session->userdata("generado_visual") === TRUE) {
+                    $tipo_tienda_visual = $this->session->userdata("tipo_tienda_visual");
+                    $panelado_visual = $this->session->userdata("panelado_visual");
+                    $sfid_visual = $this->session->userdata("sfid_visual");
+                    $generado_visual = $this->session->userdata("generado_visual");
+
+                }
+
+                $data["tipo_tienda_visual"] = $tipo_tienda_visual;
+                $data["panelado_visual"] = $panelado_visual;
+                $data["sfid_visual"] = $sfid_visual;
+                $data["generado_visual"] = $generado_visual;
+                $this->session->set_userdata($data);
+            }
+
+
+
+
+            /* Obtener los tipos de tienda para el select */
+            /** COMENTADO SELECT DEMOREAL $muebles = $this->tienda_model->get_displays_demoreal(); */
+            $muebles = $this->tienda_model->get_displays();
+            $data["muebles"] = $muebles;
+
+            /** COMENTADO SELECT DEMOREAL $data["tipos_tienda"] = $this->sfid_model->get_types_pds_demoreal(); */
+            $data["tipos_tienda"] = $this->sfid_model->get_types_pds();
+
+
+
+            $data["subtitle"] = "";
+            $data["error_panelado"] = FALSE;
+
+            if(empty($sfid_visual) && !empty($tipo_tienda_visual) && empty($panelado_visual)){
+                // Validación de panelado escogido, cuando no se ha escogido SFID pero se ha escogido un tipo de tienda
+                // sin escoger un panelado
+                $vista = 0;
+                $data["error_panelado"] = TRUE;
+
+            }elseif(!empty($panelado_visual) && empty($sfid_visual)){
+                // Cargar muebles del panelado maestro escogido
+
+                /*
+                     *  Panelado de la tienda
+                     */
+                $displays = $this->tienda_model->get_displays_panelado_maestros($panelado_visual);
+                $o_panelado =  $this->tienda_model->get_panelado_maestro($panelado_visual);
+
+                foreach ($displays as $key => $display) {
+                    $num_devices = $this->tienda_model->count_devices_display($display->id_display);
+                    $display->devices_count = $num_devices;
+                }
+
+                $data['displays'] = $displays;
+
+                $data['subtitle'] = 'Panelado genérico: ' . $o_panelado->panelado. '';
+
+
+
+
+                $vista = 2;
+            }elseif(!empty($sfid_visual)){
+                // Cargar panelado del sfid.
+                /*
+                    *  Panelado de la tienda
+                    */
+                $tiendas = $this->tienda_model->search_pds($sfid_visual);
+
+
+
+                if (!empty($tiendas) && count($tiendas) == 1) {
+
+                    $tienda = NULL;
+                    foreach ($tiendas as $tienda_1) {
+                        $tienda = $tienda_1;
+                    }
+
+
+                    $id_pds = $tienda->id_pds;
+
+                    $sfid = $this->tienda_model->get_pds($id_pds);
+
+                    $data['id_pds'] = 'ABX/PDS-' . $sfid['id_pds'];
+                    $data['commercial'] = $sfid['commercial'];
+                    $data['territory'] = $sfid['territory'];
+                    $data['reference'] = $sfid['reference'];
+                    $data['address'] = $sfid['address'];
+                    $data['zip'] = $sfid['zip'];
+                    $data['city'] = $sfid['city'];
+                    $data['id_pds_url'] = $id_pds;
+
+                    $displays = $this->sfid_model->get_displays_pds($id_pds);
+
+                    foreach ($displays as $key => $display) {
+                        $num_devices = $this->tienda_model->count_devices_display($display->id_display);
+                        $display->devices_count = $num_devices;
+                    }
+
+                    $data['displays'] = $displays;
+
+                    $data['subtitle'] = 'Panelado tienda: SFID-' . $sfid_visual. '';
+
+                }
+                $vista = 1;
+            }else{
+                // Debe escoger algun valor, form vacio
+                $vista = 0;
+            }
+
+
+
+
+
+            $data["vista"] = $vista;
+
+            /* Pasar a la vista */
+            $this->load->view('backend/header', $data);
+            $this->load->view('backend/navbar', $data);
+            $this->load->view('backend/informes/informe_visual_form', $data);
+
+            switch ($vista) {
+                case 2 :
+                    $this->load->view('backend/informes/informe_visual_panelado',$data);
+                    break;
+                case 1 :
+                    $this->load->view('backend/informes/informe_visual_sfid', $data);
+                    break;
+                default:
+                    $this->load->view('backend/informes/informe_visual', $data);
+
+            }
+
+            $this->load->view('backend/footer');
+
+
+
+
+        }
+        else
+        {
+            redirect('admin','refresh');
+        }
+    }
+
+
+
+    public function informe_visual_mueble($id_mueble){
+        if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10))
+        {
+
+            $id_dis   = $id_mueble;
+
+            $xcrud = xcrud_get_instance();
+            $this->load->model('tienda_model');
+            $this->load->model('sfid_model');
+
+
+
+            $display = $this->tienda_model->get_display($id_mueble);
+
+            /* Obtener los tipos de tienda para el select */
+            /** COMENTADO SELECT DEMOREAL $muebles = $this->tienda_model->get_displays_demoreal(); */
+            $muebles = $this->tienda_model->get_displays();
+            $data["muebles"] = $muebles;
+
+            /** COMENTADO SELECT DEMOREAL $data["tipos_tienda"] = $this->sfid_model->get_types_pds_demoreal(); */
+            $data["tipos_tienda"] = $this->sfid_model->get_types_pds();
+
+
+            $data['id_display']  = $display['id_display'];
+            $data['display']     = $display['display'];
+            $data['picture_url'] = $display['picture_url'];
+
+            $data['devices'] = $this->tienda_model->get_devices_display($id_dis);
+
+
+            // OBTENER DE LA SESION, SI EXISTE
+            if ($this->session->userdata("generado_visual") !== NULL && $this->session->userdata("generado_visual") === TRUE) {
+                $tipo_tienda_visual = $this->session->userdata("tipo_tienda_visual");
+                $panelado_visual = $this->session->userdata("panelado_visual");
+                $sfid_visual = $this->session->userdata("sfid_visual");
+                $generado_visual = $this->session->userdata("generado_visual");
+
+                $data["tipo_tienda_visual"] = $tipo_tienda_visual;
+                $data["panelado_visual"] = $panelado_visual;
+                $data["sfid_visual"] = $sfid_visual;
+                $data["generado_visual"] = $generado_visual;
+
+
+            }
+
+
+
+
+            $data['title'] = 'Panelado genérico';
+            $data['subtitle'] = 'Planograma mueble  - '.$data['display'];
+
+            $this->load->view('backend/header',$data);
+            $this->load->view('backend/navbar',$data);
+            $this->load->view('backend/informes/informe_visual_form',$data);
+            $this->load->view('backend/informes/informe_visual_maestro_mueble',$data);
+            $this->load->view('backend/footer');
+        }
+        else
+        {
+            redirect('admin','refresh');
+        }
+
+    }
+
+    public function informe_visual_terminal($id_mueble,$id_device)
+    {
+        if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
+            $id_pds = $this->uri->segment(3);
+            $id_dis = $this->uri->segment(4);
+            $id_dev = $this->uri->segment(5);
+
+            $xcrud = xcrud_get_instance();
+            $this->load->model('tienda_model');
+            $this->load->model('sfid_model');
+
+            /* Obtener los tipos de tienda para el select */
+            /** COMENTADO SELECT DEMOREAL $muebles = $this->tienda_model->get_displays_demoreal(); */
+            $muebles = $this->tienda_model->get_displays();
+            $data["muebles"] = $muebles;
+            /** COMENTADO SELECT DEMOREAL $data["tipos_tienda"] = $this->sfid_model->get_types_pds_demoreal(); */
+            $data["tipos_tienda"] = $this->sfid_model->get_types_pds();
+
+
+            $display = $this->tienda_model->get_display($id_mueble);
+
+            $data['id_display'] = $display['id_display'];
+            $data['display'] = $display['display'];
+            $data['picture_url_dis'] = $display['picture_url'];
+
+
+            $device = $this->tienda_model->get_device($id_device);
+
+            $data['id_device'] = $device['id_device'];
+            $data['device'] = $device['device'];
+            $data['brand_name'] = $device['brand_name'];
+            $data['description'] = $device['description'];
+            $data['picture_url_dev'] = $device['picture_url'];
+
+
+            // OBTENER DE LA SESION, SI EXISTE
+            if ($this->session->userdata("generado_visual") !== NULL && $this->session->userdata("generado_visual") === TRUE) {
+                $tipo_tienda_visual = $this->session->userdata("tipo_tienda_visual");
+                $panelado_visual = $this->session->userdata("panelado_visual");
+                $sfid_visual = $this->session->userdata("sfid_visual");
+                $generado_visual = $this->session->userdata("generado_visual");
+
+                $data["tipo_tienda_visual"] = $tipo_tienda_visual;
+                $data["panelado_visual"] = $panelado_visual;
+                $data["sfid_visual"] = $sfid_visual;
+                $data["generado_visual"] = $generado_visual;
+
+            }
+
+            /** COMENTADO SELECT DEMOREAL $muebles = $this->tienda_model->get_displays_demoreal(); */
+            $muebles = $this->tienda_model->get_displays();
+            $data["muebles"] = $muebles;
+            /** COMENTADO SELECT DEMOREAL $data["tipos_tienda"] = $this->sfid_model->get_types_pds_demoreal(); */
+            $data["tipos_tienda"] = $this->sfid_model->get_types_pds();
+
+            $data['title'] = 'Panelado genérico';
+            $data['subtitle'] = $data["display"] . ' - ' . $data["device"];
+
+            $this->load->view('backend/header', $data);
+            $this->load->view('backend/navbar', $data);
+            $this->load->view('backend/informes/informe_visual_form', $data);
+            $this->load->view('backend/informes/informe_visual_terminal', $data);
+            $this->load->view('backend/footer');
+        } else {
+            redirect('admin', 'refresh');
+        }
+    }
+
+
+
+    public function informe_visual_mueble_sfid(){
+        if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10))
+        {
+            $id_pds   = $this->uri->segment(3);
+            $id_dis   = $this->uri->segment(4);
+
+            $xcrud = xcrud_get_instance();
+            $this->load->model('tienda_model');
+            $this->load->model('sfid_model');
+
+            $sfid = $this->tienda_model->get_pds($id_pds);
+
+            $data["generado_visual"] = FALSE;
+
+
+            $data['id_pds']     = 'ABX/PDS-'.$sfid['id_pds'];
+            $data['commercial'] = $sfid['commercial'];
+            $data['territory']  = $sfid['territory'];
+            $data['reference']  = $sfid['reference'];
+            $data['address']    = $sfid['address'];
+            $data['zip']        = $sfid['zip'];
+            $data['city']       = $sfid['city'];
+
+            $display = $this->sfid_model->get_display($this->uri->segment(4));
+
+            $data['id_display']  = $display['id_display'];
+            $data['display']     = $display['display'];
+            $data['picture_url'] = $display['picture_url'];
+
+            $data['devices'] = $this->sfid_model->get_devices_displays_pds($id_dis);
+
+            $data['id_pds_url']  = $id_pds;
+            $data['id_dis_url']  = $id_dis;
+
+            // OBTENER DE LA SESION, SI EXISTE
+            if ($this->session->userdata("generado_visual") !== NULL && $this->session->userdata("generado_visual") === TRUE) {
+                $tipo_tienda_visual = $this->session->userdata("tipo_tienda_visual");
+                $panelado_visual = $this->session->userdata("panelado_visual");
+                $sfid_visual = $this->session->userdata("sfid_visual");
+                $generado_visual = $this->session->userdata("generado_visual");
+
+                $data["tipo_tienda_visual"] = $tipo_tienda_visual;
+                $data["panelado_visual"] = $panelado_visual;
+                $data["sfid_visual"] = $sfid_visual;
+                $data["generado_visual"] = $generado_visual;
+
+            }
+
+            /** COMENTADO SELECT DEMOREAL $muebles = $this->tienda_model->get_displays_demoreal(); */
+            $muebles = $this->tienda_model->get_displays();
+            $muebles = $this->tienda_model->get_displays_demoreal();
+
+            $data["muebles"] = $muebles;
+            /** COMENTADO SELECT DEMOREAL $data["tipos_tienda"] = $this->sfid_model->get_types_pds_demoreal(); */
+            $data["tipos_tienda"] = $this->sfid_model->get_types_pds();
+            $data["tipos_tienda"] = $this->sfid_model->get_types_pds_demoreal();
+
+            $data['title'] = 'Planograma mueble';
+            $data['subtitle'] = 'Planograma tienda [SFID-'.$data['reference'].'] - '.$data['display'];
+
+            $this->load->view('backend/header',$data);
+            $this->load->view('backend/navbar',$data);
+            $this->load->view('backend/informes/informe_visual_form',$data);
+            $this->load->view('backend/informes/informe_visual_mueble_sfid',$data);
+            $this->load->view('backend/footer');
+        }
+        else
+        {
+            redirect('admin','refresh');
+        }
+
+    }
+
+
+    public function informe_visual_ficha_terminal(){
+        if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10))
+        {
+            $data["generado_visual"] = FALSE;
+
+            $id_pds   = $this->uri->segment(3);
+            $id_dis   = $this->uri->segment(4);
+            $id_dev   = $this->uri->segment(5);
+
+            $xcrud = xcrud_get_instance();
+            $this->load->model('tienda_model');
+            $this->load->model('sfid_model');
+
+            $sfid = $this->tienda_model->get_pds($id_pds);
+
+            $data['id_pds']     = 'ABX/PDS-'.$sfid['id_pds'];
+            $data['commercial'] = $sfid['commercial'];
+            $data['territory']  = $sfid['territory'];
+            $data['reference']  = $sfid['reference'];
+            $data['address']    = $sfid['address'];
+            $data['zip']        = $sfid['zip'];
+            $data['city']       = $sfid['city'];
+
+            $display = $this->sfid_model->get_display($this->uri->segment(4));
+
+            $data['id_display']      = $display['id_display'];
+            $data['display']         = $display['display'];
+            $data['picture_url_dis'] = $display['picture_url'];
+
+
+            $device = $this->sfid_model->get_device($this->uri->segment(5));
+
+            $data['id_device']      		  = $device['id_device'];
+            $data['device']        		 	  = $device['device'];
+            $data['brand_name']   			  = $device['brand_name'];
+            $data['IMEI']          		 	  = $device['IMEI'];
+            $data['mac']            		  = $device['mac'];
+            $data['serial']          		  = $device['serial'];
+            $data['barcode']                  = $device['barcode'];
+            $data['description']    	      = $device['description'];
+            $data['owner']          		  = $device['owner'];
+            $data['picture_url_dev'] 		  = $device['picture_url'];
+
+            $data['id_pds_url']  = $id_pds;
+            $data['id_dis_url']  = $id_dis;
+            $data['id_dev_url']  = $id_dev;
+
+            // OBTENER DE LA SESION, SI EXISTE
+            if ($this->session->userdata("generado_visual") !== NULL && $this->session->userdata("generado_visual") === TRUE) {
+                $tipo_tienda_visual = $this->session->userdata("tipo_tienda_visual");
+                $panelado_visual = $this->session->userdata("panelado_visual");
+                $sfid_visual = $this->session->userdata("sfid_visual");
+                $generado_visual = $this->session->userdata("generado_visual");
+
+                $data["tipo_tienda_visual"] = $tipo_tienda_visual;
+                $data["panelado_visual"] = $panelado_visual;
+                $data["sfid_visual"] = $sfid_visual;
+                $data["generado_visual"] = $generado_visual;
+
+            }
+
+            /** COMENTADO SELECT DEMOREAL $muebles = $this->tienda_model->get_displays_demoreal(); */
+            $muebles = $this->tienda_model->get_displays();
+            $data["muebles"] = $muebles;
+
+            /** COMENTADO SELECT DEMOREAL $data["tipos_tienda"] = $this->sfid_model->get_types_pds_demoreal(); */
+            $data["tipos_tienda"] = $this->sfid_model->get_types_pds();
+
+            $data['title'] = 'Panelado tienda [SFID-'.$data['reference'].']';
+            $data['subtitle'] = $data["display"] .' - '. $data["device"];
+
+            $this->load->view('backend/header',$data);
+            $this->load->view('backend/navbar',$data);
+            $this->load->view('backend/informes/informe_visual_form',$data);
+            $this->load->view('backend/informes/informe_visual_ficha_terminal',$data);
+            $this->load->view('backend/footer');
+        }
+        else
+        {
+            redirect('admin','refresh');
+        }
+    }
+
 
 
     public function ayuda($tipo)

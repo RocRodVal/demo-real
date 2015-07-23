@@ -20,7 +20,12 @@ class Ot extends CI_Controller {
 	
 		$this->form_validation->set_rules('sfid','SFID','required|xss_clean');
 		$this->form_validation->set_rules('password','password','required|xss_clean');
-	
+
+        $entrada = "ot/cdm_inventario";
+
+        // Ya está logueado....
+        if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 11)) redirect($entrada);
+
 		if ($this->form_validation->run() == true)
 		{
 			$data = array(
@@ -34,7 +39,7 @@ class Ot extends CI_Controller {
             $this->form_validation->set_rules('sfid','SFID','callback_do_login');
 
             if($this->form_validation->run() == true){
-                redirect('ot/cdm_inventario');
+                redirect($entrada);
             }else{
                 $data['message'] = (validation_errors() ? validation_errors() : ($this->session->flashdata('message')));
             }
@@ -62,6 +67,10 @@ class Ot extends CI_Controller {
         if($this->user_model->login_ot($data)){
             return true;
         }else{
+            // Redirigir al entorno adecuado al usuario logueado...
+            $entorno =$this->user_model->login_entorno($data);
+            if($entorno != FALSE) redirect($entorno,"refresh");
+
             $this->form_validation->set_message('do_login','"Username" or "password" are incorrect.');
             return false;
         }

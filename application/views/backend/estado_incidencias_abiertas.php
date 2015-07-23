@@ -216,6 +216,7 @@
 		                                ?>
 
                                         <td class="principal"><?=($incidencia->alarm_display==1)?'Mueble: '.$mueble:'Dispositivo: '.$dispositivo?></td>
+
                                         <td><?=(!empty($incidencia->territory)? $incidencia->territory : '-')?></td>
                                         <td><?=(!empty($incidencia->brand)? $incidencia->brand : '-')?></td>
 

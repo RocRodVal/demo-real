@@ -136,6 +136,24 @@ class Informe_model extends CI_Model
     }
 
 
+    public function panelado_tienda($tipo, $id_panelado=NULL)
+    {
+        /* Incluir los modelos */
+        $xcrud = xcrud_get_instance();
+        $this->load->model('sfid_model');
+        $this->load->model('tienda_model');
+        $this->load->model('tienda_model');
+
+        $panelados = $this->tienda_model->get_panelados_maestros_demoreal($tipo);
+
+        $resp = '<option value="" selected="selected">Escoge el panelado...</option>';
+        foreach($panelados as $panel){
+
+            $s_selected = (!is_null($id_panelado) && $id_panelado == $panel->id_panelado) ? ' selected="selected" ' : '';
+            $resp .= '<option value="'.$panel->id_panelado.'" '.$s_selected.'>'.$panel->panelado.'</option>';
+        }
+        echo $resp;
+    }
 
     public function get_informe_csv($campo_orden=NULL,$ordenacion=NULL,$data)
     {

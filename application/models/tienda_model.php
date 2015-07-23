@@ -216,6 +216,7 @@ class Tienda_model extends CI_Model {
 										(devices_almacen.status = "En stock")
 									) AS unidades_almacen')
 										->join('brand_device','device.brand_device = brand_device.id_brand_device')
+
 										->order_by('brand_device.brand', 'ASC')
 										->order_by('device.device', 'ASC')
 										->get('device');
@@ -281,21 +282,97 @@ class Tienda_model extends CI_Model {
 		->join('alarm','alarm.id_alarm = material_incidencias.id_alarm')
 		->join('brand_alarm','alarm.brand_alarm = brand_alarm.id_brand_alarm')
 		->group_by('alarm.alarm')
+            ->order_by('incidencias','DESC')
 		->order_by('brand_alarm.brand', 'ASC')
 		->order_by('alarm.alarm', 'ASC')
 		->get('material_incidencias');
 	
 		return $query->result();
 	}
+
+
+    public function get_balance_alarmas() {
+
+
+        $meses_funcionamiento = $this->db->query("SELECT PERIOD_DIFF(DATE_FORMAT(NOW(),'%Y%m'), DATE_FORMAT(MIN(fecha),'%Y%m')) AS meses FROM incidencias")->row();
+        $meses = $meses_funcionamiento->meses;
+
+
+        $query = $this->db->query('SELECT brand_alarm.brand as brand, alarm.alarm as alarm, alarm.picture_url as imagen, COUNT(*) as incidencias,
+                                      (COUNT(*) / '.$meses.' * 2) as punto_pedido,
+                                      units  as unidades_almacen
+                                      FROM material_incidencias
+                                      JOIN alarm ON alarm.id_alarm = material_incidencias.id_alarm
+                                      JOIN brand_alarm ON alarm.brand_alarm = brand_alarm.id_brand_alarm
+                                      GROUP BY alarm.alarm
+                                      ORDER BY incidencias DESC, brand DESC, alarm DESC'
+									);
+
+
+        return $query->result();
+    }
+
+    /*
+     * Generar CSV con el stock cruzado (Balance de activos).
+     */
+    public function get_balance_alarmas_csv() {
+
+        $this->load->dbutil();
+        $this->load->helper('file');
+        $this->load->helper('download');
+
+        $query = $this->db->select('device.id_device, brand_device.brand, device.device,
+									(
+										SELECT COUNT(*)
+										FROM devices_pds
+								        WHERE (devices_pds.id_device = device.id_device) AND
+										(devices_pds.status = "Alta")
+								    ) AS unidades_pds,
+									(SELECT  COUNT(*)
+										FROM devices_almacen
+										WHERE (devices_almacen.id_device = device.id_device) AND
+										(devices_almacen.status = "En stock")
+									) AS unidades_almacen,
+
+                                    ROUND((SELECT  COUNT(*)
+										FROM devices_almacen
+										WHERE (devices_almacen.id_device = device.id_device) AND
+										(devices_almacen.status = "En stock")
+									)
+									-
+									(SELECT COUNT(*)
+										FROM devices_pds
+								        WHERE (devices_pds.id_device = device.id_device) AND
+										(devices_pds.status = "Alta"))* 0.05 -2 ) as Balance
+
+                                    ')
+
+            ->join('brand_device','device.brand_device = brand_device.id_brand_device')
+            ->order_by('brand_device.brand', 'ASC')
+            ->order_by('device.device', 'ASC')
+            ->get('device');
+
+
+
+
+        $delimiter = ",";
+        $newline = "\r\n";
+        $data = $this->dbutil->csv_from_result($query, $delimiter, $newline);
+        force_download('Demo_Real-Balance_Activos.csv', $data);
+
+
+    }
 	
 	
-	public function get_cdm_dispositivos() {
+	public function get_cdm_dispositivos()
+    {
 	
 		$query = $this->db->select('brand_device.brand, device.device, COUNT(*) as incidencias')
 										->join('devices_almacen','devices_almacen.id_devices_almacen = material_incidencias.id_devices_almacen')
 										->join('device','devices_almacen.id_device = device.id_device')
 										->join('brand_device','device.brand_device = brand_device.id_brand_device')
 										->group_by('device.device')
+                                        ->order_by('incidencias','DESC')
 										->order_by('brand_device.brand', 'ASC')
 										->order_by('device.device', 'ASC')
 										->get('material_incidencias');

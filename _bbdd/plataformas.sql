@@ -1011,10 +1011,10 @@ INSERT INTO `historico` (`id_historico`, `fecha`, `id_incidencia`, `id_pds`, `de
 -- --------------------------------------------------------
 
 --
--- Table structure for table `historico_io`
+-- Table structure for table `historico_IO`
 --
 
-CREATE TABLE IF NOT EXISTS `historico_io` (
+CREATE TABLE IF NOT EXISTS `historico_IO` (
 `id_historico_almacen` int(11) NOT NULL,
   `id_devices_almacen` int(11) DEFAULT NULL COMMENT 'Id. del dispositivo del almacén afectado en el histórico por Entrada/Salida',
   `id_device` int(11) DEFAULT NULL COMMENT 'Id. del dispositivo del maestro afectado en el histórico por Entrada/Salida',
@@ -1689,9 +1689,9 @@ ALTER TABLE `historico`
  ADD PRIMARY KEY (`id_historico`);
 
 --
--- Indexes for table `historico_io`
+-- Indexes for table `historico_IO`
 --
-ALTER TABLE `historico_io`
+ALTER TABLE `historico_IO`
  ADD PRIMARY KEY (`id_historico_almacen`);
 
 --
@@ -1910,9 +1910,9 @@ MODIFY `id_facturacion` int(10) unsigned NOT NULL AUTO_INCREMENT;
 ALTER TABLE `historico`
 MODIFY `id_historico` int(10) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2;
 --
--- AUTO_INCREMENT for table `historico_io`
+-- AUTO_INCREMENT for table `historico_IO`
 --
-ALTER TABLE `historico_io`
+ALTER TABLE `historico_IO`
 MODIFY `id_historico_almacen` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=76;
 --
 -- AUTO_INCREMENT for table `incidencias`

@@ -88,6 +88,37 @@
                         		<li><a <?=($this->uri->segment(2)==='incidencias_exp')?'class="active"':''?> href="<?=site_url('admin/incidencias_exp')?>"> Export incidencias SAT &raquo;</a></li>                                               
                         	</ul>
                         </li>
+                        <?php /**
+                         * CUADROS DE MANDO
+                         *
+                         */
+                        ?>
+                        <?php $inf = array('informes',
+                            'informe_pdv',
+                            'informe_planogramas',
+                            'informe_planograma_mueble_pds',
+                            'informe_planograma_terminal',
+                            'informe_visual',
+                            'informe_visual_mueble_sfid',
+                            'informe_visual_terminal',
+                            'informe_visual_ficha_terminal'); ?>
+
+                        <li <?=(in_array($this->uri->segment(2), $inf))?'class="active"':''?>>
+                            <a href="#"><i class="fa fa-sitemap fa-file"></i> Informes <span class="fa arrow"></span></a>
+                            <ul class="nav nav-second-level">
+                                <li><a <?=($this->uri->segment(2)==='informe_pdv')?'class="active"':''?> href="<?=site_url('admin/informe_pdv')?>"> Puntos de Venta &raquo;</a></li>
+                                <li><a <?=(in_array($this->uri->segment(2),
+                                        array( 'informe_planogramas',
+                                            'informe_planograma_mueble_pds',
+                                            'informe_planograma_terminal')))?'class="active"':''?> href="<?=site_url('admin/informe_planogramas')?>"> Planogramas &raquo;</a></li>
+                                <li><a <?=(
+                                    in_array($this->uri->segment(2),
+                                        array('informe_visual',
+                                            'informe_visual_mueble_sfid',
+                                            'informe_visual_terminal',
+                                            'informe_visual_ficha_terminal')))?'class="active"':''?> href="<?=site_url('admin/informe_visual')?>"> Visual &raquo;</a></li>
+                            </ul>
+                        </li>
                         <?php 
                         $ayuda = array('ayuda','manuales','muebles_fabricantes');
                         ?>	                        

@@ -15,7 +15,21 @@
             <div class="navbar-default sidebar" role="navigation">
                 <div class="sidebar-nav navbar-collapse">
                     <ul class="nav" id="side-menu" style="margin-top:20px;">
-                        <li><a <?=($this->uri->segment(2)==='dashboard')?'class="active"':''?> href="<?=site_url('tienda/dashboard')?>"><i class="fa fa-dashboard fa-fw"></i> Mis solicitudes</a></li>
+                        <?php $estado_incidencias = array("estado_incidencias");
+                        $estado_incidencias_inner = array();
+                        ?>
+
+                        <li <?=(in_array($this->uri->segment(2), $estado_incidencias)? ' class="active" ' :'')?>>
+                            <a href="#"><i class="fa fa-dashboard fa-fw"></i> Estado incidencias <span class="fa arrow"></span></a>
+
+                            <ul class="nav nav-second-level">
+                                <li><a <?=($this->uri->segment(3)==='abiertas')?'class="active"':''?> href="<?=site_url('tienda/estado_incidencias/abiertas')?>"> Incidencias abiertas &raquo;</a></li>
+                                <li><a <?=($this->uri->segment(3)==='cerradas')?'class="active"':''?> href="<?=site_url('tienda/estado_incidencias/cerradas')?>"> Incidencias cerradas &raquo;</a></li>
+                            </ul>
+
+                        </li>
+
+
                         <li><a <?=($this->uri->segment(2)==='alta_incidencia')?'class="active"':''?> href="<?=site_url('tienda/alta_incidencia')?>"><i class="fa fa-ticket fa-fw"></i> Alta incidencia</a> </li>   
                         <li <?=($this->uri->segment(2)==='ayuda'||$this->uri->segment(2)==='manuales')?'class="active"':''?>>
                         <a href="#"><i class="fa fa-question-circle fa-fw"></i> Ayuda<span class="fa arrow"></span></a>

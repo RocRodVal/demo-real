@@ -118,6 +118,9 @@
                                         <th class="sorting" data-rel="incidencias.alarm_device"    data-order="">Alarma dispositivo cableado</th>
                                         <th class="sorting" data-rel="incidencias.alarm_garra"    data-order="">Soporte sujección</th> */ ?>
 
+                                        <th class=""                                                             >Territorio</th>
+                                        <th class=""                                                             >Fabricante</th>
+
                                         <th>Última modificación</th>
                                         <th class="sorting" data-rel="incidencias.tipo_averia"    data-order="">Tipo incidencia</th>
                                         <th                                                                     >Interv.</th>
@@ -131,7 +134,7 @@
                                     foreach ($incidencias as $incidencia) {
                                         ?>
                                         <tr>
-                                            <td><a href="<?=site_url('admin/operar_incidencia/'.$incidencia->id_incidencia.'/'.$incidencia->id_pds)?>"><?php echo $incidencia->id_incidencia?></a></td>
+                                            <td><a href="<?=site_url('admin/operar_incidencia/'.$incidencia->id_pds.'/'.$incidencia->id_incidencia)?>"><?php echo $incidencia->id_incidencia?></a></td>
                                             <td><?php echo $incidencia->reference ?></td>
                                             <td><?php echo date_format(date_create($incidencia->fecha), 'd/m/Y'); ?></td>
                                             <?php
@@ -159,6 +162,8 @@
 		                                <td><?=($incidencia->fail_device==1)?'&#x25cf;':''?></td>
 		                                <td><?=($incidencia->alarm_device==1)?'&#x25cf;':''?></td>
 		                                <td><?=($incidencia->alarm_garra==1)?'&#x25cf;':''?></td> */?>
+                                            <td><?=(!empty($incidencia->territory)? $incidencia->territory : '-')?></td>
+                                            <td><?=(!empty($incidencia->brand)? $incidencia->brand : '-')?></td>
 
                                             <td>
                                                 <?php $last_updated = $incidencia->last_updated;
@@ -178,7 +183,7 @@
                                             <td><strong><?php echo $incidencia->status ?></strong></td>
                                             <td><strong><?php echo $incidencia->status_pds ?></strong></td>
 
-                                            <td  onClick="window.location.href='<?=site_url('admin/operar_incidencia/'.$incidencia->id_incidencia.'/'.$incidencia->id_pds)?>'"><a href="<?=site_url('admin/operar_incidencia/'.$incidencia->id_pds.'/'.$incidencia->id_incidencia)?>#chat"><strong><i class="fa fa-whatsapp <?=($incidencia->nuevos['nuevos']<>'0')?'chat_nuevo':'chat_leido'?>"></i></strong></a></td>
+                                            <td  onClick="window.location.href='<?=site_url('admin/operar_incidencia/'.$incidencia->id_pds.'/'.$incidencia->id_incidencia)?>'"><a href="<?=site_url('admin/operar_incidencia/'.$incidencia->id_pds.'/'.$incidencia->id_incidencia)?>#chat"><strong><i class="fa fa-whatsapp <?=($incidencia->nuevos['nuevos']<>'0')?'chat_nuevo':'chat_leido'?>"></i></strong></a></td>
                                         </tr>
                                     <?php
                                     }

@@ -128,6 +128,36 @@ class User_model extends CI_Model {
         }
     }
 
+
+    public function login_entorno($data){
+        $sfid     = $data['sfid'];
+        $password = $data['password'];
+
+        $entorno = FALSE;
+
+        // Acceso admin
+        if($this->login_admin($data)){
+            $entorno = "admin";
+
+        }
+        // Acceso master
+        else if($this->login_master($data)){
+            $entorno = "master";
+
+        }
+        // Acceso Oferta táctica
+        else if($this->login_ot($data)){
+            $entorno = "ot";
+
+        }
+        // Acceso tienda
+        else if($this->login($data)){
+            $entorno = "tienda";
+        }
+        return $entorno;
+
+    }
+
 }
 
 ?>

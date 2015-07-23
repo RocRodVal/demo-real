@@ -20,7 +20,12 @@ class Tienda extends CI_Controller {
 		
 		$this->form_validation->set_rules('sfid','SFID','required|xss_clean');
 		$this->form_validation->set_rules('password','password','required|xss_clean');
-		
+
+        $entrada = "tienda/estado_incidencias/abiertas";
+
+        // Ya está logueado....
+        if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 1)) redirect($entrada);
+
 		if ($this->form_validation->run() == true)
 		{
 			$data = array(
@@ -34,7 +39,7 @@ class Tienda extends CI_Controller {
             $this->form_validation->set_rules('sfid','SFID','callback_do_login');
 
             if($this->form_validation->run() == true){
-                redirect('tienda/dashboard');
+                redirect($entrada);
             }else{
                 $data['message'] = (validation_errors() ? validation_errors() : ($this->session->flashdata('message')));
             }
@@ -63,11 +68,294 @@ class Tienda extends CI_Controller {
         if($this->user_model->login($data)){
             return true;
         }else{
+            // Redirigir al entorno adecuado al usuario logueado...
+            $entorno =$this->user_model->login_entorno($data);
+            if($entorno != FALSE) redirect($entorno,"refresh");
+
             $this->form_validation->set_message('do_login','"SFID" or "password" are incorrect.');
             return false;
         }
     }
 
+
+
+    /**
+     * Función que guarda en sesión el valor de los filtros del POST, al venir de un form de filtrado
+     * @param $array_filtros
+     */
+    public function set_filtros($array_filtros){
+        $array_valores = NULL;
+        if(is_array($array_filtros))
+        {
+            $array_valores = array();
+            foreach ($array_filtros as $filter=>$value)
+            {
+                if(empty($value)) {
+                    $valor_filter = $this->input->post($filter);
+                }else{
+                    $valor_filter  = $value;
+                }
+                $this->session->set_userdata($filter, $valor_filter);
+                $array_valores[$filter] = $valor_filter;
+            }
+
+        }
+        return $array_valores;
+    }
+
+
+    /**
+     * Método que borra de la sesión, X variables, pasado sus nombres en un array
+     * Si el parámetro es un array (de variables), lo recorremos y eliminamos de la sesión cualquier valor que tenga
+     * la variable de sesión de ese nombre
+     */
+    public function delete_filtros($array_filtros,$array_excepciones=array()){
+        if(is_array($array_filtros)){
+            foreach($array_filtros as $filtro){
+                if(!in_array($filtro,$array_excepciones)) {
+                    $this->session->unset_userdata($filtro);
+                }
+            }
+        }
+    }
+
+    /**
+     * Recibe el array de filtros (campos del buscador/filtrador) y buscará su valor en la sesión, y cargará otro array
+     * con los pares VARIABLE=>VALOR SESION.
+     * @param $array_filtros
+     * @return array|null
+     */
+    public function get_filtros($array_filtros){
+        $array_session = NULL;
+
+        if(is_array($array_filtros)){
+            $array_session = array();
+            foreach($array_filtros as $filter=>$value){
+
+                if(!empty($value)){
+                    $sess_filter = $value;
+                }else {
+                    $sess_filter = $this->session->userdata($filter);
+                }
+                $array_session[$filter] = (!empty($sess_filter)) ? $sess_filter : NULL;
+
+            }
+        }
+        return $array_session;
+    }
+
+    public function set_orden($formulario)
+    {
+
+        $array_orden = array();
+        $campo_orden = $this->input->post($formulario . '_campo_orden');
+        $orden_campo = $this->input->post($formulario . '_orden_campo');
+
+        $this->session->set_userdata('campo_orden', $campo_orden);
+        $this->session->set_userdata('orden_campo', $orden_campo);
+
+        $array_orden[$campo_orden]= $orden_campo;
+
+        return $array_orden;
+
+    }
+
+
+    public function get_orden()
+    {
+        $sess_campo_orden = $this->session->userdata('campo_orden');
+        $sess_orden_campo = $this->session->userdata('orden_campo');
+        $array_orden = NULL;
+        if(!empty($sess_campo_orden)){
+            $array_orden = array();
+            if(!empty($sess_orden_campo)){
+                $array_orden[$sess_campo_orden] = $sess_orden_campo;
+            }else{
+                $array_orden[$sess_campo_orden] = "ASC";
+            }
+        }
+        return $array_orden;
+    }
+
+    /**
+     * Tabla de incidencias cuyo tipo son "abiertas" o "cerradas"
+     * (Antiguo dashboard)
+     */
+    public function estado_incidencias($tipo)
+    {
+        if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 1)) {
+            $data['id_pds'] = $this->session->userdata('id_pds');
+            $data['sfid'] = $this->session->userdata('sfid');
+
+            $xcrud = xcrud_get_instance();
+
+
+            $this->load->model(array('intervencion_model', 'incidencia_model', 'tienda_model', 'sfid_model','chat_model'));
+            $this->load->library('app/paginationlib');
+
+            $sfid = $this->sfid_model->get_pds($data['id_pds']);
+
+            $data['id_pds']     = $sfid['id_pds'];
+            $data['commercial'] = $sfid['commercial'];
+            $data['territory']  = $sfid['territory'];
+            $data['reference']  = $sfid['reference'];
+            $data['address']    = $sfid['address'];
+            $data['zip']        = $sfid['zip'];
+            $data['city']       = $sfid['city'];
+
+
+
+            // Comprobar si existe el segmento PAGE en la URI, si no inicializar a 1..
+            $get_page = $this->uri->segment(5);
+            if( $this->uri->segment(4) == "page") {
+                $page = ( ! empty($get_page) ) ? $get_page : 1 ;
+                $segment = 5;
+            }else{
+                $page = 1;
+                $segment = null;
+            }
+
+            /**
+             * Crear los filtros
+             */
+            $array_filtros = array(
+                'status'=>'',
+                'status_pds'=>'',
+                'territory'=>'',
+                'brand_device'=>'',
+                'id_incidencia'=>'',
+                'reference'=> $data['sfid']
+            );
+
+            /* BORRAR BUSQUEDA */
+            $borrar_busqueda = $this->uri->segment(4);
+            if($borrar_busqueda === "borrar_busqueda")
+            {
+                $this->delete_filtros($array_filtros);
+                redirect(site_url("/tienda/estado_incidencias/".$tipo),'refresh');
+            }
+            // Consultar a la session si ya se ha buscado algo y guardado allí.
+            $array_sesion = $this->get_filtros($array_filtros);
+            // Buscar en el POST si hay busqueda, y si la hay usarla y guardarla además en sesion
+
+            if($this->input->post('do_busqueda')==="si") $array_sesion = $this->set_filtros($array_filtros);
+
+            /* Creamos al vuelo las variables que vienen de los filtros */
+            foreach($array_filtros as $filtro=>$value){
+                $$filtro = $array_sesion[$filtro];
+                $data[$filtro] = $array_sesion[$filtro]; // Pasamos los valores a la vista.
+            }
+
+
+            // viene del form de ordenacion
+            $do_orden = $this->input->post('ordenar');
+            if($do_orden==='true') {
+                $array_orden = $this->set_orden($this->input->post('form'));
+            }
+
+            // Obtener el campo a ordenar, primero de Session y despues del post, si procede..
+            $array_orden = $this->get_orden();
+            if(count($array_orden) > 0) {
+                foreach ($array_orden as $key => $value) {
+                    $data["campo_orden"] = $key;
+                    $data["orden_campo"] = $value;
+                }
+            }else{
+                $data["campo_orden"] = NULL;
+                $data["orden_campo"] = NULL;
+            }
+
+
+            if($tipo==="abiertas")
+            {
+                $data['title'] = 'Incidencias abiertas';
+            }
+            else
+            {
+                $data['title'] = 'Incidencias cerradas';
+            }
+
+            $per_page = 100;
+            $total_incidencias = $this->incidencia_model->get_estado_incidencias_quantity($array_sesion,$tipo);   // Sacar el total de incidencias, para el paginador
+            $cfg_pagination = $this->paginationlib->init_pagination("tienda/estado_incidencias/$tipo/page/",$total_incidencias,$per_page,$segment);
+
+
+            $this->load->library('pagination',$cfg_pagination);
+            $this->pagination->initialize($cfg_pagination);
+
+            $bounds = $this->paginationlib->get_bounds($total_incidencias,$page,$per_page);
+
+            // Indicamos si habrá que mostrar el paginador en la vista
+            $data['show_paginator'] = $bounds["show_paginator"];
+            $data['num_resultados'] = $bounds["num_resultados"];
+            $data['n_inicial'] = $bounds["n_inicial"];
+            $data['n_final'] = $bounds["n_final"];
+            $data["pagination_helper"]   = $this->pagination;
+
+            $incidencias = $this->incidencia_model->get_estado_incidencias($page,$cfg_pagination,$array_orden,$array_sesion,$tipo);
+
+            foreach ($incidencias as $incidencia) {
+                $incidencia->device = $this->sfid_model->get_device($incidencia->id_devices_pds);
+                $incidencia->display = $this->sfid_model->get_display($incidencia->id_displays_pds);
+                $incidencia->nuevos  = $this->chat_model->contar_nuevos($incidencia->id_incidencia,$incidencia->reference);
+                $incidencia->intervencion = $this->intervencion_model->get_intervencion_incidencia($incidencia->id_incidencia);
+            }
+
+            $data['incidencias'] = $incidencias;
+
+            /* LISTADO DE TERRITORIOS PARA EL SELECT */
+            $data["territorios"] = $this->tienda_model->get_territorios();
+            /* LISTADO DE FABRICANTES PARA EL SELECT */
+            $data["fabricantes"] = $this->tienda_model->get_fabricantes();
+
+            $this->load->view('tienda/header', $data);
+            $this->load->view('tienda/navbar', $data);
+            $this->load->view('tienda/estado_incidencias_'.$tipo, $data);
+            $this->load->view('tienda/footer');
+        } else {
+            redirect('tienda', 'refresh');
+        }
+    }
+
+
+
+    public function exportar_incidencias()
+    {
+        if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 1)) {
+            $xcrud = xcrud_get_instance();
+            $data['id_pds'] = $this->session->userdata('id_pds');
+            $data['sfid'] = $this->session->userdata('sfid');
+
+            $this->load->model(array('intervencion_model', 'tienda_model', 'sfid_model','chat_model'));
+            $tipo = $this->uri->segment(3); // TIPO DE INCIDENCIA
+
+            // Filtros
+            $array_filtros = array(
+                'status'=>'',
+                'status_pds'=>'',
+                'territory'=>'',
+                'brand_device'=>'',
+                'id_incidencia'=>'',
+                'reference'=> $data['sfid']
+            );
+            $array_sesion = $this->get_filtros($array_filtros);
+
+
+            // Obtener el campo a ordenar, primero de Session y despues del post, si procede..
+            $array_orden = $this->get_orden();
+
+
+            if($tipo === "abiertas") {
+                $this->tienda_model->get_incidencias_csv($array_orden, $array_sesion, "abiertas");
+            }else {
+                $this->tienda_model->get_incidencias_csv($array_orden, $array_sesion, "cerradas");
+            }
+
+
+        } else {
+            redirect('tienda', 'refresh');
+        }
+    }
 
 
     public function dashboard()

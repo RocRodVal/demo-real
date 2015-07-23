@@ -20,6 +20,13 @@ class Master extends CI_Controller {
 	
 		$this->form_validation->set_rules('sfid','SFID','required|xss_clean');
 		$this->form_validation->set_rules('password','password','required|xss_clean');
+
+
+        $entrada = "master/estado_incidencias/abiertas";
+
+        // Ya está logueado....
+        if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 9)) redirect($entrada);
+
 	
 		if ($this->form_validation->run() == true)
 		{
@@ -34,7 +41,7 @@ class Master extends CI_Controller {
             $this->form_validation->set_rules('sfid','SFID','callback_do_login');
 
             if($this->form_validation->run() == true){
-                redirect('master/dashboard');
+                redirect($entrada);
             }else{
                 $data['message'] = (validation_errors() ? validation_errors() : ($this->session->flashdata('message')));
             }
@@ -62,59 +69,141 @@ class Master extends CI_Controller {
         if($this->user_model->login_master($data)){
             return true;
         }else{
+            // Redirigir al entorno adecuado al usuario logueado...
+            $entorno =$this->user_model->login_entorno($data);
+            if($entorno != FALSE) redirect($entorno,"refresh");
+
             $this->form_validation->set_message('do_login','"Username" or "password" are incorrect.');
             return false;
         }
     }
 
-	
-	public function dashboard_OLD()
-	{
-		if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 9))
-		{
-			$data['id_pds'] = $this->session->userdata('id_pds');
-			$data['sfid']   = $this->session->userdata('sfid');
-	
-			$xcrud = xcrud_get_instance();
-			$this->load->model(array('chat_model','sfid_model','tienda_model'));
 
-			$data['tiendas'] =  $this->tienda_model->search_pds($this->input->post('sfid'));
-			
-			$incidencias = $this->tienda_model->get_incidencias();
-				
-			foreach($incidencias as $incidencia)
-			{
-				$incidencia->device  = $this->sfid_model->get_device($incidencia->id_devices_pds);
-				$incidencia->display = $this->sfid_model->get_display($incidencia->id_displays_pds);
-			}
-			
-			$data['incidencias'] =  $incidencias;
-				
-			$sfid = $this->tienda_model->get_pds($data['id_pds']);
-				
-			$data['id_pds']     = $sfid['id_pds'];
-			$data['commercial'] = $sfid['commercial'];
-			$data['territory']  = $sfid['territory'];
-			$data['reference']  = $sfid['reference'];
-			$data['address']    = $sfid['address'];
-			$data['zip']        = $sfid['zip'];
-			$data['city']       = $sfid['city'];
-	
-			$data['title'] = 'Mis solicitudes';
-				
-			$this->load->view('master/header',$data);
-			$this->load->view('master/navbar',$data);
-			$this->load->view('master/dashboard',$data);
-			$this->load->view('master/footer');
-		}
-		else
-		{
-			redirect('master','refresh');
-		}
-	}
+    /**
+     *  Método que inicializa la paginación y devuelve el array de configuración de la misma
+     *
+     * @param $uri          URL Base que contendrá la paginación
+     * @param $total_rows   Total de filas a paginar
+     * @param int $per_page Numero de filas por página
+     * @param int $segment  Segmento de la URI que corresponderá al nº de página
+     * @return $config array con la configuración del paginador
+     */
+    /* public function init_pagination($uri,$total_rows,$per_page=10,$segment=4){
+
+         $ci                          =& get_instance();
+         $config['per_page']          = $per_page;
+         $config['uri_segment']       = $segment;
+         $config['base_url']          = base_url().$uri;
+         $config['total_rows']        = $total_rows;
+         $config['use_page_numbers']  = TRUE;
+
+         $ci->pagination->initialize($config);
+         return $config;
+     }*/
+
+    /**
+     * Función que guarda en sesión el valor de los filtros del POST, al venir de un form de filtrado
+     * @param $array_filtros
+     */
+    public function set_filtros($array_filtros){
+        $array_valores = NULL;
+        if(is_array($array_filtros))
+        {
+            $array_valores = array();
+            foreach ($array_filtros as $filter=>$value)
+            {
+                if(empty($value)) {
+                    $valor_filter = $this->input->post($filter);
+                }else{
+                    $valor_filter  = $value;
+                }
+                $this->session->set_userdata($filter, $valor_filter);
+                $array_valores[$filter] = $valor_filter;
+            }
+
+        }
+        return $array_valores;
+    }
 
 
-    public function dashboard()
+    /**
+     * Método que borra de la sesión, X variables, pasado sus nombres en un array
+     * Si el parámetro es un array (de variables), lo recorremos y eliminamos de la sesión cualquier valor que tenga
+     * la variable de sesión de ese nombre
+     */
+    public function delete_filtros($array_filtros,$array_excepciones=array()){
+        if(is_array($array_filtros)){
+            foreach($array_filtros as $filtro){
+                if(!in_array($filtro,$array_excepciones)) {
+                    $this->session->unset_userdata($filtro);
+                }
+            }
+        }
+    }
+
+    /**
+     * Recibe el array de filtros (campos del buscador/filtrador) y buscará su valor en la sesión, y cargará otro array
+     * con los pares VARIABLE=>VALOR SESION.
+     * @param $array_filtros
+     * @return array|null
+     */
+    public function get_filtros($array_filtros){
+        $array_session = NULL;
+
+        if(is_array($array_filtros)){
+            $array_session = array();
+            foreach($array_filtros as $filter=>$value){
+
+                if(!empty($value)){
+                    $sess_filter = $value;
+                }else {
+                    $sess_filter = $this->session->userdata($filter);
+                }
+                $array_session[$filter] = (!empty($sess_filter)) ? $sess_filter : NULL;
+
+            }
+        }
+        return $array_session;
+    }
+
+    public function set_orden($formulario)
+    {
+
+        $array_orden = array();
+        $campo_orden = $this->input->post($formulario . '_campo_orden');
+        $orden_campo = $this->input->post($formulario . '_orden_campo');
+
+        $this->session->set_userdata('campo_orden', $campo_orden);
+        $this->session->set_userdata('orden_campo', $orden_campo);
+
+        $array_orden[$campo_orden]= $orden_campo;
+
+        return $array_orden;
+
+    }
+
+
+    public function get_orden()
+    {
+        $sess_campo_orden = $this->session->userdata('campo_orden');
+        $sess_orden_campo = $this->session->userdata('orden_campo');
+        $array_orden = NULL;
+        if(!empty($sess_campo_orden)){
+            $array_orden = array();
+            if(!empty($sess_orden_campo)){
+                $array_orden[$sess_campo_orden] = $sess_orden_campo;
+            }else{
+                $array_orden[$sess_campo_orden] = "ASC";
+            }
+        }
+        return $array_orden;
+    }
+
+    /**
+     * Tabla de incidencias cuyo tipo son "abiertas" o "cerradas"
+     * (Antiguo dashboard)
+     */
+    public function estado_incidencias($tipo)
     {
         if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 9)) {
             $data['id_pds'] = $this->session->userdata('id_pds');
@@ -123,195 +212,97 @@ class Master extends CI_Controller {
             $xcrud = xcrud_get_instance();
 
 
-            $this->load->model(array('intervencion_model', 'tienda_model', 'sfid_model','chat_model'));
-
-            $data['tiendas'] = $this->tienda_model->search_pds($this->input->post('sfid'));
-
-            $sfid = $this->tienda_model->get_pds($data['id_pds']);
-
-            if(!empty($sfid)){
-                $data['id_pds']     = $sfid['id_pds'];
-                $data['commercial'] = $sfid['commercial'];
-                $data['territory']  = $sfid['territory'];
-                $data['reference']  = $sfid['reference'];
-                $data['address']    = $sfid['address'];
-                $data['zip']        = $sfid['zip'];
-                $data['city']       = $sfid['city'];
-            }
+            $this->load->model(array('intervencion_model', 'incidencia_model', 'tienda_model', 'sfid_model','chat_model'));
+            $this->load->library('app/paginationlib');
 
             // Comprobar si existe el segmento PAGE en la URI, si no inicializar a 1..
-            $get_page = $this->uri->segment(4);
-            if( $this->uri->segment(3) == "incidencias") {
+            $get_page = $this->uri->segment(5);
+            if( $this->uri->segment(4) == "page") {
                 $page = ( ! empty($get_page) ) ? $get_page : 1 ;
-                $segment = 4;
+                $segment = 5;
             }else{
                 $page = 1;
                 $segment = null;
             }
 
+            /**
+             * Crear los filtros
+             */
+            $array_filtros = array(
+                'status' => '',
+                'status_pds' => '',
+                'territory' => '',
+                'brand_device' => '',
+                'id_incidencia' => '',
+                'reference' => ''
+            );
 
-            // Realizar búsqueda por INCIDENCIA o SFID
-            $buscar_incidencia = NULL;
-            $buscar_sfid = NULL;
-
-            $borrar_busqueda = $this->uri->segment(3);
+            /* BORRAR BUSQUEDA */
+            $borrar_busqueda = $this->uri->segment(4);
             if($borrar_busqueda === "borrar_busqueda")
             {
-                $this->session->unset_userdata('buscar_sfid');
-                $this->session->unset_userdata('buscar_incidencia');
-
-                $this->session->unset_userdata('filtro');
-                $this->session->unset_userdata('filtro_pds');
-
-                $this->session->unset_userdata('filtro_finalizadas');
-                $this->session->unset_userdata('filtro_finalizadas_pds');
-
-                redirect(site_url("/master/dashboard"),'refresh');
+                $this->delete_filtros($array_filtros);
+                redirect(site_url("/master/estado_incidencias/".$tipo),'refresh');
             }
-
             // Consultar a la session si ya se ha buscado algo y guardado allí.
-            $sess_buscar_sfid = $this->session->userdata('buscar_sfid');
-            $sess_buscar_incidencia = $this->session->userdata('buscar_incidencia');
-            if(! empty($sess_buscar_sfid)) $buscar_sfid = $sess_buscar_sfid;
-            if(! empty($sess_buscar_incidencia)) $buscar_incidencia = $sess_buscar_incidencia;
-
+            $array_sesion = $this->get_filtros($array_filtros);
             // Buscar en el POST si hay busqueda, y si la hay usarla y guardarla además en sesion
-            $do_busqueda = $this->input->post('do_busqueda');
 
-            // Obtener los filtros: status SAT y stats PDS, primero de Session y despues del post, si procede..
-            $filtro = NULL;
-            $sess_filtro = $this->session->userdata('filtro');
-            if(! empty($sess_filtro)) $filtro = $sess_filtro;
+            if($this->input->post('do_busqueda')==="si") $array_sesion = $this->set_filtros($array_filtros);
 
-            $filtro_pds = NULL;
-            $sess_filtro_pds = $this->session->userdata('filtro_pds');
-            if(! empty($sess_filtro_pds)) $filtro_pds = $sess_filtro_pds;
-
-
-            // Obtener el filtro, primero de Session y despues del post, si procede..
-            $do_busqueda_finalizadas = $this->input->post('do_busqueda_finalizadas');
-
-            $filtro_finalizadas = NULL;
-            $filtro_finalizadas_pds = NULL;
-
-            $sess_filtro_finalizadas = $this->session->userdata('filtro_finalizadas');
-            if(! empty($sess_filtro_finalizadas)) $filtro_finalizadas = $sess_filtro_finalizadas;
-
-            $sess_filtro_finalizadas_pds = $this->session->userdata('filtro_finalizadas_pds');
-            if(! empty($sess_filtro_finalizadas_pds)) $filtro_finalizadas_pds = $sess_filtro_finalizadas_pds;
-
-            $post_finalizadas =$this->input->post('filtrar_finalizadas');
-            $post_finalizadas_pds =$this->input->post('filtrar_finalizadas_pds');
-
-
-
-            if($do_busqueda==="si")
-            {
-                $buscar_sfid = $this->input->post('buscar_sfid');
-                $this->session->set_userdata('buscar_sfid', $buscar_sfid);
-
-                $buscar_incidencia = $this->input->post('buscar_incidencia');
-                $this->session->set_userdata('buscar_incidencia', $buscar_incidencia);
-
-                $post_filtro =$this->input->post('filtrar');
-                $filtro = $post_filtro;
-                $this->session->set_userdata('filtro',$filtro);
-
-
-                $post_filtro_pds =$this->input->post('filtrar_pds');
-                $filtro_pds = $post_filtro_pds;
-                $this->session->set_userdata('filtro_pds',$filtro_pds);
-
-
-                $filtro_finalizadas = $post_finalizadas;
-                $this->session->set_userdata('filtro_finalizadas',$filtro_finalizadas);
-
-                $filtro_finalizadas_pds = $post_finalizadas_pds;
-                $this->session->set_userdata('filtro_finalizadas_pds',$filtro_finalizadas_pds);
-
-
-
+            /* Creamos al vuelo las variables que vienen de los filtros */
+            foreach($array_filtros as $filtro=>$value){
+                $$filtro = $array_sesion[$filtro];
+                $data[$filtro] = $array_sesion[$filtro]; // Pasamos los valores a la vista.
             }
-            $buscador['buscar_sfid']        = $buscar_sfid;
-            $buscador['buscar_incidencia']  = $buscar_incidencia;
 
-            $data['buscar_sfid']        = $buscar_sfid;
-            $data['buscar_incidencia']  = $buscar_incidencia;
-
-            $data["filtro"] = $filtro;
-            $data["filtro_pds"] = $filtro_pds;
-
-            $filtros = array();
-
-            if($filtro != NULL) $filtros["status"] = $filtro;
-            if($filtro_pds != NULL) $filtros["status_pds"] = $filtro_pds;
-
-            $data["filtro_finalizadas"] = $filtro_finalizadas;
-            $data["filtro_finalizadas_pds"] = $filtro_finalizadas_pds;
-
-            $filtros_finalizadas = array();
-
-            if($filtro_finalizadas != NULL) $filtros_finalizadas["status"] = $filtro_finalizadas;
-            if($filtro_finalizadas_pds != NULL) $filtros_finalizadas["status_pds"] = $filtro_finalizadas_pds;
-
-
-            // Obtener el campo a ordenar, primero de Session y despues del post, si procede..
-            $campo_orden_activas = NULL;
-            $orden_activas = NULL;
-
-            $sess_campo_orden_activas =  $this->session->userdata('campo_orden_activas');
-            if(! empty($sess_campo_orden_activas)) $campo_orden_activas = $sess_campo_orden_activas;
-            $sess_orden_activas =  $this->session->userdata('orden_activas');
-            if(! empty($sess_orden_activas)) $orden_activas = $sess_orden_activas;
 
             // viene del form de ordenacion
             $do_orden = $this->input->post('ordenar');
-
             if($do_orden==='true') {
-                $post_orden_form = $this->input->post('form');
-
-                $campo_orden_activas = $this->input->post($post_orden_form.'_campo');
-                $orden_activas = $this->input->post($post_orden_form.'_orden');
-
-                $this->session->set_userdata('campo_orden_activas', $campo_orden_activas);
-                $this->session->set_userdata('orden_activas', $orden_activas);
+                $array_orden = $this->set_orden($this->input->post('form'));
             }
 
-            $data["campo_orden_activas"] = $campo_orden_activas;
-            $data["orden_activas"] = $orden_activas;
+            // Obtener el campo a ordenar, primero de Session y despues del post, si procede..
+            $array_orden = $this->get_orden();
+            if(count($array_orden) > 0) {
+                foreach ($array_orden as $key => $value) {
+                    $data["campo_orden"] = $key;
+                    $data["orden_campo"] = $value;
+                }
+            }else{
+                $data["campo_orden"] = NULL;
+                $data["orden_campo"] = NULL;
+            }
 
-            $this->load->library('app/paginationlib');
 
-            $data['title']           = 'Mis solicitudes';
-            $data['title_iniciadas'] = 'Incidencias abiertas';
+            if($tipo==="abiertas")
+            {
+                $data['title'] = 'Incidencias abiertas';
+            }
+            else
+            {
+                $data['title'] = 'Incidencias cerradas';
+            }
 
             $per_page = 100;
-            $total_incidencias = $this->tienda_model->get_incidencias_quantity($filtros,$buscador);   // Sacar el total de incidencias, para el paginador
-            $cfg_pagination = $this->paginationlib->init_pagination("master/dashboard/incidencias/",$total_incidencias,$per_page,$segment);
+            $total_incidencias = $this->incidencia_model->get_estado_incidencias_quantity($array_sesion,$tipo);   // Sacar el total de incidencias, para el paginador
+            $cfg_pagination = $this->paginationlib->init_pagination("master/estado_incidencias/$tipo/page/",$total_incidencias,$per_page,$segment);
 
 
             $this->load->library('pagination',$cfg_pagination);
             $this->pagination->initialize($cfg_pagination);
 
+            $bounds = $this->paginationlib->get_bounds($total_incidencias,$page,$per_page);
+
             // Indicamos si habrá que mostrar el paginador en la vista
-            $data['show_paginator'] = false;
-            if($total_incidencias > $cfg_pagination['per_page']) $data['show_paginator'] = true;
-            // Mostrar párrafo de info páginas
-            $data['num_resultados'] = $total_incidencias;
-
-            $n_inicial = ($page - 1) * $per_page + 1;
-            $n_inicial = ($n_inicial == 0) ? 1 : $n_inicial;
-
-            $data['n_inicial'] = $n_inicial;
-
-            $n_final = ($n_inicial) + $per_page -1 ;
-            $n_final = ($total_incidencias < $n_final) ? $total_incidencias : $n_final;
-
-            $data['n_final'] = $n_final;
-
+            $data['show_paginator'] = $bounds["show_paginator"];
+            $data['num_resultados'] = $bounds["num_resultados"];
+            $data['n_inicial'] = $bounds["n_inicial"];
+            $data['n_final'] = $bounds["n_final"];
             $data["pagination_helper"]   = $this->pagination;
 
-            $incidencias = $this->tienda_model->get_incidencias($page,$cfg_pagination,$campo_orden_activas,$orden_activas,$filtros,$buscador);
+            $incidencias = $this->incidencia_model->get_estado_incidencias($page,$cfg_pagination,$array_orden,$array_sesion,$tipo);
 
             foreach ($incidencias as $incidencia) {
                 $incidencia->device = $this->sfid_model->get_device($incidencia->id_devices_pds);
@@ -322,100 +313,23 @@ class Master extends CI_Controller {
 
             $data['incidencias'] = $incidencias;
 
-            /** *****************************************************************************************************
-             *          Sacar la info para la tabla de Incidencias Finalizadas.
-             * *****************************************************************************************************/
-            $data['title_finalizadas'] = 'Incidencias finalizadas';
-
-
-            // Obtener la página actual del GET y si no existe, definirla a 1
-            $get_page = $this->uri->segment(4);
-            if( $this->uri->segment(3) == "finalizadas") {
-                $page_finalizadas = ( ! empty($get_page) ) ? $get_page : 1 ;
-                $segment_finalizadas = 4;
-            }else{
-                $page_finalizadas = 1;
-                $segment_finalizadas = null;
-            }
-
-
-
-
-            $per_page = 100;
-
-
-            // Obtener el campo a ordenar, primero de Session y despues del post, si procede..
-            $campo_orden_cerradas = NULL;
-            $orden_cerradas = NULL;
-
-            $sess_campo_orden_cerradas =  $this->session->userdata('campo_orden_cerradas');
-            if(! empty($sess_campo_orden_cerradas)) $campo_orden_cerradas = $sess_campo_orden_cerradas;
-            $sess_orden_cerradas =  $this->session->userdata('orden_cerradas');
-            if(! empty($sess_orden_cerradas)) $orden_cerradas = $sess_orden_cerradas;
-
-            // viene del form de ordenacion
-            $do_orden = $this->input->post('ordenar_cerradas');
-            if($do_orden==='true') {
-
-                $post_orden_form = $this->input->post('form');
-
-                $campo_orden_cerradas = $this->input->post($post_orden_form.'_campo');
-                $orden_cerradas = $this->input->post($post_orden_form.'_orden');
-
-                $this->session->set_userdata('campo_orden_cerradas', $campo_orden_cerradas);
-                $this->session->set_userdata('orden_cerradas', $orden_cerradas);
-
-            }
-
-            $data["campo_orden_cerradas"] = $campo_orden_cerradas;
-            $data["orden_cerradas"] = $orden_cerradas;
-
-            $total_incidencias = $this->tienda_model->get_incidencias_cerradas_quantity($filtros_finalizadas,$buscador);   // Sacar el total de incidencias, para el paginador
-            $cfg_pagination = $this->paginationlib->init_pagination("master/dashboard/finalizadas/",$total_incidencias,$per_page,$segment_finalizadas);
-
-            $cfg_pagination["suffix"] = '#incidencias_cerradas';
-
-            $this->load->library('pagination',$cfg_pagination,'pagination_finalizadas');
-            $this->pagination_finalizadas->initialize($cfg_pagination);
-            $data["pagination_finalizadas_helper"]   = $this->pagination_finalizadas;
-
-            // Indicamos si habrá que mostrar el paginador en la vista
-            $data['show_paginator_finalizadas'] = false;
-            if($total_incidencias > $cfg_pagination['per_page']) $data['show_paginator_finalizadas'] = true;
-            // Mostrar párrafo de info páginas
-
-            $data['num_resultados_finalizadas'] = $total_incidencias;
-            $n_inicial_finalizadas = ($page_finalizadas - 1) * $per_page + 1;
-            $n_inicial_finalizadas = ($n_inicial_finalizadas == 0) ? 1 : $n_inicial_finalizadas;
-
-            $data['n_inicial_finalizadas'] = $n_inicial_finalizadas;
-
-            $n_final_finalizadas = ($n_inicial_finalizadas) + $per_page -1 ;
-            $n_final_finalizadas = ($total_incidencias < $n_final_finalizadas) ? $total_incidencias : $n_final_finalizadas;
-            $data['n_final_finalizadas'] = $n_final_finalizadas;
-
-
-            $incidencias_finalizadas = $this->tienda_model->get_incidencias_cerradas($page_finalizadas,$cfg_pagination,$filtros_finalizadas,$buscador,$campo_orden_cerradas,$orden_cerradas);
-
-            foreach ($incidencias_finalizadas as $incidencia) {
-                $incidencia->device = $this->sfid_model->get_device($incidencia->id_devices_pds);
-                $incidencia->display = $this->sfid_model->get_display($incidencia->id_displays_pds);
-                $incidencia->nuevos  = $this->chat_model->contar_nuevos($incidencia->id_incidencia,$incidencia->reference);
-                $incidencia->intervencion = $this->intervencion_model->get_intervencion_incidencia($incidencia->id_incidencia);
-            }
-
-            $data['incidencias_finalizadas'] = $incidencias_finalizadas;
+            /* LISTADO DE TERRITORIOS PARA EL SELECT */
+            $data["territorios"] = $this->tienda_model->get_territorios();
+            /* LISTADO DE FABRICANTES PARA EL SELECT */
+            $data["fabricantes"] = $this->tienda_model->get_fabricantes();
 
             $this->load->view('master/header', $data);
             $this->load->view('master/navbar', $data);
-            $this->load->view('master/dashboard', $data);
+            $this->load->view('master/estado_incidencias_'.$tipo, $data);
             $this->load->view('master/footer');
         } else {
             redirect('master', 'refresh');
         }
     }
 
-    public function dashboard_exportar()
+
+
+    public function exportar_incidencias()
     {
         if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 9)) {
             $xcrud = xcrud_get_instance();
@@ -425,75 +339,26 @@ class Master extends CI_Controller {
             $tipo = $this->uri->segment(3); // TIPO DE INCIDENCIA
 
 
-            // Realizar búsqueda por INCIDENCIA o SFID
-            $buscar_incidencia = NULL;
-            $buscar_sfid = NULL;
-            // Consultar a la session si ya se ha buscado algo y guardado allí.
-            $sess_buscar_sfid = $this->session->userdata('buscar_sfid');
-            $sess_buscar_incidencia = $this->session->userdata('buscar_incidencia');
-            if(! empty($sess_buscar_sfid)) $buscar_sfid = $sess_buscar_sfid;
-            if(! empty($sess_buscar_incidencia)) $buscar_incidencia = $sess_buscar_incidencia;
-
-
-            // Obtener los filtros: status SAT y stats PDS, primero de Session y despues del post, si procede..
-            $filtro = NULL;
-            $sess_filtro = $this->session->userdata('filtro');
-            if(! empty($sess_filtro)) $filtro = $sess_filtro;
-
-            $filtro_pds = NULL;
-            $sess_filtro_pds = $this->session->userdata('filtro_pds');
-            if(! empty($sess_filtro_pds)) $filtro_pds = $sess_filtro_pds;
-
-            $buscador['buscar_sfid']        = $buscar_sfid;
-            $buscador['buscar_incidencia']  = $buscar_incidencia;
-
-            $filtros = array();
-
-            if($filtro != NULL) $filtros["status"] = $filtro;
-            if($filtro_pds != NULL) $filtros["status_pds"] = $filtro_pds;
-
-            // Obtener el campo a ordenar, primero de Session y despues del post, si procede..
-            $campo_orden_activas = NULL;
-            $orden_activas = NULL;
-
-            $sess_campo_orden_activas =  $this->session->userdata('campo_orden_activas');
-            if(! empty($sess_campo_orden_activas)) $campo_orden_activas = $sess_campo_orden_activas;
-            $sess_orden_activas =  $this->session->userdata('orden_activas');
-            if(! empty($sess_orden_activas)) $orden_activas = $sess_orden_activas;
-
-
-
-
-
+            // Filtros
+            $array_filtros = array(
+                'status'=>'',
+                'status_pds'=>'',
+                'territory'=>'',
+                'brand_device'=>'',
+                'id_incidencia'=>'',
+                'reference'=> ''
+            );
+            $array_sesion = $this->get_filtros($array_filtros);
 
 
             // Obtener el campo a ordenar, primero de Session y despues del post, si procede..
-            $campo_orden_cerradas = NULL;
-            $orden_cerradas = NULL;
-
-            $sess_campo_orden_cerradas =  $this->session->userdata('campo_orden_cerradas');
-            if(! empty($sess_campo_orden_cerradas)) $campo_orden_cerradas = $sess_campo_orden_cerradas;
-            $sess_orden_cerradas =  $this->session->userdata('orden_cerradas');
-            if(! empty($sess_orden_cerradas)) $orden_cerradas = $sess_orden_cerradas;
-
-            $filtro_finalizadas = NULL;
-            $filtro_finalizadas_pds = NULL;
-
-            $sess_filtro_finalizadas = $this->session->userdata('filtro_finalizadas');
-            if(! empty($sess_filtro_finalizadas)) $filtro_finalizadas = $sess_filtro_finalizadas;
-
-            $sess_filtro_finalizadas_pds = $this->session->userdata('filtro_finalizadas_pds');
-            if(! empty($sess_filtro_finalizadas_pds)) $filtro_finalizadas_pds = $sess_filtro_finalizadas_pds;
-
-            $filtros_finalizadas = array();
-            if($filtro_finalizadas != NULL) $filtros_finalizadas["status"] = $filtro_finalizadas;
-            if($filtro_finalizadas_pds != NULL) $filtros_finalizadas["status_pds"] = $filtro_finalizadas_pds;
+            $array_orden = $this->get_orden();
 
 
             if($tipo === "abiertas") {
-                $this->tienda_model->get_incidencias_csv($campo_orden_activas, $orden_activas, $filtros, $buscador, "abiertas");
+                $this->tienda_model->get_incidencias_csv($array_orden, $array_sesion, "abiertas");
             }else {
-                $this->tienda_model->get_incidencias_csv($campo_orden_cerradas, $orden_cerradas, $filtros_finalizadas, $buscador, "cerradas");
+                $this->tienda_model->get_incidencias_csv($array_orden, $array_sesion, "cerradas");
             }
 
 
@@ -503,7 +368,8 @@ class Master extends CI_Controller {
     }
 
 
-	public function detalle_incidencia($id_incidencia,$id_pds)
+
+    public function detalle_incidencia($id_incidencia,$id_pds)
 	{
 		if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 9))
 		{
@@ -795,9 +661,114 @@ class Master extends CI_Controller {
 		} else {
 			redirect('master', 'refresh');
 		}
-	}	
+	}
+    public function cdm_incidencias()
+    {
+        if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 9))
+        {
 
-	public function cdm_incidencias()
+
+            $b_filtrar_tipo = $this->input->post("filtrar_tipo");
+            $tipo_tienda = '';
+            $estado_incidencia = '';
+
+            if($b_filtrar_tipo === "si"){
+                $tipo_tienda = $this->input->post("tipo_tienda");
+                $estado_incidencia  = $this->input->post("estado_incidencia");
+            }
+
+            $data["tipo_tienda"] = $tipo_tienda;
+            $data["estado_incidencia"] = $estado_incidencia;
+
+            // Saco los tipos de tienda, pero sólo aquellos cuyos PDS tienen algun tipo de incidencia.
+            $tipos_tienda = $this->db->query("SELECT id_type_pds as id_tipo, pds as tipo FROM type_pds
+                                              WHERE status='Alta' AND client_type_pds !=2  AND id_type_pds IN (
+                                                  SELECT DISTINCT(pds.type_pds) FROM pds INNER JOIN incidencias ON incidencias.id_pds = pds.id_pds
+                                              )");
+            $data["tipos_tienda"] = $tipos_tienda->result();
+
+
+            // Saco los tipos de tienda, pero sólo aquellos cuyos PDS tienen algun tipo de incidencia.
+            $estados_incidencia = $this->db->query("SELECT DISTINCT(status_pds) FROM incidencias ");
+            $data["estados_incidencia"] = $estados_incidencia->result();
+
+
+            $xcrud_1 = xcrud_get_instance();
+            $xcrud_1->table_name('Incidencias');
+
+
+            $s_where = $s_where_incidencia= '';
+            if(!empty($tipo_tienda)){
+                $s_where = " AND pds.type_pds = ".$tipo_tienda;
+            }
+            if(!empty($estado_incidencia)){
+                $s_where_incidencia .= " AND incidencias.status_pds LIKE '".$estado_incidencia."'";
+            }
+
+
+            $xcrud_1->query("SELECT
+								YEAR(incidencias.fecha) AS Year,
+								MONTH(incidencias.fecha) AS Mes,
+								COUNT(*) AS Incidencias,
+						    	(
+									SELECT
+										COUNT(*)
+										FROM historico
+										INNER JOIN pds ON pds.id_pds = historico.id_pds
+										INNER JOIN type_pds ON type_pds.id_type_pds = pds.type_pds
+										WHERE
+										(
+											((historico.status_pds = 'Cancelada' AND historico.status = 'Cancelada') OR
+											(historico.status_pds = 'Finalizada' AND historico.status = 'Resuelta')) AND
+						            		(DATE_ADD(incidencias.fecha, INTERVAL 96 HOUR) >= historico.fecha) AND
+						            		(YEAR(historico.fecha) = Year AND MONTH(historico.fecha) = Mes)
+						            		$s_where
+										)
+
+						    	) AS '- 72 h.',
+								(
+									SELECT
+										COUNT(*)
+										FROM incidencias
+										INNER JOIN pds ON pds.id_pds = incidencias.id_pds
+										INNER JOIN type_pds ON type_pds.id_type_pds = pds.type_pds
+										WHERE
+										(
+											(incidencias.status_pds = 'Finalizada' OR incidencias.status_pds = 'Cancelada') AND
+											(YEAR(incidencias.fecha) = Year AND MONTH(incidencias.fecha) = Mes)
+											$s_where
+										)
+								) AS Cerradas
+							FROM incidencias
+							INNER JOIN pds ON pds.id_pds = incidencias.id_pds
+                            INNER JOIN type_pds ON type_pds.id_type_pds = pds.type_pds
+                            WHERE 1=1 $s_where_incidencia
+							GROUP BY
+								YEAR(incidencias.fecha),
+								MONTH(incidencias.fecha)");
+
+
+            $data['title'] = 'Estado incidencias';
+
+            $data['content'] = $xcrud_1->render();
+            /*
+            $data['content'] = $data['content'] . $xcrud_2->render();
+            $data['content'] = $data['content'] . $xcrud_3->render();
+            $data['content'] = $data['content'] . $xcrud_4->render();
+            $data['content'] = $data['content'] . $xcrud_5->render();
+            */
+
+            $this->load->view('master/header',$data);
+            $this->load->view('master/navbar',$data);
+            $this->load->view('master/cdm_incidencias',$data);
+            $this->load->view('master/footer');
+        } else {
+            redirect('master', 'refresh');
+        }
+    }
+
+
+    public function cdm_incidencias_OLD()
 	{
 		if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 9))
 		{
@@ -992,11 +963,13 @@ class Master extends CI_Controller {
 		{
 			$xcrud = xcrud_get_instance();
 			$this->load->model('tienda_model');
-	
+
+            $data['title']   = 'Sistemas de seguridad';
+
+            $data['stock_balance'] = $this->tienda_model->get_balance_alarmas();
 			$data['stocks']  = $this->tienda_model->get_cdm_alarmas();
-	
-			$data['title']   = 'Sistemas de seguridad';
-	
+
+
 			$this->load->view('master/header',$data);
 			$this->load->view('master/navbar',$data);
 			$this->load->view('master/cdm_alarmas',$data);
@@ -1014,8 +987,41 @@ class Master extends CI_Controller {
 		{
 			$xcrud = xcrud_get_instance();
 			$this->load->model('tienda_model');
-	
-			$data['stocks']  = $this->tienda_model->get_cdm_dispositivos();
+            $data['stocks'] = $this->tienda_model->get_stock_cruzado();
+
+           /* $xcrud_stocks_almacen = xcrud_get_instance();
+            $xcrud_stocks_almacen->table_name('Balance de activos');
+            $xcrud_stocks_almacen->query("SELECT
+					brand_device.brand AS Marca, device.device AS Modelo,
+									(
+										SELECT COUNT(*)
+										FROM devices_pds
+								        WHERE (devices_pds.id_device = device.id_device) AND
+										(devices_pds.status = 'Alta')
+								    ) AS 'Unidades tienda',
+									(SELECT  COUNT(*)
+										FROM devices_almacen
+										WHERE (devices_almacen.id_device = device.id_device) AND
+										(devices_almacen.status = 'En stock')
+									) AS 'Deposito en almacén'
+				FROM device
+				JOIN brand_device ON device.brand_device = brand_device.id_brand_device
+				ORDER BY brand_device.brand, device.device");
+
+            $xcrud_stocks_almacen->show_primary_ai_column(false);
+            $xcrud_stocks_almacen->unset_add();
+            $xcrud_stocks_almacen->unset_view();
+            $xcrud_stocks_almacen->unset_edit();
+            $xcrud_stocks_almacen->unset_remove();
+            $xcrud_stocks_almacen->unset_numbers();
+            $xcrud_stocks_almacen->start_minimized(true);
+
+            $data['stocks_almacen'] = $xcrud_stocks_almacen->render();*/
+
+
+
+
+			$data['stocks_dispositivos']  = $this->tienda_model->get_cdm_dispositivos();
 				
 			$data['title']   = 'Dispositivos';
 	
@@ -1532,7 +1538,7 @@ class Master extends CI_Controller {
 
             $this->load->view('master/header', $data);
             $this->load->view('master/navbar', $data);
-            $this->load->view('master/informe_puntos_venta', $data);
+            $this->load->view('master/informes/informe_puntos_venta', $data);
             $this->load->view('master/footer');
         }
         else
@@ -1858,20 +1864,20 @@ class Master extends CI_Controller {
             /* Pasar a la vista */
         $this->load->view('master/header', $data);
         $this->load->view('master/navbar', $data);
-        $this->load->view('master/informe_planograma_form', $data);
+        $this->load->view('master/informes/informe_planograma_form', $data);
 
         switch ($vista) {
             case 1:
-                $this->load->view('master/informe_planograma_mueble_sfid',$data);
+                $this->load->view('master/informes/informe_planograma_mueble_sfid',$data);
                 break;
             case 2:
-                $this->load->view('master/informe_planograma_mueble', $data);
+                $this->load->view('master/informes/informe_planograma_mueble', $data);
                 break;
             case 3:
-                $this->load->view('master/informe_planograma_sfid', $data);
+                $this->load->view('master/informes/informe_planograma_sfid', $data);
                 break;
             default:
-                $this->load->view('master/informe_planograma', $data);
+                $this->load->view('master/informes/informe_planograma', $data);
 
         }
 
@@ -1897,6 +1903,7 @@ class Master extends CI_Controller {
             $xcrud = xcrud_get_instance();
             $this->load->model('tienda_model');
             $this->load->model('sfid_model');
+            $this->load->model('informe_model');
 
             $sfid = $this->tienda_model->get_pds($id_pds);
 
@@ -1942,8 +1949,8 @@ class Master extends CI_Controller {
 
             $this->load->view('master/header',$data);
             $this->load->view('master/navbar',$data);
-            $this->load->view('master/informe_planograma_form',$data);
-            $this->load->view('master/informe_planograma_ficha_mueble',$data);
+            $this->load->view('master/informes/informe_planograma_form',$data);
+            $this->load->view('master/informes/informe_planograma_ficha_mueble',$data);
             $this->load->view('master/footer');
         }
         else
@@ -2021,8 +2028,8 @@ class Master extends CI_Controller {
 
         $this->load->view('master/header',$data);
         $this->load->view('master/navbar',$data);
-        $this->load->view('master/informe_planograma_form',$data);
-        $this->load->view('master/informe_planograma_ficha_terminal',$data);
+        $this->load->view('master/informes/informe_planograma_form',$data);
+        $this->load->view('master/informes/informe_planograma_ficha_terminal',$data);
         $this->load->view('master/footer');
         }
         else
@@ -2201,17 +2208,17 @@ class Master extends CI_Controller {
             /* Pasar a la vista */
             $this->load->view('master/header', $data);
             $this->load->view('master/navbar', $data);
-            $this->load->view('master/informe_visual_form', $data);
+            $this->load->view('master/informes/informe_visual_form', $data);
 
             switch ($vista) {
                 case 2 :
-                    $this->load->view('master/informe_visual_panelado',$data);
+                    $this->load->view('master/informes/informe_visual_panelado',$data);
                     break;
                 case 1 :
-                    $this->load->view('master/informe_visual_sfid', $data);
+                    $this->load->view('master/informes/informe_visual_sfid', $data);
                     break;
                 default:
-                    $this->load->view('master/informe_visual', $data);
+                    $this->load->view('master/informes/informe_visual', $data);
 
             }
 
@@ -2282,8 +2289,8 @@ class Master extends CI_Controller {
 
             $this->load->view('master/header',$data);
             $this->load->view('master/navbar',$data);
-            $this->load->view('master/informe_visual_form',$data);
-            $this->load->view('master/informe_visual_maestro_mueble',$data);
+            $this->load->view('master/informes/informe_visual_form',$data);
+            $this->load->view('master/informes/informe_visual_maestro_mueble',$data);
             $this->load->view('master/footer');
         }
         else
@@ -2353,8 +2360,8 @@ class Master extends CI_Controller {
 
             $this->load->view('master/header', $data);
             $this->load->view('master/navbar', $data);
-            $this->load->view('master/informe_visual_form', $data);
-            $this->load->view('master/informe_visual_terminal', $data);
+            $this->load->view('master/informes/informe_visual_form', $data);
+            $this->load->view('master/informes/informe_visual_terminal', $data);
             $this->load->view('master/footer');
         } else {
             redirect('master', 'refresh');
@@ -2425,8 +2432,8 @@ class Master extends CI_Controller {
 
             $this->load->view('master/header',$data);
             $this->load->view('master/navbar',$data);
-            $this->load->view('master/informe_visual_form',$data);
-            $this->load->view('master/informe_visual_mueble_sfid',$data);
+            $this->load->view('master/informes/informe_visual_form',$data);
+            $this->load->view('master/informes/informe_visual_mueble_sfid',$data);
             $this->load->view('master/footer');
         }
         else
@@ -2510,8 +2517,8 @@ class Master extends CI_Controller {
 
             $this->load->view('master/header',$data);
             $this->load->view('master/navbar',$data);
-            $this->load->view('master/informe_visual_form',$data);
-            $this->load->view('master/informe_visual_ficha_terminal',$data);
+            $this->load->view('master/informes/informe_visual_form',$data);
+            $this->load->view('master/informes/informe_visual_ficha_terminal',$data);
             $this->load->view('master/footer');
         }
         else
@@ -2569,24 +2576,7 @@ class Master extends CI_Controller {
 		}
 	}
 
-	public function panelado_tienda($tipo, $id_panelado=NULL)
-    {
-        /* Incluir los modelos */
-        $xcrud = xcrud_get_instance();
-        $this->load->model('sfid_model');
-        $this->load->model('tienda_model');
-        $this->load->model('informe_model');
 
-        $panelados = $this->tienda_model->get_panelados_maestros_demoreal($tipo);
-
-        $resp = '<option value="" selected="selected">Escoge el panelado...</option>';
-        foreach($panelados as $panel){
-
-            $s_selected = (!is_null($id_panelado) && $id_panelado == $panel->id_panelado) ? ' selected="selected" ' : '';
-            $resp .= '<option value="'.$panel->id_panelado.'" '.$s_selected.'>'.$panel->panelado.'</option>';
-        }
-        echo $resp;
-    }
 	public function manuales()
 	{
 		if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 9))

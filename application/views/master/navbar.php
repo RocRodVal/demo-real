@@ -33,13 +33,19 @@
                         {
                         ?>
 
-                        <?php
-                        /**
-                         * DASHBOARD
-                         *
-                         */
-                        ?>
-                        <li><a <?=($this->uri->segment(2)==='dashboard')?'class="active"':''?> href="<?=site_url('master/dashboard')?>"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a></li>
+                            <?php $estado_incidencias = array("estado_incidencias");
+                            $estado_incidencias_inner = array();
+                            ?>
+
+                            <li <?=(in_array($this->uri->segment(2), $estado_incidencias)? ' class="active" ' :'')?>>
+                                <a href="#"><i class="fa fa-dashboard fa-fw"></i> Estado incidencias <span class="fa arrow"></span></a>
+
+                                <ul class="nav nav-second-level">
+                                    <li><a <?=($this->uri->segment(3)==='abiertas')?'class="active"':''?> href="<?=site_url('master/estado_incidencias/abiertas')?>"> Incidencias abiertas &raquo;</a></li>
+                                    <li><a <?=($this->uri->segment(3)==='cerradas')?'class="active"':''?> href="<?=site_url('master/estado_incidencias/cerradas')?>"> Incidencias cerradas &raquo;</a></li>
+                                </ul>
+
+                            </li>
 
                         <?php
                             /*
@@ -51,6 +57,7 @@
                          * MAESTROS
                          *
                          */
+                            /*
                         ?>
                         <?php $maestros = array('clientes','contactos','alarmas','dispositivos','muebles','puntos_de_venta'); ?>
                         <li <?=(in_array($this->uri->segment(2), $maestros))?'class="active"':''?>>
@@ -63,6 +70,7 @@
                             </ul>
                         </li>
                         <?php
+                            */
                         /**
                          * CUADROS DE MANDO
                          *
@@ -73,10 +81,11 @@
                             <a href="#"><i class="fa fa-sitemap fa-fw"></i> Cuadro de mando<span class="fa arrow"></span></a>
                             <ul class="nav nav-second-level">
                                 <li><a <?=($this->uri->segment(2)==='cdm_incidencias')?'class="active"':''?> href="<?=site_url('master/cdm_incidencias')?>"> Estado incidencias &raquo;</a></li>
-                                <li><a <?=($this->uri->segment(2)==='cdm_tipo_incidencia')?'class="active"':''?> href="<?=site_url('master/cdm_tipo_incidencia')?>"> Tipo de incidencia &raquo;</a></li>
-                                <li><a <?=($this->uri->segment(2)==='cdm_inventario')?'class="active"':''?> href="<?=site_url('master/cdm_inventario')?>"> Inventario/Depósito &raquo;</a></li>
-                                <li><a <?=($this->uri->segment(2)==='cdm_alarmas')?'class="active"':''?> href="<?=site_url('master/cdm_alarmas')?>"> Sistemas de seguridad &raquo;</a></li>
+                                <?php /*<li><a <?=($this->uri->segment(2)==='cdm_tipo_incidencia')?'class="active"':''?> href="<?=site_url('master/cdm_tipo_incidencia')?>"> Tipo de incidencia &raquo;</a></li>*/ ?>
+                                <?php /*<li><a <?=($this->uri->segment(2)==='cdm_inventario')?'class="active"':''?> href="<?=site_url('master/cdm_inventario')?>"> Inventario/Depósito &raquo;</a></li>*/ ?>
                                 <li><a <?=($this->uri->segment(2)==='cdm_dispositivos')?'class="active"':''?> href="<?=site_url('master/cdm_dispositivos')?>"> Dispositivos &raquo;</a></li>
+                                <li><a <?=($this->uri->segment(2)==='cdm_alarmas')?'class="active"':''?> href="<?=site_url('master/cdm_alarmas')?>"> Sistemas de seguridad &raquo;</a></li>
+
                             </ul>
                         </li>
 
@@ -114,7 +123,7 @@
 
 
                         <?php               
-                        $exposicion = array('descripcion','exp_alta_incidencia','exp_alta_incidencia_mueble','exp_alta_incidencia_device','inventarios_panelados','inventarios_planogramas','inventarios');
+                        /*$exposicion = array('descripcion','exp_alta_incidencia','exp_alta_incidencia_mueble','exp_alta_incidencia_device','inventarios_panelados','inventarios_planogramas','inventarios');
                         ?>
                         <li <?=(in_array($this->uri->segment(2), $exposicion))?'class="active"':''?>>
                             <a href="#"><i class="fa fa-sitemap fa-fw"></i> Exposición<span class="fa arrow"></span></a>
@@ -126,7 +135,7 @@
                             	<li><a <?=($this->uri->segment(2)==='inventarios_planogramas')?'class="active"':''?> href="<?=site_url('master/inventarios_planogramas')?>"> Planograma mueble &raquo;</a></li>
                             </ul>
                         </li>                        
-                        <?php 
+                        <?php */
                         }
                         $ayuda = array('ayuda','manuales','muebles_fabricantes');
                         ?>
