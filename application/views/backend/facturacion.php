@@ -61,8 +61,7 @@
 		            if (empty($facturacion)) {
 		                echo '<p>No hay información sobre facturación.</p>';
 		            } else {
-                        if(empty($instalador)) $instalador = "false";
-                        if(empty($dueno)) $dueno = "false";
+
 
 
 		            ?>
@@ -70,10 +69,10 @@
 		                <div class="table-responsive">
 		                	<p><strong>Rango:</strong> <?php echo $fecha_inicio ?>/<?php echo $fecha_fin ?></p>
 
-                            <?php if($dueno) { ?>
+                            <?php if(!empty($dueno)) { ?>
                                 <p><strong>Dueño:</strong> <?=$facturacion[0]->dueno?></p>
                             <?php } ?>
-                            <?php if($instalador) { ?>
+                            <?php if(!empty($instalador)) { ?>
                                 <p><strong>Instalador:</strong> <?=$facturacion[0]->instalador?></p>
                             <?php } ?>
 
