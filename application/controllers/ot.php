@@ -61,7 +61,7 @@ class Ot extends CI_Controller {
 
         $this->load->model('user_model');
         $data = array(
-            'sfid' => strtolower($this->input->post('sfid')),
+            'sfid' => strtolower($this->input->post('sfid-login')),
             'password' => $this->input->post('password'),
         );
         if($this->user_model->login_ot($data)){
