@@ -22,7 +22,7 @@ class Admin extends CI_Controller
         $xcrud = xcrud_get_instance();
         $this->load->model('user_model');
 
-        $this->form_validation->set_rules('sfid', 'SFID', 'required|xss_clean');
+        $this->form_validation->set_rules('sfid-login', 'SFID', 'required|xss_clean');
         $this->form_validation->set_rules('password', 'password', 'required|xss_clean');
         $this->form_validation->set_message('login_error', '"Username" or "Password" are incorrect.');
 
@@ -33,13 +33,13 @@ class Admin extends CI_Controller
 
         if ($this->form_validation->run() == true) {
             $data = array(
-                'sfid' => strtolower($this->input->post('sfid')),
+                'sfid' => strtolower($this->input->post('sfid-login')),
                 'password' => $this->input->post('password'),
             );
         }
 
         if ($this->form_validation->run() == true) {
-            $this->form_validation->set_rules('sfid','SFID','callback_do_login');
+            $this->form_validation->set_rules('sfid-login','SFID','callback_do_login');
 
             if($this->form_validation->run() == true){
                 redirect($entrada);
@@ -64,7 +64,7 @@ class Admin extends CI_Controller
 
         $this->load->model('user_model');
         $data = array(
-            'sfid' => strtolower($this->input->post('sfid')),
+            'sfid' => strtolower($this->input->post('sfid-login')),
             'password' => $this->input->post('password'),
         );
         if($this->user_model->login_admin($data)){

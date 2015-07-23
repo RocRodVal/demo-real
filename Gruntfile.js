@@ -27,7 +27,7 @@ module.exports = function (grunt) {
         deploy: {
             command: [
                 'echo Deploying <%= configBranch.name %>',
-                'sh /www/demoreal.focusonemotions.com/deploy-code.sh <%= configBranch.name %>'
+                'sh /www/demoreal.focusonemotions.com/deploy-demoreal-code.sh <%= configBranch.name %>'
             ],
             options: {
                 config: 'dev'

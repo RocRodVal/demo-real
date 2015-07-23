@@ -21,7 +21,7 @@
 	                            ?>
 	                            <fieldset>
 	                                <div class="form-group">
-	                                    <input class="form-control" placeholder="SFID hijo" name="sfid" type="text" value="<?=$this->form_validation->set_value('sfid')?>">
+	                                    <input class="form-control" placeholder="SFID hijo" name="sfid-login" type="text" value="<?=$this->form_validation->set_value('sfid-login')?>">
 	                                </div>
 	                                <div class="form-group">
 	                                    <input class="form-control" placeholder="contraseña" name="password" type="password" value="<?=$this->form_validation->set_value('password')?>">
