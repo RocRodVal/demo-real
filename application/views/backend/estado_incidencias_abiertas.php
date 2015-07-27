@@ -63,7 +63,7 @@
                 <div class="col-lg-12">
                     <div class="row buscador">
                         <form action="<?=base_url()?>admin/estado_incidencias/abiertas" method="post" class="filtros form-mini">
-                            <div class="col-sm-2">
+                            <div class="col-lg-2">
                                 <label for="status">Estado SAT: </label>
                                 <select name="status" id="status" class="form-control input-sm">
                                     <option value="" <?php echo ($status==="") ? 'selected="selected"' : ''?>>Cualquier estado</option>
@@ -76,7 +76,7 @@
 
                                 </select>
                             </div>
-                            <div class="col-sm-2">
+                            <div class="col-lg-2">
                                 <label for="status_pds">Estado PDS: </label>
                                 <select name="status_pds" id="status_pds" class="form-control input-sm">
                                     <option value="" <?php echo ($status_pds==="") ? 'selected="selected"' : ''?>>Cualquier estado</option>
@@ -86,7 +86,7 @@
                                     <option value="En visita" <?php echo ($status_pds==="En visita") ? 'selected="selected"' : ''?>>En visita</option>
                                 </select>
                             </div>
-                            <div class="col-sm-2">
+                            <div class="col-lg-2">
                                 <label for="territory">Territorio: </label>
                                 <select name="territory" id="territory" class="form-control input-sm">
                                     <option value="" <?php echo ($territory==="") ? 'selected="selected"' : ''?>>Cualquier territorio</option>
@@ -100,7 +100,7 @@
                                 </select>
                             </div>
 
-                            <div class="col-sm-2">
+                            <div class="col-lg-2">
                                 <label for="brand_device">Fabricante: </label>
                                 <select name="brand_device" id="brand_device" class="form-control input-sm">
                                     <option value="" <?php echo ($brand_device==="") ? 'selected="selected"' : ''?>>Cualquier fabricante</option>
@@ -114,25 +114,21 @@
                                 </select>
                             </div>
 
-                            <div class="col-sm-1">
+                            <div class="col-lg-2">
                                 <label for="id_incidencia">Id. Incidencia: </label>
                                 <input type="text" name="id_incidencia" id="id_incidencia" class="form-control input-sm" placeholder="Id. incidencia" <?php echo (!empty($id_incidencia)) ? ' value="'.$id_incidencia.'" ' : ''?> />
                             </div>
-                            <div class="col-sm-1">
+                            <div class="col-lg-1">
                                 <label for="reference">SFID: </label>
                                 <input type="text" name="reference" id="reference" class="form-control input-sm" placeholder="SFID" <?php echo (!empty($reference)) ? ' value="'.$reference.'" ' : ''?> />
                             </div>
-                            <div class="col-sm-1">
+                            <div class="col-lg-1">
                                 <div class="form-group">
                                     <input type="hidden" name="do_busqueda" value="si">
                                     <input type="submit" value="Buscar" id="submit_button" class="form-control input-sm">
                                     </div>
-                            </div>
-                            <div class="col-sm-1">
-                                <?php /*if(! empty($buscar_sfid) || ! empty($buscar_incidencia)) { ?>
-                                    <a href="<?=base_url()?>admin/dashboard/borrar_busqueda/#incidencias_abiertas" class="reiniciar_busqueda"> <i class="glyphicon glyphicon-remove"></i>  Reiniciar</a>
-                                <?php }*/ ?>
-                            </div>
+                                 </div>
+
                         </form>
                     </div>
 

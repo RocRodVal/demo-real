@@ -109,8 +109,23 @@ form.form-mini .form-group{ margin-bottom:20px; }
 
 }
 
+/**
+**  MULTIFILTRO
+**/
+#page-wrapper .form-group{ vertical-align: top; margin-right: 15px;}
+#page-wrapper .form-group input[type="submit"]{
+    width:auto;}
+div.multifiltro{ background-color: #f1f1f1; padding:10px 5px 5px 5px; min-height: 0px;
+    height: auto;
+    display: none;}
 
+div.multifiltro div.linea{ padding: 0 0 0 0;  }
 
+#page-wrapper  form label.auto{
+    display: inline-block; width: auto; font-weight: normal;
+    max-resolution: 0;
+    padding: 0;
+}
 /**
 ** MANTENIMIENTO
 **/
