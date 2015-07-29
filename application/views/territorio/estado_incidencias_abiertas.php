@@ -37,7 +37,7 @@
     									{
     									?>
     									<tr>
-    										<td><a href="<?=site_url('tienda/alta_incidencia/'.$tienda->id_pds)?>"><?php echo $tienda->reference ?></a></td>
+    										<td><a href="<?=site_url('territorio/alta_incidencia/'.$tienda->id_pds)?>"><?php echo $tienda->reference ?></a></td>
     										<td><?php echo $tienda->pds ?></td>
     										<td><?php echo $tienda->panelado ?></td>
     										<td><?php echo $tienda->commercial ?></td>
@@ -62,8 +62,20 @@
             <div class="row" >
                 <div class="col-lg-12">
                     <div class="row buscador">
-                        <form action="<?=base_url()?>tienda/estado_incidencias/abiertas" method="post" class="filtros form-mini">
+                        <form action="<?=base_url()?>territorio/estado_incidencias/abiertas" method="post" class="filtros form-mini">
+                            <div class="col-lg-2">
+                                <label for="status">Estado SAT: </label>
+                                <select name="status" id="status" class="form-control input-sm">
+                                    <option value="" <?php echo ($status==="") ? 'selected="selected"' : ''?>>Cualquier estado</option>
+                                    <option value="Nueva" <?php echo ($status==="Nueva") ? 'selected="selected"' : ''?>>Nuevas</option>
+                                    <option value="Revisada" <?php echo ($status==="Revisada") ? 'selected="selected"' : ''?>>Revisadas</option>
+                                    <option value="Instalador asignado" <?php echo ($status==="Instalador asignado") ? 'selected="selected"' : ''?>>Instalador asignado</option>
+                                    <option value="Material asignado" <?php echo ($status==="Material asignado") ? 'selected="selected"' : ''?>>Material asignado</option>
+                                    <option value="Comunicada" <?php echo ($status==="Comunicada") ? 'selected="selected"' : ''?>>Comunicadas</option>
 
+
+                                </select>
+                            </div>
                             <div class="col-lg-2">
                                 <label for="status_pds">Estado PDS: </label>
                                 <select name="status_pds" id="status_pds" class="form-control input-sm">
@@ -74,7 +86,19 @@
                                     <option value="En visita" <?php echo ($status_pds==="En visita") ? 'selected="selected"' : ''?>>En visita</option>
                                 </select>
                             </div>
-
+                            <div class="col-lg-2">
+                                <label for="territory">Territorio: </label>
+                                <select name="territory" id="territory" class="form-control input-sm">
+                                    <option value="" <?php echo ($territory==="") ? 'selected="selected"' : ''?>>Cualquier territorio</option>
+                                    <?php
+                                        foreach($territorios as $territorio)
+                                        {
+                                            $attr = ($territorio->id_territory === $territory) ? ' selected="selected" ' :'';
+                                            echo '<option value="'.$territorio->id_territory.'" '.$attr.'>'.$territorio->territory.'</option>';
+                                        }
+                                    ?>
+                                </select>
+                            </div>
 
                             <div class="col-lg-2">
                                 <label for="brand_device">Fabricante: </label>
@@ -94,7 +118,10 @@
                                 <label for="id_incidencia">Id. Incidencia: </label>
                                 <input type="text" name="id_incidencia" id="id_incidencia" class="form-control input-sm" placeholder="Id. incidencia" <?php echo (!empty($id_incidencia)) ? ' value="'.$id_incidencia.'" ' : ''?> />
                             </div>
-
+                            <div class="col-lg-1">
+                                <label for="reference">SFID: </label>
+                                <input type="text" name="reference" id="reference" class="form-control input-sm" placeholder="SFID" <?php echo (!empty($reference)) ? ' value="'.$reference.'" ' : ''?> />
+                            </div>
                             <div class="col-lg-1">
                                 <div class="form-group">
                                     <input type="hidden" name="do_busqueda" value="si">
@@ -125,7 +152,7 @@
                             </div>
                         <?php } ?>
 
-                        <p><a href="<?=base_url()?>tienda/exportar_incidencias/abiertas" class="btn exportar"><i class="glyphicon glyphicon-file"></i> Exportar Excel</a></p>
+                        <p><a href="<?=base_url()?>territorio/exportar_incidencias/abiertas" class="btn exportar"><i class="glyphicon glyphicon-file"></i> Exportar Excel</a></p>
 		                <div class="table-responsive">
 		                    <table class="table table-striped table-bordered table-hover table-sorting" id="table_incidencias_dashboard" data-order-form="form_orden">
 		                        <thead>
@@ -160,7 +187,7 @@
 		                            <tr>
 		                                <td>
 
-                                            <a href="<?=site_url('tienda/detalle_incidencia/'.$incidencia->id_incidencia.'/'.$incidencia->id_pds)?>">
+                                            <a href="<?=site_url('territorio/detalle_incidencia/'.$incidencia->id_incidencia.'/'.$incidencia->id_pds)?>">
                                                 <?php echo $incidencia->id_incidencia?></a></td>
 
 		                                <td><?php echo $incidencia->reference ?></td>
@@ -215,14 +242,14 @@
                                         <td><strong><?php echo $incidencia->status ?></strong></td>
 		                                <td><strong><?php echo $incidencia->status_pds ?></strong></td>
 
-		                                <td><a href="<?=site_url('tienda/detalle_incidencia/'.$incidencia->id_incidencia.'/'.$incidencia->id_pds)?>#chat"><strong><i class="fa fa-whatsapp <?=($incidencia->nuevos['nuevos']<>'0')?'chat_nuevo':'chat_leido'?>"></i></strong></a></td>
+		                                <td><a href="<?=site_url('territorio/detalle_incidencia/'.$incidencia->id_incidencia.'/'.$incidencia->id_pds)?>#chat"><strong><i class="fa fa-whatsapp <?=($incidencia->nuevos['nuevos']<>'0')?'chat_nuevo':'chat_leido'?>"></i></strong></a></td>
 		                            </tr>
 		                        <?php
 		                        }
 		                        ?>
 		                        </tbody>
 		                    </table>
-                            <form action="<?=base_url()?>tienda/estado_incidencias/abiertas" method="post" id="form_orden">
+                            <form action="<?=base_url()?>territorio/estado_incidencias/abiertas" method="post" id="form_orden">
                                 <input type="hidden" name="form_orden_campo_orden"  value="">
                                 <input type="hidden" name="form_orden_orden_campo" value="">
                                 <input type="hidden" name="form"  value="">

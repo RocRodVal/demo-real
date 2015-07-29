@@ -97,6 +97,42 @@ class User_model extends CI_Model {
 		}
 	}
 
+    /**
+     * Función genérica que intenta loguearse en base al tipo de usuario pasado como parámetro. Éste determina
+     * si es un acceso admin, master, tienda, ot, territorio... etc
+     *
+     * @param $data
+     * @param int $tipo_usuario
+     * @return bool
+     */
+    public function login_tipo($data,$tipo_usuario = 1)
+    {
+        $sfid     = $data['sfid'];
+        $password = $data['password'];
+
+        $query = $this->db->select('*')
+            ->where('sfid',$sfid)
+            ->where('password',$password)
+            ->where('type',$tipo_usuario)
+            ->limit(1)
+            ->get('agent');
+
+        if($query->num_rows()==1)
+        {
+            $row = $query->row();
+            $data = array(
+                'sfid'      => $row->sfid,
+                'type'      => $row->type,
+                'logged_in' => TRUE
+            );
+            $this->session->set_userdata($data);
+            return TRUE;
+        }
+        else
+        {
+            return FALSE;
+        }
+    }
 
 
     public function login_ot($data)
@@ -148,6 +184,11 @@ class User_model extends CI_Model {
         // Acceso Oferta táctica
         else if($this->login_ot($data)){
             $entorno = "ot";
+
+        }
+        // Acceso Territorio
+        else if($this->login_tipo($data,12)){
+            $entorno = "territorio";
 
         }
         // Acceso tienda
