@@ -5,7 +5,8 @@
                     <h1 class="page-header"><?php echo $title ?></h1>
                 </div>
             </div>
-            <div class="row">
+            <?php
+            /*<div class="row">
                 <form action="<?=site_url("master/cdm_incidencias/")?>" method="post">
                     <div class="form-group">
                         <label for="tipo_tienda">
@@ -35,10 +36,169 @@
                         <input type="submit" value="Enviar">
                     </div>
                 </form>
-            </div>
+            </div> */?>
             <div class="row">
                 <div class="col-lg-12">
-                    <?php echo $content ?>
+                    <table cellpadding="0" cellspacing="0" class="table table-striped table-bordered table-hover table-borde-lineal">
+                        <?php
+                        $separador_td = "<td>&nbsp;</td><td>&nbsp;</td>";
+                        foreach($meses_columna as $clave=>$valor) {
+                            $separador_td .= "<td>&nbsp;</td>";
+                        }
+                        ?>
+                    <thead>
+                        <tr>
+                            <th></th>
+                               <?php
+                               foreach($meses_columna as $clave=>$valor)
+                               {
+                                    echo "<th>".$valor."</th>";
+                               }
+                               ?>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                        <tbody>
+                        <?php
+                        /**
+                         * Incidencias totales por dias operativos
+                         */
+                        ?>
+                            <tr>
+                                <th>Total incidencias</th>
+                                <?php
+                                foreach($tabla_1 as $clave=>$valor)
+                                {
+                                    echo "<td>".$valor->total_incidencias."</td>";
+                                }
+                                ?>
+                                <td class="total"><?=$total_incidencias_total?></td>
+                            </tr>
+
+                            <tr>
+                                <th>Días operativos</th>
+                                <?php
+                                foreach($dias_operativos as $key=>$valor)
+                                {
+                                    echo "<td>".$valor."</td>";
+                                }
+                                ?>
+                                <td  class="total"><?=$total_dias_operativos?></td>
+                            </tr>
+
+                            <tr>
+                                <th>Media</th>
+                                <?php
+                                foreach($incidencias_dia as $key=>$valor)
+                                {
+                                    echo "<td>".$valor."</td>";
+                                }
+                                ?>
+                                <td  class="total"><?=$total_media?></td>
+                            </tr>
+
+                            <tr class="separador"><?=$separador_td?></tr>
+
+                            <?php
+                            /**
+                             * Incidencias por ESTADO
+                             */
+                            ?>
+                                <tr>
+                                    <th>Finalizadas</th>
+                                    <?php
+                                        $total = 0;
+                                        foreach($incidencias_estado["Finalizada"] as $key=>$valor)
+                                        {
+                                            echo '<td>'.$valor.'</td>';
+                                            $total += $valor;
+                                        }
+                                        echo '<td class="total">'.$total.'</td>';
+                                    ?>
+                                </tr>
+                                <tr>
+                                    <th>Canceladas</th>
+                                    <?php
+                                    $total = 0;
+                                    foreach($incidencias_estado["Cancelada"] as $key=>$valor)
+                                    {
+                                        echo '<td>'.$valor.'</td>';
+                                        $total += $valor;
+                                    }
+                                    echo '<td class="total">'.$total.'</td>';
+                                    ?>
+                                </tr>
+
+
+                                <tr>
+                                    <th>En visita</th>
+                                    <?php
+                                    $total = 0;
+                                    foreach($incidencias_estado["En visita"] as $key=>$valor)
+                                    {
+                                        echo '<td>'.$valor.'</td>';
+                                        $total += $valor;
+                                    }
+                                    echo '<td class="total">'.$total.'</td>';
+                                    ?>
+                                </tr>
+                                <tr>
+                                    <th>En proceso</th>
+                                    <?php
+                                    $total = 0;
+                                    foreach($incidencias_estado["En proceso"] as $key=>$valor)
+                                    {
+                                        echo '<td>'.$valor.'</td>';
+                                        $total += $valor;
+                                    }
+                                    echo '<td class="total">'.$total.'</td>';
+                                    ?>
+                                </tr>
+                                <tr>
+                                    <th>Alta realizada</th>
+                                    <?php
+                                    $total = 0;
+                                    foreach($incidencias_estado["Alta realizada"] as $key=>$valor)
+                                    {
+                                        echo '<td>'.$valor.'</td>';
+                                        $total += $valor;
+                                    }
+                                    echo '<td class="total">'.$total.'</td>';
+                                    ?>
+                                </tr>
+
+                            <tr class="separador"><?=$separador_td?></tr>
+
+                                <tr>
+                                    <th>Finalizadas &lt; 72h</th>
+                                    <?php
+                                    $total = 0;
+                                    foreach($menos_72 as $key=>$valor)
+                                    {
+                                        echo '<td>'.$valor->cantidad.'</td>';
+                                        $total += $valor->cantidad;
+                                    }
+                                    echo '<td class="total">'.$total.'</td>';
+                                    ?>
+                                </tr>
+
+                                <tr>
+                                    <th>Finalizadas &gt; 72h</th>
+                                    <?php
+                                    $total = 0;
+                                    foreach($mas_72 as $key=>$valor)
+                                    {
+                                        echo '<td>'.$valor->cantidad.'</td>';
+                                        $total += $valor->cantidad;
+                                    }
+                                    echo '<td class="total">'.$total.'</td>';
+                                    ?>
+                                </tr>
+
+                        </tbody>
+
+                    </table>
+
                 </div>
             </div>
         </div>

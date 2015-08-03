@@ -184,3 +184,151 @@ function marcarOrdenacion(tabla,campo,orden) {
     $("#" + tabla + " th[data-rel='"+campo+"']").addClass("sorting_"+orden);
     $("#" + tabla + " th[data-rel='"+campo+"']").attr("data-order",orden);
 }
+
+
+
+/**
+ *  Añadir filtro al multifiltro para un campo
+ */
+
+function anadir_filtro(selector)
+{
+
+
+    // Identificar la capa del "Multifiltro" correspondiente a este campo
+    var id_selector = $(selector).attr("id");
+    var valor_escogido = $(selector).val();
+    var texto_escogido = $("#"+id_selector+" option:selected").html();
+
+    var capa_wrapper_multifiltro = $("#multifiltro_"+id_selector);
+    var capa_multifiltro = $("#multi_"+id_selector);
+    var siguiente = $("#"+id_selector+"_next").val();
+
+
+    var existe = false;
+
+    var elementoNoDefinido = $("#multi_"+id_selector+" div.linea input[value="+valor_escogido+"]").val();
+    if(elementoNoDefinido!=undefined) existe = true;
+
+
+    // Si no existe...
+    if(!existe && valor_escogido != '') {
+        // Añadimos el campo
+        var label = $('<label/>', {
+            'for': id_selector+'_' + siguiente,
+            'class':'auto'
+        });
+        $(label).text(texto_escogido);
+
+        var input = $('<input/>', {
+            'name' : id_selector+'_multi[]',
+            'type': 'hidden',
+            'value' : valor_escogido
+
+        });
+
+        var enlace_borrar = $('<a/>', {
+            'href' : '#',
+            'onclick' : 'eliminar_multifiltro("'+id_selector+'","'+siguiente+'");'
+        });
+        $(enlace_borrar).html('<i class="glyphicon glyphicon-remove"></i>');
+
+        var lineaActual = $('<div/>', {
+            'class': 'linea',
+            'id': id_selector+'_linea_' + siguiente
+        });
+
+        $(lineaActual).append(label);
+        $(lineaActual).append(input);
+        $(lineaActual).append(enlace_borrar);
+
+        $(capa_multifiltro).append(lineaActual);
+
+        siguiente++;
+        $("#"+id_selector+"_next").val(siguiente);
+
+
+        var filtros = $("#multi_"+id_selector+" div.linea");
+        if(filtros.length > 0){ $(capa_wrapper_multifiltro).fadeIn(); }
+        $("#"+id_selector).val("");
+        //enviar_form_ajax('#form_ajax');
+    }
+
+
+
+
+}
+
+
+function eliminar_multifiltro(id_selector,indice)
+{
+    var capa_wrapper_multifiltro = $("#multifiltro_"+id_selector);
+    // Eliminar línea filtro campo
+    $("#"+id_selector+"_linea_"+indice).remove();
+    // Eliminar indice de la cadena de índices
+
+    var filtros = $("#multi_"+id_selector+" div.linea");
+    if(filtros.length == 0){ $(capa_wrapper_multifiltro).hide(); }
+
+    $("#"+id_selector).val("");
+
+    //enviar_form_ajax('#form_ajax');
+
+}
+
+
+$.xhrPool = [];
+$.xhrPool.abortAll = function() {
+    $(this).each(function(idx, jqXHR) {
+        jqXHR.abort();
+    });
+    $.xhrPool.length = 0
+};
+
+$.ajaxSetup({
+    beforeSend: function(jqXHR) {
+        $.xhrPool.push(jqXHR);
+    },
+    complete: function(jqXHR) {
+        var index = $.xhrPool.indexOf(jqXHR);
+        if (index > -1) {
+            $.xhrPool.splice(index, 1);
+        }
+    }
+});
+
+function enviar_form_ajax(id_form, callback_enviar_form)
+{
+    $("#result").hide();
+
+    $(id_form).submit(function(){
+        $.xhrPool.abortAll();
+
+        $.ajax({
+            type: 'POST',
+
+            url: $(this).attr('action'),
+            data: $(this).serialize(),
+            // Mostramos un mensaje con la respuesta de PHP
+            success: function(data) {
+                alert(data);
+                $('#result').html(data);
+                $('#result').fadeIn();
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                console.log(xhr.status);
+                console.log(xhr.responseText);
+                console.log(thrownError);
+            }
+        })
+
+        return false;
+    });
+    $(id_form).submit();
+
+}
+
+var callback_enviar_form = function()
+{
+
+}

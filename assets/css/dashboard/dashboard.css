@@ -126,6 +126,17 @@ div.multifiltro div.linea{ padding: 0 0 0 0;  }
     max-resolution: 0;
     padding: 0;
 }
+
+/**
+**  ESTADO INCIDENCIAS
+**/
+.table-borde-lineal>tbody>tr>td {
+    border-bottom: 1px solid #ddd;
+}
+.table-borde-lineal>tbody>tr>th{ font-size:13px; text-align: right; vertical-align: middle; width: 16%;}
+.table-borde-lineal>tbody>tr>td.total{ font-weight: bold; border-left:1px solid #ddd;}
+.table-borde-lineal>tbody>tr.separador>td{ font-size: 1px; height: 4px;
+    padding: 0;}
 /**
 ** MANTENIMIENTO
 **/

@@ -34,7 +34,7 @@
                                 <?php
                                 foreach ($stock_balance as $stock) {
 
-                                        $necesitamos = round($stock->punto_pedido);
+                                        $necesitamos = $stock->punto_pedido;
 
 
                                     $balance = round($stock->unidades_almacen - $stock->punto_pedido);
@@ -51,7 +51,7 @@
                                                     <img src="<?=base_url().$imagen?>" width="50">
                                                 <?php } ?>
                                             </td>
-                                            <td><?php echo $necesitamos ?></td>
+                                            <td><?php echo $stock->punto_pedido?></td>
                                             <td><?php echo $stock->unidades_almacen ?></td>
                                             <td <?=($balance<0)?'style="background-color:red;color:white;"':''?>><?php echo $balance ?></td>
                                         </tr>
