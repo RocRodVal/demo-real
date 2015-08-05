@@ -10,131 +10,150 @@
 
 class Informe_model extends CI_Model
 {
+    public $num_registros = 0;
+
+    /**
+     * @return int
+     */
+    public function getNumRegistros()
+    {
+        return $this->num_registros;
+    }
+
+    /**
+     * @param int $num_registros
+     */
+    public function setNumRegistros($num_registros)
+    {
+        $this->num_registros = $num_registros;
+    }
 
     public function __construct()
     {
         $this->load->database();
     }
 
-    public function get_informe_pdv($page,$cfg_pag,$campo_orden=NULL,$ordenacion=NULL,$data)
+
+
+
+
+
+
+    public function tabla_temporal($data,$limit=NULL)
+    {
+
+
+
+    }
+
+    public function get_sql_informe_pdv($data,$limit=NULL)
     {
         $tipo_tienda = (isset($data["tipo_tienda"]) && !empty($data["tipo_tienda"])) ? $data["tipo_tienda"] : NULL;
         $panelado = (isset($data["panelado"])  && !empty($data["panelado"])) ? $data["panelado"] : NULL;
-        $mueble = (isset($data["mueble"])  && !empty($data["mueble"])) ? $data["mueble"] : NULL;
-        $terminal = (isset($data["terminal"])  && !empty($data["terminal"])) ? $data["terminal"] : NULL;
-        $sfid = (isset($data["sfid"])  && !empty($data["sfid"])) ? $data["sfid"] : NULL;
+        $territory = (isset($data["territory"])  && !empty($data["territory"])) ? $data["territory"] : NULL;
 
+        $id_display = (isset($data["id_display"])  && !empty($data["id_display"])) ? $data["id_display"] : NULL;
 
-        if(is_null($tipo_tienda) && is_null($panelado) && is_null($mueble) && is_null($terminal) && is_null($sfid)){
+        $id_device = (isset($data["id_device"])  && !empty($data["id_device"])) ? $data["id_device"] : NULL;
+        $brand_device = (isset($data["brand_device"])  && !empty($data["brand_device"])) ? $data["brand_device"] : NULL;
+
+        if(is_null($tipo_tienda) && is_null($panelado) && is_null($id_display) && is_null($id_device) && is_null($territory) && is_null($brand_device))
+        {
             return NULL;
         }
 
+        /*$this->db->select("pds.id_pds as id_pds, pds.reference as reference, panelado.panelado_abx as panelado_abx, type_pds.pds as tipo_pds,
+                        pds.territory as territory, territory.territory as territorio, pds.panelado_pds as panelado_pds, commercial, pds.type_via as type_via, type_via.via as tipo_via,
+                        address, zip, city")*/
+
+        $aQuery = array();
+
+        $aQuery["fields"] = array(
+                    "pds.reference as reference",
+                    "type_pds.pds as tipo_pds",
+                    "panelado.panelado_abx as panelado_abx",
+                    "pds.territory as territory",
+                    "territory.territory as territorio",
+                    "pds.panelado_pds as panelado_pds",
+                    "commercial",
+                    "pds.type_via as type_via",
+                    "type_via.via as tipo_via",
+                    "address", "zip", "city");
+
+        $aQuery["table"] = " pds ";
+        $aQuery["joins"] = array();
+
+        //$this->db->select($sCampos);
+
+        $aQuery["joins"]["type_pds"] = "type_pds.id_type_pds = pds.type_pds";
+        $aQuery["joins"]["panelado"] = "panelado.id_panelado=pds.panelado_pds";
+        $aQuery["joins"]["territory"] = "territory.id_territory=pds.territory";
+        $aQuery["joins"]["type_via"] = "type_via.id_type_via = pds.type_via";
 
 
-        $sql_campos = "";
-        $sql_where = "";
-        $sql_join = "";
-        $sql_order = " ";
-        $sql_group = " GROUP BY pds.reference  ";
-
-        if(!is_null($tipo_tienda)){
-            $sql_where .= (" AND pds.type_pds ='$tipo_tienda' ");
+        if(!is_null($id_display)){
+            $aQuery["joins"]["displays_pds"]  = "displays_pds.id_pds = pds.id_pds";
+            $aQuery["joins"]["display"]  = "display.id_display = displays_pds.id_display";
         }
-        if(!is_null($panelado)){
-            $sql_where .= (" AND pds.panelado_pds ='$panelado' ");
-        }
-        if(!is_null($mueble)){
-            $sql_where .= (" AND display.id_display ='$mueble' ");
-        }
-        if(!is_null($terminal)){
-            $sql_where .= (" AND device.id_device ='$terminal' ");
-        }
-        if(!is_null($sfid)) {
-            $sql_where = (" AND pds.reference LIKE '$sfid' ");
-            $sql_group = "";
-        }
 
-
-        if(!is_null($campo_orden) && !empty($campo_orden) && !is_null($ordenacion) && !empty($ordenacion)){
-            $sql_order = " ORDER BY $campo_orden $ordenacion ";
-        }else {
-            $sql_order = ("  ORDER BY  sfid ASC, id_type_pds ASC, id_panelado ASC, id_displays_pds ASC, position ASC $sql_order  ");
-        }
-
-        $offset = (($page-1) * $cfg_pag["per_page"]);
-        $sql_limit = ("LIMIT ".$offset.",".$cfg_pag["per_page"]);
-
-
-        if(is_null($sfid)) {
-            $sql = "SELECT  pds.reference as sfid,
-                        type_pds.pds as tipo_tienda,
-                        type_pds.id_type_pds as id_type_pds,
-                        panelado.panelado as panelado,
-                        pds.panelado_pds as id_panelado,
-                        display.display as mueble,
-                        devices_pds.id_displays_pds as id_displays_pds,
-                        ''  as position,
-                        '' as terminal
-                FROM pds
-
-                    INNER JOIN devices_pds ON pds.id_pds = devices_pds.id_pds
-                    INNER JOIN device ON devices_pds.id_device = device.id_device
-
-                    INNER JOIN displays_pds ON pds.id_pds = displays_pds.id_pds
-                    INNER JOIN display ON displays_pds.id_display = display.id_display
-
-                    INNER JOIN panelado ON pds.panelado_pds = panelado.id_panelado
-                    INNER JOIN type_pds ON pds.type_pds = type_pds.id_type_pds
-
-                WHERE 1=1 AND devices_pds.status ='Alta'
-                $sql_where
-                $sql_group
-                $sql_order
-                $sql_limit                ";
-        }else{
-
-
-            $sql= "SELECT pds.reference AS sfid,
-                          type_pds.pds AS tipo_tienda,
-                          CONCAT(display.display,' ',displays_pds.id_displays_pds) AS mueble,
-                          panelado.panelado AS panelado,
-                          devices_pds.id_device AS id_terminal,
-                          displays_pds.position AS position_mueble,
-                          devices_pds.position AS position,
-                          device.device AS terminal
-
-
-                    FROM pds, display, displays_pds, type_pds, panelado, device, devices_pds
-
-                    WHERE display.id_display = displays_pds.id_display
-
-                    AND displays_pds.id_displays_pds IN (SELECT id_displays_pds FROM displays_pds WHERE id_pds = pds.id_pds AND id_panelado = pds.panelado_pds AND status='Alta')
-                    AND device.id_device = devices_pds.id_device
-
-                    AND devices_pds.id_pds = pds.id_pds
-                    AND devices_pds.id_displays_pds = displays_pds.id_displays_pds
-                    AND devices_pds.id_display = displays_pds.id_display
-                    AND devices_pds.id_device = device.id_device
-                    ANd devices_pds.status = 'Alta'
-
-                    AND type_pds.id_type_pds = pds.type_pds
-                    AND panelado.id_panelado = pds.panelado_pds
-
-
-
-                $sql_where
-
-                ORDER BY sfid ASC, tipo_tienda ASC,  panelado ASC, position_mueble ASC, mueble ASC, position ASC
-                $sql_limit    ";
-
+        if(!is_null($id_device) || !is_null($brand_device)){
+            $aQuery["joins"]["devices_pds"]  = "devices_pds.id_pds=pds.id_pds";
+            $aQuery["joins"]["device"]  = "device.id_device=devices_pds.id_device";
         }
 
 
-        $query = $this->db->query($sql);
+        if(!is_null($tipo_tienda))  $aQuery["where_in"]["pds.type_pds"] = $tipo_tienda;
+        if(!is_null($panelado))     $aQuery["where_in"]["pds.panelado_pds"] = $panelado;
+        if(!is_null($id_display))   $aQuery["where_in"]["displays_pds.id_display"] = $id_display;
+        if(!is_null($id_device))    $aQuery["where_in"]["devices_pds.id_device"] = $id_device;
+        if(!is_null($territory))    $aQuery["where_in"]["pds.territory"] = $territory;
+        if(!is_null($brand_device)) $aQuery["where_in"]["device.brand_device"] = $brand_device;
 
-        return $query->result();
+
+        $aQuery["order_by"]["type_pds.pds"] = "asc";
+        $aQuery["order_by"]["panelado.panelado_abx"] = "asc";
+        $aQuery["order_by"]["territory.territory"] = "asc";
+        $aQuery["order_by"]["pds.reference"] = "asc";
+
+        $aQuery["group_by"] = "reference";
+
+
+
+
+       if(!is_null($limit))
+        {
+            $aQuery["limit"] = array("ini"=> $limit["ini"], "offset"=>$limit["offset"]);
+        }
+
+
+
+        return $aQuery;
     }
 
+    public function get_informe_pdv($data,$ci_pagination=NULL)
+    {
+        $limit = NULL;
+        if(count($data) > $ci_pagination["per_page"])
+        {
+            $limit["ini"] =  $ci_pagination["n_inicial"];
+            $limit["offset"] = $ci_pagination["n_final"];
+        }
+        $aQuery = $this->get_sql_informe_pdv($data,$limit);
+        if(empty($aQuery)) return NULL;
+
+        $query = $this->get_active_record_result($aQuery);
+
+        return $query;
+    }
+
+
+
+    public function get_informe_pdv_quantity($data)
+    {
+        $query = $this->get_sql_informe_pdv($data);
+        if($query === NULL) return 0;
+        return count($query->result());
+    }
 
     public function panelado_tienda($tipo, $id_panelado=NULL)
     {
@@ -155,258 +174,117 @@ class Informe_model extends CI_Model
         echo $resp;
     }
 
-    public function get_informe_csv($campo_orden=NULL,$ordenacion=NULL,$data)
+    public function get_informe_csv($data)
     {
 
         $this->load->dbutil();
         $this->load->helper('file');
         $this->load->helper('download');
 
-        $tipo_tienda = (isset($data["tipo_tienda"]) && !empty($data["tipo_tienda"])) ? $data["tipo_tienda"] : NULL;
-        $panelado = (isset($data["panelado"])  && !empty($data["panelado"])) ? $data["panelado"] : NULL;
-        $mueble = (isset($data["mueble"])  && !empty($data["mueble"])) ? $data["mueble"] : NULL;
-        $terminal = (isset($data["terminal"])  && !empty($data["terminal"])) ? $data["terminal"] : NULL;
-        $sfid = (isset($data["sfid"])  && !empty($data["sfid"])) ? $data["sfid"] : NULL;
+
+        $aQuery = $this->get_sql_informe_pdv($data);
 
 
+        $limit = NULL;
+        if(empty($aQuery)) return NULL;
 
-        $sTitleFilename = "Informe_PDV-";
+        $query = $this->get_sql_result($aQuery);
 
-        $sFiltrosFilename = "";
-        $sFiltrosFilename .= (!is_null($tipo_tienda)) ? ($tipo_tienda."-") : "";
-        $sFiltrosFilename .= (!is_null($panelado)) ? ($panelado."-") : "";
-        $sFiltrosFilename .= (!is_null($mueble)) ? ($mueble."-") : "";
-        $sFiltrosFilename .= (!is_null($terminal)) ? ($terminal."-") : "";
-        $sFiltrosFilename .= (!is_null($sfid)) ? ($sfid."-") : "";
+        if($query != NULL){
+            $delimiter = ",";
+            $newline = "\r\n";
 
-
-
-        if(is_null($tipo_tienda) && is_null($panelado) && is_null($mueble) && is_null($terminal) && is_null($sfid)){
-            return NULL;
+            $datos = $this->dbutil->csv_from_result($query, $delimiter, $newline);
+            force_download('Demo_Real-'.date("d-m-Y").'T'.date("H:i:s").'.csv', $datos);
         }
-
-        $sql_campos = "";
-        $sql_where = "";
-        $sql_join = "";
-        $sql_order = " ";
-        $sql_group = " GROUP BY pds.reference  ";
-
-        if(!is_null($tipo_tienda)){
-            $sql_where .= (" AND pds.type_pds ='$tipo_tienda' ");
-        }
-        if(!is_null($panelado)){
-            $sql_where .= (" AND pds.panelado_pds ='$panelado' ");
-        }
-        if(!is_null($mueble)){
-            $sql_where .= (" AND display.id_display ='$mueble' ");
-        }
-        if(!is_null($terminal)){
-            $sql_where .= (" AND device.id_device ='$terminal' ");
-        }
-        if(!is_null($sfid)) {
-            $sql_where = (" AND pds.reference LIKE '$sfid' ");
-            $sql_group = "";
-        }
-
-
-        if(!is_null($campo_orden) && !empty($campo_orden) && !is_null($ordenacion) && !empty($ordenacion)){
-            $sql_order = " ORDER BY $campo_orden $ordenacion ";
-        }else {
-            $sql_order = ("  ORDER BY  sfid ASC, id_type_pds ASC, id_panelado ASC, id_displays_pds ASC, position ASC $sql_order  ");
-        }
-
-
-
-
-        if(is_null($sfid)) {
-            $sql = "SELECT  pds.reference as sfid,
-                        type_pds.pds as tipo_tienda,
-                        type_pds.id_type_pds as id_type_pds,
-                        panelado.panelado as panelado,
-                        pds.panelado_pds as id_panelado,
-                        display.display as mueble,
-                        devices_pds.id_displays_pds as id_displays_pds,
-                        '' as position,
-                       '' as terminal
-                FROM pds
-
-                    INNER JOIN devices_pds ON pds.id_pds = devices_pds.id_pds
-                    INNER JOIN device ON devices_pds.id_device = device.id_device
-
-                    INNER JOIN displays_pds ON pds.id_pds = displays_pds.id_pds
-                    INNER JOIN display ON displays_pds.id_display = display.id_display
-
-                    INNER JOIN panelado ON pds.panelado_pds = panelado.id_panelado
-                    INNER JOIN type_pds ON pds.type_pds = type_pds.id_type_pds
-
-                WHERE 1=1 AND devices_pds.status ='Alta'
-                $sql_where
-                $sql_group
-                $sql_order
-                                ";
-        }else{
-
-
-            $sql= "SELECT pds.reference AS sfid,
-                          type_pds.pds AS tipo_tienda,
-                          CONCAT(display.display,' ',displays_pds.id_displays_pds) AS mueble,
-                          panelado.panelado AS panelado,
-                          devices_pds.id_device AS id_terminal,
-                          displays_pds.position AS position_mueble,
-                          devices_pds.position AS position,
-                          device.device AS terminal
-
-
-                    FROM pds, display, displays_pds, type_pds, panelado, device, devices_pds
-
-                    WHERE display.id_display = displays_pds.id_display
-
-                    AND displays_pds.id_displays_pds IN (SELECT id_displays_pds FROM displays_pds WHERE id_pds = pds.id_pds AND id_panelado = pds.panelado_pds AND status='Alta')
-                    AND device.id_device = devices_pds.id_device
-
-                    AND devices_pds.id_pds = pds.id_pds
-                    AND devices_pds.id_displays_pds = displays_pds.id_displays_pds
-                    AND devices_pds.id_display = displays_pds.id_display
-                    AND devices_pds.id_device = device.id_device
-                    ANd devices_pds.status = 'Alta'
-
-                    AND type_pds.id_type_pds = pds.type_pds
-                    AND panelado.id_panelado = pds.panelado_pds
-
-
-
-                $sql_where
-
-                ORDER BY sfid ASC, tipo_tienda ASC,  panelado ASC, position_mueble ASC, mueble ASC, position ASC
-                ";
-
-        }
-
-
-        $query = $this->db->query($sql);
-
-
-        $delimiter = ",";
-        $newline = "\r\n";
-        $data = $this->dbutil->csv_from_result($query, $delimiter, $newline);
-        force_download('Demo_Real-'.$sTitleFilename.$sFiltrosFilename.date("d-m-Y").'T'.date("H:i:s").'.csv', $data);
 
 
     }
 
 
-
-
-
-    public function get_informe_pdv_quantity($data)
+    /**
+     * Genera una consulta con Active Record en base a un array pasado como parametro, formado por las subpartes de una
+     * consulta.
+     * @param $aQuery
+     *
+     */
+    function get_active_record_result($aQuery)
     {
-        $tipo_tienda = (isset($data["tipo_tienda"]) && !empty($data["tipo_tienda"])) ? $data["tipo_tienda"] : NULL;
-        $panelado = (isset($data["panelado"])  && !empty($data["panelado"])) ? $data["panelado"] : NULL;
-        $mueble = (isset($data["mueble"])  && !empty($data["mueble"])) ? $data["mueble"] : NULL;
-        $terminal = (isset($data["terminal"])  && !empty($data["terminal"])) ? $data["terminal"] : NULL;
-        $sfid = (isset($data["sfid"])  && !empty($data["sfid"])) ? $data["sfid"] : NULL;
+        $xcrud = xcrud_get_instance();
 
 
-        if(is_null($tipo_tienda) && is_null($panelado) && is_null($mueble) && is_null($terminal) && is_null($sfid)){
-            return NULL;
-        }
+        $sCampos = implode(",",$aQuery["fields"]);
+        $this->db->select($sCampos);
 
+        if(isset($aQuery["joins"]) && !empty($aQuery["joins"]))         foreach($aQuery["joins"] as $tabla_sec=>$on)        $this->db->join($tabla_sec,$on);
+        if(isset($aQuery["where_in"]) && !empty($aQuery["where_in"]))   foreach($aQuery["where_in"] as $campo=>$valores)    $this->db->where_in($campo,$valores);
+        if(isset($aQuery["order_by"]) && !empty($aQuery["order_by"]))   foreach($aQuery["order_by"] as $campo=>$orden)      $this->db->order_by($campo,$orden);
 
+        if(isset($aQuery["group_by"]) && !empty($aQuery["group_by"]))   $this->db->group_by($aQuery["group_by"]);
 
-        $sql_campos = "";
-        $sql_where = "";
-        $sql_join = "";
-        $sql_order = " ";
-        $sql_group = "  GROUP BY sfid ";
-
-        $sql_where = "";
-        if(!is_null($tipo_tienda)){
-            $sql_where .= (" AND pds.type_pds ='$tipo_tienda' ");
-        }
-        if(!is_null($panelado)){
-            $sql_where .= (" AND pds.panelado_pds ='$panelado' ");
-        }
-        if(!is_null($mueble)){
-            $sql_where .= (" AND display.id_display ='$mueble' ");
-        }
-        if(!is_null($terminal)){
-            $sql_where .= (" AND device.id_device ='$terminal' ");
-        }
-        if(!is_null($sfid)) {
-            $sql_where = (" AND pds.reference LIKE '$sfid' ");
-            $sql_group = "";
-        }
-
-
-
-        if(is_null($sfid)) {
-            $sql = "SELECT  pds.reference as sfid,
-                        type_pds.pds as tipo_tienda,
-                        type_pds.id_type_pds as id_type_pds,
-                        panelado.panelado as panelado,
-                        pds.panelado_pds as id_panelado,
-                        display.display as mueble,
-                        devices_pds.id_displays_pds as id_displays_pds,
-                        devices_pds.position  as position,
-                        device.device as terminal
-                FROM pds
-
-                    INNER JOIN devices_pds ON pds.id_pds = devices_pds.id_pds
-                    INNER JOIN device ON devices_pds.id_device = device.id_device
-
-                    INNER JOIN displays_pds ON pds.id_pds = displays_pds.id_pds
-                    INNER JOIN display ON displays_pds.id_display = display.id_display
-
-                    INNER JOIN panelado ON pds.panelado_pds = panelado.id_panelado
-                    INNER JOIN type_pds ON pds.type_pds = type_pds.id_type_pds
-
-                WHERE 1=1 AND devices_pds.status ='Alta'
-                $sql_where
-                $sql_group
-                $sql_order
-                                ";
+        if(isset($aQuery["limit"])){
+            $limites = $aQuery["limit"];
+            $ini = (empty($limites["ini"])) ? NULL : $limites["ini"];
+            $offset = (empty($limites["offset"])) ? NULL : $limites["offset"];
+            $query = $this->db->get($aQuery["table"],$ini,$offset);
         }else{
-
-
-            $sql= "SELECT pds.reference AS sfid,
-                          type_pds.pds AS tipo_tienda,
-                          CONCAT(display.display,' ',displays_pds.id_displays_pds) AS mueble,
-                          panelado.panelado AS panelado,
-                          devices_pds.id_device AS id_terminal,
-                          displays_pds.position AS position_mueble,
-                          devices_pds.position AS position,
-                          device.device AS terminal
-
-
-                    FROM pds, display, displays_pds, type_pds, panelado, device, devices_pds
-
-                    WHERE display.id_display = displays_pds.id_display
-
-                    AND displays_pds.id_displays_pds IN (SELECT id_displays_pds FROM displays_pds WHERE id_pds = pds.id_pds AND id_panelado = pds.panelado_pds AND status='Alta')
-                    AND device.id_device = devices_pds.id_device
-
-                    AND devices_pds.id_pds = pds.id_pds
-                    AND devices_pds.id_displays_pds = displays_pds.id_displays_pds
-                    AND devices_pds.id_display = displays_pds.id_display
-                    AND devices_pds.id_device = device.id_device
-                    ANd devices_pds.status = 'Alta'
-
-                    AND type_pds.id_type_pds = pds.type_pds
-                    AND panelado.id_panelado = pds.panelado_pds
-
-
-
-                $sql_where
-
-
-                ";
-
+            $query = $this->db->get($aQuery["table"]);
         }
 
 
+        return $query->result();
 
-        $query = $this->db->query($sql);
-        return count($query->result());
     }
+
+
+
+    /**
+     * Genera una consulta con Active Record en base a un array pasado como parametro, formado por las subpartes de una
+     * consulta.
+     * @param $aQuery
+     *
+     */
+    function get_sql_result($aQuery)
+    {
+        $xcrud = xcrud_get_instance();
+
+        $sSQL = "SELECT ".implode(",",$aQuery["fields"]);
+        $sSQL .= (" FROM ".$aQuery["table"]);
+
+        if(isset($aQuery["joins"]) && !empty($aQuery["joins"]))         foreach($aQuery["joins"] as $tabla_sec=>$on)        $sSQL .= (" JOIN ".$tabla_sec." ON ".$on);
+
+        $sSQL .= " WHERE 1=1 ";
+
+        if(isset($aQuery["where_in"]) && !empty($aQuery["where_in"]))   foreach($aQuery["where_in"] as $campo=>$valores)    $sSQL .= (" AND ".$campo .  " IN (". implode(",",$valores).") ");
+
+        if(isset($aQuery["group_by"]) && !empty($aQuery["group_by"]))   $sSQL  .= (" GROUP BY ".$aQuery["group_by"]);
+
+        if(isset($aQuery["order_by"]) && !empty($aQuery["order_by"]))
+        {
+            $sSQL .= " ORDER BY ";
+            foreach($aQuery["order_by"] as $campo=>$orden) $sSQL .= ($campo . " ".$orden.",");
+
+            $sSQL = trim($sSQL,",");
+        }
+
+
+        if(isset($aQuery["limit"])){
+            $limites = $aQuery["limit"];
+            $ini = (empty($limites["ini"])) ? NULL : $limites["ini"];
+            $offset = (empty($limites["offset"])) ? NULL : $limites["offset"];
+
+            if(!is_null($ini) && !is_null($offset)){
+                $sSQL .= ("LIMIT ".$ini.",".$offset);
+            }
+        }
+
+        $query = $this->db->query($sSQL);
+        return $query;
+
+    }
+
+
+
+
 
 }
