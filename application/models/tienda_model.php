@@ -299,13 +299,14 @@ class Tienda_model extends CI_Model {
 
 
         $query = $this->db->query('SELECT brand_alarm.brand as brand, alarm.alarm as alarm, alarm.picture_url as imagen, COUNT(*) as incidencias,
-                                      (COUNT(*) / '.$meses.' * 2) as punto_pedido,
-                                      units  as unidades_almacen
+                                      (CEIL((COUNT(*) / '.$meses.' * 2/10)) * 10) as punto_pedido, units  as unidades_almacen
+
                                       FROM material_incidencias
+
                                       JOIN alarm ON alarm.id_alarm = material_incidencias.id_alarm
                                       JOIN brand_alarm ON alarm.brand_alarm = brand_alarm.id_brand_alarm
-                                      GROUP BY alarm.alarm
-                                      ORDER BY incidencias DESC, brand DESC, alarm DESC'
+                                        GROUP BY alarm.alarm
+                                        ORDER BY incidencias DESC, brand DESC, alarm DESC'
 									);
 
 

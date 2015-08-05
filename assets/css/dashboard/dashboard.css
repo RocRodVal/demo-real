@@ -127,6 +127,11 @@ div.multifiltro div.linea{ padding: 0 0 0 0;  }
     padding: 0;
 }
 
+#deshabilitador{ position:absolute; top: 0; left: 0; width: 100%; height: 100%;
+    display: none; z-index:100000;
+    background:url("../../images/preloader.gif") center bottom no-repeat transparent; padding-bottom: 30px}
+
+.disabled{ opacity:.70}
 /**
 **  ESTADO INCIDENCIAS
 **/

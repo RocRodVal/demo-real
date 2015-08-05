@@ -48,7 +48,6 @@
                                         }
                                     }
                                     $(document).ready(function(){
-
                                         if($("#tipo_tienda_visual").val()!= ""){ cargar_panelados();  }
                                     });
 

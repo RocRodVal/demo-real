@@ -251,7 +251,7 @@ function anadir_filtro(selector)
         var filtros = $("#multi_"+id_selector+" div.linea");
         if(filtros.length > 0){ $(capa_wrapper_multifiltro).fadeIn(); }
         $("#"+id_selector).val("");
-        //enviar_form_ajax('#form_ajax');
+        enviar_form_ajax('#form_ajax');
     }
 
 
@@ -272,61 +272,46 @@ function eliminar_multifiltro(id_selector,indice)
 
     $("#"+id_selector).val("");
 
-    //enviar_form_ajax('#form_ajax');
+    enviar_form_ajax('#form_ajax');
 
 }
 
 
-$.xhrPool = [];
-$.xhrPool.abortAll = function() {
-    $(this).each(function(idx, jqXHR) {
-        jqXHR.abort();
-    });
-    $.xhrPool.length = 0
-};
-
-$.ajaxSetup({
-    beforeSend: function(jqXHR) {
-        $.xhrPool.push(jqXHR);
-    },
-    complete: function(jqXHR) {
-        var index = $.xhrPool.indexOf(jqXHR);
-        if (index > -1) {
-            $.xhrPool.splice(index, 1);
-        }
-    }
-});
-
-function enviar_form_ajax(id_form, callback_enviar_form)
+function enviar_form_ajax(id_form, action)
 {
+    // Ocultamos  capa de  resultados..
     $("#result").hide();
+    // Se deshabilita el formulario..
+    $(id_form).addClass("disabled");
+    $("#deshabilitador").css("display","block");
 
-    $(id_form).submit(function(){
-        $.xhrPool.abortAll();
+
 
         $.ajax({
             type: 'POST',
 
-            url: $(this).attr('action'),
-            data: $(this).serialize(),
+            url: $(id_form).attr('action'),
+            data: $(id_form).serialize(),
             // Mostramos un mensaje con la respuesta de PHP
             success: function(data) {
-                alert(data);
+
                 $('#result').html(data);
                 $('#result').fadeIn();
-            },
-            error: function (xhr, ajaxOptions, thrownError) {
-                console.log(xhr.status);
-                console.log(xhr.responseText);
-                console.log(thrownError);
-            }
-        })
 
-        return false;
-    });
-    $(id_form).submit();
+                // Re-habilita el formulario..
+                $(id_form).removeClass("disabled");
+                $("#deshabilitador").css("display","none");
+
+            },
+            error:function(error){
+                console.error(error.responseText);
+            }
+        });
+
+
 
 }
+
 
 var callback_enviar_form = function()
 {

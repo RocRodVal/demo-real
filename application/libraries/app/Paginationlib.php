@@ -7,8 +7,7 @@ class Paginationlib {
 
     function __construct() {
         $this->ci =& get_instance();
-
-
+        $this->ci->load->library('session');
     }
 
     public function init_pagination($base_url="",$total_rows,$per_page=FALSE, $segment = FALSE){
