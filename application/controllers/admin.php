@@ -3397,8 +3397,6 @@ class Admin extends CI_Controller
             $this->load->model('tienda_model');
             $this->load->model('informe_model');
 
-            $this->load->library('informe');
-
             $data["title"] = "Informe de Puntos de Venta";
 
 
