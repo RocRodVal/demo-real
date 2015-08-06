@@ -203,24 +203,35 @@ class Tienda_model extends CI_Model {
 	
 	public function get_stock_cruzado() {
 	
-		$query = $this->db->select('device.id_device, brand_device.brand, device.device,
-									(
-										SELECT COUNT(*)
-										FROM devices_pds
-								        WHERE (devices_pds.id_device = device.id_device) AND
-										(devices_pds.status = "Alta")
-								    ) AS unidades_pds,
-									(SELECT  COUNT(*)
-										FROM devices_almacen
-										WHERE (devices_almacen.id_device = device.id_device) AND
-										(devices_almacen.status = "En stock")
-									) AS unidades_almacen')
-										->join('brand_device','device.brand_device = brand_device.id_brand_device')
+		$query = $this->db->query('
 
-										->order_by('brand_device.brand', 'ASC')
-										->order_by('device.device', 'ASC')
-										->get('device');
-	
+		SELECT temporal.id_device, brand_device.brand, temporal.device, unidades_pds, unidades_almacen
+		FROM (
+		        SELECT device.id_device, device.brand_device, device.device,
+                    (
+                        SELECT COUNT(*)
+                        FROM devices_pds
+                        WHERE (devices_pds.id_device = device.id_device) AND
+                        (devices_pds.status = "Alta")
+                    )
+                    as unidades_pds,
+
+                    (
+                        SELECT  COUNT(*)
+                        FROM devices_almacen
+                        WHERE (devices_almacen.id_device = device.id_device) AND
+                        (devices_almacen.status = "En stock")
+                    )
+                    as unidades_almacen FROM device
+                ) as temporal
+
+        JOIN brand_device ON temporal.brand_device = brand_device.id_brand_device
+        WHERE unidades_pds > 0 AND unidades_almacen > 0
+        ORDER BY brand_device.brand ASC, temporal.device ASC ');
+
+
+
+
 		return $query->result();
 	}
 
@@ -233,37 +244,34 @@ class Tienda_model extends CI_Model {
         $this->load->helper('file');
         $this->load->helper('download');
 
-        $query = $this->db->select('device.id_device, brand_device.brand, device.device,
-									(
-										SELECT COUNT(*)
-										FROM devices_pds
-								        WHERE (devices_pds.id_device = device.id_device) AND
-										(devices_pds.status = "Alta")
-								    ) AS unidades_pds,
-									(SELECT  COUNT(*)
-										FROM devices_almacen
-										WHERE (devices_almacen.id_device = device.id_device) AND
-										(devices_almacen.status = "En stock")
-									) AS unidades_almacen,
+        $query = $this->db->query('
 
-                                    ROUND((SELECT  COUNT(*)
-										FROM devices_almacen
-										WHERE (devices_almacen.id_device = device.id_device) AND
-										(devices_almacen.status = "En stock")
-									)
-									-
-									(SELECT COUNT(*)
-										FROM devices_pds
-								        WHERE (devices_pds.id_device = device.id_device) AND
-										(devices_pds.status = "Alta"))* 0.05 -2 ) as Balance
+		SELECT temporal.id_device, brand_device.brand, temporal.device, unidades_pds,
+		(CASE WHEN unidades_pds = 0 THEN 0 ELSE CEIL(unidades_pds * 0.05 + 2) END) as stock_necesario,
+		unidades_almacen,
+		(unidades_almacen - (CASE WHEN unidades_pds = 0 THEN 0 ELSE CEIL(unidades_pds * 0.05 + 2) END)) as balance
+		FROM (
+		        SELECT device.id_device, device.brand_device, device.device,
+                    (
+                        SELECT COUNT(*)
+                        FROM devices_pds
+                        WHERE (devices_pds.id_device = device.id_device) AND
+                        (devices_pds.status = "Alta")
+                    )
+                    as unidades_pds,
 
-                                    ')
+                    (
+                        SELECT  COUNT(*)
+                        FROM devices_almacen
+                        WHERE (devices_almacen.id_device = device.id_device) AND
+                        (devices_almacen.status = "En stock")
+                    )
+                    as unidades_almacen FROM device
+                ) as temporal
 
-            ->join('brand_device','device.brand_device = brand_device.id_brand_device')
-            ->order_by('brand_device.brand', 'ASC')
-            ->order_by('device.device', 'ASC')
-            ->get('device');
-
+        JOIN brand_device ON temporal.brand_device = brand_device.id_brand_device
+        WHERE unidades_pds > 0 AND unidades_almacen > 0
+        ORDER BY brand_device.brand ASC, temporal.device ASC ');
 
 
 
