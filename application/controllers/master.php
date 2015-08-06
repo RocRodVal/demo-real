@@ -768,18 +768,18 @@ class Master extends CI_Controller {
 
                 $total_incidencias_total += $value->total_incidencias;
 
-                $dias_op = contar_dias_excepto($value->mes,$value->anio,array('Sun'));
+                $dias_op = contar_dias_excepto($value->mes,$value->anio,array('Sun'),date('d'));
                 $dias_operativos[] = $dias_op;
                 $total_dias_operativos += $dias_op;
 
                 $inc_por_dia = $value->total_incidencias / $dias_op;
 
 
-                $incidencias_dia[] = round($inc_por_dia,2);
+                $incidencias_dia[] = round($inc_por_dia);
 
             }
 
-            $total_media = round($total_incidencias_total / $total_dias_operativos,2);
+            $total_media = round($total_incidencias_total / $total_dias_operativos);
 
 
             /**
