@@ -10,6 +10,8 @@ class Master extends CI_Controller {
 		$this->load->library(array('email','encrypt','form_validation','session'));
         $this->load->library('uri');
 
+        $this->load->library('auth',array(9));
+
     }
 		
 	
@@ -1560,7 +1562,8 @@ class Master extends CI_Controller {
 
     public function informe_pdv()
     {
-        if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 9)) {
+
+        if($this->auth->is_auth()) {
             $xcrud = xcrud_get_instance();
             $this->load->model('sfid_model');
             $this->load->model('tienda_model');
@@ -1568,160 +1571,179 @@ class Master extends CI_Controller {
 
             $data["title"] = "Informe de Puntos de Venta";
 
-            $tipo_tienda = "";
-            $panelado = "";
-            $mueble = "";
-            $terminal = "";
-            $sfid = "";
-
-            $data["tipo_tienda"] = $tipo_tienda;
-            $data["panelado"] = $panelado;
-            $data["mueble"] = $mueble;
-            $data["terminal"] = $terminal;
-            $data["sfid"] = $sfid;
-
-
-            $campo_orden = NULL;
-            $ordenacion = NULL;
-
-            $total_registros = 0;
-            $generado = FALSE;
 
             $resultados = array();
 
-            if ($this->input->post("generar_informe") === "si") {
-                $tipo_tienda = $this->input->post("tipo_tienda");
-                $panelado = $this->input->post("panelado");
-                $mueble = $this->input->post("mueble");
-                $terminal = $this->input->post("terminal");
-                $sfid = $this->input->post("sfid");
 
-
-               if(empty($tipo_tienda)&&empty($panelado)&&empty($mueble)&&empty($terminal)&&empty($sfid)){
-                   redirect(base_url()."master/informe_pdv");
-               }
-
-                $data["tipo_tienda"] = $tipo_tienda;
-                $data["panelado"] = $panelado;
-                $data["mueble"] = $mueble;
-                $data["terminal"] = $terminal;
-                $data["sfid"] = $sfid;
-                $data["generado"] = TRUE;
-
-
-
-
-                $total_registros = $this->informe_model->get_informe_pdv_quantity($data);
-
-
-                $data["total_registros"] = $total_registros;
-
-
-                $this->session->set_userdata($data);
-                $generado = TRUE;
-            }else{
-
-                // OBTENER DE LA SESION, SI EXISTE
-                if( $this->session->userdata("generado")!==NULL  && $this->session->userdata("generado")===TRUE){
-
-                    $tipo_tienda = $this->session->userdata("tipo_tienda");
-                    $panelado = $this->session->userdata("panelado");
-                    $mueble = $this->session->userdata("mueble");
-                    $terminal = $this->session->userdata("terminal");
-                    $sfid = $this->session->userdata("sfid");
-                    $generado = $this->session->userdata("generado");
-                    $total_registros = $this->session->userdata("total_registros");
-
-                    $data["tipo_tienda"] = $tipo_tienda;
-                    $data["panelado"] = $panelado;
-                    $data["mueble"] = $mueble;
-                    $data["terminal"] = $terminal;
-                    $data["sfid"] = $sfid;
-                    $data["generado"] = TRUE;
-                    $data["total_registros"] = $total_registros;
-
-                }
-            }
-
-
-
-            $data["generado"] = $generado;
-
-            // Comprobar si existe el segmento PAGE en la URI, si no inicializar a 1..
-            $get_page = $this->uri->segment(3);
-
-            if($get_page==="reset"){
-                $this->session->unset_userdata("tipo_tienda");
-                $this->session->unset_userdata("panelado");
-                $this->session->unset_userdata("mueble");
-                $this->session->unset_userdata("terminal");
-                $this->session->unset_userdata("sfid");
-                $this->session->unset_userdata("generado");
-
-                redirect("master/informe_pdv","refresh");
-
-            }
-
-            if( $this->uri->segment(2) === "informe_pdv") {
-                $page = ( ! empty($get_page) ) ? $get_page : 1 ;
-                $segment = 3;
-            }else{
-                $page = 1;
-                $segment = null;
-            }
-
-            $this->load->library('app/paginationlib');
-            $per_page = 100;
-
-
-            $cfg_pagination = $this->paginationlib->init_pagination("master/informe_pdv/",$total_registros,$per_page,$segment);
-            $this->load->library('pagination',$cfg_pagination);
-            $this->pagination->initialize($cfg_pagination);
-
-            // Indicamos si habrá que mostrar el paginador en la vista
-
-            $data["pag"]  = $this->paginationlib->get_bounds($total_registros,$page,$per_page);
-
-
-            $data["pagination_helper"]   = $this->pagination;
-
-
-            if($generado) {
-                $resultados = $this->informe_model->get_informe_pdv($page,$cfg_pagination,$campo_orden,$ordenacion,$data);
-            }
-
-
+            $data["generado"] = FALSE;
 
             $data["resultados"] = $resultados;
 
 
             /** COMENTADO SELECT DEMOREAL $data["tipos_tienda"] = $this->sfid_model->get_types_pds_demoreal(); */
             $data["tipos_tienda"] = $this->sfid_model->get_types_pds();
-
             /** COMENTADO SELECT DEMOREAL $panelados = $this->tienda_model->get_panelados_maestros_demoreal(); */
-            $panelados = $this->tienda_model->get_panelados_maestros();
-            $data["panelados"] = $panelados;
-
-
+            $data["panelados"] = $this->tienda_model->get_panelados_maestros();
             /** COMENTADO SELECT DEMOREAL $muebles = $this->tienda_model->get_displays_demoreal(); */
-            $muebles = $this->tienda_model->get_displays();
-            $data["muebles"] = $muebles;
-
-
-
+            $data["muebles"] = $this->tienda_model->get_displays();
             /** COMENTADO SELECT DEMOREAL $terminales = $this->tienda_model->get_devices_demoreal(); */
-            $terminales = $this->tienda_model->get_devices();
-            $data["terminales"] = $terminales;
+            //$data["terminales"] = $this->tienda_model->get_devices();
+
+            $data["terminales"] = $this->tienda_model->get_devices_demoreal();
+            /* LISTADO DE TERRITORIOS PARA EL SELECT */
+            $data["territorios"] = $this->tienda_model->get_territorios();
+            /* LISTADO DE FABRICANTES PARA EL SELECT */
+            $data["fabricantes"] = $this->tienda_model->get_fabricantes();
+
 
 
             $this->load->view('master/header', $data);
             $this->load->view('master/navbar', $data);
+            $this->load->view('master/informes/informe_puntos_venta_form', $data);
             $this->load->view('master/informes/informe_puntos_venta', $data);
             $this->load->view('master/footer');
         }
         else
         {
             redirect('master','refresh');
+        }
+    }
+
+
+
+    /**
+     * Método que se llama por AJAX desde el Informe PDV, al añadir o quitar un elemento del multifiltro.
+     */
+    public function resultado_pdv($exportar = NULL)
+    {
+        if($this->auth->is_auth()) {
+            $xcrud = xcrud_get_instance();
+
+            $this->load->model('informe_model');
+
+
+            $arr_campos = array(
+                "tipo_tienda" => '',
+                "panelado" => '',
+                "id_display" => '',
+                "id_device" => '',
+                "territory" => '',
+                "brand_device" => ''
+            );
+
+            foreach ($arr_campos as $campo => $valor) {
+                $$campo = $valor;
+                $data[$campo] = $valor;
+            }
+
+            $campo_orden = NULL;
+            $ordenacion = NULL;
+
+            $total_registros = 0;
+
+            $controlador_origen = "master"; //  Controlador por defecto
+
+
+            if ($this->input->post("generar_informe") === "si") {
+
+
+                $controlador_origen = $this->input->post("controlador");
+                $data["controlador"] = $controlador_origen;
+
+                $campos_sess_informe = array();
+                // TIPO TIENDA
+                $tipo_tienda = array();
+                $campos_sess_informe["tipo_tienda"] = NULL;
+                if (is_array($this->input->post("tipo_tienda_multi"))) {
+                    foreach ($this->input->post("tipo_tienda_multi") as $tt) $tipo_tienda[] = $tt;
+                    $campos_sess_informe["tipo_tienda"] = $tipo_tienda;
+                }
+
+                // PANELADO
+                $panelado = array();
+                $campos_sess_informe["panelado"] = NULL;
+                if (is_array($this->input->post("panelado_multi"))) {
+                    foreach ($this->input->post("panelado_multi") as $tt) $panelado[] = $tt;
+                    $campos_sess_informe["panelado"] = $panelado;
+                }
+                // MUEBLE
+                $id_display = array();
+                $campos_sess_informe["id_display"] = NULL;
+                if (is_array($this->input->post("id_display_multi"))) {
+                    foreach ($this->input->post("id_display_multi") as $tt) $id_display[] = $tt;
+                    $campos_sess_informe["id_display"] = $id_display;
+                }
+                // DEVICE
+                $id_device = array();
+                $campos_sess_informe["id_device"] = NULL;
+                if (is_array($this->input->post("id_device_multi"))) {
+                    foreach ($this->input->post("id_device_multi") as $tt) $id_device[] = $tt;
+                    $campos_sess_informe["id_device"] = $id_device;
+                }
+
+
+                // TERRITORY
+                $territory = array();
+                $campos_sess_informe["territory"] = NULL;
+                if (is_array($this->input->post("territory_multi"))) {
+                    foreach ($this->input->post("territory_multi") as $tt) $territory[] = $tt;
+                    $campos_sess_informe["territory"] = $territory;
+                }
+
+                // DEVICE BRAND
+                $brand_device = array();
+                $campos_sess_informe["brand_device"] = NULL;
+                if (is_array($this->input->post("brand_device_multi"))) {
+                    foreach ($this->input->post("brand_device_multi") as $tt) $brand_device[] = $tt;
+                    $campos_sess_informe["brand_device"] = $brand_device;
+                }
+
+
+                // Guardamos en la sesión el objeto $campos_sess_informe
+                $this->session->set_userdata("campos_sess",$campos_sess_informe);
+                $this->session->set_userdata("generado",TRUE);
+
+                $data["tipo_tienda"] = $tipo_tienda;
+                $data["panelado"] = $panelado;
+                $data["id_display"] = $id_display;
+                $data["id_device"] = $id_device;
+                $data["territory"] = $territory;
+                $data["brand_device"] = $brand_device;
+
+                $data["generado"] = TRUE;
+                $data["controlador"] = $this->uri->segment(1);
+
+            }
+
+
+            // Recuperar de la sesion
+            if($this->session->userdata("generado"))
+            {
+                foreach($this->session->userdata("campos_sess") as $nombre_var=>$valores)
+                {
+                    $$nombre_var = $valores;             // Creamos variable al vuelo..
+                    $data[$nombre_var] = $valores;      // Guardamos los mismos valores para la variable de la vista.
+                }
+            }
+
+
+            if(is_null($exportar))
+            {
+                $resultados = $this->informe_model->get_informe_pdv($data);
+                $data["total_registros"] = count($resultados);
+                $data["resultados"] = $resultados;
+
+                $resp = $this->load->view('master/informes/informe_puntos_venta_ajax', $data, TRUE);
+                echo $resp;
+
+            }
+            // Informe CSV
+            else
+            {
+
+                $this->informe_model->get_informe_csv($data);
+            }
+
         }
     }
 
