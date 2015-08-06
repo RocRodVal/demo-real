@@ -10,7 +10,10 @@ class Tienda_model extends CI_Model {
 	public function get_stock() {
 	
 		$query = $this->db->query('
-		SELECT temporal.id_device, brand_device.brand, temporal.device, unidades_pds, unidades_almacen
+		SELECT temporal.id_device, brand_device.brand, temporal.device, unidades_pds,
+		(CASE WHEN unidades_pds = 0 THEN 0 ELSE CEIL(unidades_pds * 0.05 + 2) END) as stock_necesario,
+		deposito_almacen,
+		(deposito_almacen - (CASE WHEN unidades_pds = 0 THEN 0 ELSE CEIL(unidades_pds * 0.05 + 2) END)) as balance
 		FROM (
 		        SELECT device.id_device, device.brand_device, device.device,
                     (
@@ -27,11 +30,11 @@ class Tienda_model extends CI_Model {
                         WHERE (devices_almacen.id_device = device.id_device) AND
                         (devices_almacen.status = "En stock")
                     )
-                    as unidades_almacen FROM device
+                    as deposito_almacen FROM device
                 ) as temporal
 
         JOIN brand_device ON temporal.brand_device = brand_device.id_brand_device
-        WHERE unidades_pds > 0 OR  unidades_almacen > 0
+        WHERE unidades_pds > 0 OR deposito_almacen > 0
         ORDER BY brand_device.brand ASC, temporal.device ASC ');
 	
 		return $query->result();
@@ -210,7 +213,10 @@ class Tienda_model extends CI_Model {
 	
 		$query = $this->db->query('
 
-		SELECT temporal.id_device, brand_device.brand, temporal.device, unidades_pds, unidades_almacen
+		SELECT temporal.id_device, brand_device.brand, temporal.device, unidades_pds,
+		(CASE WHEN unidades_pds = 0 THEN 0 ELSE CEIL(unidades_pds * 0.05 + 2) END) as stock_necesario,
+		unidades_almacen,
+		(unidades_almacen - (CASE WHEN unidades_pds = 0 THEN 0 ELSE CEIL(unidades_pds * 0.05 + 2) END)) as balance
 		FROM (
 		        SELECT device.id_device, device.brand_device, device.device,
                     (
@@ -231,7 +237,7 @@ class Tienda_model extends CI_Model {
                 ) as temporal
 
         JOIN brand_device ON temporal.brand_device = brand_device.id_brand_device
-        WHERE unidades_pds > 0 OR  unidades_almacen > 0
+        WHERE unidades_pds > 0 OR unidades_almacen > 0
         ORDER BY brand_device.brand ASC, temporal.device ASC ');
 
 
