@@ -814,9 +814,9 @@ class Master extends CI_Controller {
             }
 
             $titulo_incidencias_estado = $this->db->query("
-                                SELECT DISTINCT(incidencias.status_pds) as estado
-								FROM incidencias
-								ORDER BY estado ASC
+                                SELECT title as estado
+								FROM type_status_pds
+								ORDER BY id_status_pds ASC
 								 ")->result();
 
 
@@ -826,10 +826,18 @@ class Master extends CI_Controller {
                 // Rellenamos con 0 cuando no hay incidencias para ese mes
                 foreach($titulo_incidencias_estado as $id_titulo_estado=>$estado)
                 {
+
+                    // Creamos el índice por estado de incidencia, si no existe...
+                    if(!array_key_exists($estado->estado,$incidencias_estado)) $incidencias_estado[$estado->estado] = array();
+
+                    // Creamos el índice de mes, en las incidencias por estado.
                     if(!array_key_exists($id_mes,$incidencias_estado[$estado->estado])) $incidencias_estado[$estado->estado][$id_mes] = 0;
+
+                    // Ordenamos el array por estado.
                     ksort($incidencias_estado[$estado->estado]);
                 }
             }
+
 
             /**
              * TErcer bloque de la tabla, -72h y +72h
