@@ -31,7 +31,7 @@ if (!$generado)
 
 
             <div class="pagination">
-                <p>Encontrados <?=$total_registros?> resultados. <?=$controlador?></p>
+                <p>Encontrados <?=$total_registros?> resultados.</p>
             </div>
 
 
