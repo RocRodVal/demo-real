@@ -239,11 +239,11 @@ form .form-group label{ margin-right:5px; }
     position:fixed;
     z-index: 1000000;
     width: auto;
-    height: auto; right:0; bottom:0;
+    height: auto; left:0; bottom:0;
     color: #fff;
     background-color: #f60;
     padding:15px 20px 10px 20px;
-    border-top-left-radius:15px;
+    border-top-right-radius:15px;
     box-shadow:0 0 15px #000;
     }
     #env h1{ float:left; text-align: right; font-weight: bold; font-size: 22px; width:100%; margin:0; padding: 0; text-shadow:1px 1px 5px #000 ;
