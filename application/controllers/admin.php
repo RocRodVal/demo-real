@@ -656,27 +656,22 @@ class Admin extends CI_Controller
 
             $incidencia = $this->tienda_model->get_incidencia($id_inc);
 
-            $historico_material_asignado = $this->tienda_model->historico_fecha($id_inc,'Material asignado');
+            $data['last_updated'] = date("d/m/Y",strtotime($incidencia['last_updated']));
 
-            if (isset($historico_material_asignado['fecha']))
-            {
-            	$data['historico_material_asignado'] = $historico_material_asignado['fecha'];
-            }
-            else
-            {
-            	$data['historico_material_asignado'] = '---';
-            }
+            $historico_revisada = $this->tienda_model->historico_fecha($id_inc,'Revisada');
+            $data['historico_revisada'] =  isset($historico_revisada['fecha']) ? date("d/m/Y",strtotime($historico_revisada['fecha'])) : '';
+
+            $historico_instalador_asignado = $this->tienda_model->historico_fecha($id_inc,'Instalador asignado');
+            $data['historico_instalador_asignado'] =  isset($historico_instalador_asignado['fecha']) ? date("d/m/Y",strtotime($historico_instalador_asignado['fecha'])) : '';
+
+            $historico_material_asignado = $this->tienda_model->historico_fecha($id_inc,'Material asignado');
+            $data['historico_material_asignado'] =  isset($historico_material_asignado['fecha']) ? date("d/m/Y",strtotime($historico_material_asignado['fecha'])) : '';
 
             $historico_fecha_comunicada = $this->tienda_model->historico_fecha($id_inc,'Comunicada');
+            $data['historico_fecha_comunicada'] =  isset($historico_fecha_comunicada['fecha']) ? date("d/m/Y",strtotime($historico_fecha_comunicada['fecha'])) : '';
 
-            if (isset($historico_fecha_comunicada['fecha']))
-            {
-            	$data['historico_fecha_comunicada'] = $historico_fecha_comunicada['fecha'];
-            }
-            else
-            {
-            	$data['historico_fecha_comunicada'] = '---';
-            }
+            $historico_fecha_resuelta = $this->tienda_model->historico_fecha($id_inc,'Resuelta');
+            $data['historico_fecha_resuelta'] =  isset($historico_fecha_resuelta['fecha']) ? date("d/m/Y",strtotime($historico_fecha_resuelta['fecha'])) : '';
 
             $incidencia['intervencion'] = $this->intervencion_model->get_intervencion_incidencia($id_inc);
 
@@ -699,7 +694,7 @@ class Admin extends CI_Controller
             $data['chats'] = $chats;
 
             $data['title'] = 'Operativa incidencia Ref. '.$data['id_inc_url'];
-            $data['last_updated'] = $incidencia['last_updated'];
+
 
             $this->load->view('backend/header', $data);
             $this->load->view('backend/navbar', $data);
@@ -1072,6 +1067,9 @@ class Admin extends CI_Controller
         if ($status == 6)
         {
         	$fecha_cierre = $this->input->post('fecha_cierre');
+
+            if(empty($fecha_cierre)) $fecha_cierre = date('Y-m-d H:i:s');
+
         	$this->tienda_model->incidencia_update_cierre($id_inc, $fecha_cierre);
 
         	if ($incidencia['fail_device'] == 1) {
@@ -1126,6 +1124,115 @@ class Admin extends CI_Controller
         }
 
 
+    }
+
+
+    public function reset_incidencia_status()
+    {
+        if($this->auth->is_auth()) {
+
+            $id_inc = $this->uri->segment(3);
+
+            $xcrud = xcrud_get_instance();
+            $this->load->model(array('tienda_model', 'intervencion_model'));
+
+
+            $data["title"] = "Resetear estado de una incidencia";
+            $data["mensaje_alerta"] = '¿Seguro que deseas resetear la incidencia Nº ##NUM_INC##? El proceso es irreversible.';
+
+            if (empty($id_inc)) {
+                // Aún no ha indicado el ID de incidencia a actualizar.
+
+
+
+                $resetear_incidencia = $this->input->post('resetear_incidencia');
+
+                $data["mensaje_error"] = ($resetear_incidencia === 'si') ? 'Debes introducir el Identificador de la incidencia a resetear' : '';
+
+
+                $this->load->view('backend/header', $data);
+                $this->load->view('backend/navbar', $data);
+                $this->load->view('backend/reset_incidencia', $data);
+                $this->load->view('backend/footer', $data);
+            } else {
+
+
+
+                $o_pds = $this->db->query("SELECT id_pds FROM incidencias WHERE id_incidencia = '$id_inc' ")->row_array();
+
+                $id_pds = (isset($o_pds["id_pds"])) ? $o_pds["id_pds"] : NULL;
+
+                $data["id_pds"] = $id_pds;
+                $data["id_inc"] = $id_inc;
+
+
+                // Ya tenemos el ID....
+                // - Comprobamos que exista la incidencia y no esté finalizada
+                // - Reseteamos el status y status_pds
+                // - Eliminamos del histórico de estados las entradas...
+                // - Eliminamos la intervención
+                // - Eliminamos el material asignado.
+                $mensaje_error = "";
+                $mensaje_exito = "";
+
+                $sql_check = ' SELECT id_incidencia FROM incidencias WHERE status NOT IN ("Cerrada","Cancelada","Resuelta") AND status_pds != "Finalizada" AND id_incidencia = "'.$id_inc.'" ';
+                $query = $this->db->query($sql_check);
+                $check = $query->row_array();
+
+
+                if(empty($check))
+                {
+                    // La incidencia no existe, o no es reseteable...
+                    $mensaje_error = "La incidencia no existe o no es reseteable.";
+                }
+                else
+                {
+                    // La incidencia exsite, seguimos con el proceso de reseteo...
+                    // Reseteamos estado de la incidencia
+                    $sql_status = 'UPDATE incidencias SET status="Nueva", status_pds = "Alta realizada" WHERE id_incidencia="'.$id_inc.'"';
+                    $query = $this->db->query($sql_status);
+
+                    // Sacar el ID de intervención asignada a la incidencia...
+                    $sql_intervencion = 'SELECT id_intervencion FROM intervenciones_incidencias WHERE id_incidencia = "'.$id_inc.'"';
+                    $query = $this->db->query($sql_intervencion);
+                    $resultado_intervencion = $query->row_array();
+                    if(!empty($resultado_intervencion)){
+
+                        // Ahora borramos la relación de la incidencia con la intervención...
+                        $id_intervencion = $resultado_intervencion["id_intervencion"];
+                        $sql_int_inc = 'DELETE FROM intervenciones_incidencias WHERE id_incidencia = "'.$id_inc.'"';
+                        $this->db->query($sql_int_inc);
+
+                        // Si no hay otras incidencias relacionadas con la misma intervención, borramos la intervención...
+                        $sql_int_inc = 'SELECT id_incidencia, id_intervencion FROM intervenciones_incidencias WHERE id_intervencion = "'.$id_intervencion.'"';
+                        $query = $this->db->query($sql_int_inc);
+                        $resultados = $query->result();
+                        print_r($resultados);
+                        if(empty($resultados))
+                        {
+                            $this->db->query('DELETE FROM intervenciones WHERE id_intervencion ="'.$id_intervencion.'"');
+                        }
+
+                    }
+
+
+                    // Borramos el histórico de estados
+                    $this->db->query('DELETE FROM historico WHERE id_incidencia = "'.$id_inc.'"');
+
+                    // Proceso finalizado
+                    $mensaje_exito = "La incidencia Nº $id_inc se ha reseteado correctamente.";
+                }
+
+
+                $data["mensaje_error"] = $mensaje_error;
+                $data["mensaje_exito"] = $mensaje_exito;
+
+                $this->load->view('backend/header', $data);
+                $this->load->view('backend/navbar', $data);
+                $this->load->view('backend/reset_incidencia_ok', $data);
+                $this->load->view('backend/footer', $data);
+            }
+        }
     }
 
     public function update_materiales_incidencia()

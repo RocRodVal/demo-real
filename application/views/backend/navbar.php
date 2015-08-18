@@ -75,7 +75,7 @@
                         </li>                        
                         <li><a <?=($this->uri->segment(2)==='facturacion')?'class="active"':''?> href="<?=site_url('admin/facturacion')?>"><i class="fa fa-money fa-fw"></i> Facturación</a></li>
                         <?php               
-                        $operaciones = array('operaciones','apertura_pdv','cierre_pdv','cambio_sfid','incidencias','incidencias_exp');
+                        $operaciones = array('operaciones','apertura_pdv','cierre_pdv','cambio_sfid','incidencias','incidencias_exp','reset_incidencia_status');
                         ?>                      
                         <li <?=(in_array($this->uri->segment(2), $operaciones))?'class="active"':''?>>
                             <a href="#"><i class="fa fa-wrench fa-fw"></i> Operaciones<span class="fa arrow"></span></a>
@@ -83,8 +83,9 @@
                         		<!--<li><a <?=($this->uri->segment(2)==='operaciones')?'class="active"':''?> href="<?=site_url('admin/operaciones')?>"> Operaciones &raquo;</a></li>-->
                         		<li><a <?=($this->uri->segment(2)==='apertura_pdv')?'class="active"':''?> href="<?=site_url('admin/apertura_pdv')?>"> Apertura PdV &raquo;</a></li>
                         		<li><a <?=($this->uri->segment(2)==='cierre_pdv')?'class="active"':''?> href="<?=site_url('admin/cierre_pdv')?>"> Cierre PdV &raquo;</a></li>
-                        		<li><a <?=($this->uri->segment(2)==='cambio_sfid')?'class="active"':''?> href="<?=site_url('admin/cambio_sfid')?>"> Cambio de SFID &raquo;</a></li>                     		
-                        		<li><a <?=($this->uri->segment(2)==='incidencias')?'class="active"':''?> href="<?=site_url('admin/incidencias')?>"> Export incidencias &raquo;</a></li>  
+                        		<li><a <?=($this->uri->segment(2)==='cambio_sfid')?'class="active"':''?> href="<?=site_url('admin/cambio_sfid')?>"> Cambio de SFID &raquo;</a></li>
+                                <li><a <?=($this->uri->segment(2)==='reset_incidencia_status')?'class="active"':''?> href="<?=site_url('admin/reset_incidencia_status')?>"> Reset incidencia &raquo;</a></li>
+                                <li><a <?=($this->uri->segment(2)==='incidencias')?'class="active"':''?> href="<?=site_url('admin/incidencias')?>"> Export incidencias &raquo;</a></li>
                         		<li><a <?=($this->uri->segment(2)==='incidencias_exp')?'class="active"':''?> href="<?=site_url('admin/incidencias_exp')?>"> Export incidencias SAT &raquo;</a></li>                                               
                         	</ul>
                         </li>

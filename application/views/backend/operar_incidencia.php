@@ -39,6 +39,9 @@
                                classBtn="status_1/2" class="btn btn-danger" <?php if ($incidencia['status'] != 'Nueva') {
                                 echo 'disabled';
                             } ?>>Cancelar</a>
+                            <span class="fecha_status"><?=$historico_revisada?></span>
+
+
                         </div>
                         <div class="col-lg-7 labelText white">Asignar instalador e intervención</div>
                         <div class="col-lg-5 labelBtn white">
@@ -46,13 +49,19 @@
                                classBtn="status" class="btn btn-success" <?php if (!$material_editable) {
                                 echo 'disabled';
                             } ?>>Asignar instalador</a>
+
+                            <span class="fecha_status"><?=$historico_instalador_asignado?></span>
+
                         </div>                        
                         <div class="col-lg-7 labelText grey">Asignar material <?$incidencia['status']?> </div>
                         <div class="col-lg-5 labelBtn grey">
                             <a href="<?= site_url('admin/update_incidencia_materiales/' . $id_pds_url . '/' . $id_inc_url . '/2/3') ?>"
                                classBtn="status" class="btn btn-success" <?php if (!$material_editable) {
                                 echo 'disabled';
-                            } ?>>Asignar mat.</a></td>
+                            } ?>>Asignar mat.</a>
+                            <span class="fecha_status"><?=$historico_material_asignado?></span>
+
+
                         </div>                       
                         <div class="col-lg-7 labelText white">Imprimir documentación</div>
 
@@ -64,6 +73,8 @@
                                 <div class="col-lg-7 labelText white">&nbsp;</div>
                                 <div class="col-lg-5 labelBtn white">
                                     <a href="<?= site_url('admin/update_incidencia/' . $id_pds_url . '/' . $id_inc_url . '/3/5/notificacion') ?>" classBtn="status" class="btn btn-success">Volver a notificar</a>
+
+                                    <span class="fecha_status"><?=$historico_fecha_comunicada?></span>
                                 </div>
                             <?php }else{ ?>
 
@@ -92,6 +103,7 @@
                             	}
                             	?>
                             	</a>
+                                <span class="fecha_status"><?=$historico_fecha_comunicada?></span>
                             </div>
 
                                 <?php } ?>
@@ -103,6 +115,7 @@
 		                    <input type="submit" value="Resolver" name="submit" class="btn btn-success" classBtn="status" class="btn btn-success" <?php if ($incidencia['status'] != 'Comunicada') {
                                 echo 'disabled';
                             } ?> />
+                            <span class="fecha_status"><?=$historico_fecha_resuelta?></span>
 		                </div>
 		                </form>                        
                         <!-- //
@@ -173,13 +186,13 @@
                     if ($historico_material_asignado <> '---')
 					{
 					?>
-					<strong>Fecha asignación material:</strong> <?php echo date_format(date_create($historico_material_asignado), 'd/m/Y'); ?><br/>
+					<strong>Fecha asignación material:</strong> <?php echo $historico_material_asignado; ?><br/>
 					<?php
 					}
                     if ($historico_fecha_comunicada <> '---')
 					{
 					?>
-					<strong>Fecha comunicación:</strong> <?php echo date_format(date_create($historico_fecha_comunicada), 'd/m/Y'); ?><br/>
+					<strong>Fecha comunicación:</strong> <?php echo $historico_fecha_comunicada; ?><br/>
 					<?php 	
 					}
                     ?>

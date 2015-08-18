@@ -317,3 +317,28 @@ var callback_enviar_form = function()
 {
 
 }
+
+
+
+var confirmar_reset_incidencia = function(form_enviar, mensaje)
+{
+    var valor_inc = $("#id_inc").val();
+    if(valor_inc == "") enviar_form(form_enviar);
+    mensaje  = mensaje.replace( "##NUM_INC##",valor_inc);
+
+
+    if(window.confirm(mensaje))
+    {
+        var action =  $("#"+form_enviar).attr("action") + '/' +valor_inc;
+        $("#"+form_enviar).attr("action",action);
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+
+var enviar_form = function(id_form)
+{
+    $("#"+id_form).submit();
+}
