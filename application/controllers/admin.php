@@ -221,6 +221,7 @@ class Admin extends CI_Controller
      */
     public function estado_incidencias($tipo)
     {
+
         if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
             $data['id_pds'] = $this->session->userdata('id_pds');
             $data['sfid'] = $this->session->userdata('sfid');
@@ -829,7 +830,12 @@ class Admin extends CI_Controller
                         $message_operador .= "http://demoreal.focusonemotions.com/" . "\r\n\n";
 
                         $this->email->from('demoreal@focusonemotions.com', 'Demo Real');
-                        $this->email->to($mail_operador);
+
+                        if($mail_operador=="no-reply@altabox.net"){
+                            // No enviamos mail, si el instalador es por defecto, y tiene la cuenta no-reply
+                        }else {
+                            $this->email->to($mail_operador);
+                        }
 
                         if (!empty($mail_cc)) {
                             $this->email->cc($mail_cc);
