@@ -83,25 +83,30 @@
                                classBtn="status" class="btn btn-success"
                                 <?php
 
-                                if (($incidencia['status'] === 'Instalador asignado') || ($incidencia['status'] === 'Material asignado' || $incidencia['status'] === 'Comunicada') && (isset($incidencia['intervencion']) && !empty($incidencia['intervencion'])))
+                                if (($incidencia['status_pds'] === 'Finalizada') ||
+                                    ($incidencia['status'] === 'Instalador asignado') ||
+
+                                    ($incidencia['status'] === 'Material asignado' ||
+
+                                        $incidencia['status'] === 'Comunicada') && (isset($incidencia['intervencion']) && !empty($incidencia['intervencion'])))
                                 {
                                     echo '';
                                 }
                                 else
-								{
+                                {
                                     echo 'disabled';
-                            	}
-                            	?>
-                            	>
-                                <?php if ($incidencia['status'] === 'Comunicada')
+                                }
+                                ?>
+                                >
+                                <?php if ($incidencia['status'] === 'Comunicada' || $incidencia['status_pds'] === 'Finalizada')
                                 {
                                     echo 'Volver a imprimir';
                                 }
                                 else
-								{
+                                {
                                     echo 'Imprimir y notificar';
-                            	}
-                            	?>
+                                }
+                                ?>
                             	</a>
                                 <span class="fecha_status"><?=$historico_fecha_comunicada?></span>
                             </div>
