@@ -72,8 +72,16 @@
                             	<li><a <?=(in_array($this->uri->segment(2), $descripcion))?'class="active"':''?> href="<?=site_url('admin/descripcion')?>"> Planograma tiendas &raquo;</a></li>
                              	<li><a <?=($this->uri->segment(2)==='inventarios')?'class="active"':''?> href="<?=site_url('admin/inventarios')?>"> Inventarios tiendas &raquo;</a></li>
                             </ul>
-                        </li>                        
-                        <li><a <?=($this->uri->segment(2)==='facturacion')?'class="active"':''?> href="<?=site_url('admin/facturacion')?>"><i class="fa fa-money fa-fw"></i> Facturación</a></li>
+                        </li>
+                        <?php $facturaciones = array('facturacion','facturacion_intervencion'); ?>
+                        <li <?=(in_array($this->uri->segment(2),$facturaciones)) ? 'class="active"' : ''; ?>>
+                            <a href="#"><i class="fa fa-money fa-fw"></i> Facturación<span class="fa arrow"></span></a>
+                            <ul class="nav nav-second-level">
+                                <li><a <?=($this->uri->segment(2)==='facturacion')?'class="active"':''?> href="<?=site_url('admin/facturacion')?>"> Incidencias &raquo;</a></li>
+                                <li><a <?=($this->uri->segment(2)==='facturacion_intervencion')?'class="active"':''?> href="<?=site_url('admin/facturacion_intervencion')?>"> Proveedores &raquo;</a></li>
+                            </ul>
+                        </li>
+
                         <?php               
                         $operaciones = array('operaciones','apertura_pdv','cierre_pdv','cambio_sfid','incidencias','incidencias_exp','reset_incidencia_status');
                         ?>                      

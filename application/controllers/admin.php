@@ -3450,11 +3450,12 @@ class Admin extends CI_Controller
             $data['select_duenos'] = $duenos;
             $data['dueno'] = $dueno;
     		
-    		$data['title'] = 'Facturación';
+    		$data['title'] = 'Facturación de incidencias';
+            $data['accion'] = 'admin/facturacion';
     
     		$this->load->view('backend/header', $data);
     		$this->load->view('backend/navbar', $data);
-    		$this->load->view('backend/facturacion', $data);
+    		$this->load->view('backend/facturacion/facturacion', $data);
     		$this->load->view('backend/footer');
     	} else {
     		redirect('admin', 'refresh');
@@ -3484,7 +3485,51 @@ class Admin extends CI_Controller
     	} else {
     		redirect('admin', 'refresh');
     	}
-    }    
+    }
+
+    public function facturacion_intervencion()
+    {
+        if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
+            $data['id_pds'] = $this->session->userdata('id_pds');
+            $data['sfid'] = $this->session->userdata('sfid');
+
+            $xcrud = xcrud_get_instance();
+            $this->load->model(array('tienda_model','sfid_model'));
+
+            $fecha_inicio = $this->input->post('fecha_inicio');
+            $fecha_fin    = $this->input->post('fecha_fin');
+            $instalador = $this->input->post('instalador');
+            $dueno = $this->input->post('dueno');
+
+            $instaladores = $this->db->query("SELECT id_contact, contact FROM contact WHERE type_profile_contact = 1")->result();
+            $duenos = $this->db->query("SELECT id_client, client FROM client WHERE status='Alta' AND facturable = 1")->result();
+
+
+
+
+            $data['facturacion'] = $this->tienda_model->facturacion_estado_intervencion($fecha_inicio,$fecha_fin,$instalador,$dueno);
+
+            $data['fecha_inicio'] = $fecha_inicio;
+            $data['fecha_fin']   = $fecha_fin;
+
+            $data['select_instaladores'] = $instaladores;
+            $data['instalador'] = $instalador;
+
+            $data['select_duenos'] = $duenos;
+            $data['dueno'] = $dueno;
+
+            $data['title'] = 'Facturación de proveedores';
+            $data['accion'] = 'admin/facturacion_intervencion';
+
+            $this->load->view('backend/header', $data);
+            $this->load->view('backend/navbar', $data);
+            $this->load->view('backend/facturacion/facturacion_intervencion', $data);
+            $this->load->view('backend/footer');
+        } else {
+            redirect('admin', 'refresh');
+        }
+    }
+
 
     public function operaciones()
     {
