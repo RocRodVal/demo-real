@@ -5,54 +5,11 @@
                     <h1 class="page-header"><?php echo $title ?></h1>
                 </div>
             </div>
-		    <div class="row">
-		        <div class="col-lg-12">
-		        	<p>Seleccione un rango de fechas, dueño y/o instalador.</p>
-					<form action="<?=site_url('admin/facturacion');?>" method="post" class="form-inline form-sfid">
 
-                        <div class="form-group">
-                            <label>Inicio</label>
-                            <input type="date" name="fecha_inicio" id="fecha_inicio" value="<?php echo date('Y-m-01'); ?>">
-                        </div>
+		    <?php
+            // Mostrar el buscador/filtro
+            $this->load->view("backend/facturacion/buscador") ?>
 
-                        <div class="form-group">
-                            <label>Fin</label>
-                            <input type="date" name="fecha_fin" id="fecha_fin" value="<?php echo date('Y-m-d'); ?>">
-                        </div>
-
-                        <div class="form-group">
-                            <label>Dueño</label>
-                            <select name="dueno" id="dueno">
-                                <option value="">Todos</option>
-                                <?php
-                                foreach($select_duenos as $elem_dueno){
-                                    $option_selected = ($dueno == $elem_dueno->id_client) ? 'selected ="selected" ' : '';
-                                    echo '<option value="'.$elem_dueno->id_client.'" '.$option_selected.'>'.$elem_dueno->client.'</option>';
-                                }
-                                ?>
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Instalador</label>
-
-                            <select name="instalador" id="instalador">
-                                <option value="">Todos</option>
-                                <?php
-                                    foreach($select_instaladores as $inst){
-                                        $option_selected = ($instalador == $inst->id_contact) ? 'selected ="selected" ' : '';
-                                        echo '<option value="'.$inst->id_contact.'" '.$option_selected.'>'.$inst->contact.'</option>';
-                                    }
-                                ?>
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <button type="submit" class="btn btn-default">Buscar</button>
-                        </div>				  
-					</form>
-		        </div>
-		    </div>            
 		    <div class="row">
 		        <div class="col-lg-12">
 		            <?php
@@ -67,7 +24,7 @@
 		            ?>
 		            	<h1 class="page-header">Intervenciones [descargar <a href="<?=site_url('admin/facturacion_csv/'.$fecha_inicio.'/'.$fecha_fin.'/'.$instalador.'/'.$dueno);?>" target="_blank">CSV</a>]</h1>
 		                <div class="table-responsive">
-		                	<p><strong>Rango:</strong> <?php echo $fecha_inicio ?>/<?php echo $fecha_fin ?></p>
+                            <p><strong>Rango:</strong> <?php echo date("d/m/Y",strtotime($fecha_inicio)); ?> - <?php echo date("d/m/Y",strtotime($fecha_fin)); ?></p>
 
                             <?php if(!empty($dueno)) { ?>
                                 <p><strong>Dueño:</strong> <?=$facturacion[0]->dueno?></p>
@@ -95,7 +52,7 @@
 		                        foreach ($facturacion as $item_facturacion) {
 		                            ?>
 		                            <tr>
-		                                <td><?php echo $item_facturacion->fecha; ?></td>
+		                                <td><?php echo date("d/m/Y",strtotime($item_facturacion->fecha)); ?></td>
 		                                <td><?php echo $item_facturacion->SFID ?></td>
 		                                <td><?php echo $item_facturacion->pds ?></td>
 		                                <td><?php echo $item_facturacion->visita ?></td>
