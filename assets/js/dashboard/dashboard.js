@@ -325,7 +325,7 @@ var confirmar_reset_incidencia = function(form_enviar, mensaje)
     var valor_inc = $("#id_inc").val();
     if(valor_inc == "") enviar_form(form_enviar);
     mensaje  = mensaje.replace( "##NUM_INC##",valor_inc);
- 
+  
 
     if(window.confirm(mensaje))
     {
