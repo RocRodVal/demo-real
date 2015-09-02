@@ -7,13 +7,14 @@
             </div>
             <div class="row">
                 <div class="col-lg-12">
-                    <p>Este proceso es irreversible. Introduce el Id. de la incidencia y se procederá a resetear:</p>
+                    <p>Este proceso es irreversible. Introduce el Id. de la incidencia y se procederá a resetear o eliminar la relación con esta incidencia de:</p>
                     <ul>
-                        <li>El instalador/intervención</li>
-                        <li>El estado de la incidencia volverá a su estado inicial.</li>
+                        <li>El instalador/intervención asignado, que tendrá que ser asignado de nuevo.</li>
+                        <li>El material asignado, que tendrá que ser asignado de nuevo.</li>
+                        <li>El estado y fecha de cierre de la incidencia volverá a su estado inicial.</li>
+                        <li>Se eliminará la referencia en facturación para evitar duplicados al volver a procesarla con posterioridad.</li>
+                        <li>Se eliminarán todos los registros históricos de cambio de estado.</li>
                     </ul>
-
-
                     <p>&nbsp;</p>
                 </div>
             </div>            
@@ -36,85 +37,9 @@
                     <?php if(!empty($mensaje_error))  { ?>
                         <p class="message error"><i class="glyphicon glyphicon-remove"></i> <?=$mensaje_error?></p>
                     <?php } ?>
-                    <p><strong>Nota:</strong> para editar o borrar los materiales asignados a una incidencia deberás hacerlo manualmente desde la propia incidencia,
-                        después de haber reseteado su estado e instalador/intervención.</p>
                 </div>
             </div>
-            <?php 
-            if (isset($_POST['sfid']))
-            {
 
-            ?>
-
-            <?php if(isset($baja_sfid) && !empty($baja_sfid)) { ?>
-                <div class="row">
-                    <div class="col-lg-12">
-                        <p>&nbsp;</p>
-                        <p class="message warning"><i class="glyphicon glyphicon-warning-sign"></i> Se va a proceder al borrado de dispositivos, muebles y punto de servicio de la app.</p>
-                        <p class="message"><a href="<?=site_url('admin/get_inventarios_sfid/'.$baja_sfid.'/baja')?>"><i class="fa fa-file-pdf-o"></i>  Descargar informe de baja</a></p>
-                        <p>&nbsp;</p>
-                    </div>
-                </div>
-            <?php } ?>
-
-            <div class="row">
-                <div class="col-lg-12">
- 					<?php
-                    if(empty($tiendas)){
-                    	echo '<p>No hay resultados para esa cadena de búsqueda.</p>';
-                    }
-                    else
-                    {					
- 					?>
- 					<div class="panel panel-default">
-                        <div class="panel-body">
-                        	<div class="table-responsive">
-                                <table class="table table-striped table-bordered table-hover" id="dataTables-example">
-                                    <thead>
-                                        <tr>
-                                            <th>Ref.</th>
-                                            <th>SFID</th>
-                                            <th>Tipo</th>
-                                            <th>Panelado</th>
-                                            <th>Nombre comercial</th>
-                                            <th>Territorio</th>
-                                            <th>Operaciones</th>
-                                        </tr>
-                                    </thead>                                
-                                    <tbody>
-                                        <?php 
-   										foreach($tiendas as $tienda)
-    									{
-    									?>
-    									<form action="<?=site_url('admin/update_cierre_pdv');?>" method="post" class="form-inline form-sfid">
-    									<input type="hidden" name="id_pds" id="id_pds" value="<?php echo $tienda->id_pds ?>">
-    									<input type="hidden" name="reference" id="reference" value="<?php echo $tienda->reference ?>">
-    									<tr>
-    										<td><?php echo $tienda->id_pds ?></td>
-    										<td><?php echo $tienda->reference ?></a></td>
-    										<td><?php echo $tienda->pds ?></td>
-    										<td><?php echo $tienda->panelado ?></td>
-    										<td><?php echo $tienda->commercial ?></td>
-    										<td><?php echo $tienda->territory ?></td>
-    										<td><button type="submit" class="btn btn-default">Revisar y cerrar</button></td>
-    									</tr>
-    									</form>
-					    				<?php
-					    				}
-					    				?>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                    <?php 
-					}
-                    ?>                    
-            	</div>        
-            </div>
-            <?php 
-            }
-            ?>                
         </div>
         <!-- /#page-wrapper -->
 

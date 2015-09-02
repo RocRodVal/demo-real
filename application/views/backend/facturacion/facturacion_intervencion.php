@@ -37,9 +37,11 @@
 		                        <thead>
 		                        <tr>
 		                            <th>Fecha</th>
+                                    <th>Intervención</th>
+                                    <th>Incidencia</th>
+                                    <th>Estado inc.</th>
 		                            <th>SFID</th>
 		                            <th>Tipo</th>
-		                            <th>Intervención</th>
 		                            <th>Instalador</th>
                                     <th>Dueño</th>
 		                            <th>Dispositivos</th>
@@ -52,9 +54,11 @@
 		                            ?>
 		                            <tr>
 		                                <td><?php echo date("d/m/Y",strtotime($item_facturacion->fecha)); ?></td>
+                                        <td><?php echo $item_facturacion->visita ?></td>
+                                        <td><?php echo $item_facturacion->id_incidencia?></td>
+                                        <td><?php echo $item_facturacion->status_pds?></td>
 		                                <td><?php echo $item_facturacion->SFID ?></td>
 		                                <td><?php echo $item_facturacion->pds ?></td>
-		                                <td><?php echo $item_facturacion->visita ?></td>
 		                                <td><?php echo $item_facturacion->instalador ?></td>
                                         <td><?php echo $item_facturacion->dueno  ?></td>
 		                                <td><?php echo $item_facturacion->dispositivos ?></td>

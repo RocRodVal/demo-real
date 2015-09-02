@@ -4,6 +4,7 @@ class Tienda_model extends CI_Model {
 
 	public function __construct()	{
 		$this->load->database();
+        $this->load->model("incidencia_model");
 	}
 
 	
@@ -613,17 +614,32 @@ class Tienda_model extends CI_Model {
 
     public function facturacion_estado_intervencion($fecha_inicio,$fecha_fin,$instalador = NULL,$dueno=NULL) {
 
-        $query = $this->db->select('incidencias.fecha_cierre as fecha, pds.reference AS SFID, type_pds.pds, facturacion.id_intervencion AS visita, COUNT(facturacion.id_incidencia) AS incidencias, contact.contact AS instalador, client.client as dueno, SUM(facturacion.units_device) AS dispositivos, SUM(facturacion.units_alarma) AS otros')
+        $query = $this->db->select('
+                    incidencias.fecha_cierre as fecha,
+                    facturacion.id_incidencia as id_incidencia,
+                    incidencias.status_pds,
+                    pds.reference AS SFID,
+                    type_pds.pds,
+                    facturacion.id_intervencion AS visita,
+                    contact.contact AS instalador,
+                    client.client as dueno,
+                    SUM(facturacion.units_device) AS dispositivos, SUM(facturacion.units_alarma) AS otros')
+
+            ->join('intervenciones','facturacion.id_intervencion = intervenciones.id_intervencion','inner')
+            ->join('intervenciones_incidencias','intervenciones.id_intervencion = intervenciones_incidencias.id_intervencion','inner')
+            ->join('incidencias','incidencias.id_incidencia = intervenciones_incidencias.id_incidencia')
+
+
             ->join('pds','facturacion.id_pds = pds.id_pds')
             ->join('type_pds','pds.type_pds = type_pds.id_type_pds')
             ->join('displays_pds','facturacion.id_displays_pds = displays_pds.id_displays_pds')
             ->join('display','displays_pds.id_display = display.id_display')
-            ->join('intervenciones','facturacion.id_intervencion = intervenciones.id_intervencion', 'left')
-            ->join('incidencias','incidencias.id_incidencia= facturacion.id_incidencia')
             ->join('contact','intervenciones.id_operador = contact.id_contact', 'left')
             ->join('client','display.client_display= client.id_client', 'left')
+
             ->where('incidencias.fecha_cierre >=',$fecha_inicio)
-            ->where('incidencias.fecha_cierre <=',$fecha_fin);
+            ->where('incidencias.fecha_cierre <=',$fecha_fin)
+            ;
 
         if(!is_null($instalador) && !empty($instalador)){
             $query = $this->db->where('intervenciones.id_operador',$instalador);
@@ -631,8 +647,9 @@ class Tienda_model extends CI_Model {
         if(!is_null($dueno) && !empty($dueno)){
             $query = $this->db->where('display.client_display',$dueno);
         }
-        $query = $this->db->group_by('facturacion.id_intervencion')
-            ->order_by('incidencias.fecha_cierre')
+        $query = $this->db->group_by('facturacion.id_facturacion')
+
+            ->order_by('incidencias.fecha_cierre,facturacion.id_intervencion')
             ->get('facturacion');
 
         return $query->result();

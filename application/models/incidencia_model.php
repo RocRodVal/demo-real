@@ -470,6 +470,137 @@ class Incidencia_model extends CI_Model {
 
 
     }
+
+
+
+
+    function resetear_incidencia($id_inc)
+    {
+
+        $o_pds = $this->db->query("SELECT id_pds FROM incidencias WHERE id_incidencia = '$id_inc' ")->row_array();
+
+        $id_pds = (isset($o_pds["id_pds"])) ? $o_pds["id_pds"] : NULL;
+
+        $data["id_pds"] = $id_pds;
+        $data["id_inc"] = $id_inc;
+
+
+        // Ya tenemos el ID....
+        // - Comprobamos que exista la incidencia y no esté finalizada
+        // - Reseteamos el status y status_pds
+        // - Eliminamos del histórico de estados las entradas...
+        // - Eliminamos la intervención
+        // - Eliminamos el material asignado.
+
+        $sql_check = ' SELECT id_incidencia FROM incidencias WHERE status NOT IN ("Cerrada","Cancelada","Resuelta") AND status_pds != "Finalizada" AND id_incidencia = "'.$id_inc.'" ';
+        $query = $this->db->query($sql_check);
+        $check = $query->row_array();
+
+
+        if(empty($check))
+        {
+            // La incidencia no existe, o no es reseteable...
+            return false;
+        }
+        else {
+            // La incidencia exsite, seguimos con el proceso de reseteo...
+            // Reseteamos estado de la incidencia
+            $sql_status = 'UPDATE incidencias SET fecha_cierre = NULL, status="Nueva", status_pds = "Alta realizada" WHERE id_incidencia="' . $id_inc . '"';
+            $query = $this->db->query($sql_status);
+
+            // Sacar el ID de intervención asignada a la incidencia...
+            $sql_intervencion = 'SELECT id_intervencion FROM intervenciones_incidencias WHERE id_incidencia = "' . $id_inc . '"';
+            $query = $this->db->query($sql_intervencion);
+            $resultado_intervencion = $query->row_array();
+            if (!empty($resultado_intervencion)) {
+
+                // Ahora borramos la relación de la incidencia con la intervención...
+                $id_intervencion = $resultado_intervencion["id_intervencion"];
+                $sql_int_inc = 'DELETE FROM intervenciones_incidencias WHERE id_incidencia = "' . $id_inc . '"';
+                $this->db->query($sql_int_inc);
+
+                // Si no hay otras incidencias relacionadas con la misma intervención, borramos la intervención...
+                $sql_int_inc = 'SELECT id_incidencia, id_intervencion FROM intervenciones_incidencias WHERE id_intervencion = "' . $id_intervencion . '"';
+                $query = $this->db->query($sql_int_inc);
+                $resultados = $query->result();
+
+                if (empty($resultados)) {
+                    $this->db->query('DELETE FROM intervenciones WHERE id_intervencion ="' . $id_intervencion . '"');
+                }
+
+
+                // Eliminamos de la facturación la intervención...
+                $this->db->query('DELETE FROM facturacion WHERE id_intervencion = "' . $id_intervencion . '"');
+
+            }
+
+
+            // Borramos el histórico de estados
+            $this->db->query('DELETE FROM historico WHERE id_incidencia = "' . $id_inc . '"');
+
+            // Borramos el material asignado
+            $this->desasignar_material($id_inc);
+
+            return true;
+        }
+
+
+    }
+
+
+
+    function desasignar_material($id_inc,$tipo_dispositivo = "todo",$id_pds = NULL,$id_material_incidencia = NULL)
+    {
+        // TERMINAL
+        if($tipo_dispositivo==="device" || $tipo_dispositivo==="todo")
+        {
+            $material_dispositivos = $this->tienda_model->get_material_dispositivos($id_inc);
+            if (!empty($material_dispositivos)) {
+                foreach ($material_dispositivos as $material) {
+
+                    if($material->id_material_incidencias == $id_material_incidencia || $tipo_dispositivo==="todo")
+                    {
+                        // Poner el dispositivo de nuevo "En stock"
+                        $id_devices_almacen = $material->id_devices_almacen;
+                        $sql = "UPDATE devices_almacen SET status = 'En stock' WHERE id_devices_almacen = '" . $id_devices_almacen . "'";
+                        $this->db->query($sql);
+
+                        // Desvincular el dispositivo del material de la incidencia.
+                        $id_material_incidencias = $material->id_material_incidencias;
+                        $sql = "DELETE FROM material_incidencias WHERE id_material_incidencias = '$id_material_incidencias' ";
+                        $this->db->query($sql);
+
+                        // Borrar del histórico de dispositivo (diario almacen)
+                        $this->tienda_model->baja_historico_io($id_material_incidencias);
+                    }
+                }
+            }
+        }
+
+        if($tipo_dispositivo==="alarm" || $tipo_dispositivo==="todo")
+        {
+            $material_alarmas = $this->tienda_model->get_material_alarmas($id_inc);
+            if (!empty($material_alarmas)) {
+                foreach ($material_alarmas as $alarma) {
+                    if($alarma->id_material_incidencias == $id_material_incidencia || $tipo_dispositivo==="todo")
+                    {
+                        // Incrementar la cantidad (stock a devolver), en la tabla ALARM, campo units.
+                        $sql = "UPDATE alarm SET units = units +" . $alarma->cantidad . " WHERE id_alarm='" . $alarma->id_alarm . "'";
+                        $this->db->query($sql);
+
+                        // Borrar la alarma vinculada a material_incidencias
+                        $id_material_incidencias = $alarma->id_material_incidencias;
+                        $sql = "DELETE FROM material_incidencias WHERE id_material_incidencias = '$id_material_incidencias' ";
+                        $this->db->query($sql);
+
+                        // Borrar del histórico de alarmas (diario almacen)
+                        $this->tienda_model->baja_historico_io($id_material_incidencias);
+                    }
+                }
+            }
+        }
+
+    }
 	
 }
 
