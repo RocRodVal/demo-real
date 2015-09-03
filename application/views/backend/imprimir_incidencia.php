@@ -48,7 +48,7 @@ Tel. <?php echo $phone_pds ?>
 </p>	
 
 <h3 style="font-family: 'Helvetica'">OBSERVACIONES PARA RESOLUCIÓN</h3>
-<p><strong>Nota para los ténicos:</strong> acudid a la intervención con <strong>teclado</strong> y <strong>ratón</strong>, a fin de poder solucionar ciertas incidencias que requieren el uso de los mismos.</p>
+<?php /*<p><strong>Nota para los ténicos:</strong> acudid a la intervención con <strong>teclado</strong> y <strong>ratón</strong>, a fin de poder solucionar ciertas incidencias que requieren el uso de los mismos.</p>*/ ?>
 
 <p style="font-family: 'Helvetica'">
 <strong>Mueble:</strong> <?php echo $incidencia['display']['display'] ?><br/>
