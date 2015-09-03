@@ -623,10 +623,10 @@ class Tienda_model extends CI_Model {
                     facturacion.id_intervencion AS visita,
                     contact.contact AS instalador,
                     client.client as dueno,
-                    SUM(facturacion.units_device) AS dispositivos, SUM(facturacion.units_alarma) AS otros')
+                            SUM(facturacion.units_device) AS dispositivos, SUM(facturacion.units_alarma) AS otros')
 
-            ->join('intervenciones','facturacion.id_intervencion = intervenciones.id_intervencion','inner')
-            ->join('intervenciones_incidencias','intervenciones.id_intervencion = intervenciones_incidencias.id_intervencion','inner')
+            ->join('intervenciones','facturacion.id_intervencion = intervenciones.id_intervencion')
+            ->join('intervenciones_incidencias','intervenciones.id_intervencion = intervenciones_incidencias.id_intervencion')
             ->join('incidencias','incidencias.id_incidencia = intervenciones_incidencias.id_incidencia')
 
 
@@ -647,32 +647,82 @@ class Tienda_model extends CI_Model {
         if(!is_null($dueno) && !empty($dueno)){
             $query = $this->db->where('display.client_display',$dueno);
         }
-        $query = $this->db->group_by('facturacion.id_facturacion')
+        $query = $this->db->group_by('facturacion.id_facturacion');
 
-            ->order_by('incidencias.fecha_cierre,facturacion.id_intervencion')
+            $query = $this->db->order_by('incidencias.fecha_cierre,facturacion.id_intervencion')
             ->get('facturacion');
 
-        return $query->result();
+
+        $resultado = $query->result();
+
+        //echo $this->db->last_query();
+        //
+        // lo eliminamos porque no es facturable aún.
+        //
+        $facturacion = array();
+
+
+        //echo "PRE".count($resultado)." - ";
+        /* Recorro las intervenciones-incidencia así, si una intervencion tiene finalizadas todas sus incidencias, lo dejamos en el array. */
+        foreach($resultado as $intervencion)
+        {
+            //print_r($intervencion);
+            if($intervencion->status_pds == "Finalizada")
+            {
+                if(array_key_exists($intervencion->visita,$facturacion)){
+                    //echo "Ya existe\n".$intervencion->visita;
+                }
+                $facturacion[$intervencion->visita] = $intervencion;
+            }
+            else
+            {
+                $facturacion[$intervencion->visita] = $intervencion;
+                // Si existe la clave, eliminamos la intervención pq aún no es facturable por proveedor...
+                if(array_key_exists($intervencion->visita,$facturacion))
+                {
+                    unset($facturacion[$intervencion->visita]);
+                }
+            }
+
+        }
+
+       //echo "POST".count($facturacion)." - ";
+        return $facturacion;
     }
 
 
     function facturacion_estado_intervencion_csv($fecha_inicio,$fecha_fin,$instalador = NULL,$dueno=NULL)
     {
         $this->load->dbutil();
-        $this->load->helper('file');
+        $this->load->helper(array('file','csv'));
         $this->load->helper('download');
 
-        $query = $this->db->select('incidencias.fecha_cierre as fecha, pds.reference AS SFID, type_pds.pds, facturacion.id_intervencion AS visita, COUNT(facturacion.id_incidencia) AS incidencias, contact.contact AS instalador, client.client as dueno, SUM(facturacion.units_device) AS dispositivos, SUM(facturacion.units_alarma) AS otros')
+        $query = $this->db->select('
+                    incidencias.fecha_cierre as fecha,
+                    MONTH(incidencias.fecha_cierre) as mes,
+                    facturacion.id_intervencion AS visita,
+                    incidencias.status_pds,
+                    pds.reference AS SFID,
+                    type_pds.pds,
+                    contact.contact AS instalador,
+                    client.client as dueno,
+                            SUM(facturacion.units_device) AS dispositivos, SUM(facturacion.units_alarma) AS otros')
+
+            ->join('intervenciones','facturacion.id_intervencion = intervenciones.id_intervencion')
+            ->join('intervenciones_incidencias','intervenciones.id_intervencion = intervenciones_incidencias.id_intervencion')
+            ->join('incidencias','incidencias.id_incidencia = intervenciones_incidencias.id_incidencia')
+
+
             ->join('pds','facturacion.id_pds = pds.id_pds')
             ->join('type_pds','pds.type_pds = type_pds.id_type_pds')
             ->join('displays_pds','facturacion.id_displays_pds = displays_pds.id_displays_pds')
             ->join('display','displays_pds.id_display = display.id_display')
-            ->join('intervenciones','facturacion.id_intervencion = intervenciones.id_intervencion', 'left')
-            ->join('incidencias','incidencias.id_incidencia= facturacion.id_incidencia')
             ->join('contact','intervenciones.id_operador = contact.id_contact', 'left')
             ->join('client','display.client_display= client.id_client', 'left')
+
             ->where('incidencias.fecha_cierre >=',$fecha_inicio)
-            ->where('incidencias.fecha_cierre <=',$fecha_fin);
+            ->where('incidencias.fecha_cierre <=',$fecha_fin)
+        ;
 
         if(!is_null($instalador) && !empty($instalador)){
             $query = $this->db->where('intervenciones.id_operador',$instalador);
@@ -680,15 +730,49 @@ class Tienda_model extends CI_Model {
         if(!is_null($dueno) && !empty($dueno)){
             $query = $this->db->where('display.client_display',$dueno);
         }
+        $query = $this->db->group_by('facturacion.id_facturacion');
 
-        $query = $this->db->group_by('facturacion.id_intervencion')
-            ->order_by('incidencias.fecha_cierre')
+        $query = $this->db->order_by('incidencias.fecha_cierre,facturacion.id_intervencion')
             ->get('facturacion');
+
+
+        $resultado = $query->result();
+
+        $facturacion = array(
+                            array('Fecha','Mes','Intervencion','Estado','SFID','Tipo tienda','Instalador','Dueño')
+                        );
+
+
+        //echo "PRE".count($resultado)." - ";
+        /* Recorro las intervenciones-incidencia así, si una intervencion tiene finalizadas todas sus incidencias, lo dejamos en el array. */
+        foreach($resultado as $intervencion)
+        {
+            //print_r($intervencion);
+            if($intervencion->status_pds == "Finalizada")
+            {
+                if(array_key_exists($intervencion->visita,$facturacion)){
+                    //echo "Ya existe\n".$intervencion->visita;
+                }
+                $facturacion[$intervencion->visita] = (array)$intervencion;
+            }
+            else
+            {
+                $facturacion[$intervencion->visita] = (array)$intervencion;
+                // Si existe la clave, eliminamos la intervención pq aún no es facturable por proveedor...
+                if(array_key_exists($intervencion->visita,$facturacion))
+                {
+                    unset($facturacion[$intervencion->visita]);
+                }
+            }
+
+        }
+
+
 
         $delimiter = ",";
         $newline = "\r\n";
-        $data = $this->dbutil->csv_from_result($query, $delimiter, $newline);
-        force_download('Demo_Real-Facturacion_intervencion.csv', $data);
+        echo array_to_csv($facturacion,'Demo_Real-Facturacion_intervencion.csv');
+        //force_download('Demo_Real-Facturacion_intervencion.csv', $data);
     }
 
 
