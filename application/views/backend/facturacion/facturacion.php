@@ -33,6 +33,7 @@
                                 <p><strong>Instalador:</strong> <?=$facturacion[0]->instalador?></p>
                             <?php } ?>
 
+                            <p><?=count($facturacion)?> elementos</p>
 		                    <table class="table table-striped table-bordered table-hover" id="dataTables-dashboard">
 		                        <thead>
 		                        <tr>

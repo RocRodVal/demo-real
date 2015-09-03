@@ -26,20 +26,25 @@
 		                <div class="table-responsive">
 		                	<p><strong>Rango:</strong> <?php echo date("d/m/Y",strtotime($fecha_inicio)); ?> - <?php echo date("d/m/Y",strtotime($fecha_fin)); ?></p>
 
-                            <?php if(!empty($dueno)) { ?>
-                                <p><strong>Dueño:</strong> <?=$facturacion[0]->dueno?></p>
+                            <?php
+
+                            $primer_elemento = array_shift($facturacion);
+
+                            if(!empty($dueno)) {
+                                    $dueno_nombre = $primer_elemento->dueno;
+                                ?>
+                                <p><strong>Dueño:</strong> <?=$dueno_nombre?></p>
                             <?php } ?>
                             <?php if(!empty($instalador)) { ?>
-                                <p><strong>Instalador:</strong> <?=$facturacion[0]->instalador?></p>
+                                <p><strong>Instalador:</strong> <?=$primer_elemento->instalador?></p>
                             <?php } ?>
 
+                            <p><?=count($facturacion)?> elementos</p>
 		                    <table class="table table-striped table-bordered table-hover" id="dataTables-dashboard">
 		                        <thead>
 		                        <tr>
 		                            <th>Fecha</th>
                                     <th>Intervención</th>
-                                    <th>Incidencia</th>
-                                    <th>Estado inc.</th>
 		                            <th>SFID</th>
 		                            <th>Tipo</th>
 		                            <th>Instalador</th>
@@ -55,8 +60,6 @@
 		                            <tr>
 		                                <td><?php echo date("d/m/Y",strtotime($item_facturacion->fecha)); ?></td>
                                         <td><?php echo $item_facturacion->visita ?></td>
-                                        <td><?php echo $item_facturacion->id_incidencia?></td>
-                                        <td><?php echo $item_facturacion->status_pds?></td>
 		                                <td><?php echo $item_facturacion->SFID ?></td>
 		                                <td><?php echo $item_facturacion->pds ?></td>
 		                                <td><?php echo $item_facturacion->instalador ?></td>

@@ -3491,6 +3491,31 @@ class Admin extends CI_Controller
     }
 
 
+    public function facturacion_estado_intervencion_csv()
+    {
+        if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
+            $data['id_pds'] = $this->session->userdata('id_pds');
+            $data['sfid'] = $this->session->userdata('sfid');
+
+            $fecha_inicio = $this->uri->segment(3);
+            $fecha_fin    = $this->uri->segment(4);
+            $instalador   = $this->uri->segment(5);
+            $dueno   = $this->uri->segment(6);
+
+            if($instalador==="false") $instalador = NULL;
+            if($dueno==="false") $dueno = NULL;
+
+            $xcrud = xcrud_get_instance();
+            $this->load->model(array('tienda_model','sfid_model'));
+
+            $data['facturacion_csv'] = $this->tienda_model->facturacion_estado_intervencion_csv($fecha_inicio,$fecha_fin,$instalador,$dueno);
+
+        } else {
+            redirect('admin', 'refresh');
+        }
+    }
+
+
     public function operaciones()
     {
         $xcrud = xcrud_get_instance();
