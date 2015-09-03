@@ -1582,7 +1582,7 @@ class Admin extends CI_Controller
             $xcrud = xcrud_get_instance();
             $this->load->model(array('intervencion_model', 'tienda_model', 'sfid_model','incidencia_model'));
             $sfid = $this->tienda_model->get_pds($id_pds);
-            $this->incidencia_model->desasignar_materiales($id_inc,$tipo_dispositivo,$id_pds,$id_material_incidencia);
+            $this->incidencia_model->desasignar_material($id_inc,$tipo_dispositivo,$id_pds,$id_material_incidencia);
 
 
 

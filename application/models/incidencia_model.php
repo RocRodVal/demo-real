@@ -474,7 +474,7 @@ class Incidencia_model extends CI_Model {
 
 
 
-    function resetear_incidencia($id_inc) 
+    function resetear_incidencia($id_inc)
     {
 
         $o_pds = $this->db->query("SELECT id_pds FROM incidencias WHERE id_incidencia = '$id_inc' ")->row_array();
