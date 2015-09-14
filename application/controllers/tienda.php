@@ -184,16 +184,23 @@ class Tienda extends CI_Controller {
     public function estado_incidencias($tipo)
     {
         if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 1)) {
+
+
+            $xcrud = xcrud_get_instance();
+
+
+
+
             $data['id_pds'] = $this->session->userdata('id_pds');
             $data['sfid'] = $this->session->userdata('sfid');
 
-            $xcrud = xcrud_get_instance();
 
 
             $this->load->model(array('intervencion_model', 'incidencia_model', 'tienda_model', 'sfid_model','chat_model'));
             $this->load->library('app/paginationlib');
 
             $sfid = $this->sfid_model->get_pds($data['id_pds']);
+
 
 
 
