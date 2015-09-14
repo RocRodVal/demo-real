@@ -195,13 +195,15 @@ class Tienda extends CI_Controller {
 
             $sfid = $this->sfid_model->get_pds($data['id_pds']);
 
-            $data['id_pds']     = $sfid['id_pds'];
-            $data['commercial'] = $sfid['commercial'];
-            $data['territory']  = $sfid['territory'];
-            $data['reference']  = $sfid['reference'];
-            $data['address']    = $sfid['address'];
-            $data['zip']        = $sfid['zip'];
-            $data['city']       = $sfid['city'];
+
+
+            $data['id_pds']     = (!empty($sfid)) ? $sfid['id_pds'] : '';
+            $data['commercial'] = (!empty($sfid)) ? $sfid['commercial'] : '';
+            $data['territory']  = (!empty($sfid)) ? $sfid['territory'] : '';
+            $data['reference']  = (!empty($sfid)) ? $sfid['reference'] : '';
+            $data['address']    = (!empty($sfid)) ? $sfid['address'] : '';
+            $data['zip']        = (!empty($sfid)) ? $sfid['zip'] : '';
+            $data['city']       = (!empty($sfid)) ? $sfid['city'] : '';
 
 
 
@@ -376,13 +378,13 @@ class Tienda extends CI_Controller {
             $sfid = $this->tienda_model->get_pds($data['id_pds']);
 
 
-            $data['id_pds']     = $sfid['id_pds'];
-            $data['commercial'] = $sfid['commercial'];
-            $data['territory']  = $sfid['territory'];
-            $data['reference']  = $sfid['reference'];
-            $data['address']    = $sfid['address'];
-            $data['zip']        = $sfid['zip'];
-            $data['city']       = $sfid['city'];
+            $data['id_pds']     = (!empty($sfid)) ? $sfid['id_pds'] : '';
+            $data['commercial'] = (!empty($sfid)) ? $sfid['commercial'] : '';
+            $data['territory']  = (!empty($sfid)) ? $sfid['territory'] : '';
+            $data['reference']  = (!empty($sfid)) ? $sfid['reference'] : '';
+            $data['address']    = (!empty($sfid)) ? $sfid['address'] : '';
+            $data['zip']        = (!empty($sfid)) ? $sfid['zip'] : '';
+            $data['city']       = (!empty($sfid)) ? $sfid['city'] : '';
 
 
             // Comprobar si existe el segmento PAGE en la URI, si no inicializar a 1..
@@ -747,49 +749,7 @@ class Tienda extends CI_Controller {
     }
 
 	
-	public function dashboard_OLD()
-	{
-		if($this->session->userdata('logged_in'))
-		{
-			$data['id_pds'] = $this->session->userdata('id_pds');
-			$data['sfid']   = $this->session->userdata('sfid');
-				
-			$xcrud = xcrud_get_instance();
-			$this->load->model(array('chat_model','sfid_model'));
 
-			$sfid = $this->sfid_model->get_pds($data['id_pds']);
-				
-			$data['id_pds']     = $sfid['id_pds'];
-			$data['commercial'] = $sfid['commercial'];
-			$data['territory']  = $sfid['territory'];
-			$data['reference']  = $sfid['reference'];
-			$data['address']    = $sfid['address'];
-			$data['zip']        = $sfid['zip'];
-			$data['city']       = $sfid['city'];			
-
-			$incidencias = $this->sfid_model->get_incidencias($data['id_pds']);
-			
-			foreach($incidencias as $incidencia)
-			{
-				$incidencia->device  = $this->sfid_model->get_device($incidencia->id_devices_pds);
-				$incidencia->display = $this->sfid_model->get_display($incidencia->id_displays_pds);
-				$incidencia->nuevos  = $this->chat_model->contar_nuevos($incidencia->id_incidencia,'altabox');
-			}
-			
-			$data['incidencias'] =  $incidencias;
-	
-			$data['title'] = 'Mis solicitudes';
-			
-			$this->load->view('tienda/header',$data);
-			$this->load->view('tienda/navbar',$data);
-			$this->load->view('tienda/dashboard',$data);
-			$this->load->view('tienda/footer');
-		}
-		else
-		{
-			redirect('tienda','refresh');
-		}	
-	}	
 
 	
 	public function alta_incidencia()
@@ -803,22 +763,23 @@ class Tienda extends CI_Controller {
 			$this->load->model('sfid_model');		
 	
 			$sfid = $this->sfid_model->get_pds($data['id_pds']);
-			
-			$data['id_pds']     = $sfid['id_pds'];
-			$data['commercial'] = $sfid['commercial'];
-			$data['territory']  = $sfid['territory'];
-			$data['reference']  = $sfid['reference'];
-			$data['address']    = $sfid['address'];
-			$data['zip']        = $sfid['zip'];
-			$data['city']       = $sfid['city'];
+
+            $data['id_pds']     = (!empty($sfid)) ? $sfid['id_pds'] : '';
+            $data['commercial'] = (!empty($sfid)) ? $sfid['commercial'] : '';
+            $data['territory']  = (!empty($sfid)) ? $sfid['territory'] : '';
+            $data['reference']  = (!empty($sfid)) ? $sfid['reference'] : '';
+            $data['address']    = (!empty($sfid)) ? $sfid['address'] : '';
+            $data['zip']        = (!empty($sfid)) ? $sfid['zip'] : '';
+            $data['city']       = (!empty($sfid)) ? $sfid['city'] : '';
 
 			$displays = $this->sfid_model->get_displays_pds($data['id_pds']);
-			
-			foreach($displays as $key=>$display) 
-			{
-				$num_devices = $this->sfid_model->count_devices_displays_pds($display->id_displays_pds);
-				$display->devices_count = $num_devices;
-			}
+
+            if(is_array($displays) && !empty($displays)) {
+                foreach ($displays as $key => $display) {
+                    $num_devices = $this->sfid_model->count_devices_displays_pds($display->id_displays_pds);
+                    $display->devices_count = $num_devices;
+                }
+            }
 			
 			$data['displays'] = $displays;
 
@@ -941,14 +902,14 @@ class Tienda extends CI_Controller {
 			$this->load->model('sfid_model');
 	
 			$sfid = $this->sfid_model->get_pds($data['id_pds']);
-	
-			$data['id_pds']     = $sfid['id_pds'];
-			$data['commercial'] = $sfid['commercial'];
-			$data['territory']  = $sfid['territory'];
-			$data['reference']  = $sfid['reference'];
-			$data['address']    = $sfid['address'];
-			$data['zip']        = $sfid['zip'];
-			$data['city']       = $sfid['city'];
+
+            $data['id_pds']     = (!empty($sfid)) ? $sfid['id_pds'] : '';
+            $data['commercial'] = (!empty($sfid)) ? $sfid['commercial'] : '';
+            $data['territory']  = (!empty($sfid)) ? $sfid['territory'] : '';
+            $data['reference']  = (!empty($sfid)) ? $sfid['reference'] : '';
+            $data['address']    = (!empty($sfid)) ? $sfid['address'] : '';
+            $data['zip']        = (!empty($sfid)) ? $sfid['zip'] : '';
+            $data['city']       = (!empty($sfid)) ? $sfid['city'] : '';
 				
 			$display = $this->sfid_model->get_display($this->uri->segment(3));
 		
@@ -981,14 +942,14 @@ class Tienda extends CI_Controller {
 			$this->load->model(array('chat_model','sfid_model'));
 
 			$sfid = $this->sfid_model->get_pds($data['id_pds']);
-	
-			$data['id_pds']     = $sfid['id_pds'];
-			$data['commercial'] = $sfid['commercial'];
-			$data['territory']  = $sfid['territory'];
-			$data['reference']  = $sfid['reference'];
-			$data['address']    = $sfid['address'];
-			$data['zip']        = $sfid['zip'];
-			$data['city']       = $sfid['city'];
+
+            $data['id_pds']     = (!empty($sfid)) ? $sfid['id_pds'] : '';
+            $data['commercial'] = (!empty($sfid)) ? $sfid['commercial'] : '';
+            $data['territory']  = (!empty($sfid)) ? $sfid['territory'] : '';
+            $data['reference']  = (!empty($sfid)) ? $sfid['reference'] : '';
+            $data['address']    = (!empty($sfid)) ? $sfid['address'] : '';
+            $data['zip']        = (!empty($sfid)) ? $sfid['zip'] : '';
+            $data['city']       = (!empty($sfid)) ? $sfid['city'] : '';
 
 
 
@@ -1346,13 +1307,14 @@ class Tienda extends CI_Controller {
 			$xcrud = xcrud_get_instance();
 			$this->load->model('sfid_model');
 			
-			$sfid               = $this->sfid_model->get_pds($data['id_pds']);			
-			$data['id_pds']     = $sfid['id_pds'];
-			$data['commercial'] = $sfid['commercial'];
-			$data['reference']  = $sfid['reference'];
-			$data['address']    = $sfid['address'];
-			$data['zip']        = $sfid['zip'];
-			$data['city']       = $sfid['city'];
+			$sfid               = $this->sfid_model->get_pds($data['id_pds']);
+            $data['id_pds']     = (!empty($sfid)) ? $sfid['id_pds'] : '';
+            $data['commercial'] = (!empty($sfid)) ? $sfid['commercial'] : '';
+            $data['territory']  = (!empty($sfid)) ? $sfid['territory'] : '';
+            $data['reference']  = (!empty($sfid)) ? $sfid['reference'] : '';
+            $data['address']    = (!empty($sfid)) ? $sfid['address'] : '';
+            $data['zip']        = (!empty($sfid)) ? $sfid['zip'] : '';
+            $data['city']       = (!empty($sfid)) ? $sfid['city'] : '';
 		 
 			$data['title']   = 'Alta incidencia';
 			$data['content'] = 'Muchas gracias. Su incidencia ha sido dada alta con referencia número '.$referencia.'.';
@@ -1380,13 +1342,15 @@ class Tienda extends CI_Controller {
 			$this->load->model('sfid_model');
 
 			$sfid               = $this->sfid_model->get_pds($data['id_pds']);
-			$data['id_pds']     = $sfid['id_pds'];
-			$data['commercial'] = $sfid['commercial'];
-			$data['reference']  = $sfid['reference'];
-			$data['address']    = $sfid['address'];
-			$data['zip']        = $sfid['zip'];
-			$data['city']       = $sfid['city'];
-			$data['id_pds_url'] = $sfid['id_pds'];
+            $data['id_pds']     = (!empty($sfid)) ? $sfid['id_pds'] : '';
+            $data['commercial'] = (!empty($sfid)) ? $sfid['commercial'] : '';
+            $data['territory']  = (!empty($sfid)) ? $sfid['territory'] : '';
+            $data['reference']  = (!empty($sfid)) ? $sfid['reference'] : '';
+            $data['address']    = (!empty($sfid)) ? $sfid['address'] : '';
+            $data['zip']        = (!empty($sfid)) ? $sfid['zip'] : '';
+            $data['city']       = (!empty($sfid)) ? $sfid['city'] : '';
+
+            $data['id_pds_url'] = (!empty($sfid)) ? $sfid['id_pds']: '';
 			
 			switch($tipo){
 				case 1: 
@@ -1437,13 +1401,14 @@ class Tienda extends CI_Controller {
 			$this->load->model('sfid_model');
 	
 			$sfid               = $this->sfid_model->get_pds($data['id_pds']);
-			$data['id_pds']     = $sfid['id_pds'];
-			$data['commercial'] = $sfid['commercial'];
-			$data['reference']  = $sfid['reference'];
-			$data['address']    = $sfid['address'];
-			$data['zip']        = $sfid['zip'];
-			$data['city']       = $sfid['city'];
-			$data['id_pds_url'] = $sfid['id_pds'];
+            $data['id_pds']     = (!empty($sfid)) ? $sfid['id_pds'] : '';
+            $data['commercial'] = (!empty($sfid)) ? $sfid['commercial'] : '';
+            $data['territory']  = (!empty($sfid)) ? $sfid['territory'] : '';
+            $data['reference']  = (!empty($sfid)) ? $sfid['reference'] : '';
+            $data['address']    = (!empty($sfid)) ? $sfid['address'] : '';
+            $data['zip']        = (!empty($sfid)) ? $sfid['zip'] : '';
+            $data['city']       = (!empty($sfid)) ? $sfid['city'] : '';
+			$data['id_pds_url'] = (!empty($sfid)) ? $sfid['id_pds'] : '';
 				
 			$data['title']       = 'Ayuda';
 			$data['ayuda_title'] = 'Manuales';
