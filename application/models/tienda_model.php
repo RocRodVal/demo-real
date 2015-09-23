@@ -138,7 +138,47 @@ class Tienda_model extends CI_Model {
 
 }
 
+    /**
+     * Método que devuelve el operador (instalador) consultado por ID
+     * @param $id_operador
+     * @return null
+     */
+    public function get_operador($id_operador)
+    {
+        $elem = NULL;
 
+        if(!is_null($id_operador) && $id_operador > 0)
+        {
+            $query = $this->db->select("*")
+                    ->where("id_contact",$id_operador)
+                    ->where("type_profile_contact",1)
+                    ->get("contact");
+
+                    $elem = $query->row();
+        }
+        return $elem;
+    }
+    /**
+     * Método que devuelve el dueño consultado por ID
+     * @param $id_dueno
+     * @return null
+     */
+    public function get_dueno($id_dueno)
+    {
+        $elem = NULL;
+
+        if(!is_null($id_dueno) && $id_dueno > 0)
+        {
+            $query = $this->db->select("*")
+                ->where("id_client",$id_dueno)
+                ->where("status","Alta")
+                ->where("facturable",1)
+                ->get("client");
+
+            $elem = $query->row();
+        }
+        return $elem;
+    }
 
 	
 	public function borrar_alarmas($id_alarm,$units)
@@ -686,17 +726,7 @@ class Tienda_model extends CI_Model {
 
         }
 
-        /*$count = 0;
-        foreach($facturacion as $elemento)
-        {
-            echo "<div style='font-size:10px;'>";print_r($elemento); echo "<br></div>";
-            $count++;
-        }
-        echo count($facturacion)."-".$count;*/
-        /**
-         *
-         */
-
+        /*
         $sql_borrar = 'DROP TABLE IF EXISTS incidencias_intervencion';
         $this->db->query($sql_borrar);
         $cond_fecha = "";
@@ -728,7 +758,7 @@ class Tienda_model extends CI_Model {
                     AND inc.id_incidencia = interv.id_incidencia
                     '.$cond_fecha.'
             );';
-
+           */
 
       // echo "POST".count($facturacion)." - ";
         return $facturacion;
@@ -738,11 +768,15 @@ class Tienda_model extends CI_Model {
     }
 
 
-    function facturacion_estado_intervencion_csv($fecha_inicio,$fecha_fin,$instalador = NULL,$dueno=NULL)
+    function exportar_intervenciones_facturacion($formato="csv",$fecha_inicio,$fecha_fin,$instalador = NULL,$dueno=NULL)
     {
         $this->load->dbutil();
         $this->load->helper(array('file','csv'));
         $this->load->helper('download');
+
+        $this->load->model(array("contact_model","client_model"));
+
+
 
         $query = $this->db->select('
                     incidencias.fecha_cierre as fecha,
@@ -786,7 +820,7 @@ class Tienda_model extends CI_Model {
         $resultado = $query->result();
 
         $facturacion = array(
-                            array('Fecha','Mes','Intervencion','Estado','SFID','Tipo tienda','Instalador','Dueño')
+                            array('Fecha','Mes','Intervencion','Estado','SFID','Tipo tienda','Instalador','Dueño','Dispositivos','Alarmas')
                         );
 
 
@@ -794,7 +828,10 @@ class Tienda_model extends CI_Model {
         /* Recorro las intervenciones-incidencia así, si una intervencion tiene finalizadas todas sus incidencias, lo dejamos en el array. */
         foreach($resultado as $intervencion)
         {
-            //print_r($intervencion);
+            // Formato ES para la fecha
+            $intervencion->fecha = date("d/m/Y",strtotime(($intervencion->fecha)));
+
+            //
             if($intervencion->status_pds == "Finalizada")
             {
                 if(array_key_exists($intervencion->visita,$facturacion)){
@@ -814,15 +851,60 @@ class Tienda_model extends CI_Model {
 
         }
 
+        $filename["instalador"]  = (!is_null($instalador)) ? $this->contact_model->getById($instalador)->getName() : NULL;
+        $filename["dueno"] = (!is_null($dueno)) ? $this->client_model->getById($dueno)->getName() : NULL;
 
 
-        $delimiter = ",";
-        $newline = "\r\n";
-        echo array_to_csv($facturacion,'Demo_Real-Facturacion_intervencion.csv');
+
+        foreach($filename as $key=>$f_name)
+        {
+            $filename[$key] = str_sanitize($f_name);
+        }
+
+        $filename["from"] = date("d-m-Y",strtotime($fecha_inicio));
+        $filename["to"] = date("d-m-Y",strtotime($fecha_fin));
+
+        $f_nombre = implode("__",$filename);
+
+
+        switch($formato)
+        {
+            case "xls":
+                $this->generar_xls($facturacion, 'Demo_Real-Facturacion_intervencion-' . $f_nombre);
+                exit; break;
+
+            case "csv":
+            default:
+                $delimiter = ",";
+                $newline = "\r\n";
+                echo array_to_csv($facturacion,'Demo_Real-Facturacion_intervencion-' . $f_nombre);
+                break;
+        }
+
+
         //force_download('Demo_Real-Facturacion_intervencion.csv', $data);
     }
 
 
+    public function generar_xls($array_facturacion,$filename='export')
+    {
+        $this->load->library("PHPExcel");
+
+
+        $doc = new PHPExcel();
+        $doc->setActiveSheetIndex(0);
+
+        $doc->getActiveSheet()->fromArray($array_facturacion, null, 'A1');
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="'.$filename.'.xls"');
+        header('Cache-Control: max-age=0');
+
+        // Do your stuff here
+        $writer = PHPExcel_IOFactory::createWriter($doc, 'Excel5');
+
+        $writer->save('php://output');
+
+    }
     public function get_display_pds($id) {
 			if($id != FALSE) {
 			$query = $this->db->select('displays_pds.id_displays_pds, displays_pds.description, display.*')
