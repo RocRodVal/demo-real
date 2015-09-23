@@ -888,7 +888,7 @@ class Tienda_model extends CI_Model {
 
     public function generar_xls($array_facturacion,$filename='export')
     {
-        $this->load->library("phpexcel");
+        $this->load->library("PHPExcel");
 
 
         $doc = new PHPExcel();
