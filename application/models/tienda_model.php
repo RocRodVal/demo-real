@@ -851,8 +851,8 @@ class Tienda_model extends CI_Model {
 
         }
 
-        $filename["instalador"]  = !(is_null($instalador)) ? $this->contact_model->getById($instalador)->getName() : NULL;
-        $filename["dueno"] = !(is_null($dueno)) ? $this->client_model->getById($dueno)->getName() : NULL;
+        $filename["instalador"]  = (!is_null($instalador)) ? $this->contact_model->getById($instalador)->getName() : NULL;
+        $filename["dueno"] = (!is_null($dueno)) ? $this->client_model->getById($dueno)->getName() : NULL;
 
 
 
