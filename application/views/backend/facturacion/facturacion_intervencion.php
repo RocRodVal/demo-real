@@ -29,6 +29,7 @@
                             <?php
 
                             $primer_elemento = array_shift($facturacion);
+                            array_unshift($facturacion,$primer_elemento);
 
                             if(!empty($dueno)) {
                                     $dueno_nombre = $primer_elemento->dueno;
@@ -55,6 +56,7 @@
 		                        </thead>
 		                        <tbody>
 		                        <?php
+
 		                        foreach ($facturacion as $item_facturacion) {
 		                            ?>
 		                            <tr>
