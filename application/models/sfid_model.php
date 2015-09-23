@@ -16,7 +16,7 @@ class Sfid_model extends CI_Model {
 				->join('territory','pds.territory = territory.id_territory')
 				->where('pds.id_pds',$id_pds)
 				->get('pds');
-	
+
 			return $query->row_array();
 		}
 		else 

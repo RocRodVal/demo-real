@@ -5,6 +5,8 @@ class Tienda_model extends CI_Model {
 	public function __construct()	{
 		$this->load->database();
         $this->load->model("incidencia_model");
+        $this->load->model("intervencion_model");
+
 	}
 
 	
@@ -655,12 +657,10 @@ class Tienda_model extends CI_Model {
 
         $resultado = $query->result();
 
-        //echo $this->db->last_query();
-        //
-        // lo eliminamos porque no es facturable aún.
+        // Guardamos en un array, los elementos facturables, que lo son porque todas sus incidencias asignadas han
+        // sido cerradas o resueltas.
         //
         $facturacion = array();
-
 
         //echo "PRE".count($resultado)." - ";
         /* Recorro las intervenciones-incidencia así, si una intervencion tiene finalizadas todas sus incidencias, lo dejamos en el array. */
@@ -686,8 +686,55 @@ class Tienda_model extends CI_Model {
 
         }
 
-       //echo "POST".count($facturacion)." - ";
+        /*$count = 0;
+        foreach($facturacion as $elemento)
+        {
+            echo "<div style='font-size:10px;'>";print_r($elemento); echo "<br></div>";
+            $count++;
+        }
+        echo count($facturacion)."-".$count;*/
+        /**
+         *
+         */
+
+        $sql_borrar = 'DROP TABLE IF EXISTS incidencias_intervencion';
+        $this->db->query($sql_borrar);
+        $cond_fecha = "";
+
+        if(!is_null($fecha_inicio)) $cond_fecha .= (' AND inc.`fecha_cierre` >= "'.$fecha_inicio.'" ');
+        if(!is_null($fecha_fin)) $cond_fecha .= (' AND inc.`fecha_cierre` <= "'.$fecha_fin.'" ');
+
+
+
+        $sql_crear = '
+            CREATE temporary table IF NOT EXISTS incidencias_intervencion
+            AS (
+                    SELECT interv.`id_intervencion` as id_intervencion,
+                    (SELECT COUNT(incidencias.id_incidencia)
+                        FROM incidencias
+                        JOIN intervenciones_incidencias ON incidencias.id_incidencia = intervenciones_incidencias.id_incidencia
+                        WHERE id_intervencion = interv.`id_intervencion`) -
+                    (SELECT COUNT(incidencias.id_incidencia)
+                        FROM incidencias
+                        JOIN intervenciones_incidencias ON incidencias.id_incidencia = intervenciones_incidencias.id_incidencia
+                        WHERE id_intervencion = interv.`id_intervencion` AND `incidencias`.status_pds = "Finalizada") as incidencias_abiertas,
+                    MAX(inc.fecha_cierre) as fecha_cierre
+                FROM    `facturacion` fact,
+                        `intervenciones_incidencias` interv,
+                        `incidencias` inc
+
+                WHERE
+                    fact.id_intervencion = interv.id_intervencion
+                    AND inc.id_incidencia = interv.id_incidencia
+                    '.$cond_fecha.'
+            );';
+
+
+      // echo "POST".count($facturacion)." - ";
         return $facturacion;
+
+
+
     }
 
 

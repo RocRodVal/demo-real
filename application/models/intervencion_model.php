@@ -287,4 +287,21 @@ class Intervencion_model extends MY_Model
         return $incidencias;
 
     }
+
+
+
+
+    /**
+     * Función que crea una tabla temporal de las intervenciones entre dos fechas, y el numero de incidencias asociadas
+     * y cuántas están cerradas.
+     */
+    function crear_temporal_estado_incidencias($fecha_ini=NULL, $fecha_fin= NULL)
+    {
+        $this->load->database();
+
+
+        echo $this->db->last_query();
+
+    }
+
 }
