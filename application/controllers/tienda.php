@@ -319,7 +319,7 @@ class Tienda extends CI_Controller {
 
 
 
-    public function exportar_incidencias()
+    public function exportar_incidencias($tipo="abiertas",$formato="csv")
     {
         if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 1)) {
             $xcrud = xcrud_get_instance();
@@ -344,12 +344,7 @@ class Tienda extends CI_Controller {
             // Obtener el campo a ordenar, primero de Session y despues del post, si procede..
             $array_orden = $this->get_orden();
 
-
-            if($tipo === "abiertas") {
-                $this->tienda_model->get_incidencias_csv($array_orden, $array_sesion, "abiertas");
-            }else {
-                $this->tienda_model->get_incidencias_csv($array_orden, $array_sesion, "cerradas");
-            }
+            $this->tienda_model->exportar_incidencias($array_orden, $array_sesion, $tipo,$formato);
 
 
         } else {

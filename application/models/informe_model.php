@@ -174,12 +174,19 @@ class Informe_model extends CI_Model
         echo $resp;
     }
 
-    public function get_informe_csv($data)
+    public function exportar_informe_pdv($data,$formato="csv")
     {
 
         $this->load->dbutil();
         $this->load->helper('file');
+        $this->load->helper('csv');
         $this->load->helper('download');
+
+
+
+        // Array de títulos y exclusiones de campo para la exportación XLS/CSV
+        $arr_titulos = array('SFID','Tipo','Panelado','Territorio','Nombre','Tipo Vía','Dirección','CP','Localidad');
+        $excluir = array('territory','panelado_pds','type_via','');
 
 
         $aQuery = $this->get_sql_informe_pdv($data);
@@ -190,13 +197,11 @@ class Informe_model extends CI_Model
 
         $query = $this->get_sql_result($aQuery);
 
-        if($query != NULL){
-            $delimiter = ",";
-            $newline = "\r\n";
 
-            $datos = $this->dbutil->csv_from_result($query, $delimiter, $newline);
-            force_download('Demo_Real-'.date("d-m-Y").'T'.date("H:i:s").'.csv', $datos);
-        }
+
+        $datos = preparar_array_exportar($query->result(),$arr_titulos,$excluir);
+
+        exportar_fichero($formato,$datos,'Informe_PDV-'.date("d-m-Y").'T'.date("H:i:s"));
 
 
     }

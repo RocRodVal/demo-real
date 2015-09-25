@@ -1631,6 +1631,9 @@ class Admin extends CI_Controller
         $xcrud->fields('client,type_profile_client,picture_url,description,facturable,status');
         $xcrud->order_by('client');
 
+        // Ocultar el botón de borrar para evitar borrados accidentales mientras no existan constraints en BD:
+        $xcrud->unset_remove();
+
         $data['title'] = 'Empresas';
         $data['content'] = $xcrud->render();
 
@@ -1825,6 +1828,9 @@ class Admin extends CI_Controller
         $xcrud_2->fields('client_contact,type_profile_contact,contact,type_via,address,zip,city,province,county,schedule,phone,mobile,email,email_cc,status');
         $xcrud_2->order_by('contact');
 
+        // Ocultar el botón de borrar para evitar borrados accidentales mientras no existan constraints en BD:
+        $xcrud_2->unset_remove();
+
         $data['title'] = 'Contactos';
         //$data['content'] = $xcrud_1->render();
         //$data['content'] = $data['content'].$xcrud_2->render();
@@ -1848,6 +1854,10 @@ class Admin extends CI_Controller
         $xcrud_1->fields('brand');
         $xcrud_1->order_by('brand');
 
+        // Ocultar el botón de borrar para evitar borrados accidentales mientras no existan constraints en BD:
+        $xcrud_1->unset_remove();
+
+
         $xcrud_2 = xcrud_get_instance();
         $xcrud_2->table('type_alarm');
         $xcrud_2->table_name('Tipo');
@@ -1855,6 +1865,9 @@ class Admin extends CI_Controller
         $xcrud_2->columns('type');
         $xcrud_2->fields('type');
         $xcrud_2->order_by('type');
+
+        // Ocultar el botón de borrar para evitar borrados accidentales mientras no existan constraints en BD:
+        $xcrud_2->unset_remove();
 
         $xcrud_3 = xcrud_get_instance();
         $xcrud_3->table('alarm');
@@ -1868,8 +1881,13 @@ class Admin extends CI_Controller
         $xcrud_3->columns('client_alarm,brand_alarm,type_alarm,code,alarm,picture_url,status');
         $xcrud_3->fields('client_alarm,brand_alarm,type_alarm,code,alarm,picture_url,description,status');
         $xcrud_3->order_by('code');
-        
-        $xcrud_4 = xcrud_get_instance();
+
+        // Ocultar el botón de borrar para evitar borrados accidentales mientras no existan constraints en BD:
+        $xcrud_3->unset_remove();
+
+        /*
+         *  NO USADO
+         * $xcrud_4 = xcrud_get_instance();
         $xcrud_4->table('alarms_display');
         $xcrud_4->table_name('Relación alarmas mueble');
         $xcrud_4->relation('client_type_pds', 'client', 'id_client', 'client');
@@ -1888,14 +1906,15 @@ class Admin extends CI_Controller
         $xcrud_5->relation('id_alarm', 'alarm', 'id_alarm', 'alarm');
         $xcrud_5->label('client_type_pds', 'Cliente')->label('id_device', 'Dispositivo')->label('id_display', 'Mueble')->label('id_alarm', 'Alarma')->label('description', 'Comentarios')->label('status', 'Estado');
         $xcrud_5->columns('client_type_pds,id_device,id_display,id_alarm,status');
-        $xcrud_5->fields('client_type_pds,id_device,id_display,id_alarm,description,status');
+        $xcrud_5->fields('client_type_pds,id_device,id_display,id_alarm,description,status');*/
 
         $data['title'] = 'Alarmas';
         $data['content'] = $xcrud_1->render();
         $data['content'] = $data['content'] . $xcrud_2->render();
         $data['content'] = $data['content'] . $xcrud_3->render();
+        /* NO USADO
         $data['content'] = $data['content'] . $xcrud_4->render();
-        $data['content'] = $data['content'] . $xcrud_5->render();
+        $data['content'] = $data['content'] . $xcrud_5->render();*/
 
         $this->load->view('backend/header', $data);
         $this->load->view('backend/navbar', $data);
@@ -1954,12 +1973,18 @@ class Admin extends CI_Controller
         $xcrud_1->columns('brand');
         $xcrud_1->fields('brand');
 
+        // Ocultar el botón de borrar para evitar borrados accidentales mientras no existan constraints en BD:
+        $xcrud_1->unset_remove();
+
         $xcrud_2 = xcrud_get_instance();
         $xcrud_2->table('type_device');
         $xcrud_2->table_name('Tipo');
         $xcrud_2->label('type', 'Tipo');
         $xcrud_2->columns('type');
         $xcrud_2->fields('type');
+
+        // Ocultar el botón de borrar para evitar borrados accidentales mientras no existan constraints en BD:
+        $xcrud_2->unset_remove();
 
         $xcrud_3 = xcrud_get_instance();
         $xcrud_3->table('device');
@@ -1971,6 +1996,9 @@ class Admin extends CI_Controller
         $xcrud_3->label('brand_device', 'Fabricante')->label('type_device', 'Tipo')->label('device', 'Modelo')->label('brand_name', 'Modelo fabricante')->label('picture_url', 'Foto')->label('description', 'Comentarios')->label('status', 'Estado');
         $xcrud_3->columns('brand_device,type_device,device,picture_url,brand_name,status');
         $xcrud_3->fields('brand_device,type_device,device,brand_name,picture_url,description,status');
+
+        // Ocultar el botón de borrar para evitar borrados accidentales mientras no existan constraints en BD:
+        $xcrud_3->unset_remove();
 
         $data['title'] = 'Dispositivos';
         $data['content'] = $xcrud_1->render();
@@ -1996,6 +2024,9 @@ class Admin extends CI_Controller
         $xcrud_1->columns('client_panelado,type_pds,panelado,panelado_abx,status');
         $xcrud_1->fields('client_panelado,type_pds,panelado,panelado_abx,picture_url,description,status');
 
+        // Ocultar el botón de borrar para evitar borrados accidentales mientras no existan constraints en BD:
+        $xcrud_1->unset_remove();
+
         $xcrud_2 = xcrud_get_instance();
         $xcrud_2->table('displays_panelado');
         $xcrud_2->table_name('Muebles panelado');
@@ -2005,6 +2036,9 @@ class Admin extends CI_Controller
         $xcrud_2->label('client_panelado', 'Cliente')->label('id_panelado', 'REF.')->label('id_display', 'Modelo')->label('position', 'Posición')->label('description', 'Comentarios')->label('status', 'Estado');
         $xcrud_2->columns('client_panelado,id_panelado,id_display,position,status');
         $xcrud_2->fields('client_panelado,id_panelado,id_display,position,description,status');
+
+        // Ocultar el botón de borrar para evitar borrados accidentales mientras no existan constraints en BD:
+        $xcrud_2->unset_remove();
 
         $xcrud_3 = xcrud_get_instance();
         $xcrud_3->table('display');
@@ -2017,6 +2051,9 @@ class Admin extends CI_Controller
         $xcrud_3->columns('client_display,display,picture_url,positions,status');
         $xcrud_3->fields('client_display,display,picture_url,canvas_url,description,positions,status');
 
+        // Ocultar el botón de borrar para evitar borrados accidentales mientras no existan constraints en BD:
+        $xcrud_3->unset_remove();
+
         $xcrud_4 = xcrud_get_instance();
         $xcrud_4->table('devices_display');
         $xcrud_4->table_name('Dispositivos mueble');
@@ -2026,6 +2063,9 @@ class Admin extends CI_Controller
         $xcrud_4->label('client_panelado', 'Cliente')->label('id_panelado', 'REF.')->label('id_display', 'Mueble')->label('id_device', 'Dispositivo')->label('position', 'Posición')->label('description', 'Comentarios')->label('status', 'Estado');
         $xcrud_4->columns('client_panelado,id_display,id_device,position,status');
         $xcrud_4->fields('client_panelado,id_display,id_device,position,description,status');
+
+        // Ocultar el botón de borrar para evitar borrados accidentales mientras no existan constraints en BD:
+        $xcrud_4->unset_remove();
 
         $data['title'] = 'Muebles';
         $data['content'] = $xcrud_1->render();
@@ -2050,6 +2090,9 @@ class Admin extends CI_Controller
         $xcrud_1->columns('client_type_pds,pds,status');
         $xcrud_1->fields('client_type_pds,pds,description,status');
 
+        // Ocultar el botón de borrar para evitar borrados accidentales mientras no existan constraints en BD:
+        $xcrud_1->unset_remove();
+
         $xcrud_2 = xcrud_get_instance();
         $xcrud_2->table('pds');
         $xcrud_2->table_name('Tienda');
@@ -2072,8 +2115,10 @@ class Admin extends CI_Controller
         $xcrud_2->columns('client_pds,reference,type_pds,panelado_pds,commercial,territory,status');
         $xcrud_2->fields('client_pds,reference,type_pds,panelado_pds,dispo,commercial,cif,territory,picture_url,m2_fo,m2_bo,m2_total,type_via,address,zip,city,province,county,schedule,phone,mobile,email,contact_contact_person,contact_in_charge,contact_supervisor,status');
 
-
         $xcrud_2->validation_required('province');
+
+        // Ocultar el botón de borrar para evitar borrados accidentales mientras no existan constraints en BD:
+        $xcrud_2->unset_remove();
         
         $data['title'] = 'Puntos de venta';
         $data['content'] = $xcrud_1->render();

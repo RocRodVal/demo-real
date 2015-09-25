@@ -331,15 +331,13 @@ class Master extends CI_Controller {
 
 
 
-    public function exportar_incidencias()
+    public function exportar_incidencias($tipo="abiertas",$formato="csv")
     {
         if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 9)) {
             $xcrud = xcrud_get_instance();
 
 
             $this->load->model(array('intervencion_model', 'tienda_model', 'sfid_model','chat_model'));
-            $tipo = $this->uri->segment(3); // TIPO DE INCIDENCIA
-
 
             // Filtros
             $array_filtros = array(
@@ -352,16 +350,12 @@ class Master extends CI_Controller {
             );
             $array_sesion = $this->get_filtros($array_filtros);
 
-
             // Obtener el campo a ordenar, primero de Session y despues del post, si procede..
             $array_orden = $this->get_orden();
 
 
-            if($tipo === "abiertas") {
-                $this->tienda_model->get_incidencias_csv($array_orden, $array_sesion, "abiertas");
-            }else {
-                $this->tienda_model->get_incidencias_csv($array_orden, $array_sesion, "cerradas");
-            }
+            $this->tienda_model->exportar_incidencias($array_orden, $array_sesion, $tipo,$formato);
+
 
 
         } else {
@@ -720,7 +714,6 @@ class Master extends CI_Controller {
                 $s_where_incidencia .= " AND incidencias.status_pds LIKE '".$estado_incidencia."'";
             }
 
-
             /**
              * Primer bloque de la tabla, Totales incidencias, dias operativos y media
              */
@@ -743,11 +736,9 @@ class Master extends CI_Controller {
 								COUNT(*) AS total_incidencias
 								FROM incidencias
 								WHERE YEAR(incidencias.fecha) ='".$este_anio."'
-
 								GROUP BY
 								anio,
 								mes");
-
 
             $data['title'] = 'Estado incidencias';
 
@@ -759,15 +750,11 @@ class Master extends CI_Controller {
             $total_media = 0;
             $nombre_mes = array();
 
-
             setlocale(LC_ALL, 'es_ES');
 
             $cont_mes = 0;
             foreach($resultados_1 as $key=>$value)
             {
-
-
-
                 $total_incidencias_total += $value->total_incidencias;
 
                 $dias_op = contar_dias_excepto($value->mes,$value->anio,array('Sun'),date('d'));
@@ -775,10 +762,7 @@ class Master extends CI_Controller {
                 $total_dias_operativos += $dias_op;
 
                 $inc_por_dia = $value->total_incidencias / $dias_op;
-
-
                 $incidencias_dia[] = round($inc_por_dia);
-
             }
 
             $total_media = round($total_incidencias_total / $total_dias_operativos);
@@ -787,10 +771,6 @@ class Master extends CI_Controller {
             /**
              * Segundo bloque de la tabla, Incidencias mensuales por estado PdS
              */
-
-
-
-
             $resultados_2 = $this->db->query("
                                 SELECT incidencias.status_pds,
                                 YEAR(incidencias.fecha) AS anio,
@@ -826,13 +806,10 @@ class Master extends CI_Controller {
                 // Rellenamos con 0 cuando no hay incidencias para ese mes
                 foreach($titulo_incidencias_estado as $id_titulo_estado=>$estado)
                 {
-
                     // Creamos el índice por estado de incidencia, si no existe...
                     if(!array_key_exists($estado->estado,$incidencias_estado)) $incidencias_estado[$estado->estado] = array();
-
                     // Creamos el índice de mes, en las incidencias por estado.
                     if(!array_key_exists($id_mes,$incidencias_estado[$estado->estado])) $incidencias_estado[$estado->estado][$id_mes] = 0;
-
                     // Ordenamos el array por estado.
                     ksort($incidencias_estado[$estado->estado]);
                 }
@@ -851,7 +828,7 @@ class Master extends CI_Controller {
             $this->db->query(" CREATE TEMPORARY TABLE IF NOT EXISTS historico_temp(INDEX(id_incidencia))
                                     AS (
                                            SELECT h.id_incidencia, i.fecha as fecha_entrada, MAX(h.fecha) as fecha_proceso,
-                                            i.fecha_cierre, DATEDIFF(i.fecha_cierre,h.fecha) as diferencia, h.status_pds, h.status
+                                            i.fecha_cierre, DATEDIFF(i.fecha_cierre,DATE_ADD(h.fecha,INTERVAL 1 day)) as diferencia, h.status_pds, h.status
                                             FROM historico h
                                             JOIN incidencias i ON h.id_incidencia = i.id_incidencia
                                             WHERE 	YEAR(i.fecha) = '".$este_anio."' AND
@@ -1314,6 +1291,41 @@ class Master extends CI_Controller {
     }
 
 
+    /**
+     * Método del controlador, que invoca al modelo para generar un CSV con el balance de activos.
+     */
+    public function exportar_balance_activos($formato="csv")
+    {
+        if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 9))
+        {
+            $this->load->model('tienda_model');
+            $data['stocks'] = $this->tienda_model->exportar_stock_cruzado($formato);
+        }
+        else
+        {
+            redirect('master','refresh');
+        }
+    }
+
+    /**
+     * Método del controlador, que invoca al modelo para generar un CSV con el balance de activos.
+     */
+    public function exportar_balance_alarmas($formato="csv")
+    {
+        if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 9))
+        {
+            $this->load->model('tienda_model');
+            $data['stocks'] = $this->tienda_model->exportar_balance_alarmas($formato);
+
+        }
+        else
+        {
+            redirect('master','refresh');
+        }
+    }
+
+
+
     public function inventario()
 	{
 		if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 9))
@@ -1622,13 +1634,14 @@ class Master extends CI_Controller {
     /**
      * Método que se llama por AJAX desde el Informe PDV, al añadir o quitar un elemento del multifiltro.
      */
-    public function resultado_pdv($exportar = NULL)
+    public function resultado_pdv($exportar = NULL,$formato="csv")
     {
         if($this->auth->is_auth()) {
             $xcrud = xcrud_get_instance();
 
             $this->load->model('informe_model');
 
+            $data["generado"] = FALSE;
 
             $arr_campos = array(
                 "tipo_tienda" => '',
@@ -1749,7 +1762,7 @@ class Master extends CI_Controller {
             else
             {
 
-                $this->informe_model->get_informe_csv($data);
+                $this->informe_model->exportar_informe_pdv($data,$formato);
             }
 
         }

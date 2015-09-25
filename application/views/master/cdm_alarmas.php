@@ -8,7 +8,7 @@
             <div class="row">
                 <div class="col-lg-12">
                     <h1 class="page-header">Balance de sistemas de seguridad
-                        <?php if(!empty($stock_balance)) { ?><a href="<?=site_url('master/get_balance_alarmas_csv');?>" title="Exportar Excel" target="_blank">Exportar Excel</a><?php } ?>
+                        <?php if(!empty($stock_balance)) { ?><a href="<?=site_url('master/exportar_balance_alarmas/xls');?>" title="Exportar Excel">Exportar Excel</a><?php } ?>
 
                     </h1>
                     <?php
@@ -35,10 +35,20 @@
                                 foreach ($stock_balance as $stock) {
 
                                         $necesitamos = $stock->punto_pedido;
+                                        $balance = round($stock->unidades_almacen - $stock->punto_pedido);
+
+                                        // Parche de stock = 0; cuando es negativo
+                                        $num_stock = ($stock->unidades_almacen < 0) ? 0 :  $stock->unidades_almacen;
+                                        $balance = round($num_stock - $stock->punto_pedido);
+                                        // FIN PARCHE
 
 
-                                    $balance = round($stock->unidades_almacen - $stock->punto_pedido);
 
+                                        $class_css = '';
+                                        if($balance < 0)
+                                        {
+                                            $class_css = ( $stock->unidades_almacen >= 2 ) ? ' notice ' : ' warning ';
+                                        }
 
                                         ?>
                                         <tr>
@@ -52,8 +62,8 @@
                                                 <?php } ?>
                                             </td>
                                             <td><?php echo $stock->punto_pedido?></td>
-                                            <td><?php echo $stock->unidades_almacen ?></td>
-                                            <td <?=($balance<0)?'style="background-color:red;color:white;"':''?>><?php echo $balance ?></td>
+                                            <td><?php echo $num_stock ?></td>
+                                            <td class="<?=$class_css?>"><?php echo $balance ?></td>
                                         </tr>
                                     <?php  ?>
                                 <?php

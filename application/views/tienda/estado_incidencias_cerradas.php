@@ -74,7 +74,7 @@
                                 </div>
                              <?php }?>
 
-                            <p><a href="<?=base_url()?>tienda/exportar_incidencias/cerradas" class="btn exportar"><i class="glyphicon glyphicon-file"></i> Exportar Excel</a></p>
+                            <p><a href="<?=base_url()?>tienda/exportar_incidencias/cerradas/xls" class="btn exportar"><i class="glyphicon glyphicon-file"></i> Exportar Excel</a></p>
                             <div class="table-responsive">
                                 <table class="table table-striped table-bordered table-hover table-sorting" id="table_incidencias_cerradas"  data-order-form="form_orden_cerradas">
                                     <thead>
@@ -94,7 +94,7 @@
                                         <th>Última modificación</th>
                                         <th class="sorting" data-rel="incidencias.tipo_averia"    data-order="">Tipo incidencia</th>
                                         <th                                                                     >Interv.</th>
-                                        <th class="sorting" data-rel="incidencias.status"    data-order="">Estado SAT</th>
+                                        <?php /*<th class="sorting" data-rel="incidencias.status"    data-order="">Estado SAT</th>*/?>
                                         <th class="sorting" data-rel="incidencias.status_pds"    data-order="">Estado PDS</th>
                                         <th>Chat offline</th>
                                     </tr>
@@ -151,7 +151,7 @@
                                                 }
                                                 ?>
                                             </td>
-                                            <td><strong><?php echo $incidencia->status ?></strong></td>
+                                            <?php /*<td><strong><?php echo $incidencia->status ?></strong></td>*/ ?>
                                             <td><strong><?php echo $incidencia->status_pds ?></strong></td>
 
                                             <td><a href="<?=site_url('tienda/detalle_incidencia/'.$incidencia->id_incidencia.'/'.$incidencia->id_pds)?>#chat"><strong><i class="fa fa-whatsapp <?=($incidencia->nuevos['nuevos']<>'0')?'chat_nuevo':'chat_leido'?>"></i></strong></a></td>

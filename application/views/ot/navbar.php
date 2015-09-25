@@ -35,12 +35,16 @@
                          */
                         ?>
                         <?php $cdm = array('cdm_incidencias','cdm_tipo_incidencia','cdm_inventario','cdm_alarmas','cdm_dispositivos'); ?>
-                        <li <?=(in_array($this->uri->segment(2), $cdm))?'class="active"':''?>>
-                            <a href="#"><i class="fa fa-sitemap fa-fw"></i> Cuadro de mando<span class="fa arrow"></span></a>
-                            <ul class="nav nav-second-level">
-                                <li><a <?=($this->uri->segment(2)==='cdm_inventario')?'class="active"':''?> href="<?=site_url('ot/cdm_inventario')?>"> Inventario/Depósito &raquo;</a></li>
-                            </ul>
-                        </li>
+                            <li <?=(in_array($this->uri->segment(2), $cdm))?'class="active"':''?>>
+                                <a href="#"><i class="fa fa-sitemap fa-fw"></i> Cuadro de mando<span class="fa arrow"></span></a>
+                                <ul class="nav nav-second-level">
+                                    <?php /*<li><a <?=($this->uri->segment(2)==='cdm_tipo_incidencia')?'class="active"':''?> href="<?=site_url('master/cdm_tipo_incidencia')?>"> Tipo de incidencia &raquo;</a></li>*/ ?>
+                                    <?php /*<li><a <?=($this->uri->segment(2)==='cdm_inventario')?'class="active"':''?> href="<?=site_url('master/cdm_inventario')?>"> Inventario/Depósito &raquo;</a></li>*/ ?>
+                                    <li><a <?=($this->uri->segment(2)==='cdm_dispositivos')?'class="active"':''?> href="<?=site_url('ot/cdm_dispositivos')?>"> Dispositivos &raquo;</a></li>
+                                </ul>
+                            </li>
+
+
 
                         <?php /**
                         * INFORMES

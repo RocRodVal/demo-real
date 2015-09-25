@@ -10,6 +10,7 @@ class Ot extends CI_Controller {
 		$this->load->library(array('email','encrypt','form_validation','session'));
         $this->load->library('uri');
 
+        $this->load->library('auth',array(11));
     }
 		
 	
@@ -21,7 +22,7 @@ class Ot extends CI_Controller {
 		$this->form_validation->set_rules('sfid-login','SFID','required|xss_clean');
 		$this->form_validation->set_rules('password','password','required|xss_clean');
 
-        $entrada = "ot/cdm_inventario";
+        $entrada = "ot/cdm_dispositivos";
 
         // Ya está logueado....
         if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 11)) redirect($entrada);
@@ -76,7 +77,51 @@ class Ot extends CI_Controller {
         }
     }
 
-	
+
+    /*
+     * Depósito - Inventario de dispositivos para Oferta Táctica
+     */
+
+    public function cdm_dispositivos()
+    {
+        if($this->auth->is_auth())
+        {
+            $xcrud = xcrud_get_instance();
+            $this->load->model('tienda_model');
+            $data['stocks'] = $this->tienda_model->get_stock_cruzado();
+
+
+            $data['stocks_dispositivos']  = $this->tienda_model->get_cdm_dispositivos();
+
+            $data['title']   = 'Dispositivos';
+
+            $this->load->view('master/header',$data);
+            $this->load->view('ot/navbar',$data);
+            $this->load->view('ot/cdm_dispositivos',$data);
+            $this->load->view('master/footer');
+        }
+        else
+        {
+            redirect('master','refresh');
+        }
+    }
+
+    /**
+     * Método del controlador, que invoca al modelo para generar un CSV con el balance de activos.
+     */
+    public function exportar_balance_activos($formato="csv")
+    {
+        if($this->auth->is_auth())
+        {
+            $this->load->model('tienda_model');
+            $data['stocks'] = $this->tienda_model->exportar_stock_cruzado($formato);
+        }
+        else
+        {
+            redirect('master','refresh');
+        }
+    }
+
 
     /*
      * Depósito - Inventario para Oferta Táctica
@@ -84,8 +129,8 @@ class Ot extends CI_Controller {
 	
 	public function cdm_inventario()
 	{
-		if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 11))
-		{
+        if($this->auth->is_auth())
+        {
 			$xcrud = xcrud_get_instance();
 			$this->load->model('tienda_model');
 	
@@ -161,7 +206,7 @@ class Ot extends CI_Controller {
      */
     public function cdm_balance_activos_csv()
     {
-        if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 11))
+        if($this->auth->is_auth())
         {
             $this->load->model('tienda_model');
             $data['stocks'] = $this->tienda_model->get_stock_cruzado_csv();
@@ -180,7 +225,8 @@ class Ot extends CI_Controller {
      */
     public function informe_planogramas()
     {
-        if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 11)) {
+        if($this->auth->is_auth())
+        {
 
             /* Incluir los modelos */
             $xcrud = xcrud_get_instance();
@@ -431,7 +477,7 @@ class Ot extends CI_Controller {
 
 
     public function informe_planograma_mueble_pds(){
-        if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 11))
+        if($this->auth->is_auth())
         {
             $id_pds   = $this->uri->segment(3);
             $id_dis   = $this->uri->segment(4);
@@ -497,7 +543,7 @@ class Ot extends CI_Controller {
 
 
     public function informe_planograma_terminal(){
-        if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 11))
+        if($this->auth->is_auth())
         {
         $data["generado_planograma"] = FALSE;
 
@@ -594,46 +640,7 @@ class Ot extends CI_Controller {
         }
         echo $resp;
     }
-	/*public function manuales()
-	{
-		if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 9))
-		{
-			$xcrud = xcrud_get_instance();
-	
-			$data['title']       = 'Ayuda';
-			$data['ayuda_title'] = 'Manuales';
-				
-			$this->load->view('master/header',$data);
-			$this->load->view('master/navbar',$data);
-			$this->load->view('master/manuales',$data);
-			$this->load->view('master/footer');
-		}
-		else
-		{
-			redirect('master','refresh');
-		}
-	}
 
-	public function muebles_fabricantes()
-	{
-		if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 9))
-		{
-			$xcrud = xcrud_get_instance();
-	
-			$data['title']       = 'Ayuda';
-			$data['ayuda_title'] = 'Muebles fabricantes';
-	
-			$this->load->view('master/header',$data);
-			$this->load->view('master/navbar',$data);
-			$this->load->view('master/muebles_fabricantes',$data);
-			$this->load->view('master/footer');
-		}
-		else
-		{
-			redirect('master','refresh');
-		}
-	}	
-	*/
 
 	public function logout()
 	{

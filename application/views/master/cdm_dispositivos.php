@@ -12,7 +12,7 @@
                         echo '<p>No hay datos.</p>';
                     } else {
                         ?>
-                        <h1 class="page-header">Balance de activos <a href="<?=site_url('master/cdm_balance_activos_csv');?>" title="Exportar CSV" target="_blank">CSV</a></h1>
+                        <h1 class="page-header">Balance de activos <a href="<?=site_url('master/exportar_balance_activos/xls');?>" title="Exportar Excel">Exportar Excel</a></h1>
                         <div class="table-responsive">
 
                             <table class="table table-striped table-bordered table-hover" id="dataTables-example">
@@ -40,6 +40,13 @@
 
                                     $balance = $stock->unidades_almacen - $necesitamos;
 
+                                    $class_css = '';
+                                    if($balance < 0)
+                                    {
+                                        $class_css= ( $stock->unidades_almacen >=2 ) ? ' notice ' : ' warning ';
+                                    }
+
+
                                     if($stock->unidades_pds > 0 || $stock->unidades_almacen > 0)
                                     {
                                     ?>
@@ -49,7 +56,7 @@
                                         <td><?php echo $stock->unidades_pds ?></td>
                                         <td><?php echo $necesitamos ?></td>
                                         <td><?php echo $stock->unidades_almacen ?></td>
-                                        <td <?=($balance<0)?'style="background-color:red;color:white;"':''?>><?php echo $balance ?></td>
+                                        <td class="<?=$class_css?>"><?php echo $balance ?></td>
                                     </tr>
                                         <?php } ?>
                                 <?php
