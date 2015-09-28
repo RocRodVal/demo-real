@@ -614,13 +614,21 @@ class Tienda_model extends CI_Model {
 
 
 	
-	function facturacion_estado_csv($fecha_inicio,$fecha_fin,$instalador = NULL,$dueno=NULL)
+	function exportar_facturacion($formato="csv",$fecha_inicio,$fecha_fin,$instalador = NULL,$dueno=NULL)
 	{
 		$this->load->dbutil();
 		$this->load->helper('file');
+        $this->load->helper('csv');
+
 		$this->load->helper('download');
-		
-		$query = $this->db->select('facturacion.fecha, MONTH(facturacion.fecha) as mes, pds.reference AS SFID, type_pds.pds, facturacion.id_intervencion AS visita, COUNT(facturacion.id_incidencia) AS incidencias, contact.contact AS instalador, client.client AS dueno, SUM(facturacion.units_device) AS dispositivos, SUM(facturacion.units_alarma) AS otros')
+        $this->load->model(array("contact_model","client_model"));
+
+
+
+        $query = $this->db->select('facturacion.fecha, MONTH(facturacion.fecha) as mes, pds.reference AS SFID, type_pds.pds,
+		facturacion.id_intervencion AS visita, COUNT(facturacion.id_incidencia) AS incidencias,
+		contact.contact AS instalador, client.client AS dueno, SUM(facturacion.units_device) AS dispositivos,
+		SUM(facturacion.units_alarma) AS otros')
 		->join('pds','facturacion.id_pds = pds.id_pds')
 		->join('type_pds','pds.type_pds = type_pds.id_type_pds')
 		->join('displays_pds','facturacion.id_displays_pds = displays_pds.id_displays_pds')
@@ -641,11 +649,29 @@ class Tienda_model extends CI_Model {
         $query = $this->db->group_by('facturacion.id_intervencion')
 		->order_by('facturacion.fecha')
 		->get('facturacion');
-		
-		$delimiter = ",";
-		$newline = "\r\n";
-		$data = $this->dbutil->csv_from_result($query, $delimiter, $newline);
-		force_download('Demo_Real-Facturacion.csv', $data);
+
+
+        $arr_titulos = array('Fecha','Mes','SFID','Tipo tienda','Intervención','Nº Incidencias','Instalador',
+            'Dueño','Dispositivos','Otros');
+        $excluir = array();
+
+        $data = preparar_array_exportar($query->result(),$arr_titulos,$excluir);
+
+
+        // GENERAR NOMBRE DE FICHERO
+        $filename["dueno"] = (!is_null($dueno)) ? $this->client_model->getById($dueno)->getName() : NULL;                   // Campo a sanear
+        $filename["instalador"]  = (!is_null($instalador)) ? $this->contact_model->getById($instalador)->getName() : NULL;  // Campo a sanear
+        foreach($filename as $key=>$f_name)
+        {
+            $filename[$key] = str_sanitize($f_name);
+        }
+        $filename["fecha_inicio"] = (!is_null($fecha_inicio)) ? date("d-m-Y",strtotime($fecha_inicio)) : NULL;
+        $filename["fecha_fin"] = (!is_null($fecha_fin)) ? date("d-m-Y",strtotime($fecha_fin)) : NULL;
+
+        $str_filename = implode("___",$filename);
+
+        exportar_fichero($formato,$data,'Facturacion-'.$str_filename);
+
 	}
 
 
@@ -1368,16 +1394,18 @@ class Tienda_model extends CI_Model {
                             incidencias.email,
                             incidencias.id_operador,
                             incidencias.intervencion,
-                            incidencias.status  AS `Estado`
+                            incidencias.status  AS `Estado`,
                             ';
 
                 if($acceso==="admin"){
                     $sql .= 'incidencias.last_updated, ';
-                    $sql .= 'incidencias.status_pds,';
+                    $sql .= 'incidencias.status_pds';
                 }
 
-        $sql .='
 
+        $sql = trim($sql,",");
+
+        $sql .='
                 FROM incidencias
                 JOIN pds ON incidencias.id_pds = pds.id_pds
                 LEFT JOIN displays_pds ON incidencias.id_displays_pds = displays_pds.id_displays_pds
@@ -1386,7 +1414,9 @@ class Tienda_model extends CI_Model {
                 LEFT JOIN device ON devices_pds.id_device = device.id_device
                 LEFT JOIN type_device ON device.type_device = type_device.id_type_device
                 LEFT JOIN territory ON territory.id_territory=pds.territory
-                WHERE 1 = 1';
+                WHERE 1 = 1
+
+                ';
 
 
 

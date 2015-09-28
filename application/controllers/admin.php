@@ -346,14 +346,13 @@ class Admin extends CI_Controller
 
 
 
-    public function exportar_incidencias()
+    public function exportar_incidencias($tipo="abiertas",$formato="csv")
     {
         if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
             $xcrud = xcrud_get_instance();
 
 
             $this->load->model(array('intervencion_model', 'tienda_model', 'sfid_model','chat_model'));
-            $tipo = $this->uri->segment(3); // TIPO DE INCIDENCIA
 
             // Filtros abiertas
             $array_filtros = array(
@@ -371,11 +370,9 @@ class Admin extends CI_Controller
             $array_orden = $this->get_orden();
 
 
-            if($tipo === "abiertas") {
-                $this->tienda_model->get_incidencias_csv($array_orden, $array_sesion, "abiertas");
-            }else {
-                $this->tienda_model->get_incidencias_csv($array_orden, $array_sesion, "cerradas");
-            }
+
+            $this->tienda_model->exportar_incidencias($array_orden, $array_sesion, $tipo, $formato);
+
 
 
         } else {
@@ -794,7 +791,8 @@ class Admin extends CI_Controller
 
             /** ENVIO DEL EMAIL al operador*/
 
-            if($envio_mail === "notificacion") {
+            if($envio_mail === "notificacion")
+            {
 
                     $info_intervencion = $this->intervencion_model->get_info_intervencion($incidencia['intervencion']);
                     $mail_operador = $info_intervencion->operador->email;
@@ -3468,16 +3466,11 @@ class Admin extends CI_Controller
     }
         
     
-    public function facturacion_csv()
+    public function exportar_facturacion($formato="csv",$fecha_inicio=NULL,$fecha_fin=NULL,$instalador=NULL,$dueno=NULL)
     {
     	if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
     		$data['id_pds'] = $this->session->userdata('id_pds');
     		$data['sfid'] = $this->session->userdata('sfid');
-    		
-    		$fecha_inicio = $this->uri->segment(3);
-    		$fecha_fin    = $this->uri->segment(4);
-    		$instalador   = $this->uri->segment(5);
-            $dueno   = $this->uri->segment(6);
 
             if($instalador==="false") $instalador = NULL;
             if($dueno==="false") $dueno = NULL;
@@ -3485,7 +3478,7 @@ class Admin extends CI_Controller
     		$xcrud = xcrud_get_instance();
     		$this->load->model(array('tienda_model','sfid_model'));
 
-       		$data['facturacion_csv'] = $this->tienda_model->facturacion_estado_csv($fecha_inicio,$fecha_fin,$instalador,$dueno);
+       		$data['facturacion_csv'] = $this->tienda_model->exportar_facturacion($formato,$fecha_inicio,$fecha_fin,$instalador,$dueno);
 
     	} else {
     		redirect('admin', 'refresh');
@@ -3623,7 +3616,7 @@ class Admin extends CI_Controller
     /**
      * Método que se llama por AJAX desde el Informe PDV, al añadir o quitar un elemento del multifiltro.
      */
-    public function resultado_pdv($exportar = NULL)
+    public function resultado_pdv($exportar = NULL,$formato="csv")
     {
         if($this->auth->is_auth()) {
             $xcrud = xcrud_get_instance();
@@ -3750,7 +3743,7 @@ class Admin extends CI_Controller
             else
             {
 
-                $this->informe_model->get_informe_csv($data);
+                $this->informe_model->exportar_informe_pdv($data,$formato);
             }
 
         }
