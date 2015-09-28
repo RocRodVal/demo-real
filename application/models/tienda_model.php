@@ -639,6 +639,7 @@ class Tienda_model extends CI_Model {
 		->where('facturacion.fecha >=',$fecha_inicio)
 		->where('facturacion.fecha <=',$fecha_fin);
 
+
         if(!is_null($instalador) && !empty($instalador)){
             $query = $this->db->where('intervenciones.id_operador',$instalador);
         }
@@ -657,10 +658,17 @@ class Tienda_model extends CI_Model {
 
         $data = preparar_array_exportar($query->result(),$arr_titulos,$excluir);
 
+        //print_r($this->db->last_query());
 
         // GENERAR NOMBRE DE FICHERO
+
+
         $filename["dueno"] = (!is_null($dueno)) ? $this->client_model->getById($dueno)->getName() : NULL;                   // Campo a sanear
+
         $filename["instalador"]  = (!is_null($instalador)) ? $this->contact_model->getById($instalador)->getName() : NULL;  // Campo a sanear
+
+
+
         foreach($filename as $key=>$f_name)
         {
             $filename[$key] = str_sanitize($f_name);

@@ -300,6 +300,8 @@ class Contact_model extends CI_Model {
      */
     public function getById($id = NULL)
     {
+
+
         if(!is_null($id) && $id > 0)
         {
             $query = $this->db->select("id_contact,client_contact,type_profile_contact,contact,type_via,address,zip,city,
@@ -308,25 +310,29 @@ class Contact_model extends CI_Model {
                     ->limit(1)
                     ->get("contact");
 
+
+
             $row = $query->row();
 
-            $this->id = $row->id_contact;
-            $this->client = $row->client_contact;
-            $this->type = $row->type_profile_contact;
-            $this->name = $row->contact;
-            $this->type_via = $row->type_via;
-            $this->address = $row->address;
-            $this->zip = $row->zip;
-            $this->city = $row->city;
-            $this->province = $row->province;
-            $this->county = $row->county;
-            $this->schedule = $row->schedule;
-            $this->phone = $row->phone;
-            $this->mobile = $row->mobile;
-            $this->email = $row->email;
-            $this->email_cc = $row->email_cc;
-            $this->status = $row->status;
-
+            if(!empty($row))
+            {
+                $this->id = $row->id_contact;
+                $this->client = $row->client_contact;
+                $this->type = $row->type_profile_contact;
+                $this->name = $row->contact;
+                $this->type_via = $row->type_via;
+                $this->address = $row->address;
+                $this->zip = $row->zip;
+                $this->city = $row->city;
+                $this->province = $row->province;
+                $this->county = $row->county;
+                $this->schedule = $row->schedule;
+                $this->phone = $row->phone;
+                $this->mobile = $row->mobile;
+                $this->email = $row->email;
+                $this->email_cc = $row->email_cc;
+                $this->status = $row->status;
+            }
         }
 
         return $this;
