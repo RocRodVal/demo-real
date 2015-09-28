@@ -63,6 +63,8 @@
                 <div class="col-lg-12">
                     <div class="row buscador">
                         <form action="<?=base_url()?>master/estado_incidencias/abiertas" method="post" class="filtros form-mini">
+                            <?php
+                            /*
                             <div class="col-lg-2">
                                 <label for="status">Estado SAT: </label>
                                 <select name="status" id="status" class="form-control input-sm">
@@ -75,7 +77,8 @@
 
 
                                 </select>
-                            </div>
+                            </div> ?>*/
+                            ?>
                             <div class="col-lg-2">
                                 <label for="status_pds">Estado PDS: </label>
                                 <select name="status_pds" id="status_pds" class="form-control input-sm">
@@ -152,7 +155,7 @@
                             </div>
                         <?php } ?>
 
-                        <p><a href="<?=base_url()?>master/exportar_incidencias/abiertas" class="btn exportar"><i class="glyphicon glyphicon-file"></i> Exportar Excel</a></p>
+                        <p><a href="<?=base_url()?>master/exportar_incidencias/abiertas/xls" class="btn exportar"><i class="glyphicon glyphicon-file"></i> Exportar Excel</a></p>
 		                <div class="table-responsive">
 		                    <table class="table table-striped table-bordered table-hover table-sorting" id="table_incidencias_dashboard" data-order-form="form_orden">
 		                        <thead>
@@ -175,7 +178,7 @@
                                     <th>Última modificación</th>
                                     <th class="sorting" data-rel="incidencias.tipo_averia"    data-order="">Tipo incidencia</th>
 		                            <th                                                                     >Interv.</th>
-		                            <th class="sorting" data-rel="incidencias.status"    data-order="">Estado SAT</th>
+		                            <?php /*<th class="sorting" data-rel="incidencias.status"    data-order="">Estado SAT</th>*/ ?>
                                     <th class="sorting" data-rel="incidencias.status_pds"    data-order="">Estado PDS</th>
 		                            <th>Chat offline</th>
 		                        </tr>
@@ -239,7 +242,7 @@
 	                                        }
 	                                        ?>
                                         </td>
-                                        <td><strong><?php echo $incidencia->status ?></strong></td>
+                                        <?php /*<td><strong><?php echo $incidencia->status ?></strong></td>*/?>
 		                                <td><strong><?php echo $incidencia->status_pds ?></strong></td>
 
 		                                <td><a href="<?=site_url('master/detalle_incidencia/'.$incidencia->id_incidencia.'/'.$incidencia->id_pds)?>#chat"><strong><i class="fa fa-whatsapp <?=($incidencia->nuevos['nuevos']<>'0')?'chat_nuevo':'chat_leido'?>"></i></strong></a></td>

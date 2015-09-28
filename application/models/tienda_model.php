@@ -338,6 +338,31 @@ class Tienda_model extends CI_Model {
     }
 
 
+
+
+    /*
+    * Generar Exportacion de datos con el stock cruzado (NUEVA FUNCION).
+    */
+    public function exportar_stock_cruzado($formato="csv") {
+
+        $this->load->dbutil();
+        $this->load->helper('file');
+        $this->load->helper('csv');
+        $this->load->helper('download');
+
+
+        $resultados = $this->get_stock_cruzado();
+
+        $arr_titulos = array('Id dispositivo','Fabricante','Dispositivo','Ud. pds','Stock necesario','Uds. Almacén','Balance');
+        $excluir = array();
+        $datos = preparar_array_exportar($resultados,$arr_titulos,$excluir);
+        exportar_fichero($formato,$datos,"Balance_Dispositivos__".date("d-m-Y"));
+
+
+    }
+
+
+
     public function get_cdm_alarmas() {
 	
 		$query = $this->db->select('brand_alarm.brand, alarm.alarm, COUNT(*) as incidencias')
@@ -361,8 +386,9 @@ class Tienda_model extends CI_Model {
 
 
         $query = $this->db->query('SELECT brand_alarm.brand as brand, alarm.alarm as alarm, alarm.picture_url as imagen, COUNT(*) as incidencias,
-                                      (CEIL((COUNT(*) / '.$meses.' * 2/10)) * 10) as punto_pedido, units  as unidades_almacen
-
+                                      CEIL (COUNT(*) / '.$meses.') as punto_pedido,
+                                      units  as unidades_almacen,
+                                      units - CEIL (COUNT(*) / '.$meses.') as balance
                                       FROM material_incidencias
 
                                       JOIN alarm ON alarm.id_alarm = material_incidencias.id_alarm
@@ -378,50 +404,20 @@ class Tienda_model extends CI_Model {
     /*
      * Generar CSV con el stock cruzado (Balance de activos).
      */
-    public function get_balance_alarmas_csv() {
+    public function exportar_balance_alarmas($formato="csv") {
 
-        $this->load->dbutil();
         $this->load->helper('file');
+        $this->load->helper('csv');
         $this->load->helper('download');
 
-        $query = $this->db->select('device.id_device, brand_device.brand, device.device,
-									(
-										SELECT COUNT(*)
-										FROM devices_pds
-								        WHERE (devices_pds.id_device = device.id_device) AND
-										(devices_pds.status = "Alta")
-								    ) AS unidades_pds,
-									(SELECT  COUNT(*)
-										FROM devices_almacen
-										WHERE (devices_almacen.id_device = device.id_device) AND
-										(devices_almacen.status = "En stock")
-									) AS unidades_almacen,
+        $resultados = $this->get_balance_alarmas();
 
-                                    ROUND((SELECT  COUNT(*)
-										FROM devices_almacen
-										WHERE (devices_almacen.id_device = device.id_device) AND
-										(devices_almacen.status = "En stock")
-									)
-									-
-									(SELECT COUNT(*)
-										FROM devices_pds
-								        WHERE (devices_pds.id_device = device.id_device) AND
-										(devices_pds.status = "Alta"))* 0.05 -2 ) as Balance
-
-                                    ')
-
-            ->join('brand_device','device.brand_device = brand_device.id_brand_device')
-            ->order_by('brand_device.brand', 'ASC')
-            ->order_by('device.device', 'ASC')
-            ->get('device');
+        $arr_titulos = array('Brand','Alarm','Incidencias','Punto pedido','Uds. almacén','Balance');
+        $excluir = array('picture_url','imagen');
+        $datos = preparar_array_exportar($resultados,$arr_titulos,$excluir);
 
 
-
-
-        $delimiter = ",";
-        $newline = "\r\n";
-        $data = $this->dbutil->csv_from_result($query, $delimiter, $newline);
-        force_download('Demo_Real-Balance_Activos.csv', $data);
+        exportar_fichero($formato,$datos,"Balance_Sistemas_Seguridad__".date("d-m-Y"));
 
 
     }
@@ -618,13 +614,21 @@ class Tienda_model extends CI_Model {
 
 
 	
-	function facturacion_estado_csv($fecha_inicio,$fecha_fin,$instalador = NULL,$dueno=NULL)
+	function exportar_facturacion($formato="csv",$fecha_inicio,$fecha_fin,$instalador = NULL,$dueno=NULL)
 	{
 		$this->load->dbutil();
 		$this->load->helper('file');
+        $this->load->helper('csv');
+
 		$this->load->helper('download');
-		
-		$query = $this->db->select('facturacion.fecha, MONTH(facturacion.fecha) as mes, pds.reference AS SFID, type_pds.pds, facturacion.id_intervencion AS visita, COUNT(facturacion.id_incidencia) AS incidencias, contact.contact AS instalador, client.client AS dueno, SUM(facturacion.units_device) AS dispositivos, SUM(facturacion.units_alarma) AS otros')
+        $this->load->model(array("contact_model","client_model"));
+
+
+
+        $query = $this->db->select('facturacion.fecha, MONTH(facturacion.fecha) as mes, pds.reference AS SFID, type_pds.pds,
+		facturacion.id_intervencion AS visita, COUNT(facturacion.id_incidencia) AS incidencias,
+		contact.contact AS instalador, client.client AS dueno, SUM(facturacion.units_device) AS dispositivos,
+		SUM(facturacion.units_alarma) AS otros')
 		->join('pds','facturacion.id_pds = pds.id_pds')
 		->join('type_pds','pds.type_pds = type_pds.id_type_pds')
 		->join('displays_pds','facturacion.id_displays_pds = displays_pds.id_displays_pds')
@@ -645,11 +649,29 @@ class Tienda_model extends CI_Model {
         $query = $this->db->group_by('facturacion.id_intervencion')
 		->order_by('facturacion.fecha')
 		->get('facturacion');
-		
-		$delimiter = ",";
-		$newline = "\r\n";
-		$data = $this->dbutil->csv_from_result($query, $delimiter, $newline);
-		force_download('Demo_Real-Facturacion.csv', $data);
+
+
+        $arr_titulos = array('Fecha','Mes','SFID','Tipo tienda','Intervención','Nº Incidencias','Instalador',
+            'Dueño','Dispositivos','Otros');
+        $excluir = array();
+
+        $data = preparar_array_exportar($query->result(),$arr_titulos,$excluir);
+
+
+        // GENERAR NOMBRE DE FICHERO
+        $filename["dueno"] = (!is_null($dueno)) ? $this->client_model->getById($dueno)->getName() : NULL;                   // Campo a sanear
+        $filename["instalador"]  = (!is_null($instalador)) ? $this->contact_model->getById($instalador)->getName() : NULL;  // Campo a sanear
+        foreach($filename as $key=>$f_name)
+        {
+            $filename[$key] = str_sanitize($f_name);
+        }
+        $filename["fecha_inicio"] = (!is_null($fecha_inicio)) ? date("d-m-Y",strtotime($fecha_inicio)) : NULL;
+        $filename["fecha_fin"] = (!is_null($fecha_fin)) ? date("d-m-Y",strtotime($fecha_fin)) : NULL;
+
+        $str_filename = implode("___",$filename);
+
+        exportar_fichero($formato,$data,'Facturacion-'.$str_filename);
+
 	}
 
 
@@ -777,7 +799,7 @@ class Tienda_model extends CI_Model {
         $this->load->model(array("contact_model","client_model"));
 
 
-
+        // REALIZAMOS LA CONSULTA A LA BD
         $query = $this->db->select('
                     incidencias.fecha_cierre as fecha,
                     MONTH(incidencias.fecha_cierre) as mes,
@@ -804,7 +826,6 @@ class Tienda_model extends CI_Model {
             ->where('incidencias.fecha_cierre >=',$fecha_inicio)
             ->where('incidencias.fecha_cierre <=',$fecha_fin)
         ;
-
         if(!is_null($instalador) && !empty($instalador)){
             $query = $this->db->where('intervenciones.id_operador',$instalador);
         }
@@ -812,27 +833,23 @@ class Tienda_model extends CI_Model {
             $query = $this->db->where('display.client_display',$dueno);
         }
         $query = $this->db->group_by('facturacion.id_facturacion');
-
         $query = $this->db->order_by('incidencias.fecha_cierre,facturacion.id_intervencion')
             ->get('facturacion');
-
-
         $resultado = $query->result();
 
+        // DEFINO LAS CABECERAS DEL LISTADO A EXPORTAR
         $facturacion = array(
-                            array('Fecha','Mes','Intervencion','Estado','SFID','Tipo tienda','Instalador','Dueño','Dispositivos','Alarmas')
-                        );
+            array('Fecha','Mes','Intervencion','Estado','SFID','Tipo tienda','Instalador','Dueño','Dispositivos','Alarmas')
+        );
 
 
-        //echo "PRE".count($resultado)." - ";
-        /* Recorro las intervenciones-incidencia así, si una intervencion tiene finalizadas todas sus incidencias, lo dejamos en el array. */
+
+        /* Recorro las intervenciones-incidencia así, si una intervencion tiene finalizadas todas sus incidencias, lo dejamos en el array.
+        Y en caso contrario lo omitimos del informe. */
         foreach($resultado as $intervencion)
         {
-            // Formato ES para la fecha
-            $intervencion->fecha = date("d/m/Y",strtotime(($intervencion->fecha)));
-
-            //
-            if($intervencion->status_pds == "Finalizada")
+            $intervencion->fecha = date("d/m/Y",strtotime(($intervencion->fecha)));  // Formato ES para la fecha
+            if($intervencion->status_pds == "Finalizada")   // Si la incidencia actual
             {
                 if(array_key_exists($intervencion->visita,$facturacion)){
                     //echo "Ya existe\n".$intervencion->visita;
@@ -848,63 +865,26 @@ class Tienda_model extends CI_Model {
                     unset($facturacion[$intervencion->visita]);
                 }
             }
-
         }
 
-        $filename["instalador"]  = (!is_null($instalador)) ? $this->contact_model->getById($instalador)->getName() : NULL;
-        $filename["dueno"] = (!is_null($dueno)) ? $this->client_model->getById($dueno)->getName() : NULL;
-
-
-
+        // GENERAR NOMBRE DE FICHERO
+        $filename["instalador"]  = (!is_null($instalador)) ? $this->contact_model->getById($instalador)->getName() : NULL;  // Campo a sanear
+        $filename["dueno"] = (!is_null($dueno)) ? $this->client_model->getById($dueno)->getName() : NULL;                   // Campo a sanear
         foreach($filename as $key=>$f_name)
         {
             $filename[$key] = str_sanitize($f_name);
         }
-
-        $filename["from"] = date("d-m-Y",strtotime($fecha_inicio));
-        $filename["to"] = date("d-m-Y",strtotime($fecha_fin));
-
+        $filename["from"] = date("d-m-Y",strtotime($fecha_inicio));     // Campo no saneable
+        $filename["to"] = date("d-m-Y",strtotime($fecha_fin));          // Campo no saneable
         $f_nombre = implode("__",$filename);
 
-
-        switch($formato)
-        {
-            case "xls":
-                $this->generar_xls($facturacion, 'Demo_Real-Facturacion_intervencion-' . $f_nombre);
-                exit; break;
-
-            case "csv":
-            default:
-                $delimiter = ",";
-                $newline = "\r\n";
-                echo array_to_csv($facturacion,'Demo_Real-Facturacion_intervencion-' . $f_nombre);
-                break;
-        }
-
-
-        //force_download('Demo_Real-Facturacion_intervencion.csv', $data);
-    }
-
-
-    public function generar_xls($array_facturacion,$filename='export')
-    {
-        $this->load->library("PHPExcel");
-
-
-        $doc = new PHPExcel();
-        $doc->setActiveSheetIndex(0);
-
-        $doc->getActiveSheet()->fromArray($array_facturacion, null, 'A1');
-        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        header('Content-Disposition: attachment;filename="'.$filename.'.xls"');
-        header('Cache-Control: max-age=0');
-
-        // Do your stuff here
-        $writer = PHPExcel_IOFactory::createWriter($doc, 'Excel5');
-
-        $writer->save('php://output');
+        // EXPORTAR EL RESULTADO
+        exportar_fichero($formato,$facturacion,$f_nombre);
 
     }
+
+
+
     public function get_display_pds($id) {
 			if($id != FALSE) {
 			$query = $this->db->select('displays_pds.id_displays_pds, displays_pds.description, display.*')
@@ -1342,12 +1322,34 @@ class Tienda_model extends CI_Model {
 *  filtradas si procede
 *
 * */
-    public function get_incidencias_csv($array_orden = NULL,$filtros=NULL,$tipo="abiertas") {
+    public function exportar_incidencias($array_orden = NULL,$filtros=NULL,$tipo="abiertas",$formato="csv") {
         $this->load->dbutil();
         $this->load->helper('file');
+        $this->load->helper('csv');
         $this->load->helper('download');
 
         $acceso = $this->uri->segment(1);
+
+
+        // Array de títulos de campo para la exportación XLS/CSV
+        $arr_titulos = array('Id incidencia','SFID','Fecha','Elemento','Territorio','Fabricante','Tipo avería',
+        'Texto 1','Texto 2','Texto 3','Parte PDF','Denuncia','Foto 1','Foto 2','Foto 3','Contacto','Teléfono','Email',
+        'Id. Operador','Intervención','Estado','Última modificación','Estado Sat');
+        $excluir = array('fecha_cierre','fabr');
+
+
+        // ARRAY CON LOS DISTINTOS ACCESOS QUE NO COMPARTEN CAMPOS CON ELL INFORME DE ACCESO GLOBAL ADMIN
+        $array_accesos_excluidos = array("master","territorio","tienda");
+        if(in_array($acceso,$array_accesos_excluidos)){ // En master, excluimos de la exportación los campos...
+            // Array de títulos de campo para la exportación XLS/CSV
+            $arr_titulos = array('Id incidencia','SFID','Fecha','Elemento','Territorio','Fabricante','Tipo avería',
+                'Texto 1','Texto 2','Texto 3','Parte PDF','Denuncia','Foto 1','Foto 2','Foto 3','Contacto','Teléfono','Email',
+                'Id. Operador','Intervención','Estado');
+
+            array_push($excluir,'last_updated');
+            array_push($excluir,'status_pds');
+        }
+
 
         $sql = 'SELECT incidencias.id_incidencia,
                             pds.reference as `SFID`,
@@ -1393,13 +1395,19 @@ class Tienda_model extends CI_Model {
                             incidencias.id_operador,
                             incidencias.intervencion,';
 
-                if($acceso==="admin"){
-                    $sql .= 'incidencias.last_updated AS `Última modificación`, ';
-                    $sql .= 'incidencias.status_pds AS `Estado SAT`,';
+                if($acceso=="admin"){
+                    $sql .= 'incidencias.status  AS `Estado SAT`,';
+                    $sql .= 'incidencias.last_updated, ';
+                    $sql .= 'incidencias.status_pds as `Estado PDS`';
+
+                }else{
+                    $sql .= 'incidencias.status_pds as `Estado PDS`';
                 }
+        $sql = rtrim($sql,",");
 
-        $sql .='incidencias.status  AS `Estado`
 
+
+        $sql .='
                 FROM incidencias
                 JOIN pds ON incidencias.id_pds = pds.id_pds
                 LEFT JOIN displays_pds ON incidencias.id_displays_pds = displays_pds.id_displays_pds
@@ -1408,7 +1416,9 @@ class Tienda_model extends CI_Model {
                 LEFT JOIN device ON devices_pds.id_device = device.id_device
                 LEFT JOIN type_device ON device.type_device = type_device.id_type_device
                 LEFT JOIN territory ON territory.id_territory=pds.territory
-                WHERE 1 = 1';
+                WHERE 1 = 1
+
+                ';
 
 
 
@@ -1452,10 +1462,11 @@ class Tienda_model extends CI_Model {
         $query = $this->db->query($sql);
 
 
-        $delimiter = ",";
-        $newline = "\r\n";
-        $data = $this->dbutil->csv_from_result($query, $delimiter, $newline);
-        force_download('Demo_Real-'.$sTitleFilename.$sFiltrosFilename.date("d-m-Y").'T'.date("H:i:s").'.csv', $data);
+
+        $datos = preparar_array_exportar($query->result(),$arr_titulos,$excluir);
+
+        exportar_fichero($formato,$datos,$sTitleFilename.$sFiltrosFilename.date("d-m-Y")."T".date("H:i:s")."_".date("d-m-Y"));
+
 
 
     }

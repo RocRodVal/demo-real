@@ -88,18 +88,6 @@ $(document).ready(function () {
     var colorCeldaOriginal = "#ffffff";
 
 
-    $("table.table  tr td").each(function(){
-            if($.isNumeric($(this).text()) && $(this).text() < 0){
-                $(this).css("background-color", "#ff0000");
-                $(this).css("color", "#ffffff");
-            }else {
-                $(this).css("background-color", "#ffffff");
-                $(this).css("color", "#000000");
-            }
-
-        });
-
-
 
     /** Efecto HOVER  en columnas **/
     $(".table-sorting th.sorting").on("mouseover",function(){
@@ -116,28 +104,50 @@ $(document).ready(function () {
     });
 
     /** Efecto HOVER  en filas **/
+    var  colorTemp, bgTemp,i;
+
     $("table.table tr td").on("mouseover",function(){
+        colorTemp= new Array();
+        bgTemp = new Array();
+        i=0;
         $(this).parent().children().each(function(){
-            if($.isNumeric($(this).text()) && $(this).text() < 0){
-                $(this).css("background-color", "#aa0000");
-                $(this).css("color", "#ffffff");
-            }else {
-                $(this).css("background-color", "#e9e9e9");
-                $(this).css("color", "#000000");
-            }
+
+                if($(this).hasClass("warning")) {
+                    $(this).addClass("warning-hover");
+
+                }else if($(this).hasClass("notice")){
+                    $(this).addClass("notice-hover");
+
+                }else {
+                    colorTemp[i] = $(this).css('color');
+                    bgTemp[i] = $(this).css('background-color');
+                    $(this).css("background-color", "#e9e9e9");
+                    $(this).css("color", "#000000");
+                }
+                i++;
+
+
+
+            console.log($(this).attr("class"));
+
         });
-    });
-    $("table.table  tr td").on("mouseout",function(){
+    }).on("mouseout",function(){
+        i=0;
         $(this).parent().children().each(function(){
 
-            if($.isNumeric($(this).text()) && $(this).text() < 0){
-                $(this).css("background-color", "#ff0000");
-                $(this).css("color", "#ffffff");
-            }else {
-                $(this).css("background-color", "#ffffff");
-                $(this).css("color", "#000000");
-            }
+            if($(this).hasClass("warning")) {
+                $(this).removeClass("warning-hover");
 
+            }else if($(this).hasClass("notice")){
+                $(this).removeClass("notice-hover");
+
+            }else {
+                $(this).css("background-color", bgTemp[i]);
+                $(this).css("color", colorTemp[i]);
+            }
+                i++;
+
+            console.log($(this).attr("class"));
         });
     });
 

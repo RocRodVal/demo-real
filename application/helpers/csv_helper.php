@@ -25,7 +25,7 @@ if ( ! function_exists('array_to_csv'))
         if ($download != "")
         {
             header('Content-Type: application/csv;charset:utf-8');
-            header('Content-Disposition: attachement; filename="' . $download . '"');
+            header('Content-Disposition: attachement; filename="' . $download . '.csv"');
         }
 
         ob_start();
@@ -96,6 +96,89 @@ if ( ! function_exists('query_to_csv'))
         echo array_to_csv($array, $download);
     }
 }
+
+
+/**
+ * Función que genera una excel en base al array pasado como parámetro, y con el filename pasado como
+ * segundo param.
+ */
+
+if(!function_exists("array_to_xls"))
+{
+
+    function array_to_xls($array_facturacion, $filename = 'export')
+    {
+
+        $CI = &get_instance();
+        $CI->load->library("PHPExcel");
+
+
+        $doc = new PHPExcel();
+        $doc->setActiveSheetIndex(0);
+
+        $doc->getActiveSheet()->fromArray($array_facturacion, null, 'A1');
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="' . $filename . '.xls"');
+        header('Cache-Control: max-age=0');
+
+        // Do your stuff here
+        $writer = PHPExcel_IOFactory::createWriter($doc, 'Excel5');
+
+        $writer->save('php://output');
+
+    }
+}
+
+
+
+
+/**
+ * Prepara un array para la exportación. Recibe por un lado un result de una query con los datos, y un array con los títulos.
+ * En el array excluir se indicarán, si procede, los campos de BD que se deben excluir del array final.
+ */
+
+if(!function_exists("preparar_array_exportar"))
+{
+    function  preparar_array_exportar($query_result,$arr_titulos,$excluir=array())
+    {
+
+        $datos[0] = $arr_titulos;
+        foreach($query_result as $key=>$campos)
+        {
+            foreach($campos as $campo=>$valor)
+            {
+                if(!in_array($campo,$excluir)) $datos[$key+1][$campo] = $valor;
+            }
+        }
+
+        return $datos;
+    }
+}
+
+/**
+ * Función que eengloba las dos anteriors, pudiendo especificar si es CSV, XLs.. como param
+ */
+
+if(!function_exists("exportar_fichero"))
+{
+    function  exportar_fichero($formato="csv",$data,$filename="export")
+    {
+        switch($formato)
+        {
+            case "xls":
+                array_to_xls($data, 'Demo_Real-' . $filename);
+                exit; break;
+
+            case "csv":
+            default:
+                $delimiter = ",";
+                $newline = "\r\n";
+                echo array_to_csv($data,'Demo_Real-' . $filename);
+                break;
+        }
+    }
+}
+
 
 /* End of file csv_helper.php */
 /* Location: ./system/helpers/csv_helper.php */

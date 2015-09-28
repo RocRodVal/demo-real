@@ -207,7 +207,9 @@ class Master extends CI_Controller {
      */
     public function estado_incidencias($tipo)
     {
-        if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 9)) {
+
+        if($this->auth->is_auth()){ // Control de acceso según el tipo de agente. Permiso definido en constructor
+
             $data['id_pds'] = $this->session->userdata('id_pds');
             $data['sfid'] = $this->session->userdata('sfid');
 
@@ -331,15 +333,13 @@ class Master extends CI_Controller {
 
 
 
-    public function exportar_incidencias()
+    public function exportar_incidencias($tipo="abiertas",$formato="csv")
     {
-        if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 9)) {
+        if($this->auth->is_auth()){ // Control de acceso según el tipo de agente. Permiso definido en constructor
             $xcrud = xcrud_get_instance();
 
 
             $this->load->model(array('intervencion_model', 'tienda_model', 'sfid_model','chat_model'));
-            $tipo = $this->uri->segment(3); // TIPO DE INCIDENCIA
-
 
             // Filtros
             $array_filtros = array(
@@ -352,16 +352,12 @@ class Master extends CI_Controller {
             );
             $array_sesion = $this->get_filtros($array_filtros);
 
-
             // Obtener el campo a ordenar, primero de Session y despues del post, si procede..
             $array_orden = $this->get_orden();
 
 
-            if($tipo === "abiertas") {
-                $this->tienda_model->get_incidencias_csv($array_orden, $array_sesion, "abiertas");
-            }else {
-                $this->tienda_model->get_incidencias_csv($array_orden, $array_sesion, "cerradas");
-            }
+            $this->tienda_model->exportar_incidencias($array_orden, $array_sesion, $tipo,$formato);
+
 
 
         } else {
@@ -373,8 +369,8 @@ class Master extends CI_Controller {
 
     public function detalle_incidencia($id_incidencia,$id_pds)
 	{
-		if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 9))
-		{
+        if($this->auth->is_auth()){ // Control de acceso según el tipo de agente. Permiso definido en constructor
+
 			$xcrud = xcrud_get_instance();
 			$this->load->model('sfid_model');
 			$this->load->model(array('chat_model','sfid_model'));
@@ -475,8 +471,7 @@ class Master extends CI_Controller {
 
 	public function alarmas()
 	{
-		if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 9))
-		{		
+        if($this->auth->is_auth()){ // Control de acceso según el tipo de agente. Permiso definido en constructor
 			$xcrud = xcrud_get_instance();
 			$xcrud->table('alarm');
 			$xcrud->table_name('Modelo');
@@ -511,8 +506,7 @@ class Master extends CI_Controller {
 	
 	public function dispositivos()
 	{
-		if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 9))
-		{		
+        if($this->auth->is_auth()){ // Control de acceso según el tipo de agente. Permiso definido en constructor
 			$xcrud = xcrud_get_instance();
 	        $xcrud->table('device');
 	        $xcrud->table_name('Modelo');
@@ -547,8 +541,7 @@ class Master extends CI_Controller {
 	
 	public function muebles()
 	{
-		if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 9))
-		{		
+        if($this->auth->is_auth()){ // Control de acceso según el tipo de agente. Permiso definido en constructor
 			$xcrud = xcrud_get_instance();
 			$xcrud->table('display');
 			$xcrud->table_name('Modelo');
@@ -583,8 +576,7 @@ class Master extends CI_Controller {
 	
 	public function puntos_de_venta()
 	{
-		if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 9))
-		{		
+        if($this->auth->is_auth()){ // Control de acceso según el tipo de agente. Permiso definido en constructor
 			$xcrud = xcrud_get_instance();
 			$xcrud->table('pds');
 			$xcrud->table_name('Tienda');
@@ -628,8 +620,8 @@ class Master extends CI_Controller {
 	
 	public function incidencias()
 	{
-		if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 9))
-		{	
+        if($this->auth->is_auth()){ // Control de acceso según el tipo de agente. Permiso definido en constructor
+
 			$xcrud_SQL = xcrud_get_instance();
 			$xcrud_SQL->table_name('Incidencias');
 			$xcrud_SQL->query("SELECT
@@ -678,8 +670,7 @@ class Master extends CI_Controller {
 	}
     public function cdm_incidencias()
     {
-        if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 9))
-        {
+        if($this->auth->is_auth()){ // Control de acceso según el tipo de agente. Permiso definido en constructor
 
             $this->load->helper("common");
 
@@ -720,7 +711,6 @@ class Master extends CI_Controller {
                 $s_where_incidencia .= " AND incidencias.status_pds LIKE '".$estado_incidencia."'";
             }
 
-
             /**
              * Primer bloque de la tabla, Totales incidencias, dias operativos y media
              */
@@ -743,11 +733,9 @@ class Master extends CI_Controller {
 								COUNT(*) AS total_incidencias
 								FROM incidencias
 								WHERE YEAR(incidencias.fecha) ='".$este_anio."'
-
 								GROUP BY
 								anio,
 								mes");
-
 
             $data['title'] = 'Estado incidencias';
 
@@ -759,15 +747,11 @@ class Master extends CI_Controller {
             $total_media = 0;
             $nombre_mes = array();
 
-
             setlocale(LC_ALL, 'es_ES');
 
             $cont_mes = 0;
             foreach($resultados_1 as $key=>$value)
             {
-
-
-
                 $total_incidencias_total += $value->total_incidencias;
 
                 $dias_op = contar_dias_excepto($value->mes,$value->anio,array('Sun'),date('d'));
@@ -775,10 +759,7 @@ class Master extends CI_Controller {
                 $total_dias_operativos += $dias_op;
 
                 $inc_por_dia = $value->total_incidencias / $dias_op;
-
-
                 $incidencias_dia[] = round($inc_por_dia);
-
             }
 
             $total_media = round($total_incidencias_total / $total_dias_operativos);
@@ -787,10 +768,6 @@ class Master extends CI_Controller {
             /**
              * Segundo bloque de la tabla, Incidencias mensuales por estado PdS
              */
-
-
-
-
             $resultados_2 = $this->db->query("
                                 SELECT incidencias.status_pds,
                                 YEAR(incidencias.fecha) AS anio,
@@ -826,13 +803,10 @@ class Master extends CI_Controller {
                 // Rellenamos con 0 cuando no hay incidencias para ese mes
                 foreach($titulo_incidencias_estado as $id_titulo_estado=>$estado)
                 {
-
                     // Creamos el índice por estado de incidencia, si no existe...
                     if(!array_key_exists($estado->estado,$incidencias_estado)) $incidencias_estado[$estado->estado] = array();
-
                     // Creamos el índice de mes, en las incidencias por estado.
                     if(!array_key_exists($id_mes,$incidencias_estado[$estado->estado])) $incidencias_estado[$estado->estado][$id_mes] = 0;
-
                     // Ordenamos el array por estado.
                     ksort($incidencias_estado[$estado->estado]);
                 }
@@ -851,13 +825,13 @@ class Master extends CI_Controller {
             $this->db->query(" CREATE TEMPORARY TABLE IF NOT EXISTS historico_temp(INDEX(id_incidencia))
                                     AS (
                                            SELECT h.id_incidencia, i.fecha as fecha_entrada, MAX(h.fecha) as fecha_proceso,
-                                            i.fecha_cierre, DATEDIFF(i.fecha_cierre,h.fecha) as diferencia, h.status_pds, h.status
+                                            i.fecha_cierre, DATEDIFF(i.fecha_cierre,DATE_ADD(h.fecha,INTERVAL 1 day)) as diferencia, h.status_pds, h.status
                                             FROM historico h
                                             JOIN incidencias i ON h.id_incidencia = i.id_incidencia
                                             WHERE 	YEAR(i.fecha) = '".$este_anio."' AND
                                                     (
 
-                                                        (h.status_pds = 'Finalizada' || i.status_pds = 'Finalizada')
+                                                        (h.status_pds = 'En proceso' || i.status_pds = 'Finalizada')
                                                     )
                                             GROUP BY id_incidencia
                                     );
@@ -983,8 +957,7 @@ class Master extends CI_Controller {
 
     public function cdm_incidencias_OLD()
 	{
-		if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 9))
-		{
+        if($this->auth->is_auth()){ // Control de acceso según el tipo de agente. Permiso definido en constructor
 
 
             $b_filtrar_tipo = $this->input->post("filtrar_tipo");
@@ -1090,8 +1063,8 @@ class Master extends CI_Controller {
 	
 	public function cdm_tipo_incidencia()
 	{
-		if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 9))
-		{
+        if($this->auth->is_auth()){ // Control de acceso según el tipo de agente. Permiso definido en constructor
+
 			$xcrud_1 = xcrud_get_instance();
 			$xcrud_1->table_name('Dispositivo');
 			$xcrud_1->query("SELECT 
@@ -1173,8 +1146,8 @@ class Master extends CI_Controller {
 	
 	public function cdm_alarmas()
 	{
-		if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 9))
-		{
+        if($this->auth->is_auth()){ // Control de acceso según el tipo de agente. Permiso definido en constructor
+
 			$xcrud = xcrud_get_instance();
 			$this->load->model('tienda_model');
 
@@ -1202,8 +1175,8 @@ class Master extends CI_Controller {
 
 	public function cdm_dispositivos()
 	{
-		if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 9))
-		{
+        if($this->auth->is_auth()){ // Control de acceso según el tipo de agente. Permiso definido en constructor
+
 			$xcrud = xcrud_get_instance();
 			$this->load->model('tienda_model');
             $data['stocks'] = $this->tienda_model->get_stock_cruzado();
@@ -1226,8 +1199,8 @@ class Master extends CI_Controller {
 	
 	public function cdm_inventario()
 	{
-		if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 9))
-		{
+        if($this->auth->is_auth()){ // Control de acceso según el tipo de agente. Permiso definido en constructor
+
 			$xcrud = xcrud_get_instance();
 			$this->load->model('tienda_model');
 	
@@ -1302,8 +1275,8 @@ class Master extends CI_Controller {
      */
     public function cdm_balance_activos_csv()
     {
-        if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 9))
-        {
+        if($this->auth->is_auth()){ // Control de acceso según el tipo de agente. Permiso definido en constructor
+
             $this->load->model('tienda_model');
             $data['stocks'] = $this->tienda_model->get_stock_cruzado_csv();
         }
@@ -1314,10 +1287,45 @@ class Master extends CI_Controller {
     }
 
 
+    /**
+     * Método del controlador, que invoca al modelo para generar un CSV con el balance de activos.
+     */
+    public function exportar_balance_activos($formato="csv")
+    {
+        if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 9))
+        {
+            $this->load->model('tienda_model');
+            $data['stocks'] = $this->tienda_model->exportar_stock_cruzado($formato);
+        }
+        else
+        {
+            redirect('master','refresh');
+        }
+    }
+
+    /**
+     * Método del controlador, que invoca al modelo para generar un CSV con el balance de activos.
+     */
+    public function exportar_balance_alarmas($formato="csv")
+    {
+        if($this->auth->is_auth()){ // Control de acceso según el tipo de agente. Permiso definido en constructor
+
+            $this->load->model('tienda_model');
+            $data['stocks'] = $this->tienda_model->exportar_balance_alarmas($formato);
+
+        }
+        else
+        {
+            redirect('master','refresh');
+        }
+    }
+
+
+
     public function inventario()
 	{
-		if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 9))
-		{
+        if($this->auth->is_auth()){ // Control de acceso según el tipo de agente. Permiso definido en constructor
+
 			$xcrud = xcrud_get_instance();
 			$this->load->model('tienda_model');
 				
@@ -1362,8 +1370,8 @@ class Master extends CI_Controller {
 	
 	public function descripcion()
 	{
-		if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 9))
-		{
+        if($this->auth->is_auth()){ // Control de acceso según el tipo de agente. Permiso definido en constructor
+
 			$xcrud = xcrud_get_instance();
 			$this->load->model('tienda_model');
 	
@@ -1385,8 +1393,8 @@ class Master extends CI_Controller {
 	
 	public function exp_alta_incidencia()
 	{
-		if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 9))
-		{		
+        if($this->auth->is_auth()){ // Control de acceso según el tipo de agente. Permiso definido en constructor
+        //
 			$id_pds   = $this->uri->segment(3);
 		
 			$xcrud = xcrud_get_instance();
@@ -1429,8 +1437,8 @@ class Master extends CI_Controller {
 	
 	public function exp_alta_incidencia_mueble()
 	{
-		if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 9))
-		{		
+        if($this->auth->is_auth()){ // Control de acceso según el tipo de agente. Permiso definido en constructor
+        //
 			$id_pds   = $this->uri->segment(3);
 			$id_dis   = $this->uri->segment(4);
 		
@@ -1475,8 +1483,8 @@ class Master extends CI_Controller {
 	
 	public function exp_alta_incidencia_device()
 	{
-		if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 9))
-		{		
+        if($this->auth->is_auth()){ // Control de acceso según el tipo de agente. Permiso definido en constructor
+        //
 			$id_pds   = $this->uri->segment(3);
 			$id_dis   = $this->uri->segment(4);
 			$id_dev   = $this->uri->segment(5);
@@ -1535,8 +1543,8 @@ class Master extends CI_Controller {
 	
 	public function inventarios_planogramas()
 	{
-		if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 9))
-		{
+        if($this->auth->is_auth()){ // Control de acceso según el tipo de agente. Permiso definido en constructor
+
 			$xcrud = xcrud_get_instance();
 			$this->load->model('tienda_model');
 
@@ -1622,13 +1630,14 @@ class Master extends CI_Controller {
     /**
      * Método que se llama por AJAX desde el Informe PDV, al añadir o quitar un elemento del multifiltro.
      */
-    public function resultado_pdv($exportar = NULL)
+    public function resultado_pdv($exportar = NULL,$formato="csv")
     {
         if($this->auth->is_auth()) {
             $xcrud = xcrud_get_instance();
 
             $this->load->model('informe_model');
 
+            $data["generado"] = FALSE;
 
             $arr_campos = array(
                 "tipo_tienda" => '',
@@ -1749,7 +1758,7 @@ class Master extends CI_Controller {
             else
             {
 
-                $this->informe_model->get_informe_csv($data);
+                $this->informe_model->exportar_informe_pdv($data,$formato);
             }
 
         }
@@ -1759,7 +1768,8 @@ class Master extends CI_Controller {
 
     public function informe_pdv_exportar()
     {
-        if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 9)) {
+        if($this->auth->is_auth()){ // Control de acceso según el tipo de agente. Permiso definido en constructor
+
             $xcrud = xcrud_get_instance();
             $this->load->model('sfid_model');
             $this->load->model('tienda_model');
@@ -1852,7 +1862,8 @@ class Master extends CI_Controller {
      */
     public function informe_planogramas()
     {
-        if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 9)) {
+        if($this->auth->is_auth()){ // Control de acceso según el tipo de agente. Permiso definido en constructor
+
 
             /* Incluir los modelos */
             $xcrud = xcrud_get_instance();
@@ -2103,8 +2114,9 @@ class Master extends CI_Controller {
 
 
     public function informe_planograma_mueble_pds(){
-        if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 9))
-        {
+
+        if($this->auth->is_auth()){ // Control de acceso según el tipo de agente. Permiso definido en constructor
+
             $id_pds   = $this->uri->segment(3);
             $id_dis   = $this->uri->segment(4);
 
@@ -2170,8 +2182,8 @@ class Master extends CI_Controller {
 
 
     public function informe_planograma_terminal(){
-        if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 9))
-        {
+        if($this->auth->is_auth()){ // Control de acceso según el tipo de agente. Permiso definido en constructor
+
         $data["generado_planograma"] = FALSE;
 
         $id_pds   = $this->uri->segment(3);
@@ -2258,7 +2270,8 @@ class Master extends CI_Controller {
      */
     public function informe_visual()
     {
-        if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 9)) {
+        if($this->auth->is_auth()){ // Control de acceso según el tipo de agente. Permiso definido en constructor
+
 
             /* Incluir los modelos */
             $xcrud = xcrud_get_instance();
@@ -2445,8 +2458,7 @@ class Master extends CI_Controller {
 
 
     public function informe_visual_mueble($id_mueble){
-        if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 9))
-        {
+        if($this->auth->is_auth()){ // Control de acceso según el tipo de agente. Permiso definido en constructor
 
             $id_dis   = $id_mueble;
 
@@ -2510,7 +2522,8 @@ class Master extends CI_Controller {
 
     public function informe_visual_terminal($id_mueble,$id_device)
     {
-        if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 9)) {
+        if($this->auth->is_auth()){ // Control de acceso según el tipo de agente. Permiso definido en constructor
+
             $id_pds = $this->uri->segment(3);
             $id_dis = $this->uri->segment(4);
             $id_dev = $this->uri->segment(5);
@@ -2579,8 +2592,8 @@ class Master extends CI_Controller {
 
 
     public function informe_visual_mueble_sfid(){
-        if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 9))
-        {
+        if($this->auth->is_auth()){ // Control de acceso según el tipo de agente. Permiso definido en constructor
+
             $id_pds   = $this->uri->segment(3);
             $id_dis   = $this->uri->segment(4);
 
@@ -2653,8 +2666,9 @@ class Master extends CI_Controller {
 
 
     public function informe_visual_ficha_terminal(){
-        if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 9))
-        {
+
+        if($this->auth->is_auth()){ // Control de acceso según el tipo de agente. Permiso definido en constructor
+
             $data["generado_visual"] = FALSE;
 
             $id_pds   = $this->uri->segment(3);
@@ -2739,8 +2753,8 @@ class Master extends CI_Controller {
 
 	public function ayuda($tipo)
 	{
-		if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 9))
-		{
+        if($this->auth->is_auth()){ // Control de acceso según el tipo de agente. Permiso definido en constructor
+
 			$xcrud = xcrud_get_instance();
 
 			switch($tipo){
@@ -2787,8 +2801,8 @@ class Master extends CI_Controller {
 
 	public function manuales()
 	{
-		if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 9))
-		{
+        if($this->auth->is_auth()){ // Control de acceso según el tipo de agente. Permiso definido en constructor
+
 			$xcrud = xcrud_get_instance();
 	
 			$data['title']       = 'Ayuda';
@@ -2807,8 +2821,7 @@ class Master extends CI_Controller {
 
 	public function muebles_fabricantes()
 	{
-		if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 9))
-		{
+        if($this->auth->is_auth()){ // Control de acceso según el tipo de agente. Permiso definido en constructor
 			$xcrud = xcrud_get_instance();
 	
 			$data['title']       = 'Ayuda';

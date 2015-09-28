@@ -22,7 +22,7 @@
 
 
 		            ?>
-		            	<h1 class="page-header">Intervenciones [descargar <a href="<?=site_url('admin/facturacion_csv/'.$fecha_inicio.'/'.$fecha_fin.'/'.$instalador.'/'.$dueno);?>" target="_blank">CSV</a>]</h1>
+		            	<h1 class="page-header">Intervenciones [descargar <a href="<?=site_url('admin/exportar_facturacion/xls/'.$fecha_inicio.'/'.$fecha_fin.'/'.$instalador.'/'.$dueno);?>">Exportar Excel</a>]</h1>
 		                <div class="table-responsive">
                             <p><strong>Rango:</strong> <?php echo date("d/m/Y",strtotime($fecha_inicio)); ?> - <?php echo date("d/m/Y",strtotime($fecha_fin)); ?></p>
 
