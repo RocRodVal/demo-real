@@ -1400,10 +1400,12 @@ class Tienda_model extends CI_Model {
                 if($acceso==="admin"){
                     $sql .= 'incidencias.last_updated, ';
                     $sql .= 'incidencias.status_pds';
+                }else{
+                    $sql = trim($sql,",");
                 }
 
 
-        $sql = trim($sql,",");
+
 
         $sql .='
                 FROM incidencias
