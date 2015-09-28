@@ -1394,16 +1394,13 @@ class Tienda_model extends CI_Model {
                             incidencias.email,
                             incidencias.id_operador,
                             incidencias.intervencion,
-                            incidencias.status  AS `Estado`,
-                            ';
+                            incidencias.status  AS `Estado`,';
 
-                if($acceso==="admin"){
+                if($acceso=="admin"){
                     $sql .= 'incidencias.last_updated, ';
                     $sql .= 'incidencias.status_pds';
-                }else{
-                    $sql = trim($sql,",");
                 }
-
+        $sql = rtrim($sql,",");
 
 
 
