@@ -3495,8 +3495,11 @@ class Admin extends CI_Controller
 
             $fecha_inicio = $this->input->post('fecha_inicio');
             $fecha_fin    = $this->input->post('fecha_fin');
-            $instalador = $this->input->post('instalador');
-            $dueno = $this->input->post('dueno');
+            $instalador = $this->input->post('instalador'); $instalador = (is_null($instalador) || empty($instalador)) ? 0 : $instalador;
+            $dueno = $this->input->post('dueno');           $dueno = (is_null($dueno) || empty($dueno)) ? 0 : $dueno;
+
+
+
 
             $instaladores = $this->db->query("SELECT id_contact, contact FROM contact WHERE type_profile_contact = 1")->result();
             $duenos = $this->db->query("SELECT id_client, client FROM client WHERE status='Alta' AND facturable = 1")->result();
@@ -3534,6 +3537,7 @@ class Admin extends CI_Controller
             $data['id_pds'] = $this->session->userdata('id_pds');
             $data['sfid'] = $this->session->userdata('sfid');
             $this->load->model(array('tienda_model','sfid_model'));
+
 
             $xcrud = xcrud_get_instance();
 
