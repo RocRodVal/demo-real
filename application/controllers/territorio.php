@@ -10,6 +10,12 @@ class Territorio extends CI_Controller {
 		$this->load->library(array('email','encrypt','form_validation','session'));
         $this->load->library('uri');
 
+
+        $this->load->config('files');
+        $this->cfg = $this->config->config;
+        $this->export = config_item("export");
+        $this->ext = $this->export["default_ext"];
+
     }
 		
 	
@@ -329,11 +335,12 @@ class Territorio extends CI_Controller {
 
 
 
-    public function exportar_incidencias($tipo="abiertas",$formato="csv")
+    public function exportar_incidencias($tipo="abiertas",$formato=NULL)
     {
         if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 12)) {
             $xcrud = xcrud_get_instance();
 
+            $ext = (!is_null($formato) ? $formato : $this->ext);    // Formato para exportaciones, especficiado o desde CFG
 
             $this->load->model(array('intervencion_model', 'tienda_model', 'sfid_model','chat_model'));
             $tipo = $this->uri->segment(3); // TIPO DE INCIDENCIA
@@ -356,7 +363,7 @@ class Territorio extends CI_Controller {
 
 
 
-                $this->tienda_model->exportar_incidencias($array_orden, $array_sesion, $tipo,$formato);
+                $this->tienda_model->exportar_incidencias($array_orden, $array_sesion, $tipo,$ext);
 
 
 

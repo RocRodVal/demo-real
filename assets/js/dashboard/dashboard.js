@@ -128,7 +128,6 @@ $(document).ready(function () {
 
 
 
-            console.log($(this).attr("class"));
 
         });
     }).on("mouseout",function(){
@@ -147,7 +146,7 @@ $(document).ready(function () {
             }
                 i++;
 
-            console.log($(this).attr("class"));
+
         });
     });
 
@@ -160,7 +159,23 @@ $(document).ready(function () {
         else{ ordenCampo = 'desc'}
 
         var idFormOrdenar = $(this).parent().parent().parent().attr("data-order-form");
+
+
+
         //alert(idFormOrdenar);
+        $("#"+idFormOrdenar).find("input[name="+idFormOrdenar+"_campo_orden]").val(campoOrdenar);
+        $("#"+idFormOrdenar).find("input[name="+idFormOrdenar+"_orden_campo]").val(ordenCampo);
+        $("#"+idFormOrdenar).find("input[name=form]").val(idFormOrdenar);
+        $("#"+idFormOrdenar).submit();
+    });
+
+    /** Click en aviso de mensajes de chat para ordenar la tabla por el chat **/
+    $("a.mensajes_nuevos").on("click",function(){
+        var campoOrdenar = $(this).attr("data-rel");
+        var ordenCampo = $(this).attr("data-order");
+        var idFormOrdenar = $(this).attr("data-order-form");
+
+
         $("#"+idFormOrdenar).find("input[name="+idFormOrdenar+"_campo_orden]").val(campoOrdenar);
         $("#"+idFormOrdenar).find("input[name="+idFormOrdenar+"_orden_campo]").val(ordenCampo);
         $("#"+idFormOrdenar).find("input[name=form]").val(idFormOrdenar);

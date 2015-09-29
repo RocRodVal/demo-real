@@ -103,11 +103,31 @@ if ( ! function_exists('query_to_csv'))
  * segundo param.
  */
 
-if(!function_exists("array_to_xls"))
+if(!function_exists("array_to"))
 {
 
-    function array_to_xls($array_facturacion, $filename = 'export')
+    function array_to($format="xls", $array_facturacion, $filename = 'export')
     {
+
+        switch($format)
+        {
+            case "xlsx":
+                $mime = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+                $ext = $format;
+                $writer = 'Excel2007';
+                break;
+
+            case "xls":
+                $mime = 'application/vnd.ms-excel';
+                $writer = 'Excel5';
+                $ext = $format;
+                break;
+
+            default:
+                echo 'Helper CSV: array_to - Unknown Format conversion.'; die();
+                break;
+
+        }
 
         $CI = &get_instance();
         $CI->load->library("PHPExcel");
@@ -117,12 +137,12 @@ if(!function_exists("array_to_xls"))
         $doc->setActiveSheetIndex(0);
 
         $doc->getActiveSheet()->fromArray($array_facturacion, null, 'A1');
-        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        header('Content-Disposition: attachment;filename="' . $filename . '.xls"');
+        header('Content-Type: '.$mime);
+        header('Content-Disposition: attachment;filename="' . $filename . '.'.$ext.'"');
         header('Cache-Control: max-age=0');
 
         // Do your stuff here
-        $writer = PHPExcel_IOFactory::createWriter($doc, 'Excel5');
+        $writer = PHPExcel_IOFactory::createWriter($doc, $writer);
 
         $writer->save('php://output');
 
@@ -166,11 +186,15 @@ if(!function_exists("exportar_fichero"))
         switch($formato)
         {
             case "xls":
-                array_to_xls($data, 'Demo_Real-' . $filename);
+                array_to('xls',$data, 'Demo_Real-' . $filename);
                 exit; break;
 
-            case "csv":
+            case "xlsx":
+                array_to('xlsx',$data, 'Demo_Real-' . $filename);
+                exit; break;
+
             default:
+            case "csv":
                 $delimiter = ",";
                 $newline = "\r\n";
                 echo array_to_csv($data,'Demo_Real-' . $filename);

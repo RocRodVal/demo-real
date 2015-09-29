@@ -11,6 +11,11 @@ class Ot extends CI_Controller {
         $this->load->library('uri');
 
         $this->load->library('auth',array(11));
+
+        $this->load->config('files');
+        $this->cfg = $this->config->config;
+        $this->export = config_item("export");
+        $this->ext = $this->export["default_ext"];
     }
 		
 	
@@ -109,12 +114,14 @@ class Ot extends CI_Controller {
     /**
      * Método del controlador, que invoca al modelo para generar un CSV con el balance de activos.
      */
-    public function exportar_balance_activos($formato="csv")
+    public function exportar_balance_activos($formato=NULL)
     {
         if($this->auth->is_auth())
         {
             $this->load->model('tienda_model');
-            $data['stocks'] = $this->tienda_model->exportar_stock_cruzado($formato);
+            $ext = (!is_null($formato) ? $formato : $this->ext);    // Formato para exportaciones, especficiado o desde CFG
+
+            $data['stocks'] = $this->tienda_model->exportar_stock_cruzado($ext);
         }
         else
         {

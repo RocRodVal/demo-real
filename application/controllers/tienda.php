@@ -10,6 +10,12 @@ class Tienda extends CI_Controller {
 		$this->load->library(array('email','encrypt','form_validation','session'));
         $this->load->library('uri');
 
+
+        $this->load->config('files');
+        $this->cfg = $this->config->config;
+        $this->export = config_item("export");
+        $this->ext = $this->export["default_ext"];
+
     }
 	
 	
@@ -319,12 +325,14 @@ class Tienda extends CI_Controller {
 
 
 
-    public function exportar_incidencias($tipo="abiertas",$formato="csv")
+    public function exportar_incidencias($tipo="abiertas",$formato=NULL)
     {
         if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 1)) {
             $xcrud = xcrud_get_instance();
             $data['id_pds'] = $this->session->userdata('id_pds');
             $data['sfid'] = $this->session->userdata('sfid');
+
+
 
             $this->load->model(array('intervencion_model', 'tienda_model', 'sfid_model','chat_model'));
             $tipo = $this->uri->segment(3); // TIPO DE INCIDENCIA

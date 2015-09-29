@@ -155,7 +155,7 @@
                             </div>
                         <?php } ?>
 
-                        <p><a href="<?=base_url()?>master/exportar_incidencias/abiertas/xls" class="btn exportar"><i class="glyphicon glyphicon-file"></i> Exportar Excel</a></p>
+                        <p><a href="<?=base_url()?>master/exportar_incidencias/abiertas" class="btn exportar"><i class="glyphicon glyphicon-file"></i> Exportar Excel</a></p>
 		                <div class="table-responsive">
 		                    <table class="table table-striped table-bordered table-hover table-sorting" id="table_incidencias_dashboard" data-order-form="form_orden">
 		                        <thead>
