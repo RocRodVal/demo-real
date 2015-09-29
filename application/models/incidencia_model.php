@@ -4,6 +4,7 @@ class Incidencia_model extends CI_Model {
 
 	public function __construct()	{
 		$this->load->database();
+        $this->load->model('chat_model');
 	}
 
 	public function get_displays_panelado($id) {
@@ -236,10 +237,28 @@ class Incidencia_model extends CI_Model {
 	 * */
     public function get_estado_incidencias($page = 1, $cfg_pagination = NULL,$array_orden= NULL,$filtros=NULL, $tipo="abiertas") {
 
-        $this->db->select('incidencias.*,pds.reference as reference, device.brand_device as fabricante,
-                            territory.territory as territory,
-                       (SELECT brand_device.brand from brand_device  WHERE id_brand_device = fabricante
-                            ) as brand')
+        $arr_agentes_excluidos = $this->chat_model->get_agentes_excluidos();
+        $agentes_excluidos = "";
+
+
+        if(count($arr_agentes_excluidos)  > 0){
+            foreach($arr_agentes_excluidos as $agente){ $agentes_excluidos .= ("'".$agente."',"); }
+            //$agentes_excluidos = (" (".implode(",",$arr_agentes_excluidos).") ");
+        }
+
+        $agentes_excluidos  = rtrim($agentes_excluidos,",");
+
+        $this->db->select("incidencias.*,pds.reference as reference, device.brand_device as fabricante,
+                           territory.territory as territory,
+                           (SELECT brand_device.brand from brand_device  WHERE id_brand_device = fabricante) as brand,
+                           (SELECT COUNT(*)
+                                FROM chat
+                                JOIN incidencias inc ON chat.id_incidencia = inc.id_incidencia
+                                JOIN pds  ON pds.id_pds = inc.id_pds
+                                JOIN agent ON chat.agent = agent.sfid
+                                WHERE chat.status = 'Nuevo'
+                                AND incidencias.id_incidencia = chat.id_incidencia
+                                AND agent.type NOT IN ($agentes_excluidos)) as nuevos",FALSE)
             ->join('pds','incidencias.id_pds = pds.id_pds','left')
             ->join('devices_pds','incidencias.id_devices_pds=devices_pds.id_devices_pds','left')
             ->join('device','devices_pds.id_device=device.id_device','left')
@@ -278,7 +297,7 @@ class Incidencia_model extends CI_Model {
         }
 
         $query =   $this->db->get('incidencias',$cfg_pagination['per_page'], ($page-1) * $cfg_pagination['per_page']);
-        // echo $this->db->last_query();
+         //echo $this->db->last_query();
 
         return $query->result();
     }

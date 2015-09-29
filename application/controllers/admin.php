@@ -15,6 +15,10 @@ class Admin extends CI_Controller
         $this->load->library('auth',array(10));
 
 
+        $this->load->config('files');
+        $this->cfg = $this->config->config;
+        $this->export = config_item("export");
+        $this->ext = $this->export["default_ext"];
 
     }
 
@@ -324,11 +328,18 @@ class Admin extends CI_Controller
             foreach ($incidencias as $incidencia) {
                 $incidencia->device = $this->sfid_model->get_device($incidencia->id_devices_pds);
                 $incidencia->display = $this->sfid_model->get_display($incidencia->id_displays_pds);
-                $incidencia->nuevos  = $this->chat_model->contar_nuevos($incidencia->id_incidencia,$incidencia->reference);
+                //$incidencia->nuevos  = $this->chat_model->contar_nuevos($incidencia->id_incidencia,$incidencia->reference);
                 $incidencia->intervencion = $this->intervencion_model->get_intervencion_incidencia($incidencia->id_incidencia);
             }
 
+
+
+
             $data['incidencias'] = $incidencias;
+            $data['tipo'] = $tipo;
+
+            $data['mensajes_nuevos'] = $this->chat_model->existen_mensajes_nuevos($tipo);
+
 
             /* LISTADO DE TERRITORIOS PARA EL SELECT */
             $data["territorios"] = $this->tienda_model->get_territorios();
@@ -337,7 +348,7 @@ class Admin extends CI_Controller
 
             $this->load->view('backend/header', $data);
             $this->load->view('backend/navbar', $data);
-            $this->load->view('backend/estado_incidencias_'.$tipo, $data);
+            $this->load->view('backend/estado_incidencias/'.$tipo, $data);
             $this->load->view('backend/footer');
         } else {
             redirect('admin', 'refresh');
@@ -346,13 +357,15 @@ class Admin extends CI_Controller
 
 
 
-    public function exportar_incidencias($tipo="abiertas",$formato="csv")
+    public function exportar_incidencias($tipo="abiertas",$formato=NULL)
     {
         if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
             $xcrud = xcrud_get_instance();
-
-
             $this->load->model(array('intervencion_model', 'tienda_model', 'sfid_model','chat_model'));
+
+            $ext = (!is_null($formato) ? $formato : $this->ext);    // Formato para exportaciones, especficiado o desde CFG
+
+
 
             // Filtros abiertas
             $array_filtros = array(
@@ -371,7 +384,7 @@ class Admin extends CI_Controller
 
 
 
-            $this->tienda_model->exportar_incidencias($array_orden, $array_sesion, $tipo, $formato);
+            $this->tienda_model->exportar_incidencias($array_orden, $array_sesion, $tipo, $ext);
 
 
 
@@ -3466,7 +3479,7 @@ class Admin extends CI_Controller
     }
         
     
-    public function exportar_facturacion($formato="csv",$fecha_inicio=NULL,$fecha_fin=NULL,$instalador=NULL,$dueno=NULL)
+    public function exportar_facturacion($fecha_inicio=NULL,$fecha_fin=NULL,$instalador=NULL,$dueno=NULL,$formato=NULL)
     {
     	if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
     		$data['id_pds'] = $this->session->userdata('id_pds');
@@ -3475,8 +3488,10 @@ class Admin extends CI_Controller
     		$xcrud = xcrud_get_instance();
     		$this->load->model(array('tienda_model','sfid_model'));
 
+            $ext = (!is_null($formato) ? $formato : $this->ext);    // Formato para exportaciones, especficiado o desde CFG
 
-       		$data['facturacion_csv'] = $this->tienda_model->exportar_facturacion($formato,$fecha_inicio,$fecha_fin,$instalador,$dueno);
+
+       		$data['facturacion_csv'] = $this->tienda_model->exportar_facturacion($ext,$fecha_inicio,$fecha_fin,$instalador,$dueno);
 
     	} else {
     		redirect('admin', 'refresh');
@@ -3531,17 +3546,18 @@ class Admin extends CI_Controller
     }
 
 
-    public function exportar_intervenciones_facturacion($formato="csv",$fecha_inicio,$fecha_fin,$instalador=NULL,$dueno=NULL)
+    public function exportar_intervenciones_facturacion($fecha_inicio,$fecha_fin,$instalador=NULL,$dueno=NULL,$formato=NULL)
     {
         if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
             $data['id_pds'] = $this->session->userdata('id_pds');
             $data['sfid'] = $this->session->userdata('sfid');
             $this->load->model(array('tienda_model','sfid_model'));
 
-
             $xcrud = xcrud_get_instance();
 
-            $data['facturacion_csv'] = $this->tienda_model->exportar_intervenciones_facturacion($formato,$fecha_inicio,$fecha_fin,$instalador,$dueno);
+            $ext = (!is_null($formato) ? $formato : $this->ext);    // Formato para exportaciones, especficiado o desde CFG
+
+            $data['facturacion_csv'] = $this->tienda_model->exportar_intervenciones_facturacion($ext,$fecha_inicio,$fecha_fin,$instalador,$dueno);
 
         } else {
             redirect('admin', 'refresh');
@@ -3618,13 +3634,14 @@ class Admin extends CI_Controller
     /**
      * Método que se llama por AJAX desde el Informe PDV, al añadir o quitar un elemento del multifiltro.
      */
-    public function resultado_pdv($exportar = NULL,$formato="csv")
+    public function resultado_pdv($exportar = NULL,$formato=NULL)
     {
         if($this->auth->is_auth()) {
             $xcrud = xcrud_get_instance();
 
             $this->load->model('informe_model');
 
+            $ext = (!is_null($formato) ? $formato : $this->ext);    // Formato para exportaciones, especficiado o desde CFG
 
             $arr_campos = array(
                 "tipo_tienda" => '',
@@ -3745,7 +3762,7 @@ class Admin extends CI_Controller
             else
             {
 
-                $this->informe_model->exportar_informe_pdv($data,$formato);
+                $this->informe_model->exportar_informe_pdv($data,$ext);
             }
 
         }

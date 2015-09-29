@@ -42,4 +42,9 @@ class Auth
         return ( $sess_logged && in_array($sess_role,$roles_permitidos));
     }
 
+
+    public function get_type(){
+        return $this->ci->session->userdata($this->sess_var_role);
+    }
+
 }

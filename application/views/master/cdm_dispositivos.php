@@ -12,7 +12,7 @@
                         echo '<p>No hay datos.</p>';
                     } else {
                         ?>
-                        <h1 class="page-header">Balance de activos <a href="<?=site_url('master/exportar_balance_activos/xls');?>" title="Exportar Excel">Exportar Excel</a></h1>
+                        <h1 class="page-header">Balance de activos <a href="<?=site_url('master/exportar_balance_activos');?>" title="Exportar Excel">Exportar Excel</a></h1>
                         <div class="table-responsive">
 
                             <table class="table table-striped table-bordered table-hover" id="dataTables-example">

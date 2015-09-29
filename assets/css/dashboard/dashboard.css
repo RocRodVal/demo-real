@@ -26,11 +26,15 @@ Estilos de las tabla
 }
 
 .chat_nuevo{
-    color:#f60;
+    color:#fff;
+    background:#f60;
+    width:100%;
+    padding:10px 0 10px 0;
+    border-radius:5px;
 }
 
 .chat_leido{
-    color:#000;
+    color:#aaa;
 }
 
 
@@ -154,6 +158,31 @@ table.table>tbody>tr>td.warning{ background:#eb0202; color:#fff; font-weight: bo
     table.table>tbody>tr>td.warning-hover,
     table.table>tbody>tr>td.warning:hover,
     table.table>tbody>tr:hover>td.warning{ background:#c80505; }
+
+
+/**
+** AVISO MENSAJES CHAT
+**/
+
+a.mensajes_nuevos,
+h1.page-header a.mensajes_nuevos{ position: absolute; top: 0; right:0; font-size:14px; background:#ffa970; padding:6px 10px 6px 10px;
+    color:#973f04; border-radius: 3px; text-decoration: none; }
+
+
+@-webkit-keyframes blinker { from {opacity:1.0;} to {opacity:0.0;} }
+@keyframes blinker { from {opacity:1.0;} to {opacity:0.0;} }
+
+.blink {
+    text-decoration:blink;
+    -webkit-animation-name:blinker;
+    animation-name:blinker;
+    -webkit-animation-iteration-count:3;
+    animation-iteration-count:3;
+    -webkit-animation-timing-function:cubic-bezier(1.0,0,0,1.0);
+    animation-timing-function:cubic-bezier(1.0,0,0,1.0);
+    -webkit-animation-duration:0.5s;
+    animation-duration:0.5s;
+}
 
 /**
 ** MANTENIMIENTO

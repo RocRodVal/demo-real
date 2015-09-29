@@ -8,7 +8,7 @@
             <div class="row">
                 <div class="col-lg-12">
                     <h1 class="page-header">Balance de sistemas de seguridad
-                        <?php if(!empty($stock_balance)) { ?><a href="<?=site_url('master/exportar_balance_alarmas/xls');?>" title="Exportar Excel">Exportar Excel</a><?php } ?>
+                        <?php if(!empty($stock_balance)) { ?><a href="<?=site_url('master/exportar_balance_alarmas');?>" title="Exportar Excel">Exportar Excel</a><?php } ?>
 
                     </h1>
                     <?php
