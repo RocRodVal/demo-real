@@ -933,7 +933,91 @@ class Master extends CI_Controller {
             // Rellenamos con 0 cuando no hay incidencias para ese mes
 
 
+            /**
+             * Cuarto bloque de la tabla, Intervenciones, Alarmas, Terminales, Incidencias...
+             */
 
+            // Línea 1: Intervenciones
+            $resultados_3 = $this->db->query("
+                SELECT COUNT(intervenciones.id_intervencion) as cantidad, MONTH(intervenciones.fecha) as mes, YEAR(intervenciones.fecha) as anio
+                FROM intervenciones
+                JOIN intervenciones_incidencias ON intervenciones.id_intervencion = intervenciones_incidencias.id_intervencion
+                JOIN incidencias ON intervenciones_incidencias.id_incidencia = incidencias.id_incidencia
+                WHERE incidencias.status_pds = 'Finalizada' AND YEAR(intervenciones.fecha) = '".$este_anio."'
+                GROUP BY mes
+            ");
+            $data["intervenciones_anio"] = $resultados_3->result();
+
+
+            // Línea 2: Alarmas
+            $resultados_4 = $this->db->query("
+                SELECT  SUM(material_incidencias.cantidad) as cantidad,
+                        MONTH(material_incidencias.fecha) as mes,
+                        YEAR(material_incidencias.fecha) as anio
+                FROM material_incidencias
+                JOIN incidencias ON material_incidencias.id_incidencia = incidencias.id_incidencia
+                WHERE incidencias.status_pds = 'Finalizada' AND YEAR(material_incidencias.fecha) = '".$este_anio."'
+                AND id_devices_almacen IS NULL
+                GROUP BY mes
+            ");
+            $data["alarmas_anio"] = $resultados_4->result();
+
+
+            // Línea 3: Terminales
+            $resultados_5 = $this->db->query("
+                SELECT  SUM(material_incidencias.cantidad) as cantidad,
+                        MONTH(material_incidencias.fecha) as mes,
+                        YEAR(material_incidencias.fecha) as anio
+                FROM material_incidencias
+                JOIN incidencias ON material_incidencias.id_incidencia = incidencias.id_incidencia
+                WHERE incidencias.status_pds = 'Finalizada' AND YEAR(material_incidencias.fecha) = '".$este_anio."'
+                AND id_alarm IS NULL
+                GROUP BY mes
+            ");
+            $data["terminales_anio"] = $resultados_5->result();
+
+            // Línea 4: Incidencias resueltas
+
+            $resultados_6 = $this->db->query("
+                SELECT  COUNT(id_incidencia) as cantidad,
+                        MONTH(fecha) as mes,
+                        YEAR(fecha) as anio
+                FROM incidencias
+                WHERE   status_pds = 'Finalizada'
+                        AND YEAR(fecha) = '".$este_anio."'
+                GROUP BY anio, mes
+            ");
+            $data["incidencias_resueltas"] = $resultados_6->result();
+
+
+            $arr_resultados_6 = $resultados_6->result_array();
+            $arr_resultados_3 = $resultados_3->result_array();
+
+            // Línea 5: Media incidencias / intervenciones.
+            $resultados_7 = array();
+
+            $total_num = $total_denom = 0;
+            for($i=0; $i < count($arr_resultados_6); $i++)
+            {
+                $resultados_7[$i] = new StdClass();
+                $num =  $arr_resultados_6[$i]['cantidad'];
+                $denom = $arr_resultados_3[$i]['cantidad'];
+
+                if($denom == 0)
+                {
+                    $resultados_7[$i]->cantidad = 0;
+                }
+                else
+                {
+                    $resultados_7[$i]->cantidad = number_format(round($num/$denom,2),2,",",".");
+                }
+
+                $total_num +=  $arr_resultados_6[$i]['cantidad'];
+                $total_denom += $arr_resultados_3[$i]['cantidad'];
+            }
+
+            $data["media_inc_int"] = $resultados_7;
+            $data["total_media_inc_int"] = number_format(round($total_num/$total_denom,2),2,",",".");;
 
             $data["menos_72"] = $menos_72;
             $data["mas_72"] = $mas_72;
