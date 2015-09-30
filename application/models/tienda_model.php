@@ -1096,7 +1096,16 @@ class Tienda_model extends CI_Model {
 	
 		return $query->result();
 	}	
-	
+
+
+    public function get_tipos_incidencia()
+    {
+        $query = $this->db->select("id_type_incidencia,title")
+                ->order_by('title ASC')
+                ->get('type_incidencia');
+
+        return $query->result();
+    }
 	
 	public function reservar_dispositivos($id,$status)
 	{
