@@ -178,13 +178,16 @@
                                     for($i = 1; $i <= 10; $i++){ ?>
                                         <tr>
                                             <td>
-                                                <select id="alarma_almacen_<?=$i?>" name="alarma_almacen_<?=$i?>" width="500" style="width:500px">
+                                                <?php  // var_dump($alarms_almacen["Sony"]); ?>
+                                                <select id="alarma_almacen_<?=$i?>" name="alarma_almacen_<?=$i?>" width="500" style="width:500px" onchange="comprobar_stock(this,'units_alarma_almacen_<?=$i?>');">
                                                     <?php // Optgroups de dueños
+
+
                                                         foreach($duenos_alarm as $dueno_alarm){?>
                                                             <optgroup label="<?=$dueno_alarm->client?>">
                                                                 <?php // Listado de alarmas del dueño actual...
                                                                     foreach($alarms_almacen[$dueno_alarm->client] as $alarm_almacen){ ?>
-                                                                        <option value="<?php echo $alarm_almacen->id_alarm ?>"><?php echo $alarm_almacen->client_alarm.' '.$alarm_almacen->brand.' '.$alarm_almacen->code.' '.$alarm_almacen->alarm?></option>
+                                                                        <option value="<?php echo $alarm_almacen->id_alarm ?>" data-stock="<?=$alarm_almacen->units?>"><?php echo $alarm_almacen->client_alarm.' '.$alarm_almacen->brand.' '.$alarm_almacen->code.' '.$alarm_almacen->alarm?></option>
                                                                     <?php }
                                                                 ?>
                                                             </optgroup>

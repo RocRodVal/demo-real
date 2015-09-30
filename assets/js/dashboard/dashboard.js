@@ -400,3 +400,28 @@ function update_incidencia_afecta()
         });
 
 }
+
+
+
+
+function comprobar_stock(selector,id_input)
+{
+    var option = $(selector).find("option:selected");
+    var stock = $(option).attr("data-stock");
+    var input = $("#"+id_input);
+
+    if(stock <= 0)
+    {
+        $(input).addClass('error');
+        $(input).val("Stock insuficiente: "+stock);
+        $(input).attr('disabled',true);
+        $(input).attr('readonly',true);
+    }
+    else
+    {
+        $(input).removeClass('error');
+        $(input).val(1);
+        $(input).attr('disabled',false);
+        $(input).attr('readonly',false);
+    }
+}
