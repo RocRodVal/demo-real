@@ -1358,7 +1358,7 @@ class Admin extends CI_Controller
     	}
 
         // RECEPCION DE 10 CAMPOS DE ALARMAS
-        for($i = 1; $i <= 10; $i++)
+        /*for($i = 1; $i <= 10; $i++)
         {
             if ($this->input->post('units_alarma_alamacen_'.$i) <> '' && $this->input->post('units_alarma_almacen_'.$i) <> '0')
             {
@@ -1375,8 +1375,8 @@ class Admin extends CI_Controller
                 $this->tienda_model->incidencia_update_material($$var_alarma);
                 $this->tienda_model->borrar_alarmas($this->input->post('alarma_almacen_'.$i),$this->input->post('units_alarma_almacen_'.$i));
             }
-        }
-    	/*if ($this->input->post('units_alarma_almacen_1') <> '' && $this->input->post('units_alarma_almacen_1') <> '0')
+        }*/
+    	if ($this->input->post('units_alarma_almacen_1') <> '' && $this->input->post('units_alarma_almacen_1') <> '0')
     	{
 	    	$alarma_almacen_1 = array(
 	    			'fecha' => date('Y-m-d H:i:s'),
@@ -1525,7 +1525,7 @@ class Admin extends CI_Controller
     		$this->tienda_model->incidencia_update_material($alarma_almacen_10);
     		$this->tienda_model->borrar_alarmas($this->input->post('alarma_almacen_10'),$this->input->post('units_alarma_almacen_10'));
     	}
-           */
+           
     	$this->tienda_model->incidencia_update($id_inc, $status_pds, $status);
 
     	$data = array(
