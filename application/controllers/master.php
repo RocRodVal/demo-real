@@ -946,8 +946,27 @@ class Master extends CI_Controller {
                 WHERE incidencias.status_pds = 'Finalizada' AND YEAR(intervenciones.fecha) = '".$este_anio."'
                 GROUP BY mes
             ");
-            $data["intervenciones_anio"] = $resultados_3->result();
 
+            // CREAMOS UN ARRAY CON TODOS LOS MESES Y LO RELLENAMOS CON LOS RESULTADOS, SI NO EXISTE RESULTADO, ESE MES
+            // SERA DE CANTIDAD 0
+            $intervenciones_anio = array();
+            foreach($meses_columna as $num_mes=>$mes)
+            {
+                $intervenciones_anio[$num_mes] = new StdClass();
+                $intervenciones_anio[$num_mes]->cantidad = 0;
+                $intervenciones_anio[$num_mes]->mes = $num_mes;
+                $intervenciones_anio[$num_mes]->anio = $este_anio;
+
+                foreach($resultados_3->result() as $key=>$valor)
+                {
+                    if(array_key_exists("mes",$valor) && $valor->mes == $num_mes)
+                    {
+                        $intervenciones_anio[$num_mes] = $valor;
+                        break;
+                    }
+                }
+            }
+            $data["intervenciones_anio"] = $intervenciones_anio;
 
             // Línea 2: Alarmas
             $resultados_4 = $this->db->query("
@@ -960,7 +979,27 @@ class Master extends CI_Controller {
                 AND id_devices_almacen IS NULL
                 GROUP BY mes
             ");
-            $data["alarmas_anio"] = $resultados_4->result();
+
+            // CREAMOS UN ARRAY CON TODOS LOS MESES Y LO RELLENAMOS CON LOS RESULTADOS, SI NO EXISTE RESULTADO, ESE MES
+            // SERA DE CANTIDAD 0
+            $alarmas_anio = array();
+            foreach($meses_columna as $num_mes=>$mes)
+            {
+                $alarmas_anio[$num_mes] = new StdClass();
+                $alarmas_anio[$num_mes]->cantidad = 0;
+                $alarmas_anio[$num_mes]->mes = $num_mes;
+                $alarmas_anio[$num_mes]->anio = $este_anio;
+
+                foreach($resultados_4->result() as $key=>$valor)
+                {
+                    if(array_key_exists("mes",$valor) && $valor->mes == $num_mes)
+                    {
+                        $alarmas_anio[$num_mes] = $valor;
+                        break;
+                    }
+                }
+            }
+            $data["alarmas_anio"] = $alarmas_anio;
 
 
             // Línea 3: Terminales
@@ -975,7 +1014,6 @@ class Master extends CI_Controller {
                 GROUP BY mes
             ");
 
-
             // CREAMOS UN ARRAY CON TODOS LOS MESES Y LO RELLENAMOS CON LOS RESULTADOS, SI NO EXISTE RESULTADO, ESE MES
             // SERA DE CANTIDAD 0
             $terminales_anio = array();
@@ -988,13 +1026,10 @@ class Master extends CI_Controller {
 
                 foreach($resultados_5->result() as $key=>$valor)
                 {
-                    if(array_key_exists("mes",$valor))
+                    if(array_key_exists("mes",$valor) && $valor->mes == $num_mes)
                     {
-                        if($valor->mes == $num_mes)
-                        {
-                            $terminales_anio[$num_mes] = $valor;
-                            break;
-                        }
+                        $terminales_anio[$num_mes] = $valor;
+                        break;
                     }
                 }
             }
@@ -1013,35 +1048,54 @@ class Master extends CI_Controller {
                         AND YEAR(fecha) = '".$este_anio."'
                 GROUP BY anio, mes
             ");
-            $data["incidencias_resueltas"] = $resultados_6->result();
+            // CREAMOS UN ARRAY CON TODOS LOS MESES Y LO RELLENAMOS CON LOS RESULTADOS, SI NO EXISTE RESULTADO, ESE MES
+            // SERA DE CANTIDAD 0
+            $incidencias_resueltas = array();
+            foreach($meses_columna as $num_mes=>$mes)
+            {
+                $incidencias_resueltas[$num_mes] = new StdClass();
+                $incidencias_resueltas[$num_mes]->cantidad = 0;
+                $incidencias_resueltas[$num_mes]->mes = $num_mes;
+                $incidencias_resueltas[$num_mes]->anio = $este_anio;
+
+                foreach($resultados_6->result() as $key=>$valor)
+                {
+                    if(array_key_exists("mes",$valor) && $valor->mes == $num_mes)
+                    {
+                        $incidencias_resueltas[$num_mes] = $valor;
+                        break;
+                    }
+                }
+            }
+            $data["incidencias_resueltas"] = $incidencias_resueltas;
 
 
-            $arr_resultados_6 = $resultados_6->result_array();
-            $arr_resultados_3 = $resultados_3->result_array();
 
             // Línea 5: Media incidencias / intervenciones.
             $resultados_7 = array();
 
             $total_num = $total_denom = 0;
-            for($i=0; $i < count($arr_resultados_6); $i++)
+            foreach($incidencias_resueltas as $key=>$valor)
             {
-                $resultados_7[$i] = new StdClass();
-                $num =  $arr_resultados_6[$i]['cantidad'];
-                $denom = $arr_resultados_3[$i]['cantidad'];
+                $resultados_7[$key] = new StdClass();
+
+                $num =  $valor->cantidad;
+                $denom = $intervenciones_anio[$key]->cantidad;
 
                 if($denom == 0)
                 {
-                    $resultados_7[$i]->cantidad = 0;
+                    $resultados_7[$key]->cantidad = 0;
                 }
                 else
                 {
-                    $resultados_7[$i]->cantidad = number_format(round($num/$denom,2),2,",",".");
+                    $resultados_7[$key]->cantidad = number_format(round($num/$denom,2),2,",",".");
                 }
 
-                $total_num +=  $arr_resultados_6[$i]['cantidad'];
-                $total_denom += $arr_resultados_3[$i]['cantidad'];
+                $total_num +=  $valor->cantidad;
+                $total_denom += $intervenciones_anio[$key]->cantidad;
             }
 
+            
             $data["media_inc_int"] = $resultados_7;
             $data["total_media_inc_int"] = number_format(round($total_num/$total_denom,2),2,",",".");;
 
