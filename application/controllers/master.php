@@ -983,8 +983,8 @@ class Master extends CI_Controller {
             {
                 $terminales_anio[$num_mes] = new StdClass();
                 $terminales_anio[$num_mes]->cantidad = 0;
-                $terminales_anio[$num_mes] = $num_mes;
-                $terminales_anio[$num_mes] = $este_anio;
+                $terminales_anio[$num_mes]->mes = $num_mes;
+                $terminales_anio[$num_mes]->anio = $este_anio;
 
                 foreach($resultados_5->result() as $key=>$valor)
                 {
