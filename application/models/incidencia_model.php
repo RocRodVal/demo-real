@@ -426,6 +426,10 @@ class Incidencia_model extends CI_Model {
 
     }
 
+
+
+
+
     /**
      * Función que devuelve la condición a usar en un where para determinar si la incidencia/s son abiertas o cerradas
      * según los estados status y status_pds
@@ -619,6 +623,32 @@ class Incidencia_model extends CI_Model {
             }
         }
 
+    }
+
+
+    /**
+     * @param $id_incidencia
+     * @param $averia
+     */
+    public function actualizar_averia($id_incidencia=NULL,$averia=NULL)
+    {
+        if(!is_null($id_incidencia))
+        {
+            if(is_array($averia))
+            {
+                $update_fields = array();
+                foreach($averia as $campo=>$valor)
+                {
+                    $update_fields[]= ($campo.' = '.$valor);
+                }
+                $fields = implode(",",$update_fields);
+
+                $sql = "UPDATE incidencias SET $fields WHERE id_incidencia = $id_incidencia";
+                $this->db->query($sql);
+                return true;
+            }
+        }
+        return false;
     }
 	
 }

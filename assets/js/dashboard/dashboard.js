@@ -367,3 +367,36 @@ var enviar_form = function(id_form)
 {
     $("#"+id_form).submit();
 }
+
+
+
+/*
+*   OPERAR INCIDENCIA: AFECTA A...
+*/
+
+function update_incidencia_afecta()
+{
+    var id_form = $("#afecta_a");
+
+        $.ajax({
+            type: 'POST',
+            url: $(id_form).attr("action"),
+            data: $(id_form).serialize(),
+            // Mostramos un mensaje con la respuesta de PHP
+            success: function (data) {
+                var mensaje = $(id_form).find("span.result");
+                var delay = 2000;
+
+                $(mensaje).html(data);
+                $(mensaje).fadeIn(500);
+
+                setTimeout(function(){
+                    $(mensaje).fadeOut(300);
+                },delay);
+            },
+            error: function (error) {
+                console.error(error.responseText);
+            }
+        });
+
+}

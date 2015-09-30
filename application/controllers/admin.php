@@ -691,6 +691,11 @@ class Admin extends CI_Controller
             $data['incidencia'] = $incidencia;
 
 
+            $data['fail_device'] = $incidencia['fail_device'];
+            $data['alarm_display'] = $incidencia['alarm_display'];
+            $data['alarm_device'] = $incidencia['alarm_device'];
+            $data['alarm_garra'] = $incidencia['alarm_garra'];
+
             $material_editable = $this->material_editable($incidencia['status']);
             $data['material_editable'] = $material_editable;
 
@@ -716,6 +721,34 @@ class Admin extends CI_Controller
         }
     }
 
+
+    public function actualizar_averia()
+    {
+        /*if ($this->auth->is_auth())
+        {*/
+            $this->load->model('incidencia_model');
+
+            $actualizar_averia = $this->input->post('actualizar_averia');
+            if($actualizar_averia=="si")
+            {
+                $id_incidencia = $this->input->post('id_incidencia');
+
+                if(!empty($id_incidencia) && is_numeric($id_incidencia))
+                {
+                    $averia = array();
+                    $averia['fail_device'] =    ($this->input->post('fail_device')   == "on") ? 1 : 0;
+                    $averia['alarm_display'] =  ($this->input->post('alarm_display') == "on") ? 1 : 0;
+                    $averia['alarm_device'] =   ($this->input->post('alarm_device')  == "on") ? 1 : 0;
+                    $averia['alarm_garra'] =    ($this->input->post('alarm_garra')   == "on") ? 1 : 0;
+
+
+                    $respuesta = $this->incidencia_model->actualizar_averia($id_incidencia,$averia);
+
+                    echo ($respuesta) ? "Datos actualizados" : 'Datos no actualizados';
+                }
+            }
+        //}
+    }
 
     public function imprimir_incidencia()
     {
@@ -1721,6 +1754,10 @@ class Admin extends CI_Controller
     		$xcrud_SQL->query('SELECT
 					incidencias.id_incidencia AS Incidencia,
 					incidencias.fecha AS Fecha,
+					incidencias.fecha_cierre AS Cierre,
+					(SELECT MAX(fecha) FROM historico
+					    WHERE status="Resuelta" AND historico.id_incidencia = incidencias.id_incidencia)
+                    as Cierre_Historico,
 					pds.reference AS Referencia,
             		pds.commercial AS "Nombre comercial",
             		pds.address AS Dirección,
