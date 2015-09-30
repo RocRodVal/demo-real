@@ -39,7 +39,7 @@
             </div> */?>
             <div class="row">
                 <div class="col-lg-12">
-                    <table cellpadding="0" cellspacing="0" class="table table-striped table-bordered table-hover table-borde-lineal">
+                    <table cellpadding="0" cellspacing="0" class="table table-striped table-bordered table-hover table-borde-lineal table-estado-incidencias">
                         <?php
                         $separador_td = "<td>&nbsp;</td><td>&nbsp;</td>";
                         foreach($meses_columna as $clave=>$valor) {
@@ -194,6 +194,71 @@
                                     echo '<td class="total">'.$total.'</td>';
                                     ?>
                                 </tr>
+
+                            <tr class="separador"><?=$separador_td?></tr>
+
+                            <tr>
+                                <th>Intervenciones</th>
+                                <?php
+                                $total = 0;
+                                foreach($intervenciones_anio as $key=>$valor)
+                                {
+                                    echo '<td>'.$valor->cantidad.'</td>';
+                                    $total += $valor->cantidad;
+                                }
+                                echo '<td class="total">'.$total.'</td>';
+                                ?>
+                            </tr>
+
+                            <tr>
+                                <th>Alarmas</th>
+                                <?php
+                                $total = 0;
+                                foreach($alarmas_anio as $key=>$valor)
+                                {
+                                    echo '<td>'.$valor->cantidad.'</td>';
+                                    $total += $valor->cantidad;
+                                }
+                                echo '<td class="total">'.$total.'</td>';
+                                ?>
+                            </tr>
+
+                            <tr>
+                                <th>Terminales</th>
+                                <?php
+                                $total = 0;
+                                foreach($terminales_anio as $key=>$valor)
+                                {
+                                    echo '<td>'.$valor->cantidad.'</td>';
+                                    $total += $valor->cantidad;
+                                }
+                                echo '<td class="total">'.$total.'</td>';
+                                ?>
+                            </tr>
+
+                            <tr>
+                                <th>Incidencias resueltas</th>
+                                <?php
+                                $total = 0;
+                                foreach($incidencias_resueltas as $key=>$valor)
+                                {
+                                    echo '<td>'.$valor->cantidad.'</td>';
+                                    $total += $valor->cantidad;
+                                }
+                                echo '<td class="total">'.$total.'</td>';
+                                ?>
+                            </tr>
+                        <tr>
+                            <th>Media <br> Incidencias/Intervención</th>
+                            <?php
+
+                            foreach($media_inc_int as $key=>$valor)
+                            {
+                                echo '<td>'.$valor->cantidad.'</td>';
+                            }
+                            echo '<td class="total">'.$total_media_inc_int.'</td>';
+                            ?>
+                        </tr>
 
                         </tbody>
 

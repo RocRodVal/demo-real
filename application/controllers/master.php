@@ -933,7 +933,170 @@ class Master extends CI_Controller {
             // Rellenamos con 0 cuando no hay incidencias para ese mes
 
 
+            /**
+             * Cuarto bloque de la tabla, Intervenciones, Alarmas, Terminales, Incidencias...
+             */
 
+            // Línea 1: Intervenciones
+            $resultados_3 = $this->db->query("
+                SELECT COUNT(intervenciones.id_intervencion) as cantidad, MONTH(intervenciones.fecha) as mes, YEAR(intervenciones.fecha) as anio
+                FROM intervenciones
+                JOIN intervenciones_incidencias ON intervenciones.id_intervencion = intervenciones_incidencias.id_intervencion
+                JOIN incidencias ON intervenciones_incidencias.id_incidencia = incidencias.id_incidencia
+                WHERE incidencias.status_pds = 'Finalizada' AND YEAR(intervenciones.fecha) = '".$este_anio."'
+                GROUP BY mes
+            ");
+
+            // CREAMOS UN ARRAY CON TODOS LOS MESES Y LO RELLENAMOS CON LOS RESULTADOS, SI NO EXISTE RESULTADO, ESE MES
+            // SERA DE CANTIDAD 0
+            $intervenciones_anio = array();
+            foreach($meses_columna as $num_mes=>$mes)
+            {
+                $intervenciones_anio[$num_mes] = new StdClass();
+                $intervenciones_anio[$num_mes]->cantidad = 0;
+                $intervenciones_anio[$num_mes]->mes = $num_mes;
+                $intervenciones_anio[$num_mes]->anio = $este_anio;
+
+                foreach($resultados_3->result() as $key=>$valor)
+                {
+                    if(array_key_exists("mes",$valor) && $valor->mes == $num_mes)
+                    {
+                        $intervenciones_anio[$num_mes] = $valor;
+                        break;
+                    }
+                }
+            }
+            $data["intervenciones_anio"] = $intervenciones_anio;
+
+            // Línea 2: Alarmas
+            $resultados_4 = $this->db->query("
+                SELECT  SUM(material_incidencias.cantidad) as cantidad,
+                        MONTH(material_incidencias.fecha) as mes,
+                        YEAR(material_incidencias.fecha) as anio
+                FROM material_incidencias
+                JOIN incidencias ON material_incidencias.id_incidencia = incidencias.id_incidencia
+                WHERE incidencias.status_pds = 'Finalizada' AND YEAR(material_incidencias.fecha) = '".$este_anio."'
+                AND id_devices_almacen IS NULL
+                GROUP BY mes
+            ");
+
+            // CREAMOS UN ARRAY CON TODOS LOS MESES Y LO RELLENAMOS CON LOS RESULTADOS, SI NO EXISTE RESULTADO, ESE MES
+            // SERA DE CANTIDAD 0
+            $alarmas_anio = array();
+            foreach($meses_columna as $num_mes=>$mes)
+            {
+                $alarmas_anio[$num_mes] = new StdClass();
+                $alarmas_anio[$num_mes]->cantidad = 0;
+                $alarmas_anio[$num_mes]->mes = $num_mes;
+                $alarmas_anio[$num_mes]->anio = $este_anio;
+
+                foreach($resultados_4->result() as $key=>$valor)
+                {
+                    if(array_key_exists("mes",$valor) && $valor->mes == $num_mes)
+                    {
+                        $alarmas_anio[$num_mes] = $valor;
+                        break;
+                    }
+                }
+            }
+            $data["alarmas_anio"] = $alarmas_anio;
+
+
+            // Línea 3: Terminales
+            $resultados_5 = $this->db->query("
+                SELECT  SUM(material_incidencias.cantidad) as cantidad,
+                        MONTH(material_incidencias.fecha) as mes,
+                        YEAR(material_incidencias.fecha) as anio
+                FROM material_incidencias
+                JOIN incidencias ON material_incidencias.id_incidencia = incidencias.id_incidencia
+                WHERE incidencias.status_pds = 'Finalizada' AND YEAR(material_incidencias.fecha) = '".$este_anio."'
+                AND id_alarm IS NULL
+                GROUP BY mes
+            ");
+
+            // CREAMOS UN ARRAY CON TODOS LOS MESES Y LO RELLENAMOS CON LOS RESULTADOS, SI NO EXISTE RESULTADO, ESE MES
+            // SERA DE CANTIDAD 0
+            $terminales_anio = array();
+            foreach($meses_columna as $num_mes=>$mes)
+            {
+                $terminales_anio[$num_mes] = new StdClass();
+                $terminales_anio[$num_mes]->cantidad = 0;
+                $terminales_anio[$num_mes]->mes = $num_mes;
+                $terminales_anio[$num_mes]->anio = $este_anio;
+
+                foreach($resultados_5->result() as $key=>$valor)
+                {
+                    if(array_key_exists("mes",$valor) && $valor->mes == $num_mes)
+                    {
+                        $terminales_anio[$num_mes] = $valor;
+                        break;
+                    }
+                }
+            }
+            $data["terminales_anio"] = $terminales_anio;
+
+
+
+            // Línea 4: Incidencias resueltas
+
+            $resultados_6 = $this->db->query("
+                SELECT  COUNT(id_incidencia) as cantidad,
+                        MONTH(fecha) as mes,
+                        YEAR(fecha) as anio
+                FROM incidencias
+                WHERE   status_pds = 'Finalizada'
+                        AND YEAR(fecha) = '".$este_anio."'
+                GROUP BY anio, mes
+            ");
+            // CREAMOS UN ARRAY CON TODOS LOS MESES Y LO RELLENAMOS CON LOS RESULTADOS, SI NO EXISTE RESULTADO, ESE MES
+            // SERA DE CANTIDAD 0
+            $incidencias_resueltas = array();
+            foreach($meses_columna as $num_mes=>$mes)
+            {
+                $incidencias_resueltas[$num_mes] = new StdClass();
+                $incidencias_resueltas[$num_mes]->cantidad = 0;
+                $incidencias_resueltas[$num_mes]->mes = $num_mes;
+                $incidencias_resueltas[$num_mes]->anio = $este_anio;
+
+                foreach($resultados_6->result() as $key=>$valor)
+                {
+                    if(array_key_exists("mes",$valor) && $valor->mes == $num_mes)
+                    {
+                        $incidencias_resueltas[$num_mes] = $valor;
+                        break;
+                    }
+                }
+            }
+            $data["incidencias_resueltas"] = $incidencias_resueltas;
+
+
+
+            // Línea 5: Media incidencias / intervenciones.
+            $resultados_7 = array();
+
+            $total_num = $total_denom = 0;
+            foreach($incidencias_resueltas as $key=>$valor)
+            {
+                $resultados_7[$key] = new StdClass();
+
+                $num =  $valor->cantidad;
+                $denom = $intervenciones_anio[$key]->cantidad;
+
+                if($denom == 0)
+                {
+                    $resultados_7[$key]->cantidad = 0;
+                }
+                else
+                {
+                    $resultados_7[$key]->cantidad = number_format(round($num/$denom,2),2,",",".");
+                }
+
+                $total_num +=  $valor->cantidad;
+                $total_denom += $intervenciones_anio[$key]->cantidad;
+            }
+
+            $data["media_inc_int"] = $resultados_7;
+            $data["total_media_inc_int"] = number_format(round($total_num/$total_denom,2),2,",",".");;
 
             $data["menos_72"] = $menos_72;
             $data["mas_72"] = $mas_72;
