@@ -705,6 +705,9 @@ class Admin extends CI_Controller
             $material_alarmas = $this->tienda_model->get_material_alarmas($incidencia['id_incidencia']);
             $data['material_alarmas'] = $material_alarmas;
 
+            $data['tipos_incidencia'] = $this->tienda_model->get_tipos_incidencia();
+
+
             $chats = $this->chat_model->get_chat_incidencia_pds($incidencia['id_incidencia']);
             $leido = $this->chat_model->marcar_leido($incidencia['id_incidencia'],$sfid['reference']);
             $data['chats'] = $chats;
@@ -724,8 +727,8 @@ class Admin extends CI_Controller
 
     public function actualizar_averia()
     {
-        /*if ($this->auth->is_auth())
-        {*/
+        if ($this->auth->is_auth())
+        {
             $this->load->model('incidencia_model');
 
             $actualizar_averia = $this->input->post('actualizar_averia');
@@ -736,6 +739,7 @@ class Admin extends CI_Controller
                 if(!empty($id_incidencia) && is_numeric($id_incidencia))
                 {
                     $averia = array();
+                    $averia['id_type_incidencia'] =  ($this->input->post('tipo_averia') != "NULL") ? $this->input->post('tipo_averia') : 'NULL';
                     $averia['fail_device'] =    ($this->input->post('fail_device')   == "on") ? 1 : 0;
                     $averia['alarm_display'] =  ($this->input->post('alarm_display') == "on") ? 1 : 0;
                     $averia['alarm_device'] =   ($this->input->post('alarm_device')  == "on") ? 1 : 0;
@@ -747,7 +751,7 @@ class Admin extends CI_Controller
                     echo ($respuesta) ? "Datos actualizados" : 'Datos no actualizados';
                 }
             }
-        //}
+        }
     }
 
     public function imprimir_incidencia()
@@ -2177,6 +2181,32 @@ class Admin extends CI_Controller
         $this->load->view('backend/content', $data);
         $this->load->view('backend/footer');
     }
+
+
+
+    public function tipos_incidencia()
+    {
+        $xcrud = xcrud_get_instance();
+        $xcrud->table('type_incidencia');
+        $xcrud->table_name('Tipos de incidencia');
+        $xcrud->label('id_type_incidencia','Id.')->label('title', 'Título');
+        $xcrud->columns('id_type_incidencia,title');
+        $xcrud->fields('title');
+        $xcrud->order_by('id_type_incidencia');
+
+        // Ocultar el botón de borrar para evitar borrados accidentales mientras no existan constraints en BD:
+        $xcrud->unset_remove();
+
+        $data['title'] = 'Tipos de incidencia';
+        $data['content'] = $xcrud->render();
+
+        $this->load->view('backend/header', $data);
+        $this->load->view('backend/navbar', $data);
+        $this->load->view('backend/content', $data);
+        $this->load->view('backend/footer');
+    }
+
+
 
     public function descripcion()
     {

@@ -231,13 +231,30 @@
                         <tr>
                             <th>Dispositivo: </th> <td><?php echo $dispositivo ?></td>
                         </tr>
+
                         <tr>
-                            <td colspan="2"><h3>Afecta a:</h3></td>
+                            <td colspan="2"><h3>Tipo de incidencia / Elemento afectado</h3></td>
                         </tr>
                         <tr>
                             <td colspan="2">
                                 <form action="<?=site_url('admin/actualizar_averia');?>" id="afecta_a">
                                     <table border="0" width="100%">
+                                        <tr>
+                                            <th colspan="1"><label for="tipo_averia">Tipo de incidencia: </label></th>
+                                            <td colspan="3"><select id="tipo_averia" name="tipo_averia">
+                                                    <option value="NULL">-- Sin asignar --</option>
+                                                    <?php
+
+                                                    foreach($tipos_incidencia as $tipo)
+                                                    {
+                                                        $selected = ($incidencia['id_type_incidencia']==$tipo->id_type_incidencia)? ' selected = "selected" ' : '';
+
+                                                        echo '<option value="'.$tipo->id_type_incidencia.'" '.$selected.'>'.$tipo->title.'</option>';
+                                                    }
+
+                                                    ?>
+                                                </select></td>
+                                        </tr>
                                         <tr>
                                             <th><input type="checkbox" name="fail_device" id="fail_device" <?=($fail_device == 1) ? ' checked="checked" ' : '' ?>> <label for="fail_device">Fallo dispositivo</label></th>
                                             <th><input type="checkbox" name="alarm_display" id="alarm_display"  <?=($alarm_display == 1) ? ' checked="checked" ' : '' ?>> <label for="alarm_display">Alarma mueble</label></th>
