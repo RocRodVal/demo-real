@@ -169,160 +169,225 @@
                     Información de la incidencia
                 </div>
                 <div class="panel-body">
-                	<strong>Tipo tienda:</strong> <?php echo $type_pds ?><br/>
-                    <strong>Fecha alta:</strong> <?php echo date_format(date_create($incidencia['fecha']), 'd/m/Y'); ?><br/>
-                    <?php
-                    // var_dump(date_format(date_create($incidencia['fecha_cierre']), 'd/m/Y'));
-                    if (strtotime($incidencia['fecha_cierre']) AND (date_format(date_create($incidencia['fecha_cierre']), 'd/m/Y') <> '30/11/-0001'))
-                    {
-                    ?>
-                    <strong>Fecha cierre:</strong> <?php echo date_format(date_create($incidencia['fecha_cierre']), 'd/m/Y'); ?><br/>
-                    <?php
-                    }
-                    else 
-                    {
-                    ?>
-                    <strong>Fecha cierre:</strong> ---<br/>
-                    <?php 	
-                    }	
-                    ?>
-                    <strong>Estado:</strong> <?php echo $incidencia['status'] ?><br/>
-                    <?php
-                    if ($historico_material_asignado <> '---')
-					{
-					?>
-					<strong>Fecha asignación material:</strong> <?php echo $historico_material_asignado; ?><br/>
-					<?php
-					}
-                    if ($historico_fecha_comunicada <> '---')
-					{
-					?>
-					<strong>Fecha comunicación:</strong> <?php echo $historico_fecha_comunicada; ?><br/>
-					<?php 	
-					}
-                    ?>
-                    <strong>Tipo:</strong> <?php echo $incidencia['tipo_averia'] ?>
-                    <?php
-                    if ($incidencia['tipo_averia'] == 'Robo') {
-                    ?>
-                    [<a href="<?= site_url('uploads/' . $incidencia['denuncia']) ?>" target="_blank">ver denuncia</a>]
-                    <?php
-                    }
-                    ?>
-                    <br />
-		            <?php 
-		            if (!isset($incidencia['device']['device'])) {$dispositivo = 'Retirado';}
-		            else { $dispositivo = $incidencia['device']['device']; }
-		            if (!isset($incidencia['display']['display'])) { $mueble = 'Retirado'; }
-		            else { $mueble = $incidencia['display']['display']; }		                                		
-		            ?>                    
-                    <strong>Mueble:</strong> <?php echo $mueble ?><br/>
-                    <strong>Dispositivo:</strong> <?php echo $dispositivo ?><br/>
-                    <strong>Contacto:</strong> <?php echo $incidencia['contacto'].' Tel. '.$incidencia['phone'] ?><br/>
-                    <strong>Intervención:</strong>
-                    <?php
-                    //Si el estado es superior a Instalador asignado e intervención!=null->Esto nunca debería darse pero se contempla
-                    if (($incidencia['status'] == 'Comunicada' || $incidencia['status'] == 'Resuelta' ||
-                            $incidencia['status'] == 'Instalador asignado' || $incidencia['status'] == 'Material asignado') && $incidencia['intervencion'] != null) 
-					{
+                    <table width="100%" cellpadding="0" cellspacing="0" id="info_incidencia">
+
+                        <tr>
+                            <td colspan="2"><h3>Información general</h3></td>
+                        </tr>
+                        <tr>
+                            <th width="50%">Tipo tienda:</th> <td><?php echo $type_pds ?></td>
+                        </tr>
+                        <tr>
+                            <th>Fecha alta:</th> <td><?php echo date_format(date_create($incidencia['fecha']), 'd/m/Y'); ?></td>
+                        </tr>
+                        <tr>
+                            <th>Fecha cierre:</th>
+                            <?php
+                            if (strtotime($incidencia['fecha_cierre']) AND (date_format(date_create($incidencia['fecha_cierre']), 'd/m/Y') <> '30/11/-0001'))
+                            { ?>
+                                <td><?php echo date_format(date_create($incidencia['fecha_cierre']), 'd/m/Y'); ?></td>
+                            <?php } else{?>
+                                <td>---</td>
+                            <?php }?>
+                        </tr>
+                        <tr>
+                            <th>Estado:</th> <td><?php echo $incidencia['status'] ?></td>
+                        </tr>
+                        <tr>
+                            <th>Fecha asignación material:</th>
+                            <?php if (!empty($historico_material_asignado)) { ?>
+                               <td><?php echo $historico_material_asignado; ?></td>
+                            <?php }else{ ?>
+                                <td>---</td>
+                            <?php } ?>
+                        </tr>
+                        <tr>
+                            <th>Fecha comunicación:</th>
+                            <?php if (!empty($historico_fecha_comunicada)) { ?>
+                                <td><?php echo $historico_fecha_comunicada; ?></td>
+                            <?php }else{ ?>
+                                <td>---</td>
+                            <?php } ?>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><h3>Información del fallo</h3></td>
+                        </tr>
+                        <tr>
+                            <th>Tipo: </th>
+                            <td><?php echo $incidencia['tipo_averia'] ?>
+                            <?php if ($incidencia['tipo_averia'] == 'Robo') { ?>
+                                [<a href="<?= site_url('uploads/' . $incidencia['denuncia']) ?>" target="_blank">ver denuncia</a>]
+                            <?php } ?></td>
+                        </tr>
+                        <?php
+                            if (!isset($incidencia['device']['device'])) {$dispositivo = 'Retirado';}
+                            else { $dispositivo = $incidencia['device']['device']; }
+                            if (!isset($incidencia['display']['display'])) { $mueble = 'Retirado'; }
+                            else { $mueble = $incidencia['display']['display']; }
                         ?>
-                        <a onClick="showModalViewIntervencion(<?php echo $incidencia['intervencion']; ?>)">
-                            #<?php echo $incidencia['intervencion']; ?></a>
-                    <?php
-                    } else {
-                        echo "-";
-                    }
+                        <tr>
+                            <th>Mueble: </th> <td><?php echo $mueble ?></td>
+                        </tr>
+                        <tr>
+                            <th>Dispositivo: </th> <td><?php echo $dispositivo ?></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><h3>Afecta a:</h3></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <form action="<?=site_url('admin/actualizar_averia');?>" id="afecta_a">
+                                    <table border="0" width="100%">
+                                        <tr>
+                                            <th><input type="checkbox" name="fail_device" id="fail_device" <?=($fail_device == 1) ? ' checked="checked" ' : '' ?>> <label for="fail_device">Fallo dispositivo</label></th>
+                                            <th><input type="checkbox" name="alarm_display" id="alarm_display"  <?=($alarm_display == 1) ? ' checked="checked" ' : '' ?>> <label for="alarm_display">Alarma mueble</label></th>
+                                            <th><input type="checkbox" name="alarm_device" id="alarm_device"  <?=($alarm_device == 1) ? ' checked="checked" ' : '' ?>> <label for="alarm_device">Alarma dispositivo</label></th>
+                                            <th><input type="checkbox" name="alarm_garra" id="alarm_garra"  <?=($alarm_garra == 1) ? ' checked="checked" ' : '' ?>> <label for="alarm_garra">Alarma garra</label></th>
+                                        </tr>
+                                        <tr>
+                                            <td height="10" style="font-size: 1px">&nbsp;</td>
+                                        </tr>
+                                        <tr>
+                                            <td align="left" colspan="4"><a href="#" class="update" onclick="update_incidencia_afecta(); return false;">Actualizar</a> <span class="result">Prueba Resultado</span>
 
-                    ?><br/>
-                    <strong>Comentario:</strong> <?php echo $incidencia['description_1'] ?>
-                    <br clear="all" />
-                    
-                    <h3>Material asignado</h3>
-                    <?php  if($material_editable && (count($material_alarmas) > 0 || count($material_dispositivos) > 0)) { ?>
-                        <p class="message"><td><a href="<?= site_url('admin/desasignar_incidencia_materiales/' . $id_pds_url . '/' . $id_inc_url.'/todo') ?>"><i class="glyphicon glyphicon-remove"></i> Desasignar todos los materiales</a></td></p>
-                    <?php } ?>
- 					<?php
-		            if (empty($material_dispositivos)) {
-		                echo '<p class="message"><i class="glyphicon glyphicon-remove"></i> No hay dispositivos asociados.</p>';
-		            } else {
-		                ?>
-		                <div class="table-responsive">
-		                    <table class="table table-striped table-bordered table-hover" id="table_incidencias_dashboard">
-		                        <thead>
-		                        <tr>
-									<th width="20%">Código</th>
-		                        	<th width="60%">Dispositivo</th>
-		                        	<th width="10%">Unidades</th>
-                                    <th width="10%">Desasignar</th>
-		                        </tr>
-		                        </thead>
-		                        <tbody>
-		                        <?php
-		                        foreach ($material_dispositivos as $material_dispositivos_item) {
-                                    ?>
-		                            <tr>
-		                                <td><?php echo $material_dispositivos_item->barcode ?></td>
-		                                <td><?php echo $material_dispositivos_item->device ?></td>
-		                                <td><?php echo $material_dispositivos_item->cantidad ?></td>
-                                        <?php if($material_editable) { ?>
-                                            <td><a href="<?= site_url('admin/desasignar_incidencia_materiales/' . $id_pds_url . '/' . $id_inc_url.'/device/'.$material_dispositivos_item->id_material_incidencias) ?>"><i class="glyphicon glyphicon-remove"></i></a></td>
-                                        <?php }else{ ?>
-                                            <td>-</td>
-                                        <?php  } ?>
+                                                <input type="hidden" name="id_incidencia" value="<?=$incidencia["id_incidencia"]?>">
+                                                <input type="hidden" name="actualizar_averia" value="si">
+                                            </td>
+                                        </tr>
+                                    </table>
 
-		                            </tr>
-		                        <?php
-		                        }
-		                        ?>
-		                        </tbody>
-		                    </table>
-		                </div>
-		            <?php
-		            }
-		            if (empty($material_alarmas)) {
-		                echo '<p class="message"><i class="glyphicon glyphicon-remove"></i> No hay alarmas asociadas.</p>';
-		            } else {
-		                ?>
-		                <div class="table-responsive">
-		                    <table class="table table-striped table-bordered table-hover" id="table_incidencias_dashboard">
-		                        <thead>
-		                        <tr>
-		                        	<th width="20%">Código</th>
-		                            <th width="60%">Alarma</th>
-                                    <th width="20%">Dueño</th>
-		                        	<th width="5%">Unidades</th>
-                                    <th width="5%">Desasignar</th>
-		                        </tr>
-		                        </thead>
-		                        <tbody>
-		                        <?php
-		                        foreach ($material_alarmas as $material_alarmas_item) {
-		                            ?>
-		                            <tr>
-		                            	<td><?php echo $material_alarmas_item->code ?></td>
-		                                <td><?php echo $material_alarmas_item->alarm ?></td>
-                                        <td><?php echo $material_alarmas_item->dueno ?></td>
-		                                <td><?php echo $material_alarmas_item->cantidad ?></td>
-                                        <?php if($material_editable) { ?>
-                                            <td><a href="<?= site_url('admin/desasignar_incidencia_materiales/' . $id_pds_url . '/' . $id_inc_url.'/alarm/'.$material_alarmas_item->id_material_incidencias) ?>"><i class="glyphicon glyphicon-remove"></i></a></td>
-                                        <?php }else{ ?>
-                                                <td>-</td>
+                                </form>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><h3>Otra información</h3></td>
+                        </tr>
+                        <tr>
+                            <th>Contacto:</th> <td><?php echo $incidencia['contacto'].' Tel. '.$incidencia['phone'] ?></td>
+                        </tr>
+                        <tr>
+                            <th>Intervención:</th>
+                            <td>
+                            <?php
+                            //Si el estado es superior a Instalador asignado e intervención!=null->Esto nunca debería darse pero se contempla
+                            if (($incidencia['status'] == 'Comunicada' || $incidencia['status'] == 'Resuelta' ||
+                                    $incidencia['status'] == 'Instalador asignado' || $incidencia['status'] == 'Material asignado') && $incidencia['intervencion'] != null)
+                            {
+                                ?>
+                                <a onClick="showModalViewIntervencion(<?php echo $incidencia['intervencion']; ?>)">
+                                    #<?php echo $incidencia['intervencion']; ?></a>
+                            <?php
+                            } else {
+                                echo "-";
+                            }?></td>
+                        </tr>
+                        <tr>
+                            <th>Comentario:</th> <td><?php echo $incidencia['description_1'] ?></td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="2"><h3>Material asignado</h3></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <?php  if($material_editable && (count($material_alarmas) > 0 || count($material_dispositivos) > 0)) { ?>
+                                <p class="message"><td><a href="<?= site_url('admin/desasignar_incidencia_materiales/' . $id_pds_url . '/' . $id_inc_url.'/todo') ?>"><i class="glyphicon glyphicon-remove"></i> Desasignar todos los materiales</a></td></p>
+                            <?php } ?>
+                            <?php
+                            if (empty($material_dispositivos)) {
+                                echo '<p class="message"><i class="glyphicon glyphicon-remove"></i> No hay dispositivos asociados.</p>';
+                            } else {
+                                ?>
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-bordered table-hover" id="table_incidencias_dashboard">
+                                        <thead>
+                                        <tr>
+                                            <th width="20%">Código</th>
+                                            <th width="60%">Dispositivo</th>
+                                            <th width="10%">Unidades</th>
+                                            <th width="10%">Desasignar</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <?php
+                                        foreach ($material_dispositivos as $material_dispositivos_item) {
+                                            ?>
+                                            <tr>
+                                                <td><?php echo $material_dispositivos_item->barcode ?></td>
+                                                <td><?php echo $material_dispositivos_item->device ?></td>
+                                                <td><?php echo $material_dispositivos_item->cantidad ?></td>
+                                                <?php if($material_editable) { ?>
+                                                    <td><a href="<?= site_url('admin/desasignar_incidencia_materiales/' . $id_pds_url . '/' . $id_inc_url.'/device/'.$material_dispositivos_item->id_material_incidencias) ?>"><i class="glyphicon glyphicon-remove"></i></a></td>
+                                                <?php }else{ ?>
+                                                    <td>-</td>
+                                                <?php  } ?>
+
+                                            </tr>
                                         <?php } ?>
-		                            </tr>
-		                        <?php
-		                        }
-		                        ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            <?php } ?>
 
-		                        </tbody>
-		                    </table>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <?php if (empty($material_alarmas)) {
+                                    echo '<p class="message"><i class="glyphicon glyphicon-remove"></i> No hay alarmas asociadas.</p>';
+                                } else {
+                                    ?>
+                                    <div class="table-responsive">
+                                        <table class="table table-striped table-bordered table-hover" id="table_incidencias_dashboard">
+                                            <thead>
+                                            <tr>
+                                                <th width="20%">Código</th>
+                                                <th width="60%">Alarma</th>
+                                                <th width="20%">Dueño</th>
+                                                <th width="5%">Unidades</th>
+                                                <th width="5%">Desasignar</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <?php
+                                            foreach ($material_alarmas as $material_alarmas_item) {
+                                                ?>
+                                                <tr>
+                                                    <td><?php echo $material_alarmas_item->code ?></td>
+                                                    <td><?php echo $material_alarmas_item->alarm ?></td>
+                                                    <td><?php echo $material_alarmas_item->dueno ?></td>
+                                                    <td><?php echo $material_alarmas_item->cantidad ?></td>
+                                                    <?php if($material_editable) { ?>
+                                                        <td><a href="<?= site_url('admin/desasignar_incidencia_materiales/' . $id_pds_url . '/' . $id_inc_url.'/alarm/'.$material_alarmas_item->id_material_incidencias) ?>"><i class="glyphicon glyphicon-remove"></i></a></td>
+                                                    <?php }else{ ?>
+                                                        <td>-</td>
+                                                    <?php } ?>
+                                                </tr>
+                                            <?php
+                                            }
+                                            ?>
+
+                                            </tbody>
+                                        </table>
 
 
-		                </div>
-		            <?php
-		            }
+                                    </div>
+                                <?php
+                                }
 
 
-		          ?>
+                                ?>
+
+                            </td>
+                        </tr>
+                    </table>
+
+
+                    
+
+
+
+
                 </div>
             </div>
             <div class="panel panel-default">

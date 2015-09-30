@@ -2,8 +2,8 @@
 Estilos del formulario superior
 */
 .form-sfid{
-     margin-bottom:20px;
- }
+    margin-bottom:20px;
+}
 /*
 Estilos de las tabla
 */
@@ -43,19 +43,19 @@ Estilos de las tabla
 **/
 
 h1.page-header{ position: relative;}
-    h1.page-header a{ font-size: 12px; color:#0088cc; text-decoration:underline; position: absolute; top: 0; right:0;  }
-    h1.page-header a:hover{ text-decoration: none;}
+h1.page-header a{ font-size: 12px; color:#0088cc; text-decoration:underline; position: absolute; top: 0; right:0;  }
+h1.page-header a:hover{ text-decoration: none;}
 
 div.pagination{padding: 0; margin:0 0 0 0;  }
-    div.pagination ul.pagination{ margin: 0 0 0 0;}
-    div.pagination p{ width: 100%; margin:0; padding:15px 0 15px 0;}
+div.pagination ul.pagination{ margin: 0 0 0 0;}
+div.pagination p{ width: 100%; margin:0; padding:15px 0 15px 0;}
 
 .filtro,
 .buscador{ margin-bottom: 20px; }
-    .filtro label,
-    .buscador label{ width:100%; font-size: 12px; text-align: left; }
-    .filtro input[type=submit],
-    .buscador input[type=submit]{ margin: 28px 0 0 0;}
+.filtro label,
+.buscador label{ width:100%; font-size: 12px; text-align: left; }
+.filtro input[type=submit],
+.buscador input[type=submit]{ margin: 28px 0 0 0;}
 
 a.reiniciar_busqueda{ color:#000; font-size: 12px; margin: 35px 0 0 0; display: inline-block; }
 
@@ -152,12 +152,12 @@ span.fecha_status{ display:inline-block; margin-left:10px; font-size: 12px; font
 
 
 table.table>tbody>tr>td.notice{ background:#f5d609; font-weight: bold; }
-    table.table>tbody>tr>td.notice-hover{ background:#d2b80a;  }
+table.table>tbody>tr>td.notice-hover{ background:#d2b80a;  }
 
 table.table>tbody>tr>td.warning{ background:#eb0202; color:#fff; font-weight: bold;}
-    table.table>tbody>tr>td.warning-hover,
-    table.table>tbody>tr>td.warning:hover,
-    table.table>tbody>tr:hover>td.warning{ background:#c80505; }
+table.table>tbody>tr>td.warning-hover,
+table.table>tbody>tr>td.warning:hover,
+table.table>tbody>tr:hover>td.warning{ background:#c80505; }
 
 
 /**
@@ -183,6 +183,29 @@ h1.page-header a.mensajes_nuevos{ position: absolute; top: 0; right:0; font-size
     -webkit-animation-duration:0.5s;
     animation-duration:0.5s;
 }
+
+/**
+*   CUADRO INFORMACION GENERAL INCIDENCIA
+**/
+
+#info_incidencia{ font-size: 14px; }
+#info_incidencia h3{ font-size:16px; font-weight: bold; color:#f60; border-bottom:1px solid #f60; }
+#info_incidencia  th,
+#info_incidencia  td{ vertical-align: top; padding-bottom: 3px; }
+    #info_incidencia a.update{ font-size: 12px; font-weight: bold; color:#fff;  background: #0088cc;
+        padding: 5px 10px; border-radius: 3px; margin-top:10px; }
+    #info_incidencia a.update:hover,
+    #info_incidencia a.update:active,
+    #info_incidencia a.update:focus{ text-decoration: none;}
+
+#info_incidencia span.result{margin-left:10px;     background:#d3ebd3; color:#1f6e1f;
+    padding: 5px 10px; border-radius: 3px;  font-size: 12px;
+    display: none; }
+
+#info_incidencia div.table-responsive th{ background:#f60;  padding: 4px 5px; color: #fff; font-size: 12px;}
+#info_incidencia div.table-responsive td{
+    padding: 2px 5px; vertical-align: middle; font-size: 12px;}
+
 
 /**
 ** MANTENIMIENTO
