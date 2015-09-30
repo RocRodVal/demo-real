@@ -1095,7 +1095,6 @@ class Master extends CI_Controller {
                 $total_denom += $intervenciones_anio[$key]->cantidad;
             }
 
-            
             $data["media_inc_int"] = $resultados_7;
             $data["total_media_inc_int"] = number_format(round($total_num/$total_denom,2),2,",",".");;
 
