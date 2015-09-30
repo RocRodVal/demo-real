@@ -974,7 +974,33 @@ class Master extends CI_Controller {
                 AND id_alarm IS NULL
                 GROUP BY mes
             ");
-            $data["terminales_anio"] = $resultados_5->result();
+
+
+            // CREAMOS UN ARRAY CON TODOS LOS MESES Y LO RELLENAMOS CON LOS RESULTADOS, SI NO EXISTE RESULTADO, ESE MES
+            // SERA DE CANTIDAD 0
+            $terminales_anio = array();
+            foreach($meses_columna as $num_mes=>$mes)
+            {
+                $terminales_anio[$num_mes] = new StdClass();
+                $terminales_anio[$num_mes]->cantidad = 0;
+                $terminales_anio[$num_mes] = $num_mes;
+                $terminales_anio[$num_mes] = $este_anio;
+
+                foreach($resultados_5->result() as $key=>$valor)
+                {
+                    if(array_key_exists("mes",$valor))
+                    {
+                        if($valor->mes == $num_mes)
+                        {
+                            $terminales_anio[$num_mes] = $valor;
+                            break;
+                        }
+                    }
+                }
+            }
+            $data["terminales_anio"] = $terminales_anio;
+
+
 
             // Línea 4: Incidencias resueltas
 
