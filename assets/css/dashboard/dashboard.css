@@ -206,6 +206,7 @@ h1.page-header a.mensajes_nuevos{ position: absolute; top: 0; right:0; font-size
 #info_incidencia div.table-responsive td{
     padding: 2px 5px; vertical-align: middle; font-size: 12px;}
 
+#info_incidencia form select{ line-height: normal; padding: 3px 0px 3px 3px; margin-bottom: 5px;}
 
 /**
 ** MANTENIMIENTO
