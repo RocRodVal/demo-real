@@ -208,6 +208,14 @@ h1.page-header a.mensajes_nuevos{ position: absolute; top: 0; right:0; font-size
 
 #info_incidencia form select{ line-height: normal; padding: 3px 0px 3px 3px; margin-bottom: 5px;}
 
+
+/**
+**  STOCK CONTROL AL AGREGAR MATERIAL A INCIDENCIA 
+**/
+input.error{
+    background:#ff0000; color:#fff; border-style: solid;
+}
+
 /**
 ** MANTENIMIENTO
 **/
@@ -217,3 +225,5 @@ div.mantenimiento h2{ font-size:22px; margin:0 0 15px 0; padding: 0; text-align:
     color:#f60; font-weight: bold;}
 
 div.mantenimiento p.desc{ margin-bottom: 10px; font-size: 14px; text-align:center;}
+
+

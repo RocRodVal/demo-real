@@ -40,12 +40,8 @@
 
                                     $balance = $stock->unidades_almacen - $necesitamos;
 
-                                    $class_css = '';
-                                    if($balance < 0)
-                                    {
-                                        $class_css= ( $stock->unidades_almacen >=2 ) ? ' notice ' : ' warning ';
-                                    }
-
+                                    $class_balance = ($balance < 0) ? 'notice' : '';
+                                    $class_almacen = ($stock->unidades_almacen < 5 ) ? 'warning': '';
 
                                     if($stock->unidades_pds > 0 || $stock->unidades_almacen > 0)
                                     {
@@ -55,8 +51,8 @@
                                         <td><?php echo $stock->device ?></td>
                                         <td><?php echo $stock->unidades_pds ?></td>
                                         <td><?php echo $necesitamos ?></td>
-                                        <td><?php echo $stock->unidades_almacen ?></td>
-                                        <td class="<?=$class_css?>"><?php echo $balance ?></td>
+                                        <td class="<?=$class_almacen?>"><?php echo $stock->unidades_almacen ?></td>
+                                        <td class="<?=$class_balance?>"><?php echo $balance ?></td>
                                     </tr>
                                         <?php } ?>
                                 <?php

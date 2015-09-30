@@ -307,9 +307,7 @@
                         </tr>
                         <tr>
                             <td colspan="2">
-                                <?php  if($material_editable && (count($material_alarmas) > 0 || count($material_dispositivos) > 0)) { ?>
-                                <p class="message"><td><a href="<?= site_url('admin/desasignar_incidencia_materiales/' . $id_pds_url . '/' . $id_inc_url.'/todo') ?>"><i class="glyphicon glyphicon-remove"></i> Desasignar todos los materiales</a></td></p>
-                            <?php } ?>
+
                             <?php
                             if (empty($material_dispositivos)) {
                                 echo '<p class="message"><i class="glyphicon glyphicon-remove"></i> No hay dispositivos asociados.</p>';
@@ -353,7 +351,9 @@
                                 <?php if (empty($material_alarmas)) {
                                     echo '<p class="message"><i class="glyphicon glyphicon-remove"></i> No hay alarmas asociadas.</p>';
                                 } else {
-                                    ?>
+                                    if($material_editable && (count($material_alarmas) > 0 || count($material_dispositivos) > 0)) { ?>
+                                        <p class="message"><a href="<?= site_url('admin/desasignar_incidencia_materiales/' . $id_pds_url . '/' . $id_inc_url.'/todo') ?>"><i class="glyphicon glyphicon-remove"></i> Desasignar todos los materiales</a></p>
+                                    <?php } ?>
                                     <div class="table-responsive">
                                         <table class="table table-striped table-bordered table-hover" id="table_incidencias_dashboard">
                                             <thead>

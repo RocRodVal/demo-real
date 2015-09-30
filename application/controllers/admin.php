@@ -1357,7 +1357,26 @@ class Admin extends CI_Controller
     		$this->tienda_model->update_dispositivos($this->input->post('dipositivo_almacen_3'),$this->input->post('imei_3'),$this->input->post('mac_3'),$this->input->post('serial_3'),$this->input->post('barcode_3'));
     	}
 
-    	if ($this->input->post('units_alarma_almacen_1') <> '')
+        // RECEPCION DE 10 CAMPOS DE ALARMAS
+        for($i = 1; $i <= 10; $i++)
+        {
+            if ($this->input->post('units_alarma_alamacen_'.$i) <> '' && $this->input->post('units_alarma_almacen_'.$i) <> '0')
+            {
+                $var_alarma = "alarma_almacen_".$i;
+                $$var_alarma = array(
+                    'fecha' => date('Y-m-d H:i:s'),
+                    'id_incidencia' => $id_inc,
+                    'id_pds' => $id_pds,
+                    'id_alarm' => $this->input->post('alarma_almacen_'.$i),
+                    'id_devices_almacen' => NULL,
+                    'cantidad' => $this->input->post('units_alarma_almacen_'.$i)
+                );
+
+                $this->tienda_model->incidencia_update_material($$var_alarma);
+                $this->tienda_model->borrar_alarmas($this->input->post('alarma_almacen_'.$i),$this->input->post('units_alarma_almacen_'.$i));
+            }
+        }
+    	/*if ($this->input->post('units_alarma_almacen_1') <> '' && $this->input->post('units_alarma_almacen_1') <> '0')
     	{
 	    	$alarma_almacen_1 = array(
 	    			'fecha' => date('Y-m-d H:i:s'),
@@ -1372,7 +1391,7 @@ class Admin extends CI_Controller
 	    	$this->tienda_model->borrar_alarmas($this->input->post('alarma_almacen_1'),$this->input->post('units_alarma_almacen_1'));
     	}
 
-    	if ($this->input->post('units_alarma_almacen_2') <> '')
+    	if ($this->input->post('units_alarma_almacen_2') <> '' && $this->input->post('units_alarma_almacen_2') <> '0')
     	{
 	    	$alarma_almacen_2 = array(
 	    			'fecha' => date('Y-m-d H:i:s'),
@@ -1387,7 +1406,7 @@ class Admin extends CI_Controller
 	    	$this->tienda_model->borrar_alarmas($this->input->post('alarma_almacen_2'),$this->input->post('units_alarma_almacen_2'));
     	}
 
-    	if ($this->input->post('units_alarma_almacen_3') <> '')
+    	if ($this->input->post('units_alarma_almacen_3') <> '' && $this->input->post('units_alarma_almacen_3') <> '0')
     	{
 	    	$alarma_almacen_3 = array(
 	    			'fecha' => date('Y-m-d H:i:s'),
@@ -1402,7 +1421,7 @@ class Admin extends CI_Controller
 	    	$this->tienda_model->borrar_alarmas($this->input->post('alarma_almacen_3'),$this->input->post('units_alarma_almacen_3'));
     	}
 
-    	if ($this->input->post('units_alarma_almacen_4') <> '')
+    	if ($this->input->post('units_alarma_almacen_4') <> '' && $this->input->post('units_alarma_almacen_4') <> '0')
     	{
 	    	$alarma_almacen_4 = array(
 	    			'fecha' => date('Y-m-d H:i:s'),
@@ -1417,7 +1436,7 @@ class Admin extends CI_Controller
 	    	$this->tienda_model->borrar_alarmas($this->input->post('alarma_almacen_4'),$this->input->post('units_alarma_almacen_4'));
     	}
 
-    	if ($this->input->post('units_alarma_almacen_5') <> '')
+    	if ($this->input->post('units_alarma_almacen_5') <> '' && $this->input->post('units_alarma_almacen_5') <> '0')
     	{
 	    	$alarma_almacen_5 = array(
 	    			'fecha' => date('Y-m-d H:i:s'),
@@ -1432,7 +1451,7 @@ class Admin extends CI_Controller
 	    	$this->tienda_model->borrar_alarmas($this->input->post('alarma_almacen_5'),$this->input->post('units_alarma_almacen_5'));
     	}
 
-    	if ($this->input->post('units_alarma_almacen_6') <> '')
+    	if ($this->input->post('units_alarma_almacen_6') <> '' && $this->input->post('units_alarma_almacen_6') <> '0')
     	{
     		$alarma_almacen_6 = array(
     				'fecha' => date('Y-m-d H:i:s'),
@@ -1447,7 +1466,7 @@ class Admin extends CI_Controller
     		$this->tienda_model->borrar_alarmas($this->input->post('alarma_almacen_6'),$this->input->post('units_alarma_almacen_6'));
     	}
 
-    	if ($this->input->post('units_alarma_almacen_7') <> '')
+    	if ($this->input->post('units_alarma_almacen_7') <> '' && $this->input->post('units_alarma_almacen_7') <> '0')
     	{
     		$alarma_almacen_7 = array(
     				'fecha' => date('Y-m-d H:i:s'),
@@ -1462,7 +1481,7 @@ class Admin extends CI_Controller
     		$this->tienda_model->borrar_alarmas($this->input->post('alarma_almacen_7'),$this->input->post('units_alarma_almacen_7'));
     	}
 
-    	if ($this->input->post('units_alarma_almacen_8') <> '')
+    	if ($this->input->post('units_alarma_almacen_8') <> '' && $this->input->post('units_alarma_almacen_8') <> '0')
     	{
     		$alarma_almacen_8 = array(
     				'fecha' => date('Y-m-d H:i:s'),
@@ -1477,7 +1496,7 @@ class Admin extends CI_Controller
     		$this->tienda_model->borrar_alarmas($this->input->post('alarma_almacen_8'),$this->input->post('units_alarma_almacen_8'));
     	}
 
-    	if ($this->input->post('units_alarma_almacen_9') <> '')
+    	if ($this->input->post('units_alarma_almacen_9') <> '' && $this->input->post('units_alarma_almacen_9') <> '0')
     	{
     		$alarma_almacen_9 = array(
     				'fecha' => date('Y-m-d H:i:s'),
@@ -1492,7 +1511,7 @@ class Admin extends CI_Controller
     		$this->tienda_model->borrar_alarmas($this->input->post('alarma_almacen_9'),$this->input->post('units_alarma_almacen_9'));
     	}
 
-    	if ($this->input->post('units_alarma_almacen_10') <> '')
+    	if ($this->input->post('units_alarma_almacen_10') <> '' && $this->input->post('units_alarma_almacen_10') <> '0')
     	{
     		$alarma_almacen_10 = array(
     				'fecha' => date('Y-m-d H:i:s'),
@@ -1506,7 +1525,7 @@ class Admin extends CI_Controller
     		$this->tienda_model->incidencia_update_material($alarma_almacen_10);
     		$this->tienda_model->borrar_alarmas($this->input->post('alarma_almacen_10'),$this->input->post('units_alarma_almacen_10'));
     	}
-
+           */
     	$this->tienda_model->incidencia_update($id_inc, $status_pds, $status);
 
     	$data = array(

@@ -44,11 +44,10 @@
 
 
 
-                                        $class_css = '';
-                                        if($balance < 0)
-                                        {
-                                            $class_css = ( $stock->unidades_almacen >= 2 ) ? ' notice ' : ' warning ';
-                                        }
+
+
+                                        $class_almacen = ($stock->unidades_almacen < 5 ) ? 'warning': '';
+                                        $class_balance = ($balance < 0) ? 'notice' : '';
 
                                         ?>
                                         <tr>
@@ -62,8 +61,8 @@
                                                 <?php } ?>
                                             </td>
                                             <td><?php echo $stock->punto_pedido?></td>
-                                            <td><?php echo $num_stock ?></td>
-                                            <td class="<?=$class_css?>"><?php echo $balance ?></td>
+                                            <td class="<?=$class_almacen?>"><?php echo $num_stock ?></td>
+                                            <td class="<?=$class_balance?>"><?php echo $balance ?></td>
                                         </tr>
                                     <?php  ?>
                                 <?php
