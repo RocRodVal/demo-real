@@ -364,6 +364,8 @@ class Master extends CI_Controller {
                 'status_pds'=>'',
                 'territory'=>'',
                 'brand_device'=>'',
+                'id_display' => '',
+                'id_device' => '',
                 'id_incidencia'=>'',
                 'reference'=> ''
             );
