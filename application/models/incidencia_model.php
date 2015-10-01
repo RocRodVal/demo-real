@@ -572,7 +572,6 @@ class Incidencia_model extends CI_Model {
 
             $bJoin['devices_pds'] = true;
             $bJoin['device'] = true;
-
             //$this->db->where('incidencias.fail_device','1');
             $this->db->where('device.brand_device',$filtros['brand_device']);
         }
@@ -585,11 +584,12 @@ class Incidencia_model extends CI_Model {
 
         $this->db->where($this->get_condition_tipo_incidencia($tipo));
 
-        //echo $this->db->last_query();
+
         /* Obtener el resultado */
         $query =  $this->db->get('incidencias')->row();
 
-        //echo $this->db->last_query();
+        echo $this->db->last_query();
+
 
         return $query->cantidad;
 
