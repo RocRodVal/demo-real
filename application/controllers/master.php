@@ -774,6 +774,7 @@ class Master extends CI_Controller {
                 $total_incidencias_total += $value->total_incidencias;
 
                 $dias_op = contar_dias_excepto($value->mes,$value->anio,array('Sun'),date('d'));
+                if($dias_op <= 0) $dias_op = 1;
                 $dias_operativos[] = $dias_op;
                 $total_dias_operativos += $dias_op;
 

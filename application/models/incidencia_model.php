@@ -471,12 +471,12 @@ class Incidencia_model extends CI_Model {
                 $orden = $value;
             }
         }
-        if(!is_null($campo_orden) && !empty($campo_orden) && !is_null($orden) && !empty($orden)) {
+        /*if(!is_null($campo_orden) && !empty($campo_orden) && !is_null($orden) && !empty($orden)) {
             $s_orden = $campo_orden. " ".$orden;
             $sql .= " ORDER BY ".($s_orden);
-        }else{
+        }else{*/
             $sql .= " ORDER BY fecha DESC";
-        }
+        //}
 
         $query = $this->db->query($sql);
 
