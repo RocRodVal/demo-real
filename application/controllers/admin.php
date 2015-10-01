@@ -254,6 +254,8 @@ class Admin extends CI_Controller
                 'status_pds' => '',
                 'territory' => '',
                 'brand_device' => '',
+                'id_display'=>'',
+                'id_device'=>'',
                 'id_incidencia' => '',
                 'reference' => ''
             );
@@ -346,6 +348,11 @@ class Admin extends CI_Controller
             /* LISTADO DE FABRICANTES PARA EL SELECT */
             $data["fabricantes"] = $this->tienda_model->get_fabricantes();
 
+            /* LISTADO DE MUEBLES PARA EL SELECT */
+            $data["muebles"] = $this->tienda_model->get_muebles();
+            /* LISTADO DE TERMINALES PARA EL SELECT */
+            $data["terminales"] = $this->tienda_model->get_terminales();
+
             $this->load->view('backend/header', $data);
             $this->load->view('backend/navbar', $data);
             $this->load->view('backend/estado_incidencias/'.$tipo, $data);
@@ -361,7 +368,7 @@ class Admin extends CI_Controller
     {
         if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
             $xcrud = xcrud_get_instance();
-            $this->load->model(array('intervencion_model', 'tienda_model', 'sfid_model','chat_model'));
+            $this->load->model(array('intervencion_model', 'tienda_model', 'sfid_model','chat_model','incidencia_model'));
 
             $ext = (!is_null($formato) ? $formato : $this->ext);    // Formato para exportaciones, especficiado o desde CFG
 
@@ -369,12 +376,14 @@ class Admin extends CI_Controller
 
             // Filtros abiertas
             $array_filtros = array(
-                'status',
-                'status_pds',
-                'territory',
-                'brand_device',
-                'id_incidencia',
-                'reference'
+                'status' => '',
+                'status_pds' => '',
+                'territory' => '',
+                'brand_device' => '',
+                'id_display'=>'',
+                'id_device'=>'',
+                'id_incidencia' => '',
+                'reference' => ''
             );
            $array_sesion = $this->get_filtros($array_filtros);
 
@@ -384,7 +393,7 @@ class Admin extends CI_Controller
 
 
 
-            $this->tienda_model->exportar_incidencias($array_orden, $array_sesion, $tipo, $ext);
+            $this->incidencia_model->exportar_incidencias($array_orden, $array_sesion, $tipo, $ext);
 
 
 

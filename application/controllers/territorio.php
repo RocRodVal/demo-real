@@ -235,10 +235,11 @@ class Territorio extends CI_Controller {
              * Crear los filtros
              */
             $array_filtros = array(
-                'status' => '',
                 'status_pds' => '',
                 'territory' => '',
                 'brand_device' => '',
+                'id_display'=>'',
+                'id_device'=>'',
                 'id_incidencia' => '',
                 'reference' => ''
             );
@@ -299,6 +300,7 @@ class Territorio extends CI_Controller {
             $this->load->library('pagination',$cfg_pagination);
             $this->pagination->initialize($cfg_pagination);
 
+
             $bounds = $this->paginationlib->get_bounds($total_incidencias,$page,$per_page);
 
             // Indicamos si habrá que mostrar el paginador en la vista
@@ -323,10 +325,14 @@ class Territorio extends CI_Controller {
             $data["territorios"] = $this->tienda_model->get_territorios();
             /* LISTADO DE FABRICANTES PARA EL SELECT */
             $data["fabricantes"] = $this->tienda_model->get_fabricantes();
+            /* LISTADO DE MUEBLES PARA EL SELECT */
+            $data["muebles"] = $this->tienda_model->get_muebles();
+            /* LISTADO DE TERMINALES PARA EL SELECT */
+            $data["terminales"] = $this->tienda_model->get_terminales();
 
             $this->load->view('territorio/header', $data);
             $this->load->view('territorio/navbar', $data);
-            $this->load->view('territorio/estado_incidencias_'.$tipo, $data);
+            $this->load->view('territorio/estado_incidencias/'.$tipo, $data);
             $this->load->view('territorio/footer');
         } else {
             redirect('territorio', 'refresh');
@@ -348,10 +354,12 @@ class Territorio extends CI_Controller {
 
             // Filtros
             $array_filtros = array(
-                'status'=>'',
+
                 'status_pds'=>'',
                 'territory'=>'',
                 'brand_device'=>'',
+                'id_display'=>'',
+                'id_device'=>'',
                 'id_incidencia'=>'',
                 'reference'=> ''
             );
@@ -363,7 +371,7 @@ class Territorio extends CI_Controller {
 
 
 
-                $this->tienda_model->exportar_incidencias($array_orden, $array_sesion, $tipo,$ext);
+                $this->incidencia_model->exportar_incidencias($array_orden, $array_sesion, $tipo,$ext);
 
 
 

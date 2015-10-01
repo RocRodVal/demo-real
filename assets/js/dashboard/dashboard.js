@@ -425,3 +425,11 @@ function comprobar_stock(selector,id_input)
         $(input).attr('readonly',false);
     }
 }
+
+
+
+$(document).ready(function(){
+    $("form.autosubmit select").on("change",function(){
+       $(this).parents('form.autosubmit').submit();
+    });
+});

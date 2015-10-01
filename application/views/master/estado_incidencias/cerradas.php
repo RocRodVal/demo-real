@@ -12,10 +12,22 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="row filtro">
-                            <form action="<?=base_url()?>tienda/estado_incidencias/cerradas" method="post" class="filtro form-mini">
+                            <form action="<?=base_url()?>master/estado_incidencias/cerradas" method="post" class="filtro form-mini autosubmit">
 
+                                <?php
+                                /*<div class="col-lg-2">
+                                    <label for="status">Estado SAT: </label>
+                                    <select name="status" id="status" class="form-control input-sm">
+                                        <option value="" <?php echo ($status==="") ? 'selected="selected"' : ''?>>Cualquier estado</option>
 
-                                <div class="col-lg-2">
+                                        <option value="Resuelta" <?php echo ($status==="Resuelta") ? 'selected="selected"' : ''?>>Resuelta</option>
+                                        <option value="Pendiente recogida" <?php echo ($status==="Pendiente recogida") ? 'selected="selected"' : ''?>>Pendiente recogida</option>
+                                        <option value="Cerrada" <?php echo ($status==="Cerrada") ? 'selected="selected"' : ''?>>Cerrada</option>
+                                        <option value="Cancelada" <?php echo ($status==="Cancelada") ? 'selected="selected"' : ''?>>Cancelada</option>
+                                    </select>
+                                </div> */?>
+
+                                <div class="col-lg-1">
                                     <label for="status_pds">Estado PDS: </label>
                                     <select name="status_pds" id="status_pds" class="form-control input-sm">
                                         <option value="" <?php echo ($status_pds==="") ? 'selected="selected"' : ''?>>Cualquier estado</option>
@@ -25,7 +37,19 @@
                                     </select>
                                 </div>
 
-
+                                <div class="col-lg-1">
+                                    <label for="territory">Territorio: </label>
+                                    <select name="territory" id="territory" class="form-control input-sm">
+                                        <option value="" <?php echo ($territory==="") ? 'selected="selected"' : ''?>>Cualquier territorio</option>
+                                        <?php
+                                        foreach($territorios as $territorio)
+                                        {
+                                            $attr = ($territorio->id_territory === $territory) ? ' selected="selected" ' :'';
+                                            echo '<option value="'.$territorio->id_territory.'" '.$attr.'>'.$territorio->territory.'</option>';
+                                        }
+                                        ?>
+                                    </select>
+                                </div>
 
                                 <div class="col-lg-2">
                                     <label for="brand_device">Fabricante: </label>
@@ -41,12 +65,43 @@
                                     </select>
                                 </div>
 
+                                <div class="col-lg-2">
+                                    <label for="id_display">Mueble: </label>
+                                    <select name="id_display" id="id_display" class="form-control input-sm">
+                                        <option value="" <?php echo ($id_display==="") ? 'selected="selected"' : ''?>>Cualquier mueble</option>
+                                        <?php
+                                        foreach($muebles as $mueble)
+                                        {
+                                            $attr = ($mueble->id_display === $id_display) ? ' selected="selected" ' :'';
+                                            echo '<option value="'.$mueble->id_display.'" '.$attr.'>'.$mueble->display.'</option>';
+                                        }
+                                        ?>
+                                    </select>
+                                </div>
 
                                 <div class="col-lg-2">
+                                    <label for="id_device">Terminal: </label>
+                                    <select name="id_device" id="id_device" class="form-control input-sm">
+                                        <option value="" <?php echo ($id_device==="") ? 'selected="selected"' : ''?>>Cualquiera</option>
+                                        <?php
+                                        foreach($terminales as $terminal)
+                                        {
+                                            $attr = ($terminal->id_device === $id_device) ? ' selected="selected" ' :'';
+                                            echo '<option value="'.$terminal->id_device.'" '.$attr.'>'.$terminal->device.'</option>';
+                                        }
+                                        ?>
+                                    </select>
+                                </div>
+
+
+                                <div class="col-lg-1">
                                     <label for="id_incidencia">Id. Incidencia: </label>
                                     <input type="text" name="id_incidencia" id="id_incidencia" class="form-control input-sm" placeholder="Id. incidencia" <?php echo (!empty($id_incidencia)) ? ' value="'.$id_incidencia.'" ' : ''?> />
                                 </div>
-
+                                <div class="col-lg-1">
+                                    <label for="reference">SFID: </label>
+                                    <input type="text" name="reference" id="reference" class="form-control input-sm" placeholder="SFID" <?php echo (!empty($reference)) ? ' value="'.$reference.'" ' : ''?> />
+                                </div>
                                 <div class="col-lg-1">
                                     <div class="form-group">
                                         <input type="hidden" name="do_busqueda" value="si">
@@ -74,7 +129,7 @@
                                 </div>
                              <?php }?>
 
-                            <p><a href="<?=base_url()?>tienda/exportar_incidencias/cerradas/xls" class="btn exportar"><i class="glyphicon glyphicon-file"></i> Exportar Excel</a></p>
+                            <p><a href="<?=base_url()?>master/exportar_incidencias/cerradas" class="btn exportar"><i class="glyphicon glyphicon-file"></i> Exportar Excel</a></p>
                             <div class="table-responsive">
                                 <table class="table table-striped table-bordered table-hover table-sorting" id="table_incidencias_cerradas"  data-order-form="form_orden_cerradas">
                                     <thead>
@@ -104,7 +159,7 @@
                                     foreach ($incidencias as $incidencia) {
                                         ?>
                                         <tr>
-                                            <td><a href="<?=site_url('tienda/detalle_incidencia/'.$incidencia->id_incidencia.'/'.$incidencia->id_pds)?>">
+                                            <td><a href="<?=site_url('master/detalle_incidencia/'.$incidencia->id_incidencia.'/'.$incidencia->id_pds)?>">
                                                     <?php echo $incidencia->id_incidencia?></a></td>
                                             <td><?php echo $incidencia->reference ?></td>
                                             <td><?php echo date_format(date_create($incidencia->fecha), 'd/m/Y'); ?></td>
@@ -133,6 +188,7 @@
 		                                <td><?=($incidencia->fail_device==1)?'&#x25cf;':''?></td>
 		                                <td><?=($incidencia->alarm_device==1)?'&#x25cf;':''?></td>
 		                                <td><?=($incidencia->alarm_garra==1)?'&#x25cf;':''?></td> */?>
+
                                             <td><?=(!empty($incidencia->territory)? $incidencia->territory : '-')?></td>
                                             <td><?=(!empty($incidencia->brand)? $incidencia->brand : '-')?></td>
 
@@ -151,17 +207,17 @@
                                                 }
                                                 ?>
                                             </td>
-                                            <?php /*<td><strong><?php echo $incidencia->status ?></strong></td>*/ ?>
+                                            <?php /*<td><strong><?php echo $incidencia->status ?></strong></td> */ ?>
                                             <td><strong><?php echo $incidencia->status_pds ?></strong></td>
 
-                                            <td><a href="<?=site_url('tienda/detalle_incidencia/'.$incidencia->id_incidencia.'/'.$incidencia->id_pds)?>#chat"><strong><i class="fa fa-whatsapp <?=($incidencia->nuevos['nuevos']<>'0')?'chat_nuevo':'chat_leido'?>"></i></strong></a></td>
+                                            <td><a href="<?=site_url('master/detalle_incidencia/'.$incidencia->id_incidencia.'/'.$incidencia->id_pds)?>#chat"><strong><i class="fa fa-whatsapp <?=($incidencia->nuevos['nuevos']<>'0')?'chat_nuevo':'chat_leido'?>"></i></strong></a></td>
                                         </tr>
                                     <?php
                                     }
                                     ?>
                                     </tbody>
                                 </table>
-                                <form action="<?=base_url()?>tienda/estado_incidencias/cerradas" method="post" id="form_orden_cerradas">
+                                <form action="<?=base_url()?>master/estado_incidencias/cerradas" method="post" id="form_orden_cerradas">
                                     <input type="hidden" name="form_orden_cerradas_campo"  value="">
                                     <input type="hidden" name="form_orden_cerradas_orden" value="">
                                     <input type="hidden" name="form"  value="">

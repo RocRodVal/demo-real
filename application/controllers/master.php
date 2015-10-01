@@ -246,6 +246,8 @@ class Master extends CI_Controller {
                 'status_pds' => '',
                 'territory' => '',
                 'brand_device' => '',
+                'id_display' => '',
+                'id_device' => '',
                 'id_incidencia' => '',
                 'reference' => ''
             );
@@ -330,10 +332,15 @@ class Master extends CI_Controller {
             $data["territorios"] = $this->tienda_model->get_territorios();
             /* LISTADO DE FABRICANTES PARA EL SELECT */
             $data["fabricantes"] = $this->tienda_model->get_fabricantes();
+            /* LISTADO DE MUEBLES PARA EL SELECT */
+            $data["muebles"] = $this->tienda_model->get_muebles();
+            /* LISTADO DE TERMINALES PARA EL SELECT */
+            $data["terminales"] = $this->tienda_model->get_terminales();
+
 
             $this->load->view('master/header', $data);
             $this->load->view('master/navbar', $data);
-            $this->load->view('master/estado_incidencias_'.$tipo, $data);
+            $this->load->view('master/estado_incidencias/'.$tipo, $data);
             $this->load->view('master/footer');
         } else {
             redirect('master', 'refresh');
@@ -357,6 +364,8 @@ class Master extends CI_Controller {
                 'status_pds'=>'',
                 'territory'=>'',
                 'brand_device'=>'',
+                'id_display' => '',
+                'id_device' => '',
                 'id_incidencia'=>'',
                 'reference'=> ''
             );
@@ -366,7 +375,7 @@ class Master extends CI_Controller {
             $array_orden = $this->get_orden();
 
 
-            $this->tienda_model->exportar_incidencias($array_orden, $array_sesion, $tipo,$ext);
+            $this->incidencia_model->exportar_incidencias($array_orden, $array_sesion, $tipo,$ext);
 
 
 
