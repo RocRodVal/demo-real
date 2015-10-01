@@ -588,8 +588,8 @@ class Incidencia_model extends CI_Model {
         /* Obtener el resultado */
         $query =  $this->db->get('incidencias')->row();
 
-        //echo $this->db->last_query();
-
+        echo $this->db->last_query();
+        exit;
 
         return $query->cantidad;
 
