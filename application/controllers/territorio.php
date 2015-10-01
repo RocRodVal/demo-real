@@ -235,7 +235,6 @@ class Territorio extends CI_Controller {
              * Crear los filtros
              */
             $array_filtros = array(
-                'status' => '',
                 'status_pds' => '',
                 'territory' => '',
                 'brand_device' => '',
@@ -354,7 +353,7 @@ class Territorio extends CI_Controller {
 
             // Filtros
             $array_filtros = array(
-                'status'=>'',
+
                 'status_pds'=>'',
                 'territory'=>'',
                 'brand_device'=>'',
