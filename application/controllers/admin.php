@@ -1702,8 +1702,8 @@ class Admin extends CI_Controller
         $xcrud->table_name('Empresa');
         $xcrud->relation('type_profile_client', 'type_profile', 'id_type_profile', 'type');
         $xcrud->change_type('picture_url', 'image');
-        $xcrud->label('client', 'Empresa')->label('type_profile_client', 'Tipo')->label('picture_url', 'Foto')->label('description', 'Comentarios')->label('facturable', 'Facturable')->label('status', 'Estado');
-        $xcrud->columns('client,type_profile_client,facturable');
+        $xcrud->label('id_client','Identificador')->label('client', 'Empresa')->label('type_profile_client', 'Tipo')->label('picture_url', 'Foto')->label('description', 'Comentarios')->label('facturable', 'Facturable')->label('status', 'Estado');
+        $xcrud->columns('id_client,client,type_profile_client,facturable');
         $xcrud->fields('client,type_profile_client,picture_url,description,facturable,status');
         $xcrud->order_by('client');
 
@@ -1903,8 +1903,8 @@ class Admin extends CI_Controller
         $xcrud_2->relation('type_via', 'type_via', 'id_type_via', 'via');
         $xcrud_2->relation('province', 'province', 'id_province', 'province');
         $xcrud_2->relation('county', 'county', 'id_county', 'county');
-        $xcrud_2->label('client_contact', 'Empresa')->label('type_profile_contact', 'Tipo')->label('contact', 'Contacto')->label('type_via', 'Tipo vía')->label('address', 'Dirección')->label('zip', 'C.P.')->label('city', 'Ciudad')->label('province', 'Provincia')->label('county', 'CC.AA.')->label('schedule', 'Horario')->label('phone', 'Teléfono')->label('mobile', 'Móvil')->label('email', 'Email')->label('email_cc', 'Copia email')->label('status', 'Estado');
-        $xcrud_2->columns('client_contact,type_profile_contact,contact,email');
+        $xcrud_2->label('id_contact','Identificador')->label('client_contact', 'Empresa')->label('type_profile_contact', 'Tipo')->label('contact', 'Contacto')->label('type_via', 'Tipo vía')->label('address', 'Dirección')->label('zip', 'C.P.')->label('city', 'Ciudad')->label('province', 'Provincia')->label('county', 'CC.AA.')->label('schedule', 'Horario')->label('phone', 'Teléfono')->label('mobile', 'Móvil')->label('email', 'Email')->label('email_cc', 'Copia email')->label('status', 'Estado');
+        $xcrud_2->columns('id_contact,client_contact,type_profile_contact,contact,email');
         $xcrud_2->fields('client_contact,type_profile_contact,contact,type_via,address,zip,city,province,county,schedule,phone,mobile,email,email_cc,status');
         $xcrud_2->order_by('contact');
 
@@ -1929,8 +1929,8 @@ class Admin extends CI_Controller
         $xcrud_1 = xcrud_get_instance();
         $xcrud_1->table('brand_alarm');
         $xcrud_1->table_name('Fabricante');
-        $xcrud_1->label('brand', 'Fabricante');
-        $xcrud_1->columns('brand');
+        $xcrud_1->label('brand', 'Fabricante')->label('id_brand_alarm','Identificador');
+        $xcrud_1->columns('id_brand_alarm, brand');
         $xcrud_1->fields('brand');
         $xcrud_1->order_by('brand');
 
@@ -1941,8 +1941,8 @@ class Admin extends CI_Controller
         $xcrud_2 = xcrud_get_instance();
         $xcrud_2->table('type_alarm');
         $xcrud_2->table_name('Tipo');
-        $xcrud_2->label('type', 'Tipo');
-        $xcrud_2->columns('type');
+        $xcrud_2->label('id_type_alarm', 'Identificador')->label('type', 'Tipo');
+        $xcrud_2->columns('id_type_alarm,type');
         $xcrud_2->fields('type');
         $xcrud_2->order_by('type');
 
@@ -1957,8 +1957,8 @@ class Admin extends CI_Controller
         $xcrud_3->relation('brand_alarm', 'brand_alarm', 'id_brand_alarm', 'brand');
         $xcrud_3->change_type('picture_url', 'image');
         $xcrud_3->modal('picture_url');
-        $xcrud_3->label('client_alarm', 'Cliente')->label('brand_alarm', 'Fabricante')->label('type_alarm', 'Tipo')->label('code', 'Código')->label('alarm', 'Modelo')->label('picture_url', 'Foto')->label('description', 'Comentarios')->label('units', 'Unidades')->label('status', 'Estado');
-        $xcrud_3->columns('client_alarm,brand_alarm,type_alarm,code,alarm,picture_url,status');
+        $xcrud_3->label('id_alarm', 'Identificador')->label('client_alarm', 'Cliente')->label('brand_alarm', 'Fabricante')->label('type_alarm', 'Tipo')->label('code', 'Código')->label('alarm', 'Modelo')->label('picture_url', 'Foto')->label('description', 'Comentarios')->label('units', 'Unidades')->label('status', 'Estado');
+        $xcrud_3->columns('id_alarm,client_alarm,brand_alarm,type_alarm,code,alarm,picture_url,status');
         $xcrud_3->fields('client_alarm,brand_alarm,type_alarm,code,alarm,picture_url,description,status');
         $xcrud_3->order_by('code');
 
@@ -2049,8 +2049,8 @@ class Admin extends CI_Controller
         $xcrud_1 = xcrud_get_instance();
         $xcrud_1->table('brand_device');
         $xcrud_1->table_name('Fabricante');
-        $xcrud_1->label('brand', 'Fabricante');
-        $xcrud_1->columns('brand');
+        $xcrud_1->label('id_brand_device', 'Identificador')->label('brand', 'Fabricante');
+        $xcrud_1->columns('id_brand_device,brand');
         $xcrud_1->fields('brand');
 
         // Ocultar el botón de borrar para evitar borrados accidentales mientras no existan constraints en BD:
@@ -2059,8 +2059,8 @@ class Admin extends CI_Controller
         $xcrud_2 = xcrud_get_instance();
         $xcrud_2->table('type_device');
         $xcrud_2->table_name('Tipo');
-        $xcrud_2->label('type', 'Tipo');
-        $xcrud_2->columns('type');
+        $xcrud_2->label('id_type_device', 'Identificador')->label('type', 'Tipo');
+        $xcrud_2->columns('id_type_device,type');
         $xcrud_2->fields('type');
 
         // Ocultar el botón de borrar para evitar borrados accidentales mientras no existan constraints en BD:
@@ -2073,8 +2073,8 @@ class Admin extends CI_Controller
         $xcrud_3->relation('brand_device', 'brand_device', 'id_brand_device', 'brand');
         $xcrud_3->change_type('picture_url', 'image');
         $xcrud_3->modal('picture_url');
-        $xcrud_3->label('brand_device', 'Fabricante')->label('type_device', 'Tipo')->label('device', 'Modelo')->label('brand_name', 'Modelo fabricante')->label('picture_url', 'Foto')->label('description', 'Comentarios')->label('status', 'Estado');
-        $xcrud_3->columns('brand_device,type_device,device,picture_url,brand_name,status');
+        $xcrud_3->label('id_device', 'Identificador')->label('brand_device', 'Fabricante')->label('type_device', 'Tipo')->label('device', 'Modelo')->label('brand_name', 'Modelo fabricante')->label('picture_url', 'Foto')->label('description', 'Comentarios')->label('status', 'Estado');
+        $xcrud_3->columns('id_device,brand_device,type_device,device,picture_url,brand_name,status');
         $xcrud_3->fields('brand_device,type_device,device,brand_name,picture_url,description,status');
 
         // Ocultar el botón de borrar para evitar borrados accidentales mientras no existan constraints en BD:
@@ -2100,8 +2100,8 @@ class Admin extends CI_Controller
         $xcrud_1->relation('client_panelado', 'client', 'id_client', 'client');
         $xcrud_1->relation('type_pds', 'type_pds', 'id_type_pds', 'pds');
         $xcrud_1->change_type('picture_url', 'image');
-        $xcrud_1->label('client_panelado', 'Cliente')->label('type_pds', 'Tipo punto de venta')->label('panelado', 'Panelado Orange')->label('panelado_abx', 'REF.')->label('picture_url', 'Foto')->label('description', 'Comentarios')->label('status', 'Estado');
-        $xcrud_1->columns('client_panelado,type_pds,panelado,panelado_abx,status');
+        $xcrud_1->label('id_panelado', 'Identificador')->label('client_panelado', 'Cliente')->label('type_pds', 'Tipo punto de venta')->label('panelado', 'Panelado Orange')->label('panelado_abx', 'REF.')->label('picture_url', 'Foto')->label('description', 'Comentarios')->label('status', 'Estado');
+        $xcrud_1->columns('id_panelado,client_panelado,type_pds,panelado,panelado_abx,status');
         $xcrud_1->fields('client_panelado,type_pds,panelado,panelado_abx,picture_url,description,status');
 
         // Ocultar el botón de borrar para evitar borrados accidentales mientras no existan constraints en BD:
@@ -2113,8 +2113,8 @@ class Admin extends CI_Controller
         $xcrud_2->relation('client_panelado', 'client', 'id_client', 'client');
         $xcrud_2->relation('id_panelado', 'panelado', 'id_panelado', 'panelado_abx');
         $xcrud_2->relation('id_display', 'display', 'id_display', 'display');
-        $xcrud_2->label('client_panelado', 'Cliente')->label('id_panelado', 'REF.')->label('id_display', 'Modelo')->label('position', 'Posición')->label('description', 'Comentarios')->label('status', 'Estado');
-        $xcrud_2->columns('client_panelado,id_panelado,id_display,position,status');
+        $xcrud_2->label('id_displays_panelado', 'Identificador')->label('client_panelado', 'Cliente')->label('id_panelado', 'REF.')->label('id_display', 'Modelo')->label('position', 'Posición')->label('description', 'Comentarios')->label('status', 'Estado');
+        $xcrud_2->columns('id_displays_panelado,client_panelado,id_panelado,id_display,position,status');
         $xcrud_2->fields('client_panelado,id_panelado,id_display,position,description,status');
 
         // Ocultar el botón de borrar para evitar borrados accidentales mientras no existan constraints en BD:
@@ -2127,8 +2127,8 @@ class Admin extends CI_Controller
         $xcrud_3->change_type('picture_url', 'image');
         $xcrud_3->change_type('canvas_url', 'file');
         $xcrud_3->modal('picture_url');
-        $xcrud_3->label('client_display', 'Cliente')->label('display', 'Modelo')->label('picture_url', 'Foto')->label('canvas_url', 'SVG')->label('description', 'Comentarios')->label('positions', 'Posiciones')->label('status', 'Estado');
-        $xcrud_3->columns('client_display,display,picture_url,positions,status');
+        $xcrud_3->label('id_display', 'Identificador')->label('client_display', 'Cliente')->label('display', 'Modelo')->label('picture_url', 'Foto')->label('canvas_url', 'SVG')->label('description', 'Comentarios')->label('positions', 'Posiciones')->label('status', 'Estado');
+        $xcrud_3->columns('id_display,client_display,display,picture_url,positions,status');
         $xcrud_3->fields('client_display,display,picture_url,canvas_url,description,positions,status');
 
         // Ocultar el botón de borrar para evitar borrados accidentales mientras no existan constraints en BD:
@@ -2140,8 +2140,8 @@ class Admin extends CI_Controller
         $xcrud_4->relation('client_panelado', 'client', 'id_client', 'client');
         $xcrud_4->relation('id_display', 'display', 'id_display', 'display');
         $xcrud_4->relation('id_device', 'device', 'id_device', 'device');
-        $xcrud_4->label('client_panelado', 'Cliente')->label('id_panelado', 'REF.')->label('id_display', 'Mueble')->label('id_device', 'Dispositivo')->label('position', 'Posición')->label('description', 'Comentarios')->label('status', 'Estado');
-        $xcrud_4->columns('client_panelado,id_display,id_device,position,status');
+        $xcrud_4->label('id_devices_display', 'Identificador')->label('client_panelado', 'Cliente')->label('id_panelado', 'REF.')->label('id_display', 'Mueble')->label('id_device', 'Dispositivo')->label('position', 'Posición')->label('description', 'Comentarios')->label('status', 'Estado');
+        $xcrud_4->columns('id_devices_display,client_panelado,id_display,id_device,position,status');
         $xcrud_4->fields('client_panelado,id_display,id_device,position,description,status');
 
         // Ocultar el botón de borrar para evitar borrados accidentales mientras no existan constraints en BD:
@@ -2166,8 +2166,8 @@ class Admin extends CI_Controller
         $xcrud_1->table('type_pds');
         $xcrud_1->table_name('Tipo');
         $xcrud_1->relation('client_type_pds', 'client', 'id_client', 'client');
-        $xcrud_1->label('client_type_pds', 'Cliente')->label('pds', 'Tipo')->label('description', 'Comentarios')->label('status', 'Estado');
-        $xcrud_1->columns('client_type_pds,pds,status');
+        $xcrud_1->label('id_type_pds', 'Identificador')->label('client_type_pds', 'Cliente')->label('pds', 'Tipo')->label('description', 'Comentarios')->label('status', 'Estado');
+        $xcrud_1->columns('id_type_pds,client_type_pds,pds,status');
         $xcrud_1->fields('client_type_pds,pds,description,status');
 
         // Ocultar el botón de borrar para evitar borrados accidentales mientras no existan constraints en BD:
@@ -2191,8 +2191,8 @@ class Admin extends CI_Controller
         //$xcrud_2->readonly('reference');
         $xcrud_2->disabled('reference','edit');
         $xcrud_2->sum('m2_total', 'm2_fo', 'm2_bo');
-        $xcrud_2->label('client_pds', 'Cliente')->label('reference', 'SFID')->label('type_pds', 'Tipo')->label('territory', 'Territorio')->label('panelado_pds', 'Panelado')->label('dispo', 'Disposición')->label('commercial', 'Nombre comercial')->label('cif', 'CIF')->label('picture_url', 'Foto')->label('m2_fo', 'M2 front-office')->label('m2_bo', 'M2 back-office')->label('m2_total', 'M2 total')->label('type_via', 'Tipo vía')->label('address', 'Dirección')->label('zip', 'C.P.')->label('city', 'Ciudad')->label('province', 'Provincia')->label('county', 'CC.AA.')->label('schedule', 'Horario')->label('phone', 'Teléfono')->label('mobile', 'Móvil')->label('email', 'Email')->label('contact_contact_person', 'Contacto')->label('contact_in_charge', 'Encargado')->label('contact_supervisor', 'Supervisor')->label('status', 'Estado');
-        $xcrud_2->columns('client_pds,reference,type_pds,panelado_pds,commercial,territory,status');
+        $xcrud_2->label('id_pds', 'Identificador')->label('client_pds', 'Cliente')->label('reference', 'SFID')->label('type_pds', 'Tipo')->label('territory', 'Territorio')->label('panelado_pds', 'Panelado')->label('dispo', 'Disposición')->label('commercial', 'Nombre comercial')->label('cif', 'CIF')->label('picture_url', 'Foto')->label('m2_fo', 'M2 front-office')->label('m2_bo', 'M2 back-office')->label('m2_total', 'M2 total')->label('type_via', 'Tipo vía')->label('address', 'Dirección')->label('zip', 'C.P.')->label('city', 'Ciudad')->label('province', 'Provincia')->label('county', 'CC.AA.')->label('schedule', 'Horario')->label('phone', 'Teléfono')->label('mobile', 'Móvil')->label('email', 'Email')->label('contact_contact_person', 'Contacto')->label('contact_in_charge', 'Encargado')->label('contact_supervisor', 'Supervisor')->label('status', 'Estado');
+        $xcrud_2->columns('id_pds,client_pds,reference,type_pds,panelado_pds,commercial,territory,status');
         $xcrud_2->fields('client_pds,reference,type_pds,panelado_pds,dispo,commercial,cif,territory,picture_url,m2_fo,m2_bo,m2_total,type_via,address,zip,city,province,county,schedule,phone,mobile,email,contact_contact_person,contact_in_charge,contact_supervisor,status');
 
         $xcrud_2->validation_required('province');
@@ -2217,7 +2217,7 @@ class Admin extends CI_Controller
         $xcrud = xcrud_get_instance();
         $xcrud->table('type_incidencia');
         $xcrud->table_name('Tipos de incidencia');
-        $xcrud->label('id_type_incidencia','Id.')->label('title', 'Título');
+        $xcrud->label('id_type_incidencia','Identificador')->label('title', 'Título');
         $xcrud->columns('id_type_incidencia,title');
         $xcrud->fields('title');
         $xcrud->order_by('id_type_incidencia');
