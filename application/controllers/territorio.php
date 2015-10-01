@@ -300,6 +300,7 @@ class Territorio extends CI_Controller {
             $this->load->library('pagination',$cfg_pagination);
             $this->pagination->initialize($cfg_pagination);
 
+            
             $bounds = $this->paginationlib->get_bounds($total_incidencias,$page,$per_page);
 
             // Indicamos si habrá que mostrar el paginador en la vista
