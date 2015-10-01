@@ -344,7 +344,6 @@ class Tienda extends CI_Controller {
             // Filtros
             $array_filtros = array(
                 'status_pds'=>'',
-                'territory'=>'',
                 'brand_device'=>'',
                 'id_display'=>'',
                 'id_device'=>'',

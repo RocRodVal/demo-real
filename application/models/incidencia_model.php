@@ -459,7 +459,7 @@ class Incidencia_model extends CI_Model {
             $sql .= (' AND display.id_display ="'.$filtros['id_display'].'" ');
         }
         if(isset($filtros["id_device"]) && !empty($filtros["id_device"])) {
-            $sql .= (' AND incidencias.fail_device=1');
+           // $sql .= (' AND incidencias.fail_device=1');
             $sql .= (' AND device.id_device ="'.$filtros['id_device'].'" ');
         }
         if(isset($filtros["reference"]) && !empty($filtros["reference"])) $sql .=(' AND reference= '.$filtros['reference']);
@@ -481,6 +481,8 @@ class Incidencia_model extends CI_Model {
         $query = $this->db->query($sql);
 
 
+        //echo $this->db->last_query();
+        //exit;
 
         $datos = preparar_array_exportar($query->result(),$arr_titulos,$excluir);
 
