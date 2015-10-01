@@ -529,7 +529,14 @@ class Incidencia_model extends CI_Model {
 
 
         $this->db->select('COUNT(incidencias.id_incidencia) AS cantidad')
-            ->join('pds','incidencias.id_pds = pds.id_pds');
+                ->join('displays_pds','incidencias.id_displays_pds= displays_pds.id_displays_pds')
+                ->join('display','displays_pds.id_display=display.id_display')
+                ->join('devices_pds','incidencias.id_devices_pds = devices_pds.id_devices_pds')
+                ->join('device','devices_pds.id_device=device.id_device')
+                ->join('type_device','device.type_device = type_device.id_type_device')
+                ->join('pds','incidencias.id_pds = pds.id_pds')
+                ->join('territory','territory.id_territory=pds.territory');
+
 
         /** Aplicar filtros desde el array, de manera manual **/
         if(isset($filtros["status"]) && !empty($filtros["status"])) $this->db->where('incidencias.status',$filtros['status']);
@@ -538,40 +545,20 @@ class Incidencia_model extends CI_Model {
         if(isset($filtros["territory"]) && !empty($filtros["territory"])) $this->db->where('pds.territory',$filtros['territory']);
         if(isset($filtros["brand_device"]) && !empty($filtros["brand_device"])) {
 
-            if(!$bJoin['devices_pds'])   $this->db->join('devices_pds','incidencias.id_devices_pds = devices_pds.id_devices_pds');
-            if(!$bJoin['device'])   $this->db->join('device','devices_pds.id_device=device.id_device');
-
-            $bJoin['devices_pds'] = true;
-            $bJoin['device'] = true;
-
             $this->db->where('incidencias.fail_device','1');
             $this->db->where('device.brand_device',$filtros['brand_device']);
         }
         if(isset($filtros["id_display"]) && !empty($filtros["id_display"])) {
-            $this->db->join('displays_pds','incidencias.id_displays_pds= displays_pds.id_displays_pds');
-            $this->db->join('display','displays_pds.id_display=display.id_display');
             //$this->db->where('incidencias.fail_device','1');
             $this->db->where('display.id_display',$filtros['id_display']);
         }
 
         if(isset($filtros["id_device"]) && !empty($filtros["id_device"])) {
-
-            if(!$bJoin['devices_pds'])   $this->db->join('devices_pds', 'incidencias.id_devices_pds = devices_pds.id_devices_pds');
-            if(!$bJoin['device'])   $this->db->join('device','devices_pds.id_device=device.id_device');
-
-            $bJoin['devices_pds'] = true;
-            $bJoin['device'] = true;
-
             //$this->db->where('incidencias.fail_device','1');
             $this->db->where('device.id_device',$filtros['id_device']);
         }
         if(isset($filtros["brand_device"]) && !empty($filtros["brand_device"])) {
 
-            if(!$bJoin['devices_pds'])   $this->db->join('devices_pds', 'incidencias.id_devices_pds = devices_pds.id_devices_pds');
-            if(!$bJoin['device'])   $this->db->join('device','devices_pds.id_device=device.id_device');
-
-            $bJoin['devices_pds'] = true;
-            $bJoin['device'] = true;
             //$this->db->where('incidencias.fail_device','1');
             $this->db->where('device.brand_device',$filtros['brand_device']);
         }
