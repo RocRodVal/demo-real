@@ -12,9 +12,9 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="row filtro">
-                            <form action="<?=base_url()?>admin/estado_incidencias/cerradas" method="post" class="filtro form-mini">
+                            <form action="<?=base_url()?>admin/estado_incidencias/cerradas" method="post" class="filtro form-mini autosubmit">
 
-                                <div class="col-lg-2">
+                                <div class="col-lg-1">
                                     <label for="status">Estado SAT: </label>
                                     <select name="status" id="status" class="form-control input-sm">
                                         <option value="" <?php echo ($status==="") ? 'selected="selected"' : ''?>>Cualquier estado</option>
@@ -25,7 +25,7 @@
                                         <option value="Cancelada" <?php echo ($status==="Cancelada") ? 'selected="selected"' : ''?>>Cancelada</option>
                                     </select>
                                 </div>
-                                <div class="col-lg-2">
+                                <div class="col-lg-1">
                                     <label for="status_pds">Estado PDS: </label>
                                     <select name="status_pds" id="status_pds" class="form-control input-sm">
                                         <option value="" <?php echo ($status_pds==="") ? 'selected="selected"' : ''?>>Cualquier estado</option>
@@ -35,7 +35,7 @@
                                     </select>
                                 </div>
 
-                                <div class="col-lg-2">
+                                <div class="col-lg-1">
                                     <label for="territory">Territorio: </label>
                                     <select name="territory" id="territory" class="form-control input-sm">
                                         <option value="" <?php echo ($territory==="") ? 'selected="selected"' : ''?>>Cualquier territorio</option>
@@ -63,8 +63,35 @@
                                     </select>
                                 </div>
 
+                                <div class="col-lg-2">
+                                    <label for="id_display">Mueble: </label>
+                                    <select name="id_display" id="id_display" class="form-control input-sm">
+                                        <option value="" <?php echo ($id_display==="") ? 'selected="selected"' : ''?>>Cualquier mueble</option>
+                                        <?php
+                                        foreach($muebles as $mueble)
+                                        {
+                                            $attr = ($mueble->id_display === $id_display) ? ' selected="selected" ' :'';
+                                            echo '<option value="'.$mueble->id_display.'" '.$attr.'>'.$mueble->display.'</option>';
+                                        }
+                                        ?>
+                                    </select>
+                                </div>
 
                                 <div class="col-lg-2">
+                                    <label for="id_device">Terminal: </label>
+                                    <select name="id_device" id="id_device" class="form-control input-sm">
+                                        <option value="" <?php echo ($id_device==="") ? 'selected="selected"' : ''?>>Cualquiera</option>
+                                        <?php
+                                        foreach($terminales as $terminal)
+                                        {
+                                            $attr = ($terminal->id_device === $id_device) ? ' selected="selected" ' :'';
+                                            echo '<option value="'.$terminal->id_device.'" '.$attr.'>'.$terminal->device.'</option>';
+                                        }
+                                        ?>
+                                    </select>
+                                </div>
+
+                                <div class="col-lg-1">
                                     <label for="id_incidencia">Id. Incidencia: </label>
                                     <input type="text" name="id_incidencia" id="id_incidencia" class="form-control input-sm" placeholder="Id. incidencia" <?php echo (!empty($id_incidencia)) ? ' value="'.$id_incidencia.'" ' : ''?> />
                                 </div>

@@ -259,10 +259,19 @@ class Incidencia_model extends CI_Model {
                                 WHERE chat.status = 'Nuevo'
                                 AND incidencias.id_incidencia = chat.id_incidencia
                                 AND agent.type NOT IN ($agentes_excluidos)) as nuevos",FALSE)
-            ->join('pds','incidencias.id_pds = pds.id_pds','left')
+            /*->join('pds','incidencias.id_pds = pds.id_pds','left')
+            ->join('displays_pds','incidencias.id_displays_pds= displays_pds.id_displays_pds')
+            ->join('display','displays_pds.id_display=display.id_display')
             ->join('devices_pds','incidencias.id_devices_pds=devices_pds.id_devices_pds','left')
             ->join('device','devices_pds.id_device=device.id_device','left')
-            ->join('territory','territory.id_territory=pds.territory','left')
+            ->join('territory','territory.id_territory=pds.territory','left')*/
+
+            ->join('pds','incidencias.id_pds = pds.id_pds')
+            ->join('displays_pds','incidencias.id_displays_pds= displays_pds.id_displays_pds')
+            ->join('display','displays_pds.id_display=display.id_display')
+            ->join('devices_pds','incidencias.id_devices_pds=devices_pds.id_devices_pds')
+            ->join('device','devices_pds.id_device=device.id_device')
+            ->join('territory','territory.id_territory=pds.territory')
         ;
 
 
@@ -275,6 +284,14 @@ class Incidencia_model extends CI_Model {
         if(isset($filtros["brand_device"]) && !empty($filtros["brand_device"])) {
             $this->db->where('incidencias.fail_device','1');
             $this->db->where('device.brand_device',$filtros['brand_device']);
+        }
+        if(isset($filtros["id_display"]) && !empty($filtros["id_display"])) {
+            //$this->db->where('incidencias.fail_device','1');
+            $this->db->where('display.id_display',$filtros['id_display']);
+        }
+        if(isset($filtros["id_device"]) && !empty($filtros["id_device"])) {
+            //$this->db->where('incidencias.fail_device','1');
+            $this->db->where('device.id_device',$filtros['id_device']);
         }
         if(isset($filtros["reference"]) && !empty($filtros["reference"])) $this->db->where('reference',$filtros['reference']);
 
@@ -297,7 +314,8 @@ class Incidencia_model extends CI_Model {
         }
 
         $query =   $this->db->get('incidencias',$cfg_pagination['per_page'], ($page-1) * $cfg_pagination['per_page']);
-         //echo $this->db->last_query();
+         //
+        //echo $this->db->last_query();
 
         return $query->result();
     }
@@ -308,15 +326,38 @@ class Incidencia_model extends CI_Model {
      *  filtradas si procede
      *
      * */
-    public function get_estado_incidencias_csv($array_orden = NULL,$filtros=NULL,$tipo="abiertas") {
+    public function exportar_incidencias($array_orden = NULL,$filtros=NULL,$tipo="abiertas",$formato="csv") {
         $this->load->dbutil();
         $this->load->helper('file');
+        $this->load->helper('csv');
         $this->load->helper('download');
 
         $acceso = $this->uri->segment(1);
 
+
+        // Array de títulos de campo para la exportación XLS/CSV
+        $arr_titulos = array('Id incidencia','SFID','Fecha','Elemento','Territorio','Fabricante','Mueble','Terminal','Tipo avería',
+            'Texto 1','Texto 2','Texto 3','Parte PDF','Denuncia','Foto 1','Foto 2','Foto 3','Contacto','Teléfono','Email',
+            'Id. Operador','Intervención','Estado','Última modificación','Estado Sat');
+        $excluir = array('fecha_cierre','fabr');
+
+
+        // ARRAY CON LOS DISTINTOS ACCESOS QUE NO COMPARTEN CAMPOS CON ELL INFORME DE ACCESO GLOBAL ADMIN
+        $array_accesos_excluidos = array("master","territorio","tienda");
+        if(in_array($acceso,$array_accesos_excluidos)){ // En master, excluimos de la exportación los campos...
+            // Array de títulos de campo para la exportación XLS/CSV
+            $arr_titulos = array('Id incidencia','SFID','Fecha','Elemento','Territorio','Fabricante','Mueble','Terminal','Tipo avería',
+                'Texto 1','Texto 2','Texto 3','Parte PDF','Denuncia','Foto 1','Foto 2','Foto 3','Contacto','Teléfono','Email',
+                'Id. Operador','Intervención','Estado');
+
+            array_push($excluir,'last_updated');
+            array_push($excluir,'status_pds');
+        }
+
+
         $sql = 'SELECT incidencias.id_incidencia,
                             pds.reference as `SFID`,
+
                             incidencias.fecha,
                             incidencias.fecha_cierre,
 
@@ -335,6 +376,9 @@ class Incidencia_model extends CI_Model {
 
         $sql .= ' (SELECT brand_device.brand from brand_device  WHERE id_brand_device = fabr
                             ) as `Fabricante` ,';
+
+        $sql .= 'display.display as mueble,
+                device.device as terminal,';
 
         $sql .= 'incidencias.tipo_averia,';
 
@@ -359,24 +403,35 @@ class Incidencia_model extends CI_Model {
                             incidencias.id_operador,
                             incidencias.intervencion,';
 
-        if($acceso==="admin"){
-            $sql .= 'incidencias.last_updated AS `Última modificación`, ';
-            $sql .= 'incidencias.status_pds AS `Estado SAT`,';
+        if($acceso=="admin"){
+            $sql .= 'incidencias.status  AS `Estado SAT`,';
+            $sql .= 'incidencias.last_updated, ';
+            $sql .= 'incidencias.status_pds as `Estado PDS`';
+
+        }else{
+            $sql .= 'incidencias.status_pds as `Estado PDS`';
         }
+        $sql = rtrim($sql,",");
 
-        $sql .='incidencias.status  AS `Estado`
 
+
+        $sql .='
                 FROM incidencias
+
+
+                JOIN displays_pds ON incidencias.id_displays_pds = displays_pds.id_displays_pds
+                JOIN display ON displays_pds.id_display = display.id_display
+                JOIN devices_pds ON incidencias.id_devices_pds = devices_pds.id_devices_pds
+                JOIN device ON devices_pds.id_device = device.id_device
+                JOIN type_device ON device.type_device = type_device.id_type_device
+
                 JOIN pds ON incidencias.id_pds = pds.id_pds
-                LEFT JOIN displays_pds ON incidencias.id_displays_pds = displays_pds.id_displays_pds
-                LEFT JOIN display ON displays_pds.id_display = display.id_display
-                LEFT JOIN devices_pds ON incidencias.id_devices_pds = devices_pds.id_devices_pds
-                LEFT JOIN device ON devices_pds.id_device = device.id_device
-                LEFT JOIN type_device ON device.type_device = type_device.id_type_device
-                LEFT JOIN territory ON territory.id_territory=pds.territory
-                WHERE 1 = 1';
+                JOIN territory ON territory.id_territory=pds.territory
 
 
+                WHERE 1 = 1
+
+                ';
 
 
 
@@ -399,6 +454,14 @@ class Incidencia_model extends CI_Model {
             $sql .= (' AND incidencias.fail_device=1');
             $sql .= (' AND device.brand_device='.$filtros['brand_device']);
         }
+        if(isset($filtros["id_display"]) && !empty($filtros["id_display"])) {
+            //$this->db->where('incidencias.fail_device','1');
+            $sql .= (' AND display.id_display ="'.$filtros['id_display'].'" ');
+        }
+        if(isset($filtros["id_device"]) && !empty($filtros["id_device"])) {
+            $sql .= (' AND incidencias.fail_device=1');
+            $sql .= (' AND device.id_device ="'.$filtros['id_device'].'" ');
+        }
         if(isset($filtros["reference"]) && !empty($filtros["reference"])) $sql .=(' AND reference= '.$filtros['reference']);
 
         $campo_orden = $orden = NULL;
@@ -418,15 +481,14 @@ class Incidencia_model extends CI_Model {
         $query = $this->db->query($sql);
 
 
-        $delimiter = ",";
-        $newline = "\r\n";
-        $data = $this->dbutil->csv_from_result($query, $delimiter, $newline);
-        force_download('Demo_Real-'.$sTitleFilename.$sFiltrosFilename.date("d-m-Y").'T'.date("H:i:s").'.csv', $data);
+
+        $datos = preparar_array_exportar($query->result(),$arr_titulos,$excluir);
+
+        exportar_fichero($formato,$datos,$sTitleFilename.$sFiltrosFilename.date("d-m-Y")."T".date("H:i:s")."_".date("d-m-Y"));
+
 
 
     }
-
-
 
 
 
@@ -460,6 +522,10 @@ class Incidencia_model extends CI_Model {
 
     public function get_estado_incidencias_quantity($filtros=NULL, $tipo="abiertas") {
 
+        $bJoin['devices_pds'] = false;
+        $bJoin['device'] = false;
+
+
         $this->db->select('COUNT(incidencias.id_incidencia) AS cantidad')
             ->join('pds','incidencias.id_pds = pds.id_pds');
 
@@ -469,8 +535,42 @@ class Incidencia_model extends CI_Model {
         if(isset($filtros["id_incidencia"]) && !empty($filtros["id_incidencia"])) $this->db->where('id_incidencia',$filtros['id_incidencia']);
         if(isset($filtros["territory"]) && !empty($filtros["territory"])) $this->db->where('pds.territory',$filtros['territory']);
         if(isset($filtros["brand_device"]) && !empty($filtros["brand_device"])) {
-            $this->db->join('devices_pds','incidencias.id_devices_pds = devices_pds.id_devices_pds');
-            $this->db->join('device','devices_pds.id_device=device.id_device');
+
+            if(!$bJoin['devices_pds'])   $this->db->join('devices_pds','incidencias.id_devices_pds = devices_pds.id_devices_pds');
+            if(!$bJoin['device'])   $this->db->join('device','devices_pds.id_device=device.id_device');
+
+            $bJoin['devices_pds'] = true;
+            $bJoin['device'] = true;
+
+            $this->db->where('incidencias.fail_device','1');
+            $this->db->where('device.brand_device',$filtros['brand_device']);
+        }
+        if(isset($filtros["id_display"]) && !empty($filtros["id_display"])) {
+            $this->db->join('displays_pds','incidencias.id_displays_pds= displays_pds.id_displays_pds');
+            $this->db->join('display','displays_pds.id_display=display.id_display');
+            //$this->db->where('incidencias.fail_device','1');
+            $this->db->where('display.id_display',$filtros['id_display']);
+        }
+
+        if(isset($filtros["id_device"]) && !empty($filtros["id_device"])) {
+
+            if(!$bJoin['devices_pds'])   $this->db->join('devices_pds', 'incidencias.id_devices_pds = devices_pds.id_devices_pds');
+            if(!$bJoin['device'])   $this->db->join('device','devices_pds.id_device=device.id_device');
+
+            $bJoin['devices_pds'] = true;
+            $bJoin['device'] = true;
+
+            $this->db->where('incidencias.fail_device','1');
+            $this->db->where('device.id_device',$filtros['id_device']);
+        }
+        if(isset($filtros["brand_device"]) && !empty($filtros["brand_device"])) {
+
+            if(!$bJoin['devices_pds'])   $this->db->join('devices_pds', 'incidencias.id_devices_pds = devices_pds.id_devices_pds');
+            if(!$bJoin['device'])   $this->db->join('device','devices_pds.id_device=device.id_device');
+
+            $bJoin['devices_pds'] = true;
+            $bJoin['device'] = true;
+
             $this->db->where('incidencias.fail_device','1');
             $this->db->where('device.brand_device',$filtros['brand_device']);
         }
