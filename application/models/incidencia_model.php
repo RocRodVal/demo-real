@@ -562,7 +562,7 @@ class Incidencia_model extends CI_Model {
             $bJoin['devices_pds'] = true;
             $bJoin['device'] = true;
 
-            $this->db->where('incidencias.fail_device','1');
+            //$this->db->where('incidencias.fail_device','1');
             $this->db->where('device.id_device',$filtros['id_device']);
         }
         if(isset($filtros["brand_device"]) && !empty($filtros["brand_device"])) {
@@ -573,7 +573,7 @@ class Incidencia_model extends CI_Model {
             $bJoin['devices_pds'] = true;
             $bJoin['device'] = true;
 
-            $this->db->where('incidencias.fail_device','1');
+            //$this->db->where('incidencias.fail_device','1');
             $this->db->where('device.brand_device',$filtros['brand_device']);
         }
         if(isset($filtros["reference"]) && !empty($filtros["reference"])) $this->db->where('reference',$filtros['reference']);
