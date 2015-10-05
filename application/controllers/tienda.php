@@ -10,7 +10,13 @@ class Tienda extends CI_Controller {
 		$this->load->library(array('email','encrypt','form_validation','session'));
         $this->load->library('uri');
 
+        // Carga de la clase de Colección de datos, para pasar variables a la vista.
+        $this->load->library('data');
+        $this->data->set("controlador","tienda");
+        $this->data->set("accion_home","estado_incidencias/abiertas");
+        $this->data->set("entrada",($this->data->get("controlador") . '/' . $this->data->get("accion_home")));
 
+        // Config exportacion de ficheros
         $this->load->config('files');
         $this->cfg = $this->config->config;
         $this->export = config_item("export");
@@ -27,7 +33,7 @@ class Tienda extends CI_Controller {
 		$this->form_validation->set_rules('sfid-login','SFID','required|xss_clean');
 		$this->form_validation->set_rules('password','password','required|xss_clean');
 
-        $entrada = "tienda/estado_incidencias/abiertas";
+        $entrada = $this->data->get("entrada");
 
         // Ya está logueado....
         if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 1)) redirect($entrada);
@@ -56,7 +62,11 @@ class Tienda extends CI_Controller {
 			$data['message'] = (validation_errors() ? validation_errors() : ($this->session->flashdata('message')));
 						
 			$data['title'] = 'Login';
-			
+
+        /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+        $this->data->add($data);
+        $data = $this->data->getData();
+        /////
 			$this->load->view('tienda/header',$data);
 			$this->load->view('tienda/login',$data);
 			$this->load->view('tienda/footer');
@@ -318,6 +328,10 @@ class Tienda extends CI_Controller {
             /* LISTADO DE TERMINALES PARA EL SELECT */
             $data["terminales"] = $this->tienda_model->get_terminales();
 
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
             $this->load->view('tienda/header', $data);
             $this->load->view('tienda/navbar', $data);
             $this->load->view('tienda/estado_incidencias/'.$tipo, $data);
@@ -653,6 +667,10 @@ class Tienda extends CI_Controller {
 
             $data['incidencias_finalizadas'] = $incidencias_finalizadas;
 
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
             $this->load->view('tienda/header', $data);
             $this->load->view('tienda/navbar', $data);
             $this->load->view('tienda/dashboard', $data);
@@ -786,7 +804,11 @@ class Tienda extends CI_Controller {
 			$data['incidencias'] =  $incidencias;
 	
 			$data['title'] = 'Mis solicitudes';
-			
+
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
 			$this->load->view('tienda/header',$data);
 			$this->load->view('tienda/navbar',$data);
 			$this->load->view('tienda/dashboard',$data);
@@ -830,7 +852,11 @@ class Tienda extends CI_Controller {
 			$data['displays'] = $displays;
 
 			$data['title'] = 'Alta incidencia';
-		
+
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
 			$this->load->view('tienda/header',$data);
 			$this->load->view('tienda/navbar',$data);
 			$this->load->view('tienda/alta_incidencia',$data);
@@ -871,7 +897,11 @@ class Tienda extends CI_Controller {
 			$data['devices'] = $this->sfid_model->get_devices_displays_pds($this->uri->segment(3));
 		
 			$data['title'] = 'Alta incidencia';
-	
+
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
 			$this->load->view('tienda/header',$data);
 			$this->load->view('tienda/navbar',$data);
 			$this->load->view('tienda/alta_incidencia_mueble',$data);
@@ -924,7 +954,11 @@ class Tienda extends CI_Controller {
 			$data['picture_url_dev'] 		  = $device['picture_url'];			
 
 			$data['title'] = 'Alta incidencia';
-	
+
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
 			$this->load->view('tienda/header',$data);
 			$this->load->view('tienda/navbar',$data);
 			$this->load->view('tienda/alta_incidencia_dispositivo',$data);
@@ -964,7 +998,11 @@ class Tienda extends CI_Controller {
 			$data['picture_url_dis'] = $display['picture_url'];
 
 			$data['title'] = 'Alta incidencia';
-	
+
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
 			$this->load->view('tienda/header',$data);
 			$this->load->view('tienda/navbar',$data);
 			$this->load->view('tienda/alta_incidencia_mueble_alarma',$data);
@@ -1056,7 +1094,11 @@ class Tienda extends CI_Controller {
 				$data['chats'] = $chats;
 				
 				$data['title'] = 'Estado de incidencia Ref. '.$id_incidencia;
-		
+
+                /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+                $this->data->add($data);
+                $data = $this->data->getData();
+                /////
 				$this->load->view('tienda/header',$data);
 				$this->load->view('tienda/navbar',$data);
 				$this->load->view('tienda/detalle_incidencia',$data);
@@ -1363,7 +1405,11 @@ class Tienda extends CI_Controller {
 		 
 			$data['title']   = 'Alta incidencia';
 			$data['content'] = 'Muchas gracias. Su incidencia ha sido dada alta con referencia número '.$referencia.'.';
-		 
+
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
 			$this->load->view('tienda/header',$data);
 			$this->load->view('tienda/navbar',$data);
 			$this->load->view('tienda/content',$data);
@@ -1422,6 +1468,10 @@ class Tienda extends CI_Controller {
 
 			$data['title']      = 'Ayuda';
 
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
 			$this->load->view('tienda/header',$data);
 			$this->load->view('tienda/navbar',$data);
 			$this->load->view('tienda/ayuda',$data);
@@ -1454,7 +1504,11 @@ class Tienda extends CI_Controller {
 				
 			$data['title']       = 'Ayuda';
 			$data['ayuda_title'] = 'Manuales';
-			
+
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
 			$this->load->view('tienda/header',$data);
 			$this->load->view('tienda/navbar',$data);
 			$this->load->view('tienda/manuales',$data);
@@ -1484,6 +1538,10 @@ class Tienda extends CI_Controller {
         $data['bg_image'] = "bg-tienda.jpg";
         $data['title'] = 'Parada por mantenimiento';
 
+        /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+        $this->data->add($data);
+        $data = $this->data->getData();
+        /////
         $this->load->view('backend/header', $data);
         $this->load->view('common/mantenimiento', $data);
         $this->load->view('backend/footer');

@@ -12,6 +12,11 @@ class Master extends CI_Controller {
 
         $this->load->library('auth',array(9));
 
+        // Carga de la clase de Colección de datos, para pasar variables a la vista.
+        $this->load->library('data');
+        $this->data->set("controlador","master");
+        $this->data->set("accion_home","estado_incidencias/abiertas");
+        $this->data->set("entrada",($this->data->get("controlador") . '/' . $this->data->get("accion_home")));
 
         $this->load->config('files');
         $this->cfg = $this->config->config;
@@ -33,7 +38,7 @@ class Master extends CI_Controller {
 		$this->form_validation->set_rules('password','password','required|xss_clean');
 
 
-        $entrada = "master/estado_incidencias/abiertas";
+        $entrada = $this->data->get("entrada");
 
         // Ya está logueado....
         if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 9)) redirect($entrada);
@@ -62,7 +67,10 @@ class Master extends CI_Controller {
 			$data['message'] = (validation_errors() ? validation_errors() : ($this->session->flashdata('message')));
 	
 			$data['title'] = 'Login';
-				
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
 			$this->load->view('master/header',$data);
 			$this->load->view('master/login',$data);
 			$this->load->view('master/footer');
@@ -337,7 +345,10 @@ class Master extends CI_Controller {
             /* LISTADO DE TERMINALES PARA EL SELECT */
             $data["terminales"] = $this->tienda_model->get_terminales();
 
-
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
             $this->load->view('master/header', $data);
             $this->load->view('master/navbar', $data);
             $this->load->view('master/estado_incidencias/'.$tipo, $data);
@@ -474,7 +485,11 @@ class Master extends CI_Controller {
 				$data['chats'] = $chats;
 		
 				$data['title'] = 'Estado de incidencia Ref. '.$id_incidencia.' [SFID-'.$data['reference'].']';
-		
+
+                /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+                $this->data->add($data);
+                $data = $this->data->getData();
+                /////
 				$this->load->view('master/header',$data);
 				$this->load->view('master/navbar',$data);
 				$this->load->view('master/detalle_incidencia',$data);
@@ -510,7 +525,11 @@ class Master extends CI_Controller {
 	
 			$data['title']   = 'Alarmas';
 			$data['content'] = $xcrud->render();
-			
+
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
 			$this->load->view('master/header',$data);
 			$this->load->view('master/navbar',$data);
 			$this->load->view('master/content',$data);
@@ -545,7 +564,11 @@ class Master extends CI_Controller {
 		   
 			$data['title']   = 'Dispositivos';
 			$data['content'] = $xcrud->render();
-		
+
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
 			$this->load->view('master/header',$data);
 			$this->load->view('master/navbar',$data);
 			$this->load->view('master/content',$data);
@@ -580,7 +603,11 @@ class Master extends CI_Controller {
 		
 			$data['title']   = 'Muebles';
 			$data['content'] = $xcrud->render();
-				
+
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
 			$this->load->view('master/header',$data);
 			$this->load->view('master/navbar',$data);
 			$this->load->view('master/content',$data);
@@ -624,7 +651,12 @@ class Master extends CI_Controller {
 			
 			$data['title']   = 'Puntos de venta';
 			$data['content'] = $xcrud->render();
-		
+
+
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
 			$this->load->view('master/header',$data);
 			$this->load->view('master/navbar',$data);
 			$this->load->view('master/content',$data);
@@ -678,7 +710,11 @@ class Master extends CI_Controller {
 	
 			$data['title'] = 'Export incidencias';
 			$data['content'] = $xcrud_SQL->render();
-	
+
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
 			$this->load->view('master/header',$data);
 			$this->load->view('master/navbar',$data);
 			$this->load->view('master/content',$data);
@@ -1127,7 +1163,10 @@ class Master extends CI_Controller {
             $data['total_dias_operativos'] = $total_dias_operativos;
             $data['total_media'] = $total_media;
 
-
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
             $this->load->view('master/header',$data);
             $this->load->view('master/navbar',$data);
             $this->load->view('master/cdm_incidencias',$data);
@@ -1233,7 +1272,10 @@ class Master extends CI_Controller {
 			$data['content'] = $data['content'] . $xcrud_4->render();
 			$data['content'] = $data['content'] . $xcrud_5->render();
 			*/
-				
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
 			$this->load->view('master/header',$data);
 			$this->load->view('master/navbar',$data);
 			$this->load->view('master/cdm_incidencias',$data);
@@ -1317,7 +1359,11 @@ class Master extends CI_Controller {
 			$data['content'] = $data['content'] . $xcrud_3->render();
 			$data['content'] = $data['content'] . $xcrud_4->render();
 			$data['content'] = $data['content'] . $xcrud_5->render();
-			
+
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
 			$this->load->view('master/header',$data);
 			$this->load->view('master/navbar',$data);
 			$this->load->view('master/content',$data);
@@ -1343,6 +1389,10 @@ class Master extends CI_Controller {
 
             $data['stock_balance'] = $balance_alarmas;
 
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
 			$this->load->view('master/header',$data);
 			$this->load->view('master/navbar',$data);
 			$this->load->view('master/cdm_alarmas',$data);
@@ -1368,7 +1418,11 @@ class Master extends CI_Controller {
 			$data['stocks_dispositivos']  = $this->tienda_model->get_cdm_dispositivos();
 				
 			$data['title']   = 'Dispositivos';
-	
+
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
 			$this->load->view('master/header',$data);
 			$this->load->view('master/navbar',$data);
 			$this->load->view('master/cdm_dispositivos',$data);
@@ -1441,7 +1495,11 @@ class Master extends CI_Controller {
 			$data['devices_pds']     = $this->tienda_model->get_devices_total();
 	
 			$data['title']   = 'Inventario/Depósito';
-	
+
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
 			$this->load->view('master/header',$data);
 			$this->load->view('master/navbar',$data);
 			$this->load->view('master/inventario',$data);
@@ -1540,7 +1598,11 @@ class Master extends CI_Controller {
 			$data['devices_pds']     = $this->tienda_model->get_devices_total();
 				
 			$data['title']   = 'Depósito';
-	
+
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
 			$this->load->view('master/header',$data);
 			$this->load->view('master/navbar',$data);
 			$this->load->view('master/inventario',$data);
@@ -1563,7 +1625,11 @@ class Master extends CI_Controller {
 			$data['tiendas'] =  $this->tienda_model->search_pds($this->input->post('sfid'));
 	
 			$data['title'] = 'Planograma tienda';
-	
+
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
 			$this->load->view('master/header',$data);
 			$this->load->view('master/navbar',$data);
 			$this->load->view('master/descripcion',$data);
@@ -1607,7 +1673,11 @@ class Master extends CI_Controller {
 			$data['displays']=$displays;
 		
 			$data['title'] = 'Planograma tienda [SFID-'.$data['reference'].']';
-		
+
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
 			$this->load->view('master/header',$data);
 			$this->load->view('master/navbar',$data);
 			$this->load->view('master/exp_alta_incidencia',$data);
@@ -1653,7 +1723,11 @@ class Master extends CI_Controller {
 			$data['id_dis_url']  = $id_dis;
 		
 			$data['title'] = 'Planograma tienda [SFID-'.$data['reference'].']';
-		
+
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
 			$this->load->view('master/header',$data);
 			$this->load->view('master/navbar',$data);
 			$this->load->view('master/exp_alta_incidencia_display',$data);
@@ -1713,7 +1787,11 @@ class Master extends CI_Controller {
 			$data['id_dev_url']  = $id_dev;
 		
 			$data['title'] = 'Planograma tienda [SFID-'.$data['reference'].']';
-		
+
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
 			$this->load->view('master/header',$data);
 			$this->load->view('master/navbar',$data);
 			$this->load->view('master/exp_alta_incidencia_device',$data);
@@ -1748,6 +1826,10 @@ class Master extends CI_Controller {
 
 			$data['title']   = 'Planograma mueble';
 
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
 			$this->load->view('master/header',$data);
 			$this->load->view('master/navbar',$data);
 			$this->load->view('master/inventario_planogramas',$data);
@@ -1797,7 +1879,10 @@ class Master extends CI_Controller {
             $data["fabricantes"] = $this->tienda_model->get_fabricantes();
 
 
-
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
             $this->load->view('master/header', $data);
             $this->load->view('master/navbar', $data);
             $this->load->view('master/informes/informe_puntos_venta_form', $data);
@@ -2269,6 +2354,10 @@ class Master extends CI_Controller {
 
 
             /* Pasar a la vista */
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
         $this->load->view('master/header', $data);
         $this->load->view('master/navbar', $data);
         $this->load->view('master/informes/informe_planograma_form', $data);
@@ -2289,7 +2378,7 @@ class Master extends CI_Controller {
         }
 
 
-        $this->load->view('master/footer');
+        $this->load->view('master/footer',$data);
 
 
     }
@@ -2355,6 +2444,10 @@ class Master extends CI_Controller {
             $data['title'] = 'Planograma tienda';
             $data['subtitle'] = 'Planograma tienda [SFID-'.$data['reference'].'] - '.$data['display'];
 
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
             $this->load->view('master/header',$data);
             $this->load->view('master/navbar',$data);
             $this->load->view('master/informes/informe_planograma_form',$data);
@@ -2434,6 +2527,10 @@ class Master extends CI_Controller {
         $data['title'] = 'Planograma tienda [SFID-'.$data['reference'].']';
         $data['subtitle'] = $data["display"] .' - '. $data["device"];
 
+        /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+        $this->data->add($data);
+        $data = $this->data->getData();
+        /////
         $this->load->view('master/header',$data);
         $this->load->view('master/navbar',$data);
         $this->load->view('master/informes/informe_planograma_form',$data);
@@ -2614,6 +2711,10 @@ class Master extends CI_Controller {
 
             $data["vista"] = $vista;
 
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
             /* Pasar a la vista */
             $this->load->view('master/header', $data);
             $this->load->view('master/navbar', $data);
@@ -2695,6 +2796,10 @@ class Master extends CI_Controller {
             $data['title'] = 'Panelado genérico';
             $data['subtitle'] = 'Planograma mueble  - '.$data['display'];
 
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
             $this->load->view('master/header',$data);
             $this->load->view('master/navbar',$data);
             $this->load->view('master/informes/informe_visual_form',$data);
@@ -2767,6 +2872,10 @@ class Master extends CI_Controller {
             $data['title'] = 'Panelado genérico';
             $data['subtitle'] = $data["display"] . ' - ' . $data["device"];
 
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
             $this->load->view('master/header', $data);
             $this->load->view('master/navbar', $data);
             $this->load->view('master/informes/informe_visual_form', $data);
@@ -2839,6 +2948,10 @@ class Master extends CI_Controller {
             $data['title'] = 'Planograma mueble';
             $data['subtitle'] = 'Planograma tienda [SFID-'.$data['reference'].'] - '.$data['display'];
 
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
             $this->load->view('master/header',$data);
             $this->load->view('master/navbar',$data);
             $this->load->view('master/informes/informe_visual_form',$data);
@@ -2925,6 +3038,10 @@ class Master extends CI_Controller {
             $data['title'] = 'Panelado tienda [SFID-'.$data['reference'].']';
             $data['subtitle'] = $data["display"] .' - '. $data["device"];
 
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
             $this->load->view('master/header',$data);
             $this->load->view('master/navbar',$data);
             $this->load->view('master/informes/informe_visual_form',$data);
@@ -2975,6 +3092,10 @@ class Master extends CI_Controller {
 
 			$data['title'] = 'Ayuda';
 
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
 			$this->load->view('master/header',$data);
 			$this->load->view('master/navbar',$data);
 			$this->load->view('master/ayuda',$data);
@@ -2995,7 +3116,11 @@ class Master extends CI_Controller {
 	
 			$data['title']       = 'Ayuda';
 			$data['ayuda_title'] = 'Manuales';
-				
+
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
 			$this->load->view('master/header',$data);
 			$this->load->view('master/navbar',$data);
 			$this->load->view('master/manuales',$data);
@@ -3014,7 +3139,11 @@ class Master extends CI_Controller {
 	
 			$data['title']       = 'Ayuda';
 			$data['ayuda_title'] = 'Muebles fabricantes';
-	
+
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
 			$this->load->view('master/header',$data);
 			$this->load->view('master/navbar',$data);
 			$this->load->view('master/muebles_fabricantes',$data);
@@ -3043,6 +3172,10 @@ class Master extends CI_Controller {
         $data['bg_image'] = "bg-master.jpg";
         $data['title'] = 'Parada por mantenimiento';
 
+        /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+        $this->data->add($data);
+        $data = $this->data->getData();
+        /////
         $this->load->view('backend/header', $data);
         $this->load->view('common/mantenimiento', $data);
         $this->load->view('backend/footer');

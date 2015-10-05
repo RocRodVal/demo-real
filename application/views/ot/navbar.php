@@ -8,7 +8,7 @@
                     <span class="icon-bar"></span>
                 </button>
                 <?php /*<a href="<?=site_url('ot/dashboard')?>"><img src="<?=site_url('assets/images/logo-orange_small.png')?>" class="logo" title="<?=lang('comun.titulo')?>" /></a>*/?>
-                <img src="<?=site_url('assets/images/logo-orange_small.png')?>" class="logo" title="<?=lang('comun.titulo')?>" />
+                <a href="<?=site_url($entrada)?>"><img src="<?=site_url('assets/images/logo-orange_small.png')?>" class="logo" title="<?=lang('comun.titulo')?>" /></a>
             </div>
 
             <ul class="nav navbar-top-links navbar-right">

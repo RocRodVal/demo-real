@@ -3,7 +3,6 @@
 class Admin extends CI_Controller
 {
 
-
     function __construct()
     {
         parent::__construct();
@@ -14,11 +13,18 @@ class Admin extends CI_Controller
         $this->load->library('uri');
         $this->load->library('auth',array(10));
 
+        // Carga de la clase de Colección de datos, para pasar variables a la vista.
+        $this->load->library('data');
+        $this->data->set("controlador","admin");
+        $this->data->set("accion_home","estado_incidencias/abiertas");
+        $this->data->set("entrada",($this->data->get("controlador") . '/' . $this->data->get("accion_home")));
 
         $this->load->config('files');
         $this->cfg = $this->config->config;
         $this->export = config_item("export");
         $this->ext = $this->export["default_ext"];
+
+
 
     }
 
@@ -34,10 +40,10 @@ class Admin extends CI_Controller
         $this->form_validation->set_rules('password', 'password', 'required|xss_clean');
         $this->form_validation->set_message('login_error', '"Username" or "Password" are incorrect.');
 
-        $entrada = "admin/estado_incidencias/abiertas";
 
         // Ya está logueado....
-        if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) redirect($entrada);
+       $entrada = $this->data->get("entrada");
+       if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) redirect($entrada);
 
         if ($this->form_validation->run() == true) {
             $data = array(
@@ -61,6 +67,11 @@ class Admin extends CI_Controller
 
         $data['title'] = 'Login';
 
+
+        /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+        $this->data->add($data);
+        $data = $this->data->getData();
+        /////
         $this->load->view('backend/header', $data);
         $this->load->view('backend/login', $data);
         $this->load->view('backend/footer');
@@ -353,6 +364,12 @@ class Admin extends CI_Controller
             /* LISTADO DE TERMINALES PARA EL SELECT */
             $data["terminales"] = $this->tienda_model->get_terminales();
 
+
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
+
             $this->load->view('backend/header', $data);
             $this->load->view('backend/navbar', $data);
             $this->load->view('backend/estado_incidencias/'.$tipo, $data);
@@ -445,6 +462,12 @@ class Admin extends CI_Controller
 
             $data['title'] = 'Material retorno';
 
+
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
+
             $this->load->view('backend/header', $data);
             $this->load->view('backend/navbar', $data);
             $this->load->view('backend/material_retorno', $data);
@@ -467,6 +490,12 @@ class Admin extends CI_Controller
 			$data['tiendas'] =  $this->tienda_model->search_pds($this->input->post('sfid'));
 
     		$data['title'] = 'Cambio de SFID';
+
+
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
 
     		$this->load->view('backend/header', $data);
     		$this->load->view('backend/navbar', $data);
@@ -491,6 +520,12 @@ class Admin extends CI_Controller
             $data['baja_sfid'] = $this->input->post('sfid');
 
     		$data['title'] = 'Cierre PdV';
+
+
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
 
     		$this->load->view('backend/header', $data);
     		$this->load->view('backend/navbar', $data);
@@ -546,6 +581,11 @@ class Admin extends CI_Controller
     		$data['tiendas'] =  $this->tienda_model->search_pds($this->input->post('sfid'));
 
     		$data['title'] = 'Apertura PdV';
+
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
 
     		$this->load->view('backend/header', $data);
     		$this->load->view('backend/navbar', $data);
@@ -603,6 +643,12 @@ class Admin extends CI_Controller
     		$data['dispositivos']    =  $this->tienda_model->search_dispositivo_id($this->input->post('dipositivo_almacen_1'));
 
     		$data['title'] = 'Carga datos dispositivo';
+
+
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
 
     		$this->load->view('backend/header', $data);
     		$this->load->view('backend/navbar', $data);
@@ -723,6 +769,10 @@ class Admin extends CI_Controller
 
             $data['title'] = 'Operativa incidencia Ref. '.$data['id_inc_url'];
 
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
 
             $this->load->view('backend/header', $data);
             $this->load->view('backend/navbar', $data);
@@ -922,6 +972,11 @@ class Admin extends CI_Controller
             $data['title'] = 'Generación del parte para la incidencia ['.$incidencia['id_incidencia'].']';
             $data['filename_pdf'] = $filename_pdf;
 
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
+
             $this->load->view('backend/header', $data);
             $this->load->view('backend/navbar', $data);
             $this->load->view('backend/descargar_parte', $data);
@@ -1048,6 +1103,11 @@ class Admin extends CI_Controller
         $data['panelados'] = $panelados;
 
         $data['title'] = 'Panelado tienda';
+
+        /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+        $this->data->add($data);
+        $data = $this->data->getData();
+        /////
 
         $this->load->view('backend/header', $data);
         $this->load->view('backend/navbar', $data);
@@ -1212,7 +1272,10 @@ class Admin extends CI_Controller
 
                 $data["mensaje_error"] = ($resetear_incidencia === 'si') ? 'Debes introducir el Identificador de la incidencia a resetear' : '';
 
-
+                /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+                $this->data->add($data);
+                $data = $this->data->getData();
+                /////
                 $this->load->view('backend/header', $data);
                 $this->load->view('backend/navbar', $data);
                 $this->load->view('backend/reset_incidencia', $data);
@@ -1298,6 +1361,10 @@ class Admin extends CI_Controller
                 $data["mensaje_error"] = $mensaje_error;
                 $data["mensaje_exito"] = $mensaje_exito;
 
+                /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+                $this->data->add($data);
+                $data = $this->data->getData();
+                /////
                 $this->load->view('backend/header', $data);
                 $this->load->view('backend/navbar', $data);
                 $this->load->view('backend/reset_incidencia_ok', $data);
@@ -1637,6 +1704,10 @@ class Admin extends CI_Controller
 
             $data['title'] = 'Operativa incidencia Ref. '.$data['id_inc_url'];
 
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
             $this->load->view('backend/header', $data);
             $this->load->view('backend/navbar', $data);
             $this->load->view('backend/operar_incidencia_materiales', $data);
@@ -1685,6 +1756,10 @@ class Admin extends CI_Controller
 
     		$data['title'] = 'Carga datos dispositivo';
 
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
     		$this->load->view('backend/header', $data);
     		$this->load->view('backend/navbar', $data);
     		$this->load->view('backend/carga_datos_dispositivo', $data);
@@ -1713,6 +1788,10 @@ class Admin extends CI_Controller
         $data['title'] = 'Empresas';
         $data['content'] = $xcrud->render();
 
+        /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+        $this->data->add($data);
+        $data = $this->data->getData();
+        /////
         $this->load->view('backend/header', $data);
         $this->load->view('backend/navbar', $data);
         $this->load->view('backend/content', $data);
@@ -1767,6 +1846,10 @@ class Admin extends CI_Controller
             $data['title'] = 'Export incidencias';
             $data['content'] = $xcrud_SQL->render();
 
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
             $this->load->view('backend/header', $data);
             $this->load->view('backend/navbar', $data);
             $this->load->view('backend/content', $data);
@@ -1823,6 +1906,10 @@ class Admin extends CI_Controller
     		$data['title'] = 'Export incidencias';
     		$data['content'] = $xcrud_SQL->render();
 
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
     		$this->load->view('backend/header', $data);
     		$this->load->view('backend/navbar', $data);
     		$this->load->view('backend/content', $data);
@@ -1872,7 +1959,11 @@ class Admin extends CI_Controller
     
     		$data['title'] = 'Export incidencias';
     		$data['content'] = $xcrud_SQL->render();
-    
+
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
     		$this->load->view('backend/header', $data);
     		$this->load->view('backend/navbar', $data);
     		$this->load->view('backend/content', $data);
@@ -1916,7 +2007,10 @@ class Admin extends CI_Controller
         //$data['content'] = $data['content'].$xcrud_2->render();
         $data['content'] = $xcrud_2->render();
 
-
+        /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+        $this->data->add($data);
+        $data = $this->data->getData();
+        /////
         $this->load->view('backend/header', $data);
         $this->load->view('backend/navbar', $data);
         $this->load->view('backend/content', $data);
@@ -1996,6 +2090,10 @@ class Admin extends CI_Controller
         $data['content'] = $data['content'] . $xcrud_4->render();
         $data['content'] = $data['content'] . $xcrud_5->render();*/
 
+        /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+        $this->data->add($data);
+        $data = $this->data->getData();
+        /////
         $this->load->view('backend/header', $data);
         $this->load->view('backend/navbar', $data);
         $this->load->view('backend/content', $data);
@@ -2032,7 +2130,11 @@ class Admin extends CI_Controller
 
     	$data['title'] = 'Gestión alarmas';
     	$data['content'] = $xcrud->render();
-    
+
+        /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+        $this->data->add($data);
+        $data = $this->data->getData();
+        /////
     	$this->load->view('backend/header', $data);
     	$this->load->view('backend/navbar', $data);
     	$this->load->view('backend/content', $data);
@@ -2085,6 +2187,11 @@ class Admin extends CI_Controller
         $data['content'] = $data['content'] . $xcrud_2->render();
         $data['content'] = $data['content'] . $xcrud_3->render();
 
+
+        /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+        $this->data->add($data);
+        $data = $this->data->getData();
+        /////
         $this->load->view('backend/header', $data);
         $this->load->view('backend/navbar', $data);
         $this->load->view('backend/content', $data);
@@ -2153,6 +2260,10 @@ class Admin extends CI_Controller
         $data['content'] = $data['content'] . $xcrud_3->render();
         $data['content'] = $data['content'] . $xcrud_4->render();
 
+        /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+        $this->data->add($data);
+        $data = $this->data->getData();
+        /////
         $this->load->view('backend/header', $data);
         $this->load->view('backend/navbar', $data);
         $this->load->view('backend/content', $data);
@@ -2204,6 +2315,10 @@ class Admin extends CI_Controller
         $data['content'] = $xcrud_1->render();
         $data['content'] = $data['content'] . $xcrud_2->render();
 
+        /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+        $this->data->add($data);
+        $data = $this->data->getData();
+        /////
         $this->load->view('backend/header', $data);
         $this->load->view('backend/navbar', $data);
         $this->load->view('backend/content', $data);
@@ -2228,6 +2343,10 @@ class Admin extends CI_Controller
         $data['title'] = 'Tipos de incidencia';
         $data['content'] = $xcrud->render();
 
+        /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+        $this->data->add($data);
+        $data = $this->data->getData();
+        /////
         $this->load->view('backend/header', $data);
         $this->load->view('backend/navbar', $data);
         $this->load->view('backend/content', $data);
@@ -2251,6 +2370,10 @@ class Admin extends CI_Controller
 
             $data['title'] = 'Planograma tiendas';
 
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
             $this->load->view('backend/header', $data);
             $this->load->view('backend/navbar', $data);
             $this->load->view('backend/descripcion', $data);
@@ -2353,6 +2476,10 @@ class Admin extends CI_Controller
         $data['content'] = $data['content'] . $xcrud_3->render();
         $data['content'] = $data['content'] . $xcrud_4->render();
 
+        /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+        $this->data->add($data);
+        $data = $this->data->getData();
+        /////
         $this->load->view('backend/header', $data);
         $this->load->view('backend/navbar', $data);
         $this->load->view('backend/inventario', $data);
@@ -2422,6 +2549,10 @@ class Admin extends CI_Controller
 
         $data["content_alarmas"] = $xcrud_2->render();
 
+        /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+        $this->data->add($data);
+        $data = $this->data->getData();
+        /////
         $this->load->view('backend/header', $data);
         $this->load->view('backend/navbar', $data);
         $this->load->view('backend/diario_almacen', $data);
@@ -2598,7 +2729,10 @@ class Admin extends CI_Controller
         $data['content'] = $xcrud_1->render();
         $data['content'] = $data['content'] . $xcrud_2->render();
 
-
+        /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+        $this->data->add($data);
+        $data = $this->data->getData();
+        /////
         $this->load->view('backend/header', $data);
         $this->load->view('backend/navbar', $data);
         $this->load->view('backend/inventario_panelados', $data);
@@ -2652,7 +2786,10 @@ class Admin extends CI_Controller
         $data['content'] = $xcrud_1->render();
         $data['content'] = $data['content'] . $xcrud_2->render();
 
-
+        /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+        $this->data->add($data);
+        $data = $this->data->getData();
+        /////
         $this->load->view('backend/header', $data);
         $this->load->view('backend/navbar', $data);
         $this->load->view('backend/inventario_planogramas', $data);
@@ -2709,6 +2846,10 @@ class Admin extends CI_Controller
         $data['content'] = $xcrud->render();
         $data['content'] = $data['content'] . $xcrud_2->render();
 
+        /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+        $this->data->add($data);
+        $data = $this->data->getData();
+        /////
         $this->load->view('backend/header', $data);
         $this->load->view('backend/navbar', $data);
         $this->load->view('backend/almacen', $data);
@@ -2726,7 +2867,11 @@ class Admin extends CI_Controller
 	    	$data['devices'] = $this->tienda_model->get_devices();
 	     
 	    	$data['title'] = 'Alta masiva dispositivos';
-	    
+
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
 	    	$this->load->view('backend/header', $data);
 	    	$this->load->view('backend/navbar', $data);
 	    	$this->load->view('backend/alta_dispositivos_almacen', $data);
@@ -2807,6 +2952,10 @@ class Admin extends CI_Controller
                 $data["num"] = $num;
                 $data["modelo"] = $device["device"];
 
+                /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+                $this->data->add($data);
+                $data = $this->data->getData();
+                /////
                 $this->load->view('backend/header', $data);
                 $this->load->view('backend/navbar', $data);
                 $this->load->view('backend/alta_dispositivos_almacen_ok', $data);
@@ -2831,7 +2980,11 @@ class Admin extends CI_Controller
     		$data['devices'] = $this->tienda_model->get_devices();
     
     		$data['title'] = 'Baja masiva dispositivos';
-    	  
+
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
     		$this->load->view('backend/header', $data);
     		$this->load->view('backend/navbar', $data);
     		$this->load->view('backend/baja_dispositivos_almacen', $data);
@@ -2891,6 +3044,10 @@ class Admin extends CI_Controller
                 $data["num"] = $num;
                 $data["modelo"] = $device["device"];
 
+                /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+                $this->data->add($data);
+                $data = $this->data->getData();
+                /////
                 $this->load->view('backend/header', $data);
                 $this->load->view('backend/navbar', $data);
                 $this->load->view('backend/baja_dispositivos_almacen_ok', $data);
@@ -2926,6 +3083,10 @@ class Admin extends CI_Controller
                 $data["num"] = $num;
                 $data["modelo"] = $device["device"];
 
+                /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+                $this->data->add($data);
+                $data = $this->data->getData();
+                /////
                 $this->load->view('backend/header', $data);
                 $this->load->view('backend/navbar', $data);
                 $this->load->view('backend/baja_dispositivos_almacen_ko', $data);
@@ -2947,6 +3108,10 @@ class Admin extends CI_Controller
         $data['title'] = 'Listado de incidencias';
         $data['content'] = 'En construcción.';
 
+        /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+        $this->data->add($data);
+        $data = $this->data->getData();
+        /////
         $this->load->view('backend/header', $data);
         $this->load->view('backend/navbar', $data);
         $this->load->view('backend/content', $data);
@@ -2988,6 +3153,10 @@ class Admin extends CI_Controller
 
         $data['title'] = 'Alta incidencia';
 
+        /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+        $this->data->add($data);
+        $data = $this->data->getData();
+        /////
         $this->load->view('backend/header', $data);
         $this->load->view('backend/navbar', $data);
         $this->load->view('backend/alta_incidencia', $data);
@@ -3024,6 +3193,10 @@ class Admin extends CI_Controller
 
         $data['title'] = 'Panelado tienda';
 
+        /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+        $this->data->add($data);
+        $data = $this->data->getData();
+        /////
         $this->load->view('backend/header', $data);
         $this->load->view('backend/navbar', $data);
         $this->load->view('backend/exp_alta_incidencia', $data);
@@ -3062,6 +3235,10 @@ class Admin extends CI_Controller
 
         $data['title'] = 'Planograma mueble';
 
+        /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+        $this->data->add($data);
+        $data = $this->data->getData();
+        /////
         $this->load->view('backend/header', $data);
         $this->load->view('backend/navbar', $data);
         $this->load->view('backend/exp_alta_incidencia_display', $data);
@@ -3114,6 +3291,10 @@ class Admin extends CI_Controller
 
         $data['title'] = 'Detalle dispositivo';
 
+        /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+        $this->data->add($data);
+        $data = $this->data->getData();
+        /////
         $this->load->view('backend/header', $data);
         $this->load->view('backend/navbar', $data);
         $this->load->view('backend/exp_alta_incidencia_device', $data);
@@ -3144,6 +3325,10 @@ class Admin extends CI_Controller
 
         $data['title'] = 'Alta incidencia';
 
+        /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+        $this->data->add($data);
+        $data = $this->data->getData();
+        /////
         $this->load->view('backend/header', $data);
         $this->load->view('backend/navbar', $data);
         $this->load->view('backend/alta_incidencia_robo', $data);
@@ -3218,6 +3403,10 @@ class Admin extends CI_Controller
 
         $data['title'] = 'Alta incidencia';
 
+        /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+        $this->data->add($data);
+        $data = $this->data->getData();
+        /////
         $this->load->view('backend/header', $data);
         $this->load->view('backend/navbar', $data);
         $this->load->view('backend/alta_incidencia_display', $data);
@@ -3246,6 +3435,10 @@ class Admin extends CI_Controller
 
         $data['title'] = 'Dispositivos';
 
+        /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+        $this->data->add($data);
+        $data = $this->data->getData();
+        /////
         $this->load->view('backend/header', $data);
         $this->load->view('backend/navbar', $data);
         $this->load->view('backend/devices_pds', $data);
@@ -3281,6 +3474,10 @@ class Admin extends CI_Controller
 
         $data['title'] = 'Planograma';
 
+        /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+        $this->data->add($data);
+        $data = $this->data->getData();
+        /////
         $this->load->view('backend/header', $data);
         $this->load->view('backend/navbar', $data);
         $this->load->view('backend/planograma', $data);
@@ -3319,6 +3516,10 @@ class Admin extends CI_Controller
 
         $data['title'] = 'Planograma';
 
+        /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+        $this->data->add($data);
+        $data = $this->data->getData();
+        /////
         $this->load->view('backend/header', $data);
         $this->load->view('backend/navbar', $data);
         $this->load->view('backend/planograma_display', $data);
@@ -3367,6 +3568,10 @@ class Admin extends CI_Controller
 
         $data['title'] = 'Alta incidencia';
 
+        /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+        $this->data->add($data);
+        $data = $this->data->getData();
+        /////
         $this->load->view('backend/header', $data);
         $this->load->view('backend/navbar', $data);
         $this->load->view('backend/alta_incidencia_device', $data);
@@ -3509,6 +3714,10 @@ class Admin extends CI_Controller
         $data['title'] = 'Alta incidencia';
         $data['content'] = 'Muchas gracias.';
 
+        /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+        $this->data->add($data);
+        $data = $this->data->getData();
+        /////
         $this->load->view('backend/header', $data);
         $this->load->view('backend/navbar', $data);
         $this->load->view('backend/content', $data);
@@ -3523,6 +3732,10 @@ class Admin extends CI_Controller
         $data['title'] = 'Auditorías';
         $data['content'] = 'En construcción.';
 
+        /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+        $this->data->add($data);
+        $data = $this->data->getData();
+        /////
         $this->load->view('backend/header', $data);
         $this->load->view('backend/navbar', $data);
         $this->load->view('backend/content', $data);
@@ -3563,7 +3776,11 @@ class Admin extends CI_Controller
     		
     		$data['title'] = 'Facturación de incidencias';
             $data['accion'] = 'admin/facturacion';
-    
+
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
     		$this->load->view('backend/header', $data);
     		$this->load->view('backend/navbar', $data);
     		$this->load->view('backend/facturacion/facturacion', $data);
@@ -3631,6 +3848,10 @@ class Admin extends CI_Controller
             $data['title'] = 'Facturación de proveedores';
             $data['accion'] = 'admin/facturacion_intervencion';
 
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
             $this->load->view('backend/header', $data);
             $this->load->view('backend/navbar', $data);
             $this->load->view('backend/facturacion/facturacion_intervencion', $data);
@@ -3667,6 +3888,10 @@ class Admin extends CI_Controller
         $data['title'] = 'Operaciones';
         $data['content'] = 'En construcción.';
 
+        /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+        $this->data->add($data);
+        $data = $this->data->getData();
+        /////
         $this->load->view('backend/header', $data);
         $this->load->view('backend/navbar', $data);
         $this->load->view('backend/content', $data);
@@ -3711,7 +3936,10 @@ class Admin extends CI_Controller
             $data["fabricantes"] = $this->tienda_model->get_fabricantes();
 
 
-
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
             $this->load->view('backend/header', $data);
             $this->load->view('backend/navbar', $data);
             $this->load->view('backend/informes/informe_puntos_venta_form', $data);
@@ -4178,6 +4406,10 @@ class Admin extends CI_Controller
 
 
             /* Pasar a la vista */
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
             $this->load->view('backend/header', $data);
             $this->load->view('backend/navbar', $data);
             $this->load->view('backend/informes/informe_planograma_form', $data);
@@ -4262,6 +4494,10 @@ class Admin extends CI_Controller
             $data['title'] = 'Planograma tienda';
             $data['subtitle'] = 'Planograma tienda [SFID-'.$data['reference'].'] - '.$data['display'];
 
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
             $this->load->view('backend/header',$data);
             $this->load->view('backend/navbar',$data);
             $this->load->view('backend/informes/informe_planograma_form',$data);
@@ -4341,6 +4577,10 @@ class Admin extends CI_Controller
             $data['title'] = 'Planograma tienda [SFID-'.$data['reference'].']';
             $data['subtitle'] = $data["display"] .' - '. $data["device"];
 
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
             $this->load->view('backend/header',$data);
             $this->load->view('backend/navbar',$data);
             $this->load->view('backend/informes/informe_planograma_form',$data);
@@ -4521,6 +4761,10 @@ class Admin extends CI_Controller
             $data["vista"] = $vista;
 
             /* Pasar a la vista */
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
             $this->load->view('backend/header', $data);
             $this->load->view('backend/navbar', $data);
             $this->load->view('backend/informes/informe_visual_form', $data);
@@ -4602,6 +4846,10 @@ class Admin extends CI_Controller
             $data['title'] = 'Panelado genérico';
             $data['subtitle'] = 'Planograma mueble  - '.$data['display'];
 
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
             $this->load->view('backend/header',$data);
             $this->load->view('backend/navbar',$data);
             $this->load->view('backend/informes/informe_visual_form',$data);
@@ -4673,6 +4921,10 @@ class Admin extends CI_Controller
             $data['title'] = 'Panelado genérico';
             $data['subtitle'] = $data["display"] . ' - ' . $data["device"];
 
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
             $this->load->view('backend/header', $data);
             $this->load->view('backend/navbar', $data);
             $this->load->view('backend/informes/informe_visual_form', $data);
@@ -4745,6 +4997,10 @@ class Admin extends CI_Controller
             $data['title'] = 'Planograma mueble';
             $data['subtitle'] = 'Planograma tienda [SFID-'.$data['reference'].'] - '.$data['display'];
 
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
             $this->load->view('backend/header',$data);
             $this->load->view('backend/navbar',$data);
             $this->load->view('backend/informes/informe_visual_form',$data);
@@ -4830,6 +5086,10 @@ class Admin extends CI_Controller
             $data['title'] = 'Panelado tienda [SFID-'.$data['reference'].']';
             $data['subtitle'] = $data["display"] .' - '. $data["device"];
 
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
             $this->load->view('backend/header',$data);
             $this->load->view('backend/navbar',$data);
             $this->load->view('backend/informes/informe_visual_form',$data);
@@ -4882,6 +5142,10 @@ class Admin extends CI_Controller
 
             $data['title'] = 'Ayuda';
 
+                /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+                $this->data->add($data);
+                $data = $this->data->getData();
+                /////
             $this->load->view('backend/header', $data);
             $this->load->view('backend/navbar', $data);
             $this->load->view('backend/ayuda', $data);
@@ -4902,7 +5166,11 @@ class Admin extends CI_Controller
     
     		$data['title']       = 'Ayuda';
     		$data['ayuda_title'] = 'Manuales';
-    			
+
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
     		$this->load->view('backend/header',$data);
     		$this->load->view('backend/navbar',$data);
     		$this->load->view('backend/manuales',$data);
@@ -4922,7 +5190,11 @@ class Admin extends CI_Controller
     
     		$data['title']       = 'Ayuda';
     		$data['ayuda_title'] = 'Muebles fabricantes';
-    
+
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
     		$this->load->view('backend/header',$data);
     		$this->load->view('backend/navbar',$data);
     		$this->load->view('backend/muebles_fabricantes',$data);
@@ -4952,6 +5224,10 @@ class Admin extends CI_Controller
         $data['bg_image'] = "bg-admin.jpg";
         $data['title'] = 'Parada por mantenimiento';
 
+        /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+        $this->data->add($data);
+        $data = $this->data->getData();
+        /////
         $this->load->view('backend/header', $data);
         $this->load->view('common/mantenimiento', $data);
         $this->load->view('backend/footer');

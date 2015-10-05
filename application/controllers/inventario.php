@@ -8,6 +8,12 @@ class Inventario extends CI_Controller {
 		$this->load->database();
 		$this->load->helper(array('email','text','xcrud'));
 		$this->load->library(array('email','form_validation','encrypt','form_validation','session'));
+
+        // Carga de la clase de Colección de datos, para pasar variables a la vista.
+        $this->load->library('data');
+        $this->data->set("controlador","inventario");
+        $this->data->set("accion_home","");
+        $this->data->set("entrada",($this->data->get("controlador") . '/' . $this->data->get("accion_home")));
 	}
 	
 	
@@ -25,7 +31,11 @@ class Inventario extends CI_Controller {
 			$data['devices_pds']     = $this->tienda_model->get_devices_total();
 			
 			$data['title']   = 'Depósito';
-		
+
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
 			$this->load->view('backend/header', $data);
 			$this->load->view('backend/navbar', $data);
 			$this->load->view('backend/deposito', $data);
@@ -129,7 +139,12 @@ class Inventario extends CI_Controller {
 		$data['content'] = $data['content'].$xcrud_2->render();
 		$data['content'] = $data['content'].$xcrud_3->render();
 		$data['content'] = $data['content'].$xcrud_4->render();
-	
+
+
+        /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+        $this->data->add($data);
+        $data = $this->data->getData();
+        /////
 		$this->load->view('backend/header', $data);
 		$this->load->view('backend/navbar', $data);
 		$this->load->view('backend/inventario', $data);
@@ -185,7 +200,11 @@ class Inventario extends CI_Controller {
 		$data['content'] = $xcrud_1->render();
 		$data['content'] = $data['content'].$xcrud_2->render();
 
-	
+
+        /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+        $this->data->add($data);
+        $data = $this->data->getData();
+        /////
 		$this->load->view('backend/header', $data);
 		$this->load->view('backend/navbar', $data);
 		$this->load->view('backend/inventario_panelados', $data);
@@ -239,8 +258,12 @@ class Inventario extends CI_Controller {
 		$data['title']   = 'Planogramas muebles';
 		$data['content'] = $xcrud_1->render();
 		$data['content'] = $data['content'].$xcrud_2->render();
-	
-	
+
+
+        /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+        $this->data->add($data);
+        $data = $this->data->getData();
+        /////
 		$this->load->view('backend/header', $data);
 		$this->load->view('backend/navbar', $data);
 		$this->load->view('backend/inventario_planogramas', $data);
@@ -295,7 +318,12 @@ class Inventario extends CI_Controller {
 		$data['title']   = 'Depósito';
 		$data['content'] = $xcrud_1->render();
 		$data['content'] = $data['content'].$xcrud_2->render();
-	
+
+
+        /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+        $this->data->add($data);
+        $data = $this->data->getData();
+        /////
 		$this->load->view('backend/header', $data);
 		$this->load->view('backend/navbar', $data);
 		$this->load->view('backend/almacen', $data);
@@ -330,7 +358,11 @@ class Inventario extends CI_Controller {
 		$data['displays']=$displays;
 	
 		$data['title'] = 'Panelado tienda';
-	
+
+        /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+        $this->data->add($data);
+        $data = $this->data->getData();
+        /////
 		$this->load->view('backend/header', $data);
 		$this->load->view('backend/navbar', $data);
 		$this->load->view('backend/exp_alta_incidencia', $data);
@@ -367,7 +399,11 @@ class Inventario extends CI_Controller {
 		$data['id_dis_url']  = $id_dis;
 	
 		$data['title'] = 'Planograma mueble';
-	
+
+        /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+        $this->data->add($data);
+        $data = $this->data->getData();
+        /////
 		$this->load->view('backend/header', $data);
 		$this->load->view('backend/navbar', $data);
 		$this->load->view('backend/exp_alta_incidencia_display', $data);
@@ -412,7 +448,11 @@ class Inventario extends CI_Controller {
 		$data['id_dev_url']  = $id_dev;
 	
 		$data['title'] = 'Detalle dispositivo';
-	
+
+        /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+        $this->data->add($data);
+        $data = $this->data->getData();
+        /////
 		$this->load->view('backend/header', $data);
 		$this->load->view('backend/navbar', $data);
 		$this->load->view('backend/exp_alta_incidencia_device', $data);
@@ -441,7 +481,11 @@ class Inventario extends CI_Controller {
 		$data['devices']=$this->tienda_model->get_devices_pds($id_pds);
 	
 		$data['title'] = 'Dispositivos';
-	
+
+        /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+        $this->data->add($data);
+        $data = $this->data->getData();
+        /////
 		$this->load->view('backend/header', $data);
 		$this->load->view('backend/navbar', $data);
 		$this->load->view('backend/devices_pds', $data);
@@ -476,7 +520,11 @@ class Inventario extends CI_Controller {
 		$data['displays']=$displays;
 		
 		$data['title'] = 'Planograma';
-		
+
+        /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+        $this->data->add($data);
+        $data = $this->data->getData();
+        /////
 		$this->load->view('backend/header', $data);
 		$this->load->view('backend/navbar', $data);
 		$this->load->view('backend/planograma', $data);
@@ -514,7 +562,11 @@ class Inventario extends CI_Controller {
 		$data['id_dis_url']  = $id_dis;
 	
 		$data['title'] = 'Planograma';
-	
+
+        /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+        $this->data->add($data);
+        $data = $this->data->getData();
+        /////
 		$this->load->view('backend/header', $data);
 		$this->load->view('backend/navbar', $data);
 		$this->load->view('backend/planograma_display', $data);

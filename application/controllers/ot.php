@@ -12,6 +12,12 @@ class Ot extends CI_Controller {
 
         $this->load->library('auth',array(11));
 
+        // Carga de la clase de Colección de datos, para pasar variables a la vista.
+        $this->load->library('data');
+        $this->data->set("controlador","ot");
+        $this->data->set("accion_home","cdm_dispositivos");
+        $this->data->set("entrada",($this->data->get("controlador") . '/' . $this->data->get("accion_home")));
+
         $this->load->config('files');
         $this->cfg = $this->config->config;
         $this->export = config_item("export");
@@ -55,7 +61,11 @@ class Ot extends CI_Controller {
 			$data['message'] = (validation_errors() ? validation_errors() : ($this->session->flashdata('message')));
 	
 			$data['title'] = 'Login';
-				
+
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
 			$this->load->view('master/header',$data);
 			$this->load->view('ot/login',$data);
 			$this->load->view('master/footer');
@@ -100,6 +110,11 @@ class Ot extends CI_Controller {
 
             $data['title']   = 'Dispositivos';
 
+
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
             $this->load->view('master/header',$data);
             $this->load->view('ot/navbar',$data);
             $this->load->view('ot/cdm_dispositivos',$data);
@@ -195,7 +210,11 @@ class Ot extends CI_Controller {
 			$data['devices_pds']     = $this->tienda_model->get_devices_total();
 	
 			$data['title']   = 'Inventario/Depósito';
-	
+
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
 			$this->load->view('master/header',$data);
 			$this->load->view('ot/navbar',$data);
 			$this->load->view('ot/inventario',$data);
@@ -451,6 +470,10 @@ class Ot extends CI_Controller {
 
 
             /* Pasar a la vista */
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
         $this->load->view('master/header', $data);
         $this->load->view('ot/navbar', $data);
         $this->load->view('ot/informe_planograma_form', $data);
@@ -535,6 +558,10 @@ class Ot extends CI_Controller {
             $data['title'] = 'Planograma tienda';
             $data['subtitle'] = 'Planograma tienda [SFID-'.$data['reference'].'] - '.$data['display'];
 
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
             $this->load->view('master/header',$data);
             $this->load->view('ot/navbar',$data);
             $this->load->view('ot/informe_planograma_form',$data);
@@ -614,6 +641,10 @@ class Ot extends CI_Controller {
         $data['title'] = 'Planograma tienda [SFID-'.$data['reference'].']';
         $data['subtitle'] = $data["display"] .' - '. $data["device"];
 
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
         $this->load->view('master/header',$data);
         $this->load->view('ot/navbar',$data);
         $this->load->view('ot/informe_planograma_form',$data);
@@ -666,6 +697,10 @@ class Ot extends CI_Controller {
         $data['bg_image'] = "bg-master.jpg";
         $data['title'] = 'Parada por mantenimiento';
 
+        /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+        $this->data->add($data);
+        $data = $this->data->getData();
+        /////
         $this->load->view('backend/header', $data);
         $this->load->view('common/mantenimiento', $data);
         $this->load->view('backend/footer');
