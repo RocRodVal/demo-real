@@ -266,13 +266,13 @@ class Incidencia_model extends CI_Model {
             ->join('device','devices_pds.id_device=device.id_device','left')
             ->join('territory','territory.id_territory=pds.territory','left')*/
 
-            ->join('pds','incidencias.id_pds = pds.id_pds','left')
-            ->join('displays_pds','incidencias.id_displays_pds= displays_pds.id_displays_pds','left')
-            ->join('display','displays_pds.id_display=display.id_display','left')
-            ->join('devices_pds','incidencias.id_devices_pds=devices_pds.id_devices_pds','left')
-            ->join('device','devices_pds.id_device=device.id_device','left')
-            ->join('territory','territory.id_territory=pds.territory','left')
-            ->join('brand_device','device.brand_device = brand_device.id_brand_device')
+            ->join('pds','incidencias.id_pds = pds.id_pds','left outer')
+            ->join('displays_pds','incidencias.id_displays_pds= displays_pds.id_displays_pds','left outer')
+            ->join('display','displays_pds.id_display=display.id_display','left outer')
+            ->join('devices_pds','incidencias.id_devices_pds=devices_pds.id_devices_pds','left outer')
+            ->join('device','devices_pds.id_device=device.id_device','left outer')
+            ->join('territory','territory.id_territory=pds.territory','left outer')
+            ->join('brand_device','device.brand_device = brand_device.id_brand_device','left outer')
         ;
 
 
@@ -315,7 +315,7 @@ class Incidencia_model extends CI_Model {
 
         $query =   $this->db->get('incidencias',$cfg_pagination['per_page'], ($page-1) * $cfg_pagination['per_page']);
          //
-        //echo $this->db->last_query();
+       // echo $this->db->last_query();
 
         return $query->result();
     }
@@ -419,15 +419,15 @@ class Incidencia_model extends CI_Model {
                 FROM incidencias
 
 
-                LEFT JOIN displays_pds ON incidencias.id_displays_pds = displays_pds.id_displays_pds
-                LEFT JOIN display ON displays_pds.id_display = display.id_display
-                LEFT JOIN devices_pds ON incidencias.id_devices_pds = devices_pds.id_devices_pds
-                LEFT JOIN device ON devices_pds.id_device = device.id_device
-                LEFT JOIN type_device ON device.type_device = type_device.id_type_device
+                LEFT OUTER JOIN displays_pds ON incidencias.id_displays_pds = displays_pds.id_displays_pds
+                LEFT OUTER JOIN display ON displays_pds.id_display = display.id_display
+                LEFT OUTER JOIN devices_pds ON incidencias.id_devices_pds = devices_pds.id_devices_pds
+                LEFT OUTER JOIN device ON devices_pds.id_device = device.id_device
+                LEFT OUTER JOIN type_device ON device.type_device = type_device.id_type_device
 
-                LEFT JOIN pds ON incidencias.id_pds = pds.id_pds
-                LEFT JOIN territory ON territory.id_territory=pds.territory
-                JOIN brand_device ON device.brand_device = brand_device.id_brand_device
+                LEFT OUTER JOIN pds ON incidencias.id_pds = pds.id_pds
+                LEFT OUTER JOIN territory ON territory.id_territory=pds.territory
+                LEFT OUTER JOIN brand_device ON device.brand_device = brand_device.id_brand_device
 
 
                 WHERE 1 = 1
@@ -530,14 +530,13 @@ class Incidencia_model extends CI_Model {
 
 
         $this->db->select('COUNT(incidencias.id_incidencia) AS cantidad')
-                ->join('displays_pds','incidencias.id_displays_pds= displays_pds.id_displays_pds','left')
-                ->join('display','displays_pds.id_display=display.id_display','left')
-                ->join('devices_pds','incidencias.id_devices_pds = devices_pds.id_devices_pds','left')
-                ->join('device','devices_pds.id_device=device.id_device','left')
-                ->join('type_device','device.type_device = type_device.id_type_device','left')
-                ->join('pds','incidencias.id_pds = pds.id_pds','left')
-                ->join('territory','territory.id_territory=pds.territory','left')
-                ->join('brand_device','device.brand_device = brand_device.id_brand_device');
+            ->join('pds','incidencias.id_pds = pds.id_pds','left outer')
+            ->join('displays_pds','incidencias.id_displays_pds= displays_pds.id_displays_pds','left outer')
+            ->join('display','displays_pds.id_display=display.id_display','left outer')
+            ->join('devices_pds','incidencias.id_devices_pds=devices_pds.id_devices_pds','left outer')
+            ->join('device','devices_pds.id_device=device.id_device','left outer')
+            ->join('territory','territory.id_territory=pds.territory','left outer')
+            ->join('brand_device','device.brand_device = brand_device.id_brand_device','left outer');
 
 
         /** Aplicar filtros desde el array, de manera manual **/
