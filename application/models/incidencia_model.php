@@ -536,7 +536,8 @@ class Incidencia_model extends CI_Model {
                 ->join('device','devices_pds.id_device=device.id_device','left')
                 ->join('type_device','device.type_device = type_device.id_type_device','left')
                 ->join('pds','incidencias.id_pds = pds.id_pds','left')
-                ->join('territory','territory.id_territory=pds.territory','left');
+                ->join('territory','territory.id_territory=pds.territory','left')
+                ->join('brand_device','device.brand_device = brand_device.id_brand_device');
 
 
         /** Aplicar filtros desde el array, de manera manual **/
@@ -546,7 +547,6 @@ class Incidencia_model extends CI_Model {
         if(isset($filtros["territory"]) && !empty($filtros["territory"])) $this->db->where('pds.territory',$filtros['territory']);
         if(isset($filtros["brand_device"]) && !empty($filtros["brand_device"])) {
 
-            $this->db->where('incidencias.fail_device','1');
             $this->db->where('device.brand_device',$filtros['brand_device']);
         }
         if(isset($filtros["id_display"]) && !empty($filtros["id_display"])) {
