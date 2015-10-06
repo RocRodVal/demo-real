@@ -429,7 +429,20 @@ function comprobar_stock(selector,id_input)
 
 
 $(document).ready(function(){
+    // Autosubmitar el filtro de dashboard, al escoger un valor de los SELECTS
     $("form.autosubmit select").on("change",function(){
        $(this).parents('form.autosubmit').submit();
+    });
+    // Marcar los campos seleccionados del filtro de dashboard: SELECTS
+    $("form.filtros select,form.filtros input").each(function(){
+        var valor = $(this).find("option:selected").val();
+        if(valor!='' && valor != undefined)     $(this).addClass("focused");
+                                    else        $(this).removeClass("focused");
+    });
+    // Marcar los campos seleccionados del filtro de dashboard: INPUTS
+    $("form.filtros input").each(function(){
+        var valor = $(this).val();
+        if(valor!='' && valor != undefined)     $(this).addClass("focused");
+                                    else        $(this).removeClass("focused");
     });
 });

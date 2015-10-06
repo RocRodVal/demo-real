@@ -1,18 +1,15 @@
 <!-- #page-wrapper -->
         <div id="page-wrapper">
-
                 <div  id="incidencias_cerradas">
-
                     <div class="col-lg-12" >
                         <h1 class="page-header"><?php echo $title ?> </h1>
-
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="col-lg-12">
-                        <div class="row filtro">
-                            <form action="<?=base_url()?>tienda/estado_incidencias/cerradas" method="post" class="filtro form-mini autosubmit">
+                        <div class="filtro">
+                            <form action="<?=base_url()?>tienda/estado_incidencias/cerradas" method="post" class="filtros form-mini autosubmit col-lg-12">
 
 
                                 <div class="col-lg-2">
@@ -85,6 +82,9 @@
 
                             </form>
                         </div>
+                    </div>
+
+                    <div class="col-lg-12">
 
 
                         <?php
@@ -203,16 +203,17 @@
                                 </script>
                             </div>
                             <div class="pagination">
-                                <p>Encontrados <?=$num_resultados?> resultados. Mostrando del <?=$n_inicial?> al <?=$n_final?>.</p>
+
                                 <ul class="pagination">
                                     <?php echo "".$pagination_helper->create_links(); ?>
                                 </ul>
+                                <p>Encontrados <?=$num_resultados?> resultados. Mostrando del <?=$n_inicial?> al <?=$n_final?>.</p>
                             </div>
                         <?php
                         }
                         ?>
                     </div>
-
+            </div>
         </div>
         <!-- /#page-wrapper -->
         <?php $this->load->view('backend/intervenciones/ver_intervencion_incidencia');?>

@@ -1,70 +1,17 @@
 <!-- #page-wrapper -->
         <div id="page-wrapper">
-            <div class="row" id="incidencias_abiertas">
+            <div id="incidencias_abiertas">
                 <div class="col-lg-12">
                     <h1 class="page-header"><?php echo $title ?></h1>
                 </div>
-            <?php 
-            if (isset($_POST['sfid']))
-            {	
-            ?>
-            <div class="row">
-                <div class="col-lg-12">
- 					<?php
-                    if(empty($tiendas)){
-                    	echo '<p>No hay resultados para esa cadena de búsqueda.</p>';
-                    }
-                    else
-                    {					
- 					?>
+           </div>
 
- 					<div class="panel panel-default">
-                        <div class="panel-body">
-                            <div class="table-responsive">
-                                <table class="table table-striped table-bordered table-hover" id="dataTables-example">
-                                    <thead>
-                                        <tr>
-                                            <th>SFID</th>
-                                            <th>Tipo</th>
-                                            <th>Panelado</th>
-                                            <th>Nombre comercial</th>
-                                            <th>Territorio</th>
-                                        </tr>
-                                    </thead>                                
-                                    <tbody>
-                                        <?php 
-   										foreach($tiendas as $tienda)
-    									{
-    									?>
-    									<tr>
-    										<td><a href="<?=site_url('tienda/alta_incidencia/'.$tienda->id_pds)?>"><?php echo $tienda->reference ?></a></td>
-    										<td><?php echo $tienda->pds ?></td>
-    										<td><?php echo $tienda->panelado ?></td>
-    										<td><?php echo $tienda->commercial ?></td>
-    										<td><?php echo $tienda->territory ?></td>
-    									</tr>
-					    				<?php
-					    				}
-					    				?>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                    <?php 
-					}
-                    ?>                    
-            	</div>        
-            </div>
-            <?php 
-            }
-            ?>                
             <div class="row" >
                 <div class="col-lg-12">
-                    <div class="row buscador">
-                        <form action="<?=base_url()?>tienda/estado_incidencias/abiertas" method="post" class="filtros form-mini autosubmit">
+                    <div class="filtro">
+                        <form action="<?=base_url()?>tienda/estado_incidencias/abiertas" method="post" class="filtros form-mini autosubmit col-lg-12">
 
-                            <div class="col-lg-2">
+                            <div class="col-lg-3">
                                 <label for="status_pds">Estado PDS: </label>
                                 <select name="status_pds" id="status_pds" class="form-control input-sm">
                                     <option value="" <?php echo ($status_pds==="") ? 'selected="selected"' : ''?>>Cualquier estado</option>
@@ -132,7 +79,9 @@
 
                         </form>
                     </div>
+                </div>
 
+                <div class="col-lg-12">
 		            <?php
 		            if (empty($incidencias)) {
                         echo '<p class="message warning"><i class="glyphicon glyphicon-warning-sign"></i> No hay incidencias abiertas.</p>'; ?>
@@ -265,18 +214,19 @@
 		                </div>
 
                         <div class="pagination">
-                            <p>Encontrados <?=$num_resultados?> resultados. Mostrando del <?=$n_inicial?> al <?=$n_final?>.</p>
+
                             <ul class="pagination">
                                 <?php echo "".$pagination_helper->create_links(); ?>
 
                             </ul>
+                            <p>Encontrados <?=$num_resultados?> resultados. Mostrando del <?=$n_inicial?> al <?=$n_final?>.</p>
                         </div>
 		            <?php
 		            }
 		            ?>                
             	</div>
             </div>
-
+        </div>
 
         <!-- /#page-wrapper -->
         <?php $this->load->view('backend/intervenciones/ver_intervencion_incidencia');?>
