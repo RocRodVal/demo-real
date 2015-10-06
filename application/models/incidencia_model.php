@@ -266,12 +266,13 @@ class Incidencia_model extends CI_Model {
             ->join('device','devices_pds.id_device=device.id_device','left')
             ->join('territory','territory.id_territory=pds.territory','left')*/
 
-            ->join('pds','incidencias.id_pds = pds.id_pds')
-            ->join('displays_pds','incidencias.id_displays_pds= displays_pds.id_displays_pds')
-            ->join('display','displays_pds.id_display=display.id_display')
-            ->join('devices_pds','incidencias.id_devices_pds=devices_pds.id_devices_pds')
-            ->join('device','devices_pds.id_device=device.id_device')
-            ->join('territory','territory.id_territory=pds.territory')
+            ->join('pds','incidencias.id_pds = pds.id_pds','left outer')
+            ->join('displays_pds','incidencias.id_displays_pds= displays_pds.id_displays_pds','left outer')
+            ->join('display','displays_pds.id_display=display.id_display','left outer')
+            ->join('devices_pds','incidencias.id_devices_pds=devices_pds.id_devices_pds','left outer')
+            ->join('device','devices_pds.id_device=device.id_device','left outer')
+            ->join('territory','territory.id_territory=pds.territory','left outer')
+            ->join('brand_device','device.brand_device = brand_device.id_brand_device','left outer')
         ;
 
 
@@ -282,7 +283,6 @@ class Incidencia_model extends CI_Model {
         if(isset($filtros["id_incidencia"]) && !empty($filtros["id_incidencia"])) $this->db->where('id_incidencia',$filtros['id_incidencia']);
         if(isset($filtros["territory"]) && !empty($filtros["territory"])) $this->db->where('pds.territory',$filtros['territory']);
         if(isset($filtros["brand_device"]) && !empty($filtros["brand_device"])) {
-            $this->db->where('incidencias.fail_device','1');
             $this->db->where('device.brand_device',$filtros['brand_device']);
         }
         if(isset($filtros["id_display"]) && !empty($filtros["id_display"])) {
@@ -315,7 +315,7 @@ class Incidencia_model extends CI_Model {
 
         $query =   $this->db->get('incidencias',$cfg_pagination['per_page'], ($page-1) * $cfg_pagination['per_page']);
          //
-        //echo $this->db->last_query();
+       // echo $this->db->last_query();
 
         return $query->result();
     }
@@ -419,14 +419,15 @@ class Incidencia_model extends CI_Model {
                 FROM incidencias
 
 
-                JOIN displays_pds ON incidencias.id_displays_pds = displays_pds.id_displays_pds
-                JOIN display ON displays_pds.id_display = display.id_display
-                JOIN devices_pds ON incidencias.id_devices_pds = devices_pds.id_devices_pds
-                JOIN device ON devices_pds.id_device = device.id_device
-                JOIN type_device ON device.type_device = type_device.id_type_device
+                LEFT OUTER JOIN displays_pds ON incidencias.id_displays_pds = displays_pds.id_displays_pds
+                LEFT OUTER JOIN display ON displays_pds.id_display = display.id_display
+                LEFT OUTER JOIN devices_pds ON incidencias.id_devices_pds = devices_pds.id_devices_pds
+                LEFT OUTER JOIN device ON devices_pds.id_device = device.id_device
+                LEFT OUTER JOIN type_device ON device.type_device = type_device.id_type_device
 
-                JOIN pds ON incidencias.id_pds = pds.id_pds
-                JOIN territory ON territory.id_territory=pds.territory
+                LEFT OUTER JOIN pds ON incidencias.id_pds = pds.id_pds
+                LEFT OUTER JOIN territory ON territory.id_territory=pds.territory
+                LEFT OUTER JOIN brand_device ON device.brand_device = brand_device.id_brand_device
 
 
                 WHERE 1 = 1
@@ -451,7 +452,7 @@ class Incidencia_model extends CI_Model {
         if(isset($filtros["territory"]) && !empty($filtros["territory"]))           $sql .= (' AND pds.territory = '.$filtros['territory']);
         if(isset($filtros["brand_device"]) && !empty($filtros["brand_device"]))
         {
-            $sql .= (' AND incidencias.fail_device=1');
+
             $sql .= (' AND device.brand_device='.$filtros['brand_device']);
         }
         if(isset($filtros["id_display"]) && !empty($filtros["id_display"])) {
@@ -529,13 +530,13 @@ class Incidencia_model extends CI_Model {
 
 
         $this->db->select('COUNT(incidencias.id_incidencia) AS cantidad')
-                ->join('displays_pds','incidencias.id_displays_pds= displays_pds.id_displays_pds')
-                ->join('display','displays_pds.id_display=display.id_display')
-                ->join('devices_pds','incidencias.id_devices_pds = devices_pds.id_devices_pds')
-                ->join('device','devices_pds.id_device=device.id_device')
-                ->join('type_device','device.type_device = type_device.id_type_device')
-                ->join('pds','incidencias.id_pds = pds.id_pds')
-                ->join('territory','territory.id_territory=pds.territory');
+            ->join('pds','incidencias.id_pds = pds.id_pds','left outer')
+            ->join('displays_pds','incidencias.id_displays_pds= displays_pds.id_displays_pds','left outer')
+            ->join('display','displays_pds.id_display=display.id_display','left outer')
+            ->join('devices_pds','incidencias.id_devices_pds=devices_pds.id_devices_pds','left outer')
+            ->join('device','devices_pds.id_device=device.id_device','left outer')
+            ->join('territory','territory.id_territory=pds.territory','left outer')
+            ->join('brand_device','device.brand_device = brand_device.id_brand_device','left outer');
 
 
         /** Aplicar filtros desde el array, de manera manual **/
@@ -545,7 +546,6 @@ class Incidencia_model extends CI_Model {
         if(isset($filtros["territory"]) && !empty($filtros["territory"])) $this->db->where('pds.territory',$filtros['territory']);
         if(isset($filtros["brand_device"]) && !empty($filtros["brand_device"])) {
 
-            $this->db->where('incidencias.fail_device','1');
             $this->db->where('device.brand_device',$filtros['brand_device']);
         }
         if(isset($filtros["id_display"]) && !empty($filtros["id_display"])) {
@@ -575,6 +575,7 @@ class Incidencia_model extends CI_Model {
         /* Obtener el resultado */
         $query =  $this->db->get('incidencias')->row();
 
+        //echo $this->db->last_query();
 
         return $query->cantidad;
 

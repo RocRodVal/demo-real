@@ -10,7 +10,13 @@ class Territorio extends CI_Controller {
 		$this->load->library(array('email','encrypt','form_validation','session'));
         $this->load->library('uri');
 
+        // Carga de la clase de Colección de datos, para pasar variables a la vista.
+        $this->load->library('data');
+        $this->data->set("controlador","territorio");
+        $this->data->set("accion_home","estado_incidencias/abiertas");
+        $this->data->set("entrada",($this->data->get("controlador") . '/' . $this->data->get("accion_home")));
 
+        // Configuración de exportaciones a fichero
         $this->load->config('files');
         $this->cfg = $this->config->config;
         $this->export = config_item("export");
@@ -57,7 +63,11 @@ class Territorio extends CI_Controller {
 			$data['message'] = (validation_errors() ? validation_errors() : ($this->session->flashdata('message')));
 	
 			$data['title'] = 'Login';
-				
+
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
 			$this->load->view('territorio/header',$data);
 			$this->load->view('territorio/login',$data);
 			$this->load->view('territorio/footer');
@@ -330,6 +340,10 @@ class Territorio extends CI_Controller {
             /* LISTADO DE TERMINALES PARA EL SELECT */
             $data["terminales"] = $this->tienda_model->get_terminales();
 
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
             $this->load->view('territorio/header', $data);
             $this->load->view('territorio/navbar', $data);
             $this->load->view('territorio/estado_incidencias/'.$tipo, $data);
@@ -470,7 +484,11 @@ class Territorio extends CI_Controller {
 				$data['chats'] = $chats;
 		
 				$data['title'] = 'Estado de incidencia Ref. '.$id_incidencia.' [SFID-'.$data['reference'].']';
-		
+
+                /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+                $this->data->add($data);
+                $data = $this->data->getData();
+                /////
 				$this->load->view('territorio/header',$data);
 				$this->load->view('territorio/navbar',$data);
 				$this->load->view('territorio/detalle_incidencia',$data);
@@ -502,6 +520,10 @@ class Territorio extends CI_Controller {
         $data['bg_image'] = "bg-master.jpg";
         $data['title'] = 'Parada por mantenimiento';
 
+        /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+        $this->data->add($data);
+        $data = $this->data->getData();
+        /////
         $this->load->view('territorio/header', $data);
         $this->load->view('common/mantenimiento', $data);
         $this->load->view('territorio/footer');

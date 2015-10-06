@@ -1,6 +1,6 @@
 <!-- #page-wrapper -->
         <div id="page-wrapper">
-            <div class="row" id="incidencias_abiertas">
+            <div  id="incidencias_abiertas">
                 <div class="col-lg-12">
                     <?php
                         $data['mensajes_nuevos'] = $mensajes_nuevos;
@@ -9,66 +9,13 @@
                     <h1 class="page-header"><?php echo $title ?> <?php $this->load->view("backend/estado_incidencias/mensajes_chat",$data) ?>
                     </h1>
                 </div>
-            <?php 
-            if (isset($_POST['sfid']))
-            {	
-            ?>
-            <div class="row">
-                <div class="col-lg-12">
- 					<?php
-                    if(empty($tiendas)){
-                    	echo '<p>No hay resultados para esa cadena de búsqueda.</p>';
-                    }
-                    else
-                    {					
- 					?>
-
- 					<div class="panel panel-default">
-                        <div class="panel-body">
-                            <div class="table-responsive">
-                                <table class="table table-striped table-bordered table-hover" id="dataTables-example">
-                                    <thead>
-                                        <tr>
-                                            <th>SFID</th>
-                                            <th>Tipo</th>
-                                            <th>Panelado</th>
-                                            <th>Nombre comercial</th>
-                                            <th>Territorio</th>
-                                        </tr>
-                                    </thead>                                
-                                    <tbody>
-                                        <?php 
-   										foreach($tiendas as $tienda)
-    									{
-    									?>
-    									<tr>
-    										<td><a href="<?=site_url('admin/alta_incidencia/'.$tienda->id_pds)?>"><?php echo $tienda->reference ?></a></td>
-    										<td><?php echo $tienda->pds ?></td>
-    										<td><?php echo $tienda->panelado ?></td>
-    										<td><?php echo $tienda->commercial ?></td>
-    										<td><?php echo $tienda->territory ?></td>
-    									</tr>
-					    				<?php
-					    				}
-					    				?>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                    <?php 
-					}
-                    ?>                    
-            	</div>        
             </div>
-            <?php 
-            }
-            ?>                
+
             <div class="row" >
                 <div class="col-lg-12">
-                    <div class="row buscador">
-                        <form action="<?=base_url()?>admin/estado_incidencias/abiertas" method="post" class="filtros form-mini autosubmit">
-                            <div class="col-lg-1">
+                    <div class="filtro">
+                        <form action="<?=base_url()?>admin/estado_incidencias/abiertas" method="post" class="filtros form-mini autosubmit col-lg-12">
+                            <div class="col-lg-3">
                                 <label for="status">Estado SAT: </label>
                                 <select name="status" id="status" class="form-control input-sm">
                                     <option value="" <?php echo ($status==="") ? 'selected="selected"' : ''?>>Cualquiera</option>
@@ -81,7 +28,7 @@
 
                                 </select>
                             </div>
-                            <div class="col-lg-1">
+                            <div class="col-lg-3">
                                 <label for="status_pds">Estado PDS: </label>
                                 <select name="status_pds" id="status_pds" class="form-control input-sm">
                                     <option value="" <?php echo ($status_pds==="") ? 'selected="selected"' : ''?>>Cualquier estado</option>
@@ -91,7 +38,7 @@
                                     <option value="En visita" <?php echo ($status_pds==="En visita") ? 'selected="selected"' : ''?>>En visita</option>
                                 </select>
                             </div>
-                            <div class="col-lg-1">
+                            <div class="col-lg-3">
                                 <label for="territory">Territorio: </label>
                                 <select name="territory" id="territory" class="form-control input-sm">
                                     <option value="" <?php echo ($territory==="") ? 'selected="selected"' : ''?>>Cualquiera</option>
@@ -105,7 +52,7 @@
                                 </select>
                             </div>
 
-                            <div class="col-lg-2">
+                            <div class="col-lg-3">
                                 <label for="brand_device">Fabricante: </label>
                                 <select name="brand_device" id="brand_device" class="form-control input-sm">
                                     <option value="" <?php echo ($brand_device==="") ? 'selected="selected"' : ''?>>Cualquier fabricante</option>
@@ -119,7 +66,9 @@
                                 </select>
                             </div>
 
-                            <div class="col-lg-2">
+                            <div class="clearfix"></div>
+
+                            <div class="col-lg-3">
                                 <label for="id_display">Mueble: </label>
                                 <select name="id_display" id="id_display" class="form-control input-sm">
                                     <option value="" <?php echo ($id_display==="") ? 'selected="selected"' : ''?>>Cualquier mueble</option>
@@ -133,7 +82,7 @@
                                 </select>
                             </div>
 
-                            <div class="col-lg-2">
+                            <div class="col-lg-3">
                                 <label for="id_device">Terminal: </label>
                                 <select name="id_device" id="id_device" class="form-control input-sm">
                                     <option value="" <?php echo ($id_device==="") ? 'selected="selected"' : ''?>>Cualquiera</option>
@@ -147,15 +96,15 @@
                                 </select>
                             </div>
 
-                            <div class="col-lg-1">
+                            <div class="col-lg-2">
                                 <label for="id_incidencia">Id. Incidencia: </label>
                                 <input type="text" name="id_incidencia" id="id_incidencia" class="form-control input-sm" placeholder="Id." <?php echo (!empty($id_incidencia)) ? ' value="'.$id_incidencia.'" ' : ''?> />
                             </div>
-                            <div class="col-lg-1">
+                            <div class="col-lg-2">
                                 <label for="reference">SFID: </label>
                                 <input type="text" name="reference" id="reference" class="form-control input-sm" placeholder="SFID" <?php echo (!empty($reference)) ? ' value="'.$reference.'" ' : ''?> />
                             </div>
-                            <div class="col-lg-1">
+                            <div class="col-lg-2">
                                 <div class="form-group">
                                     <input type="hidden" name="do_busqueda" value="si">
                                     <input type="submit" value="Buscar" id="submit_button" class="form-control input-sm">
@@ -164,6 +113,9 @@
 
                         </form>
                     </div>
+                </div>
+
+                <div class="col-lg-12">
 
 		            <?php
 		            if (empty($incidencias)) {
@@ -299,18 +251,19 @@
 		                </div>
 
                         <div class="pagination">
-                            <p>Encontrados <?=$num_resultados?> resultados. Mostrando del <?=$n_inicial?> al <?=$n_final?>.</p>
+
                             <ul class="pagination">
                                 <?php echo "".$pagination_helper->create_links(); ?>
 
                             </ul>
+                            <p>Encontrados <?=$num_resultados?> resultados. Mostrando del <?=$n_inicial?> al <?=$n_final?>.</p>
                         </div>
 		            <?php
 		            }
 		            ?>                
             	</div>
             </div>
-
+        </div>
 
         <!-- /#page-wrapper -->
         <?php $this->load->view('backend/intervenciones/ver_intervencion_incidencia');?>

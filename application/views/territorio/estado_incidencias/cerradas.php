@@ -11,8 +11,8 @@
 
                 <div class="row">
                     <div class="col-lg-12">
-                        <div class="row filtro">
-                            <form action="<?=base_url()?>territorio/estado_incidencias/cerradas" method="post" class="filtro form-mini autosubmit">
+                        <div class="filtro">
+                            <form action="<?=base_url()?>territorio/estado_incidencias/cerradas" method="post" class="filtros form-mini autosubmit col-lg-12">
 
                                 <?php /*<div class="col-lg-2">
                                     <label for="status">Estado SAT: </label>
@@ -25,7 +25,7 @@
                                         <option value="Cancelada" <?php echo ($status==="Cancelada") ? 'selected="selected"' : ''?>>Cancelada</option>
                                     </select>
                                 </div>*/?>
-                                <div class="col-lg-1">
+                                <div class="col-lg-3">
                                     <label for="status_pds">Estado PDS: </label>
                                     <select name="status_pds" id="status_pds" class="form-control input-sm">
                                         <option value="" <?php echo ($status_pds==="") ? 'selected="selected"' : ''?>>Cualquier estado</option>
@@ -35,7 +35,7 @@
                                     </select>
                                 </div>
 
-                                <div class="col-lg-2">
+                                <div class="col-lg-3">
                                     <label for="territory">Territorio: </label>
                                     <select name="territory" id="territory" class="form-control input-sm">
                                         <option value="" <?php echo ($territory==="") ? 'selected="selected"' : ''?>>Cualquier territorio</option>
@@ -49,7 +49,7 @@
                                     </select>
                                 </div>
 
-                                <div class="col-lg-2">
+                                <div class="col-lg-3">
                                     <label for="brand_device">Fabricante: </label>
                                     <select name="brand_device" id="brand_device" class="form-control input-sm">
                                         <option value="" <?php echo ($brand_device==="") ? 'selected="selected"' : ''?>>Cualquier fabricante</option>
@@ -63,7 +63,7 @@
                                     </select>
                                 </div>
 
-                                <div class="col-lg-2">
+                                <div class="col-lg-3">
                                     <label for="id_display">Mueble: </label>
                                     <select name="id_display" id="id_display" class="form-control input-sm">
                                         <option value="" <?php echo ($id_display==="") ? 'selected="selected"' : ''?>>Cualquier mueble</option>
@@ -76,8 +76,8 @@
                                         ?>
                                     </select>
                                 </div>
-
-                                <div class="col-lg-2">
+                                <div class="clearfix"></div>
+                                <div class="col-lg-3">
                                     <label for="id_device">Terminal: </label>
                                     <select name="id_device" id="id_device" class="form-control input-sm">
                                         <option value="" <?php echo ($id_device==="") ? 'selected="selected"' : ''?>>Cualquiera</option>
@@ -92,15 +92,15 @@
                                 </div>
 
 
-                                <div class="col-lg-1">
+                                <div class="col-lg-2">
                                     <label for="id_incidencia">Id. Incidencia: </label>
                                     <input type="text" name="id_incidencia" id="id_incidencia" class="form-control input-sm" placeholder="Id. incidencia" <?php echo (!empty($id_incidencia)) ? ' value="'.$id_incidencia.'" ' : ''?> />
                                 </div>
-                                <div class="col-lg-1">
+                                <div class="col-lg-2">
                                     <label for="reference">SFID: </label>
                                     <input type="text" name="reference" id="reference" class="form-control input-sm" placeholder="SFID" <?php echo (!empty($reference)) ? ' value="'.$reference.'" ' : ''?> />
                                 </div>
-                                <div class="col-lg-1">
+                                <div class="col-lg-2">
                                     <div class="form-group">
                                         <input type="hidden" name="do_busqueda" value="si">
                                         <input type="submit" value="Buscar" id="submit_button" class="form-control input-sm">
@@ -109,8 +109,9 @@
 
                             </form>
                         </div>
+                    </div>
 
-
+                    <div class="col-lg-12">
                         <?php
                         if (empty($incidencias)) {
                             echo '<p class="message warning"><i class="glyphicon glyphicon-warning-sign"></i> No hay incidencias cerradas.</p>';
@@ -229,16 +230,17 @@
                                 </script>
                             </div>
                             <div class="pagination">
-                                <p>Encontrados <?=$num_resultados?> resultados. Mostrando del <?=$n_inicial?> al <?=$n_final?>.</p>
+
                                 <ul class="pagination">
                                     <?php echo "".$pagination_helper->create_links(); ?>
                                 </ul>
+                                <p>Encontrados <?=$num_resultados?> resultados. Mostrando del <?=$n_inicial?> al <?=$n_final?>.</p>
                             </div>
                         <?php
                         }
                         ?>
                     </div>
-
+                </div>
         </div>
         <!-- /#page-wrapper -->
         <?php $this->load->view('backend/intervenciones/ver_intervencion_incidencia');?>
