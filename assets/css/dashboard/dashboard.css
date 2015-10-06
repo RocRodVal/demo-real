@@ -58,7 +58,7 @@ div.pagination p{ width: 100%; margin:0; padding:15px 0 15px 0;}
 .buscador input[type=submit]{ margin: 28px 0 0 0;}
 .filtro div.clearfix{ margin-bottom: 15px; }
 
-.filtro form{ border:1px solid #dedcdc; float: left;  margin:0 0 20px 0; padding: 15px 0; border-radius:2px; background: #f2f2f2}
+.filtro form{ border:1px solid #dedcdc; float: left;  margin:0 0 40px 0; padding: 15px 0 20px 0; border-radius:2px; background: #f2f2f2; box-shadow:0 0 7px #ccc; }
 
 form.filtros select.focused,
 form.filtros input.focused

@@ -984,14 +984,17 @@ class Master extends CI_Controller {
              */
 
             // Línea 1: Intervenciones
-            $resultados_3 = $this->db->query("
+            /*$resultados_3 = $this->db->query("
                 SELECT COUNT(intervenciones.id_intervencion) as cantidad, MONTH(intervenciones.fecha) as mes, YEAR(intervenciones.fecha) as anio
                 FROM intervenciones
                 JOIN intervenciones_incidencias ON intervenciones.id_intervencion = intervenciones_incidencias.id_intervencion
                 JOIN incidencias ON intervenciones_incidencias.id_incidencia = incidencias.id_incidencia
                 WHERE incidencias.status_pds = 'Finalizada' AND YEAR(intervenciones.fecha) = '".$este_anio."'
                 GROUP BY mes
-            ");
+            ");*/
+
+            $resultados_3 = $this->db->query("SELECT count(distinct (id_intervencion)) as cantidad, month(fecha) as mes FROM facturacion WHERE year(fecha) = '".$este_anio."'
+GROuP by mes");
 
             // CREAMOS UN ARRAY CON TODOS LOS MESES Y LO RELLENAMOS CON LOS RESULTADOS, SI NO EXISTE RESULTADO, ESE MES
             // SERA DE CANTIDAD 0
@@ -1085,7 +1088,7 @@ class Master extends CI_Controller {
 
             // Línea 4: Incidencias resueltas
 
-            $resultados_6 = $this->db->query("
+            /*$resultados_6 = $this->db->query("
                 SELECT  COUNT(id_incidencia) as cantidad,
                         MONTH(fecha) as mes,
                         YEAR(fecha) as anio
@@ -1093,7 +1096,13 @@ class Master extends CI_Controller {
                 WHERE   status_pds = 'Finalizada'
                         AND YEAR(fecha) = '".$este_anio."'
                 GROUP BY anio, mes
-            ");
+            ");*/
+
+            $resultados_6 = $this->db->query("SELECT COUNT('id_incidencia') as cantidad,
+                                                MONTH(fecha) as mes, YEAR(fecha) as anio
+                                                FROM facturacion WHERE YEAR(fecha) = '".$este_anio."'
+                                                GROUP BY  anio, mes");
+
             // CREAMOS UN ARRAY CON TODOS LOS MESES Y LO RELLENAMOS CON LOS RESULTADOS, SI NO EXISTE RESULTADO, ESE MES
             // SERA DE CANTIDAD 0
             $incidencias_resueltas = array();
@@ -1141,6 +1150,10 @@ class Master extends CI_Controller {
                 $total_denom += $intervenciones_anio[$key]->cantidad;
             }
 
+
+
+
+
             $data["media_inc_int"] = $resultados_7;
             $data["total_media_inc_int"] = number_format(round($total_num/$total_denom,2),2,",",".");;
 
@@ -1162,6 +1175,9 @@ class Master extends CI_Controller {
             $data['total_incidencias_total'] = $total_incidencias_total;
             $data['total_dias_operativos'] = $total_dias_operativos;
             $data['total_media'] = $total_media;
+
+
+
 
             /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
             $this->data->add($data);
