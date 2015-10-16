@@ -462,6 +462,14 @@ class Tienda_model extends CI_Model {
         return $query->result();
     }
 
+    public function get_muebles_OLD(){
+        $query = $this->db->select('display.*')
+            ->where('status','Alta')
+            ->order_by('display','asc')
+            ->get('display');
+        return $query->result();
+    }
+
 
     public function get_terminales(){
         $query = $this->db->select('device.*')
@@ -477,9 +485,12 @@ class Tienda_model extends CI_Model {
 
 
 		if($id != FALSE) {
-			$query = $this->db->select('pds.*,type_pds.pds,panelado.panelado,territory.territory')
-				   ->join('type_pds','pds.type_pds = type_pds.id_type_pds')
-				   ->join('panelado','pds.panelado_pds = panelado.id_panelado')
+			$query = $this->db->select('pds.*,pds_tipo.titulo as tipo,pds_subtipo.titulo as subtipo,pds_segmento.titulo as segmento,pds_tipologia.titulo as tipologia,territory.territory')
+				    ->join('pds_tipo','pds.id_tipo= pds_tipo.id')
+                    ->join('pds_subtipo','pds.id_subtipo= pds_subtipo.id')
+                    ->join('pds_segmento','pds.id_segmento= pds_segmento.id')
+                    ->join('pds_tipologia','pds.id_tipologia= pds_tipologia.id')
+
 				   ->join('territory','pds.territory = territory.id_territory')
 				   ->like('pds.reference',$id)
 			       ->get('pds');
@@ -489,10 +500,28 @@ class Tienda_model extends CI_Model {
 		else {
 			return FALSE;
 		}
-	}	
+	}
 
-	
-	public function search_dispositivo($id) {
+    public function search_pds_OLD($id) {
+
+
+        if($id != FALSE) {
+            $query = $this->db->select('pds.*,type_pds.pds,panelado.panelado,territory.territory')
+                ->join('type_pds','pds.type_pds = type_pds.id_type_pds')
+                ->join('panelado','pds.panelado_pds = panelado.id_panelado')
+                ->join('territory','pds.territory = territory.id_territory')
+                ->like('pds.reference',$id)
+                ->get('pds');
+
+            return $query->result();
+        }
+        else {
+            return FALSE;
+        }
+    }
+
+
+    public function search_dispositivo($id) {
 		if($id != FALSE) {
 			$query = $this->db->select('devices_almacen.*')
 			//->where('devices_almacen.status','En stock')
@@ -951,7 +980,8 @@ class Tienda_model extends CI_Model {
 		return $query->result();
 	}	
 
-	
+
+
 	public function get_displays() {
 		$query = $this->db->select('*')
 		->order_by('display')
@@ -1792,7 +1822,10 @@ class Tienda_model extends CI_Model {
 			return FALSE;
 		}
 	}	
-	
+
+
+
+
 }
 
 ?>

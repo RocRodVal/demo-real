@@ -31,7 +31,7 @@
                         </li>
 
                         <?php
-                        $maestros = array('clientes','contactos','alarmas','dispositivos','muebles','puntos_de_venta','tipos_incidencia');
+                        $maestros = array('clientes','contactos','alarmas','dispositivos','muebles','puntos_de_venta','categorias_pdv','tipos_incidencia');
                         ?>
                         <li <?=(in_array($this->uri->segment(2), $maestros))?'class="active"':''?>>
                             <a href="#"><i class="fa fa-sitemap fa-fw"></i> Maestros<span class="fa arrow"></span></a>
@@ -42,6 +42,7 @@
                                 <li><a <?=($this->uri->segment(2)==='dispositivos')?'class="active"':''?> href="<?=site_url('admin/dispositivos')?>"> Dispositivos &raquo;</a></li>
                                 <li><a <?=($this->uri->segment(2)==='muebles')?'class="active"':''?> href="<?=site_url('admin/muebles')?>"> Muebles &raquo;</a></li>
                                 <li><a <?=($this->uri->segment(2)==='puntos_de_venta')?'class="active"':''?> href="<?=site_url('admin/puntos_de_venta')?>"> Puntos de venta &raquo;</a></li>
+                                <li><a <?=($this->uri->segment(2)==='categorias_pdv')?'class="active"':''?> href="<?=site_url('admin/categorias_pdv')?>"> Categorías PdV &raquo;</a></li>
                                 <li><a <?=($this->uri->segment(2)==='tipos_incidencia')?'class="active"':''?> href="<?=site_url('admin/tipos_incidencia')?>"> Tipos de incidencia &raquo;</a></li>
                             </ul>
                         </li>
@@ -67,7 +68,7 @@
                         <li <?=(in_array($this->uri->segment(2), $exposicion))?'class="active"':''?>>
                             <a href="#"><i class="fa fa-building-o fa-fw"></i> Exposición<span class="fa arrow"></span></a>
                             <ul class="nav nav-second-level">
-                            	<li><a <?=($this->uri->segment(2)==='inventarios_panelados')?'class="active"':''?> href="<?=site_url('admin/inventarios_panelados')?>"> Panelado genérico &raquo;</a></li>
+                            	<?php /*<li><a <?=($this->uri->segment(2)==='inventarios_panelados')?'class="active"':''?> href="<?=site_url('admin/inventarios_panelados')?>"> Panelado genérico &raquo;</a></li>*/?>
                                 <li><a <?=($this->uri->segment(2)==='inventarios_planogramas')?'class="active"':''?> href="<?=site_url('admin/inventarios_planogramas')?>"> Planograma genérico &raquo;</a></li>
                             	<?php $descripcion = array('descripcion','exp_alta_incidencia','exp_alta_incidencia_mueble','exp_alta_incidencia_device');	?>
                             	<li><a <?=(in_array($this->uri->segment(2), $descripcion))?'class="active"':''?> href="<?=site_url('admin/descripcion')?>"> Planograma tiendas &raquo;</a></li>
@@ -111,7 +112,9 @@
                             'informe_visual',
                             'informe_visual_mueble_sfid',
                             'informe_visual_terminal',
-                            'informe_visual_ficha_terminal'); ?>
+                            'informe_visual_ficha_terminal'
+
+                        ); ?>
 
                         <li <?=(in_array($this->uri->segment(2), $inf))?'class="active"':''?>>
                             <a href="#"><i class="fa fa-sitemap fa-file"></i> Informes <span class="fa arrow"></span></a>

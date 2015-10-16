@@ -341,7 +341,7 @@ class Master extends CI_Controller {
             /* LISTADO DE FABRICANTES PARA EL SELECT */
             $data["fabricantes"] = $this->tienda_model->get_fabricantes();
             /* LISTADO DE MUEBLES PARA EL SELECT */
-            $data["muebles"] = $this->tienda_model->get_muebles();
+            $data["muebles"] = $this->tienda_model->get_displays_demoreal();
             /* LISTADO DE TERMINALES PARA EL SELECT */
             $data["terminales"] = $this->tienda_model->get_terminales();
 
@@ -1830,7 +1830,7 @@ GROuP by mes");
 			$id_display = $this->input->post('id_display');
 			$devices    = $this->tienda_model->get_devices_display($id_display);
 
-			$data['displays'] = $this->tienda_model->get_displays();
+			$data['displays'] = $this->tienda_model->get_displays_demoreal();
 			$data['devices']  = $devices;
 
 			if ($id_display != '')
@@ -1867,8 +1867,9 @@ GROuP by mes");
             $this->load->model('sfid_model');
             $this->load->model('tienda_model');
             $this->load->model('informe_model');
+            $this->load->model('categoria_model');
 
-            $data["title"] = "Informe de Puntos de Venta";
+            $data["title"] = "Informe de Puntos de Venta (Bloom)";
 
 
             $resultados = array();
@@ -1879,14 +1880,20 @@ GROuP by mes");
             $data["resultados"] = $resultados;
 
 
-            /** COMENTADO SELECT DEMOREAL $data["tipos_tienda"] = $this->sfid_model->get_types_pds_demoreal(); */
+            /*// COMENTADO SELECT DEMOREAL $data["tipos_tienda"] = $this->sfid_model->get_types_pds_demoreal();
             $data["tipos_tienda"] = $this->sfid_model->get_types_pds();
-            /** COMENTADO SELECT DEMOREAL $panelados = $this->tienda_model->get_panelados_maestros_demoreal(); */
-            $data["panelados"] = $this->tienda_model->get_panelados_maestros();
-            /** COMENTADO SELECT DEMOREAL $muebles = $this->tienda_model->get_displays_demoreal(); */
-            $data["muebles"] = $this->tienda_model->get_displays();
-            /** COMENTADO SELECT DEMOREAL $terminales = $this->tienda_model->get_devices_demoreal(); */
+            // COMENTADO SELECT DEMOREAL $panelados = $this->tienda_model->get_panelados_maestros_demoreal();
+            $data["panelados"] = $this->tienda_model->get_panelados_maestros();*/
+            // COMENTADO SELECT DEMOREAL $muebles = $this->tienda_model->get_displays_demoreal();
+            $data["muebles"] = $this->tienda_model->get_displays_demoreal();
+            // COMENTADO SELECT DEMOREAL $terminales = $this->tienda_model->get_devices_demoreal();
             //$data["terminales"] = $this->tienda_model->get_devices();
+
+            $data["pds_tipos"] = $this->categoria_model->get_tipos_pds();
+            $data["pds_subtipos"] = $this->categoria_model->get_subtipos_pds();
+            $data["pds_segmentos"] = $this->categoria_model->get_segmentos_pds();
+            $data["pds_tipologias"] = $this->categoria_model->get_tipologias_pds();
+
 
             $data["terminales"] = $this->tienda_model->get_devices_demoreal();
             /* LISTADO DE TERRITORIOS PARA EL SELECT */
@@ -1901,16 +1908,15 @@ GROuP by mes");
             /////
             $this->load->view('master/header', $data);
             $this->load->view('master/navbar', $data);
-            $this->load->view('master/informes/informe_puntos_venta_form', $data);
-            $this->load->view('master/informes/informe_puntos_venta', $data);
+            $this->load->view('master/informes/bloom/informe_puntos_venta_form', $data);
+            $this->load->view('master/informes/bloom/informe_puntos_venta', $data);
             $this->load->view('master/footer');
         }
         else
         {
-            redirect('master','refresh');
+            redirect('admin','refresh');
         }
     }
-
 
 
     /**
@@ -1921,16 +1927,15 @@ GROuP by mes");
         if($this->auth->is_auth()) {
             $xcrud = xcrud_get_instance();
 
+            $this->load->model('informe_model');
 
             $ext = (!is_null($formato) ? $formato : $this->ext);    // Formato para exportaciones, especficiado o desde CFG
 
-            $this->load->model('informe_model');
-
-            $data["generado"] = FALSE;
-
             $arr_campos = array(
-                "tipo_tienda" => '',
-                "panelado" => '',
+                "id_tipo" => '',
+                "id_subtipo" => '',
+                "id_segmento" => '',
+                "id_tipologia" => '',
                 "id_display" => '',
                 "id_device" => '',
                 "territory" => '',
@@ -1947,7 +1952,7 @@ GROuP by mes");
 
             $total_registros = 0;
 
-            $controlador_origen = "master"; //  Controlador por defecto
+            $controlador_origen = "admin"; //  Controlador por defecto
 
 
             if ($this->input->post("generar_informe") === "si") {
@@ -1958,20 +1963,37 @@ GROuP by mes");
 
                 $campos_sess_informe = array();
                 // TIPO TIENDA
-                $tipo_tienda = array();
-                $campos_sess_informe["tipo_tienda"] = NULL;
-                if (is_array($this->input->post("tipo_tienda_multi"))) {
-                    foreach ($this->input->post("tipo_tienda_multi") as $tt) $tipo_tienda[] = $tt;
-                    $campos_sess_informe["tipo_tienda"] = $tipo_tienda;
+                $id_tipo = array();
+                $campos_sess_informe["id_tipo"] = NULL;
+                if (is_array($this->input->post("id_tipo_multi"))) {
+                    foreach ($this->input->post("id_tipo_multi") as $tt) $id_tipo[] = $tt;
+                    $campos_sess_informe["id_tipo"] = $id_tipo;
                 }
 
-                // PANELADO
-                $panelado = array();
-                $campos_sess_informe["panelado"] = NULL;
-                if (is_array($this->input->post("panelado_multi"))) {
-                    foreach ($this->input->post("panelado_multi") as $tt) $panelado[] = $tt;
-                    $campos_sess_informe["panelado"] = $panelado;
+                // SUBTIPO TIENDA
+                $id_subtipo = array();
+                $campos_sess_informe["id_subtipo"] = NULL;
+                if (is_array($this->input->post("id_subtipo_multi"))) {
+                    foreach ($this->input->post("id_subtipo_multi") as $tt) $id_subtipo[] = $tt;
+                    $campos_sess_informe["id_subtipo"] = $id_subtipo;
                 }
+
+                // SEGMENTO TIENDA
+                $id_segmento = array();
+                $campos_sess_informe["id_segmento"] = NULL;
+                if (is_array($this->input->post("id_segmento_multi"))) {
+                    foreach ($this->input->post("id_segmento_multi") as $tt) $id_segmento[] = $tt;
+                    $campos_sess_informe["id_segmento"] = $id_segmento;
+                }
+
+                // TIPOLOGIA TIENDA
+                $id_tipologia = array();
+                $campos_sess_informe["id_tipologia"] = NULL;
+                if (is_array($this->input->post("id_tipologia_multi"))) {
+                    foreach ($this->input->post("id_tipologia_multi") as $tt) $id_tipologia[] = $tt;
+                    $campos_sess_informe["id_tipologia"] = $id_tipologia;
+                }
+
                 // MUEBLE
                 $id_display = array();
                 $campos_sess_informe["id_display"] = NULL;
@@ -2009,8 +2031,12 @@ GROuP by mes");
                 $this->session->set_userdata("campos_sess",$campos_sess_informe);
                 $this->session->set_userdata("generado",TRUE);
 
-                $data["tipo_tienda"] = $tipo_tienda;
-                $data["panelado"] = $panelado;
+                $data["id_tipo"] = $id_tipo;
+                $data["id_subtipo"] = $id_subtipo;
+                $data["id_segmento"] = $id_segmento;
+                $data["id_tipologia"] = $id_tipologia;
+
+
                 $data["id_display"] = $id_display;
                 $data["id_device"] = $id_device;
                 $data["territory"] = $territory;
@@ -2039,7 +2065,7 @@ GROuP by mes");
                 $data["total_registros"] = count($resultados);
                 $data["resultados"] = $resultados;
 
-                $resp = $this->load->view('master/informes/informe_puntos_venta_ajax', $data, TRUE);
+                $resp = $this->load->view('backend/informes/bloom/informe_puntos_venta_ajax', $data, TRUE);
                 echo $resp;
 
             }
@@ -2055,7 +2081,7 @@ GROuP by mes");
 
 
 
-    public function informe_pdv_exportar()
+    public function informe_pdv_exportar_OLD()
     {
         if($this->auth->is_auth()){ // Control de acceso según el tipo de agente. Permiso definido en constructor
 
@@ -2317,7 +2343,7 @@ GROuP by mes");
                      *      Maestro del mueble
                      */
                     $devices = $this->tienda_model->get_devices_display($mueble_plano);
-                    $data['displays'] = $this->tienda_model->get_displays();
+                    $data['displays'] = $this->tienda_model->get_displays_demoreal();
                     $data['devices'] = $devices;
 
 
@@ -2359,7 +2385,7 @@ GROuP by mes");
 
 
             /** COMENTADO SELECT DEMOREAL $muebles = $this->tienda_model->get_displays_demoreal(); */
-            $muebles = $this->tienda_model->get_displays();
+            $muebles = $this->tienda_model->get_displays_demoreal();
             $data["muebles"] = $muebles;
 
         $data["vista"] = $vista;
@@ -2455,7 +2481,7 @@ GROuP by mes");
             }
 
             /** COMENTADO SELECT DEMOREAL $muebles = $this->tienda_model->get_displays_demoreal(); */
-            $muebles = $this->tienda_model->get_displays();
+            $muebles = $this->tienda_model->get_displays_demoreal();
             $data["muebles"] = $muebles;
             $data['title'] = 'Planograma tienda';
             $data['subtitle'] = 'Planograma tienda [SFID-'.$data['reference'].'] - '.$data['display'];
@@ -2538,7 +2564,7 @@ GROuP by mes");
             }
 
             /** COMENTADO SELECT DEMOREAL $muebles = $this->tienda_model->get_displays_demoreal(); */
-            $muebles = $this->tienda_model->get_displays();
+            $muebles = $this->tienda_model->get_displays_demoreal();
             $data["muebles"] = $muebles;
         $data['title'] = 'Planograma tienda [SFID-'.$data['reference'].']';
         $data['subtitle'] = $data["display"] .' - '. $data["device"];
@@ -2634,7 +2660,7 @@ GROuP by mes");
 
             /* Obtener los tipos de tienda para el select */
             /** COMENTADO SELECT DEMOREAL $muebles = $this->tienda_model->get_displays_demoreal(); */
-            $muebles = $this->tienda_model->get_displays();
+            $muebles = $this->tienda_model->get_displays_demoreal();
             $data["muebles"] = $muebles;
 
             /** COMENTADO SELECT DEMOREAL $data["tipos_tienda"] = $this->sfid_model->get_types_pds_demoreal(); */
@@ -2777,7 +2803,7 @@ GROuP by mes");
 
             /* Obtener los tipos de tienda para el select */
             /** COMENTADO SELECT DEMOREAL $muebles = $this->tienda_model->get_displays_demoreal(); */
-            $muebles = $this->tienda_model->get_displays();
+            $muebles = $this->tienda_model->get_displays_demoreal();
             $data["muebles"] = $muebles;
 
             /** COMENTADO SELECT DEMOREAL $data["tipos_tienda"] = $this->sfid_model->get_types_pds_demoreal(); */
@@ -2843,7 +2869,7 @@ GROuP by mes");
 
             /* Obtener los tipos de tienda para el select */
             /** COMENTADO SELECT DEMOREAL $muebles = $this->tienda_model->get_displays_demoreal(); */
-            $muebles = $this->tienda_model->get_displays();
+            $muebles = $this->tienda_model->get_displays_demoreal();
             $data["muebles"] = $muebles;
             /** COMENTADO SELECT DEMOREAL $data["tipos_tienda"] = $this->sfid_model->get_types_pds_demoreal(); */
             $data["tipos_tienda"] = $this->sfid_model->get_types_pds();
@@ -2880,7 +2906,7 @@ GROuP by mes");
             }
 
             /** COMENTADO SELECT DEMOREAL $muebles = $this->tienda_model->get_displays_demoreal(); */
-            $muebles = $this->tienda_model->get_displays();
+            $muebles = $this->tienda_model->get_displays_demoreal();
             $data["muebles"] = $muebles;
             /** COMENTADO SELECT DEMOREAL $data["tipos_tienda"] = $this->sfid_model->get_types_pds_demoreal(); */
             $data["tipos_tienda"] = $this->sfid_model->get_types_pds();
@@ -2953,7 +2979,7 @@ GROuP by mes");
             }
 
             /** COMENTADO SELECT DEMOREAL $muebles = $this->tienda_model->get_displays_demoreal(); */
-            $muebles = $this->tienda_model->get_displays();
+            $muebles = $this->tienda_model->get_displays_demoreal();
             $muebles = $this->tienda_model->get_displays_demoreal();
 
             $data["muebles"] = $muebles;
@@ -3045,7 +3071,7 @@ GROuP by mes");
             }
 
             /** COMENTADO SELECT DEMOREAL $muebles = $this->tienda_model->get_displays_demoreal(); */
-            $muebles = $this->tienda_model->get_displays();
+            $muebles = $this->tienda_model->get_displays_demoreal();
             $data["muebles"] = $muebles;
 
             /** COMENTADO SELECT DEMOREAL $data["tipos_tienda"] = $this->sfid_model->get_types_pds_demoreal(); */

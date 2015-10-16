@@ -54,6 +54,15 @@
     <script src="<?php echo base_url(); ?>assets/js/incidencia/formulario_incidencia.js" type="text/javascript"></script>
     <script src="<?php echo base_url(); ?>assets/js/bootstrap-tooltip.js" type="text/javascript"></script>
     <script src="<?php echo base_url(); ?>assets/js/bootstrap-confirmation.js" type="text/javascript"></script>
+
+
+    <link href="http://select2.github.io/dist/css/select2.min.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="http://select2.github.io/dist/js/select2.full.js"></script>
+    <script type="text/javascript">
+
+    </script>
+
+
 </head>
 
 <?php
