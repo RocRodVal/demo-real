@@ -17,7 +17,9 @@
 							<div class="row">
 							<?php
 							$counter = 0;
-							$sep     = array(6,12,18,24);
+							$salto_linea = 6;
+
+                            //var_dump($displays);
 							foreach($displays as $display){
 								if($display->devices_count != 0){
 									$counter++;
@@ -45,11 +47,11 @@
 									?>
 									</div>
 								<?php
-									if (in_array($counter, $sep))
+									if ($counter % $salto_linea == 0)
 									{
 										$counter = 0;
 										echo '<br clear="all" />';
-									}								
+									}
 								}
 							}
 							?>

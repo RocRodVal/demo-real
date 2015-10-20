@@ -5781,6 +5781,61 @@ class Admin extends CI_Controller
 
 
 
+    public function backup()
+    {
+        if($this->auth->is_auth()) {
+            $xcrud = xcrud_get_instance();
+            $opcion = NULL;
+            $this->load->model("backup_model");
+
+
+            $data['title'] = 'Realizar backup';
+
+            $generar_backup = $this->input->post("generar_backup");
+
+            if($generar_backup=="si") {
+                $opcion = $this->input->post("opcion");
+                $sfids = $this->input->post("sfids");
+                $array_sfids = explode("\n", $sfids);
+            }
+
+
+
+            if (is_null($opcion)) {
+
+                /////
+                // Form de backup
+                /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+                $this->data->add($data);
+                $data = $this->data->getData();
+                $this->load->view('backend/header', $data);
+                $this->load->view('backend/navbar', $data);
+                $this->load->view('backend/backup/form', $data);
+                $this->load->view('backend/footer');
+
+            } else {
+                // Tratamiento del backup
+                switch ($opcion) {
+                    case "planograma":
+                        $this->backup_model->set_sfids($array_sfids);
+                        $resultado = $this->backup_model->exportar_planogramas();
+
+                        $data["resultado"] = $resultado;
+
+                        $this->data->add($data);
+                        $data = $this->data->getData();
+                        $this->load->view('backend/header', $data);
+
+                        $this->load->view('backend/backup/planograma', $data);
+                        $this->load->view('backend/footer');
+                        break;
+                }
+
+
+            }
+        }
+    }
+
     public function mantenimiento()
     {
 

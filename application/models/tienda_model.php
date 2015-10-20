@@ -1257,7 +1257,7 @@ class Tienda_model extends CI_Model {
 		$this->db->from('devices_display');
 		$count = $this->db->count_all_results();
 		return $count;
-	}	
+	}
 	
 	
 	public function get_pds($id) {

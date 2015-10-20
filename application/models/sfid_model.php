@@ -127,7 +127,8 @@ class Sfid_model extends CI_Model {
 				->where('displays_pds.status = "Alta"')
 				->order_by('displays_pds.position')
 				->get('displays_pds');
-	
+
+            //echo $this->db->last_query();
 			return $query->result();
 		}
 		else 
