@@ -19,15 +19,19 @@
 							$counter = 0;
 							$salto_linea = 6;
 
-                            //var_dump($displays);
+
 							foreach($displays as $display){
+
 								if($display->devices_count != 0){
+
+
 									$counter++;
 									?>
 									<div class="col-lg-2 col-md-3 col-sm-6 col-xs-12 textoColumna">
 									<?php
 									if ($display->picture_url != '')
 									{
+
 										?>
 
 										<a href="<?=site_url('admin/informe_planograma_mueble_pds')?>/<?php echo $display->id_pds.'/'.$display->id_displays_pds ?>">

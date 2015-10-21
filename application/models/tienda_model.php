@@ -1256,6 +1256,8 @@ class Tienda_model extends CI_Model {
 		$this->db->where($conditions);
 		$this->db->from('devices_display');
 		$count = $this->db->count_all_results();
+
+
 		return $count;
 	}
 	
@@ -1282,10 +1284,34 @@ class Tienda_model extends CI_Model {
 		else {
 			return FALSE;
 		}
-	}	
-	
-	
-	public function get_display($id) {
+	}
+
+    public function get_sfid($sfid) {
+        if($sfid != FALSE) {
+            $query = $this->db->select('pds.*, province.province, territory.territory')
+                ->join('type_pds','pds.type_pds = type_pds.id_type_pds')
+                ->join('province','pds.province = province.id_province')
+                ->join('territory','pds.territory = territory.id_territory')
+                ->like('pds.reference',$sfid,'none')
+                ->get('pds');
+
+            /*$query = $this->db->query("
+            SELECT pds.*,type_pds.pds as pds, province.province, territory.territory
+                FROM pds
+                LEFT JOIN  type_pds ON pds.type_pds = type_pds.id_type_pds
+                LEFT JOIN  province ON pds.province = province.id_province
+                LEFT JOIN  territory ON pds.territory = territory.id_territory
+                WHERE pds.id_pds=$id");*/
+
+            return $query->row_array();
+        }
+        else {
+            return FALSE;
+        }
+    }
+
+
+    public function get_display($id) {
 		if($id != FALSE) {
 			$query = $this->db->select('*')
 			->where('id_display',$id)
@@ -1824,6 +1850,45 @@ class Tienda_model extends CI_Model {
 	}	
 
 
+
+    /**
+     * Insertar mueble SFID
+     */
+    function anadir_mueble_sfid($display,$pds,$position = 0)
+    {
+
+        // Si no están vacíos los objetos MUEBLE y PDS
+        if(!empty($display) && !empty($pds))
+        {
+            $id_pds = $pds["id_pds"];
+            $id_display = $display["id_display"];
+            $client_type_pds = 1;
+
+            $SQL = " INSERT INTO displays_pds (client_type_pds, id_pds, id_display, position, status)
+                                        VALUES(".$client_type_pds.",".$id_pds.",".$id_display.",".$position.",'Alta'); ";
+
+            $this->db->query($SQL);
+            $id_displays_pds = $this->db->insert_id();
+
+            // Buscar el planograma genérico del mueble
+            $planograma = $this->get_devices_display($id_display);
+
+            if(!empty($planograma))
+            {
+                foreach ($planograma as $terminal)
+                {
+                    $position = $terminal->position;
+                    $id_device = $terminal->id_device;
+                    $SQL = " INSERT INTO devices_pds(client_type_pds,id_pds, id_displays_pds, id_display, position, id_device, status)
+                                            VALUES(".$client_type_pds.",".$id_pds.",".$id_displays_pds.",".$id_display.",".$position.",".$id_device.",'Alta'); ";
+                    $this->db->query($SQL);
+                }
+            }
+
+        }
+
+
+    }
 
 
 }

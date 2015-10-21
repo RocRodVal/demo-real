@@ -160,6 +160,7 @@ class Sfid_model extends CI_Model {
 	
 	public function get_devices_displays_pds($id_displays_pds)
 	{
+
 		if($id_displays_pds != FALSE) 
 		{
 			$query = $this->db->select('devices_pds.*,devices_pds.status as estado, device.*, devices_pds.id_devices_pds')
@@ -169,7 +170,7 @@ class Sfid_model extends CI_Model {
 				->where('devices_pds.status != "Baja"')
 				->order_by('devices_pds.position')
 				->get('devices_pds');
-	
+            
 			return $query->result();
 		}
 		else 

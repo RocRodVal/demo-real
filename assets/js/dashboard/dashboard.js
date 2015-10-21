@@ -579,3 +579,25 @@ function insert(url,objeto,vuelta)
         });
     }
 }
+
+
+
+/**
+ ** VALIDAR AÑADIR MUEBLE A SFIDs
+ **/
+
+function validar_anadir_mueble_sfid()
+{
+    var textareaVal = $("#sfids").val();
+    var muebleVal = $("#id_display option:selected").val();
+
+    if(textareaVal == '')        $("#sfids").addClass("error");
+    else        $("#sfids").removeClass("error");
+
+    if(muebleVal == '') $("#id_display").addClass("error");
+    else  $("#id_display").removeClass("error");
+
+
+    return (textareaVal != '' && muebleVal != 0);
+
+}

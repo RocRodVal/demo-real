@@ -269,3 +269,13 @@ div.mantenimiento p.desc{ margin-bottom: 10px; font-size: 14px; text-align:cente
 
 #print-wrapper-wrapper table.backup .pos,
 #print-wrapper table.backup .name{ font-weight: bold;}
+
+
+
+#page-wrapper form textarea.error,
+#page-wrapper form input.error,
+#page-wrapper form select.error{ border:1px solid #a00;}
+
+
+span.error{ color:#a00; font-size: 14px;}
+span.exito{ color:#0a0; font-size: 14px;}

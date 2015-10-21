@@ -84,21 +84,33 @@
                             </ul>
                         </li>
 
-                        <?php               
-                        $operaciones = array('operaciones','apertura_pdv','cierre_pdv','cambio_sfid','incidencias','incidencias_exp','reset_incidencia_status');
-                        ?>                      
+                        <?php
+                        $operaciones = array('operaciones','apertura_pdv','cierre_pdv','cambio_sfid','incidencias','incidencias_exp','reset_incidencia_status','backup','anadir_mueble_sfid');
+                        ?>
                         <li <?=(in_array($this->uri->segment(2), $operaciones))?'class="active"':''?>>
                             <a href="#"><i class="fa fa-wrench fa-fw"></i> Operaciones<span class="fa arrow"></span></a>
-                            <ul class="nav nav-second-level"> 
-                        		<!--<li><a <?=($this->uri->segment(2)==='operaciones')?'class="active"':''?> href="<?=site_url('admin/operaciones')?>"> Operaciones &raquo;</a></li>-->
-                        		<li><a <?=($this->uri->segment(2)==='apertura_pdv')?'class="active"':''?> href="<?=site_url('admin/apertura_pdv')?>"> Apertura PdV &raquo;</a></li>
-                        		<li><a <?=($this->uri->segment(2)==='cierre_pdv')?'class="active"':''?> href="<?=site_url('admin/cierre_pdv')?>"> Cierre PdV &raquo;</a></li>
-                        		<li><a <?=($this->uri->segment(2)==='cambio_sfid')?'class="active"':''?> href="<?=site_url('admin/cambio_sfid')?>"> Cambio de SFID &raquo;</a></li>
+                            <ul class="nav nav-second-level">
+                                <!--<li><a <?=($this->uri->segment(2)==='operaciones')?'class="active"':''?> href="<?=site_url('admin/operaciones')?>"> Operaciones &raquo;</a></li>-->
+                                <li><a <?=($this->uri->segment(2)==='apertura_pdv')?'class="active"':''?> href="<?=site_url('admin/apertura_pdv')?>"> Apertura PdV &raquo;</a></li>
+                                <li><a <?=($this->uri->segment(2)==='cierre_pdv')?'class="active"':''?> href="<?=site_url('admin/cierre_pdv')?>"> Cierre PdV &raquo;</a></li>
+                                <li><a <?=($this->uri->segment(2)==='cambio_sfid')?'class="active"':''?> href="<?=site_url('admin/cambio_sfid')?>"> Cambio de SFID &raquo;</a></li>
                                 <li><a <?=($this->uri->segment(2)==='reset_incidencia_status')?'class="active"':''?> href="<?=site_url('admin/reset_incidencia_status')?>"> Reset incidencia &raquo;</a></li>
                                 <li><a <?=($this->uri->segment(2)==='incidencias')?'class="active"':''?> href="<?=site_url('admin/incidencias')?>"> Export incidencias &raquo;</a></li>
-                        		<li><a <?=($this->uri->segment(2)==='incidencias_exp')?'class="active"':''?> href="<?=site_url('admin/incidencias_exp')?>"> Export incidencias SAT &raquo;</a></li>                                               
-                        	</ul>
+                                <li><a <?=($this->uri->segment(2)==='incidencias_exp')?'class="active"':''?> href="<?=site_url('admin/incidencias_exp')?>"> Export incidencias SAT &raquo;</a></li>
+                            </ul>
                         </li>
+
+                        <?php
+                        $masivas = array('operaciones','anadir_mueble_sfid','cierre_pdv','cambio_sfid','incidencias','incidencias_exp','reset_incidencia_status','informe_backup','anadir_mueble_sfid');
+                        ?>
+                        <li <?=(in_array($this->uri->segment(2), $masivas))?'class="active"':''?>>
+                            <a href="#"><i class="fa fa-wrench fa-fw"></i> Operaciones masivas<span class="fa arrow"></span></a>
+                            <ul class="nav nav-second-level">
+                                <li><a <?=($this->uri->segment(2)==='informe_backup')?'class="active"':''?> href="<?=site_url('admin/informe_backup')?>"> Informes para Backup &raquo;</a></li>
+                                <li><a <?=($this->uri->segment(2)==='anadir_mueble_sfid')?'class="active"':''?> href="<?=site_url('admin/anadir_mueble_sfid')?>"> Añadir mueble a SFID(s) &raquo;</a></li>
+                            </ul>
+                        </li>
+
                         <?php /**
                          * CUADROS DE MANDO
                          *

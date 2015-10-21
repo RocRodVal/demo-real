@@ -4841,6 +4841,7 @@ class Admin extends CI_Controller
                         $data['display'] = "";
 
 
+
                         if(!empty($arr_displays_pds)) {
                             $id_displays_pds = $arr_displays_pds[0]->id_displays_pds;
 
@@ -4897,9 +4898,11 @@ class Admin extends CI_Controller
 
                         $displays = $this->sfid_model->get_displays_pds($id_pds);
 
+
                         foreach ($displays as $key => $display) {
                             $num_devices = $this->tienda_model->count_devices_display($display->id_display);
                             $display->devices_count = $num_devices;
+                            echo $display->devices_count."-";
                         }
 
                         $data['displays'] = $displays;
@@ -5005,11 +5008,10 @@ class Admin extends CI_Controller
 
 
 
-    public function informe_planograma_mueble_pds(){
+    public function informe_planograma_mueble_pds($id_pds, $id_dis){
         if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10))
         {
-            $id_pds   = $this->uri->segment(3);
-            $id_dis   = $this->uri->segment(4);
+
 
             $xcrud = xcrud_get_instance();
             $this->load->model('tienda_model');
@@ -5028,13 +5030,15 @@ class Admin extends CI_Controller
             $data['zip']        = $sfid['zip'];
             $data['city']       = $sfid['city'];
 
-            $display = $this->sfid_model->get_display($this->uri->segment(4));
+            $display = $this->sfid_model->get_display($id_dis);
+
 
             $data['id_display']  = $display['id_display'];
             $data['display']     = $display['display'];
             $data['picture_url'] = $display['picture_url'];
 
             $data['devices'] = $this->sfid_model->get_devices_displays_pds($id_dis);
+
 
             $data['id_pds_url']  = $id_pds;
             $data['id_dis_url']  = $id_dis;
@@ -5781,7 +5785,7 @@ class Admin extends CI_Controller
 
 
 
-    public function backup()
+    public function informe_backup()
     {
         if($this->auth->is_auth()) {
             $xcrud = xcrud_get_instance();
@@ -5836,6 +5840,87 @@ class Admin extends CI_Controller
         }
     }
 
+    public function anadir_mueble_sfid()
+    {
+        if($this->auth->is_auth()) {
+            $xcrud = xcrud_get_instance();
+            $this->load->model("tienda_model");
+
+            $anadir_mueble = $this->input->post("anadir_mueble");
+            $data["title"] = "Añadir mueble a SFIDs";
+            $data["anadiendo_mueble"] = FALSE;
+
+            $id_display = NULL;
+            $sfids = "";
+            $arr_sfids = array();
+
+            // Venimos del form de añadir mueble. Añadir
+            if($anadir_mueble == "si")
+            {
+
+
+                $sfids = $this->input->post("sfids");
+                $arr_sfids = explode("\n", $sfids);
+                $data["arr_sfids"] = $arr_sfids;
+                $id_display = $this->input->post("id_display");
+
+
+                $position = $this->input->post("position"); $position = (empty($position)) ? 0 : $position;
+
+            }
+
+            // Validamos y añadimos
+            if(!empty($sfids) && !empty($id_display))
+            {
+                $data["anadiendo_mueble"] = TRUE;
+
+                $display = $this->tienda_model->get_display($id_display);
+                $data["mueble"] = $display["display"];
+                $data["position"] = $position;
+
+
+                $devices_display = $this->tienda_model->get_devices_display($id_display);
+
+                // Validamos el array de SFIDs, y creamos un nuevo array que guarde NULL si el SFID no se encuentra
+                // y en caso contrario guarde el objeto PDS asociado.
+                $checked_sfids = array();
+                foreach($arr_sfids as $sfid)
+                {
+                    if(!empty($sfid))
+                    {
+                        $check_sfid = $this->tienda_model->get_sfid($sfid);
+                        if (!empty($check_sfid)){// SFID ENCONTRADO
+                            $checked_sfids[$sfid] = $check_sfid;
+
+                           $this->tienda_model->anadir_mueble_sfid($display,$check_sfid,$position);
+
+
+
+                        }
+                        else $checked_sfids[$sfid] = NULL;
+                    }
+                }
+                $data["checked_sfids"] = $checked_sfids;
+
+
+            }
+
+
+            $this->data->add($data);
+            $data = $this->data->getData();
+            $this->load->view('backend/header', $data);
+
+            $muebles = $this->tienda_model->get_muebles();
+            $data["muebles"] = $muebles;
+            $data["sfids"] = $sfids;
+            $data["id_display"]  = $id_display;
+
+            $this->load->view('backend/navbar',$data);
+            $this->load->view('backend/masivas/anadir_mueble_sfid/formulario', $data);
+            $this->load->view('backend/masivas/anadir_mueble_sfid/resultado', $data);
+            $this->load->view('backend/footer');
+        }
+    }
     public function mantenimiento()
     {
 
