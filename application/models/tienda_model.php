@@ -1854,7 +1854,7 @@ class Tienda_model extends CI_Model {
     /**
      * Insertar mueble SFID
      */
-    function anadir_mueble_sfid($display,$pds,$position = 0)
+    function anadir_mueble_sfid($display,$pds,$position = NULL)
     {
 
         // Si no están vacíos los objetos MUEBLE y PDS
@@ -1863,6 +1863,40 @@ class Tienda_model extends CI_Model {
             $id_pds = $pds["id_pds"];
             $id_display = $display["id_display"];
             $client_type_pds = 1;
+
+
+            if(is_null($position))
+            {
+                // Si no recibimos posición donde insertar (pos=NULL) lo ponemos al final del panelado
+                $query = $this->db->query(" SELECT max(position) as ultimo FROM displays_pds WHERE id_pds = " . $id_pds);
+                $result = $query->row();
+
+                if(!empty($result->ultimo) && $result->ultimo > 0)
+                {
+                    $position = $result->ultimo + 1;
+                }else{
+                    $position = 1;
+                }
+
+            }
+            else {
+
+                // SACAMOS TODOS LOS MUEBLES DESDE LA POS a INSERTAR EN ADELANTE, EN ESA TIENDA, Y LOS MOVEMOS UNA POSICION ADELANTE
+                $SQL = " SELECT id_displays_pds as ocupado FROM displays_pds WHERE id_pds = " . $id_pds . " AND position =" . $position;
+                $query = $this->db->query($SQL);
+                $result = $query->row();
+
+                if (!empty($result->ocupado)) {
+
+                    $SQL = "    UPDATE displays_pds
+                        SET position = (position + 1)
+                        WHERE id_pds = " . $id_pds . " AND position >= " . $position;
+
+                    $this->db->query($SQL);
+                }
+            }
+
+
 
             $SQL = " INSERT INTO displays_pds (client_type_pds, id_pds, id_display, position, status)
                                         VALUES(".$client_type_pds.",".$id_pds.",".$id_display.",".$position.",'Alta'); ";

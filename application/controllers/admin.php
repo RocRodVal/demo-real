@@ -5865,7 +5865,7 @@ class Admin extends CI_Controller
                 $id_display = $this->input->post("id_display");
 
 
-                $position = $this->input->post("position"); $position = (empty($position)) ? 0 : $position;
+                $position = $this->input->post("position"); $position = (empty($position)) ? NULL : $position;
 
             }
 
