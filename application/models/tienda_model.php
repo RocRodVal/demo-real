@@ -266,7 +266,7 @@ class Tienda_model extends CI_Model {
                         SELECT COUNT(*)
                         FROM devices_pds
                         WHERE (devices_pds.id_device = device.id_device) AND
-                        (devices_pds.status = "Alta")
+                        (devices_pds.status = "Alta" || devices_pds.status = "Incidencia")
                     )
                     as unidades_pds,
 

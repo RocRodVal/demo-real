@@ -2426,7 +2426,7 @@ class Admin extends CI_Controller
 
         // Ocultar el botón de borrar para evitar borrados accidentales mientras no existan constraints en BD:
         $xcrud_2->unset_remove();
-
+        $xcrud_2->order_by(array("id_tipo"=>"desc","id_subtipo"=>"asc","id_segmento"=>"asc","id_tipologia"=>"asc"));
         $data['title'] = 'Puntos de venta';
 
         $data['content'] = $xcrud_2->render();

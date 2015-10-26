@@ -773,6 +773,8 @@ class Master extends CI_Controller {
             // Rango de meses que mostrarán las columnas de la tabla, basándome en el mínimo y máximo mes que hay incidencias, este año.
             $rango_meses = $this->db->query("SELECT MONTH(MIN(fecha)) as min, MONTH(MAX(fecha)) as max FROM incidencias WHERE YEAR(fecha)='$este_anio'")->row();
 
+            $ctrl_no_cancelada = " AND status_pds != 'Cancelada' "; // Condición where de contrl de incidencias NO CANCELADAS
+
 
             // Sacamos
             $meses_columna = array();
@@ -787,7 +789,9 @@ class Master extends CI_Controller {
 								MONTH(incidencias.fecha) AS mes,
 								COUNT(*) AS total_incidencias
 								FROM incidencias
-								WHERE YEAR(incidencias.fecha) ='".$este_anio."'
+								WHERE 1 = 1
+								$ctrl_no_cancelada
+								AND YEAR(incidencias.fecha) = '".$este_anio."'
 								GROUP BY
 								anio,
 								mes");
@@ -878,7 +882,7 @@ class Master extends CI_Controller {
             $this->db->query(" UPDATE incidencias SET fecha_cierre = DATE_ADD(fecha, INTERVAL 2 day) WHERE status_pds = 'Finalizada' && fecha_cierre IS NULL; ");
 
 
-            $this->db->query(" CREATE TEMPORARY TABLE IF NOT EXISTS historico_temp(INDEX(id_incidencia))
+            /*$this->db->query(" CREATE TEMPORARY TABLE IF NOT EXISTS historico_temp(INDEX(id_incidencia))
                                     AS (
                                            SELECT h.id_incidencia, i.fecha as fecha_entrada, MAX(h.fecha) as fecha_proceso,
                                             i.fecha_cierre, DATEDIFF(i.fecha_cierre,DATE_ADD(h.fecha,INTERVAL 1 day)) as diferencia, h.status_pds, h.status
@@ -891,18 +895,32 @@ class Master extends CI_Controller {
                                                     )
                                             GROUP BY id_incidencia
                                     );
-                                    ");
+                                    ");*/
+
+            $this->db->query(" CREATE TEMPORARY TABLE IF NOT EXISTS historico_temp(INDEX(id_incidencia))
+                                    AS (
+                                           SELECT h.id_incidencia, i.fecha as fecha_entrada, MAX(h.fecha) as fecha_proceso,
+                                            i.fecha_cierre,  h.status_pds, h.status
+                                            FROM historico h
+                                            JOIN incidencias i ON h.id_incidencia = i.id_incidencia
+                                            WHERE 	YEAR(i.fecha) = '".$este_anio."' AND
+                                                    (
+                                                        (h.status_pds = 'En proceso' || i.status_pds = 'Finalizada')
+                                                    )
+                                            GROUP BY id_incidencia
+                                    );
+            ");
 
             $sql = "
             SELECT COUNT(id_incidencia)  as cantidad, YEAR(fecha_entrada) as anio, MONTH(fecha_entrada) as mes FROM historico_temp
-            WHERE diferencia < 3
+            WHERE workdaydiff(fecha_proceso,fecha_cierre) < 3
             GROUP BY anio, mes;
             ";
             $menos_72 = $this->db->query($sql)->result();
 
             $mas_72 = $this->db->query(                "
                    SELECT COUNT(id_incidencia) as cantidad, YEAR(fecha_entrada) as anio, MONTH(fecha_entrada) as mes FROM historico_temp
-                    WHERE diferencia >= 3
+                    WHERE workdaydiff(fecha_proceso,fecha_cierre) >= 3
                     GROUP BY anio, mes;")->result();
 
 
