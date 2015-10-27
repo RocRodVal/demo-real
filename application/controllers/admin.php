@@ -16,6 +16,7 @@ class Admin extends CI_Controller
         // Carga de la clase de Colección de datos, para pasar variables a la vista.
         $this->load->library('data');
         $this->data->set("controlador","admin");
+        $this->data->set("acceso","admin");
         $this->data->set("accion_home","estado_incidencias/abiertas");
         $this->data->set("entrada",($this->data->get("controlador") . '/' . $this->data->get("accion_home")));
 
