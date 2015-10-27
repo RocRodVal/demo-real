@@ -1024,6 +1024,26 @@ class Tienda_model extends CI_Model {
         return $query->result();
     }
 
+    public function get_supervisores()
+    {
+        $query = $this->db->select('*')
+                ->order_by('titulo','asc')
+                ->get('pds_supervisor')
+                ;
+
+        return $query->result();
+    }
+
+    public function get_provincias()
+    {
+        $query = $this->db->select('id_province as id,province as titulo')
+            ->order_by('titulo','asc')
+            ->get('province')
+        ;
+
+        return $query->result();
+    }
+
     public function get_panelados_maestros_demoreal($tipo=NULL) {
 
             $sql = 'SELECT * FROM panelado

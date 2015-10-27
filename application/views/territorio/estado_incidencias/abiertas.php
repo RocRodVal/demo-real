@@ -90,20 +90,49 @@
                                 </select>
                             </div>
 
-                            <div class="col-lg-2">
-                                <label for="id_incidencia">Id. Incidencia: </label>
+                            <div class="col-lg-3">
+                                <label for="id_supervisor">Supervisor: </label>
+                                <select name="id_supervisor" id="id_supervisor" class="form-control input-sm">
+                                    <option value="" <?php echo ($id_supervisor==="") ? 'selected="selected"' : ''?>>Cualquiera</option>
+                                    <?php
+                                    foreach($supervisores as $supervisor)
+                                    {
+                                        $attr = ($supervisor->id === $id_supervisor) ? ' selected="selected" ' :'';
+                                        echo '<option value="'.$supervisor->id.'" '.$attr.'>'.$supervisor->titulo.'</option>';
+                                    }
+                                    ?>
+                                </select>
+                            </div>
+
+                            <div class="col-lg-3">
+                                <label for="id_provincia">Provincia: </label>
+                                <select name="id_provincia" id="id_provincia" class="form-control input-sm">
+                                    <option value="" <?php echo ($id_provincia ==="") ? 'selected="selected"' : ''?>>Cualquiera</option>
+                                    <?php
+                                    foreach($provincias as $provincia)
+                                    {
+                                        $attr = ($provincia->id === $id_provincia) ? ' selected="selected" ' :'';
+                                        echo '<option value="'.$provincia->id.'" '.$attr.'>'.$provincia->titulo.'</option>';
+                                    }
+                                    ?>
+                                </select>
+                            </div>
+
+                            <div class="col-lg-1">
+                                <label for="id_incidencia">Incidencia: </label>
                                 <input type="text" name="id_incidencia" id="id_incidencia" class="form-control input-sm" placeholder="Id. incidencia" <?php echo (!empty($id_incidencia)) ? ' value="'.$id_incidencia.'" ' : ''?> />
                             </div>
-                            <div class="col-lg-2">
+                            <div class="col-lg-1">
                                 <label for="reference">SFID: </label>
                                 <input type="text" name="reference" id="reference" class="form-control input-sm" placeholder="SFID" <?php echo (!empty($reference)) ? ' value="'.$reference.'" ' : ''?> />
                             </div>
-                            <div class="col-lg-2">
+                            <div class="col-lg-1">
                                 <div class="form-group">
                                     <input type="hidden" name="do_busqueda" value="si">
                                     <input type="submit" value="Buscar" id="submit_button" class="form-control input-sm">
                                     </div>
                             </div>
+                            <div class="clearfix"></div>
 
                         </form>
                     </div>
@@ -152,6 +181,9 @@
 
                                     <th>Última modificación</th>
                                     <th class="sorting" data-rel="incidencias.tipo_averia"    data-order="">Tipo incidencia</th>
+                                    <th class="sorting" data-rel="incidencias.supervisor"    data-order="">Supervisor</th>
+                                    <th class="sorting" data-rel="incidencias.provincia"    data-order="">Provincia</th>
+
 		                            <th                                                                     >Interv.</th>
 		                            <?php /*<th class="sorting" data-rel="incidencias.status"    data-order="">Estado SAT</th>*/?>
                                     <th class="sorting" data-rel="incidencias.status_pds"    data-order="">Estado PDS</th>
@@ -208,6 +240,9 @@
 
 
 		                                <td><?php echo $incidencia->tipo_averia ?></td>
+                                        <td><?php echo $incidencia->supervisor ?></td>
+                                        <td><?php echo $incidencia->provincia ?></td>
+
                                         <td>
 	                                        <?php if($incidencia->intervencion != NULL){?>
 	                                        <i onClick="showModalViewIntervencion(<?php echo $incidencia->intervencion ?>);" class="fa fa-eye"></i>

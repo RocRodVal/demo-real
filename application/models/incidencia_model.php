@@ -248,7 +248,7 @@ class Incidencia_model extends CI_Model {
 
         $agentes_excluidos  = rtrim($agentes_excluidos,",");
 
-        $this->db->select("incidencias.*,pds.reference as reference, device.brand_device as fabricante,
+        $this->db->select("incidencias.*,pds.reference as reference, pds_supervisor.titulo as supervisor, province.province as provincia, device.brand_device as fabricante,
                            territory.territory as territory,
                            (SELECT brand_device.brand from brand_device  WHERE id_brand_device = fabricante) as brand,
                            (SELECT COUNT(*)
@@ -266,7 +266,10 @@ class Incidencia_model extends CI_Model {
             ->join('device','devices_pds.id_device=device.id_device','left')
             ->join('territory','territory.id_territory=pds.territory','left')*/
 
+
             ->join('pds','incidencias.id_pds = pds.id_pds','left outer')
+            ->join('pds_supervisor','pds.id_supervisor= pds_supervisor.id','left')
+            ->join('province','pds.province= province.id_province','left')
             ->join('displays_pds','incidencias.id_displays_pds= displays_pds.id_displays_pds','left outer')
             ->join('display','displays_pds.id_display=display.id_display','left outer')
             ->join('devices_pds','incidencias.id_devices_pds=devices_pds.id_devices_pds','left outer')
@@ -292,6 +295,14 @@ class Incidencia_model extends CI_Model {
         if(isset($filtros["id_device"]) && !empty($filtros["id_device"])) {
             //$this->db->where('incidencias.fail_device','1');
             $this->db->where('device.id_device',$filtros['id_device']);
+        }
+        if(isset($filtros["id_supervisor"]) && !empty($filtros["id_supervisor"])) {
+            //$this->db->where('incidencias.fail_device','1');
+            $this->db->where('pds.id_supervisor',$filtros['id_supervisor']);
+        }
+        if(isset($filtros["id_provincia"]) && !empty($filtros["id_provincia"])) {
+            //$this->db->where('incidencias.fail_device','1');
+            $this->db->where('province.id_province',$filtros['id_provincia']);
         }
         if(isset($filtros["reference"]) && !empty($filtros["reference"])) $this->db->where('reference',$filtros['reference']);
 
@@ -336,7 +347,7 @@ class Incidencia_model extends CI_Model {
 
 
         // Array de títulos de campo para la exportación XLS/CSV
-        $arr_titulos = array('Id incidencia','SFID','Fecha','Elemento','Territorio','Fabricante','Mueble','Terminal','Tipo avería',
+        $arr_titulos = array('Id incidencia','SFID','Fecha','Elemento','Territorio','Fabricante','Mueble','Terminal','Supervisor','Provincia','Tipo avería',
             'Texto 1','Texto 2','Texto 3','Parte PDF','Denuncia','Foto 1','Foto 2','Foto 3','Contacto','Teléfono','Email',
             'Id. Operador','Intervención','Estado','Última modificación','Estado Sat');
         $excluir = array('fecha_cierre','fabr');
@@ -346,7 +357,7 @@ class Incidencia_model extends CI_Model {
         $array_accesos_excluidos = array("master","territorio","tienda");
         if(in_array($acceso,$array_accesos_excluidos)){ // En master, excluimos de la exportación los campos...
             // Array de títulos de campo para la exportación XLS/CSV
-            $arr_titulos = array('Id incidencia','SFID','Fecha','Elemento','Territorio','Fabricante','Mueble','Terminal','Tipo avería',
+            $arr_titulos = array('Id incidencia','SFID','Fecha','Elemento','Territorio','Fabricante','Mueble','Terminal','Supervisor','Provincia','Tipo avería',
                 'Texto 1','Texto 2','Texto 3','Parte PDF','Denuncia','Foto 1','Foto 2','Foto 3','Contacto','Teléfono','Email',
                 'Id. Operador','Intervención','Estado');
 
@@ -378,7 +389,10 @@ class Incidencia_model extends CI_Model {
                             ) as `Fabricante` ,';
 
         $sql .= 'display.display as mueble,
-                device.device as terminal,';
+                device.device as terminal,
+                pds_supervisor.titulo as supervisor,
+                province.province as provincia,
+                ';
 
         $sql .= 'incidencias.tipo_averia,';
 
@@ -425,6 +439,9 @@ class Incidencia_model extends CI_Model {
                 LEFT OUTER JOIN device ON devices_pds.id_device = device.id_device
                 LEFT OUTER JOIN type_device ON device.type_device = type_device.id_type_device
 
+                LEFT JOIN pds_supervisor ON pds.id_supervisor= pds_supervisor.id
+                LEFT JOIN province ON pds.province= province.id_province
+
                 LEFT OUTER JOIN pds ON incidencias.id_pds = pds.id_pds
                 LEFT OUTER JOIN territory ON territory.id_territory=pds.territory
                 LEFT OUTER JOIN brand_device ON device.brand_device = brand_device.id_brand_device
@@ -463,6 +480,15 @@ class Incidencia_model extends CI_Model {
            // $sql .= (' AND incidencias.fail_device=1');
             $sql .= (' AND device.id_device ="'.$filtros['id_device'].'" ');
         }
+        if(isset($filtros["id_supervisor"]) && !empty($filtros["id_supervisor"])) {
+            //$this->db->where('incidencias.fail_device','1');
+            $sql .= (' AND pds.id_supervisor ="'.$filtros['id_supervisor'].'" ');
+        }
+        if(isset($filtros["id_provincia"]) && !empty($filtros["id_provincia"])) {
+            //$this->db->where('incidencias.fail_device','1');
+            $sql .= ('  province.id_province ="'.$filtros['id_provincia'].'" ');
+        }
+
         if(isset($filtros["reference"]) && !empty($filtros["reference"])) $sql .=(' AND reference= '.$filtros['reference']);
 
         $campo_orden = $orden = NULL;
@@ -531,6 +557,8 @@ class Incidencia_model extends CI_Model {
 
         $this->db->select('COUNT(incidencias.id_incidencia) AS cantidad')
             ->join('pds','incidencias.id_pds = pds.id_pds','left outer')
+            ->join('pds_supervisor','pds.id_supervisor= pds_supervisor.id','left')
+            ->join('province','pds.province= province.id_province','left')
             ->join('displays_pds','incidencias.id_displays_pds= displays_pds.id_displays_pds','left outer')
             ->join('display','displays_pds.id_display=display.id_display','left outer')
             ->join('devices_pds','incidencias.id_devices_pds=devices_pds.id_devices_pds','left outer')
@@ -562,6 +590,15 @@ class Incidencia_model extends CI_Model {
             //$this->db->where('incidencias.fail_device','1');
             $this->db->where('device.brand_device',$filtros['brand_device']);
         }
+        if(isset($filtros["id_supervisor"]) && !empty($filtros["id_supervisor"])) {
+            //$this->db->where('incidencias.fail_device','1');
+            $this->db->where('pds.id_supervisor',$filtros['id_supervisor']);
+        }
+        if(isset($filtros["id_provincia"]) && !empty($filtros["id_provincia"])) {
+            //$this->db->where('incidencias.fail_device','1');
+            $this->db->where('province.id_province',$filtros['id_provincia']);
+        }
+
         if(isset($filtros["reference"]) && !empty($filtros["reference"])) $this->db->where('reference',$filtros['reference']);
 
 

@@ -417,7 +417,7 @@ class Ot extends CI_Controller {
                      *      Maestro del mueble
                      */
                     $devices = $this->tienda_model->get_devices_display($mueble_plano);
-                    $data['displays'] = $this->tienda_model->get_displays();
+                    $data['displays'] = $this->tienda_model->get_displays_demoreal();
                     $data['devices'] = $devices;
 
 
@@ -453,13 +453,13 @@ class Ot extends CI_Controller {
             $this->session->unset_userdata("sfid_plano");
             $this->session->unset_userdata("generado_planograma");
 
-            redirect("ot/informe_planogramas", "refresh");
+            redirect("ot/informes/planogramas/informe_planogramas", "refresh");
 
         }
 
 
             /** COMENTADO SELECT DEMOREAL $muebles = $this->tienda_model->get_displays_demoreal(); */
-            $muebles = $this->tienda_model->get_displays();
+            $muebles = $this->tienda_model->get_displays_demoreal();
             $data["muebles"] = $muebles;
 
         $data["vista"] = $vista;
@@ -476,20 +476,20 @@ class Ot extends CI_Controller {
             /////
         $this->load->view('master/header', $data);
         $this->load->view('ot/navbar', $data);
-        $this->load->view('ot/informe_planograma_form', $data);
+        $this->load->view('ot/informes/planogramas/informe_planograma_form', $data);
 
         switch ($vista) {
             case 1:
-                $this->load->view('ot/informe_planograma_mueble_sfid',$data);
+                $this->load->view('ot/informes/planogramas/informe_planograma_mueble_sfid',$data);
                 break;
             case 2:
-                $this->load->view('ot/informe_planograma_mueble', $data);
+                $this->load->view('ot/informes/planogramas/informe_planograma_mueble', $data);
                 break;
             case 3:
-                $this->load->view('ot/informe_planograma_sfid', $data);
+                $this->load->view('ot/informes/planogramas/informe_planograma_sfid', $data);
                 break;
             default:
-                $this->load->view('ot/informe_planograma', $data);
+                $this->load->view('ot/informes/planogramas/informe_planograma', $data);
 
         }
 
@@ -564,8 +564,8 @@ class Ot extends CI_Controller {
             /////
             $this->load->view('master/header',$data);
             $this->load->view('ot/navbar',$data);
-            $this->load->view('ot/informe_planograma_form',$data);
-            $this->load->view('ot/informe_planograma_ficha_mueble',$data);
+            $this->load->view('ot/informes/planogramas/informe_planograma_form',$data);
+            $this->load->view('ot/informes/planogramas/informe_planograma_ficha_mueble',$data);
             $this->load->view('master/footer');
         }
         else
@@ -647,8 +647,8 @@ class Ot extends CI_Controller {
             /////
         $this->load->view('master/header',$data);
         $this->load->view('ot/navbar',$data);
-        $this->load->view('ot/informe_planograma_form',$data);
-        $this->load->view('ot/informe_planograma_ficha_terminal',$data);
+        $this->load->view('ot/informes/planogramas/informe_planograma_form',$data);
+        $this->load->view('ot/informes/planogramas/informe_planograma_ficha_terminal',$data);
         $this->load->view('master/footer');
         }
         else
