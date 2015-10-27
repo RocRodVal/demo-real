@@ -1014,10 +1014,40 @@ class Master extends CI_Controller {
                 GROUP BY mes
             ");*/
 
-            $resultados_3 = $this->db->query("SELECT count(distinct (id_intervencion)) as cantidad, month(fecha) as mes FROM facturacion WHERE year(fecha) = '".$este_anio."'
-GROuP by mes");
+           /* $SQL = ' CREATE TEMPORARY TABLE estado_facturacion_temp AS(
+                   SELECT (COUNT(f.id_intervencion)) as cantidad, YEAR(f.fecha) as anio, MONTH(f.fecha) as mes
+                                                FROM facturacion f
+                                                LEFT JOIN intervenciones ON f.id_intervencion = intervenciones.id_intervencion
+                                                WHERE YEAR(f.fecha) = "'.$este_anio.'"
+                                                GROUP BY mes
+            )';*/
 
-            // CREAMOS UN ARRAY CON TODOS LOS MESES Y LO RELLENAMOS CON LOS RESULTADOS, SI NO EXISTE RESULTADO, ESE MES
+
+
+
+            //, COUNT(facturacion.id_incidencia) AS incidencias";"
+
+            $this->db->query(" DROP TABLE IF EXISTS facturacion_temp; ");
+            $this->db->query('
+                CREATE TEMPORARY TABLE facturacion_temp AS
+                (
+                    SELECT f.fecha as fecha, COUNT(f.id_incidencia) AS incidencias,  SUM(f.units_device) AS dispositivos, SUM(f.units_alarma) AS otros
+                    FROM facturacion f
+                    LEFT JOIN intervenciones ON  f.id_intervencion = intervenciones.id_intervencion
+                    WHERE YEAR(f.fecha) = "'.$este_anio.'"
+                    GROUP BY f.id_intervencion
+                );
+            ');
+
+
+            $resultados_3 = $this->db->query('SELECT COUNT(*) as cantidad, YEAR(f.fecha) as anio, MONTH(f.fecha) as mes
+                                                FROM facturacion_temp f
+                                                GROUP BY mes');
+
+
+
+
+            // CREAMOS UN ARRAY CON TODOS LOS MESES Y LO RELLENAMOS CON LOS RESULTADOS, SI NO                                                                                                                                                                                                                      EXISTE RESULTADO, ESE MES
             // SERA DE CANTIDAD 0
             $intervenciones_anio = array();
             foreach($meses_columna as $num_mes=>$mes)
@@ -1119,10 +1149,20 @@ GROuP by mes");
                 GROUP BY anio, mes
             ");*/
 
-            $resultados_6 = $this->db->query("SELECT COUNT('id_incidencia') as cantidad,
+            //$resultados_3 = $this->db->query("SELECT count(distinct (id_intervencion)) as cantidad, month(fecha) as mes FROM facturacion WHERE year(fecha) = '".$este_anio."' GROuP by mes");
+
+            // TABLA TEMPORAL
+
+
+
+            $resultados_6 = $this->db->query('SELECT SUM(incidencias) as cantidad, YEAR(f.fecha) as anio, MONTH(f.fecha) as mes
+                                                FROM facturacion_temp f
+                                                GROUP BY mes');
+
+            /*$resultados_6 = $this->db->query("SELECT COUNT('id_incidencia') as cantidad,
                                                 MONTH(fecha) as mes, YEAR(fecha) as anio
                                                 FROM facturacion WHERE YEAR(fecha) = '".$este_anio."'
-                                                GROUP BY  anio, mes");
+                                                GROUP BY  anio, mes");*/
 
             // CREAMOS UN ARRAY CON TODOS LOS MESES Y LO RELLENAMOS CON LOS RESULTADOS, SI NO EXISTE RESULTADO, ESE MES
             // SERA DE CANTIDAD 0
