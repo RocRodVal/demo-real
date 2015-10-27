@@ -322,7 +322,7 @@ class Informe_model extends CI_Model
 
 
         // Array de títulos y exclusiones de campo para la exportación XLS/CSV
-        $arr_titulos = array('SFID','Tipo','Panelado','Territorio','Nombre','Tipo Vía','Dirección','CP','Localidad','Provincia');
+        $arr_titulos = array('SFID','Tipo','Subtipo','Segmento','Tipología','Territorio','Nombre','Tipo Vía','Dirección','CP','Localidad','Provincia');
         $excluir = array('territory','panelado_pds','type_via','');
 
 
