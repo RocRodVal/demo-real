@@ -174,7 +174,7 @@ class Informe_model extends CI_Model
             "commercial",
             "pds.type_via as type_via",
             "type_via.via as tipo_via",
-            "address", "zip", "city");
+            "address", "zip", "city","province.province as provincia");
 
         $aQuery["table"] = " pds ";
         $aQuery["joins"] = array();
@@ -189,6 +189,7 @@ class Informe_model extends CI_Model
 
         $aQuery["joins"]["territory"] = "territory.id_territory=pds.territory";
         $aQuery["joins"]["type_via"] = "type_via.id_type_via = pds.type_via";
+        $aQuery["joins"]["province"] = "province.id_province = pds.province";
 
 
         if(!is_null($id_display)){
@@ -307,6 +308,9 @@ class Informe_model extends CI_Model
         echo $resp;
     }
 
+
+
+
     public function exportar_informe_pdv($data,$formato="csv")
     {
 
@@ -318,7 +322,7 @@ class Informe_model extends CI_Model
 
 
         // Array de títulos y exclusiones de campo para la exportación XLS/CSV
-        $arr_titulos = array('SFID','Tipo','Panelado','Territorio','Nombre','Tipo Vía','Dirección','CP','Localidad');
+        $arr_titulos = array('SFID','Tipo','Panelado','Territorio','Nombre','Tipo Vía','Dirección','CP','Localidad','Provincia');
         $excluir = array('territory','panelado_pds','type_via','');
 
 

@@ -773,7 +773,7 @@ class Master extends CI_Controller {
             // Rango de meses que mostrarán las columnas de la tabla, basándome en el mínimo y máximo mes que hay incidencias, este año.
             $rango_meses = $this->db->query("SELECT MONTH(MIN(fecha)) as min, MONTH(MAX(fecha)) as max FROM incidencias WHERE YEAR(fecha)='$este_anio'")->row();
 
-            $ctrl_no_cancelada = " AND status_pds != 'Cancelada' "; // Condición where de contrl de incidencias NO CANCELADAS
+            $ctrl_no_cancelada = " AND (status_pds != 'Cancelada' && status != 'Cancelada') "; // Condición where de contrl de incidencias NO CANCELADAS
 
 
             // Sacamos
@@ -813,7 +813,7 @@ class Master extends CI_Controller {
             {
                 $total_incidencias_total += $value->total_incidencias;
 
-                $dias_op = contar_dias_excepto($value->mes,$value->anio,array('Sun'),date('d'));
+                $dias_op = contar_dias_excepto($value->mes,$value->anio,array('Sun','Sat'),date('d'));
                 if($dias_op <= 0) $dias_op = 1;
                 $dias_operativos[] = $dias_op;
                 $total_dias_operativos += $dias_op;
@@ -834,8 +834,9 @@ class Master extends CI_Controller {
 								MONTH(incidencias.fecha) AS mes,
 								COUNT(*) AS total_incidencias
 								FROM incidencias
-								WHERE
-								YEAR(incidencias.fecha) ='".$este_anio."'
+								WHERE 1=1
+								 $ctrl_no_cancelada
+								AND YEAR(incidencias.fecha) ='".$este_anio."'
 								GROUP BY status_pds, anio, mes
 								ORDER BY status_pds ASC, mes ASC
 								 ")->result();
@@ -853,6 +854,7 @@ class Master extends CI_Controller {
             $titulo_incidencias_estado = $this->db->query("
                                 SELECT title as estado
 								FROM type_status_pds
+								WHERE title != 'Cancelada'
 								ORDER BY id_status_pds ASC
 								 ")->result();
 
@@ -903,24 +905,25 @@ class Master extends CI_Controller {
                                             i.fecha_cierre,  h.status_pds, h.status
                                             FROM historico h
                                             JOIN incidencias i ON h.id_incidencia = i.id_incidencia
-                                            WHERE 	YEAR(i.fecha) = '".$este_anio."' AND
-                                                    (
-                                                        (h.status_pds = 'En proceso' || i.status_pds = 'Finalizada')
-                                                    )
+                                            WHERE 	YEAR(i.fecha) = '".$este_anio."'
+                                                AND ( h.status_pds != 'Cancelada' && i.status_pds != 'Cancelada')
+                                                AND ( h.status_pds = 'En proceso' || i.status_pds = 'Finalizada')
                                             GROUP BY id_incidencia
                                     );
             ");
 
+            //$this->db->query(" UPDATE historico_temp SET fecha_proceso =  DATE_ADD(fecha_entrada, INTERVAL 2 day) WHERE DATEDIFF(fecha_proceso,fecha_entrada) < 0; ");
+
             $sql = "
             SELECT COUNT(id_incidencia)  as cantidad, YEAR(fecha_entrada) as anio, MONTH(fecha_entrada) as mes FROM historico_temp
-            WHERE workdaydiff(fecha_proceso,fecha_cierre) < 3
+            WHERE (workdaydiff(fecha_proceso,fecha_cierre)) < 3
             GROUP BY anio, mes;
             ";
             $menos_72 = $this->db->query($sql)->result();
 
             $mas_72 = $this->db->query(                "
                    SELECT COUNT(id_incidencia) as cantidad, YEAR(fecha_entrada) as anio, MONTH(fecha_entrada) as mes FROM historico_temp
-                    WHERE workdaydiff(fecha_proceso,fecha_cierre) >= 3
+                    WHERE (workdaydiff(fecha_proceso,fecha_cierre)) >= 3
                     GROUP BY anio, mes;")->result();
 
 

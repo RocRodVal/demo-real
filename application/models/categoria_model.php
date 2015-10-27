@@ -39,12 +39,12 @@ class Categoria_Model extends CI_Model
         $unico = false;
         if(!empty($id_tipo) && !is_null($id_tipo))
         {
-            $query = $this->db->where(' id_tipo = "'.$id_tipo.'" ');
+            $query = $this->db->where('id',$id_tipo);
             $unico = true;
         }
         $query = $this->db->get('pds_tipo');
 
-        return (($unico) ? $query->array_row() : $query->result_array());
+        return (($unico) ? $query->row_array() : $query->result_array());
     }
     /**
      * Devuelve un array de SUBTIPOS de PDS.
@@ -105,6 +105,20 @@ class Categoria_Model extends CI_Model
         return $query->result_array();
     }
 
+
+
+    public function get_displays_categoria($id_tipo,$id_subtipo,$id_segmento,$id_tipologia)
+    {
+        $query = $this->db->select ('displays_categoria.*, display.display')
+                ->join('display','displays_categoria.id_display = display.id_display')
+                ->where('id_tipo',$id_tipo)
+                ->where('id_tipo',$id_subtipo)
+                ->where('id_tipo',$id_segmento)
+                ->where('id_tipo',$id_tipologia)
+                ->get('displays_categoria');
+
+        return $query->result();
+    }
 
     /**
      * Insertar una categoría

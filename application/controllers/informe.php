@@ -198,6 +198,47 @@ class Informe extends CI_Controller {
         echo $resp;
     }
 
+
+    public function subtipos_tienda($id_tipo, $id_subtipo=NULL)
+    {
+        /* Incluir los modelos */
+        $xcrud = xcrud_get_instance();
+        $this->load->model('sfid_model');
+        $this->load->model('tienda_model');
+        $this->load->model('categoria_model');
+
+
+        $subtipos = $this->categoria_model->get_subtipos_pds($id_tipo);
+
+        $resp = '<option value="" selected="selected">Escoge el subtipo...</option>';
+        foreach($subtipos as $subtipo){
+            $s_selected = (!is_null($id_subtipo) && $id_subtipo == $subtipo["id"]) ? ' selected="selected" ' : '';
+            $resp .= '<option value="'.$subtipo["id"].'" '.$s_selected.'>'.$subtipo["titulo"].'</option>';
+        }
+        echo $resp;
+    }
+
+
+    public function tipologias_tienda($id_subtipo, $id_tipologia=NULL)
+    {
+        /* Incluir los modelos */
+        $xcrud = xcrud_get_instance();
+        $this->load->model('sfid_model');
+        $this->load->model('tienda_model');
+        $this->load->model('categoria_model');
+
+
+        $tipologias = $this->categoria_model->get_tipologias_pds($id_tipologia,$id_subtipo);
+
+        $resp = '<option value="" selected="selected">Escoge la tipología...</option>';
+        foreach($tipologias as $tipologia){
+            $s_selected = (!is_null($id_tipologia) && $id_tipologia == $tipologia["id"]) ? ' selected="selected" ' : '';
+            $resp .= '<option value="'.$tipologia["id"].'" '.$s_selected.'>'.$tipologia["titulo"].'</option>';
+        }
+        echo $resp;
+    }
+
+
 }
 /* End of file admin.php */
 /* Location: ./application/controllers/admin.php */

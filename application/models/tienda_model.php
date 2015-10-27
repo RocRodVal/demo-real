@@ -992,14 +992,19 @@ class Tienda_model extends CI_Model {
 
 
     public function get_displays_demoreal() {
-        $query = $this->db->query('
+        /*$query = $this->db->query('
                     SELECT *
                     FROM display d
                     WHERE (
                       SELECT COUNT(id_devices_pds) FROM devices_pds p
                       WHERE p.id_display = d.id_display
                       AND p.status = "Alta"
-                    ) >= 1 ORDER BY display');
+                    ) >= 1 ORDER BY display');*/
+
+        $query = $this->db->query('
+                    SELECT *
+                    FROM display d
+                    WHERE positions > 0 AND status="Alta" ORDER BY display');
 
 
         return $query->result();

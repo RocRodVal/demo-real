@@ -3083,7 +3083,7 @@ class Admin extends CI_Controller
         $id_display = $this->input->post('id_display');
         $devices = $this->tienda_model->get_devices_display($id_display);
 
-        $data['displays'] = $this->tienda_model->get_displays();
+        //$data['displays'] = $this->tienda_model->get_displays();
         $data['displays'] = $this->tienda_model->get_displays_demoreal();
         $data['devices'] = $devices;
 
@@ -4237,63 +4237,7 @@ class Admin extends CI_Controller
 
 
 
-    public function informe_pdv_OLD()
-    {
-
-        if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
-            $xcrud = xcrud_get_instance();
-            $this->load->model('sfid_model');
-            $this->load->model('tienda_model');
-            $this->load->model('informe_model');
-
-            $data["title"] = "Informe de Puntos de Venta";
-
-
-            $resultados = array();
-
-
-            $data["generado"] = FALSE;
-
-            $data["resultados"] = $resultados;
-
-
-            /** COMENTADO SELECT DEMOREAL $data["tipos_tienda"] = $this->sfid_model->get_types_pds_demoreal(); */
-            $data["tipos_tienda"] = $this->sfid_model->get_types_pds();
-            /** COMENTADO SELECT DEMOREAL $panelados = $this->tienda_model->get_panelados_maestros_demoreal(); */
-            $data["panelados"] = $this->tienda_model->get_panelados_maestros();
-            /** COMENTADO SELECT DEMOREAL $muebles = $this->tienda_model->get_displays_demoreal(); */
-            $data["muebles"] = $this->tienda_model->get_displays_demoreal();
-            /** COMENTADO SELECT DEMOREAL $terminales = $this->tienda_model->get_devices_demoreal(); */
-            //$data["terminales"] = $this->tienda_model->get_devices();
-
-            $data["terminales"] = $this->tienda_model->get_devices_demoreal();
-            /* LISTADO DE TERRITORIOS PARA EL SELECT */
-            $data["territorios"] = $this->tienda_model->get_territorios();
-            /* LISTADO DE FABRICANTES PARA EL SELECT */
-            $data["fabricantes"] = $this->tienda_model->get_fabricantes();
-
-
-            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
-            $this->data->add($data);
-            $data = $this->data->getData();
-            /////
-            $this->load->view('backend/header', $data);
-            $this->load->view('backend/navbar', $data);
-            $this->load->view('backend/informes/informe_puntos_venta_form', $data);
-            $this->load->view('backend/informes/informe_puntos_venta', $data);
-            $this->load->view('backend/footer');
-        }
-        else
-        {
-            redirect('admin','refresh');
-        }
-    }
-
-
-
-
-
-    public function informe_pdv()
+     public function informe_pdv()
     {
 
         if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
@@ -4314,14 +4258,8 @@ class Admin extends CI_Controller
             $data["resultados"] = $resultados;
 
 
-            /*// COMENTADO SELECT DEMOREAL $data["tipos_tienda"] = $this->sfid_model->get_types_pds_demoreal();
-            $data["tipos_tienda"] = $this->sfid_model->get_types_pds();
-            // COMENTADO SELECT DEMOREAL $panelados = $this->tienda_model->get_panelados_maestros_demoreal();
-            $data["panelados"] = $this->tienda_model->get_panelados_maestros();*/
-            // COMENTADO SELECT DEMOREAL $muebles = $this->tienda_model->get_displays_demoreal();
             $data["muebles"] = $this->tienda_model->get_displays_demoreal();
-            // COMENTADO SELECT DEMOREAL $terminales = $this->tienda_model->get_devices_demoreal();
-            //$data["terminales"] = $this->tienda_model->get_devices();
+
 
             $data["pds_tipos"] = $this->categoria_model->get_tipos_pds();
             $data["pds_subtipos"] = $this->categoria_model->get_subtipos_pds();
@@ -4342,152 +4280,13 @@ class Admin extends CI_Controller
             /////
             $this->load->view('backend/header', $data);
             $this->load->view('backend/navbar', $data);
-            $this->load->view('backend/informes/bloom/informe_puntos_venta_form', $data);
-            $this->load->view('backend/informes/bloom/informe_puntos_venta', $data);
+            $this->load->view('backend/informes/bloom/pdv/informe_puntos_venta_form', $data);
+            $this->load->view('backend/informes/bloom/pdv/informe_puntos_venta', $data);
             $this->load->view('backend/footer');
         }
         else
         {
             redirect('admin','refresh');
-        }
-    }
-
-
-
-    /**
-     * Método que se llama por AJAX desde el Informe PDV, al añadir o quitar un elemento del multifiltro.
-     */
-    public function resultado_pdv_OLD($exportar = NULL,$formato=NULL)
-    {
-        if($this->auth->is_auth()) {
-            $xcrud = xcrud_get_instance();
-
-            $this->load->model('informe_model');
-
-            $ext = (!is_null($formato) ? $formato : $this->ext);    // Formato para exportaciones, especficiado o desde CFG
-
-            $arr_campos = array(
-                "tipo_tienda" => '',
-                "panelado" => '',
-                "id_display" => '',
-                "id_device" => '',
-                "territory" => '',
-                "brand_device" => ''
-            );
-
-            foreach ($arr_campos as $campo => $valor) {
-                $$campo = $valor;
-                $data[$campo] = $valor;
-            }
-
-            $campo_orden = NULL;
-            $ordenacion = NULL;
-
-            $total_registros = 0;
-
-            $controlador_origen = "admin"; //  Controlador por defecto
-
-
-            if ($this->input->post("generar_informe") === "si") {
-
-
-                $controlador_origen = $this->input->post("controlador");
-                $data["controlador"] = $controlador_origen;
-
-                $campos_sess_informe = array();
-                // TIPO TIENDA
-                $tipo_tienda = array();
-                $campos_sess_informe["tipo_tienda"] = NULL;
-                if (is_array($this->input->post("tipo_tienda_multi"))) {
-                    foreach ($this->input->post("tipo_tienda_multi") as $tt) $tipo_tienda[] = $tt;
-                    $campos_sess_informe["tipo_tienda"] = $tipo_tienda;
-                }
-
-                // PANELADO
-                $panelado = array();
-                $campos_sess_informe["panelado"] = NULL;
-                if (is_array($this->input->post("panelado_multi"))) {
-                    foreach ($this->input->post("panelado_multi") as $tt) $panelado[] = $tt;
-                    $campos_sess_informe["panelado"] = $panelado;
-                }
-                // MUEBLE
-                $id_display = array();
-                $campos_sess_informe["id_display"] = NULL;
-                if (is_array($this->input->post("id_display_multi"))) {
-                    foreach ($this->input->post("id_display_multi") as $tt) $id_display[] = $tt;
-                    $campos_sess_informe["id_display"] = $id_display;
-                }
-                // DEVICE
-                $id_device = array();
-                $campos_sess_informe["id_device"] = NULL;
-                if (is_array($this->input->post("id_device_multi"))) {
-                    foreach ($this->input->post("id_device_multi") as $tt) $id_device[] = $tt;
-                    $campos_sess_informe["id_device"] = $id_device;
-                }
-
-
-                // TERRITORY
-                $territory = array();
-                $campos_sess_informe["territory"] = NULL;
-                if (is_array($this->input->post("territory_multi"))) {
-                    foreach ($this->input->post("territory_multi") as $tt) $territory[] = $tt;
-                    $campos_sess_informe["territory"] = $territory;
-                }
-
-                // DEVICE BRAND
-                $brand_device = array();
-                $campos_sess_informe["brand_device"] = NULL;
-                if (is_array($this->input->post("brand_device_multi"))) {
-                    foreach ($this->input->post("brand_device_multi") as $tt) $brand_device[] = $tt;
-                    $campos_sess_informe["brand_device"] = $brand_device;
-                }
-
-
-                // Guardamos en la sesión el objeto $campos_sess_informe
-                $this->session->set_userdata("campos_sess",$campos_sess_informe);
-                $this->session->set_userdata("generado",TRUE);
-
-                $data["tipo_tienda"] = $tipo_tienda;
-                $data["panelado"] = $panelado;
-                $data["id_display"] = $id_display;
-                $data["id_device"] = $id_device;
-                $data["territory"] = $territory;
-                $data["brand_device"] = $brand_device;
-
-                $data["generado"] = TRUE;
-                $data["controlador"] = $this->uri->segment(1);
-
-            }
-
-
-            // Recuperar de la sesion
-            if($this->session->userdata("generado"))
-            {
-                foreach($this->session->userdata("campos_sess") as $nombre_var=>$valores)
-                {
-                   $$nombre_var = $valores;             // Creamos variable al vuelo..
-                    $data[$nombre_var] = $valores;      // Guardamos los mismos valores para la variable de la vista.
-                }
-            }
-
-
-            if(is_null($exportar))
-            {
-                $resultados = $this->informe_model->get_informe_pdv($data);
-                $data["total_registros"] = count($resultados);
-                $data["resultados"] = $resultados;
-
-                $resp = $this->load->view('backend/informes/informe_puntos_venta_ajax', $data, TRUE);
-                echo $resp;
-
-            }
-            // Informe CSV
-            else
-            {
-
-                $this->informe_model->exportar_informe_pdv($data,$ext);
-            }
-
         }
     }
 
@@ -4640,7 +4439,7 @@ class Admin extends CI_Controller
                 $data["total_registros"] = count($resultados);
                 $data["resultados"] = $resultados;
 
-                $resp = $this->load->view('backend/informes/bloom/informe_puntos_venta_ajax', $data, TRUE);
+                $resp = $this->load->view('backend/informes/bloom/pdv/informe_puntos_venta_ajax', $data, TRUE);
                 echo $resp;
 
             }
@@ -5180,11 +4979,16 @@ class Admin extends CI_Controller
             $this->load->model('sfid_model');
             $this->load->model('tienda_model');
             $this->load->model('informe_model');
+            $this->load->model('categoria_model');
 
-            $tipo_tienda_visual = "";
-            $panelado_visual = "";
+            $id_tipo_visual = NULL;
+            $id_subtipo_visual = NULL;
+            $id_segmento_visual = NULL;
+            $id_tipologia_visual = NULL;
+
             $sfid_visual = "";
             $generado_visual = FALSE;
+            $vista = NULL;
 
             $data["title"] = "Informe Visual";
 
@@ -5193,8 +4997,12 @@ class Admin extends CI_Controller
             $get_page = $this->uri->segment(3);
 
             if ($get_page === "reset") {
-                $this->session->unset_userdata("tipo_tienda_visual");
-                $this->session->unset_userdata("panelado_visual");
+                $this->session->unset_userdata("id_tipo_visual");
+                $this->session->unset_userdata("id_subtipo_visual");
+                $this->session->unset_userdata("id_segmento_visual");
+                $this->session->unset_userdata("id_tipologia_visual");
+
+
                 $this->session->unset_userdata("sfid_visual");
                 $this->session->unset_userdata("generado_visual");
                 redirect("admin/informe_visual", "refresh");
@@ -5202,126 +5010,131 @@ class Admin extends CI_Controller
 
 
             if ($this->input->post("generar_informe") === "si") {
-                $tipo_tienda_visual = $this->input->post("tipo_tienda_visual");
-                $panelado_visual = $this->input->post("panelado_visual");
-                $sfid_visual = $this->input->post("sfid_visual");
 
-                $data["tipo_tienda_visual"] = $tipo_tienda_visual;
-                $data["panelado_visual"] = $panelado_visual;
-                $data["sfid_visual"] = $sfid_visual;
-                $data["generado_visual"] = TRUE;
-                $this->session->set_userdata($data);
+                $id_tipo_visual = $this->input->post("id_tipo_visual");
+                $id_subtipo_visual = $this->input->post("id_subtipo_visual");
+                $id_segmento_visual = $this->input->post("id_segmento_visual");
+                $id_tipologia_visual = $this->input->post("id_tipologia_visual");
+
+                $sfid_visual = $this->input->post("sfid_visual");
+                $generado_visual = TRUE;
 
             } else {
                 // OBTENER DE LA SESION, SI EXISTE
                 if ($this->session->userdata("generado_visual") !== NULL && $this->session->userdata("generado_visual") === TRUE) {
-                    $tipo_tienda_visual = $this->session->userdata("tipo_tienda_visual");
-                    $panelado_visual = $this->session->userdata("panelado_visual");
+
+                    $id_tipo_visual = $this->session->userdata("id_tipo_visual");
+                    $id_subtipo_visual = $this->session->userdata("id_subtipo_visual");
+                    $id_segmento_visual = $this->session->userdata("id_segmento_visual");
+                    $id_tipologia_visual = $this->session->userdata("id_tipologia_visual");
+
                     $sfid_visual = $this->session->userdata("sfid_visual");
                     $generado_visual = $this->session->userdata("generado_visual");
-
                 }
-
-                $data["tipo_tienda_visual"] = $tipo_tienda_visual;
-                $data["panelado_visual"] = $panelado_visual;
-                $data["sfid_visual"] = $sfid_visual;
-                $data["generado_visual"] = $generado_visual;
-                $this->session->set_userdata($data);
             }
+
+            $data["id_tipo_visual"] = $id_tipo_visual;
+            $data["id_subtipo_visual"] = $id_subtipo_visual;
+            $data["id_segmento_visual"] = $id_segmento_visual;
+            $data["id_tipologia_visual"] = $id_tipologia_visual;
+
+            $data["sfid_visual"] = $sfid_visual;
+            $data["generado_visual"] = $generado_visual;
+
+            $this->session->set_userdata($data);
 
 
 
 
             /* Obtener los tipos de tienda para el select */
             /** COMENTADO SELECT DEMOREAL $muebles = $this->tienda_model->get_displays_demoreal(); */
-            $muebles = $this->tienda_model->get_displays();
+            $muebles = $this->tienda_model->get_displays_demoreal();
             $data["muebles"] = $muebles;
 
             /** COMENTADO SELECT DEMOREAL $data["tipos_tienda"] = $this->sfid_model->get_types_pds_demoreal(); */
-            $data["tipos_tienda"] = $this->sfid_model->get_types_pds();
+            $data["tipos"] = $this->categoria_model->get_tipos_pds();
+            $data["subtipos"] = array();
+            $data["segmentos"] = $this->categoria_model->get_segmentos_pds($id_segmento_visual);
+            $data["tipologias"] = array();
 
 
 
             $data["subtitle"] = "";
             $data["error_panelado"] = FALSE;
 
-            if(empty($sfid_visual) && !empty($tipo_tienda_visual) && empty($panelado_visual)){
-                // Validación de panelado escogido, cuando no se ha escogido SFID pero se ha escogido un tipo de tienda
-                // sin escoger un panelado
-                $vista = 0;
-                $data["error_panelado"] = TRUE;
-
-            }elseif(!empty($panelado_visual) && empty($sfid_visual)){
-                // Cargar muebles del panelado maestro escogido
-
-                /*
-                     *  Panelado de la tienda
-                     */
-                $displays = $this->tienda_model->get_displays_panelado_maestros($panelado_visual);
-                $o_panelado =  $this->tienda_model->get_panelado_maestro($panelado_visual);
-
-                foreach ($displays as $key => $display) {
-                    $num_devices = $this->tienda_model->count_devices_display($display->id_display);
-                    $display->devices_count = $num_devices;
-                }
-
-                $data['displays'] = $displays;
-
-                $data['subtitle'] = 'Panelado genérico: ' . $o_panelado->panelado. '';
 
 
+            if($generado_visual) {
 
 
-                $vista = 2;
-            }elseif(!empty($sfid_visual)){
-                // Cargar panelado del sfid.
-                /*
-                    *  Panelado de la tienda
-                    */
-                $tiendas = $this->tienda_model->search_pds($sfid_visual);
+                if (empty($sfid_visual)) {
+                    if (empty($id_tipo_visual) || empty($id_subtipo_visual) || empty($id_segmento_visual) || empty($id_tipologia_visual)) {
+                        // Validación de los 4 campos de categorización, que son obligatorios.
+                        $vista = 0;
+                        $data["error_panelado"] = TRUE;
+                    } else {
+                        // Cargar muebles del panelado maestro escogido
+                        /*
+                         *  Panelado de la categoría
+                         */
+                        $displays = $this->categoria_model->get_displays_categoria($id_tipo_visual,$id_subtipo_visual,$id_segmento_visual,$id_tipologia_visual);
 
+                        //$o_panelado = $this->tienda_model->get_panelado_maestro($panelado_visual);
 
+                        foreach ($displays as $key => $display) {
+                            $num_devices = $this->tienda_model->count_devices_display($display->id_display);
+                            $display->devices_count = $num_devices;
+                        }
 
-                if (!empty($tiendas) && count($tiendas) == 1) {
-
-                    $tienda = NULL;
-                    foreach ($tiendas as $tienda_1) {
-                        $tienda = $tienda_1;
+                        $data['displays'] = $displays;
+                        $data['subtitle'] = 'Tipo de tienda';
+                        $vista = 2;
                     }
 
+                } else {
+                    // Cargar panelado del sfid.
+                    /*
+                        *  Panelado de la tienda
+                        */
+                    $tiendas = $this->tienda_model->search_pds($sfid_visual);
 
-                    $id_pds = $tienda->id_pds;
 
-                    $sfid = $this->tienda_model->get_pds($id_pds);
+                    if (!empty($tiendas) && count($tiendas) == 1) {
 
-                    $data['id_pds'] = 'ABX/PDS-' . $sfid['id_pds'];
-                    $data['commercial'] = $sfid['commercial'];
-                    $data['territory'] = $sfid['territory'];
-                    $data['reference'] = $sfid['reference'];
-                    $data['address'] = $sfid['address'];
-                    $data['zip'] = $sfid['zip'];
-                    $data['city'] = $sfid['city'];
-                    $data['id_pds_url'] = $id_pds;
+                        $tienda = NULL;
+                        foreach ($tiendas as $tienda_1) {
+                            $tienda = $tienda_1;
+                        }
 
-                    $displays = $this->sfid_model->get_displays_pds($id_pds);
 
-                    foreach ($displays as $key => $display) {
-                        $num_devices = $this->tienda_model->count_devices_display($display->id_display);
-                        $display->devices_count = $num_devices;
+                        $id_pds = $tienda->id_pds;
+
+                        $sfid = $this->tienda_model->get_pds($id_pds);
+
+                        $data['id_pds'] = 'ABX/PDS-' . $sfid['id_pds'];
+                        $data['commercial'] = $sfid['commercial'];
+                        $data['territory'] = $sfid['territory'];
+                        $data['reference'] = $sfid['reference'];
+                        $data['address'] = $sfid['address'];
+                        $data['zip'] = $sfid['zip'];
+                        $data['city'] = $sfid['city'];
+                        $data['id_pds_url'] = $id_pds;
+
+                        $displays = $this->sfid_model->get_displays_pds($id_pds);
+
+                        foreach ($displays as $key => $display) {
+                            $num_devices = $this->tienda_model->count_devices_display($display->id_display);
+                            $display->devices_count = $num_devices;
+                        }
+
+                        $data['displays'] = $displays;
+
+                        $data['subtitle'] = 'Panelado tienda: SFID-' . $sfid_visual . '';
+
                     }
-
-                    $data['displays'] = $displays;
-
-                    $data['subtitle'] = 'Panelado tienda: SFID-' . $sfid_visual. '';
-
+                    $vista = 1;
                 }
-                $vista = 1;
-            }else{
-                // Debe escoger algun valor, form vacio
-                $vista = 0;
             }
-
-
 
 
 
@@ -5334,17 +5147,17 @@ class Admin extends CI_Controller
             /////
             $this->load->view('backend/header', $data);
             $this->load->view('backend/navbar', $data);
-            $this->load->view('backend/informes/informe_visual_form', $data);
+            $this->load->view('backend/informes/bloom/visual/informe_visual_form', $data);
 
             switch ($vista) {
                 case 2 :
-                    $this->load->view('backend/informes/informe_visual_panelado',$data);
+                    $this->load->view('backend/informes/bloom/visual/informe_visual_panelado',$data);
                     break;
                 case 1 :
-                    $this->load->view('backend/informes/informe_visual_sfid', $data);
+                    $this->load->view('backend/informes/bloom/visual/informe_visual_sfid', $data);
                     break;
                 default:
-                    $this->load->view('backend/informes/informe_visual', $data);
+                    $this->load->view('backend/informes/bloom/visual/informe_visual', $data);
 
             }
 
@@ -5419,8 +5232,8 @@ class Admin extends CI_Controller
             /////
             $this->load->view('backend/header',$data);
             $this->load->view('backend/navbar',$data);
-            $this->load->view('backend/informes/informe_visual_form',$data);
-            $this->load->view('backend/informes/informe_visual_maestro_mueble',$data);
+            $this->load->view('backend/informes/bloom/visual/informe_visual_form',$data);
+            $this->load->view('backend/informes/bloom/visual/informe_visual_maestro_mueble',$data);
             $this->load->view('backend/footer');
         }
         else
@@ -5494,8 +5307,8 @@ class Admin extends CI_Controller
             /////
             $this->load->view('backend/header', $data);
             $this->load->view('backend/navbar', $data);
-            $this->load->view('backend/informes/informe_visual_form', $data);
-            $this->load->view('backend/informes/informe_visual_terminal', $data);
+            $this->load->view('backend/informes/bloom/visual/informe_visual_form', $data);
+            $this->load->view('backend/informes/bloom/visual/informe_visual_terminal', $data);
             $this->load->view('backend/footer');
         } else {
             redirect('admin', 'refresh');
@@ -5570,8 +5383,8 @@ class Admin extends CI_Controller
             /////
             $this->load->view('backend/header',$data);
             $this->load->view('backend/navbar',$data);
-            $this->load->view('backend/informes/informe_visual_form',$data);
-            $this->load->view('backend/informes/informe_visual_mueble_sfid',$data);
+            $this->load->view('backend/informes/bloom/visual/informe_visual_form',$data);
+            $this->load->view('backend/informes/bloom/visual/informe_visual_mueble_sfid',$data);
             $this->load->view('backend/footer');
         }
         else
@@ -5659,8 +5472,8 @@ class Admin extends CI_Controller
             /////
             $this->load->view('backend/header',$data);
             $this->load->view('backend/navbar',$data);
-            $this->load->view('backend/informes/informe_visual_form',$data);
-            $this->load->view('backend/informes/informe_visual_ficha_terminal',$data);
+            $this->load->view('backend/informes/bloom/visual/informe_visual_form',$data);
+            $this->load->view('backend/informes/bloom/visual/informe_visual_ficha_terminal',$data);
             $this->load->view('backend/footer');
         }
         else
