@@ -345,8 +345,6 @@ class Territorio extends CI_Controller {
             $data["terminales"] = $this->tienda_model->get_terminales();
 
             $data["supervisores"] = $this->tienda_model->get_supervisores();
-
-
             $data["provincias"] = $this->tienda_model->get_provincias();
 
 

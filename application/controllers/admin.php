@@ -268,6 +268,10 @@ class Admin extends CI_Controller
                 'brand_device' => '',
                 'id_display'=>'',
                 'id_device'=>'',
+
+                'id_supervisor' => '',
+                'id_provincia' => '',
+
                 'id_incidencia' => '',
                 'reference' => ''
             );
@@ -366,6 +370,9 @@ class Admin extends CI_Controller
             $data["terminales"] = $this->tienda_model->get_terminales();
 
 
+            $data["supervisores"] = $this->tienda_model->get_supervisores();
+            $data["provincias"] = $this->tienda_model->get_provincias();
+
             /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
             $this->data->add($data);
             $data = $this->data->getData();
@@ -400,6 +407,9 @@ class Admin extends CI_Controller
                 'brand_device' => '',
                 'id_display'=>'',
                 'id_device'=>'',
+                'id_supervisor' => '',
+                'id_provincia' => '',
+
                 'id_incidencia' => '',
                 'reference' => ''
             );
