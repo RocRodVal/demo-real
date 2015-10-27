@@ -1930,7 +1930,7 @@ GROuP by mes");
             $this->load->view('master/header', $data);
             $this->load->view('master/navbar', $data);
             $this->load->view('master/informes/bloom/pdv/puntos_venta_form', $data);
-            $this->load->view('master/informes/bloom/pdv/informe_puntos_venta', $data);
+            $this->load->view('master/informes/bloom/pdv/puntos_venta', $data);
             $this->load->view('master/footer');
         }
         else
@@ -2086,7 +2086,7 @@ GROuP by mes");
                 $data["total_registros"] = count($resultados);
                 $data["resultados"] = $resultados;
 
-                $resp = $this->load->view('backend/informes/bloom/pdv/informe_puntos_venta_ajax', $data, TRUE);
+                $resp = $this->load->view('backend/informes/bloom/pdv/puntos_venta_ajax', $data, TRUE);
                 echo $resp;
 
             }
