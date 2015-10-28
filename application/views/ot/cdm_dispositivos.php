@@ -12,7 +12,7 @@
                         echo '<p>No hay datos.</p>';
                     } else {
                         ?>
-                        <h1 class="page-header">Balance de activos <a href="<?=site_url('ot/exportar_balance_activos');?>" title="Exportar Excel">Exportar Excel</a></h1>
+                        <h1 class="page-header">Balance de activos <a href="<?=site_url('master/exportar_balance_activos');?>" title="Exportar Excel">Exportar Excel</a></h1>
                         <div class="table-responsive">
 
                             <table class="table table-striped table-bordered table-hover" id="dataTables-example">
@@ -28,10 +28,14 @@
                                 </thead>
                                 <tbody>
                                 <?php
+
                                 foreach ($stocks as $stock) {
+                                    $marcar_celda = TRUE;
+
                                     if($stock->unidades_pds ==0)
                                     {
                                         $necesitamos = 0;
+                                        $marcar_celda = FALSE;
 
                                     }else
                                     {
@@ -40,10 +44,16 @@
 
                                     $balance = $stock->unidades_almacen - $necesitamos;
 
-                                    $class_balance = ($balance < 0) ? 'notice' : '';
-                                    $class_almacen = ($stock->unidades_almacen < 5 ) ? 'warning': '';
 
-                                    if($stock->unidades_pds > 0 || $stock->unidades_almacen > 0)
+
+                                    $class_almacen = ($stock->unidades_almacen < 5 && $marcar_celda) ? 'warning': '';
+                                    $class_balance = ($balance < 0 && $marcar_celda) ? 'notice' : '';
+
+                                    //if($stock->unidades_pds > 0 || $stock->unidades_almacen > 0)
+                                    if(
+                                            ($stock->unidades_pds > 0 || $stock->unidades_almacen > 0) //
+
+                                    )
                                     {
                                     ?>
                                     <tr>
