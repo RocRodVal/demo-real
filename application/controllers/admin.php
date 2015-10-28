@@ -2371,16 +2371,15 @@ class Admin extends CI_Controller
 
     public function puntos_de_venta()
     {
-        /*$xcrud_1 = xcrud_get_instance();
-        $xcrud_1->table('type_pds');
-        $xcrud_1->table_name('Tipo');
-        $xcrud_1->relation('client_type_pds', 'client', 'id_client', 'client');
-        $xcrud_1->label('id_type_pds', 'Identificador')->label('client_type_pds', 'Cliente')->label('pds', 'Tipo')->label('description', 'Comentarios')->label('status', 'Estado');
-        $xcrud_1->columns('id_type_pds,client_type_pds,pds,status');
-        $xcrud_1->fields('client_type_pds,pds,description,status');
-
+        $xcrud_1 = xcrud_get_instance();
+        $xcrud_1->table('pds_supervisor');
+        $xcrud_1->table_name('Supervisores');
+        $xcrud_1->label('id', 'Identificador')->label('titulo', 'Supervisor')->label('telefono', 'Teléfono');
+        $xcrud_1->columns('id,titulo,telefono');
+        $xcrud_1->fields('titulo,telefono');
+        $xcrud_1->start_minimized(true);
         // Ocultar el botón de borrar para evitar borrados accidentales mientras no existan constraints en BD:
-        $xcrud_1->unset_remove();*/
+        $xcrud_1->unset_remove();
 
         $xcrud_2 = xcrud_get_instance();
         $xcrud_2->table('pds');
@@ -2440,7 +2439,8 @@ class Admin extends CI_Controller
         $xcrud_2->order_by(array("id_tipo"=>"desc","id_subtipo"=>"asc","id_segmento"=>"asc","id_tipologia"=>"asc"));
         $data['title'] = 'Puntos de venta';
 
-        $data['content'] = $xcrud_2->render();
+        $data['content'] = $xcrud_1->render();
+        $data['content'] .= $xcrud_2->render();
 
         /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
         $this->data->add($data);
@@ -2542,13 +2542,20 @@ class Admin extends CI_Controller
         $xcrud_3->columns('id,id_tipo,titulo,Tipologías');
 
 
+        $xcrud_4 = xcrud_get_instance();
+        $xcrud_4->table('pds_segmento');
+        $xcrud_4->table_name('Definir Segmentos de PDS');
+        // $xcrud_1->relation('client_type_pds', 'client', 'id_client', 'client');
+        $xcrud_4->label('id', 'Id.')->label('titulo', 'Título');
+        $xcrud_4->columns('id,titulo');
+        $xcrud_4->fields('titulo');
 
 
-
-        $data['title'] = 'Categorización de PDS';
+        $data['title'] = 'Categorización de PDS: Tipo, Subtipo, Segmento, Tipología';
         $data['content'] = $xcrud_1->render();
         $data['content'] .= $xcrud_2->render();
         $data['content'] .= $xcrud_3->render();
+        $data['content'] .= $xcrud_4->render();
 
 
         /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
