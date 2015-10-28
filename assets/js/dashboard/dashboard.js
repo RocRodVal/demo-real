@@ -446,3 +446,158 @@ $(document).ready(function(){
                                     else        $(this).removeClass("focused");
     });
 });
+
+
+
+
+
+/*
+jQuery(document).on("xcrudbeforerequest", function(event, container) {
+    if (container) {
+        jQuery(container).find("select").select2("destroy");
+    } else {
+        jQuery(".xcrud").find("select").select2("destroy");
+    }
+
+
+});
+jQuery(document).on("ready xcrudafterrequest", function(event, container) {
+    if (container) {
+        jQuery(container).find("select").select2();
+    } else {
+        jQuery(".xcrud").find("select").select2();
+    }
+
+});
+jQuery(document).on("xcrudbeforedepend", function(event, container, data) {
+    jQuery(container).find('select[name="' + data.name + '"]').select2("destroy");
+
+    console.log('beforedepend');
+    console.log(data);
+});
+jQuery(document).on("xcrudafterdepend", function(event, container, data) {
+    jQuery(container).find('select[name="' + data.name + '"]').select2();
+    alert('afterdepend');
+    console.log(data);
+});*/
+
+
+
+/**
+ NUEVA CATEGORIZACION
+ **/
+
+function load_select(url,select_destino,select_actual,id_selected)
+{
+
+    var escogido = $(select_actual).val();
+    var form = $(select_actual).closest('form');
+
+    if(id_selected != undefined && id_selected != '')
+    {
+        escogido = id_selected;
+    }
+    $.ajax({
+        type: 'POST',
+        url: (url+'/'+escogido),
+        data: $(form).serialize(),
+        // Mostramos un mensaje con la respuesta de PHP
+        success: function (data) {
+            //alert( $('#'+select_destino).attr("onchange"));
+            $('#'+select_destino).html(data);
+        },
+        error: function (error) {
+            console.error(error.responseText);
+        }
+    });
+
+}
+
+
+function load_input(url,select_destino,select_actual,id_selected)
+{
+
+    var escogido = $(select_actual).val();
+    var form = $(select_actual).closest('form');
+
+    if(id_selected != undefined && id_selected != '')
+    {
+        escogido = id_selected;
+    }
+
+    $.ajax({
+        type: 'POST',
+        url: (url+'/'+escogido),
+        data: $(form).serialize(),
+        // Mostramos un mensaje con la respuesta de PHP
+        success: function (data) {
+            //alert( $('#'+select_destino).attr("onchange"));
+            $('#'+input_destino).val(data);
+        },
+        error: function (error) {
+            console.error(error.responseText);
+        }
+    });
+
+}
+
+function insert(url,objeto,vuelta)
+{
+
+
+    if(
+        ($("#id_tipo").find("option:selected").val()=='') ||
+        ($("#id_subtipo").find("option:selected").val()=='') ||
+        ($("#id_segmento").find("option:selected").val()=='')  ||
+        ($("#id_tipologia").find("option:selected").val()=='')
+    )
+    {
+        return false;
+    }
+    else {
+
+        var form = $(objeto).closest('form');
+
+
+        $.ajax({
+            type: 'POST',
+            url: (url),
+            data: $(form).serialize(),
+            // Mostramos un mensaje con la respuesta de PHP
+            success: function (data) {
+                $("#id_tipo").val('');
+                $("#id_subtipo").val('');
+                $("#id_segmento").val('');
+                $("#id_tipologia").val('');
+
+                if(data=='error') alert('Ya existe la categoría');
+                else    window.location.replace(vuelta);
+            },
+            error: function (error) {
+                console.error(error.responseText);
+            }
+        });
+    }
+}
+
+
+
+/**
+ ** VALIDAR AÑADIR MUEBLE A SFIDs
+ **/
+
+function validar_anadir_mueble_sfid()
+{
+    var textareaVal = $("#sfids").val();
+    var muebleVal = $("#id_display option:selected").val();
+
+    if(textareaVal == '')        $("#sfids").addClass("error");
+    else        $("#sfids").removeClass("error");
+
+    if(muebleVal == '') $("#id_display").addClass("error");
+    else  $("#id_display").removeClass("error");
+
+
+    return (textareaVal != '' && muebleVal != 0);
+
+}

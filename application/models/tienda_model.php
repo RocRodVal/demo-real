@@ -266,7 +266,7 @@ class Tienda_model extends CI_Model {
                         SELECT COUNT(*)
                         FROM devices_pds
                         WHERE (devices_pds.id_device = device.id_device) AND
-                        (devices_pds.status = "Alta")
+                        (devices_pds.status = "Alta" || devices_pds.status = "Incidencia")
                     )
                     as unidades_pds,
 
@@ -280,7 +280,11 @@ class Tienda_model extends CI_Model {
                 ) as temporal
 
         JOIN brand_device ON temporal.brand_device = brand_device.id_brand_device
-        WHERE unidades_pds > 0 OR unidades_almacen > 0
+        WHERE (
+                    (unidades_pds > 0 OR unidades_almacen > 0)
+                OR  (unidades_pds = 0 AND unidades_almacen > 0)
+                OR  (unidades_pds > 0 AND unidades_almacen = 0)
+               )
         ORDER BY brand_device.brand ASC, temporal.device ASC ');
 
 
@@ -462,6 +466,14 @@ class Tienda_model extends CI_Model {
         return $query->result();
     }
 
+    public function get_muebles_OLD(){
+        $query = $this->db->select('display.*')
+            ->where('status','Alta')
+            ->order_by('display','asc')
+            ->get('display');
+        return $query->result();
+    }
+
 
     public function get_terminales(){
         $query = $this->db->select('device.*')
@@ -477,9 +489,12 @@ class Tienda_model extends CI_Model {
 
 
 		if($id != FALSE) {
-			$query = $this->db->select('pds.*,type_pds.pds,panelado.panelado,territory.territory')
-				   ->join('type_pds','pds.type_pds = type_pds.id_type_pds')
-				   ->join('panelado','pds.panelado_pds = panelado.id_panelado')
+			$query = $this->db->select('pds.*,pds_tipo.titulo as tipo,pds_subtipo.titulo as subtipo,pds_segmento.titulo as segmento,pds_tipologia.titulo as tipologia,territory.territory')
+				    ->join('pds_tipo','pds.id_tipo= pds_tipo.id')
+                    ->join('pds_subtipo','pds.id_subtipo= pds_subtipo.id')
+                    ->join('pds_segmento','pds.id_segmento= pds_segmento.id')
+                    ->join('pds_tipologia','pds.id_tipologia= pds_tipologia.id')
+
 				   ->join('territory','pds.territory = territory.id_territory')
 				   ->like('pds.reference',$id)
 			       ->get('pds');
@@ -489,10 +504,28 @@ class Tienda_model extends CI_Model {
 		else {
 			return FALSE;
 		}
-	}	
+	}
 
-	
-	public function search_dispositivo($id) {
+    public function search_pds_OLD($id) {
+
+
+        if($id != FALSE) {
+            $query = $this->db->select('pds.*,type_pds.pds,panelado.panelado,territory.territory')
+                ->join('type_pds','pds.type_pds = type_pds.id_type_pds')
+                ->join('panelado','pds.panelado_pds = panelado.id_panelado')
+                ->join('territory','pds.territory = territory.id_territory')
+                ->like('pds.reference',$id)
+                ->get('pds');
+
+            return $query->result();
+        }
+        else {
+            return FALSE;
+        }
+    }
+
+
+    public function search_dispositivo($id) {
 		if($id != FALSE) {
 			$query = $this->db->select('devices_almacen.*')
 			//->where('devices_almacen.status','En stock')
@@ -951,7 +984,8 @@ class Tienda_model extends CI_Model {
 		return $query->result();
 	}	
 
-	
+
+
 	public function get_displays() {
 		$query = $this->db->select('*')
 		->order_by('display')
@@ -962,14 +996,19 @@ class Tienda_model extends CI_Model {
 
 
     public function get_displays_demoreal() {
-        $query = $this->db->query('
+        /*$query = $this->db->query('
                     SELECT *
                     FROM display d
                     WHERE (
                       SELECT COUNT(id_devices_pds) FROM devices_pds p
                       WHERE p.id_display = d.id_display
                       AND p.status = "Alta"
-                    ) >= 1 ORDER BY display');
+                    ) >= 1 ORDER BY display');*/
+
+        $query = $this->db->query('
+                    SELECT *
+                    FROM display d
+                    WHERE positions > 0 AND status="Alta" ORDER BY display');
 
 
         return $query->result();
@@ -985,6 +1024,26 @@ class Tienda_model extends CI_Model {
                       AND p.status = "Alta"
                     ) >= 1 ORDER BY device');
 
+
+        return $query->result();
+    }
+
+    public function get_supervisores()
+    {
+        $query = $this->db->select('*')
+                ->order_by('titulo','asc')
+                ->get('pds_supervisor')
+                ;
+
+        return $query->result();
+    }
+
+    public function get_provincias()
+    {
+        $query = $this->db->select('id_province as id,province as titulo')
+            ->order_by('titulo','asc')
+            ->get('province')
+        ;
 
         return $query->result();
     }
@@ -1226,8 +1285,10 @@ class Tienda_model extends CI_Model {
 		$this->db->where($conditions);
 		$this->db->from('devices_display');
 		$count = $this->db->count_all_results();
+
+
 		return $count;
-	}	
+	}
 	
 	
 	public function get_pds($id) {
@@ -1252,10 +1313,34 @@ class Tienda_model extends CI_Model {
 		else {
 			return FALSE;
 		}
-	}	
-	
-	
-	public function get_display($id) {
+	}
+
+    public function get_sfid($sfid) {
+        if($sfid != FALSE) {
+            $query = $this->db->select('pds.*, province.province, territory.territory')
+                ->join('type_pds','pds.type_pds = type_pds.id_type_pds')
+                ->join('province','pds.province = province.id_province')
+                ->join('territory','pds.territory = territory.id_territory')
+                ->like('pds.reference',$sfid,'none')
+                ->get('pds');
+
+            /*$query = $this->db->query("
+            SELECT pds.*,type_pds.pds as pds, province.province, territory.territory
+                FROM pds
+                LEFT JOIN  type_pds ON pds.type_pds = type_pds.id_type_pds
+                LEFT JOIN  province ON pds.province = province.id_province
+                LEFT JOIN  territory ON pds.territory = territory.id_territory
+                WHERE pds.id_pds=$id");*/
+
+            return $query->row_array();
+        }
+        else {
+            return FALSE;
+        }
+    }
+
+
+    public function get_display($id) {
 		if($id != FALSE) {
 			$query = $this->db->select('*')
 			->where('id_display',$id)
@@ -1792,7 +1877,83 @@ class Tienda_model extends CI_Model {
 			return FALSE;
 		}
 	}	
-	
+
+
+
+    /**
+     * Insertar mueble SFID
+     */
+    function anadir_mueble_sfid($display,$pds,$position = NULL)
+    {
+
+        // Si no están vacíos los objetos MUEBLE y PDS
+        if(!empty($display) && !empty($pds))
+        {
+            $id_pds = $pds["id_pds"];
+            $id_display = $display["id_display"];
+            $client_type_pds = 1;
+
+
+            if(is_null($position))
+            {
+                // Si no recibimos posición donde insertar (pos=NULL) lo ponemos al final del panelado
+                $query = $this->db->query(" SELECT max(position) as ultimo FROM displays_pds WHERE id_pds = " . $id_pds);
+                $result = $query->row();
+
+                if(!empty($result->ultimo) && $result->ultimo > 0)
+                {
+                    $position = $result->ultimo + 1;
+                }else{
+                    $position = 1;
+                }
+
+            }
+            else {
+
+                // SACAMOS TODOS LOS MUEBLES DESDE LA POS a INSERTAR EN ADELANTE, EN ESA TIENDA, Y LOS MOVEMOS UNA POSICION ADELANTE
+                $SQL = " SELECT id_displays_pds as ocupado FROM displays_pds WHERE id_pds = " . $id_pds . " AND position =" . $position;
+                $query = $this->db->query($SQL);
+                $result = $query->row();
+
+                if (!empty($result->ocupado)) {
+
+                    $SQL = "    UPDATE displays_pds
+                        SET position = (position + 1)
+                        WHERE id_pds = " . $id_pds . " AND position >= " . $position;
+
+                    $this->db->query($SQL);
+                }
+            }
+
+
+
+            $SQL = " INSERT INTO displays_pds (client_type_pds, id_pds, id_display, position, status)
+                                        VALUES(".$client_type_pds.",".$id_pds.",".$id_display.",".$position.",'Alta'); ";
+
+            $this->db->query($SQL);
+            $id_displays_pds = $this->db->insert_id();
+
+            // Buscar el planograma genérico del mueble
+            $planograma = $this->get_devices_display($id_display);
+
+            if(!empty($planograma))
+            {
+                foreach ($planograma as $terminal)
+                {
+                    $position = $terminal->position;
+                    $id_device = $terminal->id_device;
+                    $SQL = " INSERT INTO devices_pds(client_type_pds,id_pds, id_displays_pds, id_display, position, id_device, status)
+                                            VALUES(".$client_type_pds.",".$id_pds.",".$id_displays_pds.",".$id_display.",".$position.",".$id_device.",'Alta'); ";
+                    $this->db->query($SQL);
+                }
+            }
+
+        }
+
+
+    }
+
+
 }
 
 ?>

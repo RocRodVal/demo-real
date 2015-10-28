@@ -16,6 +16,7 @@ class Admin extends CI_Controller
         // Carga de la clase de Colección de datos, para pasar variables a la vista.
         $this->load->library('data');
         $this->data->set("controlador","admin");
+        $this->data->set("acceso","admin");
         $this->data->set("accion_home","estado_incidencias/abiertas");
         $this->data->set("entrada",($this->data->get("controlador") . '/' . $this->data->get("accion_home")));
 
@@ -267,6 +268,10 @@ class Admin extends CI_Controller
                 'brand_device' => '',
                 'id_display'=>'',
                 'id_device'=>'',
+
+                'id_supervisor' => '',
+                'id_provincia' => '',
+
                 'id_incidencia' => '',
                 'reference' => ''
             );
@@ -360,10 +365,13 @@ class Admin extends CI_Controller
             $data["fabricantes"] = $this->tienda_model->get_fabricantes();
 
             /* LISTADO DE MUEBLES PARA EL SELECT */
-            $data["muebles"] = $this->tienda_model->get_muebles();
+            $data["muebles"] = $this->tienda_model->get_displays_demoreal();
             /* LISTADO DE TERMINALES PARA EL SELECT */
             $data["terminales"] = $this->tienda_model->get_terminales();
 
+
+            $data["supervisores"] = $this->tienda_model->get_supervisores();
+            $data["provincias"] = $this->tienda_model->get_provincias();
 
             /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
             $this->data->add($data);
@@ -399,6 +407,9 @@ class Admin extends CI_Controller
                 'brand_device' => '',
                 'id_display'=>'',
                 'id_device'=>'',
+                'id_supervisor' => '',
+                'id_provincia' => '',
+
                 'id_incidencia' => '',
                 'reference' => ''
             );
@@ -2201,6 +2212,92 @@ class Admin extends CI_Controller
 
     public function muebles()
     {
+        /*$xcrud_1 = xcrud_get_instance();
+        $xcrud_1->table('panelado');
+        $xcrud_1->table_name('Panelado');
+        $xcrud_1->relation('client_panelado', 'client', 'id_client', 'client');
+        $xcrud_1->relation('type_pds', 'type_pds', 'id_type_pds', 'pds');
+        $xcrud_1->change_type('picture_url', 'image');
+        $xcrud_1->label('id_panelado', 'Identificador')->label('client_panelado', 'Cliente')->label('type_pds', 'Tipo punto de venta')->label('panelado', 'Panelado Orange')->label('panelado_abx', 'REF.')->label('picture_url', 'Foto')->label('description', 'Comentarios')->label('status', 'Estado');
+        $xcrud_1->columns('id_panelado,client_panelado,type_pds,panelado,panelado_abx,status');
+        $xcrud_1->fields('client_panelado,type_pds,panelado,panelado_abx,picture_url,description,status');*/
+
+        // Ocultar el botón de borrar para evitar borrados accidentales mientras no existan constraints en BD:
+
+
+        $xcrud_2 = xcrud_get_instance();
+        $xcrud_2->table('displays_categoria');
+        $xcrud_2->table_name('Muebles categoría');
+        $xcrud_2->relation('client', 'client', 'id_client', 'client');
+
+        $xcrud_2->relation('id_tipo', 'pds_tipo','id','titulo');
+        $xcrud_2->relation('id_subtipo', 'pds_subtipo', 'id', 'titulo','','titulo ASC',false, '', false,'id_tipo','id_tipo');
+        //$xcrud_2->fk_relation('Tipología','id_tipologia', 'pds_subtipo_tipologia', 'id_subtipo', 'id_tipologia', 'pds_tipologia', 'id', 'titulo');
+        $xcrud_2->relation('id_segmento', 'pds_segmento','id', 'titulo');
+        $xcrud_2->relation('id_tipologia', 'pds_tipologia','id', 'titulo');
+        //id_tipo,id_subtipo,id_segmento,id_tipologia,
+
+        $xcrud_2->relation('id_display', 'display', 'id_display', 'display','');
+
+        $xcrud_2->label('id', 'Identificador')->label('client', 'Cliente')->label('id_display', 'Modelo')->label('id_tipo', 'Tipo PDS')
+            ->label('id_subtipo', 'Subtipo PDS')->label('id_segmento', 'Segmento PDS')->label('id_tipologia', 'Tipología PDS')->label('position', 'Posición')->label('description', 'Comentarios')->label('status', 'Estado');
+        $xcrud_2->columns('id,client,id_tipo,id_subtipo,id_segmento,id_tipologia,id_display,position,status');
+        $xcrud_2->fields('client,id_tipo,id_subtipo,id_segmento,id_tipologia,id_display,position,status');
+// Ocultar el botón de borrar para evitar borrados accidentales mientras no existan constraints en BD:
+        $xcrud_2->unset_remove();
+
+
+        $xcrud_4 = xcrud_get_instance();
+        $xcrud_4->table('devices_display');
+        $xcrud_4->table_name('Dispositivos mueble');
+        $xcrud_4->relation('client_panelado', 'client', 'id_client', 'client');
+        $xcrud_4->relation('id_display', 'display', 'id_display', 'display');
+        $xcrud_4->relation('id_device', 'device', 'id_device', 'device');
+        $xcrud_4->label('id_devices_display', 'Identificador')->label('client_panelado', 'Cliente')->label('id_panelado', 'REF.')->label('id_display', 'Mueble')->label('id_device', 'Dispositivo')->label('position', 'Posición')->label('description', 'Comentarios')->label('status', 'Estado');
+        $xcrud_4->columns('id_devices_display,client_panelado,id_display,id_device,position,status');
+        $xcrud_4->fields('client_panelado,id_display,id_device,position,description,status');
+
+        // Ocultar el botón de borrar para evitar borrados accidentales mientras no existan constraints en BD:
+        $xcrud_4->unset_remove();
+
+
+
+        $xcrud_3 = xcrud_get_instance();
+        $xcrud_3->table('display');
+        $xcrud_3->table_name('Modelo');
+        $xcrud_3->relation('client_display', 'client', 'id_client', 'client');
+        $xcrud_3->change_type('picture_url', 'image');
+        $xcrud_3->change_type('canvas_url', 'file');
+        $xcrud_3->modal('picture_url');
+        $xcrud_3->label('id_display', 'Identificador')->label('client_display', 'Cliente')->label('display', 'Modelo')->label('picture_url', 'Foto')->label('canvas_url', 'SVG')->label('description', 'Comentarios')->label('positions', 'Posiciones')->label('status', 'Estado');
+        $xcrud_3->columns('id_display,client_display,display,picture_url,positions,status');
+        $xcrud_3->fields('client_display,display,picture_url,canvas_url,description,positions,status');
+
+        // Ocultar el botón de borrar para evitar borrados accidentales mientras no existan constraints en BD:
+        $xcrud_3->unset_remove();
+
+
+        $data['title'] = 'Muebles';
+
+        $data['content'] =  $xcrud_2->render();
+        $data['content'] = $data['content'] . $xcrud_4->render();
+        $data['content'] = $data['content'] . $xcrud_3->render();
+
+
+        /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+        $this->data->add($data);
+        $data = $this->data->getData();
+        /////
+        $this->load->view('backend/header', $data);
+        $this->load->view('backend/navbar', $data);
+        $this->load->view('backend/content', $data);
+        $this->load->view('backend/footer');
+    }
+
+
+
+    public function muebles_OLD()
+    {
         $xcrud_1 = xcrud_get_instance();
         $xcrud_1->table('panelado');
         $xcrud_1->table_name('Panelado');
@@ -2271,7 +2368,92 @@ class Admin extends CI_Controller
     }
 
 
+
     public function puntos_de_venta()
+    {
+        $xcrud_1 = xcrud_get_instance();
+        $xcrud_1->table('pds_supervisor');
+        $xcrud_1->table_name('Supervisores');
+        $xcrud_1->label('id', 'Identificador')->label('titulo', 'Supervisor')->label('telefono', 'Teléfono');
+        $xcrud_1->columns('id,titulo,telefono');
+        $xcrud_1->fields('titulo,telefono');
+        $xcrud_1->start_minimized(true);
+        // Ocultar el botón de borrar para evitar borrados accidentales mientras no existan constraints en BD:
+        $xcrud_1->unset_remove();
+
+        $xcrud_2 = xcrud_get_instance();
+        $xcrud_2->table('pds');
+        $xcrud_2->table_name('Tienda');
+        $xcrud_2->relation('client_pds', 'client', 'id_client', 'client');
+        $xcrud_2->relation('type_pds', 'type_pds', 'id_type_pds', 'pds');
+        $xcrud_2->relation('territory', 'territory', 'id_territory', 'territory');
+        $xcrud_2->relation('panelado_pds', 'panelado', 'id_panelado', 'panelado_abx');
+        $xcrud_2->relation('type_via', 'type_via', 'id_type_via', 'via');
+        $xcrud_2->relation('province', 'province', 'id_province', 'province');
+        $xcrud_2->relation('county', 'county', 'id_county', 'county');
+        $xcrud_2->relation('contact_contact_person', 'contact', 'id_contact', 'contact');
+        $xcrud_2->relation('contact_in_charge', 'contact', 'id_contact', 'contact');
+        $xcrud_2->relation('contact_supervisor', 'contact', 'id_contact', 'contact');
+
+        /*
+         *
+         *
+        PRUEBA DE CATEGORIA CON CAMPOS VINCULADOS TOTALES EN XCRUD
+        $xcrud_2->relation('id_tipo', 'pds_tipo','id','titulo');
+        $xcrud_2->relation('id_subtipo', 'pds_subtipo', 'id', 'titulo','','titulo ASC',false, '', false,'id_tipo','id_tipo');
+
+        $xcrud_2->relation('id_subtipo_tipologia', 'pds_subtipo_tipologia', 'id', 'id_tipologia','','id_tipologia ASC', false, '', false, 'id_subtipo','id_subtipo');
+        $xcrud_2->relation('id_tipologia', 'pds_tipologia', 'id', 'titulo','','titulo ASC', false, '', false, 'id','id_subtipo_tipologia');
+
+        $xcrud_2->relation('subtipo_listado', 'pds_subtipo', 'id', 'titulo','','titulo ASC','', false, '', false, 'id','id_tipo');
+        $xcrud_2->relation('id_segmento', 'pds_segmento','id', 'titulo');
+        */
+
+
+        $xcrud_2->relation('id_tipo', 'pds_tipo','id','titulo');
+        $xcrud_2->relation('id_subtipo', 'pds_subtipo', 'id', 'titulo','','titulo ASC',false, '', false,'id_tipo','id_tipo');
+        //$xcrud_2->fk_relation('Tipología','id_tipologia', 'pds_subtipo_tipologia', 'id_subtipo', 'id_tipologia', 'pds_tipologia', 'id', 'titulo');
+        $xcrud_2->relation('id_segmento', 'pds_segmento','id', 'titulo');
+        $xcrud_2->relation('id_tipologia', 'pds_tipologia','id', 'titulo');
+        //id_tipo,id_subtipo,id_segmento,id_tipologia,
+
+        $xcrud_2->change_type('picture_url', 'image');
+        $xcrud_2->modal('picture_url');
+        //$xcrud_2->readonly('reference');
+        $xcrud_2->disabled('reference','edit');
+        $xcrud_2->sum('m2_total', 'm2_fo', 'm2_bo');
+        $xcrud_2->label('id_pds', 'Identificador')->label('client_pds', 'Cliente')->label('reference', 'SFID')->label('id_tipo', 'Tipo PDS')
+            ->label('id_subtipo', 'Subtipo PDS')->label('id_segmento', 'Segmento PDS')->label('id_tipologia', 'Tipología PDS')
+            ->label('territory', 'Territorio')->label('panelado_pds', 'Panelado')->label('dispo', 'Disposición')
+            ->label('commercial', 'Nombre comercial')->label('cif', 'CIF')->label('picture_url', 'Foto')->label('m2_fo', 'M2 front-office')
+            ->label('m2_bo', 'M2 back-office')->label('m2_total', 'M2 total')->label('type_via', 'Tipo vía')
+            ->label('address', 'Dirección')->label('zip', 'C.P.')->label('city', 'Ciudad')->label('province', 'Provincia')->label('county', 'CC.AA.')->label('schedule', 'Horario')->label('phone', 'Teléfono')->label('mobile', 'Móvil')->label('email', 'Email')->label('contact_contact_person', 'Contacto')->label('contact_in_charge', 'Encargado')->label('contact_supervisor', 'Supervisor')->label('status', 'Estado');
+
+        $xcrud_2->columns('id_pds,client_pds,reference,id_tipo,id_subtipo,id_segmento,id_tipologia,commercial,territory,status');
+        $xcrud_2->fields('client_pds,reference,id_tipo,id_subtipo,id_segmento,id_tipologia,commercial,cif,territory,picture_url,m2_fo,m2_bo,m2_total,type_via,address,zip,city,province,county,schedule,phone,mobile,email,contact_contact_person,contact_in_charge,contact_supervisor,status');
+
+        $xcrud_2->validation_required('province');
+
+        // Ocultar el botón de borrar para evitar borrados accidentales mientras no existan constraints en BD:
+        $xcrud_2->unset_remove();
+        $xcrud_2->order_by(array("id_tipo"=>"desc","id_subtipo"=>"asc","id_segmento"=>"asc","id_tipologia"=>"asc"));
+        $data['title'] = 'Puntos de venta';
+
+        $data['content'] = $xcrud_1->render();
+        $data['content'] .= $xcrud_2->render();
+
+        /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+        $this->data->add($data);
+        $data = $this->data->getData();
+        /////
+        $this->load->view('backend/header', $data);
+        $this->load->view('backend/navbar', $data);
+        $this->load->view('backend/content', $data);
+        $this->load->view('backend/footer');
+    }
+
+
+    public function puntos_de_venta_OLD()
     {
         $xcrud_1 = xcrud_get_instance();
         $xcrud_1->table('type_pds');
@@ -2326,6 +2508,66 @@ class Admin extends CI_Controller
     }
 
 
+
+    public function categorias_pdv()
+    {
+        $xcrud_1 = xcrud_get_instance();
+        $xcrud_1->table('pds_tipo');
+        $xcrud_1->table_name('Definir Tipos de PDS');
+       // $xcrud_1->relation('client_type_pds', 'client', 'id_client', 'client');
+        $xcrud_1->label('id', 'Id.')->label('titulo', 'Título');
+        $xcrud_1->columns('id,titulo');
+        $xcrud_1->fields('titulo');
+
+
+        $xcrud_2 = xcrud_get_instance();
+        $xcrud_2->table('pds_tipologia');
+        $xcrud_2->table_name('Definir Tipologías de PDS');
+        // $xcrud_1->relation('client_type_pds', 'client', 'id_client', 'client');
+        $xcrud_2->label('id', 'Id.')->label('titulo', 'Título');
+        $xcrud_2->columns('id,titulo');
+        $xcrud_2->fields('titulo');
+
+
+        $xcrud_3 = xcrud_get_instance();
+        $xcrud_3->table('pds_subtipo');
+        $xcrud_3->table_name('Definir Subtipos de PDS y sus tipologías relacionadas');
+        $xcrud_3->relation('id_tipo', 'pds_tipo', 'id', 'titulo');
+        $xcrud_3->fk_relation('Tipologías','id','pds_subtipo_tipologia','id_subtipo','id_tipologia','pds_tipologia','id','titulo');
+        //(label, field, fk_table, in_fk_field, out_fk_field, rel_tbl, rel_field, rel_name, rel_where, rel_orderby, rel_concat_separator, before, add_data
+
+        $xcrud_3->label('id', 'Id.')->label('titulo', 'Título')->label('id_tipo','Tipo');
+        $xcrud_3->order_by('id_tipo','asc');
+        $xcrud_3->columns('id,id_tipo,titulo');
+        $xcrud_3->columns('id,id_tipo,titulo,Tipologías');
+
+
+        $xcrud_4 = xcrud_get_instance();
+        $xcrud_4->table('pds_segmento');
+        $xcrud_4->table_name('Definir Segmentos de PDS');
+        // $xcrud_1->relation('client_type_pds', 'client', 'id_client', 'client');
+        $xcrud_4->label('id', 'Id.')->label('titulo', 'Título');
+        $xcrud_4->columns('id,titulo');
+        $xcrud_4->fields('titulo');
+
+
+        $data['title'] = 'Categorización de PDS: Tipo, Subtipo, Segmento, Tipología';
+        $data['content'] = $xcrud_1->render();
+        $data['content'] .= $xcrud_2->render();
+        $data['content'] .= $xcrud_3->render();
+        $data['content'] .= $xcrud_4->render();
+
+
+        /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+        $this->data->add($data);
+        $data = $this->data->getData();
+        /////
+        $this->load->view('backend/header', $data);
+        $this->load->view('backend/navbar', $data);
+        $this->load->view('backend/content', $data);
+        $this->load->view('backend/footer');
+
+    }
 
     public function tipos_incidencia()
     {
@@ -2384,7 +2626,7 @@ class Admin extends CI_Controller
     }
 
 
-    public function inventarios()
+    public function inventarios_OLD()
     {
         $this->load->model('tienda_model');
 
@@ -2475,6 +2717,118 @@ class Admin extends CI_Controller
         $data['content'] = $data['content'] . $xcrud_2->render();
         $data['content'] = $data['content'] . $xcrud_3->render();
         $data['content'] = $data['content'] . $xcrud_4->render();
+
+        /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+        $this->data->add($data);
+        $data = $this->data->getData();
+        /////
+        $this->load->view('backend/header', $data);
+        $this->load->view('backend/navbar', $data);
+        $this->load->view('backend/inventario', $data);
+        $this->load->view('backend/footer');
+    }
+
+    public function inventarios()
+    {
+        $this->load->model('tienda_model');
+
+
+        $xcrud_1 = xcrud_get_instance();
+        $xcrud_1->table('displays_pds');
+        $xcrud_1->table_name('Inventario muebles');
+        $xcrud_1->relation('client_type_pds', 'client', 'id_client', 'client');
+        $xcrud_1->relation('id_pds', 'pds', 'id_pds', 'reference');
+
+
+        $xcrud_1->relation('id_display', 'display', 'id_display', 'display');
+
+        $xcrud_1->relation('id_tipo', 'pds_tipo','id','titulo');
+        $xcrud_1->relation('id_subtipo', 'pds_subtipo', 'id', 'titulo','','titulo ASC',false, '', false,'id_tipo','id_tipo');
+        //$xcrud_2->fk_relation('Tipología','id_tipologia', 'pds_subtipo_tipologia', 'id_subtipo', 'id_tipologia', 'pds_tipologia', 'id', 'titulo');
+        $xcrud_1->relation('id_segmento', 'pds_segmento','id', 'titulo');
+        $xcrud_1->relation('id_tipologia', 'pds_tipologia','id', 'titulo');
+        //id_tipo,id_subtipo,id_segmento,id_tipologia,
+
+        $xcrud_1->label('client_type_pds', 'Cliente')->label('id_displays_pds', 'REF.')->label('id_type_pds', 'Tipo')->label('id_pds', 'SFID')->label('id_panelado', 'Panelado')->label('id_display', 'Mueble')->label('position', 'Posición Orange')->label('description', 'Comentarios')->label('status', 'Estado');
+        $xcrud_1->columns('client_type_pds,id_displays_pds,id_pds,id_tipo,id_subtipo,id_segmento,id_tipologia,id_display,position,status');
+        $xcrud_1->fields('client_type_pds,id_displays_pds,id_pds,id_tipo,id_subtipo,id_segmento,id_tipologia,id_pds,id_display,position,description,status');
+        $xcrud_1->order_by('id_pds', 'asc');
+        $xcrud_1->order_by('position', 'asc');
+        $xcrud_1->show_primary_ai_column(true);
+        $xcrud_1->unset_numbers();
+        $xcrud_1->start_minimized(false);
+
+        /*$xcrud_2 = xcrud_get_instance();
+        $xcrud_2->table('alarms_display_pds');
+        $xcrud_2->table_name('Inventario alarmas mueble');
+        $xcrud_2->relation('client_type_pds', 'client', 'id_client', 'client');
+        $xcrud_2->relation('id_pds', 'pds', 'id_pds', 'reference');
+        $xcrud_2->relation('id_displays_pds', 'displays_pds', 'id_displays_pds', 'id_displays_pds');
+        $xcrud_2->relation('id_alarm', 'alarm', 'id_alarm', 'alarm');
+        $xcrud_2->label('client_type_pds', 'Cliente')->label('id_alarms_display_pds', 'REF.')->label('id_pds', 'SFID')->label('id_displays_pds', 'Cod. mueble')->label('id_alarm', 'Alarma')->label('description', 'Comentarios')->label('status', 'Estado');
+        $xcrud_2->columns('client_type_pds,id_alarms_display_pds,id_pds,id_displays_pds,id_alarm,status');
+        $xcrud_2->fields('client_type_pds,id_alarms_display_pds,id_pds,id_displays_pds,id_alarm,description,status');
+        $xcrud_2->order_by('id_pds', 'asc');
+        $xcrud_2->order_by('id_displays_pds', 'asc');
+        $xcrud_2->show_primary_ai_column(true);
+        $xcrud_2->unset_numbers();
+        $xcrud_2->start_minimized(true);*/
+
+        $xcrud_3 = xcrud_get_instance();
+        $xcrud_3->table('devices_pds');
+        $xcrud_3->table_name('Inventario dispositivos');
+        $xcrud_3->relation('client_type_pds', 'client', 'id_client', 'client');
+        $xcrud_3->relation('id_pds', 'pds', 'id_pds', 'reference');
+        $xcrud_3->relation('id_displays_pds', 'displays_pds', 'id_displays_pds', 'id_displays_pds');
+        $xcrud_3->relation('id_display', 'display', 'id_display', 'display');
+        $xcrud_3->relation('id_device', 'device', 'id_device', 'device');
+        $xcrud_3->relation('id_color_device', 'color_device', 'id_color_device', 'color_device');
+        $xcrud_3->relation('id_complement_device', 'complement_device', 'id_complement_device', 'complement_device');
+        $xcrud_3->relation('id_status_device', 'status_device', 'id_status_device', 'status_device');
+        $xcrud_3->relation('id_status_packaging_device', 'status_packaging_device', 'id_status_packaging_device', 'status_packaging_device');
+        $xcrud_3->change_type('picture_url_1', 'image');
+        $xcrud_3->change_type('picture_url_2', 'image');
+        $xcrud_3->change_type('picture_url_3', 'image');
+        $xcrud_3->modal('picture_url_1');
+        $xcrud_3->modal('picture_url_2');
+        $xcrud_3->modal('picture_url_3');
+        $xcrud_3->label('client_type_pds', 'Cliente')->label('id_devices_pds', 'REF.')->label('id_pds', 'SFID')->label('id_displays_pds', 'Cod. mueble')->label('id_display', 'Mueble')->label('alta', 'Fecha de alta')->label('position', 'Posición')->label('id_device', 'Dispositivo')->label('IMEI', 'IMEI')->label('mac', 'MAC')->label('serial', 'Nº de serie')->label('barcode', 'Código de barras')->label('id_color_device', 'Color')->label('id_complement_device', 'Complementos')->label('id_status_device', 'Estado dispositivo')->label('id_status_packaging_device', 'Estado packaging')->label('picture_url_1', 'Foto #1')->label('picture_url_2', 'Foto #2')->label('picture_url_3', 'Foto #3')->label('description', 'Comentarios')->label('status', 'Estado');
+        $xcrud_3->columns('client_type_pds,id_devices_pds,id_pds,id_displays_pds,id_display,id_device,position,IMEI,mac,status');
+        $xcrud_3->fields('client_type_pds,id_devices_pds,id_pds,id_displays_pds,id_display,alta,id_device,position,serial,IMEI,mac,barcode,id_color_device,id_complement_device,id_status_device,id_status_packaging_device,picture_url_1,picture_url_2,picture_url_3,description,status');
+        $xcrud_3->order_by('id_pds', 'asc');
+        $xcrud_3->order_by('id_displays_pds', 'asc');
+        $xcrud_3->order_by('position', 'asc');
+        $xcrud_3->show_primary_ai_column(true);
+        $xcrud_3->unset_numbers();
+        $xcrud_3->start_minimized(false);
+
+        /*$xcrud_4 = xcrud_get_instance();
+        $xcrud_4->table('alarms_device_pds');
+        $xcrud_4->table_name('Inventario alarmas dispositivo');
+        $xcrud_4->relation('client_type_pds', 'client', 'id_client', 'client');
+        $xcrud_4->relation('id_pds', 'pds', 'id_pds', 'reference');
+        $xcrud_4->relation('id_devices_pds', 'devices_pds', 'id_devices_pds', 'id_devices_pds');
+        $xcrud_4->relation('id_displays_pds', 'displays_pds', 'id_displays_pds', 'id_displays_pds');
+        $xcrud_4->relation('id_alarm', 'alarm', 'id_alarm', 'alarm');
+        $xcrud_4->label('client_type_pds', 'Cliente')->label('id_alarms_device_pds', 'REF.')->label('id_pds', 'SFID')->label('id_devices_pds', 'Cod. dispositivo')->label('id_displays_pds', 'Cod. mueble')->label('id_alarm', 'Alarma')->label('description', 'Comentarios')->label('status', 'Estado');
+        $xcrud_4->columns('client_type_pds,id_alarms_device_pds,id_pds,id_devices_pds,id_displays_pds,id_alarm,status');
+        $xcrud_4->fields('client_type_pds,id_alarms_device_pds,id_pds,id_devices_pds,id_displays_pds,id_alarm,description,status');
+        $xcrud_4->order_by('id_pds', 'asc');
+        $xcrud_4->order_by('id_displays_pds', 'asc');
+        $xcrud_4->order_by('id_devices_pds', 'asc');
+        $xcrud_4->show_primary_ai_column(true);
+        $xcrud_4->unset_numbers();
+        $xcrud_4->start_minimized(true);*/
+
+        $data['title'] = 'Inventarios tiendas';
+        $data['content'] = $xcrud_1->render();
+        //$data['content'] = $data['content'] . $xcrud_2->render();
+        $data['content'] = $data['content'] . $xcrud_3->render();
+        ///$data['content'] = $data['content'] . $xcrud_4->render();
+
+        $data['displays'] = $this->tienda_model->get_displays_total();
+        $data['devices'] = $this->tienda_model->get_devices_total();
+
 
         /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
         $this->data->add($data);
@@ -2656,7 +3010,7 @@ class Admin extends CI_Controller
             $xcrud->relation('id_status_device', 'status_device', 'id_status_device', 'status_device');
             $xcrud->relation('id_status_packaging_device', 'status_packaging_device', 'id_status_packaging_device', 'status_packaging_device');
             $xcrud->label('client_type_pds', 'Cliente')->label('id_devices_pds', 'REF.')->label('id_pds', 'SFID')->label('id_displays_pds', 'Cod. mueble')->label('id_display', 'Mueble')->label('alta', 'Fecha de alta')->label('position', 'Posición')->label('id_device', 'Dispositivo')->label('IMEI', 'IMEI')->label('mac', 'MAC')->label('serial', 'Nº de serie')->label('barcode', 'Código de barras')->label('id_color_device', 'Color')->label('id_complement_device', 'Complementos')->label('id_status_device', 'Estado dispositivo')->label('id_status_packaging_device', 'Estado packaging')->label('picture_url_1', 'Foto #1')->label('picture_url_2', 'Foto #2')->label('picture_url_3', 'Foto #3')->label('description', 'Comentarios')->label('status', 'Estado');
-            $xcrud->columns('client_type_pds,id_devices_pds,id_pds,id_displays_pds,id_display,id_device,position,IMEI,mac');
+            $xcrud->columns('client_type_pds,id_devices_pds,id_pds,id_displays_pds,id_display,id_device,position,IMEI, serial ,mac');
             $xcrud->fields('client_type_pds,id_devices_pds,id_pds,id_displays_pds,id_display,alta,id_device,position,serial,IMEI,mac,barcode,id_color_device,id_complement_device,id_status_device,id_status_packaging_device,picture_url_1,picture_url_2,picture_url_3,description');
             $xcrud->where('id_pds', $pds->id_pds);
             $xcrud->order_by('id_displays_pds', 'asc');
@@ -2747,7 +3101,8 @@ class Admin extends CI_Controller
         $id_display = $this->input->post('id_display');
         $devices = $this->tienda_model->get_devices_display($id_display);
 
-        $data['displays'] = $this->tienda_model->get_displays();
+        //$data['displays'] = $this->tienda_model->get_displays();
+        $data['displays'] = $this->tienda_model->get_displays_demoreal();
         $data['devices'] = $devices;
 
         if ($id_display != '') {
@@ -3900,7 +4255,7 @@ class Admin extends CI_Controller
 
 
 
-    public function informe_pdv()
+     public function informe_pdv()
     {
 
         if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
@@ -3908,8 +4263,9 @@ class Admin extends CI_Controller
             $this->load->model('sfid_model');
             $this->load->model('tienda_model');
             $this->load->model('informe_model');
+            $this->load->model('categoria_model');
 
-            $data["title"] = "Informe de Puntos de Venta";
+            $data["title"] = "Informe de Puntos de Venta (Bloom)";
 
 
             $resultados = array();
@@ -3920,14 +4276,14 @@ class Admin extends CI_Controller
             $data["resultados"] = $resultados;
 
 
-            /** COMENTADO SELECT DEMOREAL $data["tipos_tienda"] = $this->sfid_model->get_types_pds_demoreal(); */
-            $data["tipos_tienda"] = $this->sfid_model->get_types_pds();
-            /** COMENTADO SELECT DEMOREAL $panelados = $this->tienda_model->get_panelados_maestros_demoreal(); */
-            $data["panelados"] = $this->tienda_model->get_panelados_maestros();
-            /** COMENTADO SELECT DEMOREAL $muebles = $this->tienda_model->get_displays_demoreal(); */
-            $data["muebles"] = $this->tienda_model->get_displays();
-            /** COMENTADO SELECT DEMOREAL $terminales = $this->tienda_model->get_devices_demoreal(); */
-            //$data["terminales"] = $this->tienda_model->get_devices();
+            $data["muebles"] = $this->tienda_model->get_displays_demoreal();
+
+
+            $data["pds_tipos"] = $this->categoria_model->get_tipos_pds();
+            $data["pds_subtipos"] = $this->categoria_model->get_subtipos_pds();
+            $data["pds_segmentos"] = $this->categoria_model->get_segmentos_pds();
+            $data["pds_tipologias"] = $this->categoria_model->get_tipologias_pds();
+
 
             $data["terminales"] = $this->tienda_model->get_devices_demoreal();
             /* LISTADO DE TERRITORIOS PARA EL SELECT */
@@ -3942,8 +4298,8 @@ class Admin extends CI_Controller
             /////
             $this->load->view('backend/header', $data);
             $this->load->view('backend/navbar', $data);
-            $this->load->view('backend/informes/informe_puntos_venta_form', $data);
-            $this->load->view('backend/informes/informe_puntos_venta', $data);
+            $this->load->view('backend/informes/bloom/pdv/informe_puntos_venta_form', $data);
+            $this->load->view('backend/informes/bloom/pdv/informe_puntos_venta', $data);
             $this->load->view('backend/footer');
         }
         else
@@ -3951,6 +4307,7 @@ class Admin extends CI_Controller
             redirect('admin','refresh');
         }
     }
+
 
 
 
@@ -3967,8 +4324,10 @@ class Admin extends CI_Controller
             $ext = (!is_null($formato) ? $formato : $this->ext);    // Formato para exportaciones, especficiado o desde CFG
 
             $arr_campos = array(
-                "tipo_tienda" => '',
-                "panelado" => '',
+                "id_tipo" => '',
+                "id_subtipo" => '',
+                "id_segmento" => '',
+                "id_tipologia" => '',
                 "id_display" => '',
                 "id_device" => '',
                 "territory" => '',
@@ -3996,20 +4355,37 @@ class Admin extends CI_Controller
 
                 $campos_sess_informe = array();
                 // TIPO TIENDA
-                $tipo_tienda = array();
-                $campos_sess_informe["tipo_tienda"] = NULL;
-                if (is_array($this->input->post("tipo_tienda_multi"))) {
-                    foreach ($this->input->post("tipo_tienda_multi") as $tt) $tipo_tienda[] = $tt;
-                    $campos_sess_informe["tipo_tienda"] = $tipo_tienda;
+                $id_tipo = array();
+                $campos_sess_informe["id_tipo"] = NULL;
+                if (is_array($this->input->post("id_tipo_multi"))) {
+                    foreach ($this->input->post("id_tipo_multi") as $tt) $id_tipo[] = $tt;
+                    $campos_sess_informe["id_tipo"] = $id_tipo;
                 }
 
-                // PANELADO
-                $panelado = array();
-                $campos_sess_informe["panelado"] = NULL;
-                if (is_array($this->input->post("panelado_multi"))) {
-                    foreach ($this->input->post("panelado_multi") as $tt) $panelado[] = $tt;
-                    $campos_sess_informe["panelado"] = $panelado;
+                // SUBTIPO TIENDA
+                $id_subtipo = array();
+                $campos_sess_informe["id_subtipo"] = NULL;
+                if (is_array($this->input->post("id_subtipo_multi"))) {
+                    foreach ($this->input->post("id_subtipo_multi") as $tt) $id_subtipo[] = $tt;
+                    $campos_sess_informe["id_subtipo"] = $id_subtipo;
                 }
+
+                // SEGMENTO TIENDA
+                $id_segmento = array();
+                $campos_sess_informe["id_segmento"] = NULL;
+                if (is_array($this->input->post("id_segmento_multi"))) {
+                    foreach ($this->input->post("id_segmento_multi") as $tt) $id_segmento[] = $tt;
+                    $campos_sess_informe["id_segmento"] = $id_segmento;
+                }
+
+                // TIPOLOGIA TIENDA
+                $id_tipologia = array();
+                $campos_sess_informe["id_tipologia"] = NULL;
+                if (is_array($this->input->post("id_tipologia_multi"))) {
+                    foreach ($this->input->post("id_tipologia_multi") as $tt) $id_tipologia[] = $tt;
+                    $campos_sess_informe["id_tipologia"] = $id_tipologia;
+                }
+
                 // MUEBLE
                 $id_display = array();
                 $campos_sess_informe["id_display"] = NULL;
@@ -4047,8 +4423,12 @@ class Admin extends CI_Controller
                 $this->session->set_userdata("campos_sess",$campos_sess_informe);
                 $this->session->set_userdata("generado",TRUE);
 
-                $data["tipo_tienda"] = $tipo_tienda;
-                $data["panelado"] = $panelado;
+                $data["id_tipo"] = $id_tipo;
+                $data["id_subtipo"] = $id_subtipo;
+                $data["id_segmento"] = $id_segmento;
+                $data["id_tipologia"] = $id_tipologia;
+
+
                 $data["id_display"] = $id_display;
                 $data["id_device"] = $id_device;
                 $data["territory"] = $territory;
@@ -4065,7 +4445,7 @@ class Admin extends CI_Controller
             {
                 foreach($this->session->userdata("campos_sess") as $nombre_var=>$valores)
                 {
-                   $$nombre_var = $valores;             // Creamos variable al vuelo..
+                    $$nombre_var = $valores;             // Creamos variable al vuelo..
                     $data[$nombre_var] = $valores;      // Guardamos los mismos valores para la variable de la vista.
                 }
             }
@@ -4077,7 +4457,7 @@ class Admin extends CI_Controller
                 $data["total_registros"] = count($resultados);
                 $data["resultados"] = $resultados;
 
-                $resp = $this->load->view('backend/informes/informe_puntos_venta_ajax', $data, TRUE);
+                $resp = $this->load->view('backend/informes/bloom/pdv/informe_puntos_venta_ajax', $data, TRUE);
                 echo $resp;
 
             }
@@ -4093,7 +4473,7 @@ class Admin extends CI_Controller
 
 
 
-    public function informe_pdv_exportar()
+    public function informe_pdv_exportar_OLD()
     {
         if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
             $xcrud = xcrud_get_instance();
@@ -4278,6 +4658,7 @@ class Admin extends CI_Controller
                         $data['display'] = "";
 
 
+
                         if(!empty($arr_displays_pds)) {
                             $id_displays_pds = $arr_displays_pds[0]->id_displays_pds;
 
@@ -4334,9 +4715,11 @@ class Admin extends CI_Controller
 
                         $displays = $this->sfid_model->get_displays_pds($id_pds);
 
+
                         foreach ($displays as $key => $display) {
                             $num_devices = $this->tienda_model->count_devices_display($display->id_display);
                             $display->devices_count = $num_devices;
+                            echo $display->devices_count."-";
                         }
 
                         $data['displays'] = $displays;
@@ -4395,7 +4778,7 @@ class Admin extends CI_Controller
 
 
             /** COMENTADO SELECT DEMOREAL $muebles = $this->tienda_model->get_displays_demoreal(); */
-            $muebles = $this->tienda_model->get_displays();
+            $muebles = $this->tienda_model->get_displays_demoreal();
             $data["muebles"] = $muebles;
 
             $data["vista"] = $vista;
@@ -4442,11 +4825,10 @@ class Admin extends CI_Controller
 
 
 
-    public function informe_planograma_mueble_pds(){
+    public function informe_planograma_mueble_pds($id_pds, $id_dis){
         if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10))
         {
-            $id_pds   = $this->uri->segment(3);
-            $id_dis   = $this->uri->segment(4);
+
 
             $xcrud = xcrud_get_instance();
             $this->load->model('tienda_model');
@@ -4465,13 +4847,15 @@ class Admin extends CI_Controller
             $data['zip']        = $sfid['zip'];
             $data['city']       = $sfid['city'];
 
-            $display = $this->sfid_model->get_display($this->uri->segment(4));
+            $display = $this->sfid_model->get_display($id_dis);
+
 
             $data['id_display']  = $display['id_display'];
             $data['display']     = $display['display'];
             $data['picture_url'] = $display['picture_url'];
 
             $data['devices'] = $this->sfid_model->get_devices_displays_pds($id_dis);
+
 
             $data['id_pds_url']  = $id_pds;
             $data['id_dis_url']  = $id_dis;
@@ -4613,11 +4997,16 @@ class Admin extends CI_Controller
             $this->load->model('sfid_model');
             $this->load->model('tienda_model');
             $this->load->model('informe_model');
+            $this->load->model('categoria_model');
 
-            $tipo_tienda_visual = "";
-            $panelado_visual = "";
+            $id_tipo_visual = NULL;
+            $id_subtipo_visual = NULL;
+            $id_segmento_visual = NULL;
+            $id_tipologia_visual = NULL;
+
             $sfid_visual = "";
             $generado_visual = FALSE;
+            $vista = NULL;
 
             $data["title"] = "Informe Visual";
 
@@ -4626,8 +5015,12 @@ class Admin extends CI_Controller
             $get_page = $this->uri->segment(3);
 
             if ($get_page === "reset") {
-                $this->session->unset_userdata("tipo_tienda_visual");
-                $this->session->unset_userdata("panelado_visual");
+                $this->session->unset_userdata("id_tipo_visual");
+                $this->session->unset_userdata("id_subtipo_visual");
+                $this->session->unset_userdata("id_segmento_visual");
+                $this->session->unset_userdata("id_tipologia_visual");
+
+
                 $this->session->unset_userdata("sfid_visual");
                 $this->session->unset_userdata("generado_visual");
                 redirect("admin/informe_visual", "refresh");
@@ -4635,126 +5028,131 @@ class Admin extends CI_Controller
 
 
             if ($this->input->post("generar_informe") === "si") {
-                $tipo_tienda_visual = $this->input->post("tipo_tienda_visual");
-                $panelado_visual = $this->input->post("panelado_visual");
-                $sfid_visual = $this->input->post("sfid_visual");
 
-                $data["tipo_tienda_visual"] = $tipo_tienda_visual;
-                $data["panelado_visual"] = $panelado_visual;
-                $data["sfid_visual"] = $sfid_visual;
-                $data["generado_visual"] = TRUE;
-                $this->session->set_userdata($data);
+                $id_tipo_visual = $this->input->post("id_tipo_visual");
+                $id_subtipo_visual = $this->input->post("id_subtipo_visual");
+                $id_segmento_visual = $this->input->post("id_segmento_visual");
+                $id_tipologia_visual = $this->input->post("id_tipologia_visual");
+
+                $sfid_visual = $this->input->post("sfid_visual");
+                $generado_visual = TRUE;
 
             } else {
                 // OBTENER DE LA SESION, SI EXISTE
                 if ($this->session->userdata("generado_visual") !== NULL && $this->session->userdata("generado_visual") === TRUE) {
-                    $tipo_tienda_visual = $this->session->userdata("tipo_tienda_visual");
-                    $panelado_visual = $this->session->userdata("panelado_visual");
+
+                    $id_tipo_visual = $this->session->userdata("id_tipo_visual");
+                    $id_subtipo_visual = $this->session->userdata("id_subtipo_visual");
+                    $id_segmento_visual = $this->session->userdata("id_segmento_visual");
+                    $id_tipologia_visual = $this->session->userdata("id_tipologia_visual");
+
                     $sfid_visual = $this->session->userdata("sfid_visual");
                     $generado_visual = $this->session->userdata("generado_visual");
-
                 }
-
-                $data["tipo_tienda_visual"] = $tipo_tienda_visual;
-                $data["panelado_visual"] = $panelado_visual;
-                $data["sfid_visual"] = $sfid_visual;
-                $data["generado_visual"] = $generado_visual;
-                $this->session->set_userdata($data);
             }
+
+            $data["id_tipo_visual"] = $id_tipo_visual;
+            $data["id_subtipo_visual"] = $id_subtipo_visual;
+            $data["id_segmento_visual"] = $id_segmento_visual;
+            $data["id_tipologia_visual"] = $id_tipologia_visual;
+
+            $data["sfid_visual"] = $sfid_visual;
+            $data["generado_visual"] = $generado_visual;
+
+            $this->session->set_userdata($data);
 
 
 
 
             /* Obtener los tipos de tienda para el select */
             /** COMENTADO SELECT DEMOREAL $muebles = $this->tienda_model->get_displays_demoreal(); */
-            $muebles = $this->tienda_model->get_displays();
+            $muebles = $this->tienda_model->get_displays_demoreal();
             $data["muebles"] = $muebles;
 
             /** COMENTADO SELECT DEMOREAL $data["tipos_tienda"] = $this->sfid_model->get_types_pds_demoreal(); */
-            $data["tipos_tienda"] = $this->sfid_model->get_types_pds();
+            $data["tipos"] = $this->categoria_model->get_tipos_pds();
+            $data["subtipos"] = array();
+            $data["segmentos"] = $this->categoria_model->get_segmentos_pds($id_segmento_visual);
+            $data["tipologias"] = array();
 
 
 
             $data["subtitle"] = "";
             $data["error_panelado"] = FALSE;
 
-            if(empty($sfid_visual) && !empty($tipo_tienda_visual) && empty($panelado_visual)){
-                // Validación de panelado escogido, cuando no se ha escogido SFID pero se ha escogido un tipo de tienda
-                // sin escoger un panelado
-                $vista = 0;
-                $data["error_panelado"] = TRUE;
-
-            }elseif(!empty($panelado_visual) && empty($sfid_visual)){
-                // Cargar muebles del panelado maestro escogido
-
-                /*
-                     *  Panelado de la tienda
-                     */
-                $displays = $this->tienda_model->get_displays_panelado_maestros($panelado_visual);
-                $o_panelado =  $this->tienda_model->get_panelado_maestro($panelado_visual);
-
-                foreach ($displays as $key => $display) {
-                    $num_devices = $this->tienda_model->count_devices_display($display->id_display);
-                    $display->devices_count = $num_devices;
-                }
-
-                $data['displays'] = $displays;
-
-                $data['subtitle'] = 'Panelado genérico: ' . $o_panelado->panelado. '';
 
 
+            if($generado_visual) {
 
 
-                $vista = 2;
-            }elseif(!empty($sfid_visual)){
-                // Cargar panelado del sfid.
-                /*
-                    *  Panelado de la tienda
-                    */
-                $tiendas = $this->tienda_model->search_pds($sfid_visual);
+                if (empty($sfid_visual)) {
+                    if (empty($id_tipo_visual) || empty($id_subtipo_visual) || empty($id_segmento_visual) || empty($id_tipologia_visual)) {
+                        // Validación de los 4 campos de categorización, que son obligatorios.
+                        $vista = 0;
+                        $data["error_panelado"] = TRUE;
+                    } else {
+                        // Cargar muebles del panelado maestro escogido
+                        /*
+                         *  Panelado de la categoría
+                         */
+                        $displays = $this->categoria_model->get_displays_categoria($id_tipo_visual,$id_subtipo_visual,$id_segmento_visual,$id_tipologia_visual);
 
+                        //$o_panelado = $this->tienda_model->get_panelado_maestro($panelado_visual);
 
+                        foreach ($displays as $key => $display) {
+                            $num_devices = $this->tienda_model->count_devices_display($display->id_display);
+                            $display->devices_count = $num_devices;
+                        }
 
-                if (!empty($tiendas) && count($tiendas) == 1) {
-
-                    $tienda = NULL;
-                    foreach ($tiendas as $tienda_1) {
-                        $tienda = $tienda_1;
+                        $data['displays'] = $displays;
+                        $data['subtitle'] = 'Tipo de tienda';
+                        $vista = 2;
                     }
 
+                } else {
+                    // Cargar panelado del sfid.
+                    /*
+                        *  Panelado de la tienda
+                        */
+                    $tiendas = $this->tienda_model->search_pds($sfid_visual);
 
-                    $id_pds = $tienda->id_pds;
 
-                    $sfid = $this->tienda_model->get_pds($id_pds);
+                    if (!empty($tiendas) && count($tiendas) == 1) {
 
-                    $data['id_pds'] = 'ABX/PDS-' . $sfid['id_pds'];
-                    $data['commercial'] = $sfid['commercial'];
-                    $data['territory'] = $sfid['territory'];
-                    $data['reference'] = $sfid['reference'];
-                    $data['address'] = $sfid['address'];
-                    $data['zip'] = $sfid['zip'];
-                    $data['city'] = $sfid['city'];
-                    $data['id_pds_url'] = $id_pds;
+                        $tienda = NULL;
+                        foreach ($tiendas as $tienda_1) {
+                            $tienda = $tienda_1;
+                        }
 
-                    $displays = $this->sfid_model->get_displays_pds($id_pds);
 
-                    foreach ($displays as $key => $display) {
-                        $num_devices = $this->tienda_model->count_devices_display($display->id_display);
-                        $display->devices_count = $num_devices;
+                        $id_pds = $tienda->id_pds;
+
+                        $sfid = $this->tienda_model->get_pds($id_pds);
+
+                        $data['id_pds'] = 'ABX/PDS-' . $sfid['id_pds'];
+                        $data['commercial'] = $sfid['commercial'];
+                        $data['territory'] = $sfid['territory'];
+                        $data['reference'] = $sfid['reference'];
+                        $data['address'] = $sfid['address'];
+                        $data['zip'] = $sfid['zip'];
+                        $data['city'] = $sfid['city'];
+                        $data['id_pds_url'] = $id_pds;
+
+                        $displays = $this->sfid_model->get_displays_pds($id_pds);
+
+                        foreach ($displays as $key => $display) {
+                            $num_devices = $this->tienda_model->count_devices_display($display->id_display);
+                            $display->devices_count = $num_devices;
+                        }
+
+                        $data['displays'] = $displays;
+
+                        $data['subtitle'] = 'Panelado tienda: SFID-' . $sfid_visual . '';
+
                     }
-
-                    $data['displays'] = $displays;
-
-                    $data['subtitle'] = 'Panelado tienda: SFID-' . $sfid_visual. '';
-
+                    $vista = 1;
                 }
-                $vista = 1;
-            }else{
-                // Debe escoger algun valor, form vacio
-                $vista = 0;
             }
-
-
 
 
 
@@ -4767,17 +5165,17 @@ class Admin extends CI_Controller
             /////
             $this->load->view('backend/header', $data);
             $this->load->view('backend/navbar', $data);
-            $this->load->view('backend/informes/informe_visual_form', $data);
+            $this->load->view('backend/informes/bloom/visual/informe_visual_form', $data);
 
             switch ($vista) {
                 case 2 :
-                    $this->load->view('backend/informes/informe_visual_panelado',$data);
+                    $this->load->view('backend/informes/bloom/visual/informe_visual_panelado',$data);
                     break;
                 case 1 :
-                    $this->load->view('backend/informes/informe_visual_sfid', $data);
+                    $this->load->view('backend/informes/bloom/visual/informe_visual_sfid', $data);
                     break;
                 default:
-                    $this->load->view('backend/informes/informe_visual', $data);
+                    $this->load->view('backend/informes/bloom/visual/informe_visual', $data);
 
             }
 
@@ -4852,8 +5250,8 @@ class Admin extends CI_Controller
             /////
             $this->load->view('backend/header',$data);
             $this->load->view('backend/navbar',$data);
-            $this->load->view('backend/informes/informe_visual_form',$data);
-            $this->load->view('backend/informes/informe_visual_maestro_mueble',$data);
+            $this->load->view('backend/informes/bloom/visual/informe_visual_form',$data);
+            $this->load->view('backend/informes/bloom/visual/informe_visual_maestro_mueble',$data);
             $this->load->view('backend/footer');
         }
         else
@@ -4927,8 +5325,8 @@ class Admin extends CI_Controller
             /////
             $this->load->view('backend/header', $data);
             $this->load->view('backend/navbar', $data);
-            $this->load->view('backend/informes/informe_visual_form', $data);
-            $this->load->view('backend/informes/informe_visual_terminal', $data);
+            $this->load->view('backend/informes/bloom/visual/informe_visual_form', $data);
+            $this->load->view('backend/informes/bloom/visual/informe_visual_terminal', $data);
             $this->load->view('backend/footer');
         } else {
             redirect('admin', 'refresh');
@@ -5003,8 +5401,8 @@ class Admin extends CI_Controller
             /////
             $this->load->view('backend/header',$data);
             $this->load->view('backend/navbar',$data);
-            $this->load->view('backend/informes/informe_visual_form',$data);
-            $this->load->view('backend/informes/informe_visual_mueble_sfid',$data);
+            $this->load->view('backend/informes/bloom/visual/informe_visual_form',$data);
+            $this->load->view('backend/informes/bloom/visual/informe_visual_mueble_sfid',$data);
             $this->load->view('backend/footer');
         }
         else
@@ -5092,8 +5490,8 @@ class Admin extends CI_Controller
             /////
             $this->load->view('backend/header',$data);
             $this->load->view('backend/navbar',$data);
-            $this->load->view('backend/informes/informe_visual_form',$data);
-            $this->load->view('backend/informes/informe_visual_ficha_terminal',$data);
+            $this->load->view('backend/informes/bloom/visual/informe_visual_form',$data);
+            $this->load->view('backend/informes/bloom/visual/informe_visual_ficha_terminal',$data);
             $this->load->view('backend/footer');
         }
         else
@@ -5218,6 +5616,142 @@ class Admin extends CI_Controller
 
 
 
+    public function informe_backup()
+    {
+        if($this->auth->is_auth()) {
+            $xcrud = xcrud_get_instance();
+            $opcion = NULL;
+            $this->load->model("backup_model");
+
+
+            $data['title'] = 'Realizar backup';
+
+            $generar_backup = $this->input->post("generar_backup");
+
+            if($generar_backup=="si") {
+                $opcion = $this->input->post("opcion");
+                $sfids = $this->input->post("sfids");
+                $array_sfids = explode("\n", $sfids);
+            }
+
+
+
+            if (is_null($opcion)) {
+
+                /////
+                // Form de backup
+                /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+                $this->data->add($data);
+                $data = $this->data->getData();
+                $this->load->view('backend/header', $data);
+                $this->load->view('backend/navbar', $data);
+                $this->load->view('backend/backup/form', $data);
+                $this->load->view('backend/footer');
+
+            } else {
+                // Tratamiento del backup
+                switch ($opcion) {
+                    case "planograma":
+                        $this->backup_model->set_sfids($array_sfids);
+                        $resultado = $this->backup_model->exportar_planogramas();
+
+                        $data["resultado"] = $resultado;
+
+                        $this->data->add($data);
+                        $data = $this->data->getData();
+                        $this->load->view('backend/header', $data);
+
+                        $this->load->view('backend/backup/planograma', $data);
+                        $this->load->view('backend/footer');
+                        break;
+                }
+
+
+            }
+        }
+    }
+
+    public function anadir_mueble_sfid()
+    {
+        if($this->auth->is_auth()) {
+            $xcrud = xcrud_get_instance();
+            $this->load->model("tienda_model");
+
+            $anadir_mueble = $this->input->post("anadir_mueble");
+            $data["title"] = "Añadir mueble a SFIDs";
+            $data["anadiendo_mueble"] = FALSE;
+
+            $id_display = NULL;
+            $sfids = "";
+            $arr_sfids = array();
+
+            // Venimos del form de añadir mueble. Añadir
+            if($anadir_mueble == "si")
+            {
+
+
+                $sfids = $this->input->post("sfids");
+                $arr_sfids = explode("\n", $sfids);
+                $data["arr_sfids"] = $arr_sfids;
+                $id_display = $this->input->post("id_display");
+
+
+                $position = $this->input->post("position"); $position = (empty($position)) ? NULL : $position;
+
+            }
+
+            // Validamos y añadimos
+            if(!empty($sfids) && !empty($id_display))
+            {
+                $data["anadiendo_mueble"] = TRUE;
+
+                $display = $this->tienda_model->get_display($id_display);
+                $data["mueble"] = $display["display"];
+                $data["position"] = $position;
+
+
+                $devices_display = $this->tienda_model->get_devices_display($id_display);
+
+                // Validamos el array de SFIDs, y creamos un nuevo array que guarde NULL si el SFID no se encuentra
+                // y en caso contrario guarde el objeto PDS asociado.
+                $checked_sfids = array();
+                foreach($arr_sfids as $sfid)
+                {
+                    if(!empty($sfid))
+                    {
+                        $check_sfid = $this->tienda_model->get_sfid($sfid);
+                        if (!empty($check_sfid)){// SFID ENCONTRADO
+                            $checked_sfids[$sfid] = $check_sfid;
+
+                           $this->tienda_model->anadir_mueble_sfid($display,$check_sfid,$position);
+
+
+
+                        }
+                        else $checked_sfids[$sfid] = NULL;
+                    }
+                }
+                $data["checked_sfids"] = $checked_sfids;
+
+
+            }
+
+
+            $this->data->add($data);
+            $data = $this->data->getData();
+            $this->load->view('backend/header', $data);
+
+            $muebles = $this->tienda_model->get_muebles();
+            $data["muebles"] = $muebles;
+            $data["sfids"] = $sfids;
+            $data["id_display"]  = $id_display;
+
+            $this->load->view('backend/navbar',$data);
+            $this->load->view('backend/masivas/anadir_mueble_sfid/formulario', $data);
+            $this->load->view('backend/masivas/anadir_mueble_sfid/resultado', $data);
+            $this->load->view('backend/footer');
+        }
+    }
     public function mantenimiento()
     {
 

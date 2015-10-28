@@ -256,6 +256,9 @@ class Master extends CI_Controller {
                 'brand_device' => '',
                 'id_display' => '',
                 'id_device' => '',
+                'id_supervisor' => '',
+                'id_provincia' => '',
+
                 'id_incidencia' => '',
                 'reference' => ''
             );
@@ -341,9 +344,13 @@ class Master extends CI_Controller {
             /* LISTADO DE FABRICANTES PARA EL SELECT */
             $data["fabricantes"] = $this->tienda_model->get_fabricantes();
             /* LISTADO DE MUEBLES PARA EL SELECT */
-            $data["muebles"] = $this->tienda_model->get_muebles();
+            $data["muebles"] = $this->tienda_model->get_displays_demoreal();
             /* LISTADO DE TERMINALES PARA EL SELECT */
             $data["terminales"] = $this->tienda_model->get_terminales();
+
+            $data["supervisores"] = $this->tienda_model->get_supervisores();
+            $data["provincias"] = $this->tienda_model->get_provincias();
+
 
             /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
             $this->data->add($data);
@@ -377,6 +384,10 @@ class Master extends CI_Controller {
                 'brand_device'=>'',
                 'id_display' => '',
                 'id_device' => '',
+
+                'id_supervisor' => '',
+                'id_provincia' => '',
+
                 'id_incidencia'=>'',
                 'reference'=> ''
             );
@@ -773,6 +784,8 @@ class Master extends CI_Controller {
             // Rango de meses que mostrarán las columnas de la tabla, basándome en el mínimo y máximo mes que hay incidencias, este año.
             $rango_meses = $this->db->query("SELECT MONTH(MIN(fecha)) as min, MONTH(MAX(fecha)) as max FROM incidencias WHERE YEAR(fecha)='$este_anio'")->row();
 
+            $ctrl_no_cancelada = " AND (status_pds != 'Cancelada' && status != 'Cancelada') "; // Condición where de contrl de incidencias NO CANCELADAS
+
 
             // Sacamos
             $meses_columna = array();
@@ -787,7 +800,9 @@ class Master extends CI_Controller {
 								MONTH(incidencias.fecha) AS mes,
 								COUNT(*) AS total_incidencias
 								FROM incidencias
-								WHERE YEAR(incidencias.fecha) ='".$este_anio."'
+								WHERE 1 = 1
+								$ctrl_no_cancelada
+								AND YEAR(incidencias.fecha) = '".$este_anio."'
 								GROUP BY
 								anio,
 								mes");
@@ -809,7 +824,7 @@ class Master extends CI_Controller {
             {
                 $total_incidencias_total += $value->total_incidencias;
 
-                $dias_op = contar_dias_excepto($value->mes,$value->anio,array('Sun'),date('d'));
+                $dias_op = contar_dias_excepto($value->mes,$value->anio,array('Sun','Sat'),date('d'));
                 if($dias_op <= 0) $dias_op = 1;
                 $dias_operativos[] = $dias_op;
                 $total_dias_operativos += $dias_op;
@@ -830,8 +845,9 @@ class Master extends CI_Controller {
 								MONTH(incidencias.fecha) AS mes,
 								COUNT(*) AS total_incidencias
 								FROM incidencias
-								WHERE
-								YEAR(incidencias.fecha) ='".$este_anio."'
+								WHERE 1=1
+								 $ctrl_no_cancelada
+								AND YEAR(incidencias.fecha) ='".$este_anio."'
 								GROUP BY status_pds, anio, mes
 								ORDER BY status_pds ASC, mes ASC
 								 ")->result();
@@ -849,6 +865,7 @@ class Master extends CI_Controller {
             $titulo_incidencias_estado = $this->db->query("
                                 SELECT title as estado
 								FROM type_status_pds
+								WHERE title != 'Cancelada'
 								ORDER BY id_status_pds ASC
 								 ")->result();
 
@@ -878,7 +895,7 @@ class Master extends CI_Controller {
             $this->db->query(" UPDATE incidencias SET fecha_cierre = DATE_ADD(fecha, INTERVAL 2 day) WHERE status_pds = 'Finalizada' && fecha_cierre IS NULL; ");
 
 
-            $this->db->query(" CREATE TEMPORARY TABLE IF NOT EXISTS historico_temp(INDEX(id_incidencia))
+            /*$this->db->query(" CREATE TEMPORARY TABLE IF NOT EXISTS historico_temp(INDEX(id_incidencia))
                                     AS (
                                            SELECT h.id_incidencia, i.fecha as fecha_entrada, MAX(h.fecha) as fecha_proceso,
                                             i.fecha_cierre, DATEDIFF(i.fecha_cierre,DATE_ADD(h.fecha,INTERVAL 1 day)) as diferencia, h.status_pds, h.status
@@ -891,18 +908,33 @@ class Master extends CI_Controller {
                                                     )
                                             GROUP BY id_incidencia
                                     );
-                                    ");
+                                    ");*/
+
+            $this->db->query(" CREATE TEMPORARY TABLE IF NOT EXISTS historico_temp(INDEX(id_incidencia))
+                                    AS (
+                                           SELECT h.id_incidencia, i.fecha as fecha_entrada, MAX(h.fecha) as fecha_proceso,
+                                            i.fecha_cierre,  h.status_pds, h.status
+                                            FROM historico h
+                                            JOIN incidencias i ON h.id_incidencia = i.id_incidencia
+                                            WHERE 	YEAR(i.fecha) = '".$este_anio."'
+                                                AND ( h.status_pds != 'Cancelada' && i.status_pds != 'Cancelada')
+                                                AND ( h.status_pds = 'En proceso' || i.status_pds = 'Finalizada')
+                                            GROUP BY id_incidencia
+                                    );
+            ");
+
+            //$this->db->query(" UPDATE historico_temp SET fecha_proceso =  DATE_ADD(fecha_entrada, INTERVAL 2 day) WHERE DATEDIFF(fecha_proceso,fecha_entrada) < 0; ");
 
             $sql = "
             SELECT COUNT(id_incidencia)  as cantidad, YEAR(fecha_entrada) as anio, MONTH(fecha_entrada) as mes FROM historico_temp
-            WHERE diferencia < 3
+            WHERE (workdaydiff(fecha_proceso,fecha_cierre)) < 3
             GROUP BY anio, mes;
             ";
             $menos_72 = $this->db->query($sql)->result();
 
             $mas_72 = $this->db->query(                "
                    SELECT COUNT(id_incidencia) as cantidad, YEAR(fecha_entrada) as anio, MONTH(fecha_entrada) as mes FROM historico_temp
-                    WHERE diferencia >= 3
+                    WHERE (workdaydiff(fecha_proceso,fecha_cierre)) >= 3
                     GROUP BY anio, mes;")->result();
 
 
@@ -993,10 +1025,40 @@ class Master extends CI_Controller {
                 GROUP BY mes
             ");*/
 
-            $resultados_3 = $this->db->query("SELECT count(distinct (id_intervencion)) as cantidad, month(fecha) as mes FROM facturacion WHERE year(fecha) = '".$este_anio."'
-GROuP by mes");
+           /* $SQL = ' CREATE TEMPORARY TABLE estado_facturacion_temp AS(
+                   SELECT (COUNT(f.id_intervencion)) as cantidad, YEAR(f.fecha) as anio, MONTH(f.fecha) as mes
+                                                FROM facturacion f
+                                                LEFT JOIN intervenciones ON f.id_intervencion = intervenciones.id_intervencion
+                                                WHERE YEAR(f.fecha) = "'.$este_anio.'"
+                                                GROUP BY mes
+            )';*/
 
-            // CREAMOS UN ARRAY CON TODOS LOS MESES Y LO RELLENAMOS CON LOS RESULTADOS, SI NO EXISTE RESULTADO, ESE MES
+
+
+
+            //, COUNT(facturacion.id_incidencia) AS incidencias";"
+
+            $this->db->query(" DROP TABLE IF EXISTS facturacion_temp; ");
+            $this->db->query('
+                CREATE TEMPORARY TABLE facturacion_temp AS
+                (
+                    SELECT f.fecha as fecha, COUNT(f.id_incidencia) AS incidencias,  SUM(f.units_device) AS dispositivos, SUM(f.units_alarma) AS otros
+                    FROM facturacion f
+                    LEFT JOIN intervenciones ON  f.id_intervencion = intervenciones.id_intervencion
+                    WHERE YEAR(f.fecha) = "'.$este_anio.'"
+                    GROUP BY f.id_intervencion
+                );
+            ');
+
+
+            $resultados_3 = $this->db->query('SELECT COUNT(*) as cantidad, YEAR(f.fecha) as anio, MONTH(f.fecha) as mes
+                                                FROM facturacion_temp f
+                                                GROUP BY mes');
+
+
+
+
+            // CREAMOS UN ARRAY CON TODOS LOS MESES Y LO RELLENAMOS CON LOS RESULTADOS, SI NO                                                                                                                                                                                                                      EXISTE RESULTADO, ESE MES
             // SERA DE CANTIDAD 0
             $intervenciones_anio = array();
             foreach($meses_columna as $num_mes=>$mes)
@@ -1098,10 +1160,20 @@ GROuP by mes");
                 GROUP BY anio, mes
             ");*/
 
-            $resultados_6 = $this->db->query("SELECT COUNT('id_incidencia') as cantidad,
+            //$resultados_3 = $this->db->query("SELECT count(distinct (id_intervencion)) as cantidad, month(fecha) as mes FROM facturacion WHERE year(fecha) = '".$este_anio."' GROuP by mes");
+
+            // TABLA TEMPORAL
+
+
+
+            $resultados_6 = $this->db->query('SELECT SUM(incidencias) as cantidad, YEAR(f.fecha) as anio, MONTH(f.fecha) as mes
+                                                FROM facturacion_temp f
+                                                GROUP BY mes');
+
+            /*$resultados_6 = $this->db->query("SELECT COUNT('id_incidencia') as cantidad,
                                                 MONTH(fecha) as mes, YEAR(fecha) as anio
                                                 FROM facturacion WHERE YEAR(fecha) = '".$este_anio."'
-                                                GROUP BY  anio, mes");
+                                                GROUP BY  anio, mes");*/
 
             // CREAMOS UN ARRAY CON TODOS LOS MESES Y LO RELLENAMOS CON LOS RESULTADOS, SI NO EXISTE RESULTADO, ESE MES
             // SERA DE CANTIDAD 0
@@ -1830,7 +1902,7 @@ GROuP by mes");
 			$id_display = $this->input->post('id_display');
 			$devices    = $this->tienda_model->get_devices_display($id_display);
 
-			$data['displays'] = $this->tienda_model->get_displays();
+			$data['displays'] = $this->tienda_model->get_displays_demoreal();
 			$data['devices']  = $devices;
 
 			if ($id_display != '')
@@ -1867,8 +1939,9 @@ GROuP by mes");
             $this->load->model('sfid_model');
             $this->load->model('tienda_model');
             $this->load->model('informe_model');
+            $this->load->model('categoria_model');
 
-            $data["title"] = "Informe de Puntos de Venta";
+            $data["title"] = "Informe de Puntos de Venta (Bloom)";
 
 
             $resultados = array();
@@ -1879,14 +1952,20 @@ GROuP by mes");
             $data["resultados"] = $resultados;
 
 
-            /** COMENTADO SELECT DEMOREAL $data["tipos_tienda"] = $this->sfid_model->get_types_pds_demoreal(); */
+            /*// COMENTADO SELECT DEMOREAL $data["tipos_tienda"] = $this->sfid_model->get_types_pds_demoreal();
             $data["tipos_tienda"] = $this->sfid_model->get_types_pds();
-            /** COMENTADO SELECT DEMOREAL $panelados = $this->tienda_model->get_panelados_maestros_demoreal(); */
-            $data["panelados"] = $this->tienda_model->get_panelados_maestros();
-            /** COMENTADO SELECT DEMOREAL $muebles = $this->tienda_model->get_displays_demoreal(); */
-            $data["muebles"] = $this->tienda_model->get_displays();
-            /** COMENTADO SELECT DEMOREAL $terminales = $this->tienda_model->get_devices_demoreal(); */
+            // COMENTADO SELECT DEMOREAL $panelados = $this->tienda_model->get_panelados_maestros_demoreal();
+            $data["panelados"] = $this->tienda_model->get_panelados_maestros();*/
+            // COMENTADO SELECT DEMOREAL $muebles = $this->tienda_model->get_displays_demoreal();
+            $data["muebles"] = $this->tienda_model->get_displays_demoreal();
+            // COMENTADO SELECT DEMOREAL $terminales = $this->tienda_model->get_devices_demoreal();
             //$data["terminales"] = $this->tienda_model->get_devices();
+
+            $data["pds_tipos"] = $this->categoria_model->get_tipos_pds();
+            $data["pds_subtipos"] = $this->categoria_model->get_subtipos_pds();
+            $data["pds_segmentos"] = $this->categoria_model->get_segmentos_pds();
+            $data["pds_tipologias"] = $this->categoria_model->get_tipologias_pds();
+
 
             $data["terminales"] = $this->tienda_model->get_devices_demoreal();
             /* LISTADO DE TERRITORIOS PARA EL SELECT */
@@ -1901,16 +1980,15 @@ GROuP by mes");
             /////
             $this->load->view('master/header', $data);
             $this->load->view('master/navbar', $data);
-            $this->load->view('master/informes/informe_puntos_venta_form', $data);
-            $this->load->view('master/informes/informe_puntos_venta', $data);
+            $this->load->view('master/informes/bloom/pdv/puntos_venta_form', $data);
+            $this->load->view('master/informes/bloom/pdv/puntos_venta', $data);
             $this->load->view('master/footer');
         }
         else
         {
-            redirect('master','refresh');
+            redirect('admin','refresh');
         }
     }
-
 
 
     /**
@@ -1921,16 +1999,15 @@ GROuP by mes");
         if($this->auth->is_auth()) {
             $xcrud = xcrud_get_instance();
 
+            $this->load->model('informe_model');
 
             $ext = (!is_null($formato) ? $formato : $this->ext);    // Formato para exportaciones, especficiado o desde CFG
 
-            $this->load->model('informe_model');
-
-            $data["generado"] = FALSE;
-
             $arr_campos = array(
-                "tipo_tienda" => '',
-                "panelado" => '',
+                "id_tipo" => '',
+                "id_subtipo" => '',
+                "id_segmento" => '',
+                "id_tipologia" => '',
                 "id_display" => '',
                 "id_device" => '',
                 "territory" => '',
@@ -1947,7 +2024,7 @@ GROuP by mes");
 
             $total_registros = 0;
 
-            $controlador_origen = "master"; //  Controlador por defecto
+            $controlador_origen = "admin"; //  Controlador por defecto
 
 
             if ($this->input->post("generar_informe") === "si") {
@@ -1958,20 +2035,37 @@ GROuP by mes");
 
                 $campos_sess_informe = array();
                 // TIPO TIENDA
-                $tipo_tienda = array();
-                $campos_sess_informe["tipo_tienda"] = NULL;
-                if (is_array($this->input->post("tipo_tienda_multi"))) {
-                    foreach ($this->input->post("tipo_tienda_multi") as $tt) $tipo_tienda[] = $tt;
-                    $campos_sess_informe["tipo_tienda"] = $tipo_tienda;
+                $id_tipo = array();
+                $campos_sess_informe["id_tipo"] = NULL;
+                if (is_array($this->input->post("id_tipo_multi"))) {
+                    foreach ($this->input->post("id_tipo_multi") as $tt) $id_tipo[] = $tt;
+                    $campos_sess_informe["id_tipo"] = $id_tipo;
                 }
 
-                // PANELADO
-                $panelado = array();
-                $campos_sess_informe["panelado"] = NULL;
-                if (is_array($this->input->post("panelado_multi"))) {
-                    foreach ($this->input->post("panelado_multi") as $tt) $panelado[] = $tt;
-                    $campos_sess_informe["panelado"] = $panelado;
+                // SUBTIPO TIENDA
+                $id_subtipo = array();
+                $campos_sess_informe["id_subtipo"] = NULL;
+                if (is_array($this->input->post("id_subtipo_multi"))) {
+                    foreach ($this->input->post("id_subtipo_multi") as $tt) $id_subtipo[] = $tt;
+                    $campos_sess_informe["id_subtipo"] = $id_subtipo;
                 }
+
+                // SEGMENTO TIENDA
+                $id_segmento = array();
+                $campos_sess_informe["id_segmento"] = NULL;
+                if (is_array($this->input->post("id_segmento_multi"))) {
+                    foreach ($this->input->post("id_segmento_multi") as $tt) $id_segmento[] = $tt;
+                    $campos_sess_informe["id_segmento"] = $id_segmento;
+                }
+
+                // TIPOLOGIA TIENDA
+                $id_tipologia = array();
+                $campos_sess_informe["id_tipologia"] = NULL;
+                if (is_array($this->input->post("id_tipologia_multi"))) {
+                    foreach ($this->input->post("id_tipologia_multi") as $tt) $id_tipologia[] = $tt;
+                    $campos_sess_informe["id_tipologia"] = $id_tipologia;
+                }
+
                 // MUEBLE
                 $id_display = array();
                 $campos_sess_informe["id_display"] = NULL;
@@ -2009,8 +2103,12 @@ GROuP by mes");
                 $this->session->set_userdata("campos_sess",$campos_sess_informe);
                 $this->session->set_userdata("generado",TRUE);
 
-                $data["tipo_tienda"] = $tipo_tienda;
-                $data["panelado"] = $panelado;
+                $data["id_tipo"] = $id_tipo;
+                $data["id_subtipo"] = $id_subtipo;
+                $data["id_segmento"] = $id_segmento;
+                $data["id_tipologia"] = $id_tipologia;
+
+
                 $data["id_display"] = $id_display;
                 $data["id_device"] = $id_device;
                 $data["territory"] = $territory;
@@ -2039,7 +2137,7 @@ GROuP by mes");
                 $data["total_registros"] = count($resultados);
                 $data["resultados"] = $resultados;
 
-                $resp = $this->load->view('master/informes/informe_puntos_venta_ajax', $data, TRUE);
+                $resp = $this->load->view('master/informes/bloom/pdv/puntos_venta_ajax', $data, TRUE);
                 echo $resp;
 
             }
@@ -2055,7 +2153,7 @@ GROuP by mes");
 
 
 
-    public function informe_pdv_exportar()
+    public function informe_pdv_exportar_OLD()
     {
         if($this->auth->is_auth()){ // Control de acceso según el tipo de agente. Permiso definido en constructor
 
@@ -2317,7 +2415,7 @@ GROuP by mes");
                      *      Maestro del mueble
                      */
                     $devices = $this->tienda_model->get_devices_display($mueble_plano);
-                    $data['displays'] = $this->tienda_model->get_displays();
+                    $data['displays'] = $this->tienda_model->get_displays_demoreal();
                     $data['devices'] = $devices;
 
 
@@ -2359,7 +2457,7 @@ GROuP by mes");
 
 
             /** COMENTADO SELECT DEMOREAL $muebles = $this->tienda_model->get_displays_demoreal(); */
-            $muebles = $this->tienda_model->get_displays();
+            $muebles = $this->tienda_model->get_displays_demoreal();
             $data["muebles"] = $muebles;
 
         $data["vista"] = $vista;
@@ -2455,7 +2553,7 @@ GROuP by mes");
             }
 
             /** COMENTADO SELECT DEMOREAL $muebles = $this->tienda_model->get_displays_demoreal(); */
-            $muebles = $this->tienda_model->get_displays();
+            $muebles = $this->tienda_model->get_displays_demoreal();
             $data["muebles"] = $muebles;
             $data['title'] = 'Planograma tienda';
             $data['subtitle'] = 'Planograma tienda [SFID-'.$data['reference'].'] - '.$data['display'];
@@ -2538,7 +2636,7 @@ GROuP by mes");
             }
 
             /** COMENTADO SELECT DEMOREAL $muebles = $this->tienda_model->get_displays_demoreal(); */
-            $muebles = $this->tienda_model->get_displays();
+            $muebles = $this->tienda_model->get_displays_demoreal();
             $data["muebles"] = $muebles;
         $data['title'] = 'Planograma tienda [SFID-'.$data['reference'].']';
         $data['subtitle'] = $data["display"] .' - '. $data["device"];
@@ -2634,7 +2732,7 @@ GROuP by mes");
 
             /* Obtener los tipos de tienda para el select */
             /** COMENTADO SELECT DEMOREAL $muebles = $this->tienda_model->get_displays_demoreal(); */
-            $muebles = $this->tienda_model->get_displays();
+            $muebles = $this->tienda_model->get_displays_demoreal();
             $data["muebles"] = $muebles;
 
             /** COMENTADO SELECT DEMOREAL $data["tipos_tienda"] = $this->sfid_model->get_types_pds_demoreal(); */
@@ -2777,7 +2875,7 @@ GROuP by mes");
 
             /* Obtener los tipos de tienda para el select */
             /** COMENTADO SELECT DEMOREAL $muebles = $this->tienda_model->get_displays_demoreal(); */
-            $muebles = $this->tienda_model->get_displays();
+            $muebles = $this->tienda_model->get_displays_demoreal();
             $data["muebles"] = $muebles;
 
             /** COMENTADO SELECT DEMOREAL $data["tipos_tienda"] = $this->sfid_model->get_types_pds_demoreal(); */
@@ -2843,7 +2941,7 @@ GROuP by mes");
 
             /* Obtener los tipos de tienda para el select */
             /** COMENTADO SELECT DEMOREAL $muebles = $this->tienda_model->get_displays_demoreal(); */
-            $muebles = $this->tienda_model->get_displays();
+            $muebles = $this->tienda_model->get_displays_demoreal();
             $data["muebles"] = $muebles;
             /** COMENTADO SELECT DEMOREAL $data["tipos_tienda"] = $this->sfid_model->get_types_pds_demoreal(); */
             $data["tipos_tienda"] = $this->sfid_model->get_types_pds();
@@ -2880,7 +2978,7 @@ GROuP by mes");
             }
 
             /** COMENTADO SELECT DEMOREAL $muebles = $this->tienda_model->get_displays_demoreal(); */
-            $muebles = $this->tienda_model->get_displays();
+            $muebles = $this->tienda_model->get_displays_demoreal();
             $data["muebles"] = $muebles;
             /** COMENTADO SELECT DEMOREAL $data["tipos_tienda"] = $this->sfid_model->get_types_pds_demoreal(); */
             $data["tipos_tienda"] = $this->sfid_model->get_types_pds();
@@ -2953,7 +3051,7 @@ GROuP by mes");
             }
 
             /** COMENTADO SELECT DEMOREAL $muebles = $this->tienda_model->get_displays_demoreal(); */
-            $muebles = $this->tienda_model->get_displays();
+            $muebles = $this->tienda_model->get_displays_demoreal();
             $muebles = $this->tienda_model->get_displays_demoreal();
 
             $data["muebles"] = $muebles;
@@ -3045,7 +3143,7 @@ GROuP by mes");
             }
 
             /** COMENTADO SELECT DEMOREAL $muebles = $this->tienda_model->get_displays_demoreal(); */
-            $muebles = $this->tienda_model->get_displays();
+            $muebles = $this->tienda_model->get_displays_demoreal();
             $data["muebles"] = $muebles;
 
             /** COMENTADO SELECT DEMOREAL $data["tipos_tienda"] = $this->sfid_model->get_types_pds_demoreal(); */

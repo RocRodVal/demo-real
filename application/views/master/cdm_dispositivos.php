@@ -28,10 +28,14 @@
                                 </thead>
                                 <tbody>
                                 <?php
+
                                 foreach ($stocks as $stock) {
+                                    $marcar_celda = TRUE;
+
                                     if($stock->unidades_pds ==0)
                                     {
                                         $necesitamos = 0;
+                                        $marcar_celda = FALSE;
 
                                     }else
                                     {
@@ -42,10 +46,14 @@
 
 
 
-                                    $class_almacen = ($stock->unidades_almacen < 5 ) ? 'warning': '';
-                                    $class_balance = ($balance < 0) ? 'notice' : '';
+                                    $class_almacen = ($stock->unidades_almacen < 5 && $marcar_celda) ? 'warning': '';
+                                    $class_balance = ($balance < 0 && $marcar_celda) ? 'notice' : '';
 
-                                    if($stock->unidades_pds > 0 || $stock->unidades_almacen > 0)
+                                    //if($stock->unidades_pds > 0 || $stock->unidades_almacen > 0)
+                                    if(
+                                            ($stock->unidades_pds > 0 || $stock->unidades_almacen > 0) //
+
+                                    )
                                     {
                                     ?>
                                     <tr>

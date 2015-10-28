@@ -116,7 +116,7 @@
                                         echo '<td class="total">'.$total.'</td>';
                                     ?>
                                 </tr>
-                                <tr>
+                                <?php /*<tr>
                                     <th>Canceladas</th>
                                     <?php
                                     $total = 0;
@@ -127,7 +127,7 @@
                                     }
                                     echo '<td class="total">'.$total.'</td>';
                                     ?>
-                                </tr>
+                                </tr>*/?>
 
 
                                 <tr>

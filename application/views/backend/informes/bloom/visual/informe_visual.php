@@ -15,7 +15,7 @@
             <?php }?>
 
             <?php if($error_panelado) {?>
-                <p class="message error"><i class="glyphicon glyphicon-remove"></i> Si escoges "Tipo de tienda", debes indicar el "Panelado" del que se mostrará su genérico.</p>
+                <p class="message error"><i class="glyphicon glyphicon-remove"></i> Debes escoger la categoría de tienda completa (Tipo, Subtipo, Segmento y Tipología) para poder mostrar sus muebles.</p>
             <?php } ?>
         </div>
         <!-- /#page-wrapper -->

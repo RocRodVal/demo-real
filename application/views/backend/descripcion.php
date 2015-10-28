@@ -37,7 +37,9 @@
                                         <tr>
                                             <th>SFID / Referencia</th>
                                             <th>Tipo</th>
-                                            <th>Panelado</th>
+                                            <th>Subtipo</th>
+                                            <th>Segmento</th>
+                                            <th>Tipología</th>
                                             <th>Nombre comercial</th>
                                             <th>Territorio</th>
                                         </tr>
@@ -49,8 +51,11 @@
     									?>
     									<tr>
     										<td><a href="<?=site_url('admin/exp_alta_incidencia/'.$tienda->id_pds)?>"><?php echo $tienda->reference ?></a></td>
-    										<td><?php echo $tienda->pds ?></td>
-    										<td><?php echo $tienda->panelado ?></td>
+    										<td><?php echo $tienda->tipo ?></td>
+                                            <td><?php echo $tienda->subtipo ?></td>
+                                            <td><?php echo $tienda->segmento ?></td>
+                                            <td><?php echo $tienda->tipologia ?></td>
+
     										<td><?php echo $tienda->commercial ?></td>
     										<td><?php echo $tienda->territory ?></td>
     									</tr>
@@ -72,4 +77,3 @@
             ?>                
         </div>
         <!-- /#page-wrapper -->
-

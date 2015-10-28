@@ -241,3 +241,41 @@ div.mantenimiento h2{ font-size:22px; margin:0 0 15px 0; padding: 0; text-align:
 div.mantenimiento p.desc{ margin-bottom: 10px; font-size: 14px; text-align:center;}
 
 
+/**
+**   BACKUP
+**/
+#print-wrapper{
+    width:100%;
+    height: auto;
+    background:#fff;
+    padding: 40px;
+}
+#print-wrapper table.backup{
+    width:100%;
+    border:1px solid #000;
+    border-collapse: collapse;
+    font-size: 11px;
+}
+#print-wrapper table.backup th{ padding:5px; vertical-align: top; font-size: 12px;
+    background: #f60;}
+#print-wrapper table.backup td{ padding:5px; vertical-align: top;}
+#print-wrapper table.backup td.devices{ padding:0; }
+#print-wrapper table.backup td.sep{ border-left:none; border-right: none; font-size:1px; height:3px; }
+#print-wrapper table.backup .num{ width:auto;
+    text-align:center;}
+
+#print-wrapper table.backup table{
+    border:none;}
+
+#print-wrapper-wrapper table.backup .pos,
+#print-wrapper table.backup .name{ font-weight: bold;}
+
+
+
+#page-wrapper form textarea.error,
+#page-wrapper form input.error,
+#page-wrapper form select.error{ border:1px solid #a00;}
+
+
+span.error{ color:#a00; font-size: 14px;}
+span.exito{ color:#0a0; font-size: 14px;}

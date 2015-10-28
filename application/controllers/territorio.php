@@ -250,6 +250,10 @@ class Territorio extends CI_Controller {
                 'brand_device' => '',
                 'id_display'=>'',
                 'id_device'=>'',
+
+                'id_supervisor' => '',
+                'id_provincia' => '',
+
                 'id_incidencia' => '',
                 'reference' => ''
             );
@@ -336,9 +340,13 @@ class Territorio extends CI_Controller {
             /* LISTADO DE FABRICANTES PARA EL SELECT */
             $data["fabricantes"] = $this->tienda_model->get_fabricantes();
             /* LISTADO DE MUEBLES PARA EL SELECT */
-            $data["muebles"] = $this->tienda_model->get_muebles();
+            $data["muebles"] = $this->tienda_model->get_displays_demoreal();
             /* LISTADO DE TERMINALES PARA EL SELECT */
             $data["terminales"] = $this->tienda_model->get_terminales();
+
+            $data["supervisores"] = $this->tienda_model->get_supervisores();
+            $data["provincias"] = $this->tienda_model->get_provincias();
+
 
             /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
             $this->data->add($data);
@@ -374,6 +382,10 @@ class Territorio extends CI_Controller {
                 'brand_device'=>'',
                 'id_display'=>'',
                 'id_device'=>'',
+
+                'id_supervisor' => '',
+                'id_provincia' => '',
+
                 'id_incidencia'=>'',
                 'reference'=> ''
             );

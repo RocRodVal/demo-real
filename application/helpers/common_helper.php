@@ -76,3 +76,9 @@ function nombre_mes($number)
 
     return $nombre_meses[$number];
 }
+
+
+
+function contar_dias_entre($fecha1, $fecha){
+
+}

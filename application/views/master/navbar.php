@@ -112,12 +112,12 @@
                                         array( 'informe_planogramas',
                                         'informe_planograma_mueble_pds',
                                         'informe_planograma_terminal')))?'class="active"':''?> href="<?=site_url('master/informe_planogramas')?>"> Planogramas &raquo;</a></li>
-                                <li><a <?=(
+                               <?php /* <li><a <?=(
                                         in_array($this->uri->segment(2),
                                             array('informe_visual',
                                                 'informe_visual_mueble_sfid',
                                                 'informe_visual_terminal',
-                                                'informe_visual_ficha_terminal')))?'class="active"':''?> href="<?=site_url('master/informe_visual')?>"> Visual &raquo;</a></li>
+                                                'informe_visual_ficha_terminal')))?'class="active"':''?> href="<?=site_url('master/informe_visual')?>"> Visual &raquo;</a></li>*/?>
                             </ul>
                         </li>
 
