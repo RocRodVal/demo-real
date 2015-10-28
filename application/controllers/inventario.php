@@ -25,7 +25,10 @@ class Inventario extends CI_Controller {
 			$xcrud = xcrud_get_instance();
 			$this->load->model('tienda_model');
 			
-			$data['stocks']          = $this->tienda_model->get_stock();
+			//$data['stocks']          = $this->tienda_model->get_stock();
+            $data['stocks']          = $this->tienda_model->get_stock_cruzado();
+            $data['stocks_dispositivos']  = $this->tienda_model->get_cdm_dispositivos();
+
 			$data['alarms_almacen']  = $this->tienda_model->get_alarms_almacen_reserva();
 			$data['devices_almacen'] = $this->tienda_model->get_devices_almacen();
 			$data['displays_pds']    = $this->tienda_model->get_displays_total();
@@ -39,7 +42,7 @@ class Inventario extends CI_Controller {
             /////
 			$this->load->view('backend/header', $data);
 			$this->load->view('backend/navbar', $data);
-			$this->load->view('backend/deposito', $data);
+			$this->load->view('backend/inventario/cdm_dispositivos', $data);
 			$this->load->view('backend/footer');
 		}
 		else
