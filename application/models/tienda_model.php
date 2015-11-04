@@ -307,14 +307,14 @@ class Tienda_model extends CI_Model {
 		SELECT temporal.id_device, brand_device.brand, temporal.device, unidades_pds,
 		(CASE WHEN unidades_pds = 0 THEN 0 ELSE CEIL(unidades_pds * 0.05 + 2) END) as stock_necesario,
 		unidades_almacen,
-		(unidades_almacen - (CASE WHEN unidades_pds = 0 THEN 0 ELSE CEIL(unidades_pds * 0.05 + 2) END)) as balance
+		(unidades_almacen - (CASE WHEN unidades_pds = 0 THEN 0 ELSE CEIL(unidades_pds * 0.05) + 2 END)) as balance
 		FROM (
 		        SELECT device.id_device, device.brand_device, device.device,
                     (
                         SELECT COUNT(*)
                         FROM devices_pds
                         WHERE (devices_pds.id_device = device.id_device) AND
-                        (devices_pds.status = "Alta")
+                        (devices_pds.status = "Alta" || devices_pds.status = "Incidencia")
                     )
                     as unidades_pds,
 
@@ -328,8 +328,13 @@ class Tienda_model extends CI_Model {
                 ) as temporal
 
         JOIN brand_device ON temporal.brand_device = brand_device.id_brand_device
-        WHERE unidades_pds > 0 OR unidades_almacen > 0
-        ORDER BY brand_device.brand ASC, temporal.device ASC ');
+        WHERE (
+                    (unidades_pds > 0 OR unidades_almacen > 0)
+                OR  (unidades_pds = 0 AND unidades_almacen > 0)
+                OR  (unidades_pds > 0 AND unidades_almacen = 0)
+               )
+        ORDER BY brand_device.brand ASC, temporal.device ASC
+        ');
 
 
 
