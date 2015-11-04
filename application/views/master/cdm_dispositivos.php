@@ -32,24 +32,12 @@
                                 foreach ($stocks as $stock) {
                                     $marcar_celda = TRUE;
 
-                                    if($stock->unidades_pds ==0)
-                                    {
-                                        $necesitamos = 0;
-                                        $marcar_celda = FALSE;
-
-                                    }else
-                                    {
-                                        $necesitamos = round($stock->unidades_pds * 0.05) + 2;
-                                    }
-
-                                    $balance = $stock->unidades_almacen - $necesitamos;
-
-
+                                    $balance = $stock->unidades_almacen - $stock->stock_necesario;
 
                                     $class_almacen = ($stock->unidades_almacen < 5 && $marcar_celda) ? 'warning': '';
                                     $class_balance = ($balance < 0 && $marcar_celda) ? 'notice' : '';
 
-                                    //if($stock->unidades_pds > 0 || $stock->unidades_almacen > 0)
+
                                     if(
                                             ($stock->unidades_pds > 0 || $stock->unidades_almacen > 0) //
 
@@ -60,7 +48,7 @@
                                         <td><?php echo $stock->brand ?></td>
                                         <td><?php echo $stock->device ?></td>
                                         <td><?php echo $stock->unidades_pds ?></td>
-                                        <td><?php echo $necesitamos ?></td>
+                                        <td><?php echo $stock->stock_necesario ?></td>
                                         <td class="<?=$class_almacen?>"><?php echo $stock->unidades_almacen ?></td>
                                         <td class="<?=$class_balance?>"><?php echo $balance ?></td>
                                     </tr>
