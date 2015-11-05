@@ -439,12 +439,13 @@ class Incidencia_model extends CI_Model {
                 LEFT OUTER JOIN device ON devices_pds.id_device = device.id_device
                 LEFT OUTER JOIN type_device ON device.type_device = type_device.id_type_device
 
-                LEFT JOIN pds_supervisor ON pds.id_supervisor= pds_supervisor.id
-                LEFT JOIN province ON pds.province= province.id_province
 
                 LEFT OUTER JOIN pds ON incidencias.id_pds = pds.id_pds
                 LEFT OUTER JOIN territory ON territory.id_territory=pds.territory
                 LEFT OUTER JOIN brand_device ON device.brand_device = brand_device.id_brand_device
+
+                LEFT JOIN pds_supervisor ON pds.id_supervisor= pds_supervisor.id
+                LEFT JOIN province ON pds.province= province.id_province
 
 
                 WHERE 1 = 1
