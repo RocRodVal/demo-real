@@ -27,6 +27,7 @@
 										<?php
 										foreach($devices as $device)
 										{
+
 											if ($device->estado == 'Incidencia')
 											{
 										?>

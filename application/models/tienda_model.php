@@ -79,10 +79,10 @@ class Tienda_model extends CI_Model {
 	public function baja_dispositivos_almacen_update($id_device,$owner,$units)
     {
 
-
-    $contar = $this->db->query("SELECT COUNT(id_device) as contador FROM devices_almacen WHERE id_device=$id_device AND owner='$owner' AND status = 1")->row();
-
-
+        $contar = $this->db->query("
+        SELECT COUNT(id_device) as contador
+        FROM devices_almacen
+        WHERE id_device=$id_device AND owner='$owner' AND status = 'En stock' ")->row();
 
 
     if($contar->contador > 0) {
@@ -92,7 +92,7 @@ class Tienda_model extends CI_Model {
         $this->db->select("id_devices_almacen,id_device");
         $this->db->where("id_device",$id_device);
         $this->db->where('owner', $owner);
-        $this->db->where('status', 1);
+        $this->db->where('status', 'En stock');
         $this->db->limit($units);
         $dispositivos_a_borrar = $this->db->get("devices_almacen")->result();
         $total_baja =  $this->db->affected_rows();
@@ -105,7 +105,7 @@ class Tienda_model extends CI_Model {
             $id_devices_almacen = $dispositivo_baja->id_devices_almacen;
 
             // Borrado lógico del dispositivo.
-            $this->db->set('status', 4, FALSE);
+            $this->db->set('status', 'Baja', FALSE);
             $this->db->where('id_devices_almacen', $id_devices_almacen);
             $this->db->update('devices_almacen');
 
@@ -259,9 +259,10 @@ class Tienda_model extends CI_Model {
 		SELECT temporal.id_device, brand_device.brand, temporal.device, unidades_pds,
 		(CASE WHEN unidades_pds = 0 THEN 0 ELSE CEIL(unidades_pds * 0.05 + 2) END) as stock_necesario,
 		unidades_almacen,
-		(unidades_almacen - (CASE WHEN unidades_pds = 0 THEN 0 ELSE CEIL(unidades_pds * 0.05 + 2) END)) as balance
+		(unidades_almacen - (CASE WHEN unidades_pds = 0 THEN 0 ELSE CEIL(unidades_pds * 0.05 + 2) END)) as balance,
+		temporal.status
 		FROM (
-		        SELECT device.id_device, device.brand_device, device.device,
+		        SELECT device.id_device, device.brand_device, device.device, device.status,
                     (
                         SELECT COUNT(*)
                         FROM devices_pds
@@ -280,7 +281,7 @@ class Tienda_model extends CI_Model {
                 ) as temporal
 
         JOIN brand_device ON temporal.brand_device = brand_device.id_brand_device
-        WHERE (
+        WHERE temporal.status = "Alta" AND (
                     (unidades_pds > 0 OR unidades_almacen > 0)
                 OR  (unidades_pds = 0 AND unidades_almacen > 0)
                 OR  (unidades_pds > 0 AND unidades_almacen = 0)
@@ -439,6 +440,7 @@ class Tienda_model extends CI_Model {
 										->join('devices_almacen','devices_almacen.id_devices_almacen = material_incidencias.id_devices_almacen')
 										->join('device','devices_almacen.id_device = device.id_device')
 										->join('brand_device','device.brand_device = brand_device.id_brand_device')
+
 										->group_by('device.device')
                                         ->order_by('incidencias','DESC')
 										->order_by('brand_device.brand', 'ASC')
@@ -1023,7 +1025,7 @@ class Tienda_model extends CI_Model {
         $query = $this->db->query('
                     SELECT *
                     FROM device d
-                    WHERE (
+                    WHERE status= "Alta" AND (
                       SELECT COUNT(id_devices_pds) FROM devices_pds p
                       WHERE p.id_device = d.id_device
                       AND p.status = "Alta"
@@ -1131,10 +1133,11 @@ class Tienda_model extends CI_Model {
 		$query = $this->db->select('devices_almacen.*,device.*, COUNT(devices_almacen.id_device) AS unidades')
 		->join('device','devices_almacen.id_device = device.id_device')
 		->where('devices_almacen.status','En stock')
+        ->where('device.status','Alta')
 		->group_by('devices_almacen.id_device')
 		->order_by('device')
 		->get('devices_almacen');
-	
+
 		return $query->result();
 	}
 	

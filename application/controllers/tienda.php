@@ -1212,28 +1212,30 @@ class Tienda extends CI_Controller {
 		
 			$xcrud = xcrud_get_instance();
 			$this->load->model('sfid_model');
-			
-			$config['upload_path']   = dirname($_SERVER["SCRIPT_FILENAME"]).'/uploads/';
-			$config['upload_url']    = base_url().'/uploads/';
-			$config['allowed_types'] = 'doc|docx|pdf|jpg|png';
-			$new_name                = $data['sfid'].'-'.time();
-			$config['file_name']     = $new_name;
-			$config['overwrite']     = TRUE;
-			$config['max_size']      = '10000KB';
-	
-			$this->load->library('upload', $config);
-			
-			$denuncia = '';
-			
-			if($this->upload->do_upload())
-			{
-				$denuncia = $new_name;
-			}
-			else
-			{
-				echo 'Ha fallado la carga de la denuncia.';
-			}		
-			
+
+            $form_tipo_averia = $this->input->post('tipo_averia');
+            $denuncia = NULL;
+
+            if($form_tipo_averia==1) {
+                $config['upload_path'] = dirname($_SERVER["SCRIPT_FILENAME"]) . '/uploads/';
+                $config['upload_url'] = base_url() . '/uploads/';
+                $config['allowed_types'] = 'doc|docx|pdf|jpg|png';
+                $new_name = $data['sfid'] . '-' . time();
+                $config['file_name'] = $new_name;
+                $config['overwrite'] = TRUE;
+                $config['max_size'] = '10000KB';
+
+                $this->load->library('upload', $config);
+
+                $denuncia = '';
+
+                if ($this->upload->do_upload()) {
+                    $denuncia = $new_name;
+                } else {
+                    echo 'Ha fallado la carga de la denuncia.';
+                }
+            }
+
 			if ($this->input->post('tipo_averia') == 1)
 			{ 
 				$tipo_averia = 'Robo'; 

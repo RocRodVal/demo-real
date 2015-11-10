@@ -622,7 +622,8 @@ class Admin extends CI_Controller
     				'password'  => 'demoreal',
     				'type'      => 1
     		);    		
-    		
+
+            /* TODO: validar que no exista el agente y pds. Si existe no permitir alta. */
     		$this->tienda_model->alta_agente($data);
             $this->tienda_model->borrar_dispositivos($this->input->post('reference'));
             $this->tienda_model->borrar_muebles($this->input->post('reference'));
