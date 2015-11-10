@@ -1276,7 +1276,7 @@ class Tienda extends CI_Controller {
 					'intervencion'  	=> NULL,
 					'status_pds'	    => 1,
 					'status'	        => 1,
-                    'last_updated' => $ahora,
+                    'last_updated' => $ahora
 			);
 				
 			$incidencia = $this->sfid_model->insert_incidencia($data);
@@ -1323,7 +1323,9 @@ class Tienda extends CI_Controller {
 		
 			$xcrud = xcrud_get_instance();
 			$this->load->model('sfid_model');
-		
+
+            $ahora = date("Y-m-d H:i:s");
+
 			$data = array(
 					'fecha'    	        => date('Y-m-d H:i:s'),
 					'fecha_cierre'    	=> NULL,
@@ -1350,6 +1352,7 @@ class Tienda extends CI_Controller {
 					'intervencion'  	=> NULL,
 					'status_pds'	    => 1,
 					'status'	        => 1,
+                    'last_updated'      => $ahora
 			);
 				
 			$incidencia = $this->sfid_model->insert_incidencia($data);
