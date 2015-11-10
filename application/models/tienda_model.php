@@ -105,7 +105,7 @@ class Tienda_model extends CI_Model {
             $id_devices_almacen = $dispositivo_baja->id_devices_almacen;
 
             // Borrado lógico del dispositivo.
-            $this->db->set('status', 'Baja', FALSE);
+            $this->db->set('status', '"Baja"', FALSE);
             $this->db->where('id_devices_almacen', $id_devices_almacen);
             $this->db->update('devices_almacen');
 
