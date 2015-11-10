@@ -26,7 +26,7 @@
 		                        foreach ($devices as $device) {
 		                            ?>
 		                            <tr>
-		                                <td><?php echo $device->device ?></td>
+		                                <td><?php echo  $device->device ?></td>
 		                                <td><?php echo $device->unidades ?></td>
 		                            </tr>
 		                        <?php

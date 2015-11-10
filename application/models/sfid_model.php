@@ -69,8 +69,10 @@ class Sfid_model extends CI_Model {
 	/* Contador dispositivos mueble */
 	public function count_devices_displays_pds($id_displays_pds)
 	{
-		$conditions = array('id_displays_pds'=>$id_displays_pds,'status'=>'Alta');
+		//$conditions = array('id_displays_pds'=>$id_displays_pds,'status='=>array('Alta','Incidencia','SAT'));
+        $conditions = array('id_displays_pds'=>$id_displays_pds);
 		$this->db->where($conditions);
+
 		$this->db->from('devices_pds');
 		$count = $this->db->count_all_results();
 		return $count;

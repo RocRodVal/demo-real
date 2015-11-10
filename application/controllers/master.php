@@ -1500,9 +1500,8 @@ class Master extends CI_Controller {
 
 			$xcrud = xcrud_get_instance();
 			$this->load->model('tienda_model');
+
             $data['stocks'] = $this->tienda_model->get_stock_cruzado();
-
-
 			$data['stocks_dispositivos']  = $this->tienda_model->get_cdm_dispositivos();
 				
 			$data['title']   = 'Dispositivos';
