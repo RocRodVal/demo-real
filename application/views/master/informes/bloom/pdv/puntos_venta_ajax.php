@@ -51,7 +51,7 @@ if (!$generado)
                 <th>Territorio</th>
                 <th>Nombre</th>
                 <th>Dirección</th>
-
+                <th>Provincia</th>
 
             </tr>
             </thead>
@@ -68,6 +68,7 @@ if (!$generado)
                     <td><?=$resultado->territorio?></td>
                     <td><?=$resultado->commercial?></td>
                     <td><?=$resultado->tipo_via?> <?=$resultado->address?> <?=$resultado->zip?> <?=$resultado->city?></td>
+                    <td><?=$resultado->provincia?></td>
 
 
                 </tr>
