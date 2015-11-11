@@ -1347,10 +1347,15 @@ class Tienda_model extends CI_Model {
 	
 	public function get_pds($id) {
 		if($id != FALSE) {
-			$query = $this->db->select('pds.*,type_pds.pds as pds, province.province, territory.territory')
+			$query = $this->db->select('pds.*,pds_tipo.titulo as tipo, pds_subtipo.titulo as subtipo,
+			pds_segmento.titulo as segmento,  pds_tipologia.titulo as tipologia, province.province, territory.territory')
 			//->join('type_pds','pds.type_pds = type_pds.id_type_pds')
 			->join('province','pds.province = province.id_province')
 			->join('territory','pds.territory = territory.id_territory')
+            ->join('pds_tipo','pds.id_tipo = pds_tipo.id','left')
+            ->join('pds_subtipo','pds.id_subtipo = pds_subtipo.id','left')
+            ->join('pds_segmento','pds.id_segmento = pds_segmento.id','left')
+            ->join('pds_tipologia','pds.id_tipologia= pds_tipologia.id','left')
 			->where('pds.id_pds',$id)
 			->get('pds');
 

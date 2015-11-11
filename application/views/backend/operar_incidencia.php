@@ -175,7 +175,7 @@
                             <td colspan="2"><h3>Información general</h3></td>
                         </tr>
                         <tr>
-                            <th width="50%">Tipo tienda:</th> <td><?php echo $type_pds ?></td>
+                            <th width="50%">Tipo tienda:</th> <td><?php echo $pds["tipo"] . "-" . $pds["subtipo"] ."-" . $pds["segmento"] . "-" . $pds["tipologia"] ?></td>
                         </tr>
                         <tr>
                             <th>Fecha alta:</th> <td><?php echo date_format(date_create($incidencia['fecha']), 'd/m/Y'); ?></td>
