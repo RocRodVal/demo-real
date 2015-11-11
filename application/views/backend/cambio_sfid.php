@@ -7,6 +7,7 @@
             </div>
             <div class="row">
                 <div class="col-lg-6">
+                    <p>Introduce el SFID que quieres cambiar:</p>
                 	<form action="<?=site_url('admin/cambio_sfid');?>" method="post" class="form-inline form-sfid">
                         <div class="form-group">
                             <label>SFID</label>

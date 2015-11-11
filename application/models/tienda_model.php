@@ -70,9 +70,7 @@ class Tienda_model extends CI_Model {
 	{
 		$this->db->insert('agent',$data);
 		$id=$this->db->insert_id();
-
-
-
+        return $id;
 	}	
 	
 	
@@ -1350,7 +1348,7 @@ class Tienda_model extends CI_Model {
 	public function get_pds($id) {
 		if($id != FALSE) {
 			$query = $this->db->select('pds.*,type_pds.pds as pds, province.province, territory.territory')
-			->join('type_pds','pds.type_pds = type_pds.id_type_pds')
+			//->join('type_pds','pds.type_pds = type_pds.id_type_pds')
 			->join('province','pds.province = province.id_province')
 			->join('territory','pds.territory = territory.id_territory')
 			->where('pds.id_pds',$id)
@@ -1371,10 +1369,10 @@ class Tienda_model extends CI_Model {
 		}
 	}
 
-    public function get_sfid($sfid) {
+    public function get_sfid($sfid,$tipo_resultado="array") {
         if($sfid != FALSE) {
             $query = $this->db->select('pds.*, province.province, territory.territory')
-                ->join('type_pds','pds.type_pds = type_pds.id_type_pds')
+                //->join('type_pds','pds.type_pds = type_pds.id_type_pds')
                 ->join('province','pds.province = province.id_province')
                 ->join('territory','pds.territory = territory.id_territory')
                 ->like('pds.reference',$sfid,'none')
@@ -1388,7 +1386,8 @@ class Tienda_model extends CI_Model {
                 LEFT JOIN  territory ON pds.territory = territory.id_territory
                 WHERE pds.id_pds=$id");*/
 
-            return $query->row_array();
+            if($tipo_resultado=="array") return $query->row_array();
+            else return $query->row();
         }
         else {
             return FALSE;
@@ -1396,13 +1395,14 @@ class Tienda_model extends CI_Model {
     }
 
 
-    public function get_display($id) {
+    public function get_display($id,$tipo_objeto="array") {
 		if($id != FALSE) {
 			$query = $this->db->select('*')
 			->where('id_display',$id)
 			->get('display');
-	
-			return $query->row_array();
+
+            return ($tipo_objeto == "array") ? $query->row_array() : $query->row();
+
 		}
 		else {
 			return FALSE;
@@ -1945,8 +1945,8 @@ class Tienda_model extends CI_Model {
         // Si no están vacíos los objetos MUEBLE y PDS
         if(!empty($display) && !empty($pds))
         {
-            $id_pds = $pds["id_pds"];
-            $id_display = $display["id_display"];
+            $id_pds = $pds->id_pds;
+            $id_display = $display->id_display;
             $client_type_pds = 1;
 
 

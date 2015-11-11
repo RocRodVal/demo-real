@@ -2,16 +2,15 @@
         <div id="page-wrapper">
             <div class="row">
                 <div class="col-lg-12">
-                    <h1 class="page-header"><?php echo $title ?> <font color="red">[Beta]</font></h1>
+                    <h1 class="page-header"><?php echo $title ?></h1>
                 </div>
             </div>
             <div class="row">
                 <div class="col-lg-12">
-                    <p>Este proceso es irreversible. Se procede al borrado de los dispositivos, muebles y punto de servicio de la app. También se elimina el acceso a la misma.</p>
-                    <p>Mientras se ajusta os recomendaría antes de realizar la operación:</p>
+                    <p>Este proceso es irreversible. Se procederá al borrado de los dispositivos, muebles y punto de servicio de la app y se guardará en el histórico de cierres. También se elimina el acceso a la misma.</p>
                     <ul>
-                    <li>Cerrar las incidencias abiertas</li>
-                    <li>Exportar el listado de dispositivos de la tienda desde "Exposición &gt; Inventario tiendas" usando el SFID para filtrar</li>
+                        <li>Antes de realizar la operación se requiere que las incidencias abiertas asociadas al PdV sean cerradas.</li>
+                        <li>Puedes exportar el listado de dispositivos de la tienda desde el enlace que se mostrará una vez indiques un SFID.</li>
                     </ul>
                     <p>&nbsp;</p>
                 </div>
