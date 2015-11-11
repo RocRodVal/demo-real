@@ -289,7 +289,7 @@ class Sfid_model extends CI_Model {
      * Obtener info del PDS desde el histórico sobre el cierre de SFID
      */
 
-    public function get_historico_cierre_sfid($sfid = NULL)
+    public function get_historico_cierre_sfid($sfid = NULL,$tipo = "array")
     {
         if(!is_null($sfid))
         {

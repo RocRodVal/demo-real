@@ -3034,29 +3034,27 @@ class Admin extends CI_Controller
     {
         $this->load->model("sfid_model");
 
-        if(!is_null($id_pds) && !empty($id_pds)){
-            // El  SFID ya ha sido cerrado, buscar el id_pds en el historico de cierres de SFID
-            $pds = $this->sfid_model->get_historico_cierre_sfid($sfid);
-            $id_pds = $pds->id_pds;
-        }
-
-        if(!empty($id_pds)) {
-            $query = $this->db->select('*')->where('id_pds', $id_pds)->get('pds');
-            $pds = $query->row();
-        }
-
-
-
-        if(!empty($pds))
-        {
             if(empty($accion) || $accion=="alta"){
+                if(!empty($id_pds)) {
+                    $query = $this->db->select('*')->where('id_pds', $id_pds)->get('pds');
+                    $pds = $query->row();
+                }
                 $this->get_inventarios_sfid_alta($pds);
             }else{
+                if(!is_null($id_pds) && !empty($id_pds)){
+                    // El  SFID ya ha sido cerrado, buscar el id_pds en el historico de cierres de SFID
+                    $pds = $this->sfid_model->get_historico_cierre_sfid($sfid,"object");
+                    $id_pds = $pds->id_pds;
+                }
+                if(!empty($id_pds)) {
+                    $query = $this->db->select('*')->where('id_pds', $id_pds)->get('pds');
+                    $pds = $query->row();
+                }
                 $this->get_inventarios_sfid_baja($pds);
             }
         }
 
-    }
+
 
     public function get_inventarios_sfid_alta($pds='')
     {
