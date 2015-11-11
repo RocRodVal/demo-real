@@ -249,6 +249,61 @@ class Sfid_model extends CI_Model {
 
     }
 
+
+    /**
+     * Comprobar si existen incidencias asociadas a un SFID
+     */
+
+    public function check_incidencias_abiertas($sfid)
+    {
+        $respuesta = NULL;
+        if(!empty($sfid))
+        {
+            $incidencias = $this->db->select("COUNT(id_incidencia) as abiertas")
+                ->join("pds"," incidencias.id_pds = pds.id_pds ")
+                ->where("pds.reference =".$sfid)
+                ->where_in("incidencias.status_pds",array('Alta realizada','En proceso', 'En visita'))
+                //->where_in("incidencias.status_pds",array('Finalizada', 'Cancelada'))
+                ->get("incidencias");
+
+            $respuesta = $incidencias->row();
+        }
+
+        return $respuesta;
+    }
+
+
+
+    /**
+     * Insertar info en histórico sobre el cierre de SFID
+     */
+
+    public function alta_historico_cierre_sfid($data)
+    {
+        $this->db->insert('historico_cierre_sfid',$data);
+        $id=$this->db->insert_id();
+        return array('add' => (isset($id)) ? $id : FALSE, 'id' => $id);
+    }
+
+    /**
+     * Obtener info del PDS desde el histórico sobre el cierre de SFID
+     */
+
+    public function get_historico_cierre_sfid($sfid = NULL)
+    {
+        if(!is_null($sfid))
+        {
+
+            $query = $this->db->select('id_pds')
+                ->where('sfid',$sfid)
+                ->group_by('id_pds')
+                ->get('historico_cierre_sfid');
+
+            return $query->row();
+        }
+
+        return NULL;
+    }
 }
 
 ?>

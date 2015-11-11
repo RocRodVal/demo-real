@@ -518,7 +518,7 @@ class Admin extends CI_Controller
     }
 
 
-    public function cierre_pdv()
+    public function cierre_pdv($sfid='', $paso = NULL, $resultado=NULL)
     {
         if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
             $data['id_pds'] = $this->session->userdata('id_pds');
@@ -527,11 +527,25 @@ class Admin extends CI_Controller
             $xcrud = xcrud_get_instance();
             $this->load->model(array('tienda_model', 'sfid_model'));
 
-            $data['tiendas'] =  $this->tienda_model->search_pds($this->input->post('sfid'));
-            $data['baja_sfid'] = $this->input->post('sfid');
+            $baja_sfid = $this->input->post('sfid');
+
+            $data['tiendas'] =  $this->tienda_model->search_pds($this->input->post('sfid'),'Alta');
+            $data['baja_sfid'] = ($this->input->post('sfid')) ? $this->input->post('sfid') : $sfid;
+            $data['id_pds'] = $this->tienda_model->search_id_pds($baja_sfid);
 
             $data['title'] = 'Cierre PdV';
 
+            // Comprobar si viene de algún paso que haya dado error
+            $err = NULL;
+            if(!is_null($paso) && !$resultado)
+            {
+                switch($paso)
+                {
+                    case 0: $err = "incidencias"; break;
+                    case 1: $err = false; break;    // Fin proceso
+                }
+            }
+            $data['error'] = $err;
 
             /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
             $this->data->add($data);
@@ -548,7 +562,57 @@ class Admin extends CI_Controller
     }
 
 
-    public function update_cierre_pdv()
+
+    public function update_cierre_pdv($paso=0)
+    {
+        if ($this->auth->is_auth())
+        {
+            $this->load->model(array('tienda_model', 'sfid_model'));
+
+            $sfid = $this->input->post('reference');    // Recoger SFID del form
+
+            $continuar_proceso = NULL;
+
+            // Comprobar si hay incidencias abiertas asociadas
+            $incidencias = $this->sfid_model->check_incidencias_abiertas($sfid);
+            $continuar_proceso = ($incidencias->abiertas > 0) ? false : true;
+
+
+            if($continuar_proceso)
+            {
+                // Damos de alta en el historico de cierres
+                $id_pds = $this->input->post("id_pds");
+
+                if(!empty($id_pds))
+                {
+                    $data_sfid = array("sfid"=>$sfid, "id_pds"=>$id_pds, "fecha"=>date("Y-m-d H:i:s"));
+                    $this->sfid_model->alta_historico_cierre_sfid($data_sfid);
+                    $this->tienda_model->borrar_agente($sfid);
+                    $this->tienda_model->borrar_dispositivos($id_pds);
+                    $this->tienda_model->borrar_muebles($id_pds);
+                    $this->tienda_model->cerrar_pds($sfid,$id_pds);
+                    //$this->tienda_model->borrar_pds($this->input->post('reference'));
+
+                    redirect('admin/cierre_pdv/' . $sfid . '/1', 'refresh');
+                }
+
+
+
+
+            }
+            else
+            {
+                redirect('admin/cierre_pdv/' . $sfid . '/' . $paso . '/' . $continuar_proceso, 'refresh');
+            }
+        }
+        else
+        {
+            redirect('admin', 'refresh');
+        }
+    }
+
+
+    public function update_cierre_pdv_OLD()
     {
         if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10))
         {
@@ -610,7 +674,7 @@ class Admin extends CI_Controller
     /**
      * Una vez se aporta el SFID, ésta le asigna los muebles y dispositivos que correspondan.
      */
-    public function update_apertura_pdv()
+    public function update_apertura_pdv_OLD_PENDIENTE_UPDATE()
     {
         if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10))
         {
@@ -2926,15 +2990,22 @@ class Admin extends CI_Controller
      * @return bool
      *
      */
-    public function get_inventarios_sfid()
+    public function get_inventarios_sfid($sfid=NULL,$accion=NULL,$id_pds=NULL)
     {
-        $reference = $this->uri->segment(3);
-        $accion = $this->uri->segment(4);
+        $this->load->model("sfid_model");
 
-        if(!empty($reference)) {
-            $query = $this->db->select('*')->where('reference', $reference)->get('pds');
+        if(empty($id_pds)){
+            // El  SFID ya ha sido cerrado, buscar el id_pds en el historico de cierres de SFID
+            $pds = $this->sfid_model->get_historico_cierre_sfid($sfid);
+            $id_pds = $pds->id_pds;
+        }
+
+        if(!empty($id_pds)) {
+            $query = $this->db->select('*')->where('id_pds', $id_pds)->get('pds');
             $pds = $query->row();
         }
+
+
 
         if(!empty($pds))
         {

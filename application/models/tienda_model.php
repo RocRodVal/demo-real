@@ -193,9 +193,16 @@ class Tienda_model extends CI_Model {
 	{
 		$this->db->where('sfid', $sfid);
 		$this->db->delete('agent');
-	}	
-	
-	public function borrar_dispositivos($sfid)
+	}
+
+    public function borrar_dispositivos($id_pds)
+    {
+        $sql = "UPDATE devices_pds SET status ='Baja'
+				WHERE id_pds ='".$id_pds."'";
+        $this->db->query($sql);
+    }
+
+	public function borrar_dispositivos_OLD($sfid)
 	{
 		$sql = "DELETE devices_pds FROM devices_pds
 				INNER JOIN pds ON pds.id_pds = devices_pds.id_pds
@@ -204,14 +211,22 @@ class Tienda_model extends CI_Model {
 		$this->db->query($sql);		
 	}
 
-	public function borrar_muebles($sfid)
+	public function borrar_muebles($id_pds)
 	{
-		$sql = "DELETE displays_pds FROM displays_pds
+		$sql = "UPDATE displays_pds SET status ='Baja'
+				WHERE id_pds ='".$id_pds."'";
+
+		$this->db->query($sql);
+	}
+
+    public function borrar_muebles_OLD($sfid)
+    {
+        $sql = "DELETE displays_pds FROM displays_pds
 				INNER JOIN pds ON pds.id_pds = displays_pds.id_pds
 				WHERE pds.reference IN ('$sfid')";
-		
-		$this->db->query($sql);	
-	}
+
+        $this->db->query($sql);
+    }
 
 	public function alta_masiva_dispositivos($sfid)
 	{
@@ -240,10 +255,18 @@ class Tienda_model extends CI_Model {
 	{
 		$this->db->where('reference', $sfid);
 		$this->db->delete('pds');
-	}	
-	
+	}
 
-	public function cerrar_pds($sfid)
+    public function cerrar_pds($sfid, $id_pds)
+    {
+        $this->db->set('status','Baja');
+        /**$this->db->set('reference','X-'.$sfid);**/
+        $this->db->set('reference',$sfid. "-" .time());
+        $this->db->where('id_pds', $id_pds);
+        $this->db->update('pds');
+    }
+
+    public function cerrar_pds_OLD($sfid)
 	{
 		$this->db->set('status','Baja');
 		/**$this->db->set('reference','X-'.$sfid);**/
@@ -492,7 +515,7 @@ class Tienda_model extends CI_Model {
 
 
 
-    public function search_pds($id) {
+    public function search_pds($id,$status=NULL) {
 
 
 		if($id != FALSE) {
@@ -503,8 +526,15 @@ class Tienda_model extends CI_Model {
                     ->join('pds_tipologia','pds.id_tipologia= pds_tipologia.id')
 
 				   ->join('territory','pds.territory = territory.id_territory')
-				   ->like('pds.reference',$id)
-			       ->get('pds');
+				   ->like('pds.reference',$id);
+
+                    if(!is_null($status))
+                    {
+                        $query = $this->db->where('status',$status);
+                    }
+            $query = $this->db->get('pds');
+
+
 
 			return $query->result();
 		}
@@ -512,6 +542,24 @@ class Tienda_model extends CI_Model {
 			return FALSE;
 		}
 	}
+
+
+    public function search_id_pds($sfid) {
+
+        $query = $this->db->select('id_pds')
+            ->where('pds.reference',$sfid);
+        $query = $this->db->get('pds');
+
+        $resultado = $query->row();
+
+        if(!empty($resultado)) {
+            return $resultado->id_pds;
+        }else{
+            return NULL;
+        }
+
+    }
+
 
     public function search_pds_OLD($id) {
 
