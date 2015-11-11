@@ -3033,7 +3033,7 @@ class Admin extends CI_Controller
     {
         $this->load->model("sfid_model");
 
-        if(empty($id_pds)){
+        if(!is_null($id_pds) && !empty($id_pds)){
             // El  SFID ya ha sido cerrado, buscar el id_pds en el historico de cierres de SFID
             $pds = $this->sfid_model->get_historico_cierre_sfid($sfid);
             $id_pds = $pds->id_pds;
