@@ -16,7 +16,17 @@
                     </form>
                 </div>
             </div>
-            <?php 
+
+            <?php
+
+            if(!is_null($enuso)){
+
+                echo ($enuso=="FALSE")
+                    ? '<p class="message success"><i class="glyphicon glyphicon-success"></i> El cambio de SFID se ha realizado correctamente. </p>'
+                    : '<p class="message error"><i class="glyphicon glyphicon-error"></i>  El  SFID indicado ya está en uso. El cambio no se ha realizado.</p>';
+
+            }
+
             if (isset($_POST['sfid']))
             {	
             ?>
@@ -39,7 +49,10 @@
                                             <th>SFID actual</th>
                                             <th>SFID nuevo.</th>
                                             <th>Tipo</th>
-                                            <th>Panelado</th>
+                                            <th>Subtipo</th>
+                                            <th>Segmento</th>
+                                            <th>Tipología</th>
+
                                             <th>Nombre comercial</th>
                                             <th>Territorio</th>
                                             <th>Operaciones</th>
@@ -57,8 +70,12 @@
     										<td><?php echo $tienda->id_pds ?></td>
     										<td><?php echo $tienda->reference ?></a></td>
     										<td><input class="form-control" placeholder="nuevo SFID" name="sfid_new" id="sfid_new"></a></td>
-    										<td><?php echo $tienda->pds ?></td>
-    										<td><?php echo $tienda->panelado ?></td>
+    										<td><?php echo $tienda->tipo ?></td>
+                                            <td><?php echo $tienda->subtipo ?></td>
+                                            <td><?php echo $tienda->segmento ?></td>
+                                            <td><?php echo $tienda->tipologia ?></td>
+
+
     										<td><?php echo $tienda->commercial ?></td>
     										<td><?php echo $tienda->territory ?></td>
     										<td><button type="submit" class="btn btn-default">Cambiar</button></td>

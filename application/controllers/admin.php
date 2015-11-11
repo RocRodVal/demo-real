@@ -489,18 +489,20 @@ class Admin extends CI_Controller
     }
 
 
-    public function cambio_sfid()
+    public function cambio_sfid($sfid_enuso=NULL)
     {
-        if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
+        if ($this->auth->is_auth()) {
             $data['id_pds'] = $this->session->userdata('id_pds');
             $data['sfid'] = $this->session->userdata('sfid');
 
             $xcrud = xcrud_get_instance();
             $this->load->model(array('tienda_model', 'sfid_model'));
 
-            $data['tiendas'] =  $this->tienda_model->search_pds($this->input->post('sfid'));
+            $data['tiendas'] =  $this->tienda_model->search_pds($this->input->post('sfid'),'Alta');
 
             $data['title'] = 'Cambio de SFID';
+
+            $data['enuso'] = $sfid_enuso;
 
 
             /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
@@ -742,20 +744,32 @@ class Admin extends CI_Controller
         {
             $this->load->model(array('tienda_model', 'sfid_model'));
 
-            if ($this->input->post('sfid_new') <> '')
+            $sfid_new = $this->input->post('sfid_new');
+            if ( $sfid_new  <> '')
             {
-                $historico_sfid = array(
-                    'id_pds' => $this->input->post('id_pds'),
-                    'fecha' => date('Y-m-d H:i:s'),
-                    'sfid_old' => $this->input->post('sfid_old'),
-                    'sfid_new' => $this->input->post('sfid_new')
-                );
+                // Comprobamos que el SFID nuevo no esté en uso
 
-                $this->tienda_model->incidencia_update_sfid($this->input->post('sfid_old'),$this->input->post('sfid_new'));
-                $this->tienda_model->incidencia_update_historico_sfid($historico_sfid);
+                $checkSfid = $this->tienda_model->search_pds($sfid_new,'Alta');
+
+                if(empty($checkSfid))
+                {
+                    $historico_sfid = array(
+                        'id_pds' => $this->input->post('id_pds'),
+                        'fecha' => date('Y-m-d H:i:s'),
+                        'sfid_old' => $this->input->post('sfid_old'),
+                        'sfid_new' => $this->input->post('sfid_new')
+                    );
+
+                    $this->tienda_model->incidencia_update_sfid($this->input->post('sfid_old'), $this->input->post('sfid_new'));
+                    $this->tienda_model->incidencia_update_historico_sfid($historico_sfid);
+                    redirect('admin/cambio_sfid/FALSE', 'refresh');
+                }else
+                {
+                    redirect('admin/cambio_sfid/'.$sfid_new, 'refresh');
+                }
             }
 
-            redirect('admin/cambio_sfid', 'refresh');
+
         }
         else
         {
