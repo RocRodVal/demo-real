@@ -2,13 +2,12 @@
         <div id="page-wrapper">
             <div class="row">
                 <div class="col-lg-12">
-                    <h1 class="page-header"><?php echo $title ?> <font color="red">[Beta]</font></h1>
+                    <h1 class="page-header"><?php echo $title ?></h1>
                 </div>
             </div>
             <div class="row">
                 <div class="col-lg-12">
-                    <p>Antes de proceder al añadido automático de muebles y dispositivos se ha tener creado el PdS en la zona de maestros con todos los datos y panelado correcto.</p>
-                    <p>En este periodo de pruebas se deben apuntar todas las altas de SFID y hacérmelas llegar por email.</p>
+                    <p>Antes de proceder al añadido automático de muebles y dispositivos se ha tener creado el PdS en la zona de maestros con todos los datos y categorización correcta (Tipo, Subtipo, Segmento y Tipología).</p>
                     <p>&nbsp;</p>
                 </div>
             </div>            
@@ -56,7 +55,10 @@
                                             <th>Ref.</th>
                                             <th>SFID</th>
                                             <th>Tipo</th>
-                                            <th>Panelado</th>
+                                            <th>Subtipo</th>
+                                            <th>Segmento</th>
+                                            <th>Tipología</th>
+
                                             <th>Nombre comercial</th>
                                             <th>Territorio</th>
                                             <th>Operaciones</th>
@@ -73,8 +75,10 @@
     									<tr>
     										<td><?php echo $tienda->id_pds ?></td>
     										<td><?php echo $tienda->reference ?></a></td>
-    										<td><?php echo $tienda->pds ?></td>
-    										<td><?php echo $tienda->panelado ?></td>
+    										<td><?php echo $tienda->tipo ?></td>
+                                            <td><?php echo $tienda->subtipo ?></td>
+                                            <td><?php echo $tienda->segmento ?></td>
+                                            <td><?php echo $tienda->tipologia ?></td>
     										<td><?php echo $tienda->commercial ?></td>
     										<td><?php echo $tienda->territory ?></td>
     										<td><button type="submit" class="btn btn-default">Añadir muebles y dispositivos</button></td>

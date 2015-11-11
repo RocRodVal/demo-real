@@ -44,7 +44,7 @@ class Admin extends CI_Controller
 
         // Ya está logueado....
         $entrada = $this->data->get("entrada");
-        if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) redirect($entrada);
+        if($this->auth->is_auth()) redirect($entrada);
 
         if ($this->form_validation->run() == true) {
             $data = array(
@@ -238,7 +238,7 @@ class Admin extends CI_Controller
     public function estado_incidencias($tipo)
     {
 
-        if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
+        if ($this->auth->is_auth()) {
             $data['id_pds'] = $this->session->userdata('id_pds');
             $data['sfid'] = $this->session->userdata('sfid');
 
@@ -391,7 +391,7 @@ class Admin extends CI_Controller
 
     public function exportar_incidencias($tipo="abiertas",$formato=NULL)
     {
-        if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
+        if ($this->auth->is_auth()) {
             $xcrud = xcrud_get_instance();
             $this->load->model(array('intervencion_model', 'tienda_model', 'sfid_model','chat_model','incidencia_model'));
 
@@ -462,7 +462,7 @@ class Admin extends CI_Controller
 
     public function material_retorno()
     {
-        if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
+        if ($this->auth->is_auth()) {
             $data['id_pds'] = $this->session->userdata('id_pds');
             $data['sfid'] = $this->session->userdata('sfid');
 
@@ -522,7 +522,7 @@ class Admin extends CI_Controller
 
     public function cierre_pdv($sfid='', $paso = NULL, $resultado=NULL)
     {
-        if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
+        if ($this->auth->is_auth()) {
             $data['id_pds'] = $this->session->userdata('id_pds');
             $data['sfid'] = $this->session->userdata('sfid');
 
@@ -616,7 +616,7 @@ class Admin extends CI_Controller
 
     public function update_cierre_pdv_OLD()
     {
-        if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10))
+        if ($this->auth->is_auth())
         {
             $this->load->model(array('tienda_model', 'sfid_model'));
 
@@ -642,7 +642,7 @@ class Admin extends CI_Controller
      */
     public function apertura_pdv()
     {
-        if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
+        if ($this->auth->is_auth()) {
             $data['id_pds'] = $this->session->userdata('id_pds');
             $data['sfid'] = $this->session->userdata('sfid');
 
@@ -655,8 +655,13 @@ class Admin extends CI_Controller
             $xcrud = xcrud_get_instance();
             $this->load->model(array('tienda_model', 'sfid_model'));
 
-            $data['tiendas'] =  $this->tienda_model->search_pds($this->input->post('sfid'));
+            $sfid_alta = $this->input->post('sfid');
+            $id_pds =  $this->tienda_model->search_id_pds($sfid_alta);
 
+
+            $data['tiendas'] =  $this->tienda_model->search_pds($sfid_alta);
+
+            //print_r($data['tiendas']);
             $data['title'] = 'Apertura PdV';
 
             /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
@@ -676,30 +681,49 @@ class Admin extends CI_Controller
     /**
      * Una vez se aporta el SFID, ésta le asigna los muebles y dispositivos que correspondan.
      */
-    public function update_apertura_pdv_OLD_PENDIENTE_UPDATE()
+    public function update_apertura_pdv()
     {
-        if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10))
+        if ($this->auth->is_auth())
         {
-            $this->load->model(array('tienda_model', 'sfid_model'));
+            $this->load->model(array('tienda_model', 'sfid_model','categoria_model'));
+
+            $sfid = $this->input->post("reference");
 
             /* FIXME: revisar alta correcta en tabla de agentes */
             $data = array(
-                'sfid'      => $this->input->post('reference'),
+                'sfid'      => $sfid,
                 'password'  => 'demoreal',
                 'type'      => 1
             );
 
-            /* TODO: validar que no exista el agente y pds. Si existe no permitir alta. */
-            $this->tienda_model->alta_agente($data);
-            $this->tienda_model->borrar_dispositivos($this->input->post('reference'));
-            $this->tienda_model->borrar_muebles($this->input->post('reference'));
+            $id_agent = $this->tienda_model->alta_agente($data);
 
-            $this->tienda_model->alta_masiva_muebles($this->input->post('reference'));
-            $this->tienda_model->alta_masiva_dispositivos($this->input->post('reference'));
+            //if(is_null($id_agent)) redirect('admin/apertura_pdv/alta/'.$sfid, 'refresh');
+
+            // Validar "panelado" BLOOM
+            $PDS = $this->tienda_model->get_sfid($sfid,"object");
+
+
+            $existe_panelado = $this->categoria_model->existe_mobiliario($PDS->id_tipo,$PDS->id_subtipo,$PDS->id_segmento,$PDS->id_tipologia);
+
+
+
+            if($existe_panelado){
+
+                $muebles = $this->categoria_model->get_displays_categoria($PDS->id_tipo,$PDS->id_subtipo,$PDS->id_segmento,$PDS->id_tipologia);
+                foreach($muebles as $mueble)
+                {
+                    $this->tienda_model->anadir_mueble_sfid($mueble,$PDS,$mueble->position);
+                }
+
+
+            }
+            /*$this->tienda_model->borrar_dispositivos($sfid);
+            $this->tienda_model->borrar_muebles($sfid);*/
 
             //redirect('admin/get_inventarios_sfid/'.$this->input->post('reference').'/alta/volver/apertura_pdv');
 
-            redirect('admin/apertura_pdv/alta/'.$this->input->post('reference'), 'refresh');
+            redirect('admin/apertura_pdv/alta/'.$sfid, 'refresh');
         }
         else
         {
@@ -711,7 +735,7 @@ class Admin extends CI_Controller
 
     public function update_dispositivo()
     {
-        if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
+        if ($this->auth->is_auth()) {
             $data['id_pds'] = $this->session->userdata('id_pds');
             $data['sfid'] = $this->session->userdata('sfid');
 
@@ -740,7 +764,7 @@ class Admin extends CI_Controller
 
     public function update_sfid()
     {
-        if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10))
+        if ($this->auth->is_auth())
         {
             $this->load->model(array('tienda_model', 'sfid_model'));
 
@@ -779,7 +803,7 @@ class Admin extends CI_Controller
 
     public function operar_incidencia()
     {
-        if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
+        if ($this->auth->is_auth()) {
             /*$id_pds = $this->uri->segment(3);
             $id_inc = $this->uri->segment(4);*/
 
@@ -905,7 +929,7 @@ class Admin extends CI_Controller
 
     public function imprimir_incidencia()
     {
-        if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
+        if ($this->auth->is_auth()) {
             $id_pds = $this->uri->segment(3);
             $id_inc = $this->uri->segment(4);
             $envio_mail=$this->uri->segment(5);
@@ -1095,7 +1119,7 @@ class Admin extends CI_Controller
 
     public function insert_chat()
     {
-        if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
+        if ($this->auth->is_auth()) {
             $id_pds = $this->uri->segment(3);
             $id_inc = $this->uri->segment(4);
 
@@ -1743,7 +1767,7 @@ class Admin extends CI_Controller
 
     public function update_incidencia_materiales()
     {
-        if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
+        if ($this->auth->is_auth()) {
             $id_pds = $this->uri->segment(3);
             $id_inc = $this->uri->segment(4);
             $status_pds = $this->uri->segment(5);
@@ -1810,7 +1834,7 @@ class Admin extends CI_Controller
 
     public function desasignar_incidencia_materiales()
     {
-        if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
+        if ($this->auth->is_auth()) {
             $id_pds = $this->uri->segment(3);
             $id_inc = $this->uri->segment(4);
             $tipo_dispositivo = $this->uri->segment(5);
@@ -1834,7 +1858,7 @@ class Admin extends CI_Controller
 
     public function carga_datos_dispositivo()
     {
-        if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
+        if ($this->auth->is_auth()) {
             $data['id_pds'] = $this->session->userdata('id_pds');
             $data['sfid'] = $this->session->userdata('sfid');
 
@@ -1891,7 +1915,7 @@ class Admin extends CI_Controller
 
     public function incidencias()
     {
-        if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
+        if ($this->auth->is_auth()) {
 
             $xcrud_SQL = xcrud_get_instance();
             $xcrud_SQL->table_name('Incidencias Demo Real');
@@ -1952,7 +1976,7 @@ class Admin extends CI_Controller
 
     public function incidencias_exp()
     {
-        if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
+        if ($this->auth->is_auth()) {
 
             $xcrud_SQL = xcrud_get_instance();
             $xcrud_SQL->table_name('Incidencias Demo Real');
@@ -2011,7 +2035,7 @@ class Admin extends CI_Controller
 
     public function incidencias_master()
     {
-        if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
+        if ($this->auth->is_auth()) {
 
             $xcrud_SQL = xcrud_get_instance();
             $xcrud_SQL->table_name('Incidencias Demo Real Orange');
@@ -2512,9 +2536,10 @@ class Admin extends CI_Controller
             ->label('address', 'Dirección')->label('zip', 'C.P.')->label('city', 'Ciudad')->label('province', 'Provincia')->label('county', 'CC.AA.')->label('schedule', 'Horario')->label('phone', 'Teléfono')->label('mobile', 'Móvil')->label('email', 'Email')->label('contact_contact_person', 'Contacto')->label('contact_in_charge', 'Encargado')->label('id_supervisor', 'Supervisor')->label('status', 'Estado');
 
         $xcrud_2->columns('id_pds,client_pds,reference,id_tipo,id_subtipo,id_segmento,id_tipologia,commercial,territory,status');
-        $xcrud_2->fields('client_pds,reference,id_tipo,id_subtipo,id_segmento,id_tipologia,commercial,cif,territory,picture_url,m2_fo,m2_bo,m2_total,type_via,address,zip,city,province,county,schedule,phone,mobile,email,contact_contact_person,contact_in_charge,id_supervisor,status');
+        $xcrud_2->fields('client_pds,reference,id_tipo,id_subtipo,id_segmento,id_tipologia,commercial,cif,territory,picture_url,m2_fo,m2_bo,m2_total,type_via,address,zip,city,province,county,territory,schedule,phone,mobile,email,contact_contact_person,contact_in_charge,id_supervisor,status');
 
         $xcrud_2->validation_required('province');
+        $xcrud_2->validation_required('territory');
 
         // Ocultar el botón de borrar para evitar borrados accidentales mientras no existan constraints en BD:
         $xcrud_2->unset_remove();
@@ -3303,7 +3328,7 @@ class Admin extends CI_Controller
 
     public function alta_dispositivos_almacen()
     {
-        if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10))
+        if ($this->auth->is_auth())
         {
             $xcrud = xcrud_get_instance();
             $this->load->model('tienda_model');
@@ -3330,7 +3355,7 @@ class Admin extends CI_Controller
 
     public function alta_dispositivos_almacen_update()
     {
-        if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10))
+        if ($this->auth->is_auth())
         {
             $this->load->model('tienda_model');
 
@@ -3379,7 +3404,7 @@ class Admin extends CI_Controller
 
     public function alta_dispositivos_ok()
     {
-        if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10))
+        if ($this->auth->is_auth())
         {
             $this->load->model('tienda_model');
             $xcrud = xcrud_get_instance();
@@ -3416,7 +3441,7 @@ class Admin extends CI_Controller
 
     public function baja_dispositivos_almacen()
     {
-        if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10))
+        if ($this->auth->is_auth())
         {
             $xcrud = xcrud_get_instance();
             $this->load->model('tienda_model');
@@ -3442,7 +3467,7 @@ class Admin extends CI_Controller
 
     public function baja_dispositivos_almacen_update()
     {
-        if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10))
+        if ($this->auth->is_auth())
         {
             $this->load->model('tienda_model');
 
@@ -3470,7 +3495,7 @@ class Admin extends CI_Controller
 
     public function baja_dispositivos_ok()
     {
-        if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10))
+        if ($this->auth->is_auth())
         {
             $this->load->model('tienda_model');
             $xcrud = xcrud_get_instance();
@@ -3509,7 +3534,7 @@ class Admin extends CI_Controller
 
     public function baja_dispositivos_ko()
     {
-        if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10))
+        if ($this->auth->is_auth())
         {
             $this->load->model('tienda_model');
             $xcrud = xcrud_get_instance();
@@ -4189,7 +4214,7 @@ class Admin extends CI_Controller
 
     public function facturacion()
     {
-        if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
+        if ($this->auth->is_auth()) {
             $data['id_pds'] = $this->session->userdata('id_pds');
             $data['sfid'] = $this->session->userdata('sfid');
 
@@ -4237,7 +4262,7 @@ class Admin extends CI_Controller
 
     public function exportar_facturacion($fecha_inicio=NULL,$fecha_fin=NULL,$instalador=NULL,$dueno=NULL,$formato=NULL)
     {
-        if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
+        if ($this->auth->is_auth()) {
             $data['id_pds'] = $this->session->userdata('id_pds');
             $data['sfid'] = $this->session->userdata('sfid');
 
@@ -4256,7 +4281,7 @@ class Admin extends CI_Controller
 
     public function facturacion_intervencion()
     {
-        if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
+        if ($this->auth->is_auth()) {
             $data['id_pds'] = $this->session->userdata('id_pds');
             $data['sfid'] = $this->session->userdata('sfid');
 
@@ -4308,7 +4333,7 @@ class Admin extends CI_Controller
 
     public function exportar_intervenciones_facturacion($fecha_inicio,$fecha_fin,$instalador=NULL,$dueno=NULL,$formato=NULL)
     {
-        if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
+        if ($this->auth->is_auth()) {
             $data['id_pds'] = $this->session->userdata('id_pds');
             $data['sfid'] = $this->session->userdata('sfid');
             $this->load->model(array('tienda_model','sfid_model'));
@@ -4347,7 +4372,7 @@ class Admin extends CI_Controller
     public function informe_pdv()
     {
 
-        if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
+        if($this->auth->is_auth()) {
             $xcrud = xcrud_get_instance();
             $this->load->model('sfid_model');
             $this->load->model('tienda_model');
@@ -4564,7 +4589,7 @@ class Admin extends CI_Controller
 
     public function informe_pdv_exportar_OLD()
     {
-        if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
+        if($this->auth->is_auth()) {
             $xcrud = xcrud_get_instance();
             $this->load->model('sfid_model');
             $this->load->model('tienda_model');
@@ -4657,7 +4682,7 @@ class Admin extends CI_Controller
      */
     public function informe_planogramas()
     {
-        if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
+        if ($this->auth->is_auth()) {
 
             /* Incluir los modelos */
             $xcrud = xcrud_get_instance();
@@ -4915,7 +4940,7 @@ class Admin extends CI_Controller
 
 
     public function informe_planograma_mueble_pds($id_pds, $id_dis){
-        if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10))
+        if($this->auth->is_auth())
         {
 
 
@@ -4986,7 +5011,7 @@ class Admin extends CI_Controller
 
 
     public function informe_planograma_terminal(){
-        if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10))
+        if($this->auth->is_auth())
         {
             $data["generado_planograma"] = FALSE;
 
@@ -5078,7 +5103,7 @@ class Admin extends CI_Controller
      */
     public function informe_visual()
     {
-        if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
+        if ($this->auth->is_auth()) {
 
             /* Incluir los modelos */
             $xcrud = xcrud_get_instance();
@@ -5283,7 +5308,7 @@ class Admin extends CI_Controller
 
 
     public function informe_visual_mueble($id_mueble){
-        if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10))
+        if($this->auth->is_auth())
         {
 
             $id_dis   = $id_mueble;
@@ -5352,7 +5377,7 @@ class Admin extends CI_Controller
 
     public function informe_visual_terminal($id_mueble,$id_device)
     {
-        if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
+        if ($this->auth->is_auth()) {
             $id_pds = $this->uri->segment(3);
             $id_dis = $this->uri->segment(4);
             $id_dev = $this->uri->segment(5);
@@ -5425,7 +5450,7 @@ class Admin extends CI_Controller
 
 
     public function informe_visual_mueble_sfid(){
-        if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10))
+        if($this->auth->is_auth())
         {
             $id_pds   = $this->uri->segment(3);
             $id_dis   = $this->uri->segment(4);
@@ -5503,7 +5528,7 @@ class Admin extends CI_Controller
 
 
     public function informe_visual_ficha_terminal(){
-        if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10))
+        if($this->auth->is_auth())
         {
             $data["generado_visual"] = FALSE;
 
@@ -5593,7 +5618,7 @@ class Admin extends CI_Controller
 
     public function ayuda($tipo)
     {
-        if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
+        if ($this->auth->is_auth()) {
             $data['id_pds'] = $this->session->userdata('id_pds');
             $data['sfid'] = $this->session->userdata('sfid');
 
@@ -5645,7 +5670,7 @@ class Admin extends CI_Controller
 
     public function manuales()
     {
-        if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10)) {
+        if ($this->auth->is_auth()) {
             $data['id_pds'] = $this->session->userdata('id_pds');
             $data['sfid'] = $this->session->userdata('sfid');
 
@@ -5671,7 +5696,7 @@ class Admin extends CI_Controller
 
     public function muebles_fabricantes()
     {
-        if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10))
+        if($this->auth->is_auth())
         {
             $xcrud = xcrud_get_instance();
 
@@ -5794,8 +5819,8 @@ class Admin extends CI_Controller
             {
                 $data["anadiendo_mueble"] = TRUE;
 
-                $display = $this->tienda_model->get_display($id_display);
-                $data["mueble"] = $display["display"];
+                $display = $this->tienda_model->get_display($id_display,"object");
+                $data["mueble"] = $display->display;
                 $data["position"] = $position;
 
 
@@ -5808,7 +5833,7 @@ class Admin extends CI_Controller
                 {
                     if(!empty($sfid))
                     {
-                        $check_sfid = $this->tienda_model->get_sfid($sfid);
+                        $check_sfid = $this->tienda_model->get_sfid($sfid,"object");
                         if (!empty($check_sfid)){// SFID ENCONTRADO
                             $checked_sfids[$sfid] = $check_sfid;
 

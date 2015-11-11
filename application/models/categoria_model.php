@@ -106,16 +106,32 @@ class Categoria_Model extends CI_Model
     }
 
 
+    public function existe_mobiliario($id_tipo,$id_subtipo,$id_segmento,$id_tipologia)
+    {
+        $respuesta = FALSE;
+
+
+        if(!is_null($id_tipo) && !is_null($id_subtipo) && !is_null($id_segmento) && !is_null($id_tipologia)) {
+            // Sacamos los muebles
+            $muebles = $this->get_displays_categoria($id_tipo, $id_subtipo, $id_segmento, $id_tipologia);
+            if (!empty($muebles)) $respuesta = TRUE;
+        }
+        return $respuesta;
+    }
+
+
+
 
     public function get_displays_categoria($id_tipo,$id_subtipo,$id_segmento,$id_tipologia)
     {
         $query = $this->db->select ('displays_categoria.*, display.display')
                 ->join('display','displays_categoria.id_display = display.id_display')
                 ->where('id_tipo',$id_tipo)
-                ->where('id_tipo',$id_subtipo)
-                ->where('id_tipo',$id_segmento)
-                ->where('id_tipo',$id_tipologia)
+                ->where('id_subtipo',$id_subtipo)
+                ->where('id_segmento',$id_segmento)
+                ->where('id_tipologia',$id_tipologia)
                 ->get('displays_categoria');
+
 
         return $query->result();
     }
