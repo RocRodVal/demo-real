@@ -3032,27 +3032,34 @@ class Admin extends CI_Controller
      */
     public function get_inventarios_sfid($sfid=NULL,$accion=NULL,$id_pds=NULL)
     {
-        $this->load->model("sfid_model");
+        $this->load->model(array('tienda_model','sfid_model'));
 
-            if(empty($accion) || $accion=="alta"){
-                if(!empty($id_pds)) {
-                    $query = $this->db->select('*')->where('id_pds', $id_pds)->get('pds');
-                    $pds = $query->row();
-                }
-                $this->get_inventarios_sfid_alta($pds);
-            }else{
-                if(!is_null($id_pds) && !empty($id_pds)){
-                    // El  SFID ya ha sido cerrado, buscar el id_pds en el historico de cierres de SFID
-                    $pds = $this->sfid_model->get_historico_cierre_sfid($sfid,"object");
-                    $id_pds = $pds->id_pds;
-                }
-                if(!empty($id_pds)) {
-                    $query = $this->db->select('*')->where('id_pds', $id_pds)->get('pds');
-                    $pds = $query->row();
-                }
-                $this->get_inventarios_sfid_baja($pds);
+
+        if($accion == "alta"){
+            // INFORME ALTA
+            $pds = $this->tienda_model->get_sfid($sfid,"object");
+            $this->get_inventarios_sfid_alta($pds);
+        }else{
+            // INFORME BAJA
+
+            if(is_null($id_pds) || empty($id_pds)) {
+                // El  SFID ya ha sido cerrado, buscar el id_pds en el historico de cierres de SFID
+                $pds = $this->sfid_model->get_historico_cierre_sfid($sfid, "object");
+                $id_pds = $pds->id_pds;
             }
-        }
+
+
+
+                if (!empty($id_pds)) {
+                    $query = $this->db->select('*')->where('id_pds', $id_pds)->get('pds');
+                    $pds = $query->row();
+                    $this->get_inventarios_sfid_baja($pds);
+                }
+
+            }
+
+    }
+
 
 
 
