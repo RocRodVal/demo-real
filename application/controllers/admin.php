@@ -660,6 +660,7 @@ class Admin extends CI_Controller
 
 
             $data['tiendas'] =  $this->tienda_model->search_pds($sfid_alta);
+            $data['id_pds'] = $id_pds;
 
             //print_r($data['tiendas']);
             $data['title'] = 'Apertura PdV';
@@ -3031,31 +3032,36 @@ class Admin extends CI_Controller
      */
     public function get_inventarios_sfid($sfid=NULL,$accion=NULL,$id_pds=NULL)
     {
-        $this->load->model("sfid_model");
-
-        if(empty($id_pds)){
-            // El  SFID ya ha sido cerrado, buscar el id_pds en el historico de cierres de SFID
-            $pds = $this->sfid_model->get_historico_cierre_sfid($sfid);
-            $id_pds = $pds->id_pds;
-        }
-
-        if(!empty($id_pds)) {
-            $query = $this->db->select('*')->where('id_pds', $id_pds)->get('pds');
-            $pds = $query->row();
-        }
+        $this->load->model(array('tienda_model','sfid_model'));
 
 
+        if($accion == "alta"){
+            // INFORME ALTA
+            $pds = $this->tienda_model->get_sfid($sfid,"object");
+            $this->get_inventarios_sfid_alta($pds);
+        }else{
+            // INFORME BAJA
 
-        if(!empty($pds))
-        {
-            if(empty($accion) || $accion=="alta"){
-                $this->get_inventarios_sfid_alta($pds);
-            }else{
-                $this->get_inventarios_sfid_baja($pds);
+            if(is_null($id_pds) || empty($id_pds)) {
+                // El  SFID ya ha sido cerrado, buscar el id_pds en el historico de cierres de SFID
+                $pds = $this->sfid_model->get_historico_cierre_sfid($sfid, "object");
+                $id_pds = $pds->id_pds;
             }
-        }
+
+
+
+                if (!empty($id_pds)) {
+                    $query = $this->db->select('*')->where('id_pds', $id_pds)->get('pds');
+                    $pds = $query->row();
+                    $this->get_inventarios_sfid_baja($pds);
+                }
+
+            }
 
     }
+
+
+
 
     public function get_inventarios_sfid_alta($pds='')
     {
