@@ -551,7 +551,12 @@ class Tienda_model extends CI_Model {
         $query = $this->db->get('pds');
 
         $resultado = $query->row();
-        return $resultado->id_pds;
+
+        if(!empty($resultado)) {
+            return $resultado->id_pds;
+        }else{
+            return NULL;
+        }
 
     }
 
