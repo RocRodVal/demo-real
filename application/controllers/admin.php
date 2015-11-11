@@ -660,6 +660,7 @@ class Admin extends CI_Controller
 
 
             $data['tiendas'] =  $this->tienda_model->search_pds($sfid_alta);
+            $data['id_pds'] = $id_pds;
 
             //print_r($data['tiendas']);
             $data['title'] = 'Apertura PdV';
