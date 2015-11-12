@@ -3,3 +3,4 @@
 .project
 .settings/
 application/logs/
+application/helpers/dompdf/lib/fonts/log.htm
