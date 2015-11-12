@@ -22,7 +22,7 @@
                     </form>
                 </div>
             </div>
-            <?php if(isset($alta_sfid) && !empty($alta_sfid)) { ?>
+            <?php if($accion == "alta" && isset($alta_sfid) && !empty($alta_sfid)) { ?>
                 <div class="row">
                     <div class="col-lg-12">
                         <p>&nbsp;</p>
@@ -31,9 +31,22 @@
                         <p>&nbsp;</p>
                     </div>
                 </div>
-            <?php } ?>
+            <?php }
 
-            <?php 
+            if($accion=="existe") {
+            ?>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <p>&nbsp;</p>
+                        <p class="message error"><i class="glyphicon glyphicon-ko"></i> El PdS <?=$alta_sfid?> ya estaba dado de alta. No se ha añadido nada.</p>
+                        <p class="message"><a href="<?=site_url('admin/get_inventarios_sfid/'.$alta_sfid.'/alta/'.$id_pds)?>"><i class="fa fa-file-pdf-o"></i> Descargar informe de alta</a></p>
+                        <p>&nbsp;</p>
+                    </div>
+                </div>
+
+           <?php }
+
+
             if (isset($_POST['sfid']))
             {	
             ?>
