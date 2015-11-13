@@ -11,6 +11,9 @@ class Inventario extends CI_Controller {
 
         // Carga de la clase de Colección de datos, para pasar variables a la vista.
         $this->load->library('data');
+        $this->load->library('auth',array(10));
+
+
         $this->data->set("controlador","inventario");
         $this->data->set("acceso","admin");
         $this->data->set("accion_home","");
@@ -20,7 +23,7 @@ class Inventario extends CI_Controller {
 	
 	public function index()
 	{
-		if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 10))
+		if($this->auth->is_auth())
 		{
 			$xcrud = xcrud_get_instance();
 			$this->load->model('tienda_model');

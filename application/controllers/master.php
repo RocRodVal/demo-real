@@ -938,6 +938,43 @@ class Master extends CI_Controller {
                     GROUP BY anio, mes;")->result();
 
 
+            /**
+             * EN PROCESO < y > 72h
+             */
+
+            $this->db->query(" CREATE TEMPORARY TABLE IF NOT EXISTS historico_temp(INDEX(id_incidencia))
+                                    AS (
+                                           SELECT h.id_incidencia, i.fecha as fecha_entrada, MAX(h.fecha) as fecha_proceso,
+                                            i.fecha_cierre,  h.status_pds, h.status
+                                            FROM historico h
+                                            JOIN incidencias i ON h.id_incidencia = i.id_incidencia
+                                            WHERE 	YEAR(i.fecha) = '".$este_anio."'
+                                                AND ( h.status_pds != 'Cancelada' && i.status_pds != 'Cancelada')
+                                                AND ( h.status_pds = 'En proceso' || i.status_pds = 'Finalizada')
+                                            GROUP BY id_incidencia
+                                    );
+            ");
+
+            //$this->db->query(" UPDATE historico_temp SET fecha_proceso =  DATE_ADD(fecha_entrada, INTERVAL 2 day) WHERE DATEDIFF(fecha_proceso,fecha_entrada) < 0; ");
+
+            $sql = "
+            SELECT COUNT(id_incidencia)  as cantidad, YEAR(fecha_entrada) as anio, MONTH(fecha_entrada) as mes FROM historico_temp
+            WHERE (workdaydiff(fecha_proceso,fecha_cierre)) < 3
+            GROUP BY anio, mes;
+            ";
+            $menos_72 = $this->db->query($sql)->result();
+
+            $mas_72 = $this->db->query(                "
+                   SELECT COUNT(id_incidencia) as cantidad, YEAR(fecha_entrada) as anio, MONTH(fecha_entrada) as mes FROM historico_temp
+                    WHERE (workdaydiff(fecha_proceso,fecha_cierre)) >= 3
+                    GROUP BY anio, mes;")->result();
+
+
+
+
+
+
+
             $r_menos_72 = array();
             $r_mas_72 = array();
 
@@ -1006,32 +1043,110 @@ class Master extends CI_Controller {
 
 
 
-            // Rellenamos con 0, los meses que no haya incidencias;
-
-            // Rellenamos con 0 cuando no hay incidencias para ese mes
-
 
             /**
-             * Cuarto bloque de la tabla, Intervenciones, Alarmas, Terminales, Incidencias...
+             * EN PROCESO < y > 72h
              */
+            $this->db->query(" DROP TABLE IF EXISTS historico_temp ");
+            $this->db->query(" CREATE TEMPORARY TABLE IF NOT EXISTS historico_temp(INDEX(id_incidencia))
+                                    AS (
+                                           SELECT h.id_incidencia, i.fecha as fecha_entrada, MAX(h.fecha) as fecha_proceso,
+                                            i.fecha_cierre,  h.status_pds, h.status
+                                            FROM historico h
+                                            JOIN incidencias i ON h.id_incidencia = i.id_incidencia
+                                            WHERE 	YEAR(i.fecha) = '".$este_anio."'
+                                                AND ( h.status_pds != 'Cancelada' && i.status_pds != 'Cancelada')
+                                                AND ( h.status_pds = 'En proceso' && i.status_pds = 'En proceso')
+                                            GROUP BY id_incidencia
+                                    );
+            ");
 
-            // Línea 1: Intervenciones
-            /*$resultados_3 = $this->db->query("
-                SELECT COUNT(intervenciones.id_intervencion) as cantidad, MONTH(intervenciones.fecha) as mes, YEAR(intervenciones.fecha) as anio
-                FROM intervenciones
-                JOIN intervenciones_incidencias ON intervenciones.id_intervencion = intervenciones_incidencias.id_intervencion
-                JOIN incidencias ON intervenciones_incidencias.id_incidencia = incidencias.id_incidencia
-                WHERE incidencias.status_pds = 'Finalizada' AND YEAR(intervenciones.fecha) = '".$este_anio."'
-                GROUP BY mes
-            ");*/
+            //$this->db->query(" UPDATE historico_temp SET fecha_proceso =  DATE_ADD(fecha_entrada, INTERVAL 2 day) WHERE DATEDIFF(fecha_proceso,fecha_entrada) < 0; ");
 
-           /* $SQL = ' CREATE TEMPORARY TABLE estado_facturacion_temp AS(
-                   SELECT (COUNT(f.id_intervencion)) as cantidad, YEAR(f.fecha) as anio, MONTH(f.fecha) as mes
-                                                FROM facturacion f
-                                                LEFT JOIN intervenciones ON f.id_intervencion = intervenciones.id_intervencion
-                                                WHERE YEAR(f.fecha) = "'.$este_anio.'"
-                                                GROUP BY mes
-            )';*/
+            $hoy = date('Y-m-d');
+            $sql = "
+            SELECT COUNT(id_incidencia)  as cantidad, YEAR(fecha_entrada) as anio, MONTH(fecha_entrada) as mes FROM historico_temp
+            WHERE (workdaydiff(fecha_proceso,'".$hoy."')) < 3
+            GROUP BY anio, mes;
+            ";
+            $proceso_menos_72 = $this->db->query($sql)->result();
+
+            $proceso_mas_72 = $this->db->query(                "
+                   SELECT COUNT(id_incidencia) as cantidad, YEAR(fecha_entrada) as anio, MONTH(fecha_entrada) as mes FROM historico_temp
+                    WHERE (workdaydiff(fecha_proceso,'".$hoy."')) >= 3
+                    GROUP BY anio, mes;")->result();
+
+
+
+
+
+
+
+            $r_proceso_menos_72 = array();
+            $r_proceso_mas_72 = array();
+
+
+            // Rellenamos con 0 los meses del rango que no tienen incidencias...
+            $index = 0;
+            foreach($meses_columna as $id_mes => $mes)
+            {
+                // Menos de 72....
+                $existe = NULL;
+                foreach($proceso_menos_72 as $clave=>$valor)
+                {
+                    if($valor->mes == $id_mes)
+                    {
+                        $existe = $valor; break;
+                    }
+                }
+                if(!is_null($existe))
+                {
+                    $r_proceso_menos_72[] = $valor;
+                }
+                else
+                {
+                    $elemento = new StdClass();
+                    $elemento->cantidad = 0;
+                    $elemento->mes = $id_mes;
+                    $elemento->anio = $este_anio;
+
+                    $r_proceso_menos_72[] = $elemento;
+                }
+
+
+                // Más de 72....
+                $existe = NULL;
+
+                foreach($proceso_mas_72 as $clave=>$valor)
+                {
+                    if($valor->mes == $id_mes)
+                    {
+                        $existe = $valor; break;
+                    }
+                }
+                if(!is_null($existe))
+                {
+                    $r_proceso_mas_72[] = $valor;
+                }
+                else
+                {
+                    $elemento = new StdClass();
+                    $elemento->cantidad = 0;
+                    $elemento->mes = $id_mes;
+                    $elemento->anio = $este_anio;
+
+                    $r_proceso_mas_72[] = $elemento;
+                }
+
+                $comprobacion_proceso_72[$index] =  ($r_proceso_menos_72[$index]->cantidad + $r_proceso_mas_72[$index]->cantidad);      // Sumar las incidencias <72 y >72 de cada mes, para poder comprobar contra las de "EStado finalizada"
+
+                $index++;
+            }
+
+
+
+            $proceso_menos_72 = $r_proceso_menos_72;
+            $proceso_mas_72 = $r_proceso_mas_72;
 
 
 
@@ -1232,7 +1347,8 @@ class Master extends CI_Controller {
             $data["menos_72"] = $menos_72;
             $data["mas_72"] = $mas_72;
 
-
+            $data["proceso_menos_72"] = $proceso_menos_72;
+            $data["proceso_mas_72"] = $proceso_mas_72;
 
             $data['tabla_1'] = $resultados_1;
             $data['incidencias_estado'] = $incidencias_estado;

@@ -183,6 +183,19 @@
                                 </tr>
 
                                 <tr>
+                                    <th>En proceso &lt; 72h</th>
+                                    <?php
+                                    $total = 0;
+                                    foreach($proceso_menos_72 as $key=>$valor)
+                                    {
+                                        echo '<td>'.$valor->cantidad.'</td>';
+                                        $total += $valor->cantidad;
+                                    }
+                                    echo '<td class="total">'.$total.'</td>';
+                                    ?>
+                                </tr>
+
+                                <tr>
                                     <th>Finalizadas &gt; 72h</th>
                                     <?php
                                     $total = 0;
@@ -194,6 +207,19 @@
                                     echo '<td class="total">'.$total.'</td>';
                                     ?>
                                 </tr>
+
+                        <tr>
+                            <th>En proceso &gt; 72h</th>
+                            <?php
+                            $total = 0;
+                            foreach($proceso_mas_72 as $key=>$valor)
+                            {
+                                echo '<td>'.$valor->cantidad.'</td>';
+                                $total += $valor->cantidad;
+                            }
+                            echo '<td class="total">'.$total.'</td>';
+                            ?>
+                        </tr>
 
                             <tr class="separador"><?=$separador_td?></tr>
 
