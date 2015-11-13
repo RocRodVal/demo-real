@@ -6,7 +6,7 @@ class Chat_model extends CI_Model {
 	public function __construct()
 	{
 		$this->load->database();
-        $this->agentes_excluidos = array(9,10,11,12);
+        $this->agentes_excluidos = array(9,10,11,12,13);
 	}
 
 

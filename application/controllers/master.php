@@ -233,7 +233,7 @@ class Master extends CI_Controller {
             $xcrud = xcrud_get_instance();
 
 
-            $this->load->model(array('intervencion_model', 'incidencia_model', 'tienda_model', 'sfid_model','chat_model'));
+            $this->load->model(array('intervencion_model', 'incidencia_model', 'tienda_model', 'sfid_model','chat_model','categoria_model'));
             $this->load->library('app/paginationlib');
 
             // Comprobar si existe el segmento PAGE en la URI, si no inicializar a 1..
@@ -260,7 +260,12 @@ class Master extends CI_Controller {
                 'id_provincia' => '',
 
                 'id_incidencia' => '',
-                'reference' => ''
+                'reference' => '',
+
+                'id_tipo'=>'',
+                'id_subtipo'=>'',
+                'id_segmento'=>'',
+                'id_tipologia'=>''
             );
 
             /* BORRAR BUSQUEDA */
@@ -352,6 +357,9 @@ class Master extends CI_Controller {
             $data["provincias"] = $this->tienda_model->get_provincias();
 
 
+            $data["tipos"] = $this->categoria_model->get_tipos();
+
+
             /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
             $this->data->add($data);
             $data = $this->data->getData();
@@ -389,7 +397,12 @@ class Master extends CI_Controller {
                 'id_provincia' => '',
 
                 'id_incidencia'=>'',
-                'reference'=> ''
+                'reference'=> '',
+
+                'id_tipo'=>'',
+                'id_subtipo'=>'',
+                'id_segmento'=>'',
+                'id_tipologia'=>''
             );
             $array_sesion = $this->get_filtros($array_filtros);
 

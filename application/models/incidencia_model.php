@@ -306,6 +306,19 @@ class Incidencia_model extends CI_Model {
         }
         if(isset($filtros["reference"]) && !empty($filtros["reference"])) $this->db->where('reference',$filtros['reference']);
 
+        if(isset($filtros["id_tipo"]) && !empty($filtros["id_tipo"])) {
+            $this->db->where('pds.id_tipo',$filtros['id_tipo']);
+        }
+        if(isset($filtros["id_subtipo"]) && !empty($filtros["id_subtipo"])) {
+            $this->db->where('pds.id_subtipo',$filtros['id_subtipo']);
+        }
+        if(isset($filtros["id_segmento"]) && !empty($filtros["id_segmento"])) {
+            $this->db->where('pds.id_segmento',$filtros['id_segmento']);
+        }
+        if(isset($filtros["id_tipologia"]) && !empty($filtros["id_tipologia"])) {
+            $this->db->where('pds.id_tipologia',$filtros['id_tipologia']);
+        }
+
 
         /* Obtenemos la condición por tipo de incidencia */
         $this->db->where($this->get_condition_tipo_incidencia($tipo));
@@ -326,7 +339,7 @@ class Incidencia_model extends CI_Model {
 
         $query =   $this->db->get('incidencias',$cfg_pagination['per_page'], ($page-1) * $cfg_pagination['per_page']);
          //
-       // echo $this->db->last_query();
+        //echo $this->db->last_query();
 
         return $query->result();
     }
@@ -487,10 +500,23 @@ class Incidencia_model extends CI_Model {
         }
         if(isset($filtros["id_provincia"]) && !empty($filtros["id_provincia"])) {
             //$this->db->where('incidencias.fail_device','1');
-            $sql .= ('  province.id_province ="'.$filtros['id_provincia'].'" ');
+            $sql .= (' AND  province.id_province ="'.$filtros['id_provincia'].'" ');
         }
 
         if(isset($filtros["reference"]) && !empty($filtros["reference"])) $sql .=(' AND reference= '.$filtros['reference']);
+
+        if(isset($filtros["id_tipo"]) && !empty($filtros["id_tipo"])) {
+            $sql .= (' AND  pds.id_tipo ="'.$filtros['id_tipo'].'" ');
+        }
+        if(isset($filtros["id_subtipo"]) && !empty($filtros["id_subtipo"])) {
+            $sql .= (' AND  pds.id_subtipo ="'.$filtros['id_subtipo'].'" ');
+        }
+        if(isset($filtros["id_segmento"]) && !empty($filtros["id_segmento"])) {
+            $sql .= (' AND  pds.id_segmento ="'.$filtros['id_segmento'].'" ');
+        }
+        if(isset($filtros["id_tipologia"]) && !empty($filtros["id_tipologia"])) {
+            $sql .= (' AND  pds.id_tipologia ="'.$filtros['id_tipologia'].'" ');
+        }
 
         $campo_orden = $orden = NULL;
         if(count($array_orden) > 0) {
@@ -602,6 +628,18 @@ class Incidencia_model extends CI_Model {
 
         if(isset($filtros["reference"]) && !empty($filtros["reference"])) $this->db->where('reference',$filtros['reference']);
 
+        if(isset($filtros["id_tipo"]) && !empty($filtros["id_tipo"])) {
+            $this->db->where('pds.id_tipo',$filtros['id_tipo']);
+        }
+        if(isset($filtros["id_subtipo"]) && !empty($filtros["id_subtipo"])) {
+            $this->db->where('pds.id_subtipo',$filtros['id_subtipo']);
+        }
+        if(isset($filtros["id_segmento"]) && !empty($filtros["id_segmento"])) {
+            $this->db->where('pds.id_segmento',$filtros['id_segmento']);
+        }
+        if(isset($filtros["id_tipologia"]) && !empty($filtros["id_tipologia"])) {
+            $this->db->where('pds.id_tipologia',$filtros['id_tipologia']);
+        }
 
         /**
          * Determinado el tipo por parámetro añadir distinción de tipo: abiertas o cerradas.

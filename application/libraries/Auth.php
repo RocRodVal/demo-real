@@ -33,6 +33,11 @@ class Auth
         }
     }
 
+    public function get_roles()
+    {
+        return $this->permitted_roles;
+    }
+
     public function is_auth()
     {
         $sess_logged =  $this->ci->session->userdata($this->sess_var_auth);
