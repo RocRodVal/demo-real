@@ -233,6 +233,13 @@ class Master extends CI_Controller {
             $xcrud = xcrud_get_instance();
 
 
+            $limpiar_filtros = FALSE;
+            if($this->session->userdata('estado_incidencias')=="" || $this->session->userdata('estado_incidencias')!= $tipo)
+            {
+                $this->session->set_userdata('estado_incidencias', $tipo);
+                $limpiar_filtros = TRUE;
+            }
+
             $this->load->model(array('intervencion_model', 'incidencia_model', 'tienda_model', 'sfid_model','chat_model','categoria_model'));
             $this->load->library('app/paginationlib');
 
@@ -269,10 +276,12 @@ class Master extends CI_Controller {
             );
 
             /* BORRAR BUSQUEDA */
-            $borrar_busqueda = $this->uri->segment(4);
+            $borrar_busqueda = ($limpiar_filtros) ? "borrar_busqueda" : "";
+
             if($borrar_busqueda === "borrar_busqueda")
             {
                 $this->delete_filtros($array_filtros);
+                $array_sesion = $this->set_filtros($array_filtros);
                 redirect(site_url("/master/estado_incidencias/".$tipo),'refresh');
             }
             // Consultar a la session si ya se ha buscado algo y guardado allí.
@@ -357,7 +366,11 @@ class Master extends CI_Controller {
             $data["provincias"] = $this->tienda_model->get_provincias();
 
 
-            $data["tipos"] = $this->categoria_model->get_tipos();
+            /* SELECTORES CATEGORIA PDS */
+            $data["tipos"] = $this->categoria_model->get_tipos_pds();
+            $data["subtipos"] = $this->categoria_model->get_subtipos_pds();
+            $data["segmentos"] = $this->categoria_model->get_segmentos_pds();
+            $data["tipologias"] = $this->categoria_model->get_tipologias_pds();
 
 
             /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..

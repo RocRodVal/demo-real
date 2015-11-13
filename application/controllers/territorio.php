@@ -227,6 +227,12 @@ class Territorio extends CI_Controller {
 
             $xcrud = xcrud_get_instance();
 
+            $limpiar_filtros = FALSE;
+            if($this->session->userdata('estado_incidencias')=="" || $this->session->userdata('estado_incidencias')!= $tipo)
+            {
+                $this->session->set_userdata('estado_incidencias', $tipo);
+                $limpiar_filtros = TRUE;
+            }
 
             $this->load->model(array('intervencion_model', 'incidencia_model', 'tienda_model', 'sfid_model','chat_model','categoria_model'));
             $this->load->library('app/paginationlib');
@@ -264,10 +270,11 @@ class Territorio extends CI_Controller {
             );
 
             /* BORRAR BUSQUEDA */
-            $borrar_busqueda = $this->uri->segment(4);
+            $borrar_busqueda = ($limpiar_filtros) ? "borrar_busqueda" : "";
             if($borrar_busqueda === "borrar_busqueda")
             {
                 $this->delete_filtros($array_filtros);
+                $array_sesion = $this->set_filtros($array_filtros);
                 redirect(site_url("/territorio/estado_incidencias/".$tipo),'refresh');
             }
             // Consultar a la session si ya se ha buscado algo y guardado allí.

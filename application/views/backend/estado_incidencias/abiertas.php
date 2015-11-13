@@ -16,6 +16,58 @@
                     <div class="filtro">
                         <form action="<?=base_url()?>admin/estado_incidencias/abiertas" method="post" class="filtros form-mini autosubmit col-lg-12">
                             <div class="col-lg-3">
+                                <label for="id_tipo">Tipo PDS: </label>
+                                <select name="id_tipo" id="id_tipo" class="form-control input-sm">
+                                    <option value="" <?php echo ($id_tipo==="") ? 'selected="selected"' : ''?>>Cualquiera...</option>
+                                    <?php foreach($tipos as $pds_tipo){
+                                        echo '<option value="'.$pds_tipo["id"].'"
+                                                    '.(($id_tipo == $pds_tipo["id"]) ?  ' selected="selected" ' : '' ).'
+                                                >'.$pds_tipo["titulo"].'</option>';
+                                    }?>
+                                </select>
+                            </div>
+
+                            <div class="col-lg-3">
+                                <label for="id_subtipo">Subtipo PDS: </label>
+                                <select name="id_subtipo" id="id_subtipo" class="form-control input-sm">
+                                    <option value="" <?php echo ($id_subtipo==="") ? 'selected="selected"' : ''?>>Cualquiera...</option>
+                                    <?php foreach($subtipos as $pds_subtipo){
+                                        echo '<option value="'.$pds_subtipo["id"].'"
+                                                    '.(($id_subtipo == $pds_subtipo["id"]) ?  ' selected="selected" ' : '' ).'
+                                                >'.$pds_subtipo["titulo"].'</option>';
+                                    }?>
+                                </select>
+                            </div>
+
+                            <div class="col-lg-3">
+                                <label for="id_segmento">Segmento PDS: </label>
+                                <select name="id_segmento" id=id_segmento" class="form-control input-sm">
+                                    <option value="" <?php echo ($id_segmento==="") ? 'selected="selected"' : ''?>>Cualquiera...</option>
+                                    <?php foreach($segmentos as $segmento){
+                                        echo '<option value="'.$segmento["id"].'"
+                                                    '.(($id_segmento == $segmento["id"]) ?  ' selected="selected" ' : '' ).'
+                                                >'.$segmento["titulo"].'</option>';
+                                    }?>
+                                </select>
+                            </div>
+
+                            <div class="col-lg-3">
+                                <label for="id_tipologia">Tipologías PDS: </label>
+                                <select name="id_tipologia" id=id_tipologia" class="form-control input-sm">
+                                    <option value="" <?php echo ($id_tipologia==="") ? 'selected="selected"' : ''?>>Cualquiera...</option>
+                                    <?php foreach($tipologias as $tipologia){
+                                        echo '<option value="'.$tipologia["id"].'"
+                                                    '.(($id_tipologia == $tipologia["id"]) ?  ' selected="selected" ' : '' ).'
+                                                >'.$tipologia["titulo"].'</option>';
+                                    }?>
+                                </select>
+                            </div>
+                            <div class="clearfix"></div>
+
+                            <div class="col-lg-3">
+
+
+
                                 <label for="status">Estado SAT: </label>
                                 <select name="status" id="status" class="form-control input-sm">
                                     <option value="" <?php echo ($status==="") ? 'selected="selected"' : ''?>>Cualquiera</option>
