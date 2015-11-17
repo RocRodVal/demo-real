@@ -239,6 +239,53 @@ class Informe extends CI_Controller {
     }
 
 
+
+
+
+
+    /**
+     * Método que genera XLS en Cuadros de Mando > Estado incidencias.
+     * Recibe el mes
+     * @param $i_mes
+     * @param null $idx_status
+     * @param null $menos_72h
+     */
+    public function exportar_cdm_incidencias($i_anio= NULL,$i_mes=NULL,$idx_status=NULL,$menos_72h = NULL)
+    {
+        $this->load->model("informe_model");
+
+        if(is_null($i_mes)) $i_mes = 1;
+        if(is_null($i_anio)) $i_anio = date("Y");
+
+        $this->informe_model->exportar_cdm_incidencias($i_anio,$i_mes,$idx_status,$menos_72h);
+        /*
+        // Por estado
+        if(!is_null($idx_status))
+        {
+            switch($menos_72h)
+            {
+                case TRUE:     // Menos 72h
+                    break;
+
+                case FALSE:     // Más 72h
+                    break;
+
+                case NULL:
+                    $this->informe_model->exportar_cdm_incidencias($i_anio,$i_mes,$idx_status);
+                default: break;   // Por estado puro
+            }
+        }
+        // Sin estado, total según mes
+        else
+        {
+            $this->informe_model->exportar_cdm_incidencias($i_anio,$i_mes);
+        }*/
+    }
+
+
+
+
+
 }
 /* End of file admin.php */
 /* Location: ./application/controllers/admin.php */

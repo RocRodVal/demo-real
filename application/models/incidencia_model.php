@@ -2,6 +2,7 @@
 
 class Incidencia_model extends CI_Model {
 
+
 	public function __construct()	{
 		$this->load->database();
         $this->load->model('chat_model');
@@ -776,7 +777,30 @@ class Incidencia_model extends CI_Model {
         }
         return false;
     }
-	
+
+
+    /**
+     * Devuelve los distintos estados de incidencia, pero que se estén usando en alguna incidencia
+     * @return mixed
+     */
+    public function get_estados_incidencia()
+    {
+        $query = $this->db->query("SELECT DISTINCT(status_pds) FROM incidencias ");
+        return $query->result();
+    }
+
+
+    public function get_titulos_estado()
+    {
+        $titulo_incidencias_estado = $this->db->query("
+                                SELECT title as estado  FROM type_status_pds
+								WHERE title != 'Cancelada'  ORDER BY id_status_pds ASC
+								 ");
+
+        return $titulo_incidencias_estado->result();
+    }
+
+
 }
 
 ?>

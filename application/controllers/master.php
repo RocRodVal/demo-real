@@ -739,6 +739,9 @@ class Master extends CI_Controller {
         if($this->auth->is_auth()){ // Control de acceso según el tipo de agente. Permiso definido en constructor
 
             $this->load->helper("common");
+            $this->load->model(array("incidencia_model","informe_model"));
+
+
 
             $b_filtrar_tipo = $this->input->post("filtrar_tipo");
             $tipo_tienda = '';
@@ -749,20 +752,13 @@ class Master extends CI_Controller {
                 $estado_incidencia  = $this->input->post("estado_incidencia");
             }
 
+            $este_anio = date("Y");
+            setlocale(LC_ALL, 'es_ES');
+
             $data["tipo_tienda"] = $tipo_tienda;
             $data["estado_incidencia"] = $estado_incidencia;
-
             // Saco los tipos de tienda, pero sólo aquellos cuyos PDS tienen algun tipo de incidencia.
-            /*$tipos_tienda = $this->db->query("SELECT id_type_pds as id_tipo, pds as tipo FROM type_pds
-                                              WHERE status='Alta' AND client_type_pds !=2  AND id_type_pds IN (
-                                                  SELECT DISTINCT(pds.type_pds) FROM pds INNER JOIN incidencias ON incidencias.id_pds = pds.id_pds
-                                              )");
-            $data["tipos_tienda"] = $tipos_tienda->result();*/
-
-
-            // Saco los tipos de tienda, pero sólo aquellos cuyos PDS tienen algun tipo de incidencia.
-            $estados_incidencia = $this->db->query("SELECT DISTINCT(status_pds) FROM incidencias ");
-            $data["estados_incidencia"] = $estados_incidencia->result();
+            $data["estados_incidencia"] = $this->incidencia_model->get_estados_incidencia();
 
 
             $xcrud_1 = xcrud_get_instance();
@@ -777,142 +773,58 @@ class Master extends CI_Controller {
                 $s_where_incidencia .= " AND incidencias.status_pds LIKE '".$estado_incidencia."'";
             }
 
+            $ctrl_no_cancelada = " AND (status_pds != 'Cancelada' && status != 'Cancelada') "; // Condición where de contrl de incidencias NO CANCELADAS
+
             /**
              * Primer bloque de la tabla, Totales incidencias, dias operativos y media
              */
-            $este_anio = date("Y");
+
             // Rango de meses que mostrarán las columnas de la tabla, basándome en el mínimo y máximo mes que hay incidencias, este año.
-            $rango_meses = $this->db->query("SELECT MONTH(MIN(fecha)) as min, MONTH(MAX(fecha)) as max FROM incidencias WHERE YEAR(fecha)='$este_anio'")->row();
-
-            $ctrl_no_cancelada = " AND (status_pds != 'Cancelada' && status != 'Cancelada') "; // Condición where de contrl de incidencias NO CANCELADAS
-
-
-            // Sacamos
-            $meses_columna = array();
-            for($i = $rango_meses->min; $i<= $rango_meses->max; $i++)
-            {
-                $meses_columna[$i] = nombre_mes($i, 1, 2000);
-            }
+            $rango_meses = $this->informe_model->get_rango_meses($este_anio);
+            $primer_mes = $rango_meses->min;
+            $meses_columna = $this->informe_model->get_meses_columna($rango_meses->min,$rango_meses->max);
+            $data["primer_mes"] = $primer_mes;
             $data["meses_columna"] = $meses_columna;
 
-            $query_1 = $this->db->query("SELECT
-								YEAR(incidencias.fecha) AS anio,
-								MONTH(incidencias.fecha) AS mes,
-								COUNT(*) AS total_incidencias
-								FROM incidencias
-								WHERE 1 = 1
-								$ctrl_no_cancelada
-								AND YEAR(incidencias.fecha) = '".$este_anio."'
-								GROUP BY
-								anio,
-								mes");
+            // Sacamos la primera línea. Total incidencias
+            $resultados_1 = $this->informe_model->get_cmd_incidencias_totales($este_anio,$ctrl_no_cancelada);
+            $total_incidencias_total = $this->informe_model->get_total_cdm_incidencias($resultados_1);
+            $valor_resultados_1 = $this->informe_model->get_array_incidencias_totales($resultados_1);
 
-            $data['title'] = 'Estado incidencias';
+            $dias_operativos = $this->informe_model->get_dias_operativos_mes($rango_meses);
+            $total_dias_operativos = $this->informe_model->get_total_array($dias_operativos);
 
-            $resultados_1 = $query_1->result();
-            $dias_operativos = array();
-            $incidencias_dia = array();
-            $total_incidencias_total = 0;
-            $total_dias_operativos = 0;
-            $total_media = 0;
+            $incidencias_dia = $this->informe_model->get_medias($valor_resultados_1,$dias_operativos,$rango_meses);
+            $total_media = round($this->informe_model->get_total_array($incidencias_dia) / count($dias_operativos));
+
             $nombre_mes = array();
-
-            setlocale(LC_ALL, 'es_ES');
-
-            $cont_mes = 0;
-            foreach($resultados_1 as $key=>$value)
-            {
-                $total_incidencias_total += $value->total_incidencias;
-
-                $dias_op = contar_dias_excepto($value->mes,$value->anio,array('Sun','Sat'),date('d'));
-                if($dias_op <= 0) $dias_op = 1;
-                $dias_operativos[] = $dias_op;
-                $total_dias_operativos += $dias_op;
-
-                $inc_por_dia = $value->total_incidencias / $dias_op;
-                $incidencias_dia[] = round($inc_por_dia);
-            }
-
-            $total_media = round($total_incidencias_total / $total_dias_operativos);
-
 
             /**
              * Segundo bloque de la tabla, Incidencias mensuales por estado PdS
              */
-            $resultados_2 = $this->db->query("
-                                SELECT incidencias.status_pds,
-                                YEAR(incidencias.fecha) AS anio,
-								MONTH(incidencias.fecha) AS mes,
-								COUNT(*) AS total_incidencias
-								FROM incidencias
-								WHERE 1=1
-								 $ctrl_no_cancelada
-								AND YEAR(incidencias.fecha) ='".$este_anio."'
-								GROUP BY status_pds, anio, mes
-								ORDER BY status_pds ASC, mes ASC
-								 ")->result();
-
-            $incidencias_estado = array();
-            foreach($resultados_2 as $key=>$value)
-            {
-                if(!array_key_exists($value->status_pds,$incidencias_estado))
-                {
-                    $incidencias_estado[$value->status_pds] = array();
-                }
-                $incidencias_estado[$value->status_pds][$value->mes] = $value->total_incidencias;
-            }
-
-            $titulo_incidencias_estado = $this->db->query("
-                                SELECT title as estado
-								FROM type_status_pds
-								WHERE title != 'Cancelada'
-								ORDER BY id_status_pds ASC
-								 ")->result();
-
-
-            foreach($meses_columna as $id_mes=>$mes)
-            {
-
-                // Rellenamos con 0 cuando no hay incidencias para ese mes
-                foreach($titulo_incidencias_estado as $id_titulo_estado=>$estado)
-                {
-                    // Creamos el índice por estado de incidencia, si no existe...
-                    if(!array_key_exists($estado->estado,$incidencias_estado)) $incidencias_estado[$estado->estado] = array();
-                    // Creamos el índice de mes, en las incidencias por estado.
-                    if(!array_key_exists($id_mes,$incidencias_estado[$estado->estado])) $incidencias_estado[$estado->estado][$id_mes] = 0;
-                    // Ordenamos el array por estado.
-                    ksort($incidencias_estado[$estado->estado]);
-                }
-            }
-
+            $titulo_incidencias_estado = $this->incidencia_model->get_titulos_estado();
+            $resultados_2 = $this->informe_model->get_cmd_incidencias_totales_estado($este_anio, $ctrl_no_cancelada);
+            $incidencias_estado = $this->informe_model->get_cmd_incidencias_estado($titulo_incidencias_estado,$resultados_2,$meses_columna);
 
             /**
              * TErcer bloque de la tabla, -72h y +72h
              */
             // Limpieza de tabla temporal, poner una fecha de cierre en las finalizadas que no tengan.
-            $this->db->query(" DROP TABLE IF EXISTS historico_temp;");
-            $this->db->query(" UPDATE incidencias SET fecha_cierre = DATE_ADD(fecha, INTERVAL 2 day) WHERE status_pds = 'Finalizada' && fecha_cierre = '0000-00-00 00:00:00'; ");
-            $this->db->query(" UPDATE incidencias SET fecha_cierre = DATE_ADD(fecha, INTERVAL 2 day) WHERE status_pds = 'Finalizada' && fecha_cierre IS NULL; ");
 
+            $menos_72 = $this->informe_model->finalizadas_menos_72($este_anio,$meses_columna);
+            //$this->db->query(" UPDATE historico_temp SET fecha_proceso =  DATE_ADD(fecha_entrada, INTERVAL 2 day) WHERE DATEDIFF(fecha_proceso,fecha_entrada) < 0; ");
+            $mas_72 = $this->informe_model->finalizadas_mas_72($este_anio,$meses_columna);
+
+
+
+
+            /**
+             * EN PROCESO < y > 72h
+             */
 
             /*$this->db->query(" CREATE TEMPORARY TABLE IF NOT EXISTS historico_temp(INDEX(id_incidencia))
                                     AS (
                                            SELECT h.id_incidencia, i.fecha as fecha_entrada, MAX(h.fecha) as fecha_proceso,
-                                            i.fecha_cierre, DATEDIFF(i.fecha_cierre,DATE_ADD(h.fecha,INTERVAL 1 day)) as diferencia, h.status_pds, h.status
-                                            FROM historico h
-                                            JOIN incidencias i ON h.id_incidencia = i.id_incidencia
-                                            WHERE 	YEAR(i.fecha) = '".$este_anio."' AND
-                                                    (
-
-                                                        (h.status_pds = 'En proceso' || i.status_pds = 'Finalizada')
-                                                    )
-                                            GROUP BY id_incidencia
-                                    );
-                                    ");*/
-
-            $this->db->query(" CREATE TEMPORARY TABLE IF NOT EXISTS historico_temp(INDEX(id_incidencia))
-                                    AS (
-                                           SELECT h.id_incidencia, i.fecha as fecha_entrada, MAX(h.fecha) as fecha_proceso,
                                             i.fecha_cierre,  h.status_pds, h.status
                                             FROM historico h
                                             JOIN incidencias i ON h.id_incidencia = i.id_incidencia
@@ -931,115 +843,7 @@ class Master extends CI_Controller {
             GROUP BY anio, mes;
             ";
             $menos_72 = $this->db->query($sql)->result();
-
-            $mas_72 = $this->db->query(                "
-                   SELECT COUNT(id_incidencia) as cantidad, YEAR(fecha_entrada) as anio, MONTH(fecha_entrada) as mes FROM historico_temp
-                    WHERE (workdaydiff(fecha_proceso,fecha_cierre)) >= 3
-                    GROUP BY anio, mes;")->result();
-
-
-            /**
-             * EN PROCESO < y > 72h
-             */
-
-            $this->db->query(" CREATE TEMPORARY TABLE IF NOT EXISTS historico_temp(INDEX(id_incidencia))
-                                    AS (
-                                           SELECT h.id_incidencia, i.fecha as fecha_entrada, MAX(h.fecha) as fecha_proceso,
-                                            i.fecha_cierre,  h.status_pds, h.status
-                                            FROM historico h
-                                            JOIN incidencias i ON h.id_incidencia = i.id_incidencia
-                                            WHERE 	YEAR(i.fecha) = '".$este_anio."'
-                                                AND ( h.status_pds != 'Cancelada' && i.status_pds != 'Cancelada')
-                                                AND ( h.status_pds = 'En proceso' || i.status_pds = 'Finalizada')
-                                            GROUP BY id_incidencia
-                                    );
-            ");
-
-            //$this->db->query(" UPDATE historico_temp SET fecha_proceso =  DATE_ADD(fecha_entrada, INTERVAL 2 day) WHERE DATEDIFF(fecha_proceso,fecha_entrada) < 0; ");
-
-            $sql = "
-            SELECT COUNT(id_incidencia)  as cantidad, YEAR(fecha_entrada) as anio, MONTH(fecha_entrada) as mes FROM historico_temp
-            WHERE (workdaydiff(fecha_proceso,fecha_cierre)) < 3
-            GROUP BY anio, mes;
-            ";
-            $menos_72 = $this->db->query($sql)->result();
-
-            $mas_72 = $this->db->query(                "
-                   SELECT COUNT(id_incidencia) as cantidad, YEAR(fecha_entrada) as anio, MONTH(fecha_entrada) as mes FROM historico_temp
-                    WHERE (workdaydiff(fecha_proceso,fecha_cierre)) >= 3
-                    GROUP BY anio, mes;")->result();
-
-
-
-
-
-
-
-            $r_menos_72 = array();
-            $r_mas_72 = array();
-
-
-            // Rellenamos con 0 los meses del rango que no tienen incidencias...
-            $index = 0;
-            foreach($meses_columna as $id_mes => $mes)
-            {
-                // Menos de 72....
-                $existe = NULL;
-                foreach($menos_72 as $clave=>$valor)
-                {
-                   if($valor->mes == $id_mes)
-                   {
-                        $existe = $valor; break;
-                   }
-                }
-                if(!is_null($existe))
-                {
-                    $r_menos_72[] = $valor;
-                }
-                else
-                {
-                    $elemento = new StdClass();
-                    $elemento->cantidad = 0;
-                    $elemento->mes = $id_mes;
-                    $elemento->anio = $este_anio;
-
-                    $r_menos_72[] = $elemento;
-                }
-
-
-                // Más de 72....
-                $existe = NULL;
-
-                foreach($mas_72 as $clave=>$valor)
-                {
-                    if($valor->mes == $id_mes)
-                    {
-                        $existe = $valor; break;
-                    }
-                }
-                if(!is_null($existe))
-                {
-                    $r_mas_72[] = $valor;
-                }
-                else
-                {
-                    $elemento = new StdClass();
-                    $elemento->cantidad = 0;
-                    $elemento->mes = $id_mes;
-                    $elemento->anio = $este_anio;
-
-                    $r_mas_72[] = $elemento;
-                }
-
-                $comprobacion_72[$index] =  ($r_menos_72[$index]->cantidad + $r_mas_72[$index]->cantidad);      // Sumar las incidencias <72 y >72 de cada mes, para poder comprobar contra las de "EStado finalizada"
-
-                $index++;
-            }
-
-
-
-            $menos_72 = $r_menos_72;
-            $mas_72 = $r_mas_72;
+*/
 
 
 
@@ -1047,7 +851,7 @@ class Master extends CI_Controller {
             /**
              * EN PROCESO < y > 72h
              */
-            $this->db->query(" DROP TABLE IF EXISTS historico_temp ");
+            /*$this->db->query(" DROP TABLE IF EXISTS historico_temp ");
             $this->db->query(" CREATE TEMPORARY TABLE IF NOT EXISTS historico_temp(INDEX(id_incidencia))
                                     AS (
                                            SELECT h.id_incidencia, i.fecha as fecha_entrada, MAX(h.fecha) as fecha_proceso,
@@ -1144,12 +948,11 @@ class Master extends CI_Controller {
             }
 
 
-
             $proceso_menos_72 = $r_proceso_menos_72;
             $proceso_mas_72 = $r_proceso_mas_72;
 
 
-
+*/
 
             //, COUNT(facturacion.id_incidencia) AS incidencias";"
 
@@ -1347,8 +1150,8 @@ class Master extends CI_Controller {
             $data["menos_72"] = $menos_72;
             $data["mas_72"] = $mas_72;
 
-            $data["proceso_menos_72"] = $proceso_menos_72;
-            $data["proceso_mas_72"] = $proceso_mas_72;
+            /*$data["proceso_menos_72"] = $proceso_menos_72;
+            $data["proceso_mas_72"] = $proceso_mas_72;*/
 
             $data['tabla_1'] = $resultados_1;
             $data['incidencias_estado'] = $incidencias_estado;
@@ -1364,7 +1167,7 @@ class Master extends CI_Controller {
             $data['total_dias_operativos'] = $total_dias_operativos;
             $data['total_media'] = $total_media;
 
-
+            $data['title'] = 'Estado incidencias';
 
 
             /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..

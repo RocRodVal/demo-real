@@ -9,8 +9,11 @@
 
 
 class Informe_model extends CI_Model
+
 {
     public $num_registros = 0;
+    private $rango_meses = array();
+
 
     /**
      * @return int
@@ -34,6 +37,17 @@ class Informe_model extends CI_Model
     }
 
 
+    public function setRangoMeses($rango_meses)
+    {
+        if(is_array($rango_meses))
+        {
+            $this->rango_meses = $rango_meses;
+        }
+    }
+    public function getRangoMeses()
+    {
+        return $this->rango_meses;
+    }
 
 
 
@@ -428,6 +442,428 @@ class Informe_model extends CI_Model
 
 
 
+    public function get_rango_meses($anio=NULL)
+    {
+        if(is_null($anio)) $anio = date("Y");
+        $rango_meses = $this->db->query("SELECT MONTH(MIN(fecha)) as min, MONTH(MAX(fecha)) as max FROM incidencias WHERE YEAR(fecha)='$anio'")->row();
 
+        $this->setRangoMeses($rango_meses);
+        return $rango_meses;
+    }
+
+    public function get_meses_columna($min = 1,$max = 12)
+    {
+        $meses_columna = array();
+        for($i = $min; $i<= $max; $i++)
+        {
+            $meses_columna[$i] = nombre_mes($i, 1, 2000);
+        }
+        return $meses_columna;
+    }
+
+
+    public function get_dias_operativos_mes($rango_meses=NULL, $anio = NULL)
+    {
+        $resultado = NULL;
+        $dias_operativos = array();
+        if(is_null($anio)) $anio = date("Y");
+
+        if(!is_null($rango_meses))
+        {
+            for($i = $rango_meses->min; $i <= $rango_meses->max; $i++)
+            {
+                $dias_op = contar_dias_excepto($i,$anio,array('Sun','Sat'),date('d'));
+                if($dias_op <= 0) $dias_op = 1;
+                $dias_operativos[$i] = $dias_op;
+            }
+            $resultado = $dias_operativos;
+        }
+
+
+        return $resultado;
+    }
+
+
+    public function get_total_array($array = NULL)
+    {
+        if(is_null($array)) $array = array();
+        $total = 0;
+
+        foreach($array as $dias_mes)
+        {
+            $total += $dias_mes;
+        }
+
+        return $total;
+
+    }
+
+    /**
+     * Recorre el array de incidencias y acumula el total para devolverlo al final.
+     * @param null $array_incidencias
+     * @return int
+     */
+    public function get_total_cdm_incidencias($array_incidencias = NULL)
+    {
+        $total = 0;
+
+        if(!is_null($array_incidencias))
+        {
+            foreach($array_incidencias as $incidencias)
+            {
+                $total += $incidencias->total_incidencias;
+            }
+        }
+        return $total;
+    }
+
+    /**
+     * Devuelve en bruto un array simple [mes]=>valor las incidencias
+     * @param null $array_incidencias
+     * @return array
+     */
+    public function get_array_incidencias_totales($array_incidencias = NULL)
+    {
+        $data_inc = array();
+        if(!is_null($array_incidencias))
+        {
+            foreach($array_incidencias as $inc)
+            {
+                $data_inc[$inc->mes] = $inc->total_incidencias;
+            }
+        }
+        return $data_inc;
+    }
+
+    public function get_medias($array_num=NULL, $array_denom=NULL, $rango_meses = NULL)
+    {
+        $array_resultado = array();
+
+        if(!is_null($array_num) && !is_null($array_denom) && count($array_num) == count($array_denom) && !is_null($rango_meses))
+        {
+            for($i = $rango_meses->min; $i <= $rango_meses->max ; $i++)
+            {
+                $resultado_mes = round($array_num[$i] / $array_denom[$i]);
+                $array_resultado[$i] = $resultado_mes;
+            }
+        }
+        return $array_resultado;
+    }
+
+    /**
+     * Devuelve objeto de incidencias totales, correspondientes a la primera fila de la tablona
+     * @param $anio
+     * @param string $s_where
+     * @return mixed
+     */
+    public function get_cmd_incidencias_totales($anio,$s_where="")
+    {
+        if(!is_null($anio)) $anio = date("Y");
+
+        $query_1 = $this->db->query("
+            SELECT YEAR(incidencias.fecha) AS anio, MONTH(incidencias.fecha) AS mes, COUNT(*) AS total_incidencias
+            FROM incidencias
+            WHERE 1 = 1 $s_where AND YEAR(incidencias.fecha) = '".$anio."'
+            GROUP BY anio, mes");
+
+        return $query_1->result();
+    }
+
+
+    /**
+     * Genera y devuelve un array de resultado de incidencias filtradas
+     * @param $i_mes
+     */
+    public function get_cdm_incidencias($anio, $i_mes)
+    {
+        $query = $this->db->select("
+
+        ");
+
+    }
+
+
+    /**
+     * Devuelve objeto de incidencias agrupadas por Estado inc, año y mes
+     * @param $anio
+     * @param string $s_where
+     * @return mixed
+     */
+    public function get_cmd_incidencias_totales_estado($anio, $s_where= "")
+    {
+        if(is_null($anio)) $anio = date("Y");
+        $query = $this->db->query("
+                                SELECT incidencias.status_pds,
+                                YEAR(incidencias.fecha) AS anio,
+								MONTH(incidencias.fecha) AS mes,
+								COUNT(*) AS total_incidencias
+								FROM incidencias
+								WHERE 1=1
+								 $s_where
+								AND YEAR(incidencias.fecha) ='".$anio."'
+								GROUP BY status_pds, anio, mes
+								ORDER BY status_pds ASC, mes ASC
+								 ");
+        return $query->result();
+    }
+
+    /**
+     * Crea un array para mostrar en la vista, para incidencias mes por estados
+     * @param $array_incidencias
+     * @param $meses_columna
+     */
+    public function get_cmd_incidencias_estado($titulo_incidencias_estado, $array_incidencias, $meses_columna)
+    {
+        $incidencias_estado = array();
+
+        foreach($array_incidencias as $key=>$value)
+        {
+            if(!array_key_exists($value->status_pds,$incidencias_estado))
+            {
+                $incidencias_estado[$value->status_pds] = array();
+            }
+            $incidencias_estado[$value->status_pds][$value->mes] = $value->total_incidencias;
+        }
+
+        foreach($meses_columna as $id_mes=>$mes)
+        {
+
+            // Rellenamos con 0 cuando no hay incidencias para ese mes
+            foreach($titulo_incidencias_estado as $id_titulo_estado=>$estado)
+            {
+                // Creamos el índice por estado de incidencia, si no existe...
+                if(!array_key_exists($estado->estado,$incidencias_estado)) $incidencias_estado[$estado->estado] = array();
+                // Creamos el índice de mes, en las incidencias por estado.
+                if(!array_key_exists($id_mes,$incidencias_estado[$estado->estado])) $incidencias_estado[$estado->estado][$id_mes] = 0;
+                // Ordenamos el array por estado.
+                ksort($incidencias_estado[$estado->estado]);
+            }
+        }
+
+        return $incidencias_estado;
+    }
+
+
+
+
+    public function crear_incidencias_historico_finalizadas($anio = NULL)
+    {
+        if(is_null($anio)) $anio = date("Y");
+        $this->db->query(" DROP TABLE IF EXISTS historico_temp;");
+        $this->db->query(" UPDATE incidencias SET fecha_cierre = DATE_ADD(fecha, INTERVAL 2 day) WHERE status_pds = 'Finalizada' && fecha_cierre = '0000-00-00 00:00:00'; ");
+        $this->db->query(" UPDATE incidencias SET fecha_cierre = DATE_ADD(fecha, INTERVAL 2 day) WHERE status_pds = 'Finalizada' && fecha_cierre IS NULL; ");
+
+        $this->db->query(" CREATE TEMPORARY TABLE IF NOT EXISTS historico_temp(INDEX(id_incidencia))
+                            AS (
+                                   SELECT h.id_incidencia, i.fecha as fecha_entrada, MAX(h.fecha) as fecha_proceso,
+                                    i.fecha_cierre,  h.status_pds, h.status
+                                    FROM historico h
+                                    JOIN incidencias i ON h.id_incidencia = i.id_incidencia
+                                    WHERE 	YEAR(i.fecha) = '".$anio."'
+                                        AND ( h.status_pds != 'Cancelada' && i.status_pds != 'Cancelada')
+                                        AND ( h.status_pds = 'En proceso' || i.status_pds = 'Finalizada')
+                                    GROUP BY id_incidencia
+                            );
+            ");
+
+    }
+
+    public function finalizadas_menos_72($anio=NULL,$meses_columna)
+    {
+        if(is_null($anio)) $anio = date("Y");
+        $this->crear_incidencias_historico_finalizadas($anio);
+
+        $sql = "
+            SELECT COUNT(id_incidencia)  as cantidad, YEAR(fecha_entrada) as anio, MONTH(fecha_entrada) as mes FROM historico_temp
+            WHERE (workdaydiff(fecha_proceso,fecha_cierre)) < 3
+            GROUP BY anio, mes;
+            ";
+        $query = $this->db->query($sql)->result();
+
+        $resultado = $this->rellenar_con_ceros($anio,$query,$meses_columna);
+        return $resultado;
+    }
+
+
+    public function finalizadas_mas_72($anio=NULL,$meses_columna)
+    {
+        if(is_null($anio)) $anio = date("Y");
+        $this->crear_incidencias_historico_finalizadas($anio);
+
+
+        $sql  = "
+                   SELECT COUNT(id_incidencia) as cantidad, YEAR(fecha_entrada) as anio, MONTH(fecha_entrada) as mes FROM historico_temp
+                    WHERE (workdaydiff(fecha_proceso,fecha_cierre)) >= 3
+                    GROUP BY anio, mes; ";
+
+        $query = $this->db->query($sql)->result();
+        $resultado = $this->rellenar_con_ceros($anio,$query,$meses_columna);
+        return $resultado;
+    }
+
+
+
+
+    public function rellenar_con_ceros($anio, $elementos, $meses_columna)
+    {
+        // Rellenamos con 0 los meses del rango que no tienen incidencias...
+        $index = 0;
+        $r_elementos = array();
+        foreach($meses_columna as $id_mes => $mes)
+        {
+
+            $existe = NULL;
+            foreach($elementos as $clave=>$valor)
+            {
+                if($valor->mes == $id_mes)
+                {
+                    $existe = $valor; break;
+                }
+            }
+            if(!is_null($existe))
+            {
+                $r_elementos[] = $valor;
+            }
+            else
+            {
+                $elemento = new StdClass();
+                $elemento->cantidad = 0;
+                $elemento->mes = $id_mes;
+                $elemento->anio = $anio;
+
+                $r_elementos[] = $elemento;
+            }
+
+            $index++;
+        }
+
+        return $r_elementos;
+    }
+
+
+
+    public function exportar_cdm_incidencias($anio = NULL, $mes = NULL,$status= NULL,$menos72=NULL)
+    {
+        if(is_null($anio)) $anio = date("Y");
+        if(is_null($mes)) $mes = date("m");
+
+        $this->load->dbutil();
+        $this->load->helper('file');
+        $this->load->helper('csv');
+        $this->load->helper('download');
+
+
+        $aConditions = array();
+        $aConditions[] = " AND (incidencias.status_pds != 'Cancelada' && incidencias.status != 'Cancelada') ";
+        $aConditions[] = " AND YEAR(fecha) = '$anio' ";
+        $aConditions[] = " AND MONTH(fecha) = '$mes' ";
+
+
+        $aJoins = array();
+        $aFields = array();
+
+        $sTitleFilename = "CDM_Incidencias_";
+        $sFiltrosFilename = ($mes."-".$anio);
+
+        if(!is_null($status)){
+            $aConditions[] = " AND incidencias.status_pds = $status ";
+            $sFiltrosFilename .= (!is_null($status)) ? "_status-".$status : "";
+        }
+
+        if(!is_null($menos72)) {
+            $aConditions[] = " AND incidencias.status_pds = $status ";
+            $sFiltrosFilename .= ($menos72==1) ? "_menos-72h" : "_mas-72h";
+
+            $this->informe_model->crear_incidencias_historico_finalizadas($anio);
+
+            $aFields[] = "";
+            $aJoins[] = " LEFT JOIN historico_temp ON historico_temp.id_incidencia = incidencias.id_incidencia ";
+
+
+            if($menos72 == 1)
+            {
+                $aConditions[] = " AND  (workdaydiff(historico_temp.fecha_proceso,historico_temp.fecha_cierre)) < 3 ";
+            }
+            else
+            {
+                $aConditions[] = " AND  (workdaydiff(historico_temp.fecha_proceso,historico_temp.fecha_cierre)) >= 3 ";
+            }
+
+        }
+        $sFiltrosFilename .= "___";
+
+
+
+        // Array de títulos de campo para la exportación XLS/CSV
+        $arr_titulos = array('Id incidencia','SFID','Fecha','Elemento','Territorio','Fabricante','Mueble','Terminal','Supervisor','Provincia','Tipo avería',
+            'Texto 1','Texto 2','Texto 3','Parte PDF','Denuncia','Foto 1','Foto 2','Foto 3','Contacto','Teléfono','Email',
+            'Id. Operador','Intervención','Estado','Última modificación','Estado Sat');
+        $excluir = array('fecha_cierre','fabr');
+
+        $sql = 'SELECT incidencias.id_incidencia, pds.reference as `SFID`, incidencias.fecha, incidencias.fecha_cierre,
+
+                            (CASE incidencias.alarm_display WHEN 1 THEN ( CONCAT("Mueble: ",
+                                (CASE ISNULL(display.display) WHEN TRUE THEN "Retirado" ELSE display.display END)
+                            )) ELSE (CONCAT("Dispositivo: ",
+                                (CASE ISNULL(device.device) WHEN TRUE THEN "Retirado" ELSE device.device END)
+                            )) END) as elemento,
+
+                            device.brand_device as fabr,
+                            territory.territory as `Territorio`,
+                            ';
+
+        $sql .= ' (SELECT brand_device.brand from brand_device  WHERE id_brand_device = fabr ) as `Fabricante`,';
+        $sql .= 'display.display as mueble, device.device as terminal, pds_supervisor.titulo as supervisor, province.province as provincia,incidencias.tipo_averia,';
+        $sql .='
+                           REPLACE(REPLACE(incidencias.description_1,CHAR(10),CHAR(32)),CHAR(13),CHAR(32)) as description_1,
+                            REPLACE(REPLACE(incidencias.description_2,CHAR(10),CHAR(32)),CHAR(13),CHAR(32))  as description_2,
+                            REPLACE(REPLACE(incidencias.description_3,CHAR(10),CHAR(32)),CHAR(13),CHAR(32))  as description_3,
+                            incidencias.parte_pdf, incidencias.denuncia, incidencias.foto_url, incidencias.foto_url_2,
+                            incidencias.foto_url_3, incidencias.contacto, incidencias.phone, incidencias.email,incidencias.id_operador,
+                            incidencias.intervencion,';
+
+        $sql .= 'incidencias.status_pds as `Estado PDS`';
+        $sql = rtrim($sql,",");
+        $sql .= implode(",",$aFields);
+
+        $sql .='FROM incidencias
+
+                LEFT OUTER JOIN displays_pds ON incidencias.id_displays_pds = displays_pds.id_displays_pds
+                LEFT OUTER JOIN display ON displays_pds.id_display = display.id_display
+                LEFT OUTER JOIN devices_pds ON incidencias.id_devices_pds = devices_pds.id_devices_pds
+                LEFT OUTER JOIN device ON devices_pds.id_device = device.id_device
+                LEFT OUTER JOIN type_device ON device.type_device = type_device.id_type_device
+
+                LEFT OUTER JOIN pds ON incidencias.id_pds = pds.id_pds
+                LEFT OUTER JOIN territory ON territory.id_territory=pds.territory
+                LEFT OUTER JOIN brand_device ON device.brand_device = brand_device.id_brand_device
+
+                LEFT JOIN pds_supervisor ON pds.id_supervisor= pds_supervisor.id
+                LEFT JOIN province ON pds.province= province.id_province ';
+
+        foreach($aJoins as $join)
+        {
+            $sql .= $join;
+        }
+
+
+        $sql .= ' WHERE 1 = 1
+                ';
+                // Añadimos las condiciones
+                foreach($aConditions as $cond)
+                {
+                    $sql .= $cond;
+                }
+        $sql .= " ORDER BY fecha DESC";
+
+
+        $query = $this->db->query($sql);
+
+
+        $datos = preparar_array_exportar($query->result(),$arr_titulos,$excluir);
+
+        exportar_fichero("xls",$datos,$sTitleFilename.$sFiltrosFilename.date("d-m-Y")."T".date("H:i:s")."_".date("d-m-Y"));
+
+    }
 
 }

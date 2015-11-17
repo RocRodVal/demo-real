@@ -6,6 +6,8 @@
                 </div>
             </div>
             <?php
+
+            $anio = date("Y");
             /*<div class="row">
                 <form action="<?=site_url("master/cdm_incidencias/")?>" method="post">
                     <div class="form-group">
@@ -50,6 +52,7 @@
                         <tr>
                             <th></th>
                                <?php
+
                                foreach($meses_columna as $clave=>$valor)
                                {
                                     echo "<th>".$valor."</th>";
@@ -65,11 +68,19 @@
                          */
                         ?>
                             <tr>
+
+
                                 <th>Total incidencias</th>
                                 <?php
+                                $mes_idx = $primer_mes;
                                 foreach($tabla_1 as $clave=>$valor)
                                 {
-                                    echo "<td>".$valor->total_incidencias."</td>";
+                                    echo "<td>";
+                                    echo ($valor->total_incidencias > 0)
+                                        ? "<a href='".base_url('informe/exportar_cdm_incidencias/'.$anio.'/'.$mes_idx)."' >".$valor->total_incidencias."</a>"
+                                        : $valor->total_incidencias ;
+                                    echo "</td>";
+                                    $mes_idx++;
                                 }
                                 ?>
                                 <td class="total"><?=$total_incidencias_total?></td>
@@ -108,10 +119,17 @@
                                     <th>Finalizadas</th>
                                     <?php
                                         $total = 0;
+                                        $mes_idx = $primer_mes;
                                         foreach($incidencias_estado["Finalizada"] as $key=>$valor)
                                         {
-                                            echo '<td>'.$valor.'</td>';
+                                            echo "<td>";
+                                            echo ($valor > 0)
+                                                ? "<a href='".base_url('informe/exportar_cdm_incidencias/'.$anio.'/'.$mes_idx.'/4')."' >".$valor."</a>"
+                                                : $valor;
+
                                             $total += $valor;
+                                            $mes_idx++;
+                                            echo "</td>";
                                         }
                                         echo '<td class="total">'.$total.'</td>';
                                     ?>
@@ -134,10 +152,17 @@
                                     <th>En visita</th>
                                     <?php
                                     $total = 0;
+                                    $mes_idx = $primer_mes;
                                     foreach($incidencias_estado["En visita"] as $key=>$valor)
                                     {
-                                        echo '<td>'.$valor.'</td>';
+                                        echo "<td>";
+                                        echo ($valor > 0)
+                                            ? "<a href='".base_url('informe/exportar_cdm_incidencias/'.$anio.'/'.$mes_idx.'/3')."' >".$valor."</a>"
+                                            : $valor;
+
                                         $total += $valor;
+                                        $mes_idx++;
+                                        echo "</td>";
                                     }
                                     echo '<td class="total">'.$total.'</td>';
                                     ?>
@@ -146,10 +171,17 @@
                                     <th>En proceso</th>
                                     <?php
                                     $total = 0;
+                                    $mes_idx = $primer_mes;
                                     foreach($incidencias_estado["En proceso"] as $key=>$valor)
                                     {
-                                        echo '<td>'.$valor.'</td>';
+                                        echo "<td>";
+                                        echo ($valor > 0)
+                                            ? "<a href='".base_url('informe/exportar_cdm_incidencias/'.$anio.'/'.$mes_idx.'/2')."' >".$valor."</a>"
+                                            : $valor;
+
                                         $total += $valor;
+                                        $mes_idx++;
+                                        echo "</td>";
                                     }
                                     echo '<td class="total">'.$total.'</td>';
                                     ?>
@@ -158,10 +190,17 @@
                                     <th>Alta realizada</th>
                                     <?php
                                     $total = 0;
+                                    $mes_idx = $primer_mes;
                                     foreach($incidencias_estado["Alta realizada"] as $key=>$valor)
                                     {
-                                        echo '<td>'.$valor.'</td>';
+                                        echo "<td>";
+                                        echo ($valor > 0)
+                                            ? "<a href='".base_url('informe/exportar_cdm_incidencias/'.$anio.'/'.$mes_idx.'/1')."' >".$valor."</a>"
+                                            : $valor;
+
                                         $total += $valor;
+                                        $mes_idx++;
+                                        echo "</td>";
                                     }
                                     echo '<td class="total">'.$total.'</td>';
                                     ?>
@@ -173,53 +212,86 @@
                                     <th>Finalizadas &lt; 72h</th>
                                     <?php
                                     $total = 0;
+                                    $mes_idx = $primer_mes;
                                     foreach($menos_72 as $key=>$valor)
                                     {
-                                        echo '<td>'.$valor->cantidad.'</td>';
+                                        echo "<td>";
+                                        echo ($valor->cantidad > 0)
+                                            ? "<a href='".base_url('informe/exportar_cdm_incidencias/'.$anio.'/'.$mes_idx.'/4/1')."' >".$valor->cantidad."</a>"
+                                            : $valor->cantidad;
+
                                         $total += $valor->cantidad;
+                                        $mes_idx++;
+                                        echo "</td>";
                                     }
                                     echo '<td class="total">'.$total.'</td>';
                                     ?>
                                 </tr>
 
+                               <?php /*
+                                            COMENTADO DE MOMENTO HASTA ACEPTACION
                                 <tr>
                                     <th>En proceso &lt; 72h</th>
                                     <?php
                                     $total = 0;
+                                    $mes_idx = $primer_mes;
                                     foreach($proceso_menos_72 as $key=>$valor)
                                     {
-                                        echo '<td>'.$valor->cantidad.'</td>';
+                                        echo "<td>";
+                                        echo ($valor->cantidad > 0)
+                                            ? "<a href='$controlador/exportar_cdm_incidencias/$mes_idx/2/1' >".$valor->cantidad."</a>"
+                                            : $valor->cantidad;
+
                                         $total += $valor->cantidad;
+                                        echo "</td>";
                                     }
                                     echo '<td class="total">'.$total.'</td>';
                                     ?>
                                 </tr>
+                                */?>
 
                                 <tr>
                                     <th>Finalizadas &gt; 72h</th>
                                     <?php
                                     $total = 0;
+                                    $mes_idx = $primer_mes;
                                     foreach($mas_72 as $key=>$valor)
                                     {
-                                        echo '<td>'.$valor->cantidad.'</td>';
+                                        echo "<td>";
+                                        echo ($valor->cantidad > 0)
+                                            ? "<a href='".base_url('informe/exportar_cdm_incidencias/'.$anio.'/'.$mes_idx.'/4/0')."' >".$valor->cantidad."</a>"
+                                            : $valor->cantidad;
+
                                         $total += $valor->cantidad;
+                                        $mes_idx++;
+                                        echo "</td>";
                                     }
                                     echo '<td class="total">'.$total.'</td>';
                                     ?>
                                 </tr>
 
+
+                        <?php /*
+                                            COMENTADO DE MOMENTO HASTA ACEPTACION
                         <tr>
                             <th>En proceso &gt; 72h</th>
                             <?php
                             $total = 0;
+                            $mes_idx = $primer_mes;
                             foreach($proceso_mas_72 as $key=>$valor)
                             {
-                                echo '<td>'.$valor->cantidad.'</td>';
+                                echo "<td>";
+                                echo ($valor->cantidad > 0)
+                                    ? "<a href='$controlador/exportar_cdm_incidencias/$mes_idx/2/0' >".$valor->cantidad."</a>"
+                                    : $valor->cantidad;
+
                                 $total += $valor->cantidad;
+                                echo "</td>";
                             }
                             echo '<td class="total">'.$total.'</td>';
                             ?>
-                        </tr>
+                        </tr> */
+                        ?>
 
                             <tr class="separador"><?=$separador_td?></tr>
 
@@ -227,6 +299,7 @@
                                 <th>Intervenciones</th>
                                 <?php
                                 $total = 0;
+                                $mes_idx = $primer_mes;
                                 foreach($intervenciones_anio as $key=>$valor)
                                 {
                                     echo '<td>'.$valor->cantidad.'</td>';
@@ -240,6 +313,7 @@
                                 <th>Alarmas</th>
                                 <?php
                                 $total = 0;
+                                $mes_idx = $primer_mes;
                                 foreach($alarmas_anio as $key=>$valor)
                                 {
                                     echo '<td>'.$valor->cantidad.'</td>';
@@ -253,6 +327,7 @@
                                 <th>Terminales</th>
                                 <?php
                                 $total = 0;
+                                $mes_idx = $primer_mes;
                                 foreach($terminales_anio as $key=>$valor)
                                 {
                                     echo '<td>'.$valor->cantidad.'</td>';
@@ -266,6 +341,7 @@
                                 <th>Incidencias resueltas</th>
                                 <?php
                                 $total = 0;
+                                $mes_idx = $primer_mes;
                                 foreach($incidencias_resueltas as $key=>$valor)
                                 {
                                     echo '<td>'.$valor->cantidad.'</td>';
