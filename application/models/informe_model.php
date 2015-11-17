@@ -862,7 +862,7 @@ class Informe_model extends CI_Model
 
         $datos = preparar_array_exportar($query->result(),$arr_titulos,$excluir);
 
-        exportar_fichero("xls",$datos,$sTitleFilename.$sFiltrosFilename.date("d-m-Y")."T".date("H:i:s")."_".date("d-m-Y"));
+        exportar_fichero("xls",$datos,$sTitleFilename.$sFiltrosFilename."__".date("d-m-Y")."T".date("H:i:s")."_".date("d-m-Y"));
 
     }
 
