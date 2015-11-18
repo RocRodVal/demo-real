@@ -41,8 +41,8 @@
                                 <a href="#"><i class="fa fa-dashboard fa-fw"></i> Estado incidencias <span class="fa arrow"></span></a>
 
                                 <ul class="nav nav-second-level">
-                                    <li><a <?=($this->uri->segment(3)==='abiertas')?'class="active"':''?> href="<?=site_url('master/estado_incidencias/abiertas')?>"> Incidencias abiertas &raquo;</a></li>
-                                    <li><a <?=($this->uri->segment(3)==='cerradas')?'class="active"':''?> href="<?=site_url('master/estado_incidencias/cerradas')?>"> Incidencias cerradas &raquo;</a></li>
+                                    <li><a <?=($this->uri->segment(3)==='abiertas')?'class="active"':''?> href="<?=site_url($controlador.'/estado_incidencias/abiertas')?>"> Incidencias abiertas &raquo;</a></li>
+                                    <li><a <?=($this->uri->segment(3)==='cerradas')?'class="active"':''?> href="<?=site_url($controlador.'/estado_incidencias/cerradas')?>"> Incidencias cerradas &raquo;</a></li>
                                 </ul>
 
                             </li>
@@ -80,11 +80,11 @@
                         <li <?=(in_array($this->uri->segment(2), $cdm))?'class="active"':''?>>
                             <a href="#"><i class="fa fa-sitemap fa-fw"></i> Cuadro de mando<span class="fa arrow"></span></a>
                             <ul class="nav nav-second-level">
-                                <li><a <?=($this->uri->segment(2)==='cdm_incidencias')?'class="active"':''?> href="<?=site_url('master/cdm_incidencias')?>"> Estado incidencias &raquo;</a></li>
+                                <li><a <?=($this->uri->segment(2)==='cdm_incidencias')?'class="active"':''?> href="<?=site_url($controlador.'/cdm_incidencias')?>"> Estado incidencias &raquo;</a></li>
                                 <?php /*<li><a <?=($this->uri->segment(2)==='cdm_tipo_incidencia')?'class="active"':''?> href="<?=site_url('master/cdm_tipo_incidencia')?>"> Tipo de incidencia &raquo;</a></li>*/ ?>
                                 <?php /*<li><a <?=($this->uri->segment(2)==='cdm_inventario')?'class="active"':''?> href="<?=site_url('master/cdm_inventario')?>"> Inventario/Depósito &raquo;</a></li>*/ ?>
-                                <li><a <?=($this->uri->segment(2)==='cdm_dispositivos')?'class="active"':''?> href="<?=site_url('master/cdm_dispositivos')?>"> Dispositivos &raquo;</a></li>
-                                <li><a <?=($this->uri->segment(2)==='cdm_alarmas')?'class="active"':''?> href="<?=site_url('master/cdm_alarmas')?>"> Sistemas de seguridad &raquo;</a></li>
+                                <li><a <?=($this->uri->segment(2)==='cdm_dispositivos')?'class="active"':''?> href="<?=site_url($controlador.'/cdm_dispositivos')?>"> Dispositivos &raquo;</a></li>
+                                <li><a <?=($this->uri->segment(2)==='cdm_alarmas')?'class="active"':''?> href="<?=site_url($controlador.'/cdm_alarmas')?>"> Sistemas de seguridad &raquo;</a></li>
 
                             </ul>
                         </li>
@@ -102,22 +102,25 @@
                                                 'informe_visual',
                                                     'informe_visual_mueble_sfid',
                                                     'informe_visual_terminal',
-                                                    'informe_visual_ficha_terminal'); ?>
+                                                    'informe_visual_ficha_terminal',
+                                                'tiendas_tipologia'); ?>
 
                         <li <?=(in_array($this->uri->segment(2), $inf))?'class="active"':''?>>
                             <a href="#"><i class="fa fa-sitemap fa-file"></i> Informes <span class="fa arrow"></span></a>
                             <ul class="nav nav-second-level">
-                                <li><a <?=($this->uri->segment(2)==='informe_pdv')?'class="active"':''?> href="<?=site_url('master/informe_pdv')?>"> Puntos de Venta &raquo;</a></li>
+                                <li><a <?=($this->uri->segment(2)==='informe_pdv')?'class="active"':''?> href="<?=site_url($controlador.'/informe_pdv')?>"> Puntos de Venta &raquo;</a></li>
                                 <li><a <?=(in_array($this->uri->segment(2),
                                         array( 'informe_planogramas',
                                         'informe_planograma_mueble_pds',
-                                        'informe_planograma_terminal')))?'class="active"':''?> href="<?=site_url('master/informe_planogramas')?>"> Planogramas &raquo;</a></li>
+                                        'informe_planograma_terminal')))?'class="active"':''?> href="<?=site_url($controlador.'/informe_planogramas')?>"> Planogramas &raquo;</a></li>
                                <?php /* <li><a <?=(
                                         in_array($this->uri->segment(2),
                                             array('informe_visual',
                                                 'informe_visual_mueble_sfid',
                                                 'informe_visual_terminal',
                                                 'informe_visual_ficha_terminal')))?'class="active"':''?> href="<?=site_url('master/informe_visual')?>"> Visual &raquo;</a></li>*/?>
+                                <li><a <?=(in_array($this->uri->segment(2),
+                                        array( 'tiendas_tipologia')))?'class="active"':''?> href="<?=site_url($controlador.'/tiendas_tipologia')?>"> Tiendas por tipología &raquo;</a></li>
                             </ul>
                         </li>
 
@@ -142,12 +145,12 @@
                         <li <?=(in_array($this->uri->segment(2), $ayuda))?'class="active"':''?>>
                         <a href="#"><i class="fa fa-question-circle fa-fw"></i> Ayuda<span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level">
-                            <li><a <?=($this->uri->segment(3)==='1')?'class="active"':''?> href="<?=site_url('master/ayuda/1')?>"> Mis solicitudes &raquo;</a></li>
-                            <li><a <?=($this->uri->segment(3)==='2')?'class="active"':''?> href="<?=site_url('master/ayuda/2')?>"> Alta incidencia &raquo;</a></li>
-                            <li><a <?=($this->uri->segment(3)==='3')?'class="active"':''?> href="<?=site_url('master/ayuda/3')?>"> Alta incidencia sistema seguridad general del mueble &raquo;</a></li>
-                            <!--<li><a <?=($this->uri->segment(3)==='4')?'class="active"':''?> href="<?=site_url('master/ayuda/4')?>"> Incidencias frecuentes &raquo;</a></li>-->
-                            <li><a <?=($this->uri->segment(2)==='manuales')?'class="active"':''?> href="<?=site_url('master/ayuda/5')?>"> Manuales &raquo;</a></li>
-                            <li><a <?=($this->uri->segment(2)==='muebles_fabricantes')?'class="active"':''?> href="<?=site_url('master/ayuda/6')?>"> Muebles fabricantes &raquo;</a></li>
+                            <li><a <?=($this->uri->segment(3)==='1')?'class="active"':''?> href="<?=site_url($controlador.'/ayuda/1')?>"> Mis solicitudes &raquo;</a></li>
+                            <li><a <?=($this->uri->segment(3)==='2')?'class="active"':''?> href="<?=site_url($controlador.'/ayuda/2')?>"> Alta incidencia &raquo;</a></li>
+                            <li><a <?=($this->uri->segment(3)==='3')?'class="active"':''?> href="<?=site_url($controlador.'/ayuda/3')?>"> Alta incidencia sistema seguridad general del mueble &raquo;</a></li>
+                            <!--<li><a <?=($this->uri->segment(3)==='4')?'class="active"':''?> href="<?=site_url($controlador.'/ayuda/4')?>"> Incidencias frecuentes &raquo;</a></li>-->
+                            <li><a <?=($this->uri->segment(2)==='manuales')?'class="active"':''?> href="<?=site_url($controlador.'/ayuda/5')?>"> Manuales &raquo;</a></li>
+                            <li><a <?=($this->uri->segment(2)==='muebles_fabricantes')?'class="active"':''?> href="<?=site_url($controlador.'/ayuda/6')?>"> Muebles fabricantes &raquo;</a></li>
                         </ul>
                         </li>                        
                     </ul>

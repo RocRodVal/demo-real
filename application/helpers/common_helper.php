@@ -79,6 +79,35 @@ function nombre_mes($number)
 
 
 
-function contar_dias_entre($fecha1, $fecha){
+/**
+ * Función que busca en un array multidimensional, un valor de cierta clave
+ */
 
+function m_array_search($array,$key,$value){
+    foreach($array as $elem){
+        if($elem[$key] == $value) return TRUE;
+    }
+    return FALSE;
+}
+
+/**
+ * Función que busca en un array de objetos multidimensional, un valor de cierta clave
+ */
+
+function m_object_search($array,$key,$value){
+    foreach($array as $elem){
+        if($elem->$key == $value) return TRUE;
+    }
+    return FALSE;
+}
+
+/**
+ * Función que busca en un array de objetos multidimensional, un valor de cierta clave y lo devuelve
+ */
+
+function get_object_search($array,$key,$value){
+    foreach($array as $elem){
+        if($elem->$key == $value) return $elem;
+    }
+    return NULL;
 }

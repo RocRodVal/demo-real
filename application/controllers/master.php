@@ -799,6 +799,8 @@ class Master extends CI_Controller {
 
             $nombre_mes = array();
 
+            $data["tabla_1"] = $resultados_1;
+
             /**
              * Segundo bloque de la tabla, Incidencias mensuales por estado PdS
              */
@@ -812,147 +814,17 @@ class Master extends CI_Controller {
             // Limpieza de tabla temporal, poner una fecha de cierre en las finalizadas que no tengan.
 
             $menos_72 = $this->informe_model->finalizadas_menos_72($este_anio,$meses_columna);
-            //$this->db->query(" UPDATE historico_temp SET fecha_proceso =  DATE_ADD(fecha_entrada, INTERVAL 2 day) WHERE DATEDIFF(fecha_proceso,fecha_entrada) < 0; ");
             $mas_72 = $this->informe_model->finalizadas_mas_72($este_anio,$meses_columna);
 
 
 
-
-            /**
-             * EN PROCESO < y > 72h
-             */
-
-            /*$this->db->query(" CREATE TEMPORARY TABLE IF NOT EXISTS historico_temp(INDEX(id_incidencia))
-                                    AS (
-                                           SELECT h.id_incidencia, i.fecha as fecha_entrada, MAX(h.fecha) as fecha_proceso,
-                                            i.fecha_cierre,  h.status_pds, h.status
-                                            FROM historico h
-                                            JOIN incidencias i ON h.id_incidencia = i.id_incidencia
-                                            WHERE 	YEAR(i.fecha) = '".$este_anio."'
-                                                AND ( h.status_pds != 'Cancelada' && i.status_pds != 'Cancelada')
-                                                AND ( h.status_pds = 'En proceso' || i.status_pds = 'Finalizada')
-                                            GROUP BY id_incidencia
-                                    );
-            ");
-
-            //$this->db->query(" UPDATE historico_temp SET fecha_proceso =  DATE_ADD(fecha_entrada, INTERVAL 2 day) WHERE DATEDIFF(fecha_proceso,fecha_entrada) < 0; ");
-
-            $sql = "
-            SELECT COUNT(id_incidencia)  as cantidad, YEAR(fecha_entrada) as anio, MONTH(fecha_entrada) as mes FROM historico_temp
-            WHERE (workdaydiff(fecha_proceso,fecha_cierre)) < 3
-            GROUP BY anio, mes;
-            ";
-            $menos_72 = $this->db->query($sql)->result();
-*/
-
-
-
-
-            /**
-             * EN PROCESO < y > 72h
-             */
-            /*$this->db->query(" DROP TABLE IF EXISTS historico_temp ");
-            $this->db->query(" CREATE TEMPORARY TABLE IF NOT EXISTS historico_temp(INDEX(id_incidencia))
-                                    AS (
-                                           SELECT h.id_incidencia, i.fecha as fecha_entrada, MAX(h.fecha) as fecha_proceso,
-                                            i.fecha_cierre,  h.status_pds, h.status
-                                            FROM historico h
-                                            JOIN incidencias i ON h.id_incidencia = i.id_incidencia
-                                            WHERE 	YEAR(i.fecha) = '".$este_anio."'
-                                                AND ( h.status_pds != 'Cancelada' && i.status_pds != 'Cancelada')
-                                                AND ( h.status_pds = 'En proceso' && i.status_pds = 'En proceso')
-                                            GROUP BY id_incidencia
-                                    );
-            ");
-
-            //$this->db->query(" UPDATE historico_temp SET fecha_proceso =  DATE_ADD(fecha_entrada, INTERVAL 2 day) WHERE DATEDIFF(fecha_proceso,fecha_entrada) < 0; ");
-
-            $hoy = date('Y-m-d');
-            $sql = "
-            SELECT COUNT(id_incidencia)  as cantidad, YEAR(fecha_entrada) as anio, MONTH(fecha_entrada) as mes FROM historico_temp
-            WHERE (workdaydiff(fecha_proceso,'".$hoy."')) < 3
-            GROUP BY anio, mes;
-            ";
-            $proceso_menos_72 = $this->db->query($sql)->result();
-
-            $proceso_mas_72 = $this->db->query(                "
-                   SELECT COUNT(id_incidencia) as cantidad, YEAR(fecha_entrada) as anio, MONTH(fecha_entrada) as mes FROM historico_temp
-                    WHERE (workdaydiff(fecha_proceso,'".$hoy."')) >= 3
-                    GROUP BY anio, mes;")->result();
+            $proceso_menos_72 = $this->informe_model->proceso_menos_72($este_anio,$meses_columna);
+            $proceso_mas_72 = $this->informe_model->proceso_mas_72($este_anio,$meses_columna);
 
 
 
 
 
-
-
-            $r_proceso_menos_72 = array();
-            $r_proceso_mas_72 = array();
-
-
-            // Rellenamos con 0 los meses del rango que no tienen incidencias...
-            $index = 0;
-            foreach($meses_columna as $id_mes => $mes)
-            {
-                // Menos de 72....
-                $existe = NULL;
-                foreach($proceso_menos_72 as $clave=>$valor)
-                {
-                    if($valor->mes == $id_mes)
-                    {
-                        $existe = $valor; break;
-                    }
-                }
-                if(!is_null($existe))
-                {
-                    $r_proceso_menos_72[] = $valor;
-                }
-                else
-                {
-                    $elemento = new StdClass();
-                    $elemento->cantidad = 0;
-                    $elemento->mes = $id_mes;
-                    $elemento->anio = $este_anio;
-
-                    $r_proceso_menos_72[] = $elemento;
-                }
-
-
-                // Más de 72....
-                $existe = NULL;
-
-                foreach($proceso_mas_72 as $clave=>$valor)
-                {
-                    if($valor->mes == $id_mes)
-                    {
-                        $existe = $valor; break;
-                    }
-                }
-                if(!is_null($existe))
-                {
-                    $r_proceso_mas_72[] = $valor;
-                }
-                else
-                {
-                    $elemento = new StdClass();
-                    $elemento->cantidad = 0;
-                    $elemento->mes = $id_mes;
-                    $elemento->anio = $este_anio;
-
-                    $r_proceso_mas_72[] = $elemento;
-                }
-
-                $comprobacion_proceso_72[$index] =  ($r_proceso_menos_72[$index]->cantidad + $r_proceso_mas_72[$index]->cantidad);      // Sumar las incidencias <72 y >72 de cada mes, para poder comprobar contra las de "EStado finalizada"
-
-                $index++;
-            }
-
-
-            $proceso_menos_72 = $r_proceso_menos_72;
-            $proceso_mas_72 = $r_proceso_mas_72;
-
-
-*/
 
             //, COUNT(facturacion.id_incidencia) AS incidencias";"
 
@@ -1066,21 +938,6 @@ class Master extends CI_Controller {
 
 
 
-            // Línea 4: Incidencias resueltas
-
-            /*$resultados_6 = $this->db->query("
-                SELECT  COUNT(id_incidencia) as cantidad,
-                        MONTH(fecha) as mes,
-                        YEAR(fecha) as anio
-                FROM incidencias
-                WHERE   status_pds = 'Finalizada'
-                        AND YEAR(fecha) = '".$este_anio."'
-                GROUP BY anio, mes
-            ");*/
-
-            //$resultados_3 = $this->db->query("SELECT count(distinct (id_intervencion)) as cantidad, month(fecha) as mes FROM facturacion WHERE year(fecha) = '".$este_anio."' GROuP by mes");
-
-            // TABLA TEMPORAL
 
 
 
@@ -1150,10 +1007,10 @@ class Master extends CI_Controller {
             $data["menos_72"] = $menos_72;
             $data["mas_72"] = $mas_72;
 
-            /*$data["proceso_menos_72"] = $proceso_menos_72;
-            $data["proceso_mas_72"] = $proceso_mas_72;*/
+            $data["proceso_menos_72"] = $proceso_menos_72;
+            $data["proceso_mas_72"] = $proceso_mas_72;
 
-            $data['tabla_1'] = $resultados_1;
+            $data['tala_1'] = $resultados_1;
             $data['incidencias_estado'] = $incidencias_estado;
             $data['titulo_incidencias_estado'] = $titulo_incidencias_estado;
 
@@ -3086,6 +2943,40 @@ class Master extends CI_Controller {
         }
     }
 
+
+
+    public function tiendas_tipologia()
+    {
+        $controlador = $this->data->get("controlador");
+        $entrada = $this->data->get("entrada");
+
+        if($this->auth->is_auth()) {
+            $xcrud = xcrud_get_instance();
+
+            $this->load->model("informe_model");
+            $this->load->helper("common");
+
+            $data = array();
+            $data['title'] = "Resumen de tiendas por tipología";
+
+
+            $tiendas_tipologia = $this->informe_model->get_informe_tiendas_tipologia();
+            $data["tiendas_tipologia"] = $tiendas_tipologia;
+
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
+            $this->load->view($controlador . '/header', $data);
+            $this->load->view($controlador . '/navbar', $data);
+            $this->load->view($controlador . '/informes/tiendas_tipologia/list', $data);
+            $this->load->view($controlador . '/footer');
+        }
+        else
+        {
+            redirect($entrada,"refresh");
+        }
+    }
 
 
 	public function ayuda($tipo)

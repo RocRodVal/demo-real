@@ -258,6 +258,8 @@ class Informe extends CI_Controller {
         if(is_null($i_anio)) $i_anio = date("Y");
 
         $this->informe_model->exportar_cdm_incidencias($i_anio,$i_mes,$idx_status,$menos_72h);
+
+
         /*
         // Por estado
         if(!is_null($idx_status))
