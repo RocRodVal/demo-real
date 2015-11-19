@@ -3341,6 +3341,43 @@ class Admin extends CI_Controller
     }
 
 
+
+    /**
+     * Método del controlador, que invoca al modelo para generar un CSV con el inventario de dispositivos en almacén.
+     */
+    public function exportar_dispositivos_almacen($formato=NULL)
+    {
+        if($this->auth->is_auth())
+        {
+            $ext = (!is_null($formato) ? $formato : $this->ext);    // Formato para exportaciones, especficiado o desde CFG
+            $this->load->model('tienda_model');
+            $data['stocks'] = $this->tienda_model->exportar_dispositivos_almacen($ext);
+        }
+        else
+        {
+            redirect('admin','refresh');
+        }
+    }
+
+    /**
+     * Método del controlador, que invoca al modelo para generar un CSV con el inventario de alarmas en almacén.
+     */
+    public function exportar_alarmas_almacen($formato=NULL)
+    {
+        if($this->auth->is_auth()){ // Control de acceso según el tipo de agente. Permiso definido en constructor
+
+            $ext = (!is_null($formato) ? $formato : $this->ext);    // Formato para exportaciones, especficiado o desde CFG
+            $this->load->model('tienda_model');
+            $data['stocks'] = $this->tienda_model->exportar_alarmas_almacen($ext);
+
+        }
+        else
+        {
+            redirect('admin','refresh');
+        }
+    }
+
+
     public function alta_dispositivos_almacen()
     {
         if ($this->auth->is_auth())
@@ -4277,6 +4314,9 @@ class Admin extends CI_Controller
 
 
 
+
+
+
     public function exportar_facturacion($fecha_inicio=NULL,$fecha_fin=NULL,$instalador=NULL,$dueno=NULL,$formato=NULL)
     {
         if ($this->auth->is_auth()) {
@@ -4287,8 +4327,6 @@ class Admin extends CI_Controller
             $this->load->model(array('tienda_model','sfid_model'));
 
             $ext = (!is_null($formato) ? $formato : $this->ext);    // Formato para exportaciones, especficiado o desde CFG
-
-
             $data['facturacion_csv'] = $this->tienda_model->exportar_facturacion($ext,$fecha_inicio,$fecha_fin,$instalador,$dueno);
 
         } else {
