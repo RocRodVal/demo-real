@@ -954,7 +954,7 @@ class Informe_model extends CI_Model
         ");*/
 
         $tiendas_tipologia = $this->db->query("
-            SELECT ps.id as id_subtipo, ps.titulo as subtipo, (SELECT COUNT(id_pds) FROM pds WHERE id_subtipo=ps.id) as total
+            SELECT ps.id as id_subtipo, ps.titulo as subtipo, (SELECT COUNT(id_pds) FROM pds WHERE id_subtipo=ps.id AND pds.status ='Alta') as total
             FROM pds_subtipo ps ORDER BY id_subtipo ASC
         ")->result();
 
@@ -962,7 +962,7 @@ class Informe_model extends CI_Model
         foreach ($tiendas_tipologia as $subtipos) {
 
             $sql = " SELECT pt.id as id_tipologia, pt.titulo,
-                  (SELECT COUNT(id_pds) FROM pds WHERE pds.id_subtipo=".$subtipos->id_subtipo." AND pds.id_tipologia = pst.id_tipologia) as total
+                  (SELECT COUNT(id_pds) FROM pds WHERE pds.id_subtipo=".$subtipos->id_subtipo." AND pds.id_tipologia = pst.id_tipologia AND  pds.status ='Alta') as total
                   FROM pds_subtipo_tipologia pst
                   JOIN pds_tipologia pt ON pst.id_tipologia = pt.id
                   WHERE pst.id_subtipo = ".$subtipos->id_subtipo."
@@ -976,11 +976,8 @@ class Informe_model extends CI_Model
             {
                 $sql = "    SELECT DISTINCT(d.id_display), d.display,dc.position,d.positions,
 
-                            (   SELECT COUNT(pds.id_pds)    FROM pds
-                                JOIN displays_pds dp ON pds.id_pds = dp.id_pds
-                                WHERE pds.id_subtipo=".$subtipos->id_subtipo."
-                                AND pds.id_tipologia = ".$tipologia->id_tipologia."
-                                AND dp.id_display = dc.id_display                              ) as total,
+
+
 
                             (   SELECT SUM(d.positions) FROM displays_categoria dc
                                 JOIN display d ON dc.id_display = d.id_display
@@ -993,6 +990,7 @@ class Informe_model extends CI_Model
                             WHERE dc.id_subtipo = ".      $subtipos->id_subtipo     ."
                             AND dc.id_tipologia = ".    $tipologia->id_tipologia    ."
                             AND dc.status = 'Alta'
+
                             ORDER BY dc.position ASC ";
 
 
@@ -1000,6 +998,22 @@ class Informe_model extends CI_Model
 
                 //$tipologia->sql = $sql;
                 $tipologia->muebles = $query->result();
+
+                foreach($tipologia->muebles as $mueble)
+                {
+                    $sql = " SELECT COUNT(pds.id_pds) as total FROM pds
+                            JOIN displays_pds dp ON dp.id_pds = pds.id_pds
+                            WHERE pds.id_subtipo = ". $subtipos->id_subtipo."
+                            AND pds.id_tipologia = ". $tipologia->id_tipologia."
+                            AND dp.id_display = ".$mueble->id_display."
+                             AND  pds.status ='Alta'
+                            ";
+
+                    $query = $this->db->query($sql)->row();
+
+                    $mueble->total = $query->total;
+
+                }
 
             }
 
