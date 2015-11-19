@@ -990,7 +990,7 @@ class Informe_model extends CI_Model
                             WHERE dc.id_subtipo = ".      $subtipos->id_subtipo     ."
                             AND dc.id_tipologia = ".    $tipologia->id_tipologia    ."
                             AND dc.status = 'Alta'
-
+                            AND d.status = 'Alta'
                             ORDER BY dc.position ASC ";
 
 
@@ -1006,6 +1006,7 @@ class Informe_model extends CI_Model
                             WHERE pds.id_subtipo = ". $subtipos->id_subtipo."
                             AND pds.id_tipologia = ". $tipologia->id_tipologia."
                             AND dp.id_display = ".$mueble->id_display."
+                            AND dp.status = 'Alta'
                              AND  pds.status ='Alta'
                             ";
 

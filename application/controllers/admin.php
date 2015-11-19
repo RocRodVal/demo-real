@@ -779,6 +779,8 @@ class Admin extends CI_Controller
 
                 $checkSfid = $this->tienda_model->search_pds($sfid_new,'Alta');
 
+
+
                 if(empty($checkSfid))
                 {
                     $historico_sfid = array(
