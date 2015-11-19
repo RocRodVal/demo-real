@@ -4275,6 +4275,8 @@ class Admin extends CI_Controller
     }
 
 
+
+
     public function exportar_facturacion($fecha_inicio=NULL,$fecha_fin=NULL,$instalador=NULL,$dueno=NULL,$formato=NULL)
     {
         if ($this->auth->is_auth()) {

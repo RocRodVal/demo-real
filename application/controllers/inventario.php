@@ -11,7 +11,8 @@ class Inventario extends CI_Controller {
 
         // Carga de la clase de Colección de datos, para pasar variables a la vista.
         $this->load->library('data');
-        $this->load->library('auth',array(10));
+        $this->load->library('auth',array(10,9));
+
 
 
         $this->data->set("controlador","inventario");
@@ -53,6 +54,44 @@ class Inventario extends CI_Controller {
 			redirect('admin','refresh');
 		}		
 	}
+
+
+
+    /**
+     * Método del controlador, que invoca al modelo para generar un CSV con el balance de activos.
+     */
+    public function exportar_balance_activos($formato=NULL)
+    {
+        if($this->auth->is_auth())
+        {
+            $ext = (!is_null($formato) ? $formato : $this->ext);    // Formato para exportaciones, especficiado o desde CFG
+            $this->load->model('tienda_model');
+            $data['stocks'] = $this->tienda_model->exportar_stock_cruzado($ext);
+        }
+        else
+        {
+            redirect('inventario','refresh');
+        }
+    }
+
+    /**
+     * Método del controlador, que invoca al modelo para generar un CSV con el balance de activos.
+     */
+    public function exportar_balance_alarmas($formato=NULL)
+    {
+        if($this->auth->is_auth()){ // Control de acceso según el tipo de agente. Permiso definido en constructor
+
+            $ext = (!is_null($formato) ? $formato : $this->ext);    // Formato para exportaciones, especficiado o desde CFG
+            $this->load->model('tienda_model');
+            $data['stocks'] = $this->tienda_model->exportar_balance_alarmas($ext);
+
+        }
+        else
+        {
+            redirect('inventario','refresh');
+        }
+    }
+
 
 	
 	public function inventarios()

@@ -385,7 +385,7 @@ class Tienda_model extends CI_Model {
         $resultados = $this->get_stock_cruzado();
 
         $arr_titulos = array('Id dispositivo','Fabricante','Dispositivo','Ud. pds','Stock necesario','Uds. Almacén','Balance');
-        $excluir = array();
+        $excluir = array('status');
         $datos = preparar_array_exportar($resultados,$arr_titulos,$excluir);
         exportar_fichero($formato,$datos,"Balance_Dispositivos__".date("d-m-Y"));
 
