@@ -286,6 +286,7 @@
                                     : $valor->cantidad;
 
                                 $total += $valor->cantidad;
+                                $mes_idx++;
                                 echo "</td>";
                             }
                             echo '<td class="total">'.$total.'</td>';

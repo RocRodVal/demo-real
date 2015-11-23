@@ -120,9 +120,10 @@
                                                 'informe_visual_terminal',
                                                 'informe_visual_ficha_terminal')))?'class="active"':''?> href="<?=site_url('master/informe_visual')?>"> Visual &raquo;</a></li>*/?>
 
+
                                 <?php
                                 /*<li><a <?=(in_array($this->uri->segment(2),
-                                        array( 'tiendas_tipologia')))?'class="active"':''?> href="<?=site_url($controlador.'/tiendas_tipologia')?>"> Tiendas por tipología &raquo;</a></li>*/?>
+                                        array( 'tiendas_tipologia')))?'class="active"':''?> href="<?=site_url($controlador.'/tiendas_tipologia')?>"> Tiendas por tipología &raquo;</a></li>*/ ?>
                             </ul>
                         </li>
 
