@@ -279,3 +279,36 @@ div.mantenimiento p.desc{ margin-bottom: 10px; font-size: 14px; text-align:cente
 
 span.error{ color:#a00; font-size: 14px;}
 span.exito{ color:#0a0; font-size: 14px;}
+
+
+/**
+**      TIENDAS TIPOLOGIA
+**/
+
+.tiendas-tipo .table-bordered,
+.tiendas-tipo .table-bordered th,
+.tiendas-tipo .table-bordered td{ border:none; vertical-align: middle;  border-bottom:1px solid #f1f1f1; border-collapse: collapse}
+
+.tiendas-tipo .table-bordered tr:last-child th,
+.tiendas-tipo .table-bordered tr:last-child td{  border-bottom:2px solid #f60 }
+
+.tiendas-tipo hr{ margin-bottom: 30px;}
+
+.tiendas-tipo h3{ font-weight: bold; color:#f60; text-align: right; margin-bottom: 20px; }
+.tiendas-tipo h3 span{ font-weight: normal; color:#000;}
+
+.tiendas-tipo table.table-bordered{ margin-bottom: 60px; border-top:1px solid #f60 }
+.tiendas-tipo table th{ background:#f60;  padding: 5px; text-align: right; border: none; }
+
+.tiendas-tipo table th.principal{ width:35%;
+    background:#fcebe0; border:none;  border-bottom:1px solid #f60;  }
+
+.tiendas-tipo table th.primera-linea{ background:#fcebe0; border:none;  border-bottom:1px solid #f60;  }
+
+.tiendas-tipo table th.tipo{ text-align: center;}
+.tiendas-tipo table th.text{ text-align: right; }
+.tiendas-tipo table th.total{ text-align: right;
+    background: #fff; }
+.tiendas-tipo table th.display{ background: #fff; text-align: right; font-weight: normal;}
+.tiendas-tipo table td{ }
+.tiendas-tipo table .num{ text-align:center; font-weight: normal; background:#fff;}

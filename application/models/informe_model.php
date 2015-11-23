@@ -229,6 +229,7 @@ class Informe_model extends CI_Model
         if(!is_null($territory))    $aQuery["where_in"]["pds.territory"] = $territory;
         if(!is_null($brand_device)) $aQuery["where_in"]["device.brand_device"] = $brand_device;
 
+        $aQuery["where"]["pds.status"] = "Alta";
 
         $aQuery["order_by"]["pds_tipo.titulo"] = "asc";
         $aQuery["order_by"]["pds_subtipo.titulo"] = "asc";
@@ -238,7 +239,7 @@ class Informe_model extends CI_Model
         $aQuery["order_by"]["territory.territory"] = "asc";
         $aQuery["order_by"]["pds.reference"] = "asc";
 
-        $aQuery["group_by"] = "reference";
+        //$aQuery["group_by"] = "reference";
 
 
 
@@ -249,7 +250,7 @@ class Informe_model extends CI_Model
         }
 
 
-
+        //print_r($aQuery);
         return $aQuery;
     }
 
@@ -373,8 +374,9 @@ class Informe_model extends CI_Model
         $sCampos = implode(",",$aQuery["fields"]);
         $this->db->select($sCampos);
 
-        if(isset($aQuery["joins"]) && !empty($aQuery["joins"]))         foreach($aQuery["joins"] as $tabla_sec=>$on)        $this->db->join($tabla_sec,$on);
+        if(isset($aQuery["joins"]) && !empty($aQuery["joins"]))         foreach($aQuery["joins"] as $tabla_sec=>$on)        $this->db->join($tabla_sec,$on,"left");
         if(isset($aQuery["where_in"]) && !empty($aQuery["where_in"]))   foreach($aQuery["where_in"] as $campo=>$valores)    $this->db->where_in($campo,$valores);
+        if(isset($aQuery["where"]) && !empty($aQuery["where"]))   foreach($aQuery["where"] as $campo=>$valores)    $this->db->where($campo,$valores);
         if(isset($aQuery["order_by"]) && !empty($aQuery["order_by"]))   foreach($aQuery["order_by"] as $campo=>$orden)      $this->db->order_by($campo,$orden);
 
         if(isset($aQuery["group_by"]) && !empty($aQuery["group_by"]))   $this->db->group_by($aQuery["group_by"]);
@@ -408,11 +410,12 @@ class Informe_model extends CI_Model
         $sSQL = "SELECT ".implode(",",$aQuery["fields"]);
         $sSQL .= (" FROM ".$aQuery["table"]);
 
-        if(isset($aQuery["joins"]) && !empty($aQuery["joins"]))         foreach($aQuery["joins"] as $tabla_sec=>$on)        $sSQL .= (" JOIN ".$tabla_sec." ON ".$on);
+        if(isset($aQuery["joins"]) && !empty($aQuery["joins"]))         foreach($aQuery["joins"] as $tabla_sec=>$on)        $sSQL .= (" LEFT JOIN ".$tabla_sec." ON ".$on);
 
         $sSQL .= " WHERE 1=1 ";
 
         if(isset($aQuery["where_in"]) && !empty($aQuery["where_in"]))   foreach($aQuery["where_in"] as $campo=>$valores)    $sSQL .= (" AND ".$campo .  " IN (". implode(",",$valores).") ");
+        if(isset($aQuery["where"]) && !empty($aQuery["where"]))   foreach($aQuery["where"] as $campo=>$valores)    $sSQL .= (" AND $campo = '$valores' ");
 
         if(isset($aQuery["group_by"]) && !empty($aQuery["group_by"]))   $sSQL  .= (" GROUP BY ".$aQuery["group_by"]);
 
@@ -434,6 +437,7 @@ class Informe_model extends CI_Model
                 $sSQL .= ("LIMIT ".$ini.",".$offset);
             }
         }
+
 
         $query = $this->db->query($sSQL);
         return $query;
@@ -964,10 +968,24 @@ class Informe_model extends CI_Model
 
         ");*/
 
-        $tiendas_tipologia = $this->db->query("
-            SELECT ps.id as id_subtipo, ps.titulo as subtipo, (SELECT COUNT(id_pds) FROM pds WHERE id_subtipo=ps.id AND pds.status ='Alta') as total
-            FROM pds_subtipo ps ORDER BY id_subtipo ASC
-        ")->result();
+        /*$tiendas_tipologia = $this->db->query("
+            SELECT COUNT(pds.id_pds) as total, s.titulo as subtipo, s.id as id_subtipo FROM pds
+            INNER JOIN pds_subtipo s ON s.id = pds.id_subtipo
+            WHERE pds.status = 'Alta'
+            GROUP BY pds.id_subtipo
+
+        ")->result();*/
+
+        $tiendas_tipologia = $this->db->select(" COUNT(pds.id_pds) as total, s.titulo as subtipo, s.id as id_subtipo")
+                    ->join("pds_subtipo s","s.id = pds.id_subtipo ")
+                    ->where("pds.status LIKE 'Alta' ")
+                    ->group_by("pds.id_subtipo")
+                    ->get("pds")->result();
+
+
+
+
+        //echo $this->db->last_query();
 
 
         foreach ($tiendas_tipologia as $subtipos) {
@@ -975,9 +993,8 @@ class Informe_model extends CI_Model
             $sql = " SELECT pt.id as id_tipologia, pt.titulo,
                   (SELECT COUNT(id_pds) FROM pds WHERE pds.id_subtipo=".$subtipos->id_subtipo." AND pds.id_tipologia = pst.id_tipologia AND  pds.status ='Alta') as total
                   FROM pds_subtipo_tipologia pst
-                  JOIN pds_tipologia pt ON pst.id_tipologia = pt.id
+                  LEFT JOIN pds_tipologia pt ON pst.id_tipologia = pt.id
                   WHERE pst.id_subtipo = ".$subtipos->id_subtipo."
-
                   ORDER BY id_tipologia ASC";
 
             $subtipos->tipologias = $this->db->query($sql)->result();
@@ -997,17 +1014,23 @@ class Informe_model extends CI_Model
                                 AND dc.id_tipologia = ".    $tipologia->id_tipologia    ."
                                 AND dc.status = 'Alta'
                                 AND dc.id_display != 0
-                            AND d.status = 'Alta') as total_demos,
+                                ) as total_demos,
 
-                            ( SELECT CASE d.positions WHEN 0 THEN 'Maquetas' ELSE  'Reales' END) as tipo_mueble
+                            ( SELECT CASE d.positions WHEN 0 THEN 'Maquetas' ELSE  'Reales' END) as tipo_mueble,
 
+                            (SELECT COUNT(pds.id_pds) as total FROM pds
+                            JOIN displays_pds dp ON dp.id_pds = pds.id_pds
+                            WHERE pds.id_subtipo = ". $subtipos->id_subtipo."
+                            AND pds.id_segmento IS NOT NULL
+                            AND dp.id_display = d.id_display
+                            AND dp.status = 'Alta'
+                            AND  pds.status ='Alta') as num_pds
 
                             FROM displays_categoria dc
                             JOIN display d ON dc.id_display = d.id_display
                             WHERE dc.id_subtipo = ".      $subtipos->id_subtipo     ."
                             AND dc.id_tipologia = ".    $tipologia->id_tipologia    ."
                             AND dc.status = 'Alta'
-                            AND d.status = 'Alta'
                             GROUP BY d.id_display
                             ORDER BY d.display ASC
                             ";
@@ -1040,7 +1063,7 @@ class Informe_model extends CI_Model
 
         }
 
-       /* echo "<pre>";
+        /*echo "<pre>";
         print_r($tiendas_tipologia);
         echo "</pre>";*/
 

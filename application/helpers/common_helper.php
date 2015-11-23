@@ -96,7 +96,7 @@ function m_array_search($array,$key,$value){
 
 function m_object_search($array,$key,$value){
     foreach($array as $elem){
-        if($elem->$key == $value) return TRUE;
+        if($elem->{$key} == $value) return TRUE;
     }
     return FALSE;
 }
@@ -107,7 +107,7 @@ function m_object_search($array,$key,$value){
 
 function get_object_search($array,$key,$value){
     foreach($array as $elem){
-        if($elem->$key == $value) return $elem;
+        if($elem->{$key} == $value) return $elem;
     }
     return NULL;
 }
