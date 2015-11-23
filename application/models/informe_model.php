@@ -1076,31 +1076,7 @@ class Informe_model extends CI_Model
 
     public function get_informe_tiendas_tipologia()
     {
-        /*$tiendas_tipologia = $this->db->query("
 
-        SELECT ps.id as id_subtipo, ps.titulo, pt.id as id_tipologia, pt.titulo,
-        (SELECT COUNT(id_pds) FROM pds WHERE id_subtipo=ps.id AND id_tipologia = pt.id) as tiendas_tipologia,
-        (SELECT COUNT(id_pds) FROM pds WHERE id_subtipo=ps.id) as tiendas_tipologia_total
-        -- ,dc.id_display, dis.display, dc.position
-
-        FROM pds_subtipo ps
-
-        JOIN pds_subtipo_tipologia  pst ON pst.id_subtipo = ps.id
-        JOIN pds_tipologia pt ON pst.id_tipologia = pt.id
-        -- JOIN displays_categoria dc ON dc.id_subtipo = ps.id
-        -- JOIN display dis ON dc.id_display = dis.id_display
-        ORDER BY id_subtipo, id_tipologia
-        ;
-
-        ");*/
-
-        /*$tiendas_tipologia = $this->db->query("
-            SELECT COUNT(pds.id_pds) as total, s.titulo as subtipo, s.id as id_subtipo FROM pds
-            INNER JOIN pds_subtipo s ON s.id = pds.id_subtipo
-            WHERE pds.status = 'Alta'
-            GROUP BY pds.id_subtipo
-
-        ")->result();*/
 
         $tiendas_tipologia = $this->db->select(" COUNT(pds.id_pds) as total, s.titulo as subtipo, s.id as id_subtipo")
                     ->join("pds_subtipo s","s.id = pds.id_subtipo ")
@@ -1143,6 +1119,14 @@ class Informe_model extends CI_Model
                                 ) as total_demos,
 
                             ( SELECT CASE d.positions WHEN 0 THEN 'Maquetas' ELSE  'Reales' END) as tipo_mueble,
+
+                            (SELECT COUNT(DISTINCT(dp.id_pds)) as total FROM displays_pds dp
+                             JOIN pds ON pds.id_pds = dp.id_pds
+                            WHERE pds.id_subtipo = ". $subtipos->id_subtipo."
+                            AND pds.id_segmento IS NOT NULL
+                            AND dp.id_display = d.id_display
+                            AND dp.status = 'Alta'
+                            AND  pds.status ='Alta') as num_pds_display,
 
                             (SELECT COUNT(pds.id_pds) as total FROM pds
                             JOIN displays_pds dp ON dp.id_pds = pds.id_pds

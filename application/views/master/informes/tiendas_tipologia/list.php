@@ -82,6 +82,7 @@
                                         $elem->display = $mueble->display. " <!--({$mueble->id_display})--> ";
                                         $elem->tipo_mueble = $mueble->tipo_mueble;
                                         $elem->num_pds = $mueble->num_pds;
+                                        $elem->num_pds_display = $mueble->num_pds_display;
 
                                         if (!m_object_search($muebles_aux, "id_display", $mueble->id_display)) {
 
@@ -110,6 +111,7 @@
                                             //echo $display->num_pds . " <!-- (S={$subtipo->id_subtipo}, M={$display->id_display}) --> " ;
 
                                             // Nº de tiendas, por mueble en tipologia
+                                            echo $display->num_pds_display;
                                             ?>
                                         </td>
                                         <th class="display"><?= $display->display ?></th>
