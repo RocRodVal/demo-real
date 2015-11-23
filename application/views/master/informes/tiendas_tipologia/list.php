@@ -106,7 +106,11 @@
                                     ?>
                                     <tr>
                                         <td><?php
-                                            echo $display->num_pds . " <!-- (S={$subtipo->id_subtipo}, M={$display->id_display}) --> " ; ?>
+                                            // Nº de muebles en todas las tiendas por tipologia
+                                            //echo $display->num_pds . " <!-- (S={$subtipo->id_subtipo}, M={$display->id_display}) --> " ;
+
+                                            // Nº de tiendas, por mueble en tipologia
+                                            ?>
                                         </td>
                                         <th class="display"><?= $display->display ?></th>
                                         <?php
