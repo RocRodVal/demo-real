@@ -217,7 +217,7 @@
                                     {
                                         echo "<td>";
                                         echo ($valor->cantidad > 0)
-                                            ? "<a href='".base_url('informe/exportar_cdm_incidencias/'.$anio.'/'.$mes_idx.'/4/1')."' >".$valor->cantidad."</a>"
+                                            ? "<a href='".base_url('informe/exportar_cdm_incidencias_finalizadas/'.$anio.'/'.$mes_idx.'/1')."' >".$valor->cantidad."</a>"
                                             : $valor->cantidad;
 
                                         $total += $valor->cantidad;
@@ -259,7 +259,7 @@
                                     {
                                         echo "<td>";
                                         echo ($valor->cantidad > 0)
-                                            ? "<a href='".base_url('informe/exportar_cdm_incidencias/'.$anio.'/'.$mes_idx.'/4/0')."' >".$valor->cantidad."</a>"
+                                            ? "<a href='".base_url('informe/exportar_cdm_incidencias_finalizadas/'.$anio.'/'.$mes_idx.'/0')."' >".$valor->cantidad."</a>"
                                             : $valor->cantidad;
 
                                         $total += $valor->cantidad;

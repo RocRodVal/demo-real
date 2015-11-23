@@ -20,6 +20,9 @@ if (!$generado)
 <div class="row" style="display: block">
     <?php
 
+
+    //echo $this->db->last_query();
+
     if(is_null($resultados)){
         echo "<p class='message error'><i class='glyphicon glyphicon-remove'></i> Debes introducir algún criterio para poder generar el informe.</p>";
     }elseif(count($resultados) == 0){

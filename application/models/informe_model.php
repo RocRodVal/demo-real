@@ -229,6 +229,7 @@ class Informe_model extends CI_Model
         if(!is_null($territory))    $aQuery["where_in"]["pds.territory"] = $territory;
         if(!is_null($brand_device)) $aQuery["where_in"]["device.brand_device"] = $brand_device;
 
+        $aQuery["where"]["pds.status"] = "Alta";
 
         $aQuery["order_by"]["pds_tipo.titulo"] = "asc";
         $aQuery["order_by"]["pds_subtipo.titulo"] = "asc";
@@ -238,7 +239,7 @@ class Informe_model extends CI_Model
         $aQuery["order_by"]["territory.territory"] = "asc";
         $aQuery["order_by"]["pds.reference"] = "asc";
 
-        $aQuery["group_by"] = "reference";
+        //$aQuery["group_by"] = "reference";
 
 
 
@@ -249,7 +250,7 @@ class Informe_model extends CI_Model
         }
 
 
-
+        //print_r($aQuery);
         return $aQuery;
     }
 
@@ -373,8 +374,9 @@ class Informe_model extends CI_Model
         $sCampos = implode(",",$aQuery["fields"]);
         $this->db->select($sCampos);
 
-        if(isset($aQuery["joins"]) && !empty($aQuery["joins"]))         foreach($aQuery["joins"] as $tabla_sec=>$on)        $this->db->join($tabla_sec,$on);
+        if(isset($aQuery["joins"]) && !empty($aQuery["joins"]))         foreach($aQuery["joins"] as $tabla_sec=>$on)        $this->db->join($tabla_sec,$on,"left");
         if(isset($aQuery["where_in"]) && !empty($aQuery["where_in"]))   foreach($aQuery["where_in"] as $campo=>$valores)    $this->db->where_in($campo,$valores);
+        if(isset($aQuery["where"]) && !empty($aQuery["where"]))   foreach($aQuery["where"] as $campo=>$valores)    $this->db->where($campo,$valores);
         if(isset($aQuery["order_by"]) && !empty($aQuery["order_by"]))   foreach($aQuery["order_by"] as $campo=>$orden)      $this->db->order_by($campo,$orden);
 
         if(isset($aQuery["group_by"]) && !empty($aQuery["group_by"]))   $this->db->group_by($aQuery["group_by"]);
@@ -408,11 +410,12 @@ class Informe_model extends CI_Model
         $sSQL = "SELECT ".implode(",",$aQuery["fields"]);
         $sSQL .= (" FROM ".$aQuery["table"]);
 
-        if(isset($aQuery["joins"]) && !empty($aQuery["joins"]))         foreach($aQuery["joins"] as $tabla_sec=>$on)        $sSQL .= (" JOIN ".$tabla_sec." ON ".$on);
+        if(isset($aQuery["joins"]) && !empty($aQuery["joins"]))         foreach($aQuery["joins"] as $tabla_sec=>$on)        $sSQL .= (" LEFT JOIN ".$tabla_sec." ON ".$on);
 
         $sSQL .= " WHERE 1=1 ";
 
         if(isset($aQuery["where_in"]) && !empty($aQuery["where_in"]))   foreach($aQuery["where_in"] as $campo=>$valores)    $sSQL .= (" AND ".$campo .  " IN (". implode(",",$valores).") ");
+        if(isset($aQuery["where"]) && !empty($aQuery["where"]))   foreach($aQuery["where"] as $campo=>$valores)    $sSQL .= (" AND $campo = '$valores' ");
 
         if(isset($aQuery["group_by"]) && !empty($aQuery["group_by"]))   $sSQL  .= (" GROUP BY ".$aQuery["group_by"]);
 
@@ -434,6 +437,7 @@ class Informe_model extends CI_Model
                 $sSQL .= ("LIMIT ".$ini.",".$offset);
             }
         }
+
 
         $query = $this->db->query($sSQL);
         return $query;
@@ -650,8 +654,6 @@ class Informe_model extends CI_Model
     {
         if(is_null($anio)) $anio = date("Y");
         $this->db->query(" DROP TABLE IF EXISTS historico_temp;");
-        $this->db->query(" UPDATE incidencias SET fecha_cierre = DATE_ADD(fecha, INTERVAL 2 day) WHERE status_pds = 'Finalizada' && fecha_cierre = '0000-00-00 00:00:00'; ");
-        $this->db->query(" UPDATE incidencias SET fecha_cierre = DATE_ADD(fecha, INTERVAL 2 day) WHERE status_pds = 'Finalizada' && fecha_cierre IS NULL; ");
 
         $this->db->query(" CREATE TEMPORARY TABLE IF NOT EXISTS historico_temp(INDEX(id_incidencia))
                             AS (
@@ -698,7 +700,7 @@ class Informe_model extends CI_Model
 
         $sql = "
             SELECT COUNT(id_incidencia)  as cantidad, YEAR(fecha_entrada) as anio, MONTH(fecha_entrada) as mes FROM historico_temp
-            WHERE (workdaydiff(fecha_proceso,fecha_cierre)) < 3
+            WHERE (workdaydiff(fecha_proceso,fecha_cierre)) <= 3
             GROUP BY anio, mes;
             ";
         $query = $this->db->query($sql)->result();
@@ -716,7 +718,7 @@ class Informe_model extends CI_Model
 
         $sql  = "
                    SELECT COUNT(id_incidencia) as cantidad, YEAR(fecha_entrada) as anio, MONTH(fecha_entrada) as mes FROM historico_temp
-                    WHERE (workdaydiff(fecha_proceso,fecha_cierre)) >= 3
+                    WHERE (workdaydiff(fecha_proceso,fecha_cierre)) > 3
                     GROUP BY anio, mes; ";
 
         $query = $this->db->query($sql)->result();
@@ -731,14 +733,6 @@ class Informe_model extends CI_Model
         if(is_null($anio)) $anio = date("Y");
         $this->crear_incidencias_historico_proceso($anio);
         $hoy = date("Y-m-d");
-        /*$sql = "
-
-            SELECT COUNT(id_incidencia)  as cantidad, YEAR(fecha_entrada) as anio, MONTH(fecha_entrada) as mes FROM historico_temp
-            WHERE (workdaydiff(fecha_proceso,fecha_cierre)) < 3
-            GROUP BY anio, mes;
-            ";*/
-
-
         $sql = "
             SELECT  COUNT(id_incidencia)  as cantidad, YEAR(fecha_entrada) as anio, MONTH(fecha_entrada) as mes FROM historico_temp
             WHERE (workdaydiff(fecha_cierre,fecha_proceso)) <= 3
@@ -810,6 +804,140 @@ class Informe_model extends CI_Model
 
 
 
+
+
+    public function exportar_cdm_incidencias_finalizadas($anio = NULL, $mes = NULL,$menos72=NULL)
+    {
+        if(is_null($anio)) $anio = date("Y");
+        $this->crear_incidencias_historico_finalizadas($anio);
+
+
+        if($menos72 == 1) {
+
+            $sql = "
+            SELECT id_incidencia  FROM historico_temp
+            WHERE (workdaydiff(fecha_proceso,fecha_cierre)) <= 3 AND YEAR(fecha_entrada) ='$anio' AND MONTH(fecha_entrada) = '$mes'
+            ";
+
+            $sTitulo72 = "menos72";
+
+        }else{
+            $sql  = "
+                   SELECT id_incidencia FROM historico_temp
+                    WHERE (workdaydiff(fecha_proceso,fecha_cierre)) > 3 AND YEAR(fecha_entrada) ='$anio' AND MONTH(fecha_entrada) = '$mes'
+                   ";
+
+            $sTitulo72 = "mas72";
+        }
+        $query = $this->db->query($sql)->result();
+
+        $ids = array();
+        foreach($query as $id) $ids[] = $id->id_incidencia;
+
+
+        $this->exportar_incidencias_id($ids,$anio,$mes,"Finalizadas-$sTitulo72");
+
+        //return $query;
+    }
+
+
+    public function exportar_incidencias_id($array_ids,$anio, $mes,$status)
+    {
+
+        $this->load->dbutil();
+        $this->load->helper('file');
+        $this->load->helper('csv');
+        $this->load->helper('download');
+
+
+        $aJoins = array();
+        $aFields = array();
+
+        $sTitleFilename = "CDM_Incidencias_";
+
+        $sFiltrosFilename = (!is_null($status)) ? "".$status : "";
+        $sFiltrosFilename .= "___";
+
+
+
+        // Array de títulos de campo para la exportación XLS/CSV
+        $arr_titulos = array('Id incidencia','SFID','Fecha','Elemento','Territorio','Fabricante','Mueble','Terminal','Supervisor','Provincia','Tipo avería',
+            'Texto 1','Texto 2','Texto 3','Parte PDF','Denuncia','Foto 1','Foto 2','Foto 3','Contacto','Teléfono','Email',
+            'Id. Operador','Intervención','Estado','Última modificación','Estado Sat','Estado incidencia');
+        $excluir = array('fecha_cierre','fabr');
+
+        $sql = 'SELECT incidencias.id_incidencia, pds.reference as `SFID`, incidencias.fecha, incidencias.fecha_cierre,
+
+                            (CASE incidencias.alarm_display WHEN 1 THEN ( CONCAT("Mueble: ",
+                                (CASE ISNULL(display.display) WHEN TRUE THEN "Retirado" ELSE display.display END)
+                            )) ELSE (CONCAT("Dispositivo: ",
+                                (CASE ISNULL(device.device) WHEN TRUE THEN "Retirado" ELSE device.device END)
+                            )) END) as elemento,
+
+                            device.brand_device as fabr,
+                            territory.territory as `Territorio`,
+                            ';
+
+        $sql .= ' (SELECT brand_device.brand from brand_device  WHERE id_brand_device = fabr ) as `Fabricante`,';
+        $sql .= 'display.display as mueble, device.device as terminal, pds_supervisor.titulo as supervisor, province.province as provincia,incidencias.tipo_averia,';
+        $sql .='
+                           REPLACE(REPLACE(incidencias.description_1,CHAR(10),CHAR(32)),CHAR(13),CHAR(32)) as description_1,
+                            REPLACE(REPLACE(incidencias.description_2,CHAR(10),CHAR(32)),CHAR(13),CHAR(32))  as description_2,
+                            REPLACE(REPLACE(incidencias.description_3,CHAR(10),CHAR(32)),CHAR(13),CHAR(32))  as description_3,
+                            incidencias.parte_pdf, incidencias.denuncia, incidencias.foto_url, incidencias.foto_url_2,
+                            incidencias.foto_url_3, incidencias.contacto, incidencias.phone, incidencias.email,incidencias.id_operador,
+                            incidencias.intervencion,';
+
+        $sql .= 'incidencias.status as `Estado`,
+                 incidencias.last_updated as `Última modificación`,
+                 incidencias.status_pds as `Estado PDS`,
+                 type_incidencia.title as `Estado Incidencia`,';
+
+        $sql = rtrim($sql,",");
+        $sql .= implode(",",$aFields);
+
+        $sql .=' FROM incidencias
+
+                LEFT OUTER JOIN displays_pds ON incidencias.id_displays_pds = displays_pds.id_displays_pds
+                LEFT OUTER JOIN display ON displays_pds.id_display = display.id_display
+                LEFT OUTER JOIN devices_pds ON incidencias.id_devices_pds = devices_pds.id_devices_pds
+                LEFT OUTER JOIN device ON devices_pds.id_device = device.id_device
+                LEFT OUTER JOIN type_device ON device.type_device = type_device.id_type_device
+
+                LEFT OUTER JOIN pds ON incidencias.id_pds = pds.id_pds
+                LEFT OUTER JOIN territory ON territory.id_territory=pds.territory
+                LEFT OUTER JOIN brand_device ON device.brand_device = brand_device.id_brand_device
+
+                LEFT JOIN pds_supervisor ON pds.id_supervisor= pds_supervisor.id
+                LEFT JOIN type_incidencia ON incidencias.id_type_incidencia = type_incidencia.id_type_incidencia
+                LEFT JOIN province ON pds.province= province.id_province ';
+
+        foreach($aJoins as $join)
+        {
+            $sql .= $join;
+        }
+
+
+        $sql .= ' WHERE 1 = 1';
+        // Añadimos las condiciones
+        $sql .= " AND id_incidencia IN (".implode(",",$array_ids).") ";
+        $sql .= " ORDER BY fecha DESC";
+
+        $query = $this->db->query($sql);
+
+        $datos = preparar_array_exportar($query->result(),$arr_titulos,$excluir);
+
+        //echo count($query->result());
+        //var_dump($query->result()); exit;
+        exportar_fichero("xls",$datos,$sTitleFilename.$sFiltrosFilename."__".date("d-m-Y")."T".date("H:i:s"));
+
+    }
+
+
+
+
+
+
     public function exportar_cdm_incidencias($anio = NULL, $mes = NULL,$status= NULL,$menos72=NULL)
     {
         if(is_null($anio)) $anio = date("Y");
@@ -844,7 +972,6 @@ class Informe_model extends CI_Model
         }
 
         if(!is_null($menos72)) {
-            $aConditions[] = " AND incidencias.status_pds = $status ";
             $sFiltrosFilename .= ($menos72==1) ? "_menos-72h" : "_mas-72h";
 
             $this->informe_model->crear_incidencias_historico_finalizadas($anio);
@@ -855,11 +982,11 @@ class Informe_model extends CI_Model
 
             if($menos72 == 1)
             {
-                $aConditions[] = " AND  (workdaydiff($campo_resta,historico_temp.fecha_proceso)) <= 3 ";
+                $aConditions[] = " AND  ((workdaydiff($campo_resta,historico_temp.fecha_proceso))) <= 3 ";
             }
             else
             {
-                $aConditions[] = " AND  (workdaydiff($campo_resta, historico_temp.fecha_proceso)) > 3 ";
+                $aConditions[] = " AND  ((workdaydiff($campo_resta, historico_temp.fecha_proceso))) > 3 ";
             }
 
         }
@@ -936,6 +1063,9 @@ class Informe_model extends CI_Model
         $datos = preparar_array_exportar($query->result(),$arr_titulos,$excluir);
 
 
+        //echo count($query->result());
+        //var_dump($query->result()); exit;
+
         exportar_fichero("xls",$datos,$sTitleFilename.$sFiltrosFilename."__".date("d-m-Y")."T".date("H:i:s")."_".date("d-m-Y"));
 
     }
@@ -946,28 +1076,18 @@ class Informe_model extends CI_Model
 
     public function get_informe_tiendas_tipologia()
     {
-        /*$tiendas_tipologia = $this->db->query("
 
-        SELECT ps.id as id_subtipo, ps.titulo, pt.id as id_tipologia, pt.titulo,
-        (SELECT COUNT(id_pds) FROM pds WHERE id_subtipo=ps.id AND id_tipologia = pt.id) as tiendas_tipologia,
-        (SELECT COUNT(id_pds) FROM pds WHERE id_subtipo=ps.id) as tiendas_tipologia_total
-        -- ,dc.id_display, dis.display, dc.position
 
-        FROM pds_subtipo ps
+        $tiendas_tipologia = $this->db->select(" COUNT(pds.id_pds) as total, s.titulo as subtipo, s.id as id_subtipo")
+                    ->join("pds_subtipo s","s.id = pds.id_subtipo ")
+                    ->where("pds.status LIKE 'Alta' ")
+                    ->group_by("pds.id_subtipo")
+                    ->get("pds")->result();
 
-        JOIN pds_subtipo_tipologia  pst ON pst.id_subtipo = ps.id
-        JOIN pds_tipologia pt ON pst.id_tipologia = pt.id
-        -- JOIN displays_categoria dc ON dc.id_subtipo = ps.id
-        -- JOIN display dis ON dc.id_display = dis.id_display
-        ORDER BY id_subtipo, id_tipologia
-        ;
 
-        ");*/
 
-        $tiendas_tipologia = $this->db->query("
-            SELECT ps.id as id_subtipo, ps.titulo as subtipo, (SELECT COUNT(id_pds) FROM pds WHERE id_subtipo=ps.id AND pds.status ='Alta') as total
-            FROM pds_subtipo ps ORDER BY id_subtipo ASC
-        ")->result();
+
+        //echo $this->db->last_query();
 
 
         foreach ($tiendas_tipologia as $subtipos) {
@@ -975,9 +1095,8 @@ class Informe_model extends CI_Model
             $sql = " SELECT pt.id as id_tipologia, pt.titulo,
                   (SELECT COUNT(id_pds) FROM pds WHERE pds.id_subtipo=".$subtipos->id_subtipo." AND pds.id_tipologia = pst.id_tipologia AND  pds.status ='Alta') as total
                   FROM pds_subtipo_tipologia pst
-                  JOIN pds_tipologia pt ON pst.id_tipologia = pt.id
+                  LEFT JOIN pds_tipologia pt ON pst.id_tipologia = pt.id
                   WHERE pst.id_subtipo = ".$subtipos->id_subtipo."
-
                   ORDER BY id_tipologia ASC";
 
             $subtipos->tipologias = $this->db->query($sql)->result();
@@ -997,17 +1116,31 @@ class Informe_model extends CI_Model
                                 AND dc.id_tipologia = ".    $tipologia->id_tipologia    ."
                                 AND dc.status = 'Alta'
                                 AND dc.id_display != 0
-                            AND d.status = 'Alta') as total_demos,
+                                ) as total_demos,
 
-                            ( SELECT CASE d.positions WHEN 0 THEN 'Maquetas' ELSE  'Reales' END) as tipo_mueble
+                            ( SELECT CASE d.positions WHEN 0 THEN 'Maquetas' ELSE  'Reales' END) as tipo_mueble,
 
+                            (SELECT COUNT(DISTINCT(dp.id_pds)) as total FROM displays_pds dp
+                             JOIN pds ON pds.id_pds = dp.id_pds
+                            WHERE pds.id_subtipo = ". $subtipos->id_subtipo."
+                            AND pds.id_segmento IS NOT NULL
+                            AND dp.id_display = d.id_display
+                            AND dp.status = 'Alta'
+                            AND  pds.status ='Alta') as num_pds_display,
+
+                            (SELECT COUNT(pds.id_pds) as total FROM pds
+                            JOIN displays_pds dp ON dp.id_pds = pds.id_pds
+                            WHERE pds.id_subtipo = ". $subtipos->id_subtipo."
+                            AND pds.id_segmento IS NOT NULL
+                            AND dp.id_display = d.id_display
+                            AND dp.status = 'Alta'
+                            AND  pds.status ='Alta') as num_pds
 
                             FROM displays_categoria dc
                             JOIN display d ON dc.id_display = d.id_display
                             WHERE dc.id_subtipo = ".      $subtipos->id_subtipo     ."
                             AND dc.id_tipologia = ".    $tipologia->id_tipologia    ."
                             AND dc.status = 'Alta'
-                            AND d.status = 'Alta'
                             GROUP BY d.id_display
                             ORDER BY d.display ASC
                             ";
@@ -1040,7 +1173,7 @@ class Informe_model extends CI_Model
 
         }
 
-       /* echo "<pre>";
+        /*echo "<pre>";
         print_r($tiendas_tipologia);
         echo "</pre>";*/
 
