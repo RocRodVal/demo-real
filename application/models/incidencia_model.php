@@ -350,7 +350,7 @@ class Incidencia_model extends CI_Model {
         // Array de títulos de campo para la exportación XLS/CSV
         $arr_titulos = array('Id incidencia','SFID','Fecha','Elemento','Territorio','Fabricante','Mueble','Terminal','Supervisor','Provincia','Tipo avería',
             'Texto 1','Texto 2','Texto 3','Parte PDF','Denuncia','Foto 1','Foto 2','Foto 3','Contacto','Teléfono','Email',
-            'Id. Operador','Intervención','Estado','Última modificación','Estado Sat');
+            'Id. Operador','Intervención','Estado','Última modificación','Estado Sat','Estado incidencia');
         $excluir = array('fecha_cierre','fabr');
 
 
@@ -360,7 +360,7 @@ class Incidencia_model extends CI_Model {
             // Array de títulos de campo para la exportación XLS/CSV
             $arr_titulos = array('Id incidencia','SFID','Fecha','Elemento','Territorio','Fabricante','Mueble','Terminal','Supervisor','Provincia','Tipo avería',
                 'Texto 1','Texto 2','Texto 3','Parte PDF','Denuncia','Foto 1','Foto 2','Foto 3','Contacto','Teléfono','Email',
-                'Id. Operador','Intervención','Estado');
+                'Id. Operador','Intervención','Estado','Estado incidencia');
 
             array_push($excluir,'last_updated');
             array_push($excluir,'status_pds');
@@ -421,10 +421,12 @@ class Incidencia_model extends CI_Model {
         if($acceso=="admin"){
             $sql .= 'incidencias.status  AS `Estado SAT`,';
             $sql .= 'incidencias.last_updated, ';
-            $sql .= 'incidencias.status_pds as `Estado PDS`';
+            $sql .= 'incidencias.status_pds as `Estado PDS`,
+                    type_incidencia.title as `Estado Incidencia`';
 
         }else{
-            $sql .= 'incidencias.status_pds as `Estado PDS`';
+            $sql .= 'incidencias.status_pds as `Estado PDS`,
+                    type_incidencia.title as `Estado Incidencia`';
         }
         $sql = rtrim($sql,",");
 
@@ -446,6 +448,7 @@ class Incidencia_model extends CI_Model {
                 LEFT OUTER JOIN brand_device ON device.brand_device = brand_device.id_brand_device
 
                 LEFT JOIN pds_supervisor ON pds.id_supervisor= pds_supervisor.id
+                LEFT JOIN type_incidencia ON incidencias.id_type_incidencia = type_incidencia.id_type_incidencia
                 LEFT JOIN province ON pds.province= province.id_province
 
 

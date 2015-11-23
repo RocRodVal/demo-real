@@ -12,7 +12,7 @@
 		                echo '<p>No hay dispositivos.</p>';
 		            } else {
 		            ?>
-		            	<h1 class="page-header">Dispositivos</h1>
+		            	<h1 class="page-header">Dispositivos <a href="<?=site_url('admin/exportar_dispositivos_almacen/xls');?>" title="Exportar Excel">Exportar Excel</a></h1>
 		                <div class="table-responsive">
 		                    <table class="table table-striped table-bordered table-hover" id="dataTables-example">
 		                        <thead>
@@ -47,7 +47,7 @@
 		                echo '<p>No hay alarmas.</p>';
 		            } else {
 		            ?>
-		            	<h1 class="page-header">Alarmas</h1>
+		            	<h1 class="page-header">Alarmas <a href="<?=site_url('admin/exportar_alarmas_almacen/xls');?>" title="Exportar Excel">Exportar Excel</a></h1>
 		                <div class="table-responsive">
 		                    <table class="table table-striped table-bordered table-hover" id="dataTables-example">
 		                        <thead>

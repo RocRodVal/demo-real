@@ -385,9 +385,56 @@ class Tienda_model extends CI_Model {
         $resultados = $this->get_stock_cruzado();
 
         $arr_titulos = array('Id dispositivo','Fabricante','Dispositivo','Ud. pds','Stock necesario','Uds. Almacén','Balance');
-        $excluir = array();
+        $excluir = array('status');
         $datos = preparar_array_exportar($resultados,$arr_titulos,$excluir);
         exportar_fichero($formato,$datos,"Balance_Dispositivos__".date("d-m-Y"));
+
+
+    }
+
+
+
+    /*
+    * Generar Exportacion de dispositivos en almacén
+    */
+    public function exportar_dispositivos_almacen($formato="csv") {
+
+        $this->load->dbutil();
+        $this->load->helper('file');
+        $this->load->helper('csv');
+        $this->load->helper('download');
+
+        $resultados = $this->tienda_model->get_devices_almacen_exportar();
+
+        $arr_titulos = array('Dispositivo','Unidades');
+        $excluir = array();
+
+        $datos = preparar_array_exportar($resultados,$arr_titulos,$excluir);
+        exportar_fichero($formato,$datos,"Dispositivos_Almacen__".date("d-m-Y"));
+
+
+    }
+
+
+
+    /*
+    * Generar Exportacion de alarmas en almacén
+    */
+    public function exportar_alarmas_almacen($formato="csv") {
+
+        $this->load->dbutil();
+        $this->load->helper('file');
+        $this->load->helper('csv');
+        $this->load->helper('download');
+
+
+        $resultados = $this->tienda_model->get_alarms_almacen_reserva_exportar();
+
+        $arr_titulos = array('Marca', 'Alarma', 'Unidades');
+        $excluir = array();
+
+        $datos = preparar_array_exportar($resultados,$arr_titulos,$excluir);
+        exportar_fichero($formato,$datos,"Balance_Alarmas__".date("d-m-Y"));
 
 
     }
@@ -1186,6 +1233,19 @@ class Tienda_model extends CI_Model {
 
 		return $query->result();
 	}
+
+    public function get_devices_almacen_exportar() {
+
+        $query = $this->db->select('device.device, COUNT(devices_almacen.id_device) AS unidades')
+            ->join('device','devices_almacen.id_device = device.id_device')
+            ->where('devices_almacen.status','En stock')
+            ->where('device.status','Alta')
+            ->group_by('devices_almacen.id_device')
+            ->order_by('device')
+            ->get('devices_almacen');
+
+        return $query->result();
+    }
 	
 	
 	public function get_devices() {
@@ -1303,6 +1363,29 @@ class Tienda_model extends CI_Model {
 	
 		return $query->result();
 	}
+
+
+    public function get_alarms_almacen_reserva_exportar($dueno = NULL) {
+
+        $query = $this->db->select('brand_alarm.brand, alarm.alarm,  alarm.units')
+            ->join('client','alarm.client_alarm = client.id_client')
+            ->join('brand_alarm','alarm.brand_alarm = brand_alarm.id_brand_alarm')
+            ->join('type_alarm','alarm.type_alarm = type_alarm.id_type_alarm')
+            ->order_by('brand')
+            ->order_by('code')
+            ->order_by('alarm')
+            ->where('alarm.status','Alta');
+
+        if(! is_null($dueno)){
+            $query->where('alarm.client_alarm',$dueno);
+        }
+        $query = $this->db->get('alarm');
+
+
+        return $query->result();
+    }
+
+
 
     public function get_alarms_almacen() {
 	

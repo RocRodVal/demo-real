@@ -228,8 +228,7 @@
                                     ?>
                                 </tr>
 
-                               <?php /*
-                                            COMENTADO DE MOMENTO HASTA ACEPTACION
+
                                 <tr>
                                     <th>En proceso &lt; 72h</th>
                                     <?php
@@ -239,16 +238,17 @@
                                     {
                                         echo "<td>";
                                         echo ($valor->cantidad > 0)
-                                            ? "<a href='$controlador/exportar_cdm_incidencias/$mes_idx/2/1' >".$valor->cantidad."</a>"
+                                            ? "<a href='".base_url("informe/exportar_cdm_incidencias/$anio/$mes_idx/2/1")."' >".$valor->cantidad."</a>"
                                             : $valor->cantidad;
 
                                         $total += $valor->cantidad;
+                                        $mes_idx++;
                                         echo "</td>";
                                     }
                                     echo '<td class="total">'.$total.'</td>';
                                     ?>
                                 </tr>
-                                */?>
+
 
                                 <tr>
                                     <th>Finalizadas &gt; 72h</th>
@@ -271,8 +271,8 @@
                                 </tr>
 
 
-                        <?php /*
-                                            COMENTADO DE MOMENTO HASTA ACEPTACION
+
+
                         <tr>
                             <th>En proceso &gt; 72h</th>
                             <?php
@@ -282,16 +282,17 @@
                             {
                                 echo "<td>";
                                 echo ($valor->cantidad > 0)
-                                    ? "<a href='$controlador/exportar_cdm_incidencias/$mes_idx/2/0' >".$valor->cantidad."</a>"
+                                    ? "<a href='".base_url("informe/exportar_cdm_incidencias/$anio/$mes_idx/2/0")."' >".$valor->cantidad."</a>"
                                     : $valor->cantidad;
 
                                 $total += $valor->cantidad;
+                                $mes_idx++;
                                 echo "</td>";
                             }
                             echo '<td class="total">'.$total.'</td>';
                             ?>
-                        </tr> */
-                        ?>
+                        </tr>
+
 
                             <tr class="separador"><?=$separador_td?></tr>
 
