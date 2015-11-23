@@ -895,7 +895,9 @@ class Informe_model extends CI_Model
                             incidencias.foto_url_3, incidencias.contacto, incidencias.phone, incidencias.email,incidencias.id_operador,
                             incidencias.intervencion,';
 
-        $sql .= 'incidencias.status_pds as `Estado PDS`,
+        $sql .= 'incidencias.status as `Estado`,
+                 incidencias.last_updated as `Última modificación`,
+                 incidencias.status_pds as `Estado PDS`,
                  type_incidencia.title as `Estado Incidencia`,';
 
         $sql = rtrim($sql,",");
