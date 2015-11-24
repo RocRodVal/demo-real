@@ -56,8 +56,8 @@
 
                                 </tr>
                                 <tr>
-
-                                    <th class="text" colspan="2">Mueble</th>
+                                    <th class="text">PdV/Mueble</th>
+                                    <th class="text">Mueble</th>
                                     <?php foreach ($tipologias as $tipologia) {
                                        ?>
                                         <th class="tipo"><?= $tipologia->titulo  ." <!--({$tipologia->id_tipologia})--> " ?></th>
