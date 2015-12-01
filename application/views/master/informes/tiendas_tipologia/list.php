@@ -56,13 +56,14 @@
 
                                 </tr>
                                 <tr>
-                                    <th class="text">PdV/Mueble</th>
+                                    <th class="text">Tiendas por mueble</th>
                                     <th class="text">Mueble</th>
                                     <?php foreach ($tipologias as $tipologia) {
                                        ?>
                                         <th class="tipo"><?= $tipologia->titulo  ." <!--({$tipologia->id_tipologia})--> " ?></th>
-                                    <?php  }?>
-                                    <th class="tipo">Tipo</th>
+                                    <?php  } ?>
+
+                                    <?php /* ?><th class="tipo">Tipo</th> */?>
                                 </tr>
 
                                 <?php
@@ -132,7 +133,7 @@
 
                                         }
                                         ?>
-                                        <td><?=$display->tipo_mueble?></td>
+                                        <?php /* <td><?=$display->tipo_mueble?></td> */ ?>
                                     </tr>
 
                                 <?php  } ?>
