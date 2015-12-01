@@ -52,7 +52,7 @@
                                         <?php
                                     }
                                     ?>
-                                    <th class="num primera-linea">&nbsp;</th>
+                                    <?php /*<th class="num primera-linea">&nbsp;</th> */?>
 
                                 </tr>
                                 <tr>
