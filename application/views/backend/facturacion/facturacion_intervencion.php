@@ -47,7 +47,7 @@
 		                            <th>Fecha</th>
                                     <th>Intervención</th>
 		                            <th>SFID</th>
-		                            <th>Tipo</th>
+		                            <th>Tipología</th>
 		                            <th>Instalador</th>
                                     <th>Dueño</th>
 		                            <th>Dispositivos</th>
@@ -63,7 +63,7 @@
 		                                <td><?php echo date("d/m/Y",strtotime($item_facturacion->fecha)); ?></td>
                                         <td><?php echo $item_facturacion->visita ?></td>
 		                                <td><?php echo $item_facturacion->SFID ?></td>
-		                                <td><?php echo $item_facturacion->pds ?></td>
+                                        <td><?php echo $item_facturacion->tipo."-".$item_facturacion->subtipo."-".$item_facturacion->segmento."-".$item_facturacion->tipologia ?></td>
 		                                <td><?php echo $item_facturacion->instalador ?></td>
                                         <td><?php echo $item_facturacion->dueno  ?></td>
 		                                <td><?php echo $item_facturacion->dispositivos ?></td>
