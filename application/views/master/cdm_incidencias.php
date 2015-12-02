@@ -207,7 +207,10 @@
                                 </tr>
 
                             <tr class="separador"><?=$separador_td?></tr>
-
+                                <?php
+                                    // FINALIZADAS y EN PROCESO <72H
+                                    $total_menos_72 = array();
+                                ?>
                                 <tr>
                                     <th>Finalizadas &lt; 72h</th>
                                     <?php
@@ -221,8 +224,15 @@
                                             : $valor->cantidad;
 
                                         $total += $valor->cantidad;
+
+                                        $total_menos_72[$mes_idx] = $valor->cantidad;   // Sumar al total < 72 las finalizadas <72
+
                                         $mes_idx++;
                                         echo "</td>";
+
+
+
+
                                     }
                                     echo '<td class="total">'.$total.'</td>';
                                     ?>
@@ -242,6 +252,8 @@
                                             : $valor->cantidad;
 
                                         $total += $valor->cantidad;
+
+                                        $total_menos_72[$mes_idx] += $valor->cantidad;   // Sumar al total <72 las En proceso <72
                                         $mes_idx++;
                                         echo "</td>";
                                     }
@@ -250,6 +262,31 @@
                                 </tr>
 
 
+                                <tr>
+                                    <th>TOTAL  &lt; 72h</th>
+                                    <?php
+                                        $total = 0;
+                                        $mes_idx = $primer_mes;
+
+                                        foreach($total_menos_72 as $cantidad)
+                                        {
+                                            echo "<td>";
+                                            /*echo ($valor->cantidad > 0)
+                                                ? "<a href='".base_url("informe/exportar_cdm_incidencias/$anio/$mes_idx/2/1")."' >".$valor->cantidad."</a>"
+                                                : $valor->cantidad;*/
+                                            echo $cantidad;
+                                            $total += $cantidad; // Total de la línea
+                                            $mes_idx++;
+                                            echo "</td>";
+                                        }
+                                        echo '<td class="total">'.$total.'</td>';
+                                    ?>
+                                </tr>
+
+                                <?php
+                                // FINALIZADAS y EN PROCESO <72H
+                                $total_mas_72 = array();
+                                ?>
                                 <tr>
                                     <th>Finalizadas &gt; 72h</th>
                                     <?php
@@ -263,6 +300,9 @@
                                             : $valor->cantidad;
 
                                         $total += $valor->cantidad;
+                                        $total_mas_72[$mes_idx] = $valor->cantidad;  // Sumar al total >72 las Finalidas >72
+
+
                                         $mes_idx++;
                                         echo "</td>";
                                     }
@@ -286,6 +326,8 @@
                                     : $valor->cantidad;
 
                                 $total += $valor->cantidad;
+
+                                $total_mas_72[$mes_idx] += $valor->cantidad;  // Sumar al total >72 las En proceso >72
                                 $mes_idx++;
                                 echo "</td>";
                             }
@@ -293,6 +335,27 @@
                             ?>
                         </tr>
 
+
+                        <tr>
+                            <th>TOTAL  &gt; 72h</th>
+                            <?php
+                            $total = 0;
+                            $mes_idx = $primer_mes;
+
+                            foreach($total_mas_72 as $cantidad)
+                            {
+                                echo "<td>";
+                                /*echo ($valor->cantidad > 0)
+                                    ? "<a href='".base_url("informe/exportar_cdm_incidencias/$anio/$mes_idx/2/1")."' >".$valor->cantidad."</a>"
+                                    : $valor->cantidad;*/
+                                echo $cantidad;
+                                $total += $cantidad; // Total de la línea
+                                $mes_idx++;
+                                echo "</td>";
+                            }
+                            echo '<td class="total">'.$total.'</td>';
+                            ?>
+                        </tr>
 
                             <tr class="separador"><?=$separador_td?></tr>
 
