@@ -9,7 +9,7 @@
             <div class="row" >
                 <div class="col-lg-12">
                     <div class="filtro">
-                        <form action="<?=base_url()?>master/estado_incidencias/abiertas" method="post" class="filtros form-mini autosubmit col-lg-12">
+                        <form action="<?=base_url($controlador)?>/estado_incidencias/abiertas" method="post" class="filtros form-mini autosubmit col-lg-12">
                             <div class="col-lg-3">
                                 <label for="id_tipo">Tipo PDS: </label>
                                 <select name="id_tipo" id="id_tipo" class="form-control input-sm">

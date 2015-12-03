@@ -12,7 +12,7 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="filtro">
-                            <form action="<?=base_url()?>master/estado_incidencias/cerradas" method="post" class="filtros form-mini autosubmit col-lg-12">
+                            <form action="<?=base_url($controlador)?>/estado_incidencias/cerradas" method="post" class="filtros form-mini autosubmit col-lg-12">
 
                                 <div class="col-lg-3">
                                     <label for="id_tipo">Tipo PDS: </label>

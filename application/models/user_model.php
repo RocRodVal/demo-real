@@ -112,10 +112,17 @@ class User_model extends CI_Model {
 
         $query = $this->db->select('*')
             ->where('sfid',$sfid)
-            ->where('password',$password)
-            ->where('type',$tipo_usuario)
-            ->limit(1)
-            ->get('agent');
+            ->where('password',$password);
+
+        if(is_numeric($tipo_usuario)) {
+            $query = $this->db->where('type', $tipo_usuario);
+        }
+        elseif(is_array($tipo_usuario))
+        {
+            $query = $this->db->where_in('type',$tipo_usuario);
+        }
+
+        $query = $this->db->limit(1)->get('agent');
 
         if($query->num_rows()==1)
         {
@@ -189,6 +196,11 @@ class User_model extends CI_Model {
         // Acceso Territorio
         else if($this->login_tipo($data,12)){
             $entorno = "territorio";
+
+        }
+        // Acceso TT PP
+        else if($this->login_tipo($data,13)){
+            $entorno = "ttpp";
 
         }
         // Acceso tienda

@@ -44,7 +44,7 @@ class Categoria_Model extends CI_Model
         }
         $query = $this->db->get('pds_tipo');
 
-        return (($unico) ? $query->row_array() : $query->result_array());
+        return $query->result_array();
     }
     /**
      * Devuelve un array de SUBTIPOS de PDS.
@@ -52,12 +52,17 @@ class Categoria_Model extends CI_Model
      * @param $array_tipos
      * @return mixed
      */
-    public function get_subtipos_pds($id_tipo=NULL)
+    public function get_subtipos_pds($id_tipo=NULL,$id_subtipo=NULL)
     {
         $query = $this->db->select('*');
         if(!empty($id_tipo))
         {
             $query = $this->db->where('id_tipo',$id_tipo);
+        }
+
+        if(!empty($id_subtipo))
+        {
+            $query = $this->db->where("id",$id_subtipo);
         }
         $query = $this->db->get('pds_subtipo');
 
@@ -104,6 +109,27 @@ class Categoria_Model extends CI_Model
 
         return $query->result_array();
     }
+
+
+    public function get_tipologias_filtradas($id_tipo=NULL, $id_subtipo= NULL)
+    {
+
+            $query = $this->db->select('pds_tipologia.*')
+                ->join('pds_subtipo_tipologia','pds_subtipo_tipologia.id_tipologia = pds_tipologia.id')
+                ->join ('pds_subtipo','pds_subtipo_tipologia.id_subtipo=pds_subtipo.id')
+                ->join('pds_tipo','pds_tipo.id = pds_subtipo.id_tipo');
+
+
+            if(!is_null($id_subtipo)) $query = $this->db->where('pds_subtipo_tipologia.id_subtipo = '.$id_subtipo);
+            if(!is_null($id_tipo))    $query = $this->db->where('pds_tipo.id = '.$id_tipo);
+
+            $query = $this->db->get('pds_tipologia');
+
+
+        return $query->result_array();
+    }
+
+
 
 
     public function existe_mobiliario($id_tipo,$id_subtipo,$id_segmento,$id_tipologia)
