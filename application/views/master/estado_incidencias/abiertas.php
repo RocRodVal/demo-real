@@ -10,6 +10,55 @@
                 <div class="col-lg-12">
                     <div class="filtro">
                         <form action="<?=base_url()?>master/estado_incidencias/abiertas" method="post" class="filtros form-mini autosubmit col-lg-12">
+                            <div class="col-lg-3">
+                                <label for="id_tipo">Tipo PDS: </label>
+                                <select name="id_tipo" id="id_tipo" class="form-control input-sm">
+                                    <option value="" <?php echo ($id_tipo==="") ? 'selected="selected"' : ''?>>Cualquiera...</option>
+                                    <?php foreach($tipos as $tipo){
+                                        echo '<option value="'.$tipo["id"].'"
+                                                    '.(($id_tipo == $tipo["id"]) ?  ' selected="selected" ' : '' ).'
+                                                >'.$tipo["titulo"].'</option>';
+                                    }?>
+                                </select>
+                            </div>
+
+                            <div class="col-lg-3">
+                                <label for="id_subtipo">Subtipo PDS: </label>
+                                <select name="id_subtipo" id="id_subtipo" class="form-control input-sm">
+                                    <option value="" <?php echo ($id_subtipo==="") ? 'selected="selected"' : ''?>>Cualquiera...</option>
+                                    <?php foreach($subtipos as $tipo){
+                                        echo '<option value="'.$tipo["id"].'"
+                                                    '.(($id_subtipo == $tipo["id"]) ?  ' selected="selected" ' : '' ).'
+                                                >'.$tipo["titulo"].'</option>';
+                                    }?>
+                                </select>
+                            </div>
+
+                            <div class="col-lg-3">
+                                <label for="id_segmento">Segmento PDS: </label>
+                                <select name="id_segmento" id=id_segmento" class="form-control input-sm">
+                                    <option value="" <?php echo ($id_segmento==="") ? 'selected="selected"' : ''?>>Cualquiera...</option>
+                                    <?php foreach($segmentos as $segmento){
+                                        echo '<option value="'.$segmento["id"].'"
+                                                    '.(($id_segmento == $segmento["id"]) ?  ' selected="selected" ' : '' ).'
+                                                >'.$segmento["titulo"].'</option>';
+                                    }?>
+                                </select>
+                            </div>
+
+                            <div class="col-lg-3">
+                                <label for="id_tipologia">Tipologías PDS: </label>
+                                <select name="id_tipologia" id=id_tipologia" class="form-control input-sm">
+                                    <option value="" <?php echo ($id_tipologia==="") ? 'selected="selected"' : ''?>>Cualquiera...</option>
+                                    <?php foreach($tipologias as $tipo){
+                                        echo '<option value="'.$tipo["id"].'"
+                                                    '.(($id_tipologia == $tipo["id"]) ?  ' selected="selected" ' : '' ).'
+                                                >'.$tipo["titulo"].'</option>';
+                                    }?>
+                                </select>
+                            </div>
+
+                            <div class="clearfix"></div>
 
                             <div class="col-lg-3">
                                 <label for="status_pds">Estado PDS: </label>
@@ -26,11 +75,11 @@
                                 <select name="territory" id="territory" class="form-control input-sm">
                                     <option value="" <?php echo ($territory==="") ? 'selected="selected"' : ''?>>Cualquier territorio</option>
                                     <?php
-                                        foreach($territorios as $territorio)
-                                        {
-                                            $attr = ($territorio->id_territory === $territory) ? ' selected="selected" ' :'';
-                                            echo '<option value="'.$territorio->id_territory.'" '.$attr.'>'.$territorio->territory.'</option>';
-                                        }
+                                    foreach($territorios as $territorio)
+                                    {
+                                        $attr = ($territorio->id_territory === $territory) ? ' selected="selected" ' :'';
+                                        echo '<option value="'.$territorio->id_territory.'" '.$attr.'>'.$territorio->territory.'</option>';
+                                    }
                                     ?>
                                 </select>
                             </div>

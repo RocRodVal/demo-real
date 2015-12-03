@@ -243,8 +243,8 @@ class Incidencia_model extends CI_Model {
 
 
         if(count($arr_agentes_excluidos)  > 0){
-            foreach($arr_agentes_excluidos as $agente){ $agentes_excluidos .= ("'".$agente."',"); }
-            //$agentes_excluidos = (" (".implode(",",$arr_agentes_excluidos).") ");
+            foreach($arr_agentes_excluidos as $agente) $agentes_excluidos .= ("'".$agente."',");
+
         }
 
         $agentes_excluidos  = rtrim($agentes_excluidos,",");
@@ -260,52 +260,39 @@ class Incidencia_model extends CI_Model {
                                 WHERE chat.status = 'Nuevo'
                                 AND incidencias.id_incidencia = chat.id_incidencia
                                 AND agent.type NOT IN ($agentes_excluidos)) as nuevos",FALSE)
-            /*->join('pds','incidencias.id_pds = pds.id_pds','left')
-            ->join('displays_pds','incidencias.id_displays_pds= displays_pds.id_displays_pds')
-            ->join('display','displays_pds.id_display=display.id_display')
-            ->join('devices_pds','incidencias.id_devices_pds=devices_pds.id_devices_pds','left')
-            ->join('device','devices_pds.id_device=device.id_device','left')
-            ->join('territory','territory.id_territory=pds.territory','left')*/
 
 
-            ->join('pds','incidencias.id_pds = pds.id_pds','left outer')
-            ->join('pds_supervisor','pds.id_supervisor= pds_supervisor.id','left')
-            ->join('province','pds.province= province.id_province','left')
-            ->join('displays_pds','incidencias.id_displays_pds= displays_pds.id_displays_pds','left outer')
-            ->join('display','displays_pds.id_display=display.id_display','left outer')
-            ->join('devices_pds','incidencias.id_devices_pds=devices_pds.id_devices_pds','left outer')
-            ->join('device','devices_pds.id_device=device.id_device','left outer')
-            ->join('territory','territory.id_territory=pds.territory','left outer')
-            ->join('brand_device','device.brand_device = brand_device.id_brand_device','left outer')
-        ;
+                 ->join('pds','incidencias.id_pds = pds.id_pds','left outer')
+                 ->join('pds_supervisor','pds.id_supervisor= pds_supervisor.id','left')
+                 ->join('province','pds.province= province.id_province','left')
+                 ->join('displays_pds','incidencias.id_displays_pds= displays_pds.id_displays_pds','left outer')
+                 ->join('display','displays_pds.id_display=display.id_display','left outer')
+                 ->join('devices_pds','incidencias.id_devices_pds=devices_pds.id_devices_pds','left outer')
+                 ->join('device','devices_pds.id_device=device.id_device','left outer')
+                 ->join('territory','territory.id_territory=pds.territory','left outer')
+                 ->join('brand_device','device.brand_device = brand_device.id_brand_device','left outer');
 
 
 
         /** Aplicar filtros desde el array, de manera manual **/
-        if(isset($filtros["status"]) && !empty($filtros["status"])) $this->db->where('incidencias.status',$filtros['status']);
-        if(isset($filtros["status_pds"]) && !empty($filtros["status_pds"])) $this->db->where('incidencias.status_pds',$filtros['status_pds']);
-        if(isset($filtros["id_incidencia"]) && !empty($filtros["id_incidencia"])) $this->db->where('id_incidencia',$filtros['id_incidencia']);
-        if(isset($filtros["territory"]) && !empty($filtros["territory"])) $this->db->where('pds.territory',$filtros['territory']);
-        if(isset($filtros["brand_device"]) && !empty($filtros["brand_device"])) {
-            $this->db->where('device.brand_device',$filtros['brand_device']);
-        }
-        if(isset($filtros["id_display"]) && !empty($filtros["id_display"])) {
-            //$this->db->where('incidencias.fail_device','1');
-            $this->db->where('display.id_display',$filtros['id_display']);
-        }
-        if(isset($filtros["id_device"]) && !empty($filtros["id_device"])) {
-            //$this->db->where('incidencias.fail_device','1');
-            $this->db->where('device.id_device',$filtros['id_device']);
-        }
-        if(isset($filtros["id_supervisor"]) && !empty($filtros["id_supervisor"])) {
-            //$this->db->where('incidencias.fail_device','1');
-            $this->db->where('pds.id_supervisor',$filtros['id_supervisor']);
-        }
-        if(isset($filtros["id_provincia"]) && !empty($filtros["id_provincia"])) {
-            //$this->db->where('incidencias.fail_device','1');
-            $this->db->where('province.id_province',$filtros['id_provincia']);
-        }
-        if(isset($filtros["reference"]) && !empty($filtros["reference"])) $this->db->where('reference',$filtros['reference']);
+        if(isset($filtros["status"])        && !empty($filtros["status"]))          $this->db->where('incidencias.status',$filtros['status']);
+        if(isset($filtros["status_pds"])    && !empty($filtros["status_pds"]))      $this->db->where('incidencias.status_pds',$filtros['status_pds']);
+        if(isset($filtros["id_incidencia"]) && !empty($filtros["id_incidencia"]))   $this->db->where('id_incidencia',$filtros['id_incidencia']);
+        if(isset($filtros["territory"])     && !empty($filtros["territory"]))       $this->db->where('pds.territory',$filtros['territory']);
+        if(isset($filtros["brand_device"])  && !empty($filtros["brand_device"]))    $this->db->where('device.brand_device',$filtros['brand_device']);
+
+        if(isset($filtros["id_display"])    && !empty($filtros["id_display"]))      $this->db->where('display.id_display',$filtros['id_display']);
+        if(isset($filtros["id_device"])     && !empty($filtros["id_device"]))       $this->db->where('device.id_device',$filtros['id_device']);
+        if(isset($filtros["id_supervisor"]) && !empty($filtros["id_supervisor"]))   $this->db->where('pds.id_supervisor',$filtros['id_supervisor']);
+        if(isset($filtros["id_provincia"])  && !empty($filtros["id_provincia"]))    $this->db->where('province.id_province',$filtros['id_provincia']);
+
+        if(isset($filtros["reference"])     && !empty($filtros["reference"]))       $this->db->where('reference',$filtros['reference']);
+
+        if(isset($filtros["id_tipo"])       && !empty($filtros["id_tipo"]))         $this->db->where('pds.id_tipo',$filtros['id_tipo']);
+        if(isset($filtros["id_subtipo"])    && !empty($filtros["id_subtipo"]))      $this->db->where('pds.id_subtipo',$filtros['id_subtipo']);
+        if(isset($filtros["id_segmento"])   && !empty($filtros["id_segmento"]))     $this->db->where('pds.id_segmento',$filtros['id_segmento']);
+        if(isset($filtros["id_tipologia"])  && !empty($filtros["id_tipologia"]))    $this->db->where('pds.id_tipologia',$filtros['id_tipologia']);
+
 
 
         /* Obtenemos la condición por tipo de incidencia */
@@ -496,6 +483,20 @@ class Incidencia_model extends CI_Model {
 
         if(isset($filtros["reference"]) && !empty($filtros["reference"])) $sql .=(' AND reference= '.$filtros['reference']);
 
+        if(isset($filtros["id_tipo"]) && !empty($filtros["id_tipo"])) {
+            $sql .= (' AND  pds.id_tipo ="'.$filtros['id_tipo'].'" ');
+        }
+        if(isset($filtros["id_subtipo"]) && !empty($filtros["id_subtipo"])) {
+            $sql .= (' AND  pds.id_subtipo ="'.$filtros['id_subtipo'].'" ');
+        }
+        if(isset($filtros["id_segmento"]) && !empty($filtros["id_segmento"])) {
+            $sql .= (' AND  pds.id_segmento ="'.$filtros['id_segmento'].'" ');
+        }
+        if(isset($filtros["id_tipologia"]) && !empty($filtros["id_tipologia"])) {
+            $sql .= (' AND  pds.id_tipologia ="'.$filtros['id_tipologia'].'" ');
+        }
+
+
         $campo_orden = $orden = NULL;
         if(count($array_orden) > 0) {
             foreach ($array_orden as $key=>$value){
@@ -605,6 +606,19 @@ class Incidencia_model extends CI_Model {
         }
 
         if(isset($filtros["reference"]) && !empty($filtros["reference"])) $this->db->where('reference',$filtros['reference']);
+
+        if(isset($filtros["id_tipo"]) && !empty($filtros["id_tipo"])) {
+            $this->db->where('pds.id_tipo',$filtros['id_tipo']);
+        }
+        if(isset($filtros["id_subtipo"]) && !empty($filtros["id_subtipo"])) {
+            $this->db->where('pds.id_subtipo',$filtros['id_subtipo']);
+        }
+        if(isset($filtros["id_segmento"]) && !empty($filtros["id_segmento"])) {
+            $this->db->where('pds.id_segmento',$filtros['id_segmento']);
+        }
+        if(isset($filtros["id_tipologia"]) && !empty($filtros["id_tipologia"])) {
+            $this->db->where('pds.id_tipologia',$filtros['id_tipologia']);
+        }
 
 
         /**
@@ -802,6 +816,7 @@ class Incidencia_model extends CI_Model {
 
         return $titulo_incidencias_estado->result();
     }
+
 
 
 }

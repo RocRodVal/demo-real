@@ -32,6 +32,10 @@ class Auth
             $this->permitted_roles = array();
         }
     }
+    public function get_roles()
+    {
+        return $this->permitted_roles;
+    }
 
     public function is_auth()
     {
@@ -46,5 +50,7 @@ class Auth
     public function get_type(){
         return $this->ci->session->userdata($this->sess_var_role);
     }
+
+
 
 }

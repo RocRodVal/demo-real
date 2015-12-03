@@ -10,7 +10,7 @@
 	                        <center><img src="<?=site_url('assets/images/logo-orange_big.png')?>" title="<?=lang('comun.titulo')?>" width="50%" /></center>
 	                    </div>
 	                    <div class="panel-body">
-	                        <form action="<?=site_url('master');?>" method="post" class="content_auto form_login">
+	                        <form action="<?=site_url($controlador);?>" method="post" class="content_auto form_login">
 	                        	<?php 
 	                        	if (isset($message)) 
 								{ 
