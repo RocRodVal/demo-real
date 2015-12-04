@@ -2383,7 +2383,7 @@ class Admin extends CI_Controller
         $xcrud_4->label('id_devices_display', 'Identificador')->label('client_panelado', 'Cliente')->label('id_panelado', 'REF.')->label('id_display', 'Mueble')->label('id_device', 'Dispositivo')->label('position', 'Posición')->label('description', 'Comentarios')->label('status', 'Estado');
         $xcrud_4->columns('id_devices_display,client_panelado,id_display,id_device,position,status');
         $xcrud_4->fields('client_panelado,id_display,id_device,position,description,status');
-
+        // $xcrud_4->where('status',array('Incidencia','Alta'));
         // Ocultar el botón de borrar para evitar borrados accidentales mientras no existan constraints en BD:
         $xcrud_4->unset_remove();
 
@@ -2883,7 +2883,7 @@ class Admin extends CI_Controller
         $xcrud_1->label('client_type_pds', 'Cliente')->label('id_displays_pds', 'REF.')->label('id_type_pds', 'Tipo')->label('id_pds', 'SFID')->label('id_panelado', 'Panelado')->label('id_display', 'Mueble')->label('position', 'Posición Orange')->label('description', 'Comentarios')->label('status', 'Estado');
         $xcrud_1->columns('client_type_pds,id_displays_pds,id_pds,id_tipo,id_subtipo,id_segmento,id_tipologia,id_display,position,status');
         $xcrud_1->fields('client_type_pds,id_displays_pds,id_pds,id_tipo,id_subtipo,id_segmento,id_tipologia,id_pds,id_display,position,description,status');
-        $xcrud_1->where('status','Alta');
+        $xcrud_1->where('status',array('Alta','Incidencia'));
         $xcrud_1->order_by('id_pds', 'asc');
         $xcrud_1->order_by('position', 'asc');
         $xcrud_1->show_primary_ai_column(true);
@@ -2928,7 +2928,7 @@ class Admin extends CI_Controller
         $xcrud_3->columns('client_type_pds,id_devices_pds,id_pds,id_displays_pds,id_display,id_device,position,IMEI,mac,status');
         $xcrud_3->fields('client_type_pds,id_devices_pds,id_pds,id_displays_pds,id_display,alta,id_device,position,serial,IMEI,mac,barcode,id_color_device,id_complement_device,id_status_device,id_status_packaging_device,picture_url_1,picture_url_2,picture_url_3,description,status');
 
-        $xcrud_3->where('status','Alta');
+         $xcrud_3->where('status',array('Alta','Incidencia'));
         $xcrud_3->order_by('id_pds', 'asc');
         $xcrud_3->order_by('id_displays_pds', 'asc');
         $xcrud_3->order_by('position', 'asc');
