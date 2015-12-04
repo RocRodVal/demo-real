@@ -228,7 +228,7 @@ class Informe extends CI_Controller {
         $this->load->model('categoria_model');
 
 
-        $tipologias = $this->categoria_model->get_tipologias_pds($id_tipologia,$id_subtipo);
+        $tipologias = $this->categoria_model->get_tipologias($id_tipologia,$id_subtipo);
             
        
         

@@ -83,7 +83,7 @@ class Categoria_Model extends CI_Model
      * Devuelve un array de TIPOLOGIAS de PDS
      * @return mixed
      */
-    public function get_tipologias_pds($id_tipologia=NULL, $id_subtipo= NULL)
+    public function get_tipologias($id_tipologia=NULL, $id_subtipo= NULL)
     {
         $query = $this->db->select('id_subtipo, id_tipologia as id, pds_tipologia.titulo');
         if(empty($id_subtipo) && is_null($id_subtipo))
@@ -107,7 +107,7 @@ class Categoria_Model extends CI_Model
     
     
     
-     public function get_tipologias_pds_OLD($id_tipologia=NULL, $id_subtipo= NULL)
+     public function get_tipologias_pds($id_tipologia=NULL, $id_subtipo= NULL)
     {
         if(empty($id_subtipo) && is_null($id_subtipo))
         {
