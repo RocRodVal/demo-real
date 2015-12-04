@@ -5237,14 +5237,7 @@ class Admin extends CI_Controller
                 }
             }
 
-            $data["id_tipo_visual"] = $id_tipo_visual;
-            $data["id_subtipo_visual"] = $id_subtipo_visual;
-            $data["id_segmento_visual"] = $id_segmento_visual;
-            $data["id_tipologia_visual"] = $id_tipologia_visual;
-
-            $data["sfid_visual"] = $sfid_visual;
-            $data["generado_visual"] = $generado_visual;
-
+            
             $this->session->set_userdata($data);
 
 
@@ -5291,7 +5284,7 @@ class Admin extends CI_Controller
                         }
 
                         $data['displays'] = $displays;
-                        $data['subtitle'] = 'Tipo de tienda';
+                        $data['subtitle'] = 'Tipo de tienda  VISTA 2';
                         $vista = 2;
                     }
 
@@ -5302,7 +5295,7 @@ class Admin extends CI_Controller
                         */
                     $tiendas = $this->tienda_model->search_pds($sfid_visual);
 
-
+                    $id_tipo_visual = $id_subtipo_visual = $id_segmento_visual = $id_tipologia_visual = NULL;
                     if (!empty($tiendas) && count($tiendas) == 1) {
 
                         $tienda = NULL;
@@ -5341,7 +5334,16 @@ class Admin extends CI_Controller
             }
 
 
+            $data["id_tipo_visual"] = $id_tipo_visual;
+            $data["id_subtipo_visual"] = $id_subtipo_visual;
+            $data["id_segmento_visual"] = $id_segmento_visual;
+            $data["id_tipologia_visual"] = $id_tipologia_visual;
 
+            $data["sfid_visual"] = $sfid_visual;
+            $data["generado_visual"] = $generado_visual;
+
+            
+            
             $data["vista"] = $vista;
 
             /* Pasar a la vista */
@@ -5386,20 +5388,14 @@ class Admin extends CI_Controller
             $id_dis   = $id_mueble;
 
             $xcrud = xcrud_get_instance();
-            $this->load->model('tienda_model');
-            $this->load->model('sfid_model');
+            $this->load->model(array('tienda_model','sfid_model','categoria_model'));
+            
 
 
 
             $display = $this->tienda_model->get_display($id_mueble);
 
-            /* Obtener los tipos de tienda para el select */
-            /** COMENTADO SELECT DEMOREAL $muebles = $this->tienda_model->get_displays_demoreal(); */
-            $muebles = $this->tienda_model->get_displays();
-            $data["muebles"] = $muebles;
-
-            /** COMENTADO SELECT DEMOREAL $data["tipos_tienda"] = $this->sfid_model->get_types_pds_demoreal(); */
-            $data["tipos_tienda"] = $this->sfid_model->get_types_pds();
+            
 
 
             $data['id_display']  = $display['id_display'];
@@ -5408,26 +5404,36 @@ class Admin extends CI_Controller
 
             $data['devices'] = $this->tienda_model->get_devices_display($id_dis);
 
-
+            // Inicialización de campos-categoría
+            $id_tipo_visual = $id_subtipo_visual = $id_segmento_visual = $id_tipologia_visual = NULL;
+            
             // OBTENER DE LA SESION, SI EXISTE
             if ($this->session->userdata("generado_visual") !== NULL && $this->session->userdata("generado_visual") === TRUE) {
-                $tipo_tienda_visual = $this->session->userdata("tipo_tienda_visual");
-                $panelado_visual = $this->session->userdata("panelado_visual");
+                $id_tipo_visual = $this->session->userdata("id_tipo_visual");
+                $id_subtipo_visual = $this->session->userdata("id_subtipo_visual");
+                $id_segmento_visual = $this->session->userdata("id_segmento_visual");
+                $id_tipologia_visual = $this->session->userdata("id_tipologia_visual");
+
                 $sfid_visual = $this->session->userdata("sfid_visual");
                 $generado_visual = $this->session->userdata("generado_visual");
 
-                $data["tipo_tienda_visual"] = $tipo_tienda_visual;
-                $data["panelado_visual"] = $panelado_visual;
+                $data["id_tipo_visual"] = $id_tipo_visual;
+                $data["id_subtipo_visual"] = $id_subtipo_visual;
+                $data["id_segmento_visual"] = $id_segmento_visual;
+                $data["id_tipologia_visual"] = $id_tipologia_visual;
+
                 $data["sfid_visual"] = $sfid_visual;
                 $data["generado_visual"] = $generado_visual;
+            }            
+            
+            /** COMENTADO SELECT DEMOREAL $data["tipos_tienda"] = $this->sfid_model->get_types_pds_demoreal(); */
+            $data["tipos"] = $this->categoria_model->get_tipos_pds();
+            $data["subtipos"] = array();
+            $data["segmentos"] = $this->categoria_model->get_segmentos_pds($id_segmento_visual);
+            $data["tipologias"] = array();
 
-
-            }
-
-
-
-
-            $data['title'] = 'Panelado genérico';
+        
+            $data['title'] = 'Muebles genéricos de la categoría';
             $data['subtitle'] = 'Planograma mueble  - '.$data['display'];
 
             /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
@@ -5455,8 +5461,8 @@ class Admin extends CI_Controller
             $id_dev = $this->uri->segment(5);
 
             $xcrud = xcrud_get_instance();
-            $this->load->model('tienda_model');
-            $this->load->model('sfid_model');
+            $this->load->model(array('tienda_model','sfid_model','categoria_model'));
+            
 
             /* Obtener los tipos de tienda para el select */
             /** COMENTADO SELECT DEMOREAL $muebles = $this->tienda_model->get_displays_demoreal(); */
@@ -5482,19 +5488,34 @@ class Admin extends CI_Controller
             $data['picture_url_dev'] = $device['picture_url'];
 
 
+            // Inicialización de campos-categoría
+            $id_tipo_visual = $id_subtipo_visual = $id_segmento_visual = $id_tipologia_visual = NULL;
+            
             // OBTENER DE LA SESION, SI EXISTE
             if ($this->session->userdata("generado_visual") !== NULL && $this->session->userdata("generado_visual") === TRUE) {
-                $tipo_tienda_visual = $this->session->userdata("tipo_tienda_visual");
-                $panelado_visual = $this->session->userdata("panelado_visual");
+                $id_tipo_visual = $this->session->userdata("id_tipo_visual");
+                $id_subtipo_visual = $this->session->userdata("id_subtipo_visual");
+                $id_segmento_visual = $this->session->userdata("id_segmento_visual");
+                $id_tipologia_visual = $this->session->userdata("id_tipologia_visual");
+
                 $sfid_visual = $this->session->userdata("sfid_visual");
                 $generado_visual = $this->session->userdata("generado_visual");
 
-                $data["tipo_tienda_visual"] = $tipo_tienda_visual;
-                $data["panelado_visual"] = $panelado_visual;
+                $data["id_tipo_visual"] = $id_tipo_visual;
+                $data["id_subtipo_visual"] = $id_subtipo_visual;
+                $data["id_segmento_visual"] = $id_segmento_visual;
+                $data["id_tipologia_visual"] = $id_tipologia_visual;
+
                 $data["sfid_visual"] = $sfid_visual;
                 $data["generado_visual"] = $generado_visual;
+            }            
+            
+            /** COMENTADO SELECT DEMOREAL $data["tipos_tienda"] = $this->sfid_model->get_types_pds_demoreal(); */
+            $data["tipos"] = $this->categoria_model->get_tipos_pds();
+            $data["subtipos"] = array();
+            $data["segmentos"] = $this->categoria_model->get_segmentos_pds($id_segmento_visual);
+            $data["tipologias"] = array();
 
-            }
 
             /** COMENTADO SELECT DEMOREAL $muebles = $this->tienda_model->get_displays_demoreal(); */
             $muebles = $this->tienda_model->get_displays();
@@ -5568,7 +5589,15 @@ class Admin extends CI_Controller
                 $data["generado_visual"] = $generado_visual;
 
             }
-
+            
+            
+            // Anular selectores de campos de categoría. Va por SFID
+            $data["id_tipo_visual"] = NULL;
+            $data["id_subtipo_visual"] = NULL;
+            $data["id_segmento_visual"] = NULL;
+            $data["id_tipologia_visual"] = NULL;
+            
+            
             /** COMENTADO SELECT DEMOREAL $muebles = $this->tienda_model->get_displays_demoreal(); */
             $muebles = $this->tienda_model->get_displays();
             $muebles = $this->tienda_model->get_displays_demoreal();
@@ -5659,7 +5688,13 @@ class Admin extends CI_Controller
                 $data["generado_visual"] = $generado_visual;
 
             }
-
+            
+            // Anular selectores de campos de categoría. Va por SFID
+            $data["id_tipo_visual"] = NULL;
+            $data["id_subtipo_visual"] = NULL;
+            $data["id_segmento_visual"] = NULL;
+            $data["id_tipologia_visual"] = NULL;
+            
             /** COMENTADO SELECT DEMOREAL $muebles = $this->tienda_model->get_displays_demoreal(); */
             $muebles = $this->tienda_model->get_displays();
             $data["muebles"] = $muebles;

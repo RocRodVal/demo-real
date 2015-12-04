@@ -28,7 +28,7 @@
 									{
 										?>
 
-										<a href="<?=site_url('admin/informe_visual_mueble_sfid')?>/<?php echo $display->id_pds.'/'.$display->id_displays_pds ?>">
+										<a href="<?=site_url($controlador.'/informe_visual_mueble_sfid')?>/<?php echo $display->id_pds.'/'.$display->id_displays_pds ?>">
 											<div class="caption" title="<?php echo strtoupper($display->display); ?>">
 											<img
 												src="<?=site_url('application/uploads/'.$display->picture_url.'')?>"
@@ -39,7 +39,7 @@
 									}
 									else{
 										?>
-										<a href="<?=site_url('admin/informe_visual_mueble_sfid')?>/<?php echo $display->id_pds.'/'.$display->id_display ?>"><?php echo strtoupper($display->display) ?></a><br clear="all" />
+										<a href="<?=site_url($controlador.'/informe_visual_mueble_sfid')?>/<?php echo $display->id_pds.'/'.$display->id_display ?>"><?php echo strtoupper($display->display) ?></a><br clear="all" />
 									<?php
 									}
 									?>

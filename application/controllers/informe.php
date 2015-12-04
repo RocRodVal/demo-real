@@ -229,7 +229,10 @@ class Informe extends CI_Controller {
 
 
         $tipologias = $this->categoria_model->get_tipologias_pds($id_tipologia,$id_subtipo);
-
+            
+       
+        
+        
         $resp = '<option value="" selected="selected">Escoge la tipología...</option>';
         foreach($tipologias as $tipologia){
             $s_selected = (!is_null($id_tipologia) && $id_tipologia == $tipologia["id"]) ? ' selected="selected" ' : '';

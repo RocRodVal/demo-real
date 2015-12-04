@@ -433,6 +433,13 @@ $(document).ready(function(){
     $("form.autosubmit select").on("change",function(){
        $(this).parents('form.autosubmit').submit();
     });
+    enfocar_campos();
+});
+
+
+
+function enfocar_campos()
+{
     // Marcar los campos seleccionados del filtro de dashboard: SELECTS
     $("form.filtros select,form.filtros input").each(function(){
         var valor = $(this).find("option:selected").val();
@@ -445,9 +452,7 @@ $(document).ready(function(){
         if(valor!='' && valor != undefined)     $(this).addClass("focused");
                                     else        $(this).removeClass("focused");
     });
-});
-
-
+}
 
 
 

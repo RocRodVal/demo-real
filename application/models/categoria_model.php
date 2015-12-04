@@ -85,6 +85,30 @@ class Categoria_Model extends CI_Model
      */
     public function get_tipologias_pds($id_tipologia=NULL, $id_subtipo= NULL)
     {
+        $query = $this->db->select('id_subtipo, id_tipologia as id, pds_tipologia.titulo');
+        if(empty($id_subtipo) && is_null($id_subtipo))
+        {
+            if(empty($id_tipologia) && is_null($id_tipologia))
+            {
+                $query = $this->db->where('id= '.$id_tipologia);
+            }
+        }
+        else
+        {
+            $query = $this->db->join('pds_subtipo_tipologia','pds_subtipo_tipologia.id_tipologia = pds_tipologia.id')
+                    ->where('pds_subtipo_tipologia.id_subtipo = '.$id_subtipo);
+         
+
+        }
+         $query = $this->db->get('pds_tipologia');
+         
+        return $query->result_array();
+    }
+    
+    
+    
+     public function get_tipologias_pds_OLD($id_tipologia=NULL, $id_subtipo= NULL)
+    {
         if(empty($id_subtipo) && is_null($id_subtipo))
         {
             if(empty($id_subtipo) && is_null($id_subtipo))
@@ -109,7 +133,7 @@ class Categoria_Model extends CI_Model
 
         return $query->result_array();
     }
-
+    
 
     public function get_tipologias_filtradas($id_tipo=NULL, $id_subtipo= NULL)
     {
@@ -150,7 +174,7 @@ class Categoria_Model extends CI_Model
 
     public function get_displays_categoria($id_tipo,$id_subtipo,$id_segmento,$id_tipologia)
     {
-        $query = $this->db->select ('displays_categoria.*, display.display')
+        $query = $this->db->select ('displays_categoria.*, display.*')
                 ->join('display','displays_categoria.id_display = display.id_display')
                 ->where('id_tipo',$id_tipo)
                 ->where('id_subtipo',$id_subtipo)

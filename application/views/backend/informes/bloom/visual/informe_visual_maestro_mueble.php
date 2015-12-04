@@ -23,7 +23,7 @@
                             foreach($devices as $device)
                             {
                                 ?>
-                                <a class="list-group-item" href="<?=site_url('admin/informe_visual_terminal/'.$id_display.'/'.$device->id_device)?>">
+                                <a class="list-group-item" href="<?=site_url($controlador.'/informe_visual_terminal/'.$id_display.'/'.$device->id_device)?>">
                                     <?php echo $device->position.'. '.$device->device ?>
                                 </a>
                             <?php

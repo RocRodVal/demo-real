@@ -9,6 +9,7 @@
             <div class="row">
                 <div class="col-lg-12">
                     <div class="row buscador">
+                        
                         <form action="<?=site_url($controlador.'/informe_visual');?>" method="post" class="form-inline filtros form-mini">
                             <div class="col-sm-12">
                                 <div class="form-group">
@@ -82,7 +83,7 @@
 
                                 <div class="form-group">
                                     <?php   if($generado_visual===TRUE)    {?>
-                                        <a href="<?=base_url("admin/informe_visual/reset")?>" class="reiniciar_busqueda"> <i class="glyphicon glyphicon-remove"></i> Resetear informe</a>
+                                        <a href="<?=base_url($controlador."/informe_visual/reset")?>" class="reiniciar_busqueda"> <i class="glyphicon glyphicon-remove"></i> Resetear informe</a>
                                     <?php } ?>
                                 </div>
 
@@ -97,10 +98,7 @@
 
             <?php
 
-                echo "  Tipo: $id_tipo_visual <br>
-                        Subtipo: $id_subtipo_visual <br>
-                        Segmento: $id_segmento_visual <br>
-                        Tipologí: $id_tipologia_visual <br>";
+                
             ?>
 
             <script>
@@ -121,7 +119,7 @@
 
                     }
 
-
+                   
                 });
             </script>
 
