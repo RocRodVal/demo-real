@@ -54,6 +54,8 @@
     <script src="<?php echo base_url(); ?>assets/js/incidencia/formulario_incidencia.js" type="text/javascript"></script>
     <script src="<?php echo base_url(); ?>assets/js/bootstrap-tooltip.js" type="text/javascript"></script>
     <script src="<?php echo base_url(); ?>assets/js/bootstrap-confirmation.js" type="text/javascript"></script>
+    
+    <script src="<?php echo base_url(); ?>assets/js/informes/informes.js"></script>
 </head>
 
 <?php

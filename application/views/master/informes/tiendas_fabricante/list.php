@@ -109,9 +109,8 @@
                         }
                         ?>
                               
-                            <tr class="separador">
-                                <th class="total" colspan="3"></th>
-                                <td class="total"><strong>Total tiendas / tipo:  <?=$segmento->num_pds?></strong></td>
+                            <tr class="separador">                                
+                                <td class="total" colspan="4"><strong>Total tiendas / tipo:  <?=$segmento->num_pds?></strong></td>
                             </tr>        
                             
                     <?php } ?>

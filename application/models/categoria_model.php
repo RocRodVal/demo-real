@@ -98,7 +98,7 @@ class Categoria_Model extends CI_Model
         }        
         if(!empty($id_tipologia) && !is_null($id_tipologia))
         {
-            $query = $this->db->where('pds_subtipo_tipologia.id_tipologia= '.$id_tipologia);
+            $query = $this->db->where('pds_subtipo_tipologia.id_tipologia',$id_tipologia);
         }
         $query= $this->db->distinct();
         $query = $this->db->group_by('id_tipologia');
