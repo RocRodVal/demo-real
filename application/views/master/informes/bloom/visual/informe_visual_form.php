@@ -17,7 +17,7 @@
                                     <?php
                                         $url_ajax_subtipos = site_url().'informe/subtipos_tienda/';
                                     ?>
-                                    <select id="id_tipo_visual" name="id_tipo_visual" class="form-control" onchange="cargar_subselect('id_tipo_visual','id_subtipo_visual',false,'<?=$url_ajax_subtipos?>');">
+                                    <select id="id_tipo_visual" name="id_tipo_visual" class="form-control" onchange="cargar_subselect('id_tipo_visual','id_subtipo_visual',false,'<?=$url_ajax_subtipos?>',function(){});">
                                         <option value="">Escoge el tipo...</option>
                                         <?php
                                         foreach($tipos as $tipo)
@@ -38,7 +38,7 @@
                                          $url_ajax_tipologias = base_url()."informe/tipologias_tienda/";
                                     ?>
                                     <select id="id_subtipo_visual" name="id_subtipo_visual" class="form-control"
-                                            onchange="cargar_subselect('id_subtipo_visual','id_tipologia_visual','<?=$id_tipologia_visual?>','<?=$url_ajax_tipologias?>');">
+                                            onchange="cargar_subselect('id_subtipo_visual','id_tipologia_visual','<?=$id_tipologia_visual?>','<?=$url_ajax_tipologias?>',function(){});">
                                             <option value="">Escoge un Tipo de tienda...</option>
                                     </select>
 
@@ -110,7 +110,7 @@
 
                             /// SUBTIPO
                             if($("#id_subtipo_visual").val()!= ""){
-                                cargar_subselect("id_subtipo_visual","id_tipologia_visual",'<?=$id_tipologia_visual?>',"<?=$url_ajax_tipologias?>");
+                                cargar_subselect("id_subtipo_visual","id_tipologia_visual",'<?=$id_tipologia_visual?>',"<?=$url_ajax_tipologias?>",function(){});
                             }
 
                         });

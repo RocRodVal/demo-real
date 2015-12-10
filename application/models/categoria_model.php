@@ -180,8 +180,8 @@ class Categoria_Model extends CI_Model
                 ->where('id_segmento',$id_segmento)
                 ->where('id_tipologia',$id_tipologia)
                 ->get('displays_categoria');
-
-
+        
+        
         return $query->result();
     }
 
