@@ -110,7 +110,7 @@
 
                             /// SUBTIPO
                             if($("#id_subtipo_visual").val()!= ""){
-                                cargar_subselect("id_subtipo_visual","id_tipologia_visual",'<?=$id_tipologia_visual?>',"<?=$url_ajax_tipologias?>");
+                                cargar_subselect("id_subtipo_visual","id_tipologia_visual",'<?=$id_tipologia_visual?>',"<?=$url_ajax_tipologias?>",function(){});
                             }
 
                         });

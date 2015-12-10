@@ -87,20 +87,22 @@ class Categoria_Model extends CI_Model
     {
         $query = $this->db->select('id_subtipo, id_tipologia as id, pds_tipologia.titulo');
         if(empty($id_subtipo) && is_null($id_subtipo))
-        {
-            if(empty($id_tipologia) && is_null($id_tipologia))
-            {
-                $query = $this->db->where('id= '.$id_tipologia);
-            }
+        {            
+            $query =$this->db->join('pds_subtipo_tipologia','pds_subtipo_tipologia.id_tipologia = pds_tipologia.id');
         }
         else
         {
+            $query = $this->db->select('id_subtipo, id_tipologia as id, pds_tipologia.titulo');
             $query = $this->db->join('pds_subtipo_tipologia','pds_subtipo_tipologia.id_tipologia = pds_tipologia.id')
                     ->where('pds_subtipo_tipologia.id_subtipo = '.$id_subtipo);
-         
-
+        }        
+        if(!empty($id_tipologia) && !is_null($id_tipologia))
+        {
+            $query = $this->db->where('pds_subtipo_tipologia.id_tipologia',$id_tipologia);
         }
-         $query = $this->db->get('pds_tipologia');
+        $query= $this->db->distinct();
+        $query = $this->db->group_by('id_tipologia');
+        $query = $this->db->get('pds_tipologia');
          
         return $query->result_array();
     }
@@ -119,7 +121,6 @@ class Categoria_Model extends CI_Model
             {
                 $query = $this->db->where('id= '.$id_tipologia);
             }
-
             $query = $this->db->get('pds_tipologia');
         }
         else
@@ -128,9 +129,7 @@ class Categoria_Model extends CI_Model
                 ->join('pds_subtipo_tipologia','pds_subtipo_tipologia.id_tipologia = pds_tipologia.id')
                 ->where('pds_subtipo_tipologia.id_subtipo = '.$id_subtipo)
                 ->get('pds_tipologia');
-
         }
-
         return $query->result_array();
     }
     
@@ -181,8 +180,8 @@ class Categoria_Model extends CI_Model
                 ->where('id_segmento',$id_segmento)
                 ->where('id_tipologia',$id_tipologia)
                 ->get('displays_categoria');
-
-
+        
+        
         return $query->result();
     }
 

@@ -14,6 +14,7 @@
             enfocar = true;
         }
 
+        //alert(callback);
         //alert(site_url+id_principal+'/'+id_secundario);
         
         if (id_principal != "") {

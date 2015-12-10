@@ -106,7 +106,7 @@ $(document).ready(function () {
     /** Efecto HOVER  en filas **/
     var  colorTemp, bgTemp,i;
 
-    $("table.table tr td").on("mouseover",function(){
+    $("table.table-hover tr td").on("mouseover",function(){
         colorTemp= new Array();
         bgTemp = new Array();
         i=0;
@@ -150,6 +150,15 @@ $(document).ready(function () {
         });
     });
 
+    $(".tiendas-fab table.table tr td table tr td").on("mouseover",function(){
+       $(this).css("background","transparent");
+       $(".tiendas-fab table.table tr td table ").css("background","transparent");
+    });
+    $(".tiendas-fab table.table tr td table tr td").on("mouseout",function(){
+        $(this).css("background","transparent");
+        $(".tiendas-fab table.table tr td table ").css("background","transparent");
+    });
+    
     /** Click en TH para ordenar **/
     $(".table-sorting th.sorting").on("click",function(){
         var campoOrdenar = $(this).attr("data-rel");
@@ -365,6 +374,7 @@ var confirmar_reset_incidencia = function(form_enviar, mensaje)
 
 var enviar_form = function(id_form)
 {
+   
     $("#"+id_form).submit();
 }
 
@@ -606,3 +616,29 @@ function validar_anadir_mueble_sfid()
     return (textareaVal != '' && muebleVal != 0);
 
 }
+
+
+
+
+$(document).ready(function(){
+    $("a.launch_planograma").click(function(){
+        //$(this).parent().parent().parent().parent().find("div.planograma").hide();
+        var pulsacion = this;
+        $(pulsacion).toggleClass("selected");  
+        
+        $(".tiendas-fab").find("div.planograma").fadeOut(function(){
+             
+            
+        });
+           
+           $(pulsacion).parent().find("div.planograma").toggle();
+           
+                
+                
+                      
+        
+        
+        
+        return false;
+    });
+});

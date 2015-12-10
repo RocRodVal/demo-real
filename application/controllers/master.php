@@ -15,6 +15,7 @@ class Master extends CI_Controller {
         // Carga de la clase de Colección de datos, para pasar variables a la vista.
         $this->load->library('data');
         $this->data->set("controlador","master");
+        $this->data->set("acceso","master");
         $this->data->set("accion_home","estado_incidencias/abiertas");
         $this->data->set("entrada",($this->data->get("controlador") . '/' . $this->data->get("accion_home")));
 
@@ -1776,7 +1777,7 @@ class Master extends CI_Controller {
         }
         else
         {
-            redirect('admin','refresh');
+            redirect('master','refresh');
         }
     }
 
@@ -1814,7 +1815,7 @@ class Master extends CI_Controller {
 
             $total_registros = 0;
 
-            $controlador_origen = "admin"; //  Controlador por defecto
+            $controlador_origen = "master"; //  Controlador por defecto
 
 
             if ($this->input->post("generar_informe") === "si") {
@@ -2459,8 +2460,7 @@ class Master extends CI_Controller {
      */
     public function informe_visual()
     {
-        if($this->auth->is_auth()){ // Control de acceso según el tipo de agente. Permiso definido en constructor
-
+        if ($this->auth->is_auth()) {
 
             /* Incluir los modelos */
             $xcrud = xcrud_get_instance();
@@ -2468,11 +2468,16 @@ class Master extends CI_Controller {
             $this->load->model('sfid_model');
             $this->load->model('tienda_model');
             $this->load->model('informe_model');
+            $this->load->model('categoria_model');
 
-            $tipo_tienda_visual = "";
-            $panelado_visual = "";
+            $id_tipo_visual = NULL;
+            $id_subtipo_visual = NULL;
+            $id_segmento_visual = NULL;
+            $id_tipologia_visual = NULL;
+
             $sfid_visual = "";
             $generado_visual = FALSE;
+            $vista = NULL;
 
             $data["title"] = "Informe Visual";
 
@@ -2481,8 +2486,12 @@ class Master extends CI_Controller {
             $get_page = $this->uri->segment(3);
 
             if ($get_page === "reset") {
-                $this->session->unset_userdata("tipo_tienda_visual");
-                $this->session->unset_userdata("panelado_visual");
+                $this->session->unset_userdata("id_tipo_visual");
+                $this->session->unset_userdata("id_subtipo_visual");
+                $this->session->unset_userdata("id_segmento_visual");
+                $this->session->unset_userdata("id_tipologia_visual");
+
+
                 $this->session->unset_userdata("sfid_visual");
                 $this->session->unset_userdata("generado_visual");
                 redirect("master/informe_visual", "refresh");
@@ -2490,32 +2499,31 @@ class Master extends CI_Controller {
 
 
             if ($this->input->post("generar_informe") === "si") {
-                $tipo_tienda_visual = $this->input->post("tipo_tienda_visual");
-                $panelado_visual = $this->input->post("panelado_visual");
-                $sfid_visual = $this->input->post("sfid_visual");
 
-                $data["tipo_tienda_visual"] = $tipo_tienda_visual;
-                $data["panelado_visual"] = $panelado_visual;
-                $data["sfid_visual"] = $sfid_visual;
-                $data["generado_visual"] = TRUE;
-                $this->session->set_userdata($data);
+                $id_tipo_visual = $this->input->post("id_tipo_visual");
+                $id_subtipo_visual = $this->input->post("id_subtipo_visual");
+                $id_segmento_visual = $this->input->post("id_segmento_visual");
+                $id_tipologia_visual = $this->input->post("id_tipologia_visual");
+
+                $sfid_visual = $this->input->post("sfid_visual");
+                $generado_visual = TRUE;
 
             } else {
                 // OBTENER DE LA SESION, SI EXISTE
                 if ($this->session->userdata("generado_visual") !== NULL && $this->session->userdata("generado_visual") === TRUE) {
-                    $tipo_tienda_visual = $this->session->userdata("tipo_tienda_visual");
-                    $panelado_visual = $this->session->userdata("panelado_visual");
+
+                    $id_tipo_visual = $this->session->userdata("id_tipo_visual");
+                    $id_subtipo_visual = $this->session->userdata("id_subtipo_visual");
+                    $id_segmento_visual = $this->session->userdata("id_segmento_visual");
+                    $id_tipologia_visual = $this->session->userdata("id_tipologia_visual");
+
                     $sfid_visual = $this->session->userdata("sfid_visual");
                     $generado_visual = $this->session->userdata("generado_visual");
-
                 }
-
-                $data["tipo_tienda_visual"] = $tipo_tienda_visual;
-                $data["panelado_visual"] = $panelado_visual;
-                $data["sfid_visual"] = $sfid_visual;
-                $data["generado_visual"] = $generado_visual;
-                $this->session->set_userdata($data);
             }
+
+            
+            $this->session->set_userdata($data);
 
 
 
@@ -2526,113 +2534,121 @@ class Master extends CI_Controller {
             $data["muebles"] = $muebles;
 
             /** COMENTADO SELECT DEMOREAL $data["tipos_tienda"] = $this->sfid_model->get_types_pds_demoreal(); */
-            $data["tipos_tienda"] = $this->sfid_model->get_types_pds();
+            $data["tipos"] = $this->categoria_model->get_tipos_pds();
+            $data["subtipos"] = array();
+            $data["segmentos"] = $this->categoria_model->get_segmentos_pds($id_segmento_visual);
+            $data["tipologias"] = array();
 
 
 
             $data["subtitle"] = "";
             $data["error_panelado"] = FALSE;
 
-            if(empty($sfid_visual) && !empty($tipo_tienda_visual) && empty($panelado_visual)){
-                // Validación de panelado escogido, cuando no se ha escogido SFID pero se ha escogido un tipo de tienda
-                // sin escoger un panelado
-                $vista = 0;
-                $data["error_panelado"] = TRUE;
-
-            }elseif(!empty($panelado_visual) && empty($sfid_visual)){
-                // Cargar muebles del panelado maestro escogido
-
-                /*
-                     *  Panelado de la tienda
-                     */
-                $displays = $this->tienda_model->get_displays_panelado_maestros($panelado_visual);
-                $o_panelado =  $this->tienda_model->get_panelado_maestro($panelado_visual);
-
-                foreach ($displays as $key => $display) {
-                    $num_devices = $this->tienda_model->count_devices_display($display->id_display);
-                    $display->devices_count = $num_devices;
-                }
-
-                $data['displays'] = $displays;
-
-                $data['subtitle'] = 'Panelado genérico: ' . $o_panelado->panelado. '';
 
 
+            if($generado_visual) {
 
 
-                $vista = 2;
-            }elseif(!empty($sfid_visual)){
-                // Cargar panelado del sfid.
-                /*
-                    *  Panelado de la tienda
-                    */
-                $tiendas = $this->tienda_model->search_pds($sfid_visual);
+                if (empty($sfid_visual)) {
+                    if (empty($id_tipo_visual) || empty($id_subtipo_visual) || empty($id_segmento_visual) || empty($id_tipologia_visual)) {
+                        // Validación de los 4 campos de categorización, que son obligatorios.
+                        $vista = 0;
+                        $data["error_panelado"] = TRUE;
+                    } else {
+                        // Cargar muebles del panelado maestro escogido
+                        /*
+                         *  Panelado de la categoría
+                         */
+                        $displays = $this->categoria_model->get_displays_categoria($id_tipo_visual,$id_subtipo_visual,$id_segmento_visual,$id_tipologia_visual);
 
+                        //$o_panelado = $this->tienda_model->get_panelado_maestro($panelado_visual);
 
+                        foreach ($displays as $key => $display) {
+                            $num_devices = $this->tienda_model->count_devices_display($display->id_display);
+                            $display->devices_count = $num_devices;
+                        }
 
-                if (!empty($tiendas) && count($tiendas) == 1) {
-
-                    $tienda = NULL;
-                    foreach ($tiendas as $tienda_1) {
-                        $tienda = $tienda_1;
+                        $data['displays'] = $displays;
+                        $data['subtitle'] = 'Tipo de tienda';
+                        $vista = 2;
                     }
 
+                } else {
+                    // Cargar panelado del sfid.
+                    /*
+                        *  Panelado de la tienda
+                        */
+                    $tiendas = $this->tienda_model->search_pds($sfid_visual);
 
-                    $id_pds = $tienda->id_pds;
+                    $id_tipo_visual = $id_subtipo_visual = $id_segmento_visual = $id_tipologia_visual = NULL;
+                    if (!empty($tiendas) && count($tiendas) == 1) {
 
-                    $sfid = $this->tienda_model->get_pds($id_pds);
+                        $tienda = NULL;
+                        foreach ($tiendas as $tienda_1) {
+                            $tienda = $tienda_1;
+                        }
 
-                    $data['id_pds'] = 'ABX/PDS-' . $sfid['id_pds'];
-                    $data['commercial'] = $sfid['commercial'];
-                    $data['territory'] = $sfid['territory'];
-                    $data['reference'] = $sfid['reference'];
-                    $data['address'] = $sfid['address'];
-                    $data['zip'] = $sfid['zip'];
-                    $data['city'] = $sfid['city'];
-                    $data['id_pds_url'] = $id_pds;
 
-                    $displays = $this->sfid_model->get_displays_pds($id_pds);
+                        $id_pds = $tienda->id_pds;
 
-                    foreach ($displays as $key => $display) {
-                        $num_devices = $this->tienda_model->count_devices_display($display->id_display);
-                        $display->devices_count = $num_devices;
+                        $sfid = $this->tienda_model->get_pds($id_pds);
+
+                        $data['id_pds'] = 'ABX/PDS-' . $sfid['id_pds'];
+                        $data['commercial'] = $sfid['commercial'];
+                        $data['territory'] = $sfid['territory'];
+                        $data['reference'] = $sfid['reference'];
+                        $data['address'] = $sfid['address'];
+                        $data['zip'] = $sfid['zip'];
+                        $data['city'] = $sfid['city'];
+                        $data['id_pds_url'] = $id_pds;
+
+                        $displays = $this->sfid_model->get_displays_pds($id_pds);
+
+                        foreach ($displays as $key => $display) {
+                            $num_devices = $this->tienda_model->count_devices_display($display->id_display);
+                            $display->devices_count = $num_devices;
+                        }
+
+                        $data['displays'] = $displays;
+
+                        $data['subtitle'] = 'Panelado tienda: SFID-' . $sfid_visual . '';
+
                     }
-
-                    $data['displays'] = $displays;
-
-                    $data['subtitle'] = 'Panelado tienda: SFID-' . $sfid_visual. '';
-
+                    $vista = 1;
                 }
-                $vista = 1;
-            }else{
-                // Debe escoger algun valor, form vacio
-                $vista = 0;
             }
 
 
+            $data["id_tipo_visual"] = $id_tipo_visual;
+            $data["id_subtipo_visual"] = $id_subtipo_visual;
+            $data["id_segmento_visual"] = $id_segmento_visual;
+            $data["id_tipologia_visual"] = $id_tipologia_visual;
 
-
-
+            $data["sfid_visual"] = $sfid_visual;
+            $data["generado_visual"] = $generado_visual;
+            $this->session->set_userdata($data);
+            
+            
             $data["vista"] = $vista;
 
+            /* Pasar a la vista */
             /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
             $this->data->add($data);
             $data = $this->data->getData();
             /////
-            /* Pasar a la vista */
             $this->load->view('master/header', $data);
             $this->load->view('master/navbar', $data);
-            $this->load->view('master/informes/informe_visual_form', $data);
+            $this->load->view('master/informes/bloom/visual/informe_visual_form', $data);
 
             switch ($vista) {
                 case 2 :
-                    $this->load->view('master/informes/informe_visual_panelado',$data);
+                    $this->load->view('master/informes/bloom/visual/informe_visual_panelado',$data);
                     break;
                 case 1 :
-                    $this->load->view('master/informes/informe_visual_sfid', $data);
+                    $this->load->view('master/informes/bloom/visual/informe_visual_sfid', $data);
                     break;
                 default:
-                    $this->load->view('master/informes/informe_visual', $data);
+                    $this->load->view('master/informes/bloom/visual/informe_visual', $data);
 
             }
 
@@ -2651,25 +2667,17 @@ class Master extends CI_Controller {
 
 
     public function informe_visual_mueble($id_mueble){
-        if($this->auth->is_auth()){ // Control de acceso según el tipo de agente. Permiso definido en constructor
+        if($this->auth->is_auth())
+        {
 
             $id_dis   = $id_mueble;
 
             $xcrud = xcrud_get_instance();
-            $this->load->model('tienda_model');
-            $this->load->model('sfid_model');
-
-
+            $this->load->model(array('tienda_model','sfid_model','categoria_model'));
+            
 
             $display = $this->tienda_model->get_display($id_mueble);
-
-            /* Obtener los tipos de tienda para el select */
-            /** COMENTADO SELECT DEMOREAL $muebles = $this->tienda_model->get_displays_demoreal(); */
-            $muebles = $this->tienda_model->get_displays_demoreal();
-            $data["muebles"] = $muebles;
-
-            /** COMENTADO SELECT DEMOREAL $data["tipos_tienda"] = $this->sfid_model->get_types_pds_demoreal(); */
-            $data["tipos_tienda"] = $this->sfid_model->get_types_pds();
+            
 
 
             $data['id_display']  = $display['id_display'];
@@ -2678,26 +2686,41 @@ class Master extends CI_Controller {
 
             $data['devices'] = $this->tienda_model->get_devices_display($id_dis);
 
-
+            // Inicialización de campos-categoría
+            $id_tipo_visual = $id_subtipo_visual = $id_segmento_visual = 
+                    $id_tipologia_visual = $sfid_visual = $generado_visual=  NULL;
+            
+                       
+            
             // OBTENER DE LA SESION, SI EXISTE
             if ($this->session->userdata("generado_visual") !== NULL && $this->session->userdata("generado_visual") === TRUE) {
-                $tipo_tienda_visual = $this->session->userdata("tipo_tienda_visual");
-                $panelado_visual = $this->session->userdata("panelado_visual");
+                $id_tipo_visual = $this->session->userdata("id_tipo_visual");
+                $id_subtipo_visual = $this->session->userdata("id_subtipo_visual");
+                $id_segmento_visual = $this->session->userdata("id_segmento_visual");
+                $id_tipologia_visual = $this->session->userdata("id_tipologia_visual");
+
                 $sfid_visual = $this->session->userdata("sfid_visual");
-                $generado_visual = $this->session->userdata("generado_visual");
+                $generado_visual = $this->session->userdata("generado_visual");    
+            }         
+           
+            
+            $data["id_tipo_visual"] = $id_tipo_visual;
+            $data["id_subtipo_visual"] = $id_subtipo_visual;
+            $data["id_segmento_visual"] = $id_segmento_visual;
+            $data["id_tipologia_visual"] = $id_tipologia_visual;
+            $data["sfid_visual"] = $sfid_visual;
+            $data["generado_visual"] = $generado_visual;
+             $this->session->set_userdata($data);
+             
+            
+            /** COMENTADO SELECT DEMOREAL $data["tipos_tienda"] = $this->sfid_model->get_types_pds_demoreal(); */
+            $data["tipos"] = $this->categoria_model->get_tipos_pds();
+            $data["subtipos"] = array();
+            $data["segmentos"] = $this->categoria_model->get_segmentos_pds($id_segmento_visual);
+            $data["tipologias"] = array();
 
-                $data["tipo_tienda_visual"] = $tipo_tienda_visual;
-                $data["panelado_visual"] = $panelado_visual;
-                $data["sfid_visual"] = $sfid_visual;
-                $data["generado_visual"] = $generado_visual;
-
-
-            }
-
-
-
-
-            $data['title'] = 'Panelado genérico';
+        
+            $data['title'] = 'Muebles genéricos de la categoría';
             $data['subtitle'] = 'Planograma mueble  - '.$data['display'];
 
             /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
@@ -2706,8 +2729,8 @@ class Master extends CI_Controller {
             /////
             $this->load->view('master/header',$data);
             $this->load->view('master/navbar',$data);
-            $this->load->view('master/informes/informe_visual_form',$data);
-            $this->load->view('master/informes/informe_visual_maestro_mueble',$data);
+            $this->load->view('master/informes/bloom/visual/informe_visual_form',$data);
+            $this->load->view('master/informes/bloom/visual/informe_visual_maestro_mueble',$data);
             $this->load->view('master/footer');
         }
         else
@@ -2719,19 +2742,18 @@ class Master extends CI_Controller {
 
     public function informe_visual_terminal($id_mueble,$id_device)
     {
-        if($this->auth->is_auth()){ // Control de acceso según el tipo de agente. Permiso definido en constructor
-
+        if ($this->auth->is_auth()) {
             $id_pds = $this->uri->segment(3);
             $id_dis = $this->uri->segment(4);
             $id_dev = $this->uri->segment(5);
 
             $xcrud = xcrud_get_instance();
-            $this->load->model('tienda_model');
-            $this->load->model('sfid_model');
+            $this->load->model(array('tienda_model','sfid_model','categoria_model'));
+            
 
             /* Obtener los tipos de tienda para el select */
             /** COMENTADO SELECT DEMOREAL $muebles = $this->tienda_model->get_displays_demoreal(); */
-            $muebles = $this->tienda_model->get_displays_demoreal();
+            $muebles = $this->tienda_model->get_displays();
             $data["muebles"] = $muebles;
             /** COMENTADO SELECT DEMOREAL $data["tipos_tienda"] = $this->sfid_model->get_types_pds_demoreal(); */
             $data["tipos_tienda"] = $this->sfid_model->get_types_pds();
@@ -2753,22 +2775,38 @@ class Master extends CI_Controller {
             $data['picture_url_dev'] = $device['picture_url'];
 
 
+            // Inicialización de campos-categoría
+            $id_tipo_visual = $id_subtipo_visual = $id_segmento_visual = $id_tipologia_visual = $sfid_visual = $generado_visual=  NULL;
+            
             // OBTENER DE LA SESION, SI EXISTE
             if ($this->session->userdata("generado_visual") !== NULL && $this->session->userdata("generado_visual") === TRUE) {
-                $tipo_tienda_visual = $this->session->userdata("tipo_tienda_visual");
-                $panelado_visual = $this->session->userdata("panelado_visual");
+                $id_tipo_visual = $this->session->userdata("id_tipo_visual");
+                $id_subtipo_visual = $this->session->userdata("id_subtipo_visual");
+                $id_segmento_visual = $this->session->userdata("id_segmento_visual");
+                $id_tipologia_visual = $this->session->userdata("id_tipologia_visual");
+
                 $sfid_visual = $this->session->userdata("sfid_visual");
-                $generado_visual = $this->session->userdata("generado_visual");
+                $generado_visual = $this->session->userdata("generado_visual");    
+            }            
+            
+            
+            echo $id_tipo_visual;
+            $data["id_tipo_visual"] = $id_tipo_visual;
+            $data["id_subtipo_visual"] = $id_subtipo_visual;
+            $data["id_segmento_visual"] = $id_segmento_visual;
+            $data["id_tipologia_visual"] = $id_tipologia_visual;
+            $data["sfid_visual"] = $sfid_visual;
+            $data["generado_visual"] = $generado_visual;
+            
+            /** COMENTADO SELECT DEMOREAL $data["tipos_tienda"] = $this->sfid_model->get_types_pds_demoreal(); */
+            $data["tipos"] = $this->categoria_model->get_tipos_pds();
+            $data["subtipos"] = array();
+            $data["segmentos"] = $this->categoria_model->get_segmentos_pds($id_segmento_visual);
+            $data["tipologias"] = array();
 
-                $data["tipo_tienda_visual"] = $tipo_tienda_visual;
-                $data["panelado_visual"] = $panelado_visual;
-                $data["sfid_visual"] = $sfid_visual;
-                $data["generado_visual"] = $generado_visual;
-
-            }
 
             /** COMENTADO SELECT DEMOREAL $muebles = $this->tienda_model->get_displays_demoreal(); */
-            $muebles = $this->tienda_model->get_displays_demoreal();
+            $muebles = $this->tienda_model->get_displays();
             $data["muebles"] = $muebles;
             /** COMENTADO SELECT DEMOREAL $data["tipos_tienda"] = $this->sfid_model->get_types_pds_demoreal(); */
             $data["tipos_tienda"] = $this->sfid_model->get_types_pds();
@@ -2782,8 +2820,8 @@ class Master extends CI_Controller {
             /////
             $this->load->view('master/header', $data);
             $this->load->view('master/navbar', $data);
-            $this->load->view('master/informes/informe_visual_form', $data);
-            $this->load->view('master/informes/informe_visual_terminal', $data);
+            $this->load->view('master/informes/bloom/visual/informe_visual_form', $data);
+            $this->load->view('master/informes/bloom/visual/informe_visual_terminal', $data);
             $this->load->view('master/footer');
         } else {
             redirect('master', 'refresh');
@@ -2793,8 +2831,8 @@ class Master extends CI_Controller {
 
 
     public function informe_visual_mueble_sfid(){
-        if($this->auth->is_auth()){ // Control de acceso según el tipo de agente. Permiso definido en constructor
-
+        if($this->auth->is_auth())
+        {
             $id_pds   = $this->uri->segment(3);
             $id_dis   = $this->uri->segment(4);
 
@@ -2839,9 +2877,17 @@ class Master extends CI_Controller {
                 $data["generado_visual"] = $generado_visual;
 
             }
-
+            
+            
+            // Anular selectores de campos de categoría. Va por SFID
+            $data["id_tipo_visual"] = NULL;
+            $data["id_subtipo_visual"] = NULL;
+            $data["id_segmento_visual"] = NULL;
+            $data["id_tipologia_visual"] = NULL;
+            
+            
             /** COMENTADO SELECT DEMOREAL $muebles = $this->tienda_model->get_displays_demoreal(); */
-            $muebles = $this->tienda_model->get_displays_demoreal();
+            $muebles = $this->tienda_model->get_displays();
             $muebles = $this->tienda_model->get_displays_demoreal();
 
             $data["muebles"] = $muebles;
@@ -2858,8 +2904,8 @@ class Master extends CI_Controller {
             /////
             $this->load->view('master/header',$data);
             $this->load->view('master/navbar',$data);
-            $this->load->view('master/informes/informe_visual_form',$data);
-            $this->load->view('master/informes/informe_visual_mueble_sfid',$data);
+            $this->load->view('master/informes/bloom/visual/informe_visual_form',$data);
+            $this->load->view('master/informes/bloom/visual/informe_visual_mueble_sfid',$data);
             $this->load->view('master/footer');
         }
         else
@@ -2871,9 +2917,8 @@ class Master extends CI_Controller {
 
 
     public function informe_visual_ficha_terminal(){
-
-        if($this->auth->is_auth()){ // Control de acceso según el tipo de agente. Permiso definido en constructor
-
+        if($this->auth->is_auth())
+        {
             $data["generado_visual"] = FALSE;
 
             $id_pds   = $this->uri->segment(3);
@@ -2931,9 +2976,15 @@ class Master extends CI_Controller {
                 $data["generado_visual"] = $generado_visual;
 
             }
-
+            
+            // Anular selectores de campos de categoría. Va por SFID
+            $data["id_tipo_visual"] = NULL;
+            $data["id_subtipo_visual"] = NULL;
+            $data["id_segmento_visual"] = NULL;
+            $data["id_tipologia_visual"] = NULL;
+            
             /** COMENTADO SELECT DEMOREAL $muebles = $this->tienda_model->get_displays_demoreal(); */
-            $muebles = $this->tienda_model->get_displays_demoreal();
+            $muebles = $this->tienda_model->get_displays();
             $data["muebles"] = $muebles;
 
             /** COMENTADO SELECT DEMOREAL $data["tipos_tienda"] = $this->sfid_model->get_types_pds_demoreal(); */
@@ -2948,8 +2999,8 @@ class Master extends CI_Controller {
             /////
             $this->load->view('master/header',$data);
             $this->load->view('master/navbar',$data);
-            $this->load->view('master/informes/informe_visual_form',$data);
-            $this->load->view('master/informes/informe_visual_ficha_terminal',$data);
+            $this->load->view('master/informes/bloom/visual/informe_visual_form',$data);
+            $this->load->view('master/informes/bloom/visual/informe_visual_ficha_terminal',$data);
             $this->load->view('master/footer');
         }
         else
@@ -2959,7 +3010,9 @@ class Master extends CI_Controller {
     }
 
 
-
+    /**
+     * Acción de entrada del Informe: Tiendas por tipología
+     */
     public function tiendas_tipologia()
     {
         $controlador = $this->data->get("controlador");
@@ -2993,7 +3046,55 @@ class Master extends CI_Controller {
         }
     }
 
+    
+    /**
+     * Acción de entrada del Informe: Tiendas por fabricante
+     */
+    public function tiendas_fabricante()
+    {
+        $controlador = $this->data->get("controlador");
+        $entrada = $this->data->get("entrada");
 
+        if($this->auth->is_auth()) {
+            $xcrud = xcrud_get_instance();
+
+            $this->load->model("informe_model");
+            $this->load->helper("common");
+                                  
+            $data = array();
+            $data['title'] = "Informe de tiendas por fabricante";
+            
+            // Recoger el fabricante del form
+            $data['id_fabricante'] = ($this->input->post('id_fabricante')) ? $this->input->post('id_fabricante') : NULL;       
+            
+            // Sacar el listado de fabricantes
+            $data['fabricantes'] = $this->informe_model->get_displays_fabricantes();            
+            // Obtener el resultado.
+            $data['resultado'] = $this->informe_model->get_informe_tiendas_fabricante($data['id_fabricante']);            
+
+            
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
+            $this->load->view($controlador . '/header', $data);
+            $this->load->view($controlador . '/navbar', $data);
+            $this->load->view($controlador . '/informes/tiendas_fabricante/list', $data);
+            $this->load->view($controlador . '/footer');
+        }
+        else
+        {
+            redirect($entrada,"refresh");
+        }
+    }
+    
+    
+    
+    
+    /**
+     * Acción de entrada de la Ayuda
+     * @param type $tipo Define qué ayuda mostrar.
+     */
 	public function ayuda($tipo)
 	{
         if($this->auth->is_auth()){ // Control de acceso según el tipo de agente. Permiso definido en constructor
