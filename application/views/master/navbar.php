@@ -103,7 +103,8 @@
                                                     'informe_visual_mueble_sfid',
                                                     'informe_visual_terminal',
                                                     'informe_visual_ficha_terminal',
-                                                'tiendas_tipologia'); ?>
+                                                'tiendas_tipologia',
+                                                'tiendas_fabricante'); ?>
 
                         <li <?=(in_array($this->uri->segment(2), $inf))?'class="active"':''?>>
                             <a href="#"><i class="fa fa-sitemap fa-file"></i> Informes <span class="fa arrow"></span></a>
@@ -124,6 +125,9 @@
 
                                 <li><a <?=(in_array($this->uri->segment(2),
                                         array( 'tiendas_tipologia')))?'class="active"':''?> href="<?=site_url($controlador.'/tiendas_tipologia')?>"> Tiendas por tipología &raquo;</a></li>
+                                
+                                <li><a <?=(in_array($this->uri->segment(2),
+                                        array( 'tiendas_fabricante')))?'class="active"':''?> href="<?=site_url($controlador.'/tiendas_fabricante')?>"> Tiendas por fabricante &raquo;</a></li>
                             </ul>
                         </li>
 
