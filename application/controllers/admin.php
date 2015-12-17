@@ -711,7 +711,7 @@ class Admin extends CI_Controller
             /* FIXME: revisar alta correcta en tabla de agentes */
             $data = array(
                 'sfid'      => $sfid,
-                'password'  => 'demoreal',
+                'password'  => sha1('demoreal'),
                 'type'      => 1
             );
 
