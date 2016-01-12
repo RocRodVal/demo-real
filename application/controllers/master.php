@@ -750,7 +750,7 @@ class Master extends CI_Controller {
 			redirect('master', 'refresh');
 		}
 	}
-    public function cdm_incidencias()
+    public function cdm_incidencias($anio = NULL)
     {
         if($this->auth->is_auth()){ // Control de acceso según el tipo de agente. Permiso definido en constructor
 
@@ -768,7 +768,8 @@ class Master extends CI_Controller {
                 $estado_incidencia  = $this->input->post("estado_incidencia");
             }
 
-            $este_anio = date("Y");
+            $este_anio = (is_null($anio)) ? date("Y") : $anio;
+
             setlocale(LC_ALL, 'es_ES');
 
             $data["tipo_tienda"] = $tipo_tienda;
@@ -802,20 +803,27 @@ class Master extends CI_Controller {
             $data["primer_mes"] = $primer_mes;
             $data["meses_columna"] = $meses_columna;
 
+
+
             // Sacamos la primera línea. Total incidencias
             $resultados_1 = $this->informe_model->get_cmd_incidencias_totales($este_anio,$ctrl_no_cancelada);
             $total_incidencias_total = $this->informe_model->get_total_cdm_incidencias($resultados_1);
             $valor_resultados_1 = $this->informe_model->get_array_incidencias_totales($resultados_1);
 
+
             $dias_operativos = $this->informe_model->get_dias_operativos_mes($rango_meses);
             $total_dias_operativos = $this->informe_model->get_total_array($dias_operativos);
+
 
             $incidencias_dia = $this->informe_model->get_medias($valor_resultados_1,$dias_operativos,$rango_meses);
             $total_media = round($this->informe_model->get_total_array($incidencias_dia) / count($dias_operativos));
 
+
             $nombre_mes = array();
 
             $data["tabla_1"] = $resultados_1;
+
+
 
             /**
              * Segundo bloque de la tabla, Incidencias mensuales por estado PdS
@@ -1018,7 +1026,12 @@ class Master extends CI_Controller {
 
 
             $data["media_inc_int"] = $resultados_7;
-            $data["total_media_inc_int"] = number_format(round($total_num/$total_denom,2),2,",",".");;
+
+            if($total_denom > 0) {
+                $data["total_media_inc_int"] = number_format(round($total_num / $total_denom, 2), 2, ",", ".");;
+            }else{
+                $data["total_media_inc_int"] = 0;
+            }
 
             $data["menos_72"] = $menos_72;
             $data["mas_72"] = $mas_72;

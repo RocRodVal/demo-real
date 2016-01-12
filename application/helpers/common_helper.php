@@ -74,7 +74,8 @@ function nombre_mes($number)
         7=>"Julio",8=>"Agosto",9=>"Septiembre",10=>"Octubre",11=>"Noviembre",12=>"Diciembre"
     );
 
-    return $nombre_meses[$number];
+
+    return isset($nombre_meses[$number]) ? $nombre_meses[$number] : '';
 }
 
 

@@ -562,13 +562,13 @@ class Informe_model extends CI_Model
      */
     public function get_cmd_incidencias_totales($anio,$s_where="")
     {
-        if(!is_null($anio)) $anio = date("Y");
-
-        $query_1 = $this->db->query("
+        $sql = "
             SELECT YEAR(incidencias.fecha) AS anio, MONTH(incidencias.fecha) AS mes, COUNT(*) AS total_incidencias
             FROM incidencias
             WHERE 1 = 1 $s_where AND YEAR(incidencias.fecha) = '".$anio."'
-            GROUP BY anio, mes");
+            GROUP BY anio, mes";
+
+        $query_1 = $this->db->query($sql);
 
         return $query_1->result();
     }

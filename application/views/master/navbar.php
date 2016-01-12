@@ -75,12 +75,31 @@
                          * CUADROS DE MANDO
                          *
                          */
+
                         ?>
-                        <?php $cdm = array('cdm_incidencias','cdm_tipo_incidencia','cdm_inventario','cdm_alarmas','cdm_dispositivos'); ?>
+                        <?php
+                            $cdm = array('cdm_incidencias','cdm_tipo_incidencia','cdm_inventario','cdm_alarmas','cdm_dispositivos');
+                            $arr_anios = array();
+                            $anio_inicial = 2015; $este_anio = date("Y");
+                            for($i = $este_anio; $i >= $anio_inicial; $i--) {
+                                $arr_anios[] = $i;
+                            }
+
+
+                            ?>
                         <li <?=(in_array($this->uri->segment(2), $cdm))?'class="active"':''?>>
                             <a href="#"><i class="fa fa-sitemap fa-fw"></i> Cuadro de mando<span class="fa arrow"></span></a>
                             <ul class="nav nav-second-level">
-                                <li><a <?=($this->uri->segment(2)==='cdm_incidencias')?'class="active"':''?> href="<?=site_url($controlador.'/cdm_incidencias')?>"> Estado incidencias &raquo;</a></li>
+                                <li <?=($this->uri->segment(2)==='cdm_incidencias'  && in_array($this->uri->segment(3),$arr_anios))?'class="active"':''?> >
+                                    <a href="#"> Estado incidencias &raquo;</a>
+                                    <ul class="nav nav-second-level">
+                                        <?php
+
+                                        for($i = $este_anio; $i >= $anio_inicial; $i--){ ?>
+                                            <li><a <?=($this->uri->segment(2)==='cdm_incidencias'  && $this->uri->segment(3)==$i)?'class="active"':''?> href="<?=site_url($controlador.'/cdm_incidencias/'.$i)?>"><i class="fa fa-calendar fa-fw"></i> <?=$i?></a></li>
+                                        <?php } ?>
+                                    </ul>
+                                </li>
                                 <?php /*<li><a <?=($this->uri->segment(2)==='cdm_tipo_incidencia')?'class="active"':''?> href="<?=site_url('master/cdm_tipo_incidencia')?>"> Tipo de incidencia &raquo;</a></li>*/ ?>
                                 <?php /*<li><a <?=($this->uri->segment(2)==='cdm_inventario')?'class="active"':''?> href="<?=site_url('master/cdm_inventario')?>"> Inventario/Depósito &raquo;</a></li>*/ ?>
                                 <li><a <?=($this->uri->segment(2)==='cdm_dispositivos')?'class="active"':''?> href="<?=site_url($controlador.'/cdm_dispositivos')?>"> Dispositivos &raquo;</a></li>
