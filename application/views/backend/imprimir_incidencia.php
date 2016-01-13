@@ -21,7 +21,8 @@
 		<p style="font-family: 'Helvetica'">
 			<strong>Número de intervención:</strong> <?php echo $incidencia['intervencion']; ?><br />
 			<strong>Número de incidencia:</strong> <?php echo $id_inc_url ?><br />            		
-			<strong>Fecha:</strong> <?php echo date_format(date_create($historico_fecha_comunicada), 'd/m/Y'); ?>
+			<strong>Fecha:</strong> <?php echo date_format(date_create($historico_fecha_comunicada), 'd/m/Y');?><br />
+			<strong>Id. destino material:</strong> <?php echo $id_parte;?>
 		</p>
 		<!--
 		<p style="font-family: 'Helvetica'">

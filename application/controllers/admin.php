@@ -1025,6 +1025,12 @@ class Admin extends CI_Controller
             $leido = $this->chat_model->marcar_leido($incidencia['id_incidencia'],$sfid['reference']);
             $data['chats'] = $chats;
 
+
+            $info_intervencion = $this->intervencion_model->get_info_intervencion($incidencia['intervencion']);
+            $data['id_parte'] = $info_intervencion->operador->id_parte;
+
+
+
             $data['title'] = 'DOCUMENTACIÓN DE RESOLUCIÓN DE INCIDENCIA';
 
             // Salida PDF
@@ -1036,12 +1042,13 @@ class Admin extends CI_Controller
             $attach =  "uploads/intervenciones/".$filename_pdf.".pdf";
 
 
+
             /** ENVIO DEL EMAIL al operador*/
 
             if($envio_mail === "notificacion")
             {
 
-                $info_intervencion = $this->intervencion_model->get_info_intervencion($incidencia['intervencion']);
+
                 $mail_operador = $info_intervencion->operador->email;
                 $mail_cc = $info_intervencion->operador->email_cc;
 
@@ -2132,9 +2139,9 @@ class Admin extends CI_Controller
         $xcrud_2->relation('type_via', 'type_via', 'id_type_via', 'via');
         $xcrud_2->relation('province', 'province', 'id_province', 'province');
         $xcrud_2->relation('county', 'county', 'id_county', 'county');
-        $xcrud_2->label('id_contact','Identificador')->label('client_contact', 'Empresa')->label('type_profile_contact', 'Tipo')->label('contact', 'Contacto')->label('type_via', 'Tipo vía')->label('address', 'Dirección')->label('zip', 'C.P.')->label('city', 'Ciudad')->label('province', 'Provincia')->label('county', 'CC.AA.')->label('schedule', 'Horario')->label('phone', 'Teléfono')->label('mobile', 'Móvil')->label('email', 'Email')->label('email_cc', 'Copia email')->label('status', 'Estado');
-        $xcrud_2->columns('id_contact,client_contact,type_profile_contact,contact,email');
-        $xcrud_2->fields('client_contact,type_profile_contact,contact,type_via,address,zip,city,province,county,schedule,phone,mobile,email,email_cc,status');
+        $xcrud_2->label('id_contact','Identificador')->label('client_contact', 'Empresa')->label('type_profile_contact', 'Tipo')->label('contact', 'Contacto')->label('id_parte', 'Id. destino material')->label('type_via', 'Tipo vía')->label('address', 'Dirección')->label('zip', 'C.P.')->label('city', 'Ciudad')->label('province', 'Provincia')->label('county', 'CC.AA.')->label('schedule', 'Horario')->label('phone', 'Teléfono')->label('mobile', 'Móvil')->label('email', 'Email')->label('email_cc', 'Copia email')->label('status', 'Estado');
+        $xcrud_2->columns('id_contact,client_contact,type_profile_contact,contact, id_parte,email');
+        $xcrud_2->fields('client_contact,type_profile_contact,contact,id_parte,type_via,address,zip,city,province,county,schedule,phone,mobile,email,email_cc,status');
         $xcrud_2->order_by('contact');
 
         // Ocultar el botón de borrar para evitar borrados accidentales mientras no existan constraints en BD:
