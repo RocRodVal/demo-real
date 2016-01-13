@@ -1808,7 +1808,7 @@ class Admin extends CI_Controller
             $this->load->model(array('intervencion_model', 'tienda_model', 'sfid_model'));
 
             $sfid = $this->tienda_model->get_pds($id_pds);
-
+            $data['pds'] = $sfid;
             $data['id_pds'] = 'ABX/PDS-' . $sfid['id_pds'];
             //$data['type_pds'] = $sfid['pds'];
             $data['commercial'] = $sfid['commercial'];
