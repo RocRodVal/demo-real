@@ -485,6 +485,7 @@ class Incidencia_model extends CI_Model {
         }
 
         if(isset($filtros["reference"]) && !empty($filtros["reference"])) $sql .=(' AND reference= '.$filtros['reference']);
+        if(isset($filtros["id_intervencion"]) && !empty($filtros["id_intervencion"])) $sql .=(' AND intervenciones_incidencias.id_intervencion = '.$filtros['id_intervencion']);
 
         if(isset($filtros["id_tipo"]) && !empty($filtros["id_tipo"])) {
             $sql .= (' AND  pds.id_tipo ="'.$filtros['id_tipo'].'" ');
