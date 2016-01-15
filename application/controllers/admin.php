@@ -274,6 +274,7 @@ class Admin extends CI_Controller
 
                 'id_incidencia' => '',
                 'reference' => '',
+                'id_intervencion'=>'',
 
                 'id_tipo'=>'',
                 'id_subtipo'=>'',
@@ -424,6 +425,7 @@ class Admin extends CI_Controller
 
                 'id_incidencia' => '',
                 'reference' => '',
+                'id_intervencion'=>'',
 
                 'id_tipo'=>'',
                 'id_subtipo'=>'',
