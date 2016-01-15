@@ -186,6 +186,10 @@
                                 <label for="reference">SFID: </label>
                                 <input type="text" name="reference" id="reference" class="form-control input-sm" placeholder="SFID" <?php echo (!empty($reference)) ? ' value="'.$reference.'" ' : ''?> />
                             </div>
+                            <div class="col-lg-2">
+                                <label for="id_intervencion">Id. intervención: </label>
+                                <input type="text" name="id_intervencion" id="id_intervencion" class="form-control input-sm" placeholder="Id. intervención" <?php echo (!empty($id_intervencion)) ? ' value="'.$id_intervencion.'" ' : ''?> />
+                            </div>
                             <div class="col-lg-1">
                                 <div class="form-group">
                                     <input type="hidden" name="do_busqueda" value="si">

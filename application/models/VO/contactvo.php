@@ -13,4 +13,5 @@ class ContactVO extends VO
     var $email;
     var $phone;
     var $status;
+    var $id_parte;
 }
