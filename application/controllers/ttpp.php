@@ -273,7 +273,8 @@ class Ttpp extends CI_Controller {
                 'id_tipo'=> '4',
                 'id_subtipo'=>'10',
                 'id_segmento'=>'',
-                'id_tipologia'=>''
+                'id_tipologia'=>'',
+                'id_tipo_incidencia'=>''
             );
 
 
@@ -380,11 +381,14 @@ class Ttpp extends CI_Controller {
             $data["segmentos"] = $this->categoria_model->get_segmentos_pds();
             $data["tipologias"] = $this->categoria_model->get_tipologias_filtradas(4,10);
 
+            /* SELECTOR DEL TIPO DE INCIDENCIA*/
+            $data['tipos_incidencia'] = $this->tienda_model->get_tipos_incidencia();
 
             /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
             $this->data->add($data);
             $data = $this->data->getData();
             /////
+
             $this->load->view('master/header', $data);
             $this->load->view($controlador.'/navbar', $data);
             $this->load->view($controlador.'/estado_incidencias/'.$tipo, $data);
@@ -420,7 +424,9 @@ class Ttpp extends CI_Controller {
                 'id_incidencia'=>'',
                 'reference'=> '',
 
-                'id_tipo'=>'4'
+                'id_tipo'=>'4',
+                'id_subtipo'=>'10',
+                'id_tipo_incidencia'=>''
             );
             $array_sesion = $this->get_filtros($array_filtros);
 

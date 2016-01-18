@@ -162,6 +162,23 @@
                                 </select>
                             </div>
 
+                            <div class="clearfix"></div>
+
+                            <div class="col-lg-3">
+                                <label for="id_tipo_incidencia">Tipo incidencia: </label>
+                                <select name="id_tipo_incidencia" id="id_tipo_incidencia" class="form-control input-sm">
+                                    <option value="" <?php echo ($id_tipo_incidencia ==="") ? 'selected="selected"' : ''?>>Cualquiera</option>
+                                    <?php
+
+                                    foreach($tipos_incidencia as $tip)
+                                    {
+                                        $attr = ($tip->id_type_incidencia === $id_tipo_incidencia) ? ' selected="selected" ' :'';
+                                        echo '<option value="'.$tip->id_type_incidencia.'" '.$attr.'>'.$tip->title.'</option>';
+                                    }
+                                    ?>
+                                </select>
+                            </div>
+
                             <div class="col-lg-1">
                                 <label for="id_incidencia">Incidencia: </label>
                                 <input type="text" name="id_incidencia" id="id_incidencia" class="form-control input-sm" placeholder="Id. incidencia" <?php echo (!empty($id_incidencia)) ? ' value="'.$id_incidencia.'" ' : ''?> />
