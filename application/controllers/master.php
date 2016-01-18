@@ -2197,7 +2197,7 @@ class Master extends CI_Controller {
                     $data['picture_url'] = $display_maestro["picture_url"];
 
 
-                    $tiendas = $this->tienda_model->search_pds($sfid_plano);
+                    $tiendas = $this->tienda_model->search_pds($sfid_plano,'Alta');
                     if (!empty($tiendas) && count($tiendas) == 1) {
 
                         $tienda = NULL;
@@ -2254,7 +2254,7 @@ class Master extends CI_Controller {
                     /*
                      *  Panelado de la tienda
                      */
-                    $tiendas = $this->tienda_model->search_pds($sfid_plano);
+                    $tiendas = $this->tienda_model->search_pds($sfid_plano,'Alta');
 
 
 
@@ -2672,7 +2672,7 @@ class Master extends CI_Controller {
                     /*
                         *  Panelado de la tienda
                         */
-                    $tiendas = $this->tienda_model->search_pds($sfid_visual);
+                    $tiendas = $this->tienda_model->search_pds($sfid_visual,'Alta');
 
                     $id_tipo_visual = $id_subtipo_visual = $id_segmento_visual = $id_tipologia_visual = NULL;
                     if (!empty($tiendas) && count($tiendas) == 1) {
