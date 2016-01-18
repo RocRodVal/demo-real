@@ -4825,7 +4825,9 @@ class Admin extends CI_Controller
                     $data['picture_url'] = $display_maestro["picture_url"];
 
 
-                    $tiendas = $this->tienda_model->search_pds($sfid_plano);
+                    $tiendas = $this->tienda_model->search_pds($sfid_plano,'Alta');
+
+
                     if (!empty($tiendas) && count($tiendas) == 1) {
 
                         $tienda = NULL;
@@ -4883,7 +4885,7 @@ class Admin extends CI_Controller
                     /*
                      *  Panelado de la tienda
                      */
-                    $tiendas = $this->tienda_model->search_pds($sfid_plano);
+                    $tiendas = $this->tienda_model->search_pds($sfid_plano,'Alta');
 
 
 
@@ -5302,7 +5304,8 @@ class Admin extends CI_Controller
                     /*
                         *  Panelado de la tienda
                         */
-                    $tiendas = $this->tienda_model->search_pds($sfid_visual);
+                    $tiendas = $this->tienda_model->search_pds($sfid_visual,'Alta');
+
 
                     $id_tipo_visual = $id_subtipo_visual = $id_segmento_visual = $id_tipologia_visual = NULL;
                     if (!empty($tiendas) && count($tiendas) == 1) {
@@ -5313,9 +5316,13 @@ class Admin extends CI_Controller
                         }
 
 
+
                         $id_pds = $tienda->id_pds;
 
+
                         $sfid = $this->tienda_model->get_pds($id_pds);
+
+
 
                         $data['id_pds'] = 'ABX/PDS-' . $sfid['id_pds'];
                         $data['commercial'] = $sfid['commercial'];
@@ -5327,6 +5334,7 @@ class Admin extends CI_Controller
                         $data['id_pds_url'] = $id_pds;
 
                         $displays = $this->sfid_model->get_displays_pds($id_pds);
+                        //print_r($displays);
 
                         foreach ($displays as $key => $display) {
                             $num_devices = $this->tienda_model->count_devices_display($display->id_display);

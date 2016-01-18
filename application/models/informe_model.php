@@ -184,7 +184,6 @@ class Informe_model extends CI_Model
 
             "pds.territory as territory",
             "territory.territory as territorio",
-            "province.province as provincia",
 
             "commercial",
             "pds.type_via as type_via",

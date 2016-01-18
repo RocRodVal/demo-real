@@ -263,7 +263,7 @@ class Incidencia_model extends CI_Model {
 
 
                  ->join('pds','incidencias.id_pds = pds.id_pds','left outer')
-                ->join('intervenciones_incidencias','intervenciones_incidencias.id_incidencia= incidencias.id_incidencia')
+                ->join('intervenciones_incidencias','intervenciones_incidencias.id_incidencia= incidencias.id_incidencia','left')
                  ->join('pds_supervisor','pds.id_supervisor= pds_supervisor.id','left')
                  ->join('province','pds.province= province.id_province','left')
                  ->join('displays_pds','incidencias.id_displays_pds= displays_pds.id_displays_pds','left outer')
@@ -439,7 +439,7 @@ class Incidencia_model extends CI_Model {
                 LEFT JOIN pds_supervisor ON pds.id_supervisor= pds_supervisor.id
                 LEFT JOIN type_incidencia ON incidencias.id_type_incidencia = type_incidencia.id_type_incidencia
                 LEFT JOIN province ON pds.province= province.id_province
-                JOIN intervenciones_incidencias ON intervenciones_incidencias.id_incidencia = incidencias.id_incidencia
+                LEFT JOIN intervenciones_incidencias ON intervenciones_incidencias.id_incidencia = incidencias.id_incidencia
 
 
                 WHERE 1 = 1
@@ -575,7 +575,7 @@ class Incidencia_model extends CI_Model {
             ->join('device','devices_pds.id_device=device.id_device','left outer')
             ->join('territory','territory.id_territory=pds.territory','left outer')
             ->join('brand_device','device.brand_device = brand_device.id_brand_device','left outer')
-            ->join('intervenciones_incidencias','intervenciones_incidencias.id_incidencia= incidencias.id_incidencia');
+            ->join('intervenciones_incidencias','intervenciones_incidencias.id_incidencia= incidencias.id_incidencia','left');
 
 
         /** Aplicar filtros desde el array, de manera manual **/
