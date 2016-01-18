@@ -1074,7 +1074,7 @@ class Master extends CI_Controller {
             }
             $data["incidencias_robo"] = $incidencias_robo;
             $data["total_inc_robo"] = $total_inc_robo;
-            $data["total_inc_tipo"] = $total_inc_tipo;
+            $data["total_inc_tipo"] = ($total_inc_tipo > 0) ? $total_inc_tipo : 1; // Evitar división por 0
 
 
             /* LINEAS NUM INC POR AVERIA */
