@@ -460,7 +460,7 @@ class Incidencia_model extends CI_Model {
         /** Aplicar filtros desde el array, de manera manual **/
         if(isset($filtros["status"]) && !empty($filtros["status"]))                 $sql .= (' AND incidencias.status ="' .$filtros['status']. '"');
         if(isset($filtros["status_pds"]) && !empty($filtros["status_pds"]))         $sql .= (' AND incidencias.status_pds ="'.$filtros['status_pds'].'"');
-        if(isset($filtros["id_incidencia"]) && !empty($filtros["id_incidencia"]))   $sql .= (' AND id_incidencia ='.$filtros['id_incidencia']);
+        if(isset($filtros["id_incidencia"]) && !empty($filtros["id_incidencia"]))   $sql .= (' AND incidencias.id_incidencia ='.$filtros['id_incidencia']);
         if(isset($filtros["territory"]) && !empty($filtros["territory"]))           $sql .= (' AND pds.territory = '.$filtros['territory']);
         if(isset($filtros["brand_device"]) && !empty($filtros["brand_device"]))
         {
