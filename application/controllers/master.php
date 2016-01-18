@@ -1073,7 +1073,7 @@ class Master extends CI_Controller {
                 }
             }
             $data["incidencias_robo"] = $incidencias_robo;
-            $data["total_inc_robo"] = $total_inc_robo;
+            $data["total_inc_robo"] = ($total_inc_robo > 0) ? $total_inc_robo : 1; // Evitar división por 0;
             $data["total_inc_tipo"] = ($total_inc_tipo > 0) ? $total_inc_tipo : 1; // Evitar división por 0
 
 
@@ -1108,7 +1108,7 @@ class Master extends CI_Controller {
                 }
             }
             $data["incidencias_averia"] = $incidencias_averia;
-            $data["total_inc_averia"] = $total_inc_averia;
+            $data["total_inc_averia"] = ($total_inc_averia > 0) ? $total_inc_averia : 1; // Evitar división por 0;;
 
 
 
