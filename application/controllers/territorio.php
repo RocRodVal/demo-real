@@ -260,7 +260,8 @@ class Territorio extends CI_Controller {
                 'id_tipo'=>'',
                 'id_subtipo'=>'',
                 'id_segmento'=>'',
-                'id_tipologia'=>''
+                'id_tipologia'=>'',
+                'id_tipo_incidencia'=>''
             );
 
             /* BORRAR BUSQUEDA */
@@ -358,7 +359,8 @@ class Territorio extends CI_Controller {
             $data["segmentos"] = $this->categoria_model->get_segmentos_pds();
             $data["tipologias"] = $this->categoria_model->get_tipologias_pds();
 
-
+            /* SELECTOR DEL TIPO DE INCIDENCIA*/
+            $data['tipos_incidencia'] = $this->tienda_model->get_tipos_incidencia();
             /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
             $this->data->add($data);
             $data = $this->data->getData();
@@ -403,7 +405,8 @@ class Territorio extends CI_Controller {
                 'id_tipo'=>'',
                 'id_subtipo'=>'',
                 'id_segmento'=>'',
-                'id_tipologia'=>''
+                'id_tipologia'=>'',
+                'id_tipo_incidencia'=>''
             );
             $array_sesion = $this->get_filtros($array_filtros);
 
