@@ -1057,7 +1057,7 @@ class Master extends CI_Controller {
             {
                 $incidencias_robo[$num_mes] = new StdClass();
                 $incidencias_robo[$num_mes]->cantidad = 0;
-                $incidencias_robo[$num_mes]->total = 0;
+                $incidencias_robo[$num_mes]->total = 1;
                 $incidencias_robo[$num_mes]->mes = $num_mes;
                 $incidencias_robo[$num_mes]->anio = $este_anio;
 
@@ -1093,7 +1093,7 @@ class Master extends CI_Controller {
             {
                 $incidencias_averia[$num_mes] = new StdClass();
                 $incidencias_averia[$num_mes]->cantidad = 0;
-                $incidencias_averia[$num_mes]->total = 0;
+                $incidencias_averia[$num_mes]->total = 1;
                 $incidencias_averia[$num_mes]->mes = $num_mes;
                 $incidencias_averia[$num_mes]->anio = $este_anio;
 
