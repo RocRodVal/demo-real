@@ -769,6 +769,7 @@ class Master extends CI_Controller {
             }
 
             $este_anio = (is_null($anio)) ? date("Y") : $anio;
+            $data['anio'] = $este_anio;
 
             setlocale(LC_ALL, 'es_ES');
 
@@ -1014,15 +1015,13 @@ class Master extends CI_Controller {
                 }
                 else
                 {
-                    $resultados_7[$key]->cantidad = number_format(round($num/$denom,2),2,",",".");
+                        $resultados_7[$key]->cantidad = number_format(round($num / $denom, 2), 2, ",", ".");
+
                 }
 
                 $total_num +=  $valor->cantidad;
                 $total_denom += $intervenciones_anio[$key]->cantidad;
             }
-
-
-
 
 
             $data["media_inc_int"] = $resultados_7;
@@ -1032,6 +1031,88 @@ class Master extends CI_Controller {
             }else{
                 $data["total_media_inc_int"] = 0;
             }
+
+
+            /* LINEAS NUM INC POR ROBO */
+            $sql_aux = 'SELECT COUNT(id_incidencia) FROM incidencias
+                        WHERE month(fecha) = mes AND YEAR(fecha) = "'.$este_anio.'" '.$ctrl_no_cancelada.' ';
+
+
+            $resultados_8 = $this->db->query('SELECT COUNT(id_incidencia) as cantidad,
+
+                                            YEAR(f.fecha) as anio, MONTH(f.fecha) as mes,
+                                            ('.$sql_aux.') as total
+
+                                                FROM incidencias f
+                                                WHERE YEAR(f.fecha) = "'.$este_anio.'" AND f.tipo_averia = "Robo"
+                                                '.$ctrl_no_cancelada.'
+                                                GROUP BY mes');
+
+            // CREAMOS UN ARRAY CON TODOS LOS MESES Y LO RELLENAMOS CON LOS RESULTADOS, SI NO EXISTE RESULTADO, ESE MES
+            // SERA DE CANTIDAD 0
+            $incidencias_robo = array();
+            $total_inc_robo = 0;
+            $total_inc_tipo = 0;
+            foreach($meses_columna as $num_mes=>$mes)
+            {
+                $incidencias_robo[$num_mes] = new StdClass();
+                $incidencias_robo[$num_mes]->cantidad = 0;
+                $incidencias_robo[$num_mes]->total = 0;
+                $incidencias_robo[$num_mes]->mes = $num_mes;
+                $incidencias_robo[$num_mes]->anio = $este_anio;
+
+                foreach($resultados_8->result() as $key=>$valor)
+                {
+                    if(array_key_exists("mes",$valor) && $valor->mes == $num_mes)
+                    {
+                        $incidencias_robo[$num_mes] = $valor;
+                        $total_inc_robo += $valor->cantidad;
+                        $total_inc_tipo += $valor->total;
+                        break;
+                    }
+                }
+            }
+            $data["incidencias_robo"] = $incidencias_robo;
+            $data["total_inc_robo"] = $total_inc_robo;
+            $data["total_inc_tipo"] = $total_inc_tipo;
+
+
+            /* LINEAS NUM INC POR AVERIA */
+            $resultados_9 = $this->db->query('SELECT COUNT(id_incidencia) as cantidad, YEAR(f.fecha) as anio, MONTH(f.fecha) as mes,
+            ('.$sql_aux.') as total
+                                                FROM incidencias f
+                                                WHERE YEAR(f.fecha) = "'.$este_anio.'" AND f.tipo_averia = "Avería"
+                                                '.$ctrl_no_cancelada.'
+                                                GROUP BY mes');
+
+            // CREAMOS UN ARRAY CON TODOS LOS MESES Y LO RELLENAMOS CON LOS RESULTADOS, SI NO EXISTE RESULTADO, ESE MES
+            // SERA DE CANTIDAD 0
+            $incidencias_averia = array();
+            $total_inc_averia = 0;
+            foreach($meses_columna as $num_mes=>$mes)
+            {
+                $incidencias_averia[$num_mes] = new StdClass();
+                $incidencias_averia[$num_mes]->cantidad = 0;
+                $incidencias_averia[$num_mes]->total = 0;
+                $incidencias_averia[$num_mes]->mes = $num_mes;
+                $incidencias_averia[$num_mes]->anio = $este_anio;
+
+                foreach($resultados_9->result() as $key=>$valor)
+                {
+                    if(array_key_exists("mes",$valor) && $valor->mes == $num_mes)
+                    {
+                        $incidencias_averia[$num_mes] = $valor;
+                        $total_inc_averia += $valor->cantidad;
+                        break;
+                    }
+                }
+            }
+            $data["incidencias_averia"] = $incidencias_averia;
+            $data["total_inc_averia"] = $total_inc_averia;
+
+
+
+
 
             $data["menos_72"] = $menos_72;
             $data["mas_72"] = $mas_72;

@@ -5,10 +5,7 @@
                     <h1 class="page-header"><?php echo $title ?></h1>
                 </div>
             </div>
-            <?php
-
-            $anio = date("Y");
-            /*<div class="row">
+            <?php       /*<div class="row">
                 <form action="<?=site_url("master/cdm_incidencias/")?>" method="post">
                     <div class="form-group">
                         <label for="tipo_tienda">
@@ -426,6 +423,51 @@
                             ?>
                         </tr>
 
+                        <tr class="separador"><?=$separador_td?></tr>
+
+                        <tr>
+                            <th>Incidencias por robo</th>
+                            <?php /* INCIDENCIAS POR ROBO ABS */
+                            foreach($incidencias_robo as $key=>$valor)
+                            {
+                                echo '<td>'.$valor->cantidad.'</td>';
+                            }
+                            echo '<td class="total">'.$total_inc_robo.'</td>';
+                            ?>
+                        </tr>
+
+                        <tr>
+                            <th>Ratio  de incidencias por robo</th>
+                            <?php /* INCIDENCIAS POR ROBO ABS */
+                            foreach($incidencias_robo as $key=>$valor)
+                            {
+                                echo '<td>'.number_format ($valor->cantidad / $valor->total * 100,2,",",".").' %</td>';
+                            }
+                            echo '<td class="total">'.number_format ($total_inc_robo/ $total_inc_tipo*100,2,",",".").' %</td>';
+                            ?>
+                        </tr>
+
+                        <tr>
+                            <th>Incidencias por avería</th>
+                            <?php /* INCIDENCIAS POR ROBO/AVERIA */
+                            foreach($incidencias_averia as $key=>$valor)
+                            {
+                                echo '<td>'.$valor->cantidad.'</td>';
+                            }
+                            echo '<td class="total">'.$total_inc_averia.'</td>';
+                            ?>
+                        </tr>
+
+                        <tr>
+                            <th>Ratio  de incidencias por avería</th>
+                            <?php /* INCIDENCIAS POR ROBO ABS */
+                            foreach($incidencias_averia as $key=>$valor)
+                            {
+                                echo '<td>'.number_format ($valor->cantidad / $valor->total * 100,2,",",".").' %</td>';
+                            }
+                            echo '<td class="total">'.number_format ($total_inc_averia/ $total_inc_tipo*100,2,",",".").' %</td>';
+                            ?>
+                        </tr>
                         </tbody>
 
                     </table>
