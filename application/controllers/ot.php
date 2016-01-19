@@ -453,7 +453,7 @@ class Ot extends CI_Controller {
             $this->session->unset_userdata("sfid_plano");
             $this->session->unset_userdata("generado_planograma");
 
-            redirect("ot/informes/planogramas/informe_planogramas", "refresh");
+            redirect("ot/informe_planogramas", "refresh");
 
         }
 
@@ -653,7 +653,7 @@ class Ot extends CI_Controller {
         }
         else
         {
-            redirect('ot','refresh');
+            redirect('ot/informe_planogramas','refresh');
         }
 }
 

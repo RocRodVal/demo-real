@@ -405,7 +405,7 @@ class Admin extends CI_Controller
 
 
 
-    public function exportar_incidencias($tipo="abiertas",$formato=NULL)
+    public function exportar_incidencias($tipo="abiertas",$formato=NULL,$portipo=NULL)
     {
         if ($this->auth->is_auth()) {
             $xcrud = xcrud_get_instance();
@@ -444,7 +444,7 @@ class Admin extends CI_Controller
 
 
 
-            $this->incidencia_model->exportar_incidencias($array_orden, $array_sesion, $tipo, $ext);
+            $this->incidencia_model->exportar_incidencias($array_orden, $array_sesion, $tipo, $ext,$portipo);
 
 
 
@@ -4973,7 +4973,7 @@ class Admin extends CI_Controller
                 $this->session->unset_userdata("sfid_plano");
                 $this->session->unset_userdata("generado_planograma");
 
-                redirect("admin/informes/informe_planogramas", "refresh");
+                redirect("admin/informe_planogramas", "refresh");
 
             }
 

@@ -217,7 +217,8 @@
                                 </div>
                              <?php }?>
 
-                            <p><a href="<?=base_url()?>master/exportar_incidencias/cerradas" class="btn exportar"><i class="glyphicon glyphicon-file"></i> Exportar Excel</a></p>
+                            <p><a href="<?=base_url()?>master/exportar_incidencias/cerradas" class="btn exportar"><i class="glyphicon glyphicon-file"></i> Exportar Excel</a>
+                            <a href="<?=base_url()?>master/exportar_incidencias/cerradas/xlsx/portipo" class="btn exportar"><i class="glyphicon glyphicon-file"></i> Exportar Excel por tipo</a></p>
                             <div class="table-responsive">
                                 <table class="table table-striped table-bordered table-hover table-sorting" id="table_incidencias_cerradas"  data-order-form="form_orden_cerradas">
                                     <thead>
