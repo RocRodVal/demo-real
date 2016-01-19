@@ -382,7 +382,7 @@ class Master extends CI_Controller {
 
 
 
-    public function exportar_incidencias($tipo="abiertas",$formato=NULL)
+    public function exportar_incidencias($tipo="abiertas",$formato=NULL,$portipo=NULL)
     {
         if($this->auth->is_auth()){ // Control de acceso según el tipo de agente. Permiso definido en constructor
             $xcrud = xcrud_get_instance();
@@ -418,7 +418,7 @@ class Master extends CI_Controller {
             $array_orden = $this->get_orden();
 
 
-            $this->incidencia_model->exportar_incidencias($array_orden, $array_sesion, $tipo,$ext);
+            $this->incidencia_model->exportar_incidencias($array_orden, $array_sesion, $tipo,$ext,$portipo);
 
 
 
@@ -2388,7 +2388,7 @@ class Master extends CI_Controller {
     }
         else
         {
-            redirect('master','refresh');
+            redirect('master/informe_planogramas','refresh');
         }
     }
 

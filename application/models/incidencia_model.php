@@ -328,7 +328,7 @@ class Incidencia_model extends CI_Model {
      *  filtradas si procede
      *
      * */
-    public function exportar_incidencias($array_orden = NULL,$filtros=NULL,$tipo="abiertas",$formato="csv") {
+    public function exportar_incidencias($array_orden = NULL,$filtros=NULL,$tipo="abiertas",$formato="csv",$portipo=NULL) {
         $this->load->dbutil();
         $this->load->helper('file');
         $this->load->helper('csv');
@@ -341,7 +341,7 @@ class Incidencia_model extends CI_Model {
         $arr_titulos = array('Id incidencia','SFID','Fecha','Elemento','Territorio','Fabricante','Mueble','Terminal','Supervisor','Provincia','Tipo avería',
             'Texto 1','Texto 2','Texto 3','Parte PDF','Denuncia','Foto 1','Foto 2','Foto 3','Contacto','Teléfono','Email',
             'Id. Operador','Intervención','Estado','Última modificación','Estado Sat','Tipo incidencia');
-        $excluir = array('fecha_cierre','fabr');
+        $excluir = array('fecha_cierre','fabr','id_type_incidencia');
 
 
         // ARRAY CON LOS DISTINTOS ACCESOS QUE NO COMPARTEN CAMPOS CON ELL INFORME DE ACCESO GLOBAL ADMIN
@@ -350,7 +350,7 @@ class Incidencia_model extends CI_Model {
             // Array de títulos de campo para la exportación XLS/CSV
             $arr_titulos = array('Id incidencia','SFID','Fecha','Elemento','Territorio','Fabricante','Mueble','Terminal','Supervisor','Provincia','Tipo avería',
                 'Texto 1','Texto 2','Texto 3','Parte PDF','Denuncia','Foto 1','Foto 2','Foto 3','Contacto','Teléfono','Email',
-                'Id. Operador','Intervención','Estado','Tipo incidencia');
+                'Id. Operador','Intervención','Estado','Tipo_Incidencia');
 
             array_push($excluir,'last_updated');
             array_push($excluir,'status_pds');
@@ -406,17 +406,18 @@ class Incidencia_model extends CI_Model {
                             incidencias.phone,
                             incidencias.email,
                             incidencias.id_operador,
-                            incidencias.intervencion,';
+                            incidencias.intervencion,
+                            type_incidencia.id_type_incidencia,';
 
         if($acceso=="admin"){
             $sql .= 'incidencias.status  AS `Estado SAT`,';
             $sql .= 'incidencias.last_updated, ';
             $sql .= 'incidencias.status_pds as `Estado PDS`,
-                    type_incidencia.title as `Tipo Incidencia`';
+                     type_incidencia.title as `Tipo_Incidencia`';
 
         }else{
             $sql .= 'incidencias.status_pds as `Estado PDS`,
-                    type_incidencia.title as `Tipo Incidencia`';
+                    type_incidencia.title as `Tipo_Incidencia`';
         }
         $sql = rtrim($sql,",");
 
@@ -511,15 +512,21 @@ class Incidencia_model extends CI_Model {
                 $orden = $value;
             }
         }
-
+        if (!is_null($portipo)) {
+            $sql .= " ORDER BY type_incidencia.title ASC, fecha DESC ";
+        } else {
+            $sql .= " ORDER BY fecha DESC";
+        }
 
         /*if(!is_null($campo_orden) && !empty($campo_orden) && !is_null($orden) && !empty($orden)) {
           $s_orden = $campo_orden. " ".$orden;
           $sql .= " ORDER BY ".($s_orden);
       }else{*/
-        $sql .= " ORDER BY fecha DESC";
+
         //}
 
+//        echo $sql;
+  //      exit;
 
         $query = $this->db->query($sql);
 
@@ -527,10 +534,74 @@ class Incidencia_model extends CI_Model {
         //echo $this->db->last_query();
         //exit;
 
-        $datos = preparar_array_exportar($query->result(),$arr_titulos,$excluir);
+        /* */
+        $resultado=$query->result();
 
-        exportar_fichero($formato,$datos,$sTitleFilename.$sFiltrosFilename.date("d-m-Y")."T".date("H:i:s")."_".date("d-m-Y"));
 
+        if (is_null($portipo)) {
+            $datos = preparar_array_exportar($resultado, $arr_titulos, $excluir);
+            exportar_fichero($formato,$datos,$sTitleFilename.$sFiltrosFilename.date("d-m-Y")."T".date("H:i:s")."_".date("d-m-Y"));
+        }
+        else {
+            $linea = 0;
+            //$aux[$linea] = $arr_titulos;
+            //$linea++;
+            $anterior = 0;
+            //$dos=false;
+            //$columnas = count($arr_titulos);
+            foreach ($resultado as $key => $campos) {
+                if (is_null($campos->Tipo_Incidencia)) {
+                    $titulo = "Incidencias sin tipificar";
+                }
+                else $titulo = $campos->Tipo_Incidencia;
+
+                if ($key==0) { $anterior = $campos->id_type_incidencia; }
+
+                if (($campos->id_type_incidencia == $anterior)) {
+                    $contador=0;
+                    foreach ($campos as $campo => $valor) {
+                        if ($key == 0) {
+                            if (!in_array($campo, $excluir)) {
+                                if ($contador==0) {
+                                    $aux[$linea][$campo] = $titulo;
+                                }else $aux[$linea][$campo] = "";
+                                $aux[$linea + 1] = $arr_titulos;
+                                $aux[$linea + 2][$campo] = $valor;
+                                $lineas=3;
+                            }
+
+                        } else {
+
+                            if (!in_array($campo, $excluir)) $aux[$linea][$campo] = $valor;
+                            $lineas =1;
+                        }
+                        $contador++;
+                    }
+                }
+                else {
+                    $anterior = $campos->id_type_incidencia;
+                    $contador=0;
+                    foreach ($campos as $campo => $valor) {
+
+                        $aux[$linea][$campo]="";
+                        if (!in_array($campo, $excluir)) {
+                            if ($contador==0) {
+                                $aux[$linea+1][$campo] = $titulo;
+                            } else $aux[$linea][$campo]="";
+                            $aux[$linea + 2] = $arr_titulos;
+                            $aux[$linea + 3][$campo] = $valor;
+                            $lineas=4;
+                        }
+
+                        $contador++;
+                    }
+                }
+                $linea = $linea + $lineas;
+
+            }
+            //$datos = preparar_array_exportar($aux, $arr_titulos, $excluir);
+            exportar_fichero($formato,$aux,$sTitleFilename.$sFiltrosFilename.date("d-m-Y")."T".date("H:i:s")."_".date("d-m-Y"));
+        }
 
     }
 

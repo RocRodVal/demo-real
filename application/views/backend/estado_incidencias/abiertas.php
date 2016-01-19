@@ -239,7 +239,7 @@
                         <?php } ?>
 
                         <p><a href="<?=base_url()?>admin/exportar_incidencias/abiertas" class="btn exportar"><i class="glyphicon glyphicon-file"></i> Exportar Excel</a>
-                       <?php /* <a href="<?=base_url()?>admin/exportar_incidencias/abiertas/xlsx/portipo" class="btn exportar"><i class="glyphicon glyphicon-file"></i> Exportar Excel por tipo</a>*/ ?></p>
+                        <a href="<?=base_url()?>admin/exportar_incidencias/abiertas/xlsx/portipo" class="btn exportar"><i class="glyphicon glyphicon-file"></i> Exportar Excel por tipo</a></p>
 		                <div class="table-responsive">
 		                    <table class="table table-striped table-bordered table-hover table-sorting" id="table_incidencias_abiertas" data-order-form="form_orden_<?=$tipo?>">
 		                        <thead>

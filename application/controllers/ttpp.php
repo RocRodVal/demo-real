@@ -922,7 +922,7 @@ class Ttpp extends CI_Controller {
         }
         else
         {
-            redirect('ttpp','refresh');
+            redirect('ttpp/informe_planogramas','refresh');
         }
 
     }
