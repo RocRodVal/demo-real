@@ -287,8 +287,9 @@
                             <td>
                             <?php
                             //Si el estado es superior a Instalador asignado e intervención!=null->Esto nunca debería darse pero se contempla
-                            if (($incidencia['status'] == 'Comunicada' || $incidencia['status'] == 'Resuelta' ||
-                                    $incidencia['status'] == 'Instalador asignado' || $incidencia['status'] == 'Material asignado') && $incidencia['intervencion'] != null)
+                           /* if (($incidencia['status'] == 'Comunicada' || $incidencia['status'] == 'Resuelta' ||
+                                    $incidencia['status'] == 'Instalador asignado' || $incidencia['status'] == 'Material asignado') && $incidencia['intervencion'] != null)*/
+                            if ($incidencia['intervencion'] != null)
                             {
                                 ?>
                                 <a onClick="showModalViewIntervencion(<?php echo $incidencia['intervencion']; ?>)">
