@@ -5746,6 +5746,83 @@ class Admin extends CI_Controller
     }
 
 
+    /**
+     * Acción de entrada del Informe: Tiendas por tipología
+     */
+    public function tiendas_tipologia()
+    {
+        $controlador = $this->data->get("controlador");
+        $entrada = $this->data->get("entrada");
+
+        if($this->auth->is_auth()) {
+            $xcrud = xcrud_get_instance();
+
+            $this->load->model("informe_model");
+            $this->load->helper("common");
+
+            $data = array();
+            $data['title'] = "Resumen de tiendas por tipología";
+
+
+            $tiendas_tipologia = $this->informe_model->get_informe_tiendas_tipologia();
+            $data["tiendas_tipologia"] = $tiendas_tipologia;
+
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
+            $this->load->view('/backend/header', $data);
+            $this->load->view('/backend/navbar', $data);
+            $this->load->view('/backend/informes/tiendas_tipologia/list', $data);
+            $this->load->view('/backend/footer');
+        }
+        else
+        {
+            redirect($entrada,"refresh");
+        }
+    }
+
+
+    /**
+     * Acción de entrada del Informe: Tiendas por fabricante
+     */
+    public function tiendas_fabricante()
+    {
+        $controlador = $this->data->get("controlador");
+        $entrada = $this->data->get("entrada");
+
+        if($this->auth->is_auth()) {
+            $xcrud = xcrud_get_instance();
+
+            $this->load->model("informe_model");
+            $this->load->helper("common");
+
+            $data = array();
+            $data['title'] = "Informe de tiendas por fabricante";
+
+            // Recoger el fabricante del form
+            $data['id_fabricante'] = ($this->input->post('id_fabricante')) ? $this->input->post('id_fabricante') : NULL;
+
+            // Sacar el listado de fabricantes
+            $data['fabricantes'] = $this->informe_model->get_displays_fabricantes();
+            // Obtener el resultado.
+            $data['resultado'] = $this->informe_model->get_informe_tiendas_fabricante($data['id_fabricante']);
+
+
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
+            $this->load->view('/backend/header', $data);
+            $this->load->view('/backend/navbar', $data);
+            $this->load->view('/backend/informes/tiendas_fabricante/list', $data);
+            $this->load->view('/backend/footer');
+        }
+        else
+        {
+            redirect($entrada,"refresh");
+        }
+    }
 
     public function ayuda($tipo)
     {

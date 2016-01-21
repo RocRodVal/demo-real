@@ -22,7 +22,7 @@
 
 
 		            ?>
-		            	<h1 class="page-header">Intervenciones [descargar <a href="<?=site_url('admin/exportar_intervenciones_facturacion/'.$fecha_inicio.'/'.$fecha_fin.'/'.$instalador.'/'.$dueno);?>" target="_blank">Exportal Excel</a>]</h1>
+		            	<h1 class="page-header">Intervenciones [descargar <a href="<?=site_url('admin/exportar_intervenciones_facturacion/'.$fecha_inicio.'/'.$fecha_fin.'/'.$instalador.'/'.$dueno);?>" target="_blank">Exportar Excel</a>]</h1>
 		                <div class="table-responsive">
 		                	<p><strong>Rango:</strong> <?php echo date("d/m/Y",strtotime($fecha_inicio)); ?> - <?php echo date("d/m/Y",strtotime($fecha_fin)); ?></p>
 
@@ -46,6 +46,7 @@
 		                        <tr>
 		                            <th>Fecha</th>
                                     <th>Intervención</th>
+									<th>Incidencias</th>
 		                            <th>SFID</th>
 		                            <th>Tipología</th>
 		                            <th>Instalador</th>
@@ -62,7 +63,14 @@
 		                            <tr>
 		                                <td><?php echo date("d/m/Y",strtotime($item_facturacion->fecha)); ?></td>
                                         <td><?php echo $item_facturacion->visita ?></td>
-		                                <td><?php echo $item_facturacion->SFID ?></td>
+										<td><?php foreach ($item_facturacion->Incidencias as $incidencia ) {
+												echo $incidencia;
+												if ($incidencia !== end($item_facturacion->Incidencias)) {
+													echo " - ";
+												}
+											}
+											?></td>
+										<td><?php echo $item_facturacion->SFID ?></td>
                                         <td><?php echo $item_facturacion->tipo."-".$item_facturacion->subtipo."-".$item_facturacion->segmento."-".$item_facturacion->tipologia ?></td>
 		                                <td><?php echo $item_facturacion->instalador ?></td>
                                         <td><?php echo $item_facturacion->dueno  ?></td>

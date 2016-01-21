@@ -770,8 +770,6 @@ class Tienda_model extends CI_Model {
 
 
 
-
-	
 	function exportar_facturacion($formato="csv",$fecha_inicio,$fecha_fin,$instalador = NULL,$dueno=NULL)
 	{
 		$this->load->dbutil();
@@ -843,7 +841,7 @@ class Tienda_model extends CI_Model {
 
 
 
-    public function facturacion_estado_intervencion($fecha_inicio,$fecha_fin,$instalador = NULL,$dueno=NULL) {
+    public function facturacion_estado_intervencion_old($fecha_inicio,$fecha_fin,$instalador = NULL,$dueno=NULL) {
 
         $query = $this->db->select('
                     incidencias.fecha_cierre as fecha,
@@ -940,7 +938,7 @@ class Tienda_model extends CI_Model {
     }
 
 
-    function exportar_intervenciones_facturacion($formato="csv",$fecha_inicio,$fecha_fin,$instalador = NULL,$dueno=NULL)
+    function exportar_intervenciones_facturacion_old($formato="csv",$fecha_inicio,$fecha_fin,$instalador = NULL,$dueno=NULL)
     {
         $this->load->dbutil();
         $this->load->helper(array('file','csv'));
@@ -1040,6 +1038,244 @@ class Tienda_model extends CI_Model {
     }
 
 
+    public function facturacion_estado_intervencion($fecha_inicio,$fecha_fin,$instalador = NULL,$dueno=NULL) {
+
+        $query = $this->db->select('
+                    incidencias.fecha_cierre as fecha,
+                    incidencias.status_pds,
+                    pds.reference AS SFID,
+                    facturacion.id_incidencia as Incidencias,
+                    pds_tipo.titulo as tipo,
+                    pds_subtipo.titulo as subtipo,
+			        pds_segmento.titulo as segmento,
+			        pds_tipologia.titulo as tipologia,
+                    facturacion.id_intervencion AS visita,
+                    contact.contact AS instalador,
+                    client.client as dueno,
+                            SUM(facturacion.units_device) AS dispositivos, SUM(facturacion.units_alarma) AS otros')
+
+            ->join('intervenciones','facturacion.id_intervencion = intervenciones.id_intervencion')
+            ->join('intervenciones_incidencias','intervenciones.id_intervencion = intervenciones_incidencias.id_intervencion')
+            ->join('incidencias','incidencias.id_incidencia = intervenciones_incidencias.id_incidencia')
+
+
+            ->join('pds','facturacion.id_pds = pds.id_pds')
+            ->join('pds_tipo','pds.id_tipo = pds_tipo.id','left')
+            ->join('pds_subtipo','pds.id_subtipo = pds_subtipo.id','left')
+            ->join('pds_segmento','pds.id_segmento = pds_segmento.id','left')
+            ->join('pds_tipologia','pds.id_tipologia= pds_tipologia.id','left')
+            ->join('displays_pds','facturacion.id_displays_pds = displays_pds.id_displays_pds')
+            ->join('display','displays_pds.id_display = display.id_display')
+            ->join('contact','intervenciones.id_operador = contact.id_contact', 'left')
+            ->join('client','display.client_display= client.id_client', 'left')
+
+            ->where('incidencias.fecha_cierre >=',$fecha_inicio)
+            ->where('incidencias.fecha_cierre <=',$fecha_fin)
+        ;
+
+
+        /* pds_tipo.titulo as tipo, pds_subtipo.titulo as subtipo,
+			pds_segmento.titulo as segmento,  pds_tipologia.titulo as tipologia, province.province, territory.territory')
+
+			->join('province','pds.province = province.id_province')
+			->join('territory','pds.territory = territory.id_territory')
+            ->join('pds_tipo','pds.id_tipo = pds_tipo.id','left')
+            ->join('pds_subtipo','pds.id_subtipo = pds_subtipo.id','left')
+            ->join('pds_segmento','pds.id_segmento = pds_segmento.id','left')
+            ->join('pds_tipologia','pds.id_tipologia= pds_tipologia.id','left')*/
+
+        if(!is_null($instalador) && !empty($instalador)){
+            $query = $this->db->where('intervenciones.id_operador',$instalador);
+        }
+        if(!is_null($dueno) && !empty($dueno)){
+            $query = $this->db->where('display.client_display',$dueno);
+        }
+        $query = $this->db->group_by('facturacion.id_facturacion');
+
+        $query = $this->db->order_by('incidencias.fecha_cierre,facturacion.id_intervencion')
+            ->get('facturacion');
+
+
+        $resultado = $query->result();
+
+        // Guardamos en un array, los elementos facturables, que lo son porque todas sus incidencias asignadas han
+        // sido cerradas o resueltas.
+        //
+        $facturacion = array();
+
+        //echo "PRE".count($resultado)." - ";
+        /* Recorro las intervenciones-incidencia así, si una intervencion tiene finalizadas todas sus incidencias, lo dejamos en el array. */
+        $indice=0;
+        $incidencias=array();
+        foreach($resultado as $intervencion)
+        {
+
+            if($intervencion->status_pds == "Finalizada")
+            {
+                if(array_key_exists($intervencion->visita,$facturacion)){
+
+                    $indice =$indice+1;
+                    //echo "Ya existe\n".$intervencion->visita;
+                } else {
+                    $incidencias=array();
+                    $indice = 0;
+                }
+
+                $facturacion[$intervencion->visita] = $intervencion;
+                $incidencias[$indice] =  $intervencion->Incidencias;
+                $facturacion[$intervencion->visita]->Incidencias = $incidencias;
+
+                //$indice ++;
+                // $facturacion[$intervencion->id_incidencia] =
+                //print_r($incidencias);
+            }
+            else
+            {
+                $facturacion[$intervencion->visita] = $intervencion;
+                // Si existe la clave, eliminamos la intervención pq aún no es facturable por proveedor...
+                if(array_key_exists($intervencion->visita,$facturacion))
+                {
+                    $indice=0;
+                    unset($incidencias);
+                    unset($facturacion[$intervencion->visita]);
+                }
+            }
+
+            //echo $indice." ".$intervencion->visita ;
+            //echo"<br>";
+        }
+
+        return $facturacion;
+
+    }
+
+    function exportar_intervenciones_facturacion($formato="csv",$fecha_inicio,$fecha_fin,$instalador = NULL,$dueno=NULL)
+    {
+        $this->load->dbutil();
+        $this->load->helper(array('file','csv'));
+        $this->load->helper('download');
+
+        $this->load->model(array("contact_model","client_model"));
+
+
+        // REALIZAMOS LA CONSULTA A LA BD
+        $query = $this->db->select('
+                    incidencias.fecha_cierre as fecha,
+                    facturacion.id_intervencion AS visita,
+                    facturacion.id_incidencia as Incidencias,
+                    incidencias.status_pds,
+                    pds.reference AS SFID,
+                    pds_tipo.titulo as tipo,
+                    pds_subtipo.titulo as subtipo,
+			        pds_segmento.titulo as segmento,
+			        pds_tipologia.titulo as tipologia,
+                    contact.contact AS instalador,
+                    client.client as dueno,
+                            SUM(facturacion.units_device) AS dispositivos, SUM(facturacion.units_alarma) AS otros')
+
+            ->join('intervenciones','facturacion.id_intervencion = intervenciones.id_intervencion')
+            ->join('intervenciones_incidencias','intervenciones.id_intervencion = intervenciones_incidencias.id_intervencion')
+            ->join('incidencias','incidencias.id_incidencia = intervenciones_incidencias.id_incidencia')
+
+
+            ->join('pds','facturacion.id_pds = pds.id_pds')
+            ->join('pds_tipo','pds.id_tipo = pds_tipo.id','left')
+            ->join('pds_subtipo','pds.id_subtipo = pds_subtipo.id','left')
+            ->join('pds_segmento','pds.id_segmento = pds_segmento.id','left')
+            ->join('pds_tipologia','pds.id_tipologia= pds_tipologia.id','left')
+            ->join('displays_pds','facturacion.id_displays_pds = displays_pds.id_displays_pds')
+            ->join('display','displays_pds.id_display = display.id_display')
+            ->join('contact','intervenciones.id_operador = contact.id_contact', 'left')
+            ->join('client','display.client_display= client.id_client', 'left')
+
+            ->where('incidencias.fecha_cierre >=',$fecha_inicio)
+            ->where('incidencias.fecha_cierre <=',$fecha_fin)
+        ;
+        if(!is_null($instalador) && !empty($instalador)){
+            $query = $this->db->where('intervenciones.id_operador',$instalador);
+        }
+        if(!is_null($dueno) && !empty($dueno)){
+            $query = $this->db->where('display.client_display',$dueno);
+        }
+        $query = $this->db->group_by('facturacion.id_facturacion');
+        $query = $this->db->order_by('incidencias.fecha_cierre,facturacion.id_intervencion')
+            ->get('facturacion');
+        $resultado = $query->result();
+
+        $titulos=array('Fecha','Intervencion','Incidencias','SFID','Tipo tienda','Subtipo tienda','Segmento tienda','Tipología tienda','Instalador','Dueño','Dispositivos','Alarmas');
+        $excluir=array('status_pds');
+
+        // DEFINO LAS CABECERAS DEL LISTADO A EXPORTAR
+        $facturacion = array();
+
+        $indice=0;
+        $incidencias=array();
+
+        /* Recorro las intervenciones-incidencia así, si una intervencion tiene finalizadas todas sus incidencias, lo dejamos en el array.
+        Y en caso contrario lo omitimos del informe.*/
+        /* En el campo incidencias se guarda un array con todas las incidencias resueltas en una intervencion*/
+        foreach($resultado as $intervencion)
+        {
+            $intervencion->fecha = date("d/m/Y",strtotime(($intervencion->fecha)));  // Formato ES para la fecha
+            if($intervencion->status_pds == "Finalizada")   // Si la incidencia actual
+            {
+                if(array_key_exists($intervencion->visita,$facturacion)){
+                    $indice =$indice+1;
+                    //echo "Ya existe\n".$intervencion->visita;
+                } else {
+                    $incidencias=array();
+                    $indice = 0;
+                }
+                $facturacion[$intervencion->visita] = $intervencion;
+                $incidencias[$indice] =  $intervencion->Incidencias;
+                $facturacion[$intervencion->visita]->Incidencias = $incidencias;
+            }
+            else
+            {
+                $facturacion[$intervencion->visita] = $intervencion;
+                // Si existe la clave, eliminamos la intervención pq aún no es facturable por proveedor...
+                if(array_key_exists($intervencion->visita,$facturacion))
+                {
+                    $indice=0;
+                    unset($facturacion[$intervencion->visita]);
+                }
+            }
+        }
+
+        // GENERAR NOMBRE DE FICHERO
+        $filename["instalador"]  = (!is_null($instalador)) ? $this->contact_model->getById($instalador)->getName() : NULL;  // Campo a sanear
+        $filename["dueno"] = (!is_null($dueno)) ? $this->client_model->getById($dueno)->getName() : NULL;                   // Campo a sanear
+        foreach($filename as $key=>$f_name)
+        {
+            $filename[$key] = str_sanitize($f_name);
+        }
+        $filename["from"] = date("d-m-Y",strtotime($fecha_inicio));     // Campo no saneable
+        $filename["to"] = date("d-m-Y",strtotime($fecha_fin));          // Campo no saneable
+        $f_nombre = implode("__",$filename);
+
+
+
+        //Preparación del campo incidencias
+
+        foreach ($facturacion as $item_facturacion) {
+            $todas="";
+            foreach ($item_facturacion->Incidencias as $inc) {
+                $todas.=$inc;
+                if ($inc !== end($item_facturacion->Incidencias)) {
+                    $todas.=" - ";
+                }
+            }
+            $item_facturacion->Incidencias= $todas;
+            //echo $incidencias;
+        }
+        /*  print_r($facturacion);
+          exit;*/
+
+        $facturacion = preparar_array_exportar($facturacion,$titulos,$excluir);
+        // EXPORTAR EL RESULTADO
+        exportar_fichero($formato,$facturacion,$f_nombre);
+
+    }
 
     public function get_display_pds($id) {
 			if($id != FALSE) {

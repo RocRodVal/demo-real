@@ -68,10 +68,10 @@
                         <li <?=(in_array($this->uri->segment(2), $exposicion))?'class="active"':''?>>
                             <a href="#"><i class="fa fa-building-o fa-fw"></i> Exposición<span class="fa arrow"></span></a>
                             <ul class="nav nav-second-level">
-                            	<?php /*<li><a <?=($this->uri->segment(2)==='inventarios_panelados')?'class="active"':''?> href="<?=site_url($acceso.'/inventarios_panelados')?>"> Panelado genérico &raquo;</a></li>*/?>
+                            	<?php /*<li><a <?=($this->uri->segment(2)==='inventarios_panelados')?'class="active"':''?> href="<?=site_url($acceso.'/inventarios_panelados')?>"> Panelado genérico &raquo;</a></li>
                                 <li><a <?=($this->uri->segment(2)==='inventarios_planogramas')?'class="active"':''?> href="<?=site_url($acceso.'/inventarios_planogramas')?>"> Planograma genérico &raquo;</a></li>
                             	<?php $descripcion = array('descripcion','exp_alta_incidencia','exp_alta_incidencia_mueble','exp_alta_incidencia_device');	?>
-                            	<li><a <?=(in_array($this->uri->segment(2), $descripcion))?'class="active"':''?> href="<?=site_url($acceso.'/descripcion')?>"> Planograma tiendas &raquo;</a></li>
+                            	<li><a <?=(in_array($this->uri->segment(2), $descripcion))?'class="active"':''?> href="<?=site_url($acceso.'/descripcion')?>"> Planograma tiendas &raquo;</a></li> */?>
                              	<li><a <?=($this->uri->segment(2)==='inventarios')?'class="active"':''?> href="<?=site_url($acceso.'/inventarios')?>"> Inventarios tiendas &raquo;</a></li>
                             </ul>
                         </li>
@@ -125,7 +125,9 @@
                             'informe_visual',
                             'informe_visual_mueble_sfid',
                             'informe_visual_terminal',
-                            'informe_visual_ficha_terminal'
+                            'informe_visual_ficha_terminal',
+                            'tiendas_tipologia',
+                            'tiendas_fabricante'
 
                         ); ?>
 
@@ -144,6 +146,11 @@
                                             'informe_visual_mueble_sfid',
                                             'informe_visual_terminal',
                                             'informe_visual_ficha_terminal')))?'class="active"':''?> href="<?=site_url($acceso.'/informe_visual')?>"> Visual &raquo;</a></li>
+                                <li><a <?=(in_array($this->uri->segment(2),
+                                        array( 'tiendas_tipologia')))?'class="active"':''?> href="<?=site_url($controlador.'/tiendas_tipologia')?>"> Tiendas por tipología &raquo;</a></li>
+
+                                <li><a <?=(in_array($this->uri->segment(2),
+                                        array( 'tiendas_fabricante')))?'class="active"':''?> href="<?=site_url($controlador.'/tiendas_fabricante')?>"> Tiendas por fabricante &raquo;</a></li>
                             </ul>
                         </li>
                         <?php 
