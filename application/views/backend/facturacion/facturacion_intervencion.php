@@ -63,11 +63,8 @@
 		                            <tr>
 		                                <td><?php echo date("d/m/Y",strtotime($item_facturacion->fecha)); ?></td>
                                         <td><?php echo $item_facturacion->visita ?></td>
-										<td><?php foreach ($item_facturacion->Incidencias as $incidencia ) {
-												echo $incidencia;
-												if ($incidencia !== end($item_facturacion->Incidencias)) {
-													echo " - ";
-												}
+										<td><?php if(count($item_facturacion->incidencias) > 0){
+												echo implode(" - ",$item_facturacion->incidencias);
 											}
 											?></td>
 										<td><?php echo $item_facturacion->SFID ?></td>

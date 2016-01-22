@@ -1044,7 +1044,7 @@ class Tienda_model extends CI_Model {
                     incidencias.fecha_cierre as fecha,
                     incidencias.status_pds,
                     pds.reference AS SFID,
-                    facturacion.id_incidencia as Incidencias,
+                    facturacion.id_incidencia as id_incidencia,
                     pds_tipo.titulo as tipo,
                     pds_subtipo.titulo as subtipo,
 			        pds_segmento.titulo as segmento,
@@ -1105,29 +1105,26 @@ class Tienda_model extends CI_Model {
 
         //echo "PRE".count($resultado)." - ";
         /* Recorro las intervenciones-incidencia así, si una intervencion tiene finalizadas todas sus incidencias, lo dejamos en el array. */
-        $indice=0;
-        $incidencias=array();
+
         foreach($resultado as $intervencion)
         {
 
-            if($intervencion->status_pds == "Finalizada")
-            {
-                if(array_key_exists($intervencion->visita,$facturacion)){
-
-                    $indice =$indice+1;
-                    //echo "Ya existe\n".$intervencion->visita;
-                } else {
-                    $incidencias=array();
-                    $indice = 0;
+            if (!isset($intervencion->incidencias)) {
+                if(array_key_exists($intervencion->visita,$facturacion)) {
+                    $intervencion->incidencias=$facturacion[$intervencion->visita]->incidencias;
+                }
+                else {
+                    $intervencion->incidencias=array();
                 }
 
+            }
+            if($intervencion->status_pds == "Finalizada")
+            {
+                if (!in_array( $intervencion->id_incidencia,$intervencion->incidencias)) {
+                    $intervencion->incidencias[] = $intervencion->id_incidencia;
+                }
                 $facturacion[$intervencion->visita] = $intervencion;
-                $incidencias[$indice] =  $intervencion->Incidencias;
-                $facturacion[$intervencion->visita]->Incidencias = $incidencias;
 
-                //$indice ++;
-                // $facturacion[$intervencion->id_incidencia] =
-                //print_r($incidencias);
             }
             else
             {
@@ -1135,14 +1132,10 @@ class Tienda_model extends CI_Model {
                 // Si existe la clave, eliminamos la intervención pq aún no es facturable por proveedor...
                 if(array_key_exists($intervencion->visita,$facturacion))
                 {
-                    $indice=0;
-                    unset($incidencias);
                     unset($facturacion[$intervencion->visita]);
                 }
             }
 
-            //echo $indice." ".$intervencion->visita ;
-            //echo"<br>";
         }
 
         return $facturacion;
@@ -1162,7 +1155,7 @@ class Tienda_model extends CI_Model {
         $query = $this->db->select('
                     incidencias.fecha_cierre as fecha,
                     facturacion.id_intervencion AS visita,
-                    facturacion.id_incidencia as Incidencias,
+                    facturacion.id_incidencia as id_incidencia,
                     incidencias.status_pds,
                     pds.reference AS SFID,
                     pds_tipo.titulo as tipo,
@@ -1203,7 +1196,7 @@ class Tienda_model extends CI_Model {
         $resultado = $query->result();
 
         $titulos=array('Fecha','Intervencion','Incidencias','SFID','Tipo tienda','Subtipo tienda','Segmento tienda','Tipología tienda','Instalador','Dueño','Dispositivos','Alarmas');
-        $excluir=array('status_pds');
+        $excluir=array('status_pds','id_incidencia');
 
         // DEFINO LAS CABECERAS DEL LISTADO A EXPORTAR
         $facturacion = array();
@@ -1217,18 +1210,21 @@ class Tienda_model extends CI_Model {
         foreach($resultado as $intervencion)
         {
             $intervencion->fecha = date("d/m/Y",strtotime(($intervencion->fecha)));  // Formato ES para la fecha
+            if (!isset($intervencion->incidencias)) {
+                if(array_key_exists($intervencion->visita,$facturacion)) {
+                    $intervencion->incidencias=$facturacion[$intervencion->visita]->incidencias;
+                }
+                else {
+                    $intervencion->incidencias=array();
+                }
+
+            }
             if($intervencion->status_pds == "Finalizada")   // Si la incidencia actual
             {
-                if(array_key_exists($intervencion->visita,$facturacion)){
-                    $indice =$indice+1;
-                    //echo "Ya existe\n".$intervencion->visita;
-                } else {
-                    $incidencias=array();
-                    $indice = 0;
+                if (!in_array( $intervencion->id_incidencia,$intervencion->incidencias)) {
+                    $intervencion->incidencias[] = $intervencion->id_incidencia;
                 }
                 $facturacion[$intervencion->visita] = $intervencion;
-                $incidencias[$indice] =  $intervencion->Incidencias;
-                $facturacion[$intervencion->visita]->Incidencias = $incidencias;
             }
             else
             {
@@ -1236,7 +1232,7 @@ class Tienda_model extends CI_Model {
                 // Si existe la clave, eliminamos la intervención pq aún no es facturable por proveedor...
                 if(array_key_exists($intervencion->visita,$facturacion))
                 {
-                    $indice=0;
+                    //$indice=0;
                     unset($facturacion[$intervencion->visita]);
                 }
             }
@@ -1254,24 +1250,22 @@ class Tienda_model extends CI_Model {
         $f_nombre = implode("__",$filename);
 
 
-
-        //Preparación del campo incidencias
-
+        //Preparación del campo incidencias y el orden del contenido a mostrar
+        $campos=array('fecha','visita','incidencias','SFID','tipo','subtipo','segmento','tipologia','instalador','dueno','dispositivos','otros');
+        $aux=array();
+        $indice=0;
         foreach ($facturacion as $item_facturacion) {
-            $todas="";
-            foreach ($item_facturacion->Incidencias as $inc) {
-                $todas.=$inc;
-                if ($inc !== end($item_facturacion->Incidencias)) {
-                    $todas.=" - ";
-                }
+            if(count($item_facturacion->incidencias) > 0){
+                $item_facturacion->incidencias= implode(" - ",$item_facturacion->incidencias);
             }
-            $item_facturacion->Incidencias= $todas;
-            //echo $incidencias;
+            for ($i=0;$i<count($campos);$i++) {
+                $aux[$indice][$campos[$i]] = $item_facturacion->$campos[$i];
+            }
+            $indice++;
         }
-        /*  print_r($facturacion);
-          exit;*/
 
-        $facturacion = preparar_array_exportar($facturacion,$titulos,$excluir);
+        $facturacion=preparar_array_exportar($aux,$titulos,$excluir);
+
         // EXPORTAR EL RESULTADO
         exportar_fichero($formato,$facturacion,$f_nombre);
 
@@ -2176,8 +2170,16 @@ class Tienda_model extends CI_Model {
 
 	public function facturacion($data)
 	{
-		$this->db->insert('facturacion',$data);
-		$id=$this->db->insert_id();
+        //$id_intervencion = isset($data["id_intervencion"]) ? $data["id_intervencion"] : NULL;
+        $id_incidencia = isset($data["id_incidencia"]) ? $data["id_incidencia"] : NULL;
+
+       $query = $this->db->select("count(id_facturacion) as facturado")->where("id_incidencia",$id_incidencia)->get("facturacion")->result();
+        $res = array_shift($query);
+       if($res->facturado == 0)
+       {
+           $this->db->insert('facturacion', $data);
+           $id = $this->db->insert_id();
+       }
 	}
 		
 	
