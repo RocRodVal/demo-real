@@ -736,9 +736,9 @@ class Tienda_model extends CI_Model {
 	
 	
 	public function facturacion_estado($fecha_inicio,$fecha_fin,$instalador = NULL,$dueno=NULL) {
-
+        /*cuando se cuentan las incidencias de una intervención estas deben tener id_incidencia diferente*/
         $query = $this->db->select('facturacion.fecha, pds.reference AS SFID, pds_tipo.titulo as tipo, pds_subtipo.titulo as subtipo,
-			pds_segmento.titulo as segmento,  pds_tipologia.titulo as tipologia , facturacion.id_intervencion AS visita, COUNT(facturacion.id_incidencia) AS incidencias, contact.contact AS instalador, client.client as dueno, SUM(facturacion.units_device) AS dispositivos, SUM(facturacion.units_alarma) AS otros')
+			pds_segmento.titulo as segmento,  pds_tipologia.titulo as tipologia , facturacion.id_intervencion AS visita, COUNT(distinct(facturacion.id_incidencia)) AS incidencias, contact.contact AS instalador, client.client as dueno, SUM(facturacion.units_device) AS dispositivos, SUM(facturacion.units_alarma) AS otros')
 		->join('pds','facturacion.id_pds = pds.id_pds')
         ->join('pds_tipo','pds.id_tipo = pds_tipo.id','left')
         ->join('pds_subtipo','pds.id_subtipo = pds_subtipo.id','left')
