@@ -2046,11 +2046,11 @@ class Admin extends CI_Controller
             		incidencias.status_pds AS "Estado tienda",
 					incidencias.status AS "Estado SAT"
 				FROM incidencias
-				JOIN pds ON incidencias.id_pds = pds.id_pds
+				LEFT JOIN pds ON incidencias.id_pds = pds.id_pds
             	LEFT JOIN province ON pds.province = province.id_province
             	LEFT JOIN county ON pds.county = county.id_county
-				JOIN displays_pds ON incidencias.id_displays_pds = displays_pds.id_displays_pds
-				JOIN display ON displays_pds.id_display = display.id_display
+				LEFT JOIN displays_pds ON incidencias.id_displays_pds = displays_pds.id_displays_pds
+				LEFT JOIN display ON displays_pds.id_display = display.id_display
 				LEFT JOIN devices_pds ON incidencias.id_devices_pds = devices_pds.id_devices_pds
 				LEFT JOIN device ON devices_pds.id_device = device.id_device');
 
@@ -2575,6 +2575,7 @@ class Admin extends CI_Controller
         $xcrud_2->columns('id_pds,client_pds,reference,id_tipo,id_subtipo,id_segmento,id_tipologia,commercial,territory,status');
         $xcrud_2->fields('client_pds,reference,id_tipo,id_subtipo,id_segmento,id_tipologia,commercial,cif,territory,picture_url,m2_fo,m2_bo,m2_total,type_via,address,zip,city,province,county,territory,schedule,phone,mobile,email,contact_contact_person,contact_in_charge,id_supervisor,status');
 
+        $xcrud_2->validation_required('reference');
         $xcrud_2->validation_required('province');
         $xcrud_2->validation_required('territory');
 
@@ -2589,6 +2590,7 @@ class Admin extends CI_Controller
         /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
         $this->data->add($data);
         $data = $this->data->getData();
+
         /////
         $this->load->view('backend/header', $data);
         $this->load->view('backend/navbar', $data);
