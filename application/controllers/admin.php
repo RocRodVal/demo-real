@@ -6107,14 +6107,14 @@ class Admin extends CI_Controller
             //$this->load->model(array('intervencion_model', 'tienda_model', 'sfid_model','chat_model','incidencia_model'));
 
 
-           // $b_filtrar_tipo = $this->input->post("filtrar_tipo");
+            $b_filtrar_tipo = $this->input->post("filtrar_tipo");
             $tipo_tienda = '';
             $estado_incidencia = '';
 
-           /* if($b_filtrar_tipo === "si"){
+            if($b_filtrar_tipo === "si"){
                 $tipo_tienda = $this->input->post("tipo_tienda");
                 $estado_incidencia  = $this->input->post("estado_incidencia");
-            }*/
+            }
 
             $este_anio = (is_null($anio)) ? date("Y") : $anio;
             $data['anio'] = $este_anio;
@@ -6131,14 +6131,14 @@ class Admin extends CI_Controller
             $xcrud_1->table_name('Incidencias');
 
 
-         /*  $s_where = $s_where_incidencia= '';
+           $s_where = $s_where_incidencia= '';
             if(!empty($tipo_tienda)){
                 $s_where = " AND pds.type_pds = ".$tipo_tienda;
             }
             if(!empty($estado_incidencia)){
                 $s_where_incidencia .= " AND incidencias.status_pds LIKE '".$estado_incidencia."'";
             }
-*/
+
             $ctrl_no_cancelada = " AND (status_pds != 'Cancelada' && status != 'Cancelada') "; // Condición where de contrl de incidencias NO CANCELADAS
 
             /**
