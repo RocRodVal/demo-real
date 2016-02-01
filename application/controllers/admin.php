@@ -296,6 +296,12 @@ class Admin extends CI_Controller
 
             if($this->input->post('do_busqueda')==="si") $array_sesion = $this->set_filtros($array_filtros);
 
+            //Descomentar en el caso de tener que forzar el estado de las incidencias al seleccionar el tipo de incidencia
+            /*if($array_sesion['id_tipo_incidencia']!="" && $tipo==="abiertas") {
+                $array_sesion['status']="Revisada";
+            }*/
+
+
             /* Creamos al vuelo las variables que vienen de los filtros */
             foreach($array_filtros as $filtro=>$value){
                 $$filtro = $array_sesion[$filtro];
@@ -6091,6 +6097,381 @@ class Admin extends CI_Controller
         $this->load->view('backend/footer');
     }
 
+
+    public function cdm_incidencias($anio = NULL)
+    {
+        if($this->auth->is_auth()){ // Control de acceso según el tipo de agente. Permiso definido en constructor
+
+            $this->load->helper("common");
+            $this->load->model(array("incidencia_model","informe_model","tablona_model"));
+            //$this->load->model(array('intervencion_model', 'tienda_model', 'sfid_model','chat_model','incidencia_model'));
+
+
+            $b_filtrar_tipo = $this->input->post("filtrar_tipo");
+            $tipo_tienda = '';
+            $estado_incidencia = '';
+
+            if($b_filtrar_tipo === "si"){
+                $tipo_tienda = $this->input->post("tipo_tienda");
+                $estado_incidencia  = $this->input->post("estado_incidencia");
+            }
+
+            $este_anio = (is_null($anio)) ? date("Y") : $anio;
+            $data['anio'] = $este_anio;
+
+            setlocale(LC_ALL, 'es_ES');
+
+            $data["tipo_tienda"] = $tipo_tienda;
+            $data["estado_incidencia"] = $estado_incidencia;
+            // Saco los tipos de tienda, pero sólo aquellos cuyos PDS tienen algun tipo de incidencia.
+            $data["estados_incidencia"] = $this->incidencia_model->get_estados_incidencia();
+
+
+            $xcrud_1 = xcrud_get_instance();
+            $xcrud_1->table_name('Incidencias');
+
+
+           $s_where = $s_where_incidencia= '';
+            if(!empty($tipo_tienda)){
+                $s_where = " AND pds.type_pds = ".$tipo_tienda;
+            }
+            if(!empty($estado_incidencia)){
+                $s_where_incidencia .= " AND incidencias.status_pds LIKE '".$estado_incidencia."'";
+            }
+
+            $ctrl_no_cancelada = " AND (status_pds != 'Cancelada' && status != 'Cancelada') "; // Condición where de contrl de incidencias NO CANCELADAS
+
+            /**
+             * Primer bloque de la tabla, Totales incidencias, dias operativos y media
+             */
+
+            // Rango de meses que mostrarán las columnas de la tabla, basándome en el mínimo y máximo mes que hay incidencias, este año.
+            $rango_meses = $this->informe_model->get_rango_meses($este_anio);
+            $primer_mes = $rango_meses->min;
+            $meses_columna = $this->informe_model->get_meses_columna($rango_meses->min,$rango_meses->max);
+            $data["primer_mes"] = $primer_mes;
+            $data["meses_columna"] = $meses_columna;
+
+
+
+            // Sacamos la primera línea. Total incidencias
+            $resultados_1 = $this->informe_model->get_cmd_incidencias_totales($este_anio,$ctrl_no_cancelada);
+            $total_incidencias_total = $this->informe_model->get_total_cdm_incidencias($resultados_1);
+            $valor_resultados_1 = $this->informe_model->get_array_incidencias_totales($resultados_1);
+
+
+            $dias_operativos = $this->informe_model->get_dias_operativos_mes($rango_meses);
+            $total_dias_operativos = $this->informe_model->get_total_array($dias_operativos);
+
+
+            $incidencias_dia = $this->informe_model->get_medias($valor_resultados_1,$dias_operativos,$rango_meses);
+            $total_media = round($this->informe_model->get_total_array($incidencias_dia) / count($dias_operativos));
+
+
+            $nombre_mes = array();
+
+            $data["tabla_1"] = $resultados_1;
+
+
+            /**
+             * Segundo bloque de la tabla, Incidencias mensuales por estado PdS
+             */
+            $titulo_incidencias_estado = $this->incidencia_model->get_titulos_estado();
+            $resultados_2 = $this->informe_model->get_cmd_incidencias_totales_estado($este_anio, $ctrl_no_cancelada);
+            $incidencias_estado = $this->informe_model->get_cmd_incidencias_estado($titulo_incidencias_estado,$resultados_2,$meses_columna);
+
+            /**
+             * TErcer bloque de la tabla, -72h y +72h
+             */
+            // Limpieza de tabla temporal, poner una fecha de cierre en las finalizadas que no tengan.
+
+            $menos_72 = $this->informe_model->finalizadas_menos_72($este_anio,$meses_columna);
+            $mas_72 = $this->informe_model->finalizadas_mas_72($este_anio,$meses_columna);
+
+
+
+            $proceso_menos_72 = $this->informe_model->proceso_menos_72($este_anio,$meses_columna);
+            $proceso_mas_72 = $this->informe_model->proceso_mas_72($este_anio,$meses_columna);
+
+            /*
+             * Tabla temporal con datos sobre la facturacion
+             */
+            $this->tablona_model->crear_facturaciontemp($este_anio);
+
+            /*Numero total de intervenciones de un determinado año*/
+            $resultados_3 = $this->tablona_model->get_totalIntervenciones();
+
+
+
+
+            // CREAMOS UN ARRAY CON TODOS LOS MESES Y LO RELLENAMOS CON LOS RESULTADOS, SI NO                                                                                                                                                                                                                      EXISTE RESULTADO, ESE MES
+            // SERA DE CANTIDAD 0
+            $intervenciones_anio = array();
+            foreach($meses_columna as $num_mes=>$mes)
+            {
+                $intervenciones_anio[$num_mes] = new StdClass();
+                $intervenciones_anio[$num_mes]->cantidad = 0;
+                $intervenciones_anio[$num_mes]->mes = $num_mes;
+                $intervenciones_anio[$num_mes]->anio = $este_anio;
+
+                foreach($resultados_3 as $key=>$valor)
+                {
+                    if(array_key_exists("mes",$valor) && $valor->mes == $num_mes)
+                    {
+                        $intervenciones_anio[$num_mes] = $valor;
+                        break;
+                    }
+                }
+            }
+            $data["intervenciones_anio"] = $intervenciones_anio;
+
+            // Línea 2: Alarmas
+            $resultados_4 = $this->tablona_model->get_alarmas($este_anio);
+
+            // CREAMOS UN ARRAY CON TODOS LOS MESES Y LO RELLENAMOS CON LOS RESULTADOS, SI NO EXISTE RESULTADO, ESE MES
+            // SERA DE CANTIDAD 0
+            $alarmas_anio = array();
+            foreach($meses_columna as $num_mes=>$mes)
+            {
+                $alarmas_anio[$num_mes] = new StdClass();
+                $alarmas_anio[$num_mes]->cantidad = 0;
+                $alarmas_anio[$num_mes]->mes = $num_mes;
+                $alarmas_anio[$num_mes]->anio = $este_anio;
+
+                foreach($resultados_4 as $key=>$valor)
+                {
+                    if(array_key_exists("mes",$valor) && $valor->mes == $num_mes)
+                    {
+                        $alarmas_anio[$num_mes] = $valor;
+                        break;
+                    }
+                }
+            }
+            $data["alarmas_anio"] = $alarmas_anio;
+
+
+            // Línea 3: Terminales
+            /*$resultados_5 = $this->db->query("
+                SELECT  SUM(material_incidencias.cantidad) as cantidad,
+                        MONTH(material_incidencias.fecha) as mes,
+                        YEAR(material_incidencias.fecha) as anio
+                FROM material_incidencias
+                JOIN incidencias ON material_incidencias.id_incidencia = incidencias.id_incidencia
+                WHERE incidencias.status_pds = 'Finalizada' AND YEAR(material_incidencias.fecha) = '".$este_anio."'
+                AND id_alarm IS NULL
+                GROUP BY mes
+            ");*/
+            $resultados_5= $this->tablona_model->get_terminales($este_anio);
+
+
+            // CREAMOS UN ARRAY CON TODOS LOS MESES Y LO RELLENAMOS CON LOS RESULTADOS, SI NO EXISTE RESULTADO, ESE MES
+            // SERA DE CANTIDAD 0
+            $terminales_anio = array();
+            foreach($meses_columna as $num_mes=>$mes)
+            {
+                $terminales_anio[$num_mes] = new StdClass();
+                $terminales_anio[$num_mes]->cantidad = 0;
+                $terminales_anio[$num_mes]->mes = $num_mes;
+                $terminales_anio[$num_mes]->anio = $este_anio;
+
+                foreach($resultados_5 as $key=>$valor)
+                {
+                    if(array_key_exists("mes",$valor) && $valor->mes == $num_mes)
+                    {
+                        $terminales_anio[$num_mes] = $valor;
+                        break;
+                    }
+                }
+            }
+            $data["terminales_anio"] = $terminales_anio;
+
+
+
+            $resultados_6 = $this->tablona_model->get_IncidenciasResueltas();
+
+            /*$resultados_6 = $this->db->query("SELECT COUNT('id_incidencia') as cantidad,
+                                                MONTH(fecha) as mes, YEAR(fecha) as anio
+                                                FROM facturacion WHERE YEAR(fecha) = '".$este_anio."'
+                                                GROUP BY  anio, mes");*/
+
+            // CREAMOS UN ARRAY CON TODOS LOS MESES Y LO RELLENAMOS CON LOS RESULTADOS, SI NO EXISTE RESULTADO, ESE MES
+            // SERA DE CANTIDAD 0
+            $incidencias_resueltas = array();
+            foreach($meses_columna as $num_mes=>$mes)
+            {
+                $incidencias_resueltas[$num_mes] = new StdClass();
+                $incidencias_resueltas[$num_mes]->cantidad = 0;
+                $incidencias_resueltas[$num_mes]->mes = $num_mes;
+                $incidencias_resueltas[$num_mes]->anio = $este_anio;
+
+                foreach($resultados_6 as $key=>$valor)
+                {
+                    if(array_key_exists("mes",$valor) && $valor->mes == $num_mes)
+                    {
+                        $incidencias_resueltas[$num_mes] = $valor;
+                        break;
+                    }
+                }
+            }
+            $data["incidencias_resueltas"] = $incidencias_resueltas;
+
+
+
+            // Línea 5: Media incidencias / intervenciones.
+            $resultados_7 = array();
+
+            $total_num = $total_denom = 0;
+            foreach($incidencias_resueltas as $key=>$valor)
+            {
+                $resultados_7[$key] = new StdClass();
+
+                $num =  $valor->cantidad;
+                $denom = $intervenciones_anio[$key]->cantidad;
+
+                if($denom == 0)
+                {
+                    $resultados_7[$key]->cantidad = 0;
+                }
+                else
+                {
+                    $resultados_7[$key]->cantidad = number_format(round($num / $denom, 2), 2, ",", ".");
+
+                }
+
+                $total_num +=  $valor->cantidad;
+                $total_denom += $intervenciones_anio[$key]->cantidad;
+            }
+
+
+            $data["media_inc_int"] = $resultados_7;
+
+            if($total_denom > 0) {
+                $data["total_media_inc_int"] = number_format(round($total_num / $total_denom, 2), 2, ",", ".");;
+            }else{
+                $data["total_media_inc_int"] = 0;
+            }
+
+
+            /* LINEAS NUM INC POR ROBO */
+           /* $sql_aux = 'SELECT COUNT(id_incidencia) FROM incidencias
+                        WHERE month(fecha) = mes AND YEAR(fecha) = "'.$este_anio.'" '.$ctrl_no_cancelada.' ';
+
+
+            $resultados_8 = $this->db->query('SELECT COUNT(id_incidencia) as cantidad,
+
+                                            YEAR(f.fecha) as anio, MONTH(f.fecha) as mes,
+                                            ('.$sql_aux.') as total
+
+                                                FROM incidencias f
+                                                WHERE YEAR(f.fecha) = "'.$este_anio.'" AND f.tipo_averia = "Robo"
+                                                '.$ctrl_no_cancelada.'
+                                                GROUP BY mes');*/
+
+            /*LINEAS NUMERO INCIDENCIAS POR ROBO*/
+            $resultados_8 = $this->tablona_model->get_IncidenciasTipo($este_anio,$ctrl_no_cancelada,'Robo');
+
+            // CREAMOS UN ARRAY CON TODOS LOS MESES Y LO RELLENAMOS CON LOS RESULTADOS, SI NO EXISTE RESULTADO, ESE MES
+            // SERA DE CANTIDAD 0
+            $incidencias_robo = array();
+            $total_inc_robo = 0;
+            $total_inc_tipo = 0;
+            foreach($meses_columna as $num_mes=>$mes)
+            {
+                $incidencias_robo[$num_mes] = new StdClass();
+                $incidencias_robo[$num_mes]->cantidad = 0;
+                $incidencias_robo[$num_mes]->total = 0;
+                $incidencias_robo[$num_mes]->mes = $num_mes;
+                $incidencias_robo[$num_mes]->anio = $este_anio;
+
+                foreach($resultados_8 as $key=>$valor)
+                {
+                    if(array_key_exists("mes",$valor) && $valor->mes == $num_mes)
+                    {
+                        $incidencias_robo[$num_mes] = $valor;
+                        $total_inc_robo += $valor->cantidad;
+                        $total_inc_tipo += $valor->total;
+                        break;
+                    }
+                }
+            }
+            $data["incidencias_robo"] = $incidencias_robo;
+            $data["total_inc_robo"] = ($total_inc_robo > 0) ? $total_inc_robo : 1; // Evitar división por 0;
+            $data["total_inc_tipo"] = ($total_inc_tipo > 0) ? $total_inc_tipo : 1; // Evitar división por 0
+
+
+            /* LINEAS NUM INC POR AVERIA */
+            $resultados_9 = $this->tablona_model->get_IncidenciasTipo($este_anio,$ctrl_no_cancelada,'Averia');
+                /*$this->db->query('SELECT COUNT(id_incidencia) as cantidad, YEAR(f.fecha) as anio, MONTH(f.fecha) as mes,
+            ('.$sql_aux.') as total
+                                                FROM incidencias f
+                                                WHERE YEAR(f.fecha) = "'.$este_anio.'" AND f.tipo_averia = "Avería"
+                                                '.$ctrl_no_cancelada.'
+                                                GROUP BY mes');
+*/
+            // CREAMOS UN ARRAY CON TODOS LOS MESES Y LO RELLENAMOS CON LOS RESULTADOS, SI NO EXISTE RESULTADO, ESE MES
+            // SERA DE CANTIDAD 0
+            $incidencias_averia = array();
+            $total_inc_averia = 0;
+            foreach($meses_columna as $num_mes=>$mes)
+            {
+                $incidencias_averia[$num_mes] = new StdClass();
+                $incidencias_averia[$num_mes]->cantidad = 0;
+                $incidencias_averia[$num_mes]->total = 0;
+                $incidencias_averia[$num_mes]->mes = $num_mes;
+                $incidencias_averia[$num_mes]->anio = $este_anio;
+
+                foreach($resultados_9 as $key=>$valor)
+                {
+                    if(array_key_exists("mes",$valor) && $valor->mes == $num_mes)
+                    {
+                        $incidencias_averia[$num_mes] = $valor;
+                        $total_inc_averia += $valor->cantidad;
+                        break;
+                    }
+                }
+            }
+            $data["incidencias_averia"] = $incidencias_averia;
+            $data["total_inc_averia"] = ($total_inc_averia > 0) ? $total_inc_averia : 1; // Evitar división por 0;;
+
+
+
+
+
+            $data["menos_72"] = $menos_72;
+            $data["mas_72"] = $mas_72;
+
+            $data["proceso_menos_72"] = $proceso_menos_72;
+            $data["proceso_mas_72"] = $proceso_mas_72;
+
+            $data['tala_1'] = $resultados_1;
+            $data['incidencias_estado'] = $incidencias_estado;
+            $data['titulo_incidencias_estado'] = $titulo_incidencias_estado;
+
+
+
+            $data['nombre_mes'] = $nombre_mes;
+            $data['dias_operativos'] = $dias_operativos;
+            $data['incidencias_dia'] = $incidencias_dia;
+
+            $data['total_incidencias_total'] = $total_incidencias_total;
+            $data['total_dias_operativos'] = $total_dias_operativos;
+            $data['total_media'] = $total_media;
+
+            $data['title'] = 'Estado incidencias '.$anio;
+
+
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
+            $this->load->view('backend/header',$data);
+            $this->load->view('backend/navbar',$data);
+            $this->load->view('backend/cdm_incidencias',$data);
+            $this->load->view('backend/footer');
+        } else {
+            redirect('master', 'refresh');
+        }
+    }
 }
 /* End of file admin.php */
 /* Location: ./application/controllers/admin.php */
