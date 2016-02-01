@@ -16,8 +16,14 @@
             <div class="navbar-default sidebar" role="navigation">
                 <div class="sidebar-nav navbar-collapse">
                     <ul class="nav" id="side-menu" style="margin-top:20px;">
-                        <?php $estado_incidencias = array("estado_incidencias","incidencias_exp");
-                              $estado_incidencias_inner = array();
+                        <?php $estado_incidencias = array("estado_incidencias","incidencias_exp","cdm_incidencias");
+                           // $cdm = array('cdm_incidencias');
+                            $estado_incidencias_inner = array();
+                            $arr_anios = array();
+                            $anio_inicial = 2015; $este_anio = date("Y");
+                            for($i = $este_anio; $i >= $anio_inicial; $i--) {
+                                $arr_anios[] = $i;
+                            }
                         ?>
 
                         <li <?=(in_array($this->uri->segment(2), $estado_incidencias)? ' class="active" ' :'')?>>
@@ -28,8 +34,20 @@
                                 <li><a <?=($this->uri->segment(2)==='cerradas')?'class="active"':''?> href="<?=site_url($acceso.'/estado_incidencias/cerradas')?>"> Incidencias cerradas &raquo;</a></li>
                               <?php /*  <li><a <?=($this->uri->segment(3)==='incidencias')?'class="active"':''?> href="<?=site_url($acceso.'/incidencias')?>"> Exportar todas &raquo;</a></li> */ ?>
                                 <li><a <?=($this->uri->segment(2)==='incidencias_exp')?'class="active"':''?> href="<?=site_url($acceso.'/incidencias_exp')?>"> Exportar todas &raquo;</a></li>
-                            </ul>
+                                <li <?=($this->uri->segment(2)==='cdm_incidencias')?'class="active"':''?>>
+                                    <a href="#">Resumen por año<span class="fa arrow"></span></a>
+                                    <ul class="nav nav-second-level">
+                                        <li <?=($this->uri->segment(2)==='cdm_incidencias'  && in_array($this->uri->segment(3),$arr_anios))?'class="active"':''?> >
 
+                                            <?php
+                                            for($i = $este_anio; $i >= $anio_inicial; $i--){ ?>
+                                                <li><a <?=($this->uri->segment(2)==='cdm_incidencias'  && $this->uri->segment(3)==$i)?'class="active"':''?> href="<?=site_url($controlador.'/cdm_incidencias/'.$i)?>">
+                                                <i class="fa fa-calendar fa-fw"></i> <?=$i?></a></li>
+                                        <?php } ?>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
                         </li>
 
                         <?php
@@ -81,7 +99,7 @@
                         <li <?=(in_array($this->uri->segment(2),$facturaciones)) ? 'class="active"' : ''; ?>>
                             <a href="#"><i class="fa fa-money fa-fw"></i> Facturación<span class="fa arrow"></span></a>
                             <ul class="nav nav-second-level">
-                                <li><a <?=($this->uri->segment(2)==='facturacion')?'class="active"':''?> href="<?=site_url($acceso.'/facturacion')?>"> Incidencias &raquo;</a></li>
+                                <li><a <?=($this->uri->segment(2)==='facturacion')?'class="active"':''?> href="<?=site_url($acceso.'/facturacion')?>"> Intervenciones &raquo;</a></li>
                                 <li><a <?=($this->uri->segment(2)==='facturacion_intervencion')?'class="active"':''?> href="<?=site_url($acceso.'/facturacion_intervencion')?>"> Proveedores &raquo;</a></li>
                             </ul>
                         </li>
@@ -156,6 +174,7 @@
                                         array( 'tiendas_fabricante')))?'class="active"':''?> href="<?=site_url($controlador.'/tiendas_fabricante')?>"> Tiendas por fabricante &raquo;</a></li>
                             </ul>
                         </li>
+
                         <?php 
                         $ayuda = array('ayuda','manuales','muebles_fabricantes');
                         ?>	                        
