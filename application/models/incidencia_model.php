@@ -328,7 +328,7 @@ class Incidencia_model extends CI_Model {
      *  filtradas si procede
      *
      * */
-    public function exportar_incidencias($array_orden = NULL,$filtros=NULL,$tipo="abiertas",$formato="csv",$portipo=NULL) {
+    public function exportar_incidencias($array_orden = NULL,$filtros=NULL,$tipo="abiertas",$formato="csv",$porrazon=NULL) {
         $this->load->dbutil();
         $this->load->helper('file');
         $this->load->helper('csv');
@@ -340,7 +340,7 @@ class Incidencia_model extends CI_Model {
         // Array de títulos de campo para la exportación XLS/CSV
         $arr_titulos = array('Id incidencia','SFID','Fecha','Elemento','Territorio','Fabricante','Mueble','Terminal','Supervisor','Provincia','Tipo avería',
             'Texto 1','Texto 2','Texto 3','Parte PDF','Denuncia','Foto 1','Foto 2','Foto 3','Contacto','Teléfono','Email',
-            'Id. Operador','Intervención','Estado','Última modificación','Estado Sat','Tipo incidencia');
+            'Id. Operador','Intervención','Estado','Última modificación','Estado Sat','Razon parada');
         $excluir = array('fecha_cierre','fabr','id_type_incidencia');
 
 
@@ -350,7 +350,7 @@ class Incidencia_model extends CI_Model {
             // Array de títulos de campo para la exportación XLS/CSV
             $arr_titulos = array('Id incidencia','SFID','Fecha','Elemento','Territorio','Fabricante','Mueble','Terminal','Supervisor','Provincia','Tipo avería',
                 'Texto 1','Texto 2','Texto 3','Parte PDF','Denuncia','Foto 1','Foto 2','Foto 3','Contacto','Teléfono','Email',
-                'Id. Operador','Intervención','Estado','Tipo_Incidencia');
+                'Id. Operador','Intervención','Estado','Razon parada');
 
             array_push($excluir,'last_updated');
             array_push($excluir,'status_pds');
@@ -359,23 +359,16 @@ class Incidencia_model extends CI_Model {
 
         $sql = 'SELECT incidencias.id_incidencia,
                             pds.reference as `SFID`,
-
                             incidencias.fecha,
                             incidencias.fecha_cierre,
-
-
-
                             (CASE incidencias.alarm_display WHEN 1 THEN ( CONCAT("Mueble: ",
                                 (CASE ISNULL(display.display) WHEN TRUE THEN "Retirado" ELSE display.display END)
                             )) ELSE (CONCAT("Dispositivo: ",
                                 (CASE ISNULL(device.device) WHEN TRUE THEN "Retirado" ELSE device.device END)
                             )) END) as elemento,
-
                             device.brand_device as fabr,
                             territory.territory as `Territorio`,
                             ';
-
-
         $sql .= ' (SELECT brand_device.brand from brand_device  WHERE id_brand_device = fabr
                             ) as `Fabricante` ,';
 
@@ -413,11 +406,11 @@ class Incidencia_model extends CI_Model {
             $sql .= 'incidencias.status  AS `Estado SAT`,';
             $sql .= 'incidencias.last_updated, ';
             $sql .= 'incidencias.status_pds as `Estado PDS`,
-                     type_incidencia.title as `Tipo_Incidencia`';
+                     type_incidencia.title as `razon_Parada`';
 
         }else{
             $sql .= 'incidencias.status_pds as `Estado PDS`,
-                    type_incidencia.title as `Tipo_Incidencia`';
+                    type_incidencia.title as `razon_Parada`';
         }
         $sql = rtrim($sql,",");
 
@@ -512,7 +505,7 @@ class Incidencia_model extends CI_Model {
                 $orden = $value;
             }
         }
-        if (!is_null($portipo)) {
+        if (!is_null($porrazon)) {
             $sql .= " ORDER BY type_incidencia.title ASC, fecha DESC ";
         } else {
             $sql .= " ORDER BY fecha DESC";
@@ -538,7 +531,7 @@ class Incidencia_model extends CI_Model {
         $resultado=$query->result();
 
 
-        if (is_null($portipo)) {
+        if (is_null($porrazon)) {
             $datos = preparar_array_exportar($resultado, $arr_titulos, $excluir);
             exportar_fichero($formato,$datos,$sTitleFilename.$sFiltrosFilename.date("d-m-Y")."T".date("H:i:s")."_".date("d-m-Y"));
         }
@@ -550,10 +543,10 @@ class Incidencia_model extends CI_Model {
             //$dos=false;
             //$columnas = count($arr_titulos);
             foreach ($resultado as $key => $campos) {
-                if (is_null($campos->Tipo_Incidencia)) {
-                    $titulo = "Incidencias sin tipificar";
+                if (is_null($campos->razon_Parada)) {
+                    $titulo = "Incidencias sin razon de parada";
                 }
-                else $titulo = $campos->Tipo_Incidencia;
+                else $titulo = $campos->razon_Parada;
 
                 if ($key==0) { $anterior = $campos->id_type_incidencia; }
 

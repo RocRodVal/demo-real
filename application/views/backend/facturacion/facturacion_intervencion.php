@@ -22,7 +22,7 @@
 
 
 		            ?>
-		            	<h1 class="page-header">Intervenciones [descargar <a href="<?=site_url('admin/exportar_intervenciones_facturacion/'.$fecha_inicio.'/'.$fecha_fin.'/'.$instalador.'/'.$dueno);?>" target="_blank">Exportar Excel</a>]</h1>
+		            	<h1 class="page-header">Proveedores [descargar <a href="<?=site_url('admin/exportar_intervenciones_facturacion/'.$fecha_inicio.'/'.$fecha_fin.'/'.$instalador.'/'.$dueno);?>" target="_blank">Exportar Excel</a>]</h1>
 		                <div class="table-responsive">
 		                	<p><strong>Rango:</strong> <?php echo date("d/m/Y",strtotime($fecha_inicio)); ?> - <?php echo date("d/m/Y",strtotime($fecha_fin)); ?></p>
 
@@ -49,10 +49,12 @@
 									<th>Incidencias</th>
 		                            <th>SFID</th>
 		                            <th>Tipología</th>
+									<th>Poblacion / Provincia</th>
 		                            <th>Instalador</th>
                                     <th>Dueño</th>
 		                            <th>Dispositivos</th>
 		                            <th>Alarmas</th>
+									<th>Fecha cierre</th>
 		                        </tr>
 		                        </thead>
 		                        <tbody>
@@ -69,10 +71,12 @@
 											?></td>
 										<td><?php echo $item_facturacion->SFID ?></td>
                                         <td><?php echo $item_facturacion->tipo."-".$item_facturacion->subtipo."-".$item_facturacion->segmento."-".$item_facturacion->tipologia ?></td>
+										<td><?php echo $item_facturacion->poblacion." / ".$item_facturacion->provincia ?></td>
 		                                <td><?php echo $item_facturacion->instalador ?></td>
                                         <td><?php echo $item_facturacion->dueno  ?></td>
 		                                <td><?php echo $item_facturacion->dispositivos ?></td>
 		                                <td><?php echo $item_facturacion->otros ?></td>
+										<td><?php echo date("d/m/Y",strtotime($item_facturacion->cierre)); ?></td>
 		                            </tr>
 		                        <?php
 		                        }

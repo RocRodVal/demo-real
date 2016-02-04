@@ -18,6 +18,16 @@
             </h1>
         </div>
     </div>
+
+
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header"><?php echo $title ?>
+
+                    <a href="<?=site_url('admin/estado_incidencias/'. (($status_pds !="Finalizada" )? "abiertas": "cerradas")); ?>" class="btn btn-danger right">Volver</a>
+                </h1>
+            </div>
+    </div>
     <div class="row">
         <div class="col-lg-6 col-md-6">
             <div class="panel panel-default">
@@ -240,11 +250,19 @@
                                 <form action="<?=site_url('admin/actualizar_averia');?>" id="afecta_a">
                                     <table border="0" width="100%">
                                         <tr>
-                                            <th colspan="1"><label for="tipo_averia">Tipo de incidencia: </label></th>
+                                            <th><label for="tipo_averia">Tipo de incidencia: </label></th>
+                                            <th><input type="checkbox" name="fail_device" id="fail_device" <?=($fail_device == 1) ? ' checked="checked" ' : '' ?>> <label for="fail_device">Fallo dispositivo</label></th>
+                                            <th><input type="checkbox" name="alarm_display" id="alarm_display"  <?=($alarm_display == 1) ? ' checked="checked" ' : '' ?>> <label for="alarm_display">Alarma mueble</label></th>
+                                            <th><input type="checkbox" name="alarm_device" id="alarm_device"  <?=($alarm_device == 1) ? ' checked="checked" ' : '' ?>> <label for="alarm_device">Alarma dispositivo</label></th>
+                                            <th><input type="checkbox" name="alarm_garra" id="alarm_garra"  <?=($alarm_garra == 1) ? ' checked="checked" ' : '' ?>> <label for="alarm_garra">Alarma garra</label></th>
+                                        </tr>
+
+                                        <tr>
+                                            <th colspan="2"><label for="tipo_averia">Razón de parada de incidencia: </label></th>
                                             <td colspan="3"><select id="tipo_averia" name="tipo_averia">
                                                     <option value="NULL">-- Sin asignar --</option>
                                                     <?php
-
+                                                    /* razones de parada de incidencias*/
                                                     foreach($tipos_incidencia as $tipo)
                                                     {
                                                         $selected = ($incidencia['id_type_incidencia']==$tipo->id_type_incidencia)? ' selected = "selected" ' : '';
@@ -255,12 +273,26 @@
                                                     ?>
                                                 </select></td>
                                         </tr>
+
                                         <tr>
-                                            <th><input type="checkbox" name="fail_device" id="fail_device" <?=($fail_device == 1) ? ' checked="checked" ' : '' ?>> <label for="fail_device">Fallo dispositivo</label></th>
-                                            <th><input type="checkbox" name="alarm_display" id="alarm_display"  <?=($alarm_display == 1) ? ' checked="checked" ' : '' ?>> <label for="alarm_display">Alarma mueble</label></th>
-                                            <th><input type="checkbox" name="alarm_device" id="alarm_device"  <?=($alarm_device == 1) ? ' checked="checked" ' : '' ?>> <label for="alarm_device">Alarma dispositivo</label></th>
-                                            <th><input type="checkbox" name="alarm_garra" id="alarm_garra"  <?=($alarm_garra == 1) ? ' checked="checked" ' : '' ?>> <label for="alarm_garra">Alarma garra</label></th>
+                                            <td colspan="5"><h3>Solucion ejecutada</h3></td>
                                         </tr>
+                                        <tr>
+                                            <th colspan="1"><label for="tipo_averia">Solución ejecutada:</label></th>
+                                            <td colspan="4"><select id="id_solucion_incidencia" name="id_solucion_incidencia">
+                                                    <option value="NULL">-- Sin asignar --</option>
+                                                    <?php
+                                                    /* solucion ejecutada en la incidencias*/
+                                                    foreach($soluciones as $sol)
+                                                    {
+                                                        $selected = ($incidencia['id_solucion_incidencia']==$sol->id_solucion_incidencia)? ' selected = "selected" ' : '';
+                                                        echo '<option value="'.$sol->id_solucion_incidencia.'" '.$selected.'>'.substr($sol->title,0,80).'</option>';
+                                                    }
+
+                                                    ?>
+                                                </select></td>
+                                        </tr>
+
                                         <tr>
                                             <td height="10" style="font-size: 1px">&nbsp;</td>
                                         </tr>
@@ -276,6 +308,8 @@
                                 </form>
                             </td>
                         </tr>
+
+
                         <tr>
                             <td colspan="2"><h3>Otra información</h3></td>
                         </tr>

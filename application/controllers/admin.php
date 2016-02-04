@@ -411,7 +411,7 @@ class Admin extends CI_Controller
 
 
 
-    public function exportar_incidencias($tipo="abiertas",$formato=NULL,$portipo=NULL)
+    public function exportar_incidencias($tipo="abiertas",$formato=NULL,$porrazon=NULL)
     {
         if ($this->auth->is_auth()) {
             $xcrud = xcrud_get_instance();
@@ -450,7 +450,7 @@ class Admin extends CI_Controller
 
 
 
-            $this->incidencia_model->exportar_incidencias($array_orden, $array_sesion, $tipo, $ext,$portipo);
+            $this->incidencia_model->exportar_incidencias($array_orden, $array_sesion, $tipo, $ext,$porrazon);
 
 
 
@@ -873,7 +873,7 @@ class Admin extends CI_Controller
             $incidencia = $this->tienda_model->get_incidencia($id_inc);
 
             $data['last_updated'] = date("d/m/Y",strtotime($incidencia['last_updated']));
-
+            $data['status_pds'] = $incidencia['status'];
             $historico_revisada = $this->tienda_model->historico_fecha($id_inc,'Revisada');
             $data['historico_revisada'] =  isset($historico_revisada['fecha']) ? date("d/m/Y",strtotime($historico_revisada['fecha'])) : '';
 
@@ -911,6 +911,7 @@ class Admin extends CI_Controller
             $data['material_alarmas'] = $material_alarmas;
 
             $data['tipos_incidencia'] = $this->tienda_model->get_tipos_incidencia();
+            $data['soluciones'] = $this->tienda_model->get_soluciones_incidencia();
 
 
             $chats = $this->chat_model->get_chat_incidencia_pds($incidencia['id_incidencia']);
@@ -953,6 +954,7 @@ class Admin extends CI_Controller
                     $averia['alarm_display'] =  ($this->input->post('alarm_display') == "on") ? 1 : 0;
                     $averia['alarm_device'] =   ($this->input->post('alarm_device')  == "on") ? 1 : 0;
                     $averia['alarm_garra'] =    ($this->input->post('alarm_garra')   == "on") ? 1 : 0;
+                    $averia['id_solucion_incidencia'] =  ($this->input->post('id_solucion_incidencia') != "NULL") ? $this->input->post('id_solucion_incidencia') : 'NULL';
 
 
                     $respuesta = $this->incidencia_model->actualizar_averia($id_incidencia,$averia);
@@ -2721,7 +2723,7 @@ class Admin extends CI_Controller
 
     }
 
-    public function tipos_incidencia()
+  /*  public function tipos_incidencia()
     {
         $xcrud = xcrud_get_instance();
         $xcrud->table('type_incidencia');
@@ -2745,8 +2747,59 @@ class Admin extends CI_Controller
         $this->load->view('backend/navbar', $data);
         $this->load->view('backend/content', $data);
         $this->load->view('backend/footer');
+    }*/
+
+    public function razones_parada()
+    {
+        $xcrud = xcrud_get_instance();
+        $xcrud->table('type_incidencia');
+        $xcrud->table_name('Razones de parada de incidencias');
+        $xcrud->label('id_type_incidencia','Identificador')->label('title', 'Título');
+        $xcrud->columns('id_type_incidencia,title');
+        $xcrud->fields('title');
+        $xcrud->order_by('id_type_incidencia');
+
+        // Ocultar el botón de borrar para evitar borrados accidentales mientras no existan constraints en BD:
+        $xcrud->unset_remove();
+
+        $data['title'] = 'Razones de parada';
+        $data['content'] = $xcrud->render();
+
+        /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+        $this->data->add($data);
+        $data = $this->data->getData();
+        /////
+        $this->load->view('backend/header', $data);
+        $this->load->view('backend/navbar', $data);
+        $this->load->view('backend/content', $data);
+        $this->load->view('backend/footer');
     }
 
+    public function soluciones_ejecutadas()
+    {
+        $xcrud = xcrud_get_instance();
+        $xcrud->table('solucion_incidencia');
+        $xcrud->table_name('Soluciones para incidencias');
+        $xcrud->label('id_solucion_incidencia','Identificador')->label('title', 'Título');
+        $xcrud->columns('id_solucion_incidencia,title');
+        $xcrud->fields('title');
+        $xcrud->order_by('id_solucion_incidencia');
+
+        // Ocultar el botón de borrar para evitar borrados accidentales mientras no existan constraints en BD:
+        $xcrud->unset_remove();
+
+        $data['title'] = 'Soluciones';
+        $data['content'] = $xcrud->render();
+
+        /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+        $this->data->add($data);
+        $data = $this->data->getData();
+        /////
+        $this->load->view('backend/header', $data);
+        $this->load->view('backend/navbar', $data);
+        $this->load->view('backend/content', $data);
+        $this->load->view('backend/footer');
+    }
 
 
     public function descripcion()
@@ -4333,7 +4386,7 @@ class Admin extends CI_Controller
             $data['select_duenos'] = $duenos;
             $data['dueno'] = $dueno;
 
-            $data['title'] = 'Facturación de incidencias';
+            $data['title'] = 'Facturación de intervenciones';
             $data['accion'] = 'admin/facturacion';
 
             /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
@@ -4348,10 +4401,6 @@ class Admin extends CI_Controller
             redirect('admin', 'refresh');
         }
     }
-
-
-
-
 
 
 
@@ -4442,6 +4491,60 @@ class Admin extends CI_Controller
         }
     }
 
+    public function facturacion_fabricanteM()
+    {
+        if ($this->auth->is_auth()) {
+            $data['id_pds'] = $this->session->userdata('id_pds');
+            $data['sfid'] = $this->session->userdata('sfid');
+
+            $xcrud = xcrud_get_instance();
+            $this->load->model(array('tienda_model','sfid_model'));
+
+            $fecha_inicio = $this->input->post('fecha_inicio');
+            $fecha_fin    = $this->input->post('fecha_fin');
+            $fabricante = $this->input->post('fabricante');   $fabricante = (empty($fabricante)) ? 0 : $fabricante;
+
+            $fabricantes = $this->db->query("SELECT id_client, client FROM client WHERE status='Alta' AND facturable = 1 and type_profile_client=2")->result();
+
+            $data['facturacion'] = $this->tienda_model->facturacion_fabricanteM($fecha_inicio,$fecha_fin,$fabricante);
+
+            //$material_dispositivos = $this->tienda_model->get_material_dispositivos($incidencia['id_incidencia']);
+            $data['fecha_inicio'] = $fecha_inicio;
+            $data['fecha_fin']   = $fecha_fin;
+            $data['select_fabricantes'] = $fabricantes;
+            $data['fabricante'] = $fabricante;
+            $data['title'] = 'Facturación de fabricante';
+            $data['accion'] = 'admin/facturacion_fabricanteM';
+
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
+            $this->load->view('backend/header', $data);
+            $this->load->view('backend/navbar', $data);
+            $this->load->view('backend/facturacion/facturacion_fabricanteM', $data);
+            $this->load->view('backend/footer');
+        } else {
+            redirect('admin', 'refresh');
+        }
+    }
+
+    public function exportar_facturacion_fabricanteM($fecha_inicio=NULL,$fecha_fin=NULL,$fabricante=NULL,$formato=NULL)
+    {
+        if ($this->auth->is_auth()) {
+            $data['id_pds'] = $this->session->userdata('id_pds');
+            $data['sfid'] = $this->session->userdata('sfid');
+
+            $xcrud = xcrud_get_instance();
+            $this->load->model(array('tienda_model','sfid_model'));
+
+            $ext = (!is_null($formato) ? $formato : $this->ext);    // Formato para exportaciones, especficiado o desde CFG
+            $data['facturacion_csv'] = $this->tienda_model->exportar_facturacion_fabricanteM($ext,$fecha_inicio,$fecha_fin,$fabricante);
+
+        } else {
+            redirect('admin', 'refresh');
+        }
+    }
 
     public function operaciones()
     {

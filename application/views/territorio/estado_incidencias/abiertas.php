@@ -172,7 +172,7 @@
                             <div class="clearfix"></div>
 
                             <div class="col-lg-3">
-                                <label for="id_tipo_incidencia">Tipo incidencia: </label>
+                                <label for="id_tipo_incidencia">Razon parada: </label>
                                 <select name="id_tipo_incidencia" id="id_tipo_incidencia" class="form-control input-sm">
                                     <option value="" <?php echo ($id_tipo_incidencia ==="") ? 'selected="selected"' : ''?>>Cualquiera</option>
                                     <?php
