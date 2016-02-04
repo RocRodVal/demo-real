@@ -161,7 +161,7 @@
                             <div class="clearfix"></div>
 
                             <div class="col-lg-3">
-                                <label for="id_tipo_incidencia">Tipo incidencia: </label>
+                                <label for="id_tipo_incidencia">Razon parada: </label>
                                 <select name="id_tipo_incidencia" id="id_tipo_incidencia" class="form-control input-sm">
                                     <option value="" <?php echo ($id_tipo_incidencia ==="") ? 'selected="selected"' : ''?>>Cualquiera</option>
                                     <?php
@@ -217,7 +217,7 @@
                         <?php } ?>
 
                         <p><a href="<?=base_url()?>master/exportar_incidencias/abiertas" class="btn exportar"><i class="glyphicon glyphicon-file"></i> Exportar Excel</a>
-                        <a href="<?=base_url()?>master/exportar_incidencias/abiertas/xlsx/portipo" class="btn exportar"><i class="glyphicon glyphicon-file"></i> Exportar Excel por tipo</a></p>
+                            <a href="<?=base_url()?>master/exportar_incidencias/abiertas/xlsx/porrazon" class="btn exportar"><i class="glyphicon glyphicon-file"></i> Exportar por razon de parada</a></p>
 		                <div class="table-responsive">
 		                    <table class="table table-striped table-bordered table-hover table-sorting" id="table_incidencias_dashboard" data-order-form="form_orden">
 		                        <thead>

@@ -51,7 +51,7 @@
                         </li>
 
                         <?php
-                        $maestros = array('clientes','contactos','alarmas','dispositivos','muebles','puntos_de_venta','categorias_pdv','tipos_incidencia');
+                        $maestros = array('clientes','contactos','alarmas','dispositivos','muebles','puntos_de_venta','categorias_pdv','razones_parada','soluciones_ejecutadas');
                         ?>
                         <li <?=(in_array($this->uri->segment(2), $maestros))?'class="active"':''?>>
                             <a href="#"><i class="fa fa-sitemap fa-fw"></i> Maestros<span class="fa arrow"></span></a>
@@ -63,7 +63,8 @@
                                 <li><a <?=($this->uri->segment(2)==='muebles')?'class="active"':''?> href="<?=site_url($acceso.'/muebles')?>"> Muebles &raquo;</a></li>
                                 <li><a <?=($this->uri->segment(2)==='puntos_de_venta')?'class="active"':''?> href="<?=site_url($acceso.'/puntos_de_venta')?>"> Puntos de venta &raquo;</a></li>
                                 <li><a <?=($this->uri->segment(2)==='categorias_pdv')?'class="active"':''?> href="<?=site_url($acceso.'/categorias_pdv')?>"> Categorías PdV &raquo;</a></li>
-                                <li><a <?=($this->uri->segment(2)==='tipos_incidencia')?'class="active"':''?> href="<?=site_url($acceso.'/tipos_incidencia')?>"> Tipos de incidencia &raquo;</a></li>
+                                <li><a <?=($this->uri->segment(2)==='razones_parada')?'class="active"':''?> href="<?=site_url($acceso.'/razones_parada')?>"> Razones de parada &raquo;</a></li>
+                                <li><a <?=($this->uri->segment(2)==='soluciones_ejecutadas')?'class="active"':''?> href="<?=site_url($acceso.'/soluciones_ejecutadas')?>"> Soluciones ejecutadas &raquo;</a></li>
                             </ul>
                         </li>
                         <!--<li><a <?=($this->uri->segment(2)==='auditorias')?'class="active"':''?> href="<?=site_url($acceso.'/auditorias')?>"><i class="fa fa-list-alt fa-fw"></i> Auditorías</a></li>-->
@@ -95,12 +96,13 @@
                              	<li><a <?=($this->uri->segment(2)==='inventarios')?'class="active"':''?> href="<?=site_url($acceso.'/inventarios')?>"> Inventarios tiendas &raquo;</a></li>
                             </ul>
                         </li>
-                        <?php $facturaciones = array('facturacion','facturacion_intervencion'); ?>
+                        <?php $facturaciones = array('facturacion','facturacion_intervencion','facturacion_fabricanteM'); ?>
                         <li <?=(in_array($this->uri->segment(2),$facturaciones)) ? 'class="active"' : ''; ?>>
                             <a href="#"><i class="fa fa-money fa-fw"></i> Facturación<span class="fa arrow"></span></a>
                             <ul class="nav nav-second-level">
                                 <li><a <?=($this->uri->segment(2)==='facturacion')?'class="active"':''?> href="<?=site_url($acceso.'/facturacion')?>"> Intervenciones &raquo;</a></li>
                                 <li><a <?=($this->uri->segment(2)==='facturacion_intervencion')?'class="active"':''?> href="<?=site_url($acceso.'/facturacion_intervencion')?>"> Proveedores &raquo;</a></li>
+                                <li><a <?=($this->uri->segment(2)==='facturacion_fabricanteM')?'class="active"':''?> href="<?=site_url($acceso.'/facturacion_fabricanteM')?>"> Fabricante Mueble &raquo;</a></li>
                             </ul>
                         </li>
 
