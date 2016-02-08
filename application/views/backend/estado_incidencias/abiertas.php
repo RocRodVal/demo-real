@@ -7,10 +7,18 @@
                         $data['tipo'] = $tipo;
                     ?>
                     <h1 class="page-header"><?php echo $title ?> <?php $this->load->view("backend/estado_incidencias/mensajes_chat",$data) ?>
+
+
+            <?php
+            if (($tipo=='abiertas') && $mensajes_nuevosC>0){
+                $data['mensajes_nuevosC'] = $mensajes_nuevosC;
+                $data['tipoC'] = 'cerradas';
+                ?>
+                   <?php  $this->load->view("backend/estado_incidencias/mensajes_chat",$data)  ?>
+            <?php }  ?>
                     </h1>
                 </div>
             </div>
-
             <div class="row" >
                 <div class="col-lg-12">
                     <div class="filtro">
