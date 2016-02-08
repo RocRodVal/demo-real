@@ -370,6 +370,9 @@ class Admin extends CI_Controller
             $data['tipo'] = $tipo;
 
             $data['mensajes_nuevos'] = $this->chat_model->existen_mensajes_nuevos($tipo);
+            if($tipo=='abiertas') {
+                $data['mensajes_nuevosC'] = $this->chat_model->existen_mensajes_nuevos('cerradas');
+            }
 
 
             /* LISTADO DE TERRITORIOS PARA EL SELECT */
