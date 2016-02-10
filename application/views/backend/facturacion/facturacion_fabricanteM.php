@@ -42,6 +42,7 @@
 								<th>Ciudad</th>
 								<th>Mueble</th>
 								<th>Fabricante</th>
+								<th>Nº terminales</th>
 								<th>Descripción de tienda del error</th>
 								<th>Solución</th>
 								<th>Cierre</th>
@@ -61,6 +62,7 @@
 									<td><?php echo $item_facturacion->ciudad ?></td>
 									<td><?php echo $item_facturacion->mueble ?></td>
 									<td><?php echo $item_facturacion->fabricante ?></td>
+									<td><?=(!empty($item_facturacion->dispositivos) ) ? $item_facturacion->dispositivos :"0" ?></td>
 									<td><?php echo $item_facturacion->descripcion ?></td>
 									<td><?php echo $item_facturacion->solucion ?></td>
 									<td><?php echo date("d/m/Y",strtotime($item_facturacion->cierre)); ?></td>
