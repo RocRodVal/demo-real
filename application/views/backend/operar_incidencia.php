@@ -24,7 +24,7 @@
             <div class="col-lg-12">
                 <h1 class="page-header"><?php echo $title ?>
 
-                    <a href="<?=site_url('admin/estado_incidencias/'. (($status_pds !="Finalizada" )? "abiertas": "cerradas")); ?>" class="btn btn-danger right">Volver</a>
+                    <a href="<?=site_url('admin/estado_incidencias/'. ((($status_pds !="Resuelta" ) && ($status_pds !="Cerrada" ) && ($status_pds !="Cancelada" ) && ($status_pds !="Pendiente recogida" ))? "abiertas": "cerradas")); ?>" class="btn btn-danger right">Volver</a>
                 </h1>
             </div>
     </div>
