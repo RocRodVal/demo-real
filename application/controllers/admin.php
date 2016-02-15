@@ -2575,18 +2575,20 @@ class Admin extends CI_Controller
         $xcrud_2->modal('picture_url');
         //$xcrud_2->readonly('reference');
         $xcrud_2->disabled('reference','edit');
+        //$xcrud_2->disabled('codigoSAT','edit');
         $xcrud_2->sum('m2_total', 'm2_fo', 'm2_bo');
-        $xcrud_2->label('id_pds', 'Identificador')->label('client_pds', 'Cliente')->label('reference', 'SFID')->label('id_tipo', 'Tipo PDS')
+        $xcrud_2->label('id_pds', 'Identificador')->label('client_pds', 'Cliente')->label('reference', 'SFID')->label('codigoSAT', 'Codigo SAT')->label('id_tipo', 'Tipo PDS')
             ->label('id_subtipo', 'Subtipo PDS')->label('id_segmento', 'Segmento PDS')->label('id_tipologia', 'Tipología PDS')
             ->label('territory', 'Territorio')->label('panelado_pds', 'Panelado')->label('dispo', 'Disposición')
             ->label('commercial', 'Nombre comercial')->label('cif', 'CIF')->label('picture_url', 'Foto')->label('m2_fo', 'M2 front-office')
             ->label('m2_bo', 'M2 back-office')->label('m2_total', 'M2 total')->label('type_via', 'Tipo vía')
             ->label('address', 'Dirección')->label('zip', 'C.P.')->label('city', 'Ciudad')->label('province', 'Provincia')->label('county', 'CC.AA.')->label('schedule', 'Horario')->label('phone', 'Teléfono')->label('mobile', 'Móvil')->label('email', 'Email')->label('contact_contact_person', 'Contacto')->label('contact_in_charge', 'Encargado')->label('id_supervisor', 'Supervisor')->label('status', 'Estado');
 
-        $xcrud_2->columns('id_pds,client_pds,reference,id_tipo,id_subtipo,id_segmento,id_tipologia,commercial,territory,status');
-        $xcrud_2->fields('client_pds,reference,id_tipo,id_subtipo,id_segmento,id_tipologia,commercial,cif,territory,picture_url,m2_fo,m2_bo,m2_total,type_via,address,zip,city,province,county,territory,schedule,phone,mobile,email,contact_contact_person,contact_in_charge,id_supervisor,status');
+        $xcrud_2->columns('id_pds,client_pds,reference,codigoSAT,id_tipo,id_subtipo,id_segmento,id_tipologia,commercial,territory,status');
+        $xcrud_2->fields('client_pds,reference,codigoSAT,id_tipo,id_subtipo,id_segmento,id_tipologia,commercial,cif,territory,picture_url,m2_fo,m2_bo,m2_total,type_via,address,zip,city,province,county,territory,schedule,phone,mobile,email,contact_contact_person,contact_in_charge,id_supervisor,status');
 
         $xcrud_2->validation_required('reference');
+        $xcrud_2->validation_required('codigoSAT');
         $xcrud_2->validation_required('province');
         $xcrud_2->validation_required('territory');
 
@@ -4583,27 +4585,26 @@ class Admin extends CI_Controller
 
             $resultados = array();
 
+            $codigoSAT = "";
+
+            $data["codigoSAT"] = $codigoSAT;
 
             $data["generado"] = FALSE;
 
             $data["resultados"] = $resultados;
 
-
             $data["muebles"] = $this->tienda_model->get_displays_demoreal();
-
 
             $data["pds_tipos"] = $this->categoria_model->get_tipos_pds();
             $data["pds_subtipos"] = $this->categoria_model->get_subtipos_pds();
             $data["pds_segmentos"] = $this->categoria_model->get_segmentos_pds();
             $data["pds_tipologias"] = $this->categoria_model->get_tipologias();
 
-
             $data["terminales"] = $this->tienda_model->get_devices_demoreal();
             /* LISTADO DE TERRITORIOS PARA EL SELECT */
             $data["territorios"] = $this->tienda_model->get_territorios();
             /* LISTADO DE FABRICANTES PARA EL SELECT */
             $data["fabricantes"] = $this->tienda_model->get_fabricantes();
-
 
             /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
             $this->data->add($data);
@@ -4644,7 +4645,8 @@ class Admin extends CI_Controller
                 "id_display" => '',
                 "id_device" => '',
                 "territory" => '',
-                "brand_device" => ''
+                "brand_device" => '',
+                "codigoSAT" =>''
             );
 
             foreach ($arr_campos as $campo => $valor) {
@@ -4731,6 +4733,14 @@ class Admin extends CI_Controller
                     $campos_sess_informe["brand_device"] = $brand_device;
                 }
 
+                // CODIGO SAT
+                $codigoSAT ="";
+                $campos_sess_informe["codigoSAT"] = NULL;
+                if (is_array($this->input->post("codigoSAT_multi"))) {
+                    foreach ($this->input->post("codigoSAT_multi") as $tt) $codigoSAT = $tt;
+                    $campos_sess_informe["codigoSAT"] = $codigoSAT;
+                }
+
 
                 // Guardamos en la sesión el objeto $campos_sess_informe
                 $this->session->set_userdata("campos_sess",$campos_sess_informe);
@@ -4746,6 +4756,8 @@ class Admin extends CI_Controller
                 $data["id_device"] = $id_device;
                 $data["territory"] = $territory;
                 $data["brand_device"] = $brand_device;
+                $data["codigoSAT"] = $codigoSAT;
+
 
                 $data["generado"] = TRUE;
                 $data["controlador"] = $this->uri->segment(1);
@@ -4767,6 +4779,7 @@ class Admin extends CI_Controller
             if(is_null($exportar))
             {
                 $resultados = $this->informe_model->get_informe_pdv($data);
+                //print_r($resultados); exit;
                 $data["total_registros"] = count($resultados);
                 $data["resultados"] = $resultados;
 
@@ -4948,6 +4961,7 @@ class Admin extends CI_Controller
 
                     if (!empty($tiendas) && count($tiendas) == 1) {
 
+
                         $tienda = NULL;
                         foreach ($tiendas as $tienda_1) {
                             $tienda = $tienda_1;
@@ -5034,7 +5048,7 @@ class Admin extends CI_Controller
                         foreach ($displays as $key => $display) {
                             $num_devices = $this->tienda_model->count_devices_display($display->id_display);
                             $display->devices_count = $num_devices;
-                            echo $display->devices_count."-";
+                            //echo $display->devices_count."-";
                         }
 
                         $data['displays'] = $displays;

@@ -200,6 +200,21 @@
 
                     </div>
 
+                    <div class="form-group">
+                        <label for="codigoSAT">Codigo SAT: </label>
+                        <input id="codigoSAT" name="codigoSAT" value="<?=$codigoSAT?>" placeholder="Cualquiera..." class="form-control" onclick="anadir_filtroTexto(this);">
+                        <div id="multifiltro_codigoSAT" class="multifiltro">
+                            <input name="codigoSAT_next" id="codigoSAT_next" type="hidden" value="0">
+                            <div id="multi_codigoSAT">
+                                <?php /*<div class="linea">
+                                    <label class="auto"></label> <input type="hidden" name="panelado_1" value="1">
+                                    <a href="#" onclick="eliminar_filtro();"><i class="glyphicon glyphicon-remove"></i></a>
+                                </div>*/?>
+                            </div>
+                        </div>
+
+                    </div>
+
                     <?php /*<div class="form-group">
                         <input type="submit" onclick="enviar_form_ajax('#form_ajax'); return false;">
                     </div>*/?>
