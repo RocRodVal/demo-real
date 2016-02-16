@@ -42,6 +42,7 @@ if (!$generado)
             <thead>
             <tr>
                 <th>SFID</th>
+                <th>Codigo SAT</th>
                 <th>Tipo</th>
                 <th>Subtipo</th>
                 <th>Segmento</th>
@@ -61,6 +62,7 @@ if (!$generado)
             {?>
                 <tr>
                     <td><?=$resultado->reference?></td>
+                    <td><?=$resultado->codigoSAT?></td>
 
                     <td><?=$resultado->tipo?></td>
                     <td><?=$resultado->subtipo?></td>

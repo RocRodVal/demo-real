@@ -161,9 +161,10 @@ class Informe_model extends CI_Model
 
         $id_device = (isset($data["id_device"])  && !empty($data["id_device"])) ? $data["id_device"] : NULL;
         $brand_device = (isset($data["brand_device"])  && !empty($data["brand_device"])) ? $data["brand_device"] : NULL;
+        $codigoSAT = (isset($data["codigoSAT"])  && !empty($data["codigoSAT"])) ? $data["codigoSAT"] : NULL;
 
         if(is_null($id_tipo) && is_null($id_subtipo) && is_null($id_segmento) && is_null($id_tipologia)
-            && is_null($id_display) && is_null($id_device) && is_null($territory) && is_null($brand_device))
+            && is_null($id_display) && is_null($id_device) && is_null($territory) && is_null($brand_device) && is_null($codigoSAT))
         {
             return NULL;
         }
@@ -176,6 +177,7 @@ class Informe_model extends CI_Model
 
         $aQuery["fields"] = array(
             "pds.reference as reference",
+            "pds.codigoSAT as codigoSAT",
 
             "pds_tipo.titulo as tipo",
             "pds_subtipo.titulo as subtipo",
@@ -227,6 +229,7 @@ class Informe_model extends CI_Model
         if(!is_null($id_device))    $aQuery["where_in"]["devices_pds.id_device"] = $id_device;
         if(!is_null($territory))    $aQuery["where_in"]["pds.territory"] = $territory;
         if(!is_null($brand_device)) $aQuery["where_in"]["device.brand_device"] = $brand_device;
+        if(!is_null($codigoSAT)) $aQuery["where"]["pds.codigoSAT"] = $codigoSAT;
 
         $aQuery["where"]["pds.status"] = "Alta";
 
@@ -241,15 +244,12 @@ class Informe_model extends CI_Model
         //$aQuery["group_by"] = "reference";
 
 
-
-
         if(!is_null($limit))
         {
             $aQuery["limit"] = array("ini"=> $limit["ini"], "offset"=>$limit["offset"]);
         }
 
-
-        //print_r($aQuery);
+//print_r($aQuery); exit;
         return $aQuery;
     }
 
@@ -326,7 +326,7 @@ class Informe_model extends CI_Model
 
 
 
-    public function exportar_informe_pdv($data,$formato="csv")
+    public function exportar_informe_pdv($data,$formato="csv",$controlador=NULL)
     {
 
         $this->load->dbutil();
@@ -337,9 +337,13 @@ class Informe_model extends CI_Model
 
 
         // Array de títulos y exclusiones de campo para la exportación XLS/CSV
-        $arr_titulos = array('SFID','Tipo','Subtipo','Segmento','Tipología','Territorio','Nombre','Tipo Vía','Dirección','CP','Localidad','Provincia');
-        $excluir = array('territory','panelado_pds','type_via','');
-
+        if(!empty($controlador)) {
+            $arr_titulos = array('SFID', 'Codigo SAT', 'Tipo', 'Subtipo', 'Segmento', 'Tipología', 'Territorio', 'Nombre', 'Tipo Vía', 'Dirección', 'CP', 'Localidad', 'Provincia');
+            $excluir = array('territory','panelado_pds','type_via','');
+        }else {
+            $arr_titulos = array('SFID', 'Tipo', 'Subtipo', 'Segmento', 'Tipología', 'Territorio', 'Nombre', 'Tipo Vía', 'Dirección', 'CP', 'Localidad', 'Provincia');
+            $excluir = array('codigoSAT','territory','panelado_pds','type_via','');
+        }
 
         $aQuery = $this->get_sql_informe_pdv($data);
 
@@ -389,7 +393,7 @@ class Informe_model extends CI_Model
             $query = $this->db->get($aQuery["table"]);
         }
 
-
+//print_r($this->db->last_query()); exit;
         return $query->result();
 
     }

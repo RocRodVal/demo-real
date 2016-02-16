@@ -293,6 +293,71 @@ function anadir_filtro(selector)
 
 }
 
+function anadir_filtroTexto(selector)
+{
+
+
+    // Identificar la capa del "Multifiltro" correspondiente a este campo
+    var id_selector = $(selector).attr("id");
+    var valor_escogido = $(selector).val();
+    var texto_escogido = $(selector).val();
+
+    var capa_wrapper_multifiltro = $("#multifiltro_"+id_selector);
+    var capa_multifiltro = $("#multi_"+id_selector);
+    var siguiente = $("#"+id_selector+"_next").val();
+
+
+    var existe = false;
+
+    var elementoNoDefinido = $("#multi_"+id_selector+" div.linea input[value="+valor_escogido+"]").val();
+    if(elementoNoDefinido!=undefined) existe = true;
+
+
+    // Si no existe...
+    if(!existe && valor_escogido != '') {
+        // Añadimos el campo
+        var label = $('<label/>', {
+            'for': id_selector+'_' + siguiente,
+            'class':'auto'
+        });
+        $(label).text(texto_escogido);
+
+        var input = $('<input/>', {
+            'name' : id_selector+'_multi[]',
+            'type': 'hidden',
+            'value' : valor_escogido
+
+        });
+
+        var enlace_borrar = $('<a/>', {
+            'href' : '#',
+            'onclick' : 'eliminar_multifiltro("'+id_selector+'","'+siguiente+'");'
+        });
+        $(enlace_borrar).html('<i class="glyphicon glyphicon-remove"></i>');
+
+        var lineaActual = $('<div/>', {
+            'class': 'linea',
+            'id': id_selector+'_linea_' + siguiente
+        });
+
+        $(lineaActual).append(label);
+        $(lineaActual).append(input);
+        $(lineaActual).append(enlace_borrar);
+
+        $(capa_multifiltro).append(lineaActual);
+
+        siguiente++;
+        $("#"+id_selector+"_next").val(siguiente);
+
+
+        var filtros = $("#multi_"+id_selector+" div.linea");
+        if(filtros.length > 0){ $(capa_wrapper_multifiltro).fadeIn(); }
+        $("#"+id_selector).val("");
+        enviar_form_ajax('#form_ajax');
+    }
+
+}
+
 
 function eliminar_multifiltro(id_selector,indice)
 {
