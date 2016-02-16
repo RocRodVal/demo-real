@@ -4791,7 +4791,7 @@ class Admin extends CI_Controller
             else
             {
 
-                $this->informe_model->exportar_informe_pdv($data,$ext);
+                $this->informe_model->exportar_informe_pdv($data,$ext,$controlador_origen);
             }
 
         }

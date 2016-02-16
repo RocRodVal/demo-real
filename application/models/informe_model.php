@@ -326,7 +326,7 @@ class Informe_model extends CI_Model
 
 
 
-    public function exportar_informe_pdv($data,$formato="csv")
+    public function exportar_informe_pdv($data,$formato="csv",$controlador=NULL)
     {
 
         $this->load->dbutil();
@@ -337,9 +337,13 @@ class Informe_model extends CI_Model
 
 
         // Array de títulos y exclusiones de campo para la exportación XLS/CSV
-        $arr_titulos = array('SFID','Codigo SAT','Tipo','Subtipo','Segmento','Tipología','Territorio','Nombre','Tipo Vía','Dirección','CP','Localidad','Provincia');
-        $excluir = array('territory','panelado_pds','type_via','');
-
+        if(!empty($controlador)) {
+            $arr_titulos = array('SFID', 'Codigo SAT', 'Tipo', 'Subtipo', 'Segmento', 'Tipología', 'Territorio', 'Nombre', 'Tipo Vía', 'Dirección', 'CP', 'Localidad', 'Provincia');
+            $excluir = array('territory','panelado_pds','type_via','');
+        }else {
+            $arr_titulos = array('SFID', 'Tipo', 'Subtipo', 'Segmento', 'Tipología', 'Territorio', 'Nombre', 'Tipo Vía', 'Dirección', 'CP', 'Localidad', 'Provincia');
+            $excluir = array('codigoSAT','territory','panelado_pds','type_via','');
+        }
 
         $aQuery = $this->get_sql_informe_pdv($data);
 
