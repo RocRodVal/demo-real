@@ -53,7 +53,7 @@ class Sfid_model extends CI_Model {
 			$query = $this->db->select('devices_pds.*,device.*')
 			->join('device','devices_pds.id_device = device.id_device')
 			->where('devices_pds.id_devices_pds',$id_devices_pds)
-			->where('devices_pds.status != "Baja"')
+			//->where('devices_pds.status != "Baja"')
 			->order_by('devices_pds.position')
 			->get('devices_pds');
 	
