@@ -34,6 +34,7 @@
 						<table class="table table-striped table-bordered table-hover" id="dataTables-dashboard">
 							<thead>
 							<tr>
+								<th>Intervención</th>
 								<th>Incidencia</th>
 								<th>Fecha</th>
 								<th>SFID</th>
@@ -54,6 +55,7 @@
 							foreach ($facturacion as $item_facturacion) {
 								?>
 								<tr>
+									<td><?php echo $item_facturacion->intervencion; ?></td>
 									<td><?php echo $item_facturacion->incidencia; ?></td>
 									<td><?php echo date("d/m/Y",strtotime($item_facturacion->fecha)); ?></td>
 									<td><?php echo $item_facturacion->SFID ?></td>
