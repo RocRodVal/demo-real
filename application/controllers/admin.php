@@ -5952,6 +5952,102 @@ class Admin extends CI_Controller
         }
     }
 
+    /**
+     * Muestra por mes el consumo de los diferentes modelos de alarmas
+     * Tomando el estado de las incidencias "En visita" y la fecha en la cual la incidencia se puso en ese estado
+     */
+    public function informe_sistemas_seguridad()
+    {
+        if($this->auth->is_auth()){ // Control de acceso según el tipo de agente. Permiso definido en constructor
+            //$controlador = $this->data->get("controlador");
+            $data['id_pds'] = $this->session->userdata('id_pds');
+            $data['sfid'] = $this->session->userdata('sfid');
+
+            $xcrud = xcrud_get_instance();
+
+            $this->load->model(array('tablona_model', 'informe_model','alarma_model'));
+            $this->load->helper("common");
+
+            /**
+             * Crear los filtros
+             */
+            $array_filtros = array('anio' => '');
+
+            // Consultar a la session si ya se ha buscado algo y guardado allí.
+            $array_sesion = $this->get_filtros($array_filtros);
+            // Buscar en el POST si hay busqueda, y si la hay usarla y guardarla además en sesion
+            if($this->input->post('filtrar_anio')==="si") $array_sesion = $this->set_filtros($array_filtros);
+
+            /* Creamos al vuelo las variables que vienen de los filtros */
+            foreach($array_filtros as $filtro=>$value){
+                $$filtro = $array_sesion[$filtro];
+                $data[$filtro] = $array_sesion[$filtro]; // Pasamos los valores a la vista.
+            }
+
+            $title = 'Alarmas utilizadas';
+            $anio='';
+            if (!empty($_POST)) {
+
+                $anio=$_POST['anio'];
+                $estado="En visita";
+                if (!empty($anio)) {
+                    $this->tablona_model->crear_historicotemp($anio,$estado);
+
+                    $title .= ' ' . $anio;
+                    setlocale(LC_ALL, 'es_ES');
+
+                    $xcrud_1 = xcrud_get_instance();
+                    $xcrud_1->table_name('Alarmas');
+
+                    $alarmas=$this->alarma_model->get_alarmas();
+
+                    // Rango de meses que mostrarán las columnas de la tabla, basándome en el mínimo y máximo mes que hay incidencias, este año.
+                    $rango_meses = $this->informe_model->get_rango_meses($anio);
+                    // $primer_mes = $rango_meses->min;
+                    $meses_columna = $this->informe_model->get_meses_columna($rango_meses->min,$rango_meses->max);
+                    $data["primer_mes"] =  $rango_meses->min;;
+                    $data["ultimo_mes"] = $rango_meses->max;
+                    $data["meses_columna"] = $meses_columna;
+
+                    $resultado = $this->alarma_model->get_sistemas_seguridad_totales();
+//print_r($resultado);exit;
+                    $valor_resultado = $this->alarma_model->get_array_sistemas_seguridad($resultado,$rango_meses->min,$rango_meses->max,$alarmas);
+
+                    $data['valor_resultado'] = $valor_resultado;
+                }
+            }
+            $data['title']=$title;
+            $data['anio']=$anio;
+
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
+            $this->load->view('/backend/header', $data);
+            $this->load->view('/backend/navbar', $data);
+            $this->load->view('/backend/informe_sistemas_seguridad.php', $data);
+            $this->load->view('/backend/footer');
+        } else {
+            redirect('master', 'refresh');
+        }
+    }
+
+    /**
+     * Funcion que exporta los datos de las alarmas utilizadas en un año
+     */
+    public function exportar_sistemas_seguridad($anio,$formato=NULL) {
+        if ($this->auth->is_auth())
+        {
+            $ext = (!is_null($formato) ? $formato : $this->ext);    // Formato para exportaciones, especficiado o desde CFG
+            $this->load->model('alarma_model');
+            $data['alarmas'] = $this->alarma_model->exportar_sistemas_seguridad($anio,$ext);
+        }
+        else
+        {
+            redirect('master','refresh');
+        }
+    }
+
     public function ayuda($tipo)
     {
         if ($this->auth->is_auth()) {

@@ -1322,4 +1322,30 @@ class Informe_model extends CI_Model
         return $resultado;
     }
 
+    /**
+     * Devuelve objeto de alarmas totales
+     * @return mixed
+     */
+   /* public function get_sistemas_seguridad_totales()
+    {
+       // $sql = "SELECT * FROM historico_temp";
+       // $query_1 = $this->db->query($sql);
+       // print_r($query_1->result());
+
+        $sql = "
+            SELECT sum(m.cantidad) as total,m.id_alarm, t.type as tipo_alarma, month(h.fecha) as mes
+            FROM demoreal.material_incidencias as m
+            INNER JOIN historico_temp h ON h.id_incidencia=m.id_incidencia
+            INNER JOIN alarm a ON a.id_alarm = m.id_alarm
+            INNER JOIN type_alarm t ON t.id_type_alarm = a.type_alarm
+            where m.id_alarm IS NOT NULL
+            GROUP BY month(h.fecha), a.type_alarm";
+
+        $query_1 = $this->db->query($sql);
+       // print_r($query_1->result());
+        return $query_1->result();
+    }*/
+
+
+
 }

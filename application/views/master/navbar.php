@@ -123,7 +123,8 @@
                                                     'informe_visual_terminal',
                                                     'informe_visual_ficha_terminal',
                                                 'tiendas_tipologia',
-                                                'tiendas_fabricante'); ?>
+                                                'tiendas_fabricante');
+                                              //  'informe_sistemas_seguridad'); ?>
 
                         <li <?=(in_array($this->uri->segment(2), $inf))?'class="active"':''?>>
                             <a href="#"><i class="fa fa-sitemap fa-file"></i> Informes <span class="fa arrow"></span></a>
@@ -147,6 +148,8 @@
                                 
                                 <li><a <?=(in_array($this->uri->segment(2),
                                         array( 'tiendas_fabricante')))?'class="active"':''?> href="<?=site_url($controlador.'/tiendas_fabricante')?>"> Tiendas por fabricante &raquo;</a></li>
+                               <!-- <li><a <?=(in_array($this->uri->segment(2),
+                                        array( 'informe_sistemas_seguridad')))?'class="active"':''?> href="<?=site_url($controlador.'/informe_sistemas_seguridad')?>"> Alarmas utilizadas &raquo;</a></li>-->
                             </ul>
                         </li>
 
