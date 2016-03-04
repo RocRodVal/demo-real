@@ -35,7 +35,8 @@
                                         <option value="">Escoge año...</option>
 
                                         <?php
-                                        for($i=2015;$i<=getdate()['year'];$i++) {
+                                        //for($i=2015;$i<=getdate()['year'];$i++) {
+                                        for($i=2015;$i<=date("Y");$i++) {
                                             echo '<option value="'.$i.'" ' . ($anio == $i ? ' selected="selected" ' : '') . '>'.$i.'</option>';
                                           //  echo '<option value="2016"' . ($anio == "2016" ? ' selected="selected" ' : '') . '>2016</option>';
                                         }
@@ -83,17 +84,23 @@
                         </thead>
                             <tbody>
                                 <?php
+
+                                if (!empty($valor_resultado)) {
                                     foreach ($valor_resultado as $clave => $valor) {
                                         echo "<tr>";
                                         echo "<th>$clave</th>";
-                                        echo "<th>".$valor['code']."</th>";
-                                        echo "<th>".$valor['fabricante']."</th>";
-                                        for ($i = $primer_mes; $i <= $ultimo_mes; $i++) {
-                                            echo "<td>$valor[$i]</td>";
+                                        echo "<th>" . $valor['code'] . "</th>";
+                                        echo "<th>" . $valor['fabricante'] . "</th>";
+                                        if(!is_null($primer_mes)) {
+                                            for ($i = $primer_mes; $i <= $ultimo_mes; $i++) {
+                                                echo "<td>$valor[$i]</td>";
+                                            }
+                                        }else {
+                                            echo "<td>No hay datos</td>";
                                         }
                                         echo "</tr>";
                                     }
-
+                                }
                                 ?>
                             </tbody>
                         <?php } ?>
