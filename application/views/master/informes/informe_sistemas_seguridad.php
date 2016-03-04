@@ -35,7 +35,8 @@
                                         <option value="">Escoge año...</option>
 
                                         <?php
-                                        for($i=2015;$i<=getdate()['year'];$i++) {
+                                        //for($i=2015;$i<=getdate()['year'];$i++) {
+                                        for($i=2015;$i<=date("Y");$i++) {
                                             echo '<option value="'.$i.'" ' . ($anio == $i ? ' selected="selected" ' : '') . '>'.$i.'</option>';
                                           //  echo '<option value="2016"' . ($anio == "2016" ? ' selected="selected" ' : '') . '>2016</option>';
                                         }
