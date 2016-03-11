@@ -36,7 +36,6 @@ class Tienda extends CI_Controller {
         $entrada = $this->data->get("entrada");
 
 
-
 		if ($this->form_validation->run() == true)
 		{
 			$data = array(
@@ -76,7 +75,7 @@ class Tienda extends CI_Controller {
     public function do_login(){
 
         // Se intenta un login... Destruimos la sesión actual que pudiera estar abierta.
-        $this->session->sess_destroy();
+        //$this->session->sess_destroy();
 
         $this->load->model('user_model');
         $data = array(
