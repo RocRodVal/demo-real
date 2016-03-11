@@ -56,11 +56,7 @@ class Tienda extends CI_Controller {
             }
 
 
-		}else
-        {
-            // Ya está logueado....
-            if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 1)) redirect($entrada);
-        }
+		}
 
 			$data['message'] = (validation_errors() ? validation_errors() : ($this->session->flashdata('message')));
 						
