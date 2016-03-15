@@ -324,7 +324,7 @@
 		                        ?>
 		                        </tbody>
 		                    </table>
-                            <form action="<?=base_url()?>/estado_incidencias/abiertas" method="post" id="form_orden">
+                            <form action="<?=base_url()?><?=$controlador?>/estado_incidencias/abiertas" method="post" id="form_orden">
                                 <input type="hidden" name="form_orden_campo_orden"  value="">
                                 <input type="hidden" name="form_orden_orden_campo" value="">
                                 <input type="hidden" name="form"  value="">
