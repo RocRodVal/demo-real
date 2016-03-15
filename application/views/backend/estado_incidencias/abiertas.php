@@ -269,8 +269,8 @@
 
                                     <th>Última modificación</th>
                                     <th class="sorting" data-rel="incidencias.tipo_averia"    data-order="">Tipo incidencia</th>
-                                    <th class="sorting" data-rel="incidencias.supervisor"    data-order="">Supervisor</th>
-                                    <th class="sorting" data-rel="incidencias.provincia"    data-order="">Provincia</th>
+                                    <th class="sorting" data-rel="pds_supervisor.titulo"    data-order="">Supervisor</th>
+                                    <th class="sorting"  data-rel="province.province"    data-order="">Provincia</th>
 
 		                            <th                                                                     >Interv.</th>
 		                            <th class="sorting" data-rel="incidencias.status"    data-order="">Estado SAT</th>
