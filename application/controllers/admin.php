@@ -726,7 +726,7 @@ class Admin extends CI_Controller
             /* FIXME: revisar alta correcta en tabla de agentes */
             $data = array(
                 'sfid'      => $sfid,
-                'password'  => 'demoreal',
+                'password'  => sha1('demoreal'),
                 'type'      => 1
             );
 
@@ -736,7 +736,6 @@ class Admin extends CI_Controller
 
             // Validar "panelado" BLOOM
             $PDS = $this->tienda_model->get_sfid($sfid,"object");
-
 
             $existe_panelado = $this->categoria_model->existe_mobiliario($PDS->id_tipo,$PDS->id_subtipo,$PDS->id_segmento,$PDS->id_tipologia);
 

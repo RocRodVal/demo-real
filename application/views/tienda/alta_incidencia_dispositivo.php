@@ -114,7 +114,7 @@
                         <div class="row right">
                             <div class="right col-lg-12">
                                 <input type="button" value="Cancelar" class="btn btn-danger"
-                                       onclick="window.location='<?= site_url('tienda/dashboard') ?>'"/>
+                                       onclick="history.go(-1);return false;"/>
                                 <input type="submit" value="Envíar" name="submit" class="btn btn-success"/>
                             </div>
                         </div>
