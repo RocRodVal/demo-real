@@ -211,11 +211,13 @@ class Informe_model extends CI_Model
         if(!is_null($id_display)){
             $aQuery["joins"]["displays_pds"]  = "displays_pds.id_pds = pds.id_pds";
             $aQuery["joins"]["display"]  = "display.id_display = displays_pds.id_display";
+            $aQuery["where"]["displays_pds.status"] = "Alta";
         }
 
         if(!is_null($id_device) || !is_null($brand_device)){
             $aQuery["joins"]["devices_pds"]  = "devices_pds.id_pds=pds.id_pds";
             $aQuery["joins"]["device"]  = "device.id_device=devices_pds.id_device";
+            $aQuery["where"]["devices_pds.status"] = "Alta";
         }
 
 
