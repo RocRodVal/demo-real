@@ -206,8 +206,11 @@
 
                 </div>
 
-
+                <div class="col-sm-12">
+                    <a href="<?=site_url($controlador.'/resultado_pdv/exportar');?>">Exportar todos</a>
+                </div>
             </form>
+
 
         </div>
     </div>

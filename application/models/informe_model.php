@@ -166,7 +166,7 @@ class Informe_model extends CI_Model
         if(is_null($id_tipo) && is_null($id_subtipo) && is_null($id_segmento) && is_null($id_tipologia)
             && is_null($id_display) && is_null($id_device) && is_null($territory) && is_null($brand_device) && is_null($codigoSAT))
         {
-            return NULL;
+         //   return NULL;
         }
 
         /*$this->db->select("pds.id_pds as id_pds, pds.reference as reference, panelado.panelado_abx as panelado_abx, type_pds.pds as tipo_pds,
@@ -1348,6 +1348,6 @@ class Informe_model extends CI_Model
         return $query_1->result();
     }*/
 
-
+   
 
 }
