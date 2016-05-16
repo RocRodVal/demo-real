@@ -44,10 +44,10 @@
                                     <?php /*<li><a <?=($this->uri->segment(2)==='cdm_inventario')?'class="active"':''?> href="<?=site_url('master/cdm_inventario')?>"> Inventario/Depósito &raquo;</a></li>*/ ?>
                                     <!--<li><a <?=($this->uri->segment(2)==='cdm_dispositivos')?'class="active"':''?> href="<?=site_url('ot/cdm_dispositivos')?>"> Dispositivos &raquo;</a></li>-->
                                     <li <?=(in_array($this->uri->segment(2),$cdm) && ($this->uri->segment(3)=='') && (in_array($this->uri->segment(2),$cdm_dispositivos)))?'class="active"':''?>>
-                                        <a href="#"> Dispositivos &raquo;</a>
+                                        <a href="#"> Dispositivos <span class="fa arrow"></span></a>
                                         <ul class="nav nav-second-level">
-                                            <li><a <?=($this->uri->segment(2)==='cdm_dispositivos_balance')?'class="active"':''?> href="<?=site_url($controlador.'/cdm_dispositivos_balance/')?>"><i class="fa fa-tasks"></i> Balance</a></li>
-                                            <li><a <?=($this->uri->segment(2)==='cdm_dispositivos_incidencias')?'class="active"':''?> href="<?=site_url($controlador.'/cdm_dispositivos_incidencias/')?>"><i class="fa fa-exclamation-triangle"></i> Incidencias</a></li>
+                                            <li><a <?=($this->uri->segment(2)==='cdm_dispositivos_balance')?'class="active"':''?> href="<?=site_url($controlador.'/cdm_dispositivos_balance/')?>"><i class="fa fa-tasks"></i> Balance &raquo;</a></li>
+                                            <li><a <?=($this->uri->segment(2)==='cdm_dispositivos_incidencias')?'class="active"':''?> href="<?=site_url($controlador.'/cdm_dispositivos_incidencias/')?>"><i class="fa fa-exclamation-triangle"></i> Incidencias &raquo;</a></li>
                                         </ul>
                                     </li>
                                 </ul>

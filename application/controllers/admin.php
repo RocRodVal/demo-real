@@ -2267,7 +2267,7 @@ class Admin extends CI_Controller
     {
         $xcrud = xcrud_get_instance();
         $xcrud->table('alarm');
-        $xcrud->table_name('Alarma');
+        $xcrud->table_name('Sistemas de seguridad');
         $xcrud->relation('client_alarm', 'client', 'id_client', 'client');
         $xcrud->relation('type_alarm', 'type_alarm', 'id_type_alarm', 'type');
         $xcrud->relation('brand_alarm', 'brand_alarm', 'id_brand_alarm', 'brand');
@@ -2289,7 +2289,7 @@ class Admin extends CI_Controller
 
         $xcrud->before_update("historico_io_alarmas_before_update","../libraries/diario_almacen.php");
 
-        $data['title'] = 'Gestión alarmas';
+        $data['title'] = 'Gestión Sistemas de seguridad';
         $data['content'] = $xcrud->render();
 
         /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
