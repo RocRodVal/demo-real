@@ -2678,6 +2678,16 @@ class Admin extends CI_Controller
         $xcrud_1->fields('titulo');
 
 
+      /* Agregando el campo orden
+      $xcrud_2 = xcrud_get_instance();
+        $xcrud_2->table('pds_tipologia');
+        $xcrud_2->table_name('Definir Tipologías de PDS');
+        $xcrud_2->order_by('orden','asc');
+        // $xcrud_1->relation('client_type_pds', 'client', 'id_client', 'client');
+        $xcrud_2->label('id', 'Id.')->label('titulo', 'Título')->label('orden', 'Orden');
+        $xcrud_2->columns('id,titulo,orden');
+        $xcrud_2->columns('titulo');
+        $xcrud_2->columns('orden');*/
         $xcrud_2 = xcrud_get_instance();
         $xcrud_2->table('pds_tipologia');
         $xcrud_2->table_name('Definir Tipologías de PDS');
@@ -2700,6 +2710,16 @@ class Admin extends CI_Controller
         $xcrud_3->columns('id,id_tipo,titulo,Tipologías');
 
 
+        /*Agregando el campo orden
+         * $xcrud_4 = xcrud_get_instance();
+        $xcrud_4->table('pds_segmento');
+        $xcrud_4->table_name('Definir Segmentos de PDS');
+        $xcrud_4->order_by('orden','asc');
+        // $xcrud_1->relation('client_type_pds', 'client', 'id_client', 'client');
+        $xcrud_4->label('id', 'Id.')->label('titulo', 'Título')->label('orden', 'Orden');
+        $xcrud_4->columns('id,titulo,orden');
+        $xcrud_4->columns('titulo');
+        $xcrud_4->columns('orden');*/
         $xcrud_4 = xcrud_get_instance();
         $xcrud_4->table('pds_segmento');
         $xcrud_4->table_name('Definir Segmentos de PDS');
@@ -5983,7 +6003,7 @@ class Admin extends CI_Controller
                 $data[$filtro] = $array_sesion[$filtro]; // Pasamos los valores a la vista.
             }
 
-            $title = 'Alarmas utilizadas';
+            $title = 'Análisis de consumo de Sistemas de seguridad';
             $anio='';
             if (!empty($_POST)) {
 

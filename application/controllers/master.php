@@ -1857,7 +1857,7 @@ class Master extends CI_Controller {
                 $data[$filtro] = $array_sesion[$filtro]; // Pasamos los valores a la vista.
             }
 
-            $title = 'Alarmas utilizadas';
+            $title = 'Análisis de consumo de Sistemas de seguridad';
             $anio='';
             if (!empty($_POST)) {
 

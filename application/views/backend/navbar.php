@@ -79,9 +79,15 @@
                            		<li><a <?=($this->uri->segment(2)==='almacen')?'class="active"':''?> href="<?=site_url($acceso.'/almacen')?>"> Inventario &raquo;</a></li>
                            		<li><a <?=(in_array($this->uri->segment(2),array('alta_dispositivos_almacen','alta_dispositivos_ok')))?'class="active"':''?> href="<?=site_url($acceso.'/alta_dispositivos_almacen')?>"> Alta masiva dispositivos &raquo;</a></li>
                            		<li><a <?=(in_array($this->uri->segment(2),array('baja_dispositivos_almacen','baja_dispositivos_ok','baja_dispositivos_ko')))?'class="active"':''?> href="<?=site_url($acceso.'/baja_dispositivos_almacen')?>"> Baja masiva dispositivos &raquo;</a></li>
-                           		<li><a <?=($this->uri->segment(2)==='alarmas_almacen')?'class="active"':''?> href="<?=site_url($acceso.'/alarmas_almacen')?>"> Gestión alarmas &raquo;</a></li>
                                 <li><a <?=($this->uri->segment(2)==='diario_almacen')?'class="active"':''?> href="<?=site_url($acceso.'/diario_almacen')?>"> Diario almacén &raquo;</a></li>
-                                <li><a <?=($this->uri->segment(2)=='informe_sistemas_seguridad')?'class="active"':''?> href="<?=site_url($acceso.'/informe_sistemas_seguridad')?>"> Alarmas utilizadas &raquo;</a></li>
+                                <li <?=(($this->uri->segment(2)==='alarmas_almacen') || ($this->uri->segment(2)==='informe_sistemas_seguridad'))?'class="active"':''?>>
+                                    <a href="#">Sistemas de seguridad  <span class="fa arrow"></span></a>
+                                        <ul class="nav nav-second-level">
+                                            <li><a <?=($this->uri->segment(2)==='alarmas_almacen')?'class="active"':''?> href="<?=site_url($acceso.'/alarmas_almacen')?>"><i class="fa fa-tasks"></i> Gestión &raquo;</a></li>
+                                            <li><a <?=($this->uri->segment(2)=='informe_sistemas_seguridad')?'class="active"':''?> href="<?=site_url($acceso.'/informe_sistemas_seguridad')?>"><i class="fa fa-bars"></i> Análisis de consumo &raquo;</a></li>
+                                        </ul>
+                                </li>
+
                         	</ul>
                         </li>		
                         <?php               
