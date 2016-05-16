@@ -33,7 +33,7 @@ class Ot extends CI_Controller {
 		$this->form_validation->set_rules('sfid-login','SFID','required|xss_clean');
 		$this->form_validation->set_rules('password','password','required|xss_clean');
 
-        $entrada = "ot/cdm_dispositivos";
+        $entrada = "ot/cdm_dispositivos_balance";
 
         // Ya está logueado....
         if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 11)) redirect($entrada);
@@ -125,7 +125,71 @@ class Ot extends CI_Controller {
             redirect('master','refresh');
         }
     }
+    /*
+     * Depósito - Inventario de dispositivos para Oferta Táctica
+     */
 
+    public function cdm_dispositivos_balance()
+    {
+        if($this->auth->is_auth())
+        {
+            $xcrud = xcrud_get_instance();
+            $this->load->model('tienda_model');
+            $data['stocks'] = $this->tienda_model->get_stock_cruzado();
+
+
+           // $data['stocks_dispositivos']  = $this->tienda_model->get_cdm_dispositivos();
+
+            $data['title']   = 'Dispositivos';
+
+
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
+            $this->load->view('master/header',$data);
+            $this->load->view('ot/navbar',$data);
+            $this->load->view('ot/cdm_dispositivos_balance',$data);
+            $this->load->view('master/footer');
+        }
+        else
+        {
+            redirect('master','refresh');
+        }
+    }
+
+    /*
+    * Depósito - Incidencias de dispositivos para Oferta Táctica
+    */
+
+    public function cdm_dispositivos_incidencias()
+    {
+        if($this->auth->is_auth())
+        {
+            $xcrud = xcrud_get_instance();
+            $this->load->model('tienda_model');
+            //$data['stocks'] = $this->tienda_model->get_stock_cruzado();
+
+
+            $data['stocks_dispositivos']  = $this->tienda_model->get_cdm_dispositivos();
+
+            $data['title']   = 'Dispositivos';
+
+
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
+            $this->load->view('master/header',$data);
+            $this->load->view('ot/navbar',$data);
+            $this->load->view('ot/cdm_dispositivos_incidencias',$data);
+            $this->load->view('master/footer');
+        }
+        else
+        {
+            redirect('master','refresh');
+        }
+    }
     /**
      * Método del controlador, que invoca al modelo para generar un CSV con el balance de activos.
      */

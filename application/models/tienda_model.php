@@ -123,10 +123,6 @@ class Tienda_model extends CI_Model {
             $this->alta_historico_io($data,NULL);
             $cont++;
         }
-
-
-
-
         return $total_baja;
 
     }else{
@@ -392,6 +388,26 @@ class Tienda_model extends CI_Model {
 
     }
 
+    /*
+   * Generar Exportacion de datos con el stock cruzado (NUEVA FUNCION).
+   */
+    public function exportar_cdm_dispositivos($formato="csv") {
+
+        $this->load->dbutil();
+        $this->load->helper('file');
+        $this->load->helper('csv');
+        $this->load->helper('download');
+
+
+        $resultados = $this->get_cdm_dispositivos();
+
+        $arr_titulos = array('Marca','Modelo','Incidencias');
+        $excluir = array('status');
+        $datos = preparar_array_exportar($resultados,$arr_titulos,$excluir);
+        exportar_fichero($formato,$datos,"Incidencias_Dispositivos__".date("d-m-Y"));
+
+
+    }
 
 
     /*
@@ -1891,7 +1907,7 @@ class Tienda_model extends CI_Model {
                 ->join('territory','pds.territory = territory.id_territory')
                 ->like('pds.reference',$sfid,'none')
                 ->get('pds');
-
+//echo $this->db->last_query(); exit;
             /*$query = $this->db->query("
             SELECT pds.*,type_pds.pds as pds, province.province, territory.territory
                 FROM pds

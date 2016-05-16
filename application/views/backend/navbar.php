@@ -41,7 +41,7 @@
 
                                             <?php
                                             for($i = $este_anio; $i >= $anio_inicial; $i--){ ?>
-                                                <li><a <?=($this->uri->segment(2)==='cdm_incidencias'  && $this->uri->segment(3)==$i)?'class="active"':''?> href="<?=site_url($controlador.'/cdm_incidencias/'.$i)?>">
+                                                <li><a <?=($this->uri->segment(2)==='cdm_incidencias'  && $this->uri->segment(3)==$i)?'class="active"':''?> href="<?=site_url($acceso.'/cdm_incidencias/'.$i)?>">
                                                 <i class="fa fa-calendar fa-fw"></i> <?=$i?></a></li>
                                         <?php } ?>
                                         </li>
@@ -171,10 +171,10 @@
                                             'informe_visual_terminal',
                                             'informe_visual_ficha_terminal')))?'class="active"':''?> href="<?=site_url($acceso.'/informe_visual')?>"> Visual &raquo;</a></li>
                                 <li><a <?=(in_array($this->uri->segment(2),
-                                        array( 'tiendas_tipologia')))?'class="active"':''?> href="<?=site_url($controlador.'/tiendas_tipologia')?>"> Tiendas por tipología &raquo;</a></li>
+                                        array( 'tiendas_tipologia')))?'class="active"':''?> href="<?=site_url($acceso.'/tiendas_tipologia')?>"> Tiendas por tipología &raquo;</a></li>
 
                                 <li><a <?=(in_array($this->uri->segment(2),
-                                        array( 'tiendas_fabricante')))?'class="active"':''?> href="<?=site_url($controlador.'/tiendas_fabricante')?>"> Tiendas por fabricante &raquo;</a></li>
+                                        array( 'tiendas_fabricante')))?'class="active"':''?> href="<?=site_url($acceso.'/tiendas_fabricante')?>"> Tiendas por fabricante &raquo;</a></li>
                             </ul>
                         </li>
 
