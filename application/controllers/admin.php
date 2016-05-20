@@ -1286,8 +1286,6 @@ class Admin extends CI_Controller
         $status_ext = $this->uri->segment(7);
 
 
-
-
         $xcrud = xcrud_get_instance();
         $this->load->model(array('tienda_model','intervencion_model'));
 
@@ -1344,15 +1342,15 @@ class Admin extends CI_Controller
 
 
 
+        $fecha_cierre = $this->input->post('fecha_cierre');
+
+        if(empty($fecha_cierre)) { $fecha_cierre = date('Y-m-d H:i:s'); }
 
         /**
          * Botón resolver Incidencia : Recoge fecha de resolución y hace la operación
          */
         if ($status == 6)
         {
-            $fecha_cierre = $this->input->post('fecha_cierre');
-
-            if(empty($fecha_cierre)) $fecha_cierre = date('Y-m-d H:i:s');
 
             $this->tienda_model->incidencia_update_cierre($id_inc, $fecha_cierre);
 
@@ -1367,10 +1365,11 @@ class Admin extends CI_Controller
          */
         if (($status == 8) AND ($status_ext == 'ext'))
         {
+
             if ($incidencia['fail_device'] == 1) {
                 $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'], 1,$id_inc);
             }
-
+            $this->tienda_model->incidencia_update_cierre($id_inc, $fecha_cierre);
         }
 
         /**
@@ -2678,8 +2677,8 @@ class Admin extends CI_Controller
         $xcrud_1->fields('titulo');
 
 
-      /* Agregando el campo orden
-      $xcrud_2 = xcrud_get_instance();
+      /* Agregando el campo orden*/
+        $xcrud_2 = xcrud_get_instance();
         $xcrud_2->table('pds_tipologia');
         $xcrud_2->table_name('Definir Tipologías de PDS');
         $xcrud_2->order_by('orden','asc');
@@ -2687,7 +2686,8 @@ class Admin extends CI_Controller
         $xcrud_2->label('id', 'Id.')->label('titulo', 'Título')->label('orden', 'Orden');
         $xcrud_2->columns('id,titulo,orden');
         $xcrud_2->columns('titulo');
-        $xcrud_2->columns('orden');*/
+        $xcrud_2->columns('orden');
+        /* SIN EL CAMPO ORDEN
         $xcrud_2 = xcrud_get_instance();
         $xcrud_2->table('pds_tipologia');
         $xcrud_2->table_name('Definir Tipologías de PDS');
@@ -2695,7 +2695,7 @@ class Admin extends CI_Controller
         $xcrud_2->label('id', 'Id.')->label('titulo', 'Título');
         $xcrud_2->columns('id,titulo');
         $xcrud_2->fields('titulo');
-
+*/
 
         $xcrud_3 = xcrud_get_instance();
         $xcrud_3->table('pds_subtipo');
@@ -2710,23 +2710,23 @@ class Admin extends CI_Controller
         $xcrud_3->columns('id,id_tipo,titulo,Tipologías');
 
 
-        /*Agregando el campo orden
-         * $xcrud_4 = xcrud_get_instance();
-        $xcrud_4->table('pds_segmento');
-        $xcrud_4->table_name('Definir Segmentos de PDS');
-        $xcrud_4->order_by('orden','asc');
-        // $xcrud_1->relation('client_type_pds', 'client', 'id_client', 'client');
-        $xcrud_4->label('id', 'Id.')->label('titulo', 'Título')->label('orden', 'Orden');
-        $xcrud_4->columns('id,titulo,orden');
-        $xcrud_4->columns('titulo');
-        $xcrud_4->columns('orden');*/
+        /*Agregando el campo orden */
         $xcrud_4 = xcrud_get_instance();
         $xcrud_4->table('pds_segmento');
         $xcrud_4->table_name('Definir Segmentos de PDS');
-        // $xcrud_1->relation('client_type_pds', 'client', 'id_client', 'client');
+        $xcrud_4->order_by('orden','asc');
+        $xcrud_4->label('id', 'Id.')->label('titulo', 'Título')->label('orden', 'Orden');
+        $xcrud_4->columns('id,titulo,orden');
+        $xcrud_4->columns('titulo');
+        $xcrud_4->columns('orden');
+
+        /* SIN EL CAMPO ORDEN
+        $xcrud_4 = xcrud_get_instance();
+        $xcrud_4->table('pds_segmento');
+        $xcrud_4->table_name('Definir Segmentos de PDS');
         $xcrud_4->label('id', 'Id.')->label('titulo', 'Título');
         $xcrud_4->columns('id,titulo');
-        $xcrud_4->fields('titulo');
+        $xcrud_4->fields('titulo');*/
 
 
         $data['title'] = 'Categorización de PDS: Tipo, Subtipo, Segmento, Tipología';
@@ -6291,7 +6291,6 @@ class Admin extends CI_Controller
                             $this->tienda_model->anadir_mueble_sfid($display,$check_sfid,$position);
 
 
-
                         }
                         else $checked_sfids[$sfid] = NULL;
                     }
@@ -6317,6 +6316,7 @@ class Admin extends CI_Controller
             $this->load->view('backend/footer');
         }
     }
+
     public function mantenimiento()
     {
 

@@ -674,8 +674,41 @@ class Informe_model extends CI_Model
             ");
 
     }
+/*
+ * Creamos tablas temporales con los datos de las fechas de las incidencias del año que nos pasan por parametro.
+ */
+   /* public function crear_temporal_incidencias_finalizadas($anio = NULL)
+    {
+        if(is_null($anio)) $anio = date("Y");
+        $this->db->query(" DROP TABLE IF EXISTS temp_historico_fechas;");
 
+        $this->db->query(" CREATE TABLE IF NOT EXISTS temp_historico_fechas(INDEX(id_incidencia))
+                          AS(
+	                      SELECT id_incidencia, max(fecha) as fecha, status_pds FROM historico WHERE status_pds != 'Cancelada' GRoUp by id_incidencia, status_pds);
+                        ");
 
+        $this->db->query(" DROP TABLE IF EXISTS historico_incidencias_fechas;");
+
+        $this->db->query(" CREATE TEMPORARY TABLE IF NOT EXISTS historico_incidencias_fechas(INDEX(id_incidencia))
+                            AS(
+                                SELECT H.id_incidencia,
+                                i.fecha as fecha_entrada,
+                                (SELECT  h1.fecha FROM temp_historico_fechas h1 WHERE h1.status_pds = 'En proceso' AND h1.id_incidencia = H.id_incidencia ) as fecha_proceso,
+                                (SELECT  h2.fecha FROM temp_historico_fechas h2 WHERE YEAR(h2.fecha) = $anio AND h2.status_pds = 'Finalizada' AND h2.id_incidencia = H.id_incidencia ) as fecha_finalizada,
+                                i.fecha_cierre,
+                                i.status_pds,
+                                i.status as status_sat
+
+                                FROM temp_historico_fechas H
+                                JOIN incidencias i ON H.id_incidencia = i.id_incidencia
+
+                                WHERE i.status_pds != 'Cancelada'
+                                GROUP BY H.id_incidencia
+                            );
+                        ");
+
+    }
+*/
     public function crear_incidencias_historico_proceso($anio = NULL)
     {
         if(is_null($anio)) $anio = date("Y");
@@ -718,14 +751,23 @@ class Informe_model extends CI_Model
     public function finalizadas_mas_72($anio=NULL,$meses_columna)
     {
         if(is_null($anio)) $anio = date("Y");
-        $this->crear_incidencias_historico_finalizadas($anio);
+       // if ($anio==2015) {
+            $this->crear_incidencias_historico_finalizadas($anio);
 
 
-        $sql  = "
+            $sql = "
                    SELECT COUNT(id_incidencia) as cantidad, YEAR(fecha_entrada) as anio, MONTH(fecha_entrada) as mes FROM historico_temp
                     WHERE (workdaydiff(fecha_proceso,fecha_cierre)) > 3
                     GROUP BY anio, mes; ";
+      /*  }
+        else {
+            $this->crear_temporal_incidencias_finalizadas($anio);
 
+            $sql ="SELECT COUNT(id_incidencia) as cantidad, YEAR(fecha_entrada) as anio, MONTH(fecha_entrada) as mes FROM historico_incidencias_fechas
+                    WHERE YEAR(fecha_entrada) = $anio AND (fecha_cierre IS NOT NULL ||  fecha_cierre IS NULL && status_pds = 'Finalizada')
+                    AND if (fecha_cierre is null,workdaydiff(fecha_finalizada,fecha_proceso) >3,workdaydiff(fecha_cierre,fecha_proceso) > 3)
+                    GROUP BY anio,mes;";
+        }*/
         $query = $this->db->query($sql)->result();
         $resultado = $this->rellenar_con_ceros($anio,$query,$meses_columna);
         return $resultado;
@@ -1222,7 +1264,7 @@ class Informe_model extends CI_Model
             FROM pds
             JOIN pds_segmento s ON s.id = pds.id_segmento            
             WHERE pds.status = 'Alta'
-            ORDER BY s.titulo ASC;
+            ORDER BY s.orden ASC;
         ")->result();
         
         // Añadimos los segmentos, cuyas tipologias tienen muebles.        
@@ -1239,7 +1281,7 @@ class Informe_model extends CI_Model
                 JOIN pds_segmento s ON s.id = pds.id_segmento
                 JOIN pds_tipologia t ON t.id = pds.id_tipologia              
                 WHERE pds.status = 'Alta' AND s.id = ".$id_segmento."
-                ORDER BY t.titulo ASC;
+                ORDER BY t.orden ASC;
             ")->result();
                     
                // Para cada tipologia-segmento buscamos los muebles de aquellas que tienen y las añadimos al resultado
