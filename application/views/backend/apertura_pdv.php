@@ -45,7 +45,18 @@
                 </div>
 
            <?php }
+            if($accion=="nopanelado") {
+                ?>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <p>&nbsp;</p>
+                        <p class="message error"><i class="glyphicon glyphicon-ko"></i> No existen muebles para la categoria del PdS <?=$alta_sfid?>.</p>
+                        <p class="message"><a href="<?=site_url('admin/get_inventarios_sfid/'.$alta_sfid.'/alta/'.$id_pds)?>"><i class="fa fa-file-pdf-o"></i> Descargar informe de alta</a></p>
+                        <p>&nbsp;</p>
+                    </div>
+                </div>
 
+            <?php }
 
             if (isset($_POST['sfid']))
             {	

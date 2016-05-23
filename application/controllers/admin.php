@@ -680,7 +680,7 @@ class Admin extends CI_Controller
 
             $accion = $this->uri->segment(3);
 
-            if($accion=="alta" || $accion=="existe"){
+            if($accion=="alta" || $accion=="existe" || $accion=='nopanelado'){
                 $data['alta_sfid'] = $this->uri->segment(4);
             }
             $data["accion"] = $accion;
@@ -690,7 +690,6 @@ class Admin extends CI_Controller
 
             $sfid_alta = $this->input->post('sfid');
             $id_pds =  $this->tienda_model->search_id_pds($sfid_alta);
-
 
             $data['tiendas'] =  $this->tienda_model->search_pds($sfid_alta);
             $data['id_pds'] = $id_pds;
@@ -753,12 +752,17 @@ class Admin extends CI_Controller
 
                 redirect('admin/apertura_pdv/alta/'.$sfid, 'refresh');
             }
-            /*$this->tienda_model->borrar_dispositivos($sfid);
-            $this->tienda_model->borrar_muebles($sfid);*/
+            else {
+                if (!$existe_panelado) {
+                    redirect('admin/apertura_pdv/nopanelado/' . $sfid, 'refresh');
+                } else {
+                    /*$this->tienda_model->borrar_dispositivos($sfid);
+                    $this->tienda_model->borrar_muebles($sfid);*/
 
-            //redirect('admin/get_inventarios_sfid/'.$this->input->post('reference').'/alta/volver/apertura_pdv');
-            redirect('admin/apertura_pdv/existe/'.$sfid, 'refresh');
-
+                    //redirect('admin/get_inventarios_sfid/'.$this->input->post('reference').'/alta/volver/apertura_pdv');
+                    redirect('admin/apertura_pdv/existe/' . $sfid, 'refresh');
+                }
+            }
         }
         else
         {
@@ -5955,7 +5959,6 @@ class Admin extends CI_Controller
             // Obtener el resultado.
             $data['resultado'] = $this->informe_model->get_informe_tiendas_fabricante($data['id_fabricante']);
 
-
             /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
             $this->data->add($data);
             $data = $this->data->getData();
@@ -6422,7 +6425,6 @@ class Admin extends CI_Controller
 
             $menos_72 = $this->informe_model->finalizadas_menos_72($este_anio,$meses_columna);
             $mas_72 = $this->informe_model->finalizadas_mas_72($este_anio,$meses_columna);
-
 
 
             $proceso_menos_72 = $this->informe_model->proceso_menos_72($este_anio,$meses_columna);

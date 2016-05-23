@@ -126,7 +126,7 @@
                         <div class="col-lg-7 labelText grey">Resolver incidencia<br /><br /></div>
 		                <form action="<?= site_url('admin/update_incidencia/' . $id_pds_url . '/' . $id_inc_url . '/4/6') ?>" method="post">
 		                <div class="col-lg-5 labelBtn grey">
-		                    <input type="date" name="fecha_cierre" id="fecha_cierre" value="Fecha"><br />
+		                    <input type="date" name="fecha_cierre" id="fecha_cierre" value="Fecha"   <?php if ($incidencia['status_pds'] == 'Finalizada') { echo 'disabled'; } ?> ><br />
 		                    <input type="submit" value="Resolver" name="submit" class="btn btn-success" classBtn="status" class="btn btn-success" <?php if ($incidencia['status'] != 'Comunicada') {
                                 echo 'disabled';
                             } ?> />
@@ -166,7 +166,9 @@
                         <div class="col-lg-7 labelText white">Cierre forzoso (act. externas)</div>
                         <div class="col-lg-5 labelBtn white">
                             <a href="<?= site_url('admin/update_incidencia/' . $id_pds_url . '/' . $id_inc_url . '/4/8/ext') ?>"
-                               classBtn="status" class="btn btn-danger">Cierre forzoso</a>
+
+                               classBtn="status" class="btn btn-danger" <?php if ($incidencia['status_pds'] == 'Finalizada') { echo 'disabled'; } ?>>Cierre forzoso</a>
+
                         </div>                             
                     </div>
                 </div>
