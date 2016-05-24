@@ -46,7 +46,7 @@
             <div class="col-lg-12">
                 
                 <?php 
-                //print_r($resultado);
+
                 if(empty($resultado->segmentos)) { ?>
                 
                 <?php } else { ?>
@@ -63,11 +63,16 @@
                     $aux=null;
                     foreach($resultado->segmentos as $segmento){
                     /*agregado para que salgan los segmentos DHO NEXT y DHO NEXT PLUS juntos*/
+                    if ($segmento->segmento=='DHO NEXT PLUS') {
+                        continue;
+                    }
                     if ($segmento->id_segmento == 2) {
+                       // echo $segmento->id_segmento." ".$elementos;
                         $elementos++;
                         $aux = ($resultado->segmentos[$elementos]);
                             //echo $aux->segmento;
                     }
+
                     $tipologias = $segmento->tipologias;
                     $firstSeg = TRUE;
                     $rowSeg = count($tipologias);
@@ -108,6 +113,7 @@
                                 <?php
                                 /*agregado para que salgan los segmentos DHO NEXT y DHO NEXT PLUS juntos*/
                                 if (!empty($aux)) {
+                                    //echo "ENTRA SIEMPRE ".$elementos;
                                    // print_r($aux->tipologias[$t]->muebles[$m]->num_pds); echo "<br>";
                                     //$tipos=$aux->tipologias[$tipo];
                                     $mueble->num_pds+=$aux->tipologias[$t]->muebles[$m]->num_pds;
