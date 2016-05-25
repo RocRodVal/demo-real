@@ -1294,7 +1294,7 @@ class Informe_model extends CI_Model
      * Obtener resultado del informe de Tiendas por fabricante
      * @param type $id_fabricante
      */
-    public function get_informe_tiendas_fabricante($id_fabricante = NULL)
+   /* public function get_informe_tiendas_fabricante($id_fabricante = NULL)
     {
         
         $resultado = new StdClass();
@@ -1405,13 +1405,13 @@ class Informe_model extends CI_Model
              else $resultado->segmentos[] = $segmento;                                     
         }       
         return $resultado;
-    }
+    }*/
 
     /**
      * Obtener resultado del informe de Tiendas por fabricante
      * @param type $id_fabricante
      */
-    public function get_informe_tiendas_fabricante_old($id_fabricante = NULL)
+    public function get_informe_tiendas_fabricante($id_fabricante = NULL)
     {
 
         $resultado = new StdClass();
