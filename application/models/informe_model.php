@@ -677,7 +677,7 @@ class Informe_model extends CI_Model
 /*
  * Creamos tablas temporales con los datos de las fechas de las incidencias del año que nos pasan por parametro.
  */
-   /* public function crear_temporal_incidencias_finalizadas($anio = NULL)
+    public function crear_temporal_incidencias_finalizadas($anio = NULL)
     {
         if(is_null($anio)) $anio = date("Y");
         $this->db->query(" DROP TABLE IF EXISTS temp_historico_fechas;");
@@ -708,7 +708,7 @@ class Informe_model extends CI_Model
                         ");
 
     }
-*/
+
     public function crear_incidencias_historico_proceso($anio = NULL)
     {
         if(is_null($anio)) $anio = date("Y");
@@ -734,13 +734,23 @@ class Informe_model extends CI_Model
     public function finalizadas_menos_72($anio=NULL,$meses_columna)
     {
         if(is_null($anio)) $anio = date("Y");
-        $this->crear_incidencias_historico_finalizadas($anio);
+        if ($anio==2015) {
+            $this->crear_incidencias_historico_finalizadas($anio);
 
-        $sql = "
+            $sql = "
             SELECT COUNT(id_incidencia)  as cantidad, YEAR(fecha_entrada) as anio, MONTH(fecha_entrada) as mes FROM historico_temp
             WHERE (workdaydiff(fecha_proceso,fecha_cierre)) <= 3
             GROUP BY anio, mes;
             ";
+        }
+        else {
+            $this->crear_temporal_incidencias_finalizadas($anio);
+
+            $sql ="SELECT COUNT(id_incidencia) as cantidad, YEAR(fecha_entrada) as anio, MONTH(fecha_entrada) as mes FROM historico_incidencias_fechas
+                    WHERE YEAR(fecha_entrada) = $anio AND (fecha_cierre IS NOT NULL ||  fecha_cierre IS NULL && status_pds = 'Finalizada')
+                    AND if (fecha_cierre is null,workdaydiff(fecha_finalizada,fecha_proceso) <=3,workdaydiff(fecha_cierre,fecha_proceso) <= 3)
+                    GROUP BY anio,mes;";
+        }
         $query = $this->db->query($sql)->result();
 
         $resultado = $this->rellenar_con_ceros($anio,$query,$meses_columna);
@@ -751,7 +761,7 @@ class Informe_model extends CI_Model
     public function finalizadas_mas_72($anio=NULL,$meses_columna)
     {
         if(is_null($anio)) $anio = date("Y");
-       // if ($anio==2015) {
+        if ($anio==2015) {
             $this->crear_incidencias_historico_finalizadas($anio);
 
 
@@ -759,7 +769,7 @@ class Informe_model extends CI_Model
                    SELECT COUNT(id_incidencia) as cantidad, YEAR(fecha_entrada) as anio, MONTH(fecha_entrada) as mes FROM historico_temp
                     WHERE (workdaydiff(fecha_proceso,fecha_cierre)) > 3
                     GROUP BY anio, mes; ";
-      /*  }
+        }
         else {
             $this->crear_temporal_incidencias_finalizadas($anio);
 
@@ -767,8 +777,11 @@ class Informe_model extends CI_Model
                     WHERE YEAR(fecha_entrada) = $anio AND (fecha_cierre IS NOT NULL ||  fecha_cierre IS NULL && status_pds = 'Finalizada')
                     AND if (fecha_cierre is null,workdaydiff(fecha_finalizada,fecha_proceso) >3,workdaydiff(fecha_cierre,fecha_proceso) > 3)
                     GROUP BY anio,mes;";
-        }*/
+        }
         $query = $this->db->query($sql)->result();
+
+        $this->db->query(" DROP TABLE IF EXISTS temp_historico_fechas;");
+
         $resultado = $this->rellenar_con_ceros($anio,$query,$meses_columna);
         return $resultado;
     }
@@ -856,31 +869,54 @@ class Informe_model extends CI_Model
     public function exportar_cdm_incidencias_finalizadas($anio = NULL, $mes = NULL,$menos72=NULL)
     {
         if(is_null($anio)) $anio = date("Y");
-        $this->crear_incidencias_historico_finalizadas($anio);
+        if ($anio==2015) {
+            $this->crear_incidencias_historico_finalizadas($anio);
 
+            if ($menos72 == 1) {
+                $sql = "SELECT id_incidencia  FROM historico_temp
+                        WHERE (workdaydiff(fecha_proceso,fecha_cierre)) <= 3 AND YEAR(fecha_entrada) ='$anio' AND MONTH(fecha_entrada) = '$mes'
+                        ";
 
-        if($menos72 == 1) {
+                $sTitulo72 = "menos72";
 
-            $sql = "
-            SELECT id_incidencia  FROM historico_temp
-            WHERE (workdaydiff(fecha_proceso,fecha_cierre)) <= 3 AND YEAR(fecha_entrada) ='$anio' AND MONTH(fecha_entrada) = '$mes'
-            ";
+            } else {
+                $sql = "SELECT id_incidencia FROM historico_temp
+                        WHERE (workdaydiff(fecha_proceso,fecha_cierre)) > 3 AND YEAR(fecha_entrada) ='$anio' AND MONTH(fecha_entrada) = '$mes'
+                        ";
 
-            $sTitulo72 = "menos72";
+                $sTitulo72 = "mas72";
+            }
+        }
+        else {
+            $this->crear_temporal_incidencias_finalizadas($anio);
+            if ($menos72 == 1) {
+                $sql = "SELECT id_incidencia
+                        FROM historico_incidencias_fechas
+                        WHERE YEAR(fecha_entrada) = $anio AND MONTH(fecha_entrada) = $mes
+                        AND (fecha_cierre IS NOT NULL ||  fecha_cierre IS NULL && status_pds = 'Finalizada')
+                        AND if (fecha_cierre is null,workdaydiff(fecha_finalizada,fecha_proceso) <= 3,workdaydiff(fecha_cierre,fecha_proceso) <= 3);
+                        ";
 
-        }else{
-            $sql  = "
-                   SELECT id_incidencia FROM historico_temp
-                    WHERE (workdaydiff(fecha_proceso,fecha_cierre)) > 3 AND YEAR(fecha_entrada) ='$anio' AND MONTH(fecha_entrada) = '$mes'
-                   ";
+                $sTitulo72 = "menos72";
 
-            $sTitulo72 = "mas72";
+            } else {
+                $sql = "SELECT id_incidencia
+                        FROM historico_incidencias_fechas
+                        WHERE YEAR(fecha_entrada) = $anio AND MONTH(fecha_entrada) = $mes
+                        AND (fecha_cierre IS NOT NULL ||  fecha_cierre IS NULL && status_pds = 'Finalizada')
+                        AND if (fecha_cierre is null,workdaydiff(fecha_finalizada,fecha_proceso) > 3,workdaydiff(fecha_cierre,fecha_proceso) > 3);
+                        ";
+
+                $sTitulo72 = "mas72";
+            }
+
         }
         $query = $this->db->query($sql)->result();
 
+        $this->db->query(" DROP TABLE IF EXISTS temp_historico_fechas;");
+
         $ids = array();
         foreach($query as $id) $ids[] = $id->id_incidencia;
-
 
         $this->exportar_incidencias_id($ids,$anio,$mes,"Finalizadas-$sTitulo72");
 
@@ -998,7 +1034,15 @@ class Informe_model extends CI_Model
 
 
         if($status == 2) {$this->crear_incidencias_historico_proceso(); $campo_resta = "'".date("Y-m-d")."'"; }// En proceso
-        if($status == 4) {$this->crear_incidencias_historico_finalizadas(); $campo_resta = " historico_temp.fecha_cierre "; }// Finalizadas
+        if($status == 4) {
+           // if($anio==2015) {
+                $this->crear_incidencias_historico_finalizadas($anio);
+
+            /*}else {
+                $this->crear_temporal_incidencias_finalizadas($anio);
+            }*/
+            $campo_resta = " historico_temp.fecha_cierre ";
+        }// Finalizadas
 
 
         $aConditions = array();
@@ -1290,20 +1334,17 @@ class Informe_model extends CI_Model
               {
                   
                   $id_tipologia = $tipo->id_tipologia;
-                  // Sacar los muebles de la tipología
+                  // Sacar todos los muebles que tengan mas de 0 posiciones
                   $muebles_tipologia = $this->db->query(" 
-                      SELECT d.id_display, d.display, d.picture_url as imagen, dc.position,
+                      SELECT d.id_display, d.display, d.picture_url as imagen,
                           (SELECT COUNT(pds.id_pds) FROM pds 
                             JOIN displays_pds dp ON dp.id_pds = pds.id_pds
-                           WHERE pds.status = 'Alta' AND pds.id_segmento=dp.id_segmento AND pds.id_tipologia = dp.id_tipologia) as num_pds 
-                      FROM displays_categoria dc
-                      JOIN display d ON dc.id_display = d.id_display                      
-                      WHERE dc.id_segmento = ".$id_segmento." 
-                      AND dc.id_tipologia = ".$id_tipologia."
-                      AND d.positions > 0      
+                           WHERE pds.status = 'Alta' AND pds.id_segmento=dp.id_segmento AND pds.id_tipologia = dp.id_tipologia
+                           AND pds.id_tipologia=$id_tipologia and pds.id_segmento=$id_segmento) as num_pds
+                      FROM display d
+                      WHERE d.positions > 0
                       $cond_fabricante
                       GROUP BY d.id_display
-                      ORDER BY dc.position ASC
                       ;
                   ")->result();
 
@@ -1363,6 +1404,126 @@ class Informe_model extends CI_Model
              if(empty($segmento->tipologias)) unset($segmento);
              else $resultado->segmentos[] = $segmento;                                     
         }       
+        return $resultado;
+    }
+
+    /**
+     * Obtener resultado del informe de Tiendas por fabricante
+     * @param type $id_fabricante
+     */
+    public function get_informe_tiendas_fabricante_old($id_fabricante = NULL)
+    {
+
+        $resultado = new StdClass();
+
+
+        $cond_fabricante = (is_null($id_fabricante)) ? "" : " AND d.client_display = '$id_fabricante' ";
+
+        $segmentos_tienda = $this->db->query("
+            SELECT distinct pds.id_segmento,s.titulo as segmento,
+                (SELECT COUNT(id_pds) FROM pds WHERE status='Alta' AND pds.id_segmento = s.id) AS num_pds
+            FROM pds
+            JOIN pds_segmento s ON s.id = pds.id_segmento
+            WHERE pds.status = 'Alta'
+            ORDER BY s.orden ASC;
+        ")->result();
+
+        // Añadimos los segmentos, cuyas tipologias tienen muebles.
+        $resultado->segmentos = array();
+        foreach($segmentos_tienda as $segmento)
+        {
+            $id_segmento = $segmento->id_segmento;
+
+
+            $tipologias_tienda = $this->db->query("
+                SELECT distinct  pds.id_tipologia, t.titulo as tipologia,
+                    (SELECT COUNT(id_pds) FROM pds WHERE status='Alta' AND pds.id_segmento = s.id AND pds.id_tipologia = t.id) AS num_pds
+                FROM pds
+                JOIN pds_segmento s ON s.id = pds.id_segmento
+                JOIN pds_tipologia t ON t.id = pds.id_tipologia
+                WHERE pds.status = 'Alta' AND s.id = ".$id_segmento."
+                ORDER BY t.orden ASC;
+            ")->result();
+
+            // Para cada tipologia-segmento buscamos los muebles de aquellas que tienen y las añadimos al resultado
+            $segmento->tipologias = array();
+            foreach($tipologias_tienda as $tipo)
+            {
+
+                $id_tipologia = $tipo->id_tipologia;
+                // Sacar los muebles de la tipología
+                $muebles_tipologia = $this->db->query("
+                      SELECT d.id_display, d.display, d.picture_url as imagen, dc.position,
+                          (SELECT COUNT(pds.id_pds) FROM pds
+                            JOIN displays_pds dp ON dp.id_pds = pds.id_pds
+                           WHERE pds.status = 'Alta' AND pds.id_segmento=dp.id_segmento AND pds.id_tipologia = dp.id_tipologia) as num_pds
+                      FROM displays_categoria dc
+                      JOIN display d ON dc.id_display = d.id_display
+                      WHERE dc.id_segmento = ".$id_segmento."
+                      AND dc.id_tipologia = ".$id_tipologia."
+                      AND d.positions > 0
+                      $cond_fabricante
+                      GROUP BY d.id_display
+                      ORDER BY dc.position ASC
+                      ;
+                  ")->result();
+
+                if(empty($muebles_tipologia))
+                {
+                    unset($tipo);
+                }
+                else
+                {
+                    $tipo->muebles = new StdClass();
+
+                    // Recorrer los muebles y preguntar cuántos PDS lo tienen asociado
+                    foreach($muebles_tipologia as $mueble)
+                    {
+                        $id_mueble = $mueble->id_display;
+                        $num_pds = $this->db->query("
+                                SELECT COUNT(pds.id_pds) as num_pds FROM pds
+                                JOIN displays_pds dp ON dp.id_pds = pds.id_pds
+                                JOIN display d ON dp.id_display = d.id_display
+                                WHERE pds.status='Alta'
+                                $cond_fabricante
+                                AND pds.id_segmento = ".$id_segmento."
+                                AND pds.id_tipologia = ".$id_tipologia."
+                                AND dp.id_display = ".$id_mueble.";")->row();
+
+
+                        $mueble->num_pds = empty($num_pds) ? 0 : $num_pds->num_pds;
+
+                        // Sacar planograma
+
+                        $mueble->planograma = new StdClass();
+
+                        $planograma = $this->db->query("
+                              SELECT d.device, d.id_device, d.picture_url as imagen
+                              FROM device d
+                              JOIN devices_display dd ON dd.id_device = d.id_device
+                              WHERE id_display = ".$id_mueble."
+                                  AND dd.status='Alta'
+                                  ORDER BY position ASC
+                              ")->result();
+
+                        $mueble->planograma = $planograma;
+
+
+                    }
+
+
+
+                    $tipo->muebles = $muebles_tipologia;
+
+
+                    $segmento->tipologias[] = $tipo;
+                }
+
+            }
+            // Si no está vacio el array de tipologias para el segmento... Añadimos al resultado
+            if(empty($segmento->tipologias)) unset($segmento);
+            else $resultado->segmentos[] = $segmento;
+        }
         return $resultado;
     }
 
