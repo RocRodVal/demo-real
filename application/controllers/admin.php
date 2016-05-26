@@ -2590,7 +2590,7 @@ class Admin extends CI_Controller
         $xcrud_2->fields('client_pds,reference,codigoSAT,id_tipo,id_subtipo,id_segmento,id_tipologia,commercial,cif,territory,picture_url,m2_fo,m2_bo,m2_total,type_via,address,zip,city,province,county,territory,schedule,phone,mobile,email,contact_contact_person,contact_in_charge,id_supervisor,status');
 
         $xcrud_2->validation_required('reference');
-        $xcrud_2->validation_required('codigoSAT');
+        //$xcrud_2->validation_required('codigoSAT');
         $xcrud_2->validation_required('province');
         $xcrud_2->validation_required('territory');
 
@@ -6066,7 +6066,7 @@ class Admin extends CI_Controller
         }
         else
         {
-            redirect('master','refresh');
+            redirect('admin','refresh');
         }
     }
 
