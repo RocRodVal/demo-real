@@ -250,8 +250,6 @@ class Informe_model extends CI_Model
         {
             $aQuery["limit"] = array("ini"=> $limit["ini"], "offset"=>$limit["offset"]);
         }
-
-//print_r($aQuery); exit;
         return $aQuery;
     }
 
@@ -1178,7 +1176,7 @@ class Informe_model extends CI_Model
 
 
 
-        //echo $this->db->last_query();
+      //  echo $this->db->last_query();exit;
 
 
         foreach ($tiendas_tipologia as $subtipos) {
@@ -1236,7 +1234,7 @@ class Informe_model extends CI_Model
                             ORDER BY d.display ASC
                             ";
 
-
+                //echo $sql;exit;
                  $query = $this->db->query($sql);
 
                 //$tipologia->sql = $sql;
@@ -1291,10 +1289,10 @@ class Informe_model extends CI_Model
     
     
     /**
-     * Obtener resultado del informe de Tiendas por fabricante
+     * Obtener resultado del informe de Tiendas por fabricante, consultando todos los muebles que están dados de alta
      * @param type $id_fabricante
      */
-   /* public function get_informe_tiendas_fabricante($id_fabricante = NULL)
+   public function get_informe_tiendas_fabricante($id_fabricante = NULL)
     {
         
         $resultado = new StdClass();
@@ -1368,6 +1366,7 @@ class Informe_model extends CI_Model
                                 $cond_fabricante
                                 AND pds.id_segmento = ".$id_segmento."
                                 AND pds.id_tipologia = ".$id_tipologia."
+                                AND dp.status = 'Alta'
                                 AND dp.id_display = ".$id_mueble.";")->row();
                           
                           
@@ -1405,13 +1404,13 @@ class Informe_model extends CI_Model
              else $resultado->segmentos[] = $segmento;                                     
         }       
         return $resultado;
-    }*/
+    }
 
     /**
-     * Obtener resultado del informe de Tiendas por fabricante
+     * Obtener resultado del informe de Tiendas por fabricante basandose en el maestro de muebles de las categorias
      * @param type $id_fabricante
      */
-    public function get_informe_tiendas_fabricante($id_fabricante = NULL)
+    public function get_informe_tiendas_fabricante_old($id_fabricante = NULL)
     {
 
         $resultado = new StdClass();

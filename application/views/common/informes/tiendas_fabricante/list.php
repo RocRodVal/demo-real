@@ -59,6 +59,7 @@
                     $elementos=0;
 
                     foreach($resultado->segmentos as $segmento){
+                        $pintable=false;
                         $siguiente=null;
                         /*agregado para que salgan los segmentos DHO NEXT y DHO NEXT PLUS juntos
                         *SOLICITADO por Teresa Fernandez Murillo
@@ -67,9 +68,7 @@
                             continue;
                         }
                         if ($segmento->id_segmento == 2) {
-                           // echo $elementos;
-                            $elementos++;
-                            $siguiente = ($resultado->segmentos[$elementos]);
+                            $siguiente = ($resultado->segmentos[$elementos+1]);
                         }
 
                         $tipologias = $segmento->tipologias;
@@ -149,18 +148,21 @@
                                         $firstTipo = FALSE;
                                         $m++;
                             }
-                            ?>
+                            if($m>0) {
+                                $pintable=true;
+                                ?>
 
-                            <tr class="separador-tipo">
-                                <td height="1">&nbsp;</td>
-                                <th colspan="3" height="1">&nbsp;</th>
-                            </tr>
-                            <?php
+                                <tr class="separador-tipo">
+                                    <td height="1">&nbsp;</td>
+                                    <th colspan="3" height="1">&nbsp;</th>
+                                </tr>
+                                <?php
+                            }
                                 $t++;
                                 unset($mueblesAux);
                         }
 
-                        if($m>0) {
+                       if($pintable) {
                             ?>
 
                             <tr class="separador">
@@ -172,13 +174,14 @@
                                     $segmento->num_pds += $siguiente->num_pds;
                                 }
                                 ?>
-                                <td class="total" colspan="4"><strong>Total tiendas /
-                                        tipo: <?= $segmento->num_pds ?></strong></td>
+                                <td class="total" colspan="4"><strong>Total tiendas / tipo: <?= $segmento->num_pds ?></strong></td>
                             </tr>
 
                             <?php
                         }
-                        /*agregado para que salgan los segmentos DHO NEXT y DHO NEXT PLUS juntos*/
+                        /*agregado para que salgan los segmentos DHO NEXT y DHO NEXT PLUS juntos
+                         **SOLICITADO por Teresa Fernandez Murillo
+                        */
                         $elementos++;
                         if ($elementos>(count($resultado->segmentos)-1)) {
                             break;

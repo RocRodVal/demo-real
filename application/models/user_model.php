@@ -18,8 +18,16 @@ class User_model extends CI_Model {
 		    ->where('sfid',$sfid)
 		    ->where('password',$password)
 		    ->limit(1)
-		    ->get('agent');		
-			
+		    ->get('agent');
+
+		/*Agregado para comprobar si la tienda es MAIN SMARTSTORE*/
+		$query2 = $this->db->select('*')
+			->where('reference',$sfid)
+			->where('id_segmento',20)
+			->get('pds');
+
+		//echo $query->last_query();
+
 		if($query->num_rows()==1)
 		{
 			$row = $query->row();
@@ -29,6 +37,12 @@ class User_model extends CI_Model {
 					'type'      => $row->type,
 					'logged_in' => TRUE
 			);
+			if($query2->num_rows()==1) {
+				$data['hacePedidos']=TRUE;
+			}
+			else {
+				$data['hacePedidos']=FALSE;
+			}
 			$this->session->set_userdata($data);
 			return TRUE;
 		}
@@ -50,15 +64,19 @@ class User_model extends CI_Model {
 			->where('type',10)
 			->limit(1)
 			->get('agent');
-			
+
+
+
 		if($query->num_rows()==1)
 		{
+
 			$row = $query->row();
 			$data = array(
 					'sfid'      => $row->sfid,
 					'type'      => $row->type,
 					'logged_in' => TRUE
 			);
+
 			$this->session->set_userdata($data);
 			return TRUE;
 		}

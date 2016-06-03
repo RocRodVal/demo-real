@@ -2124,13 +2124,19 @@ class Tienda_model extends CI_Model {
 	}
 
 
-	public function historico_fecha($id,$status) {
+	public function historico_fecha($id,$status,$tabla=null) {
 		if($id != FALSE) {
-			$query = $this->db->select('historico.fecha')
-			->where('historico.id_incidencia',$id)
-			->where('historico.status',$status)
-			->get('historico');
-	
+            if($tabla=="pedidos") {
+                $query = $this->db->select('pedidos_historico.fecha')
+                    ->where('pedidos_historico.id_pedido', $id)
+                    ->where('pedidos_historico.status', $status)
+                    ->get('pedidos_historico');
+            }else {
+                $query = $this->db->select('historico.fecha')
+                    ->where('historico.id_incidencia', $id)
+                    ->where('historico.status', $status)
+                    ->get('historico');
+            }
 			return $query->row_array();
 		}
 		else {
@@ -2151,16 +2157,16 @@ class Tienda_model extends CI_Model {
 	}	
 
 	public function incidencia_update_cierre($id,$fecha_cierre)
-	{
-        $ahora = date("Y-m-d H:i:s");
-		$this->db->set('fecha_cierre', $fecha_cierre);
-        $this->db->set('last_updated', "'$ahora'", FALSE);
-		$this->db->where('id_incidencia',$id);
-		$this->db->update('incidencias');
-	}	
-	
-	
-	public function comentario_incidencia_update($id,$texto)
+{
+    $ahora = date("Y-m-d H:i:s");
+    $this->db->set('fecha_cierre', $fecha_cierre);
+    $this->db->set('last_updated', "'$ahora'", FALSE);
+    $this->db->where('id_incidencia',$id);
+    $this->db->update('incidencias');
+}
+
+
+    public function comentario_incidencia_update($id,$texto)
 	{
 		$this->db->set('description_2', $texto);
 		$this->db->where('id_incidencia',$id);
@@ -2521,8 +2527,8 @@ class Tienda_model extends CI_Model {
 
 
 
-            $SQL = " INSERT INTO displays_pds (client_type_pds, id_pds, id_display, position, status)
-                                        VALUES(".$client_type_pds.",".$id_pds.",".$id_display.",".$position.",'Alta'); ";
+            $SQL = " INSERT INTO displays_pds (client_type_pds, id_pds, id_display, position, status,id_tipo,id_subtipo,id_segmento,id_tipologia)
+                                        VALUES(".$client_type_pds.",".$id_pds.",".$id_display.",".$position.",'Alta',$pds->id_tipo,$pds->id_subtipo,$pds->id_segmento,$pds->id_tipologia); ";
 
             $this->db->query($SQL);
             $id_displays_pds = $this->db->insert_id();

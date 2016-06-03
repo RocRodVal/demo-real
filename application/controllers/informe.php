@@ -279,7 +279,16 @@ class Informe extends CI_Controller {
 
     }
 
+   /* public function exportar_cdm_incidencias_totales($i_anio= NULL,$i_mes=NULL,$menos_72h = NULL)
+    {
+        $this->load->model("informe_model");
 
+        if(is_null($i_mes)) $i_mes = 1;
+        if(is_null($i_anio)) $i_anio = date("Y");
+
+        $this->informe_model->exportar_cdm_incidencias_totales($i_anio,$i_mes,$menos_72h);
+
+    }*/
 
 
 }

@@ -124,6 +124,43 @@ class Alarma_model extends CI_Model {
 		exportar_fichero($formato,$datos,"Alarmas_".$anio."__".date("d-m-Y"));
 
 	}
+
+	/*
+   * Consultar el listado de alarmas que se pueden incluir en los pedidos a realizar por las tiendas SMARTSTORE
+	 * Solo se puede hacer pedidos de las alarmas que estén marcadas como elemento_conectado
+   */
+	public function get_alarmas_pedido() {
+		$query = $this->db->select('code,brand as fabricante,alarm,id_alarm')
+			->join('brand_alarm','brand_alarm.id_brand_alarm=alarm.brand_alarm')
+			->join('type_alarm','type_alarm.id_type_alarm=alarm.type_alarm')
+			->where('alarm.elemento_conectado',1)
+			->order_by('alarm ASC')
+			->get('alarm');
+
+		return $query->result();
+	}
+
+	/*
+	 * Inserta un pedido en la base de datos
+	 */
+	public function insert_pedido($data)
+	{
+		$this->db->insert('pedidos',$data);
+		$id=$this->db->insert_id();
+
+		return array('add' => (isset($id)) ? $id : FALSE, 'id' => $id);
+	}
+
+	/*
+	 * Inserta en la base de datos el detale de un pedido
+	 */
+	public function insert_detalle_pedido($data)
+	{
+		$this->db->insert('pedidos_detalle',$data);
+		$id=$this->db->insert_id();
+
+		return array('add' => (isset($id)) ? $id : FALSE, 'id' => $id);
+	}
 }
 
 ?>

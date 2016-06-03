@@ -3770,7 +3770,7 @@ class Master extends CI_Controller {
             /////
             $this->load->view($controlador . '/header', $data);
             $this->load->view($controlador . '/navbar', $data);
-            $this->load->view($controlador . '/informes/tiendas_fabricante/list', $data);
+            $this->load->view( 'common/informes/tiendas_fabricante/list', $data);
             $this->load->view($controlador . '/footer');
         }
         else

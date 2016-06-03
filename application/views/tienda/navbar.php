@@ -29,8 +29,28 @@
 
                         </li>
 
+                        <li><a <?=($this->uri->segment(2)==='alta_incidencia')?'class="active"':''?> href="<?=site_url('tienda/alta_incidencia')?>"><i class="fa fa-ticket fa-fw"></i> Alta incidencia</a> </li>
 
-                        <li><a <?=($this->uri->segment(2)==='alta_incidencia')?'class="active"':''?> href="<?=site_url('tienda/alta_incidencia')?>"><i class="fa fa-ticket fa-fw"></i> Alta incidencia</a> </li>   
+                        <?php
+                        /*
+                         * Ene l caso de que acceda una tienda de tipo SMARTSOTRE se le mostrara el menu para poder hacer pedidos y comprobar su estado
+                         */
+                        if ($this->session->userdata('hacePedidos')){
+                        $estado_pedidos = array("pedidos",'alta_pedido','detalle_pedido');
+                        //$estado_incidencias_inner = array();
+                        ?>
+                        <li <?=(in_array($this->uri->segment(2), $estado_pedidos)? ' class="active" ' :'')?>>
+                            <a href="#"><i class="fa fa-dashboard fa-file-text-o"></i> Pedidos <span class="fa arrow"></span></a>
+
+                            <ul class="nav nav-second-level">
+                                <li><a <?=(($this->uri->segment(2)==='pedidos') && ($this->uri->segment(3)==='abiertos'))?'class="active"':''?> href="<?=site_url('tienda/pedidos/abiertos')?>"> Pedidos abiertos &raquo;</a></li>
+                                <li><a <?=(($this->uri->segment(2)==='pedidos') && ($this->uri->segment(3)==='finalizados'))?'class="active"':''?> href="<?=site_url('tienda/pedidos/finalizados')?>"> Pedidos finalizados &raquo;</a></li>
+                                <li><a <?=($this->uri->segment(2)==='alta_pedido')?'class="active"':''?> href="<?=site_url('tienda/alta_pedido')?>"><i class="fa fa-ticket fa-fw"></i> Alta de pedido &raquo;</a></li>
+                            </ul>
+
+                        </li>
+                        <?php } ?>
+
                         <li <?=($this->uri->segment(2)==='ayuda'||$this->uri->segment(2)==='manuales')?'class="active"':''?>>
                         <a href="#"><i class="fa fa-question-circle fa-fw"></i> Ayuda<span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level">
