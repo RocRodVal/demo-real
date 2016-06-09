@@ -31,7 +31,7 @@
                             <div class="col-sm-12">
                                 <div class="form-group">
                                     <label for="anio">Año</label>
-                                    <select id="anio" name="anio" class="form-control" onchange="enviar_form('form');">
+                                    <select id="anio" name="anio" class="form-control">
                                         <option value="">Escoge año...</option>
 
                                         <?php
@@ -47,7 +47,25 @@
                                     <input type="hidden" name="filtrar_anio" value="si">
                                     <input type="submit" value="Generar" class="form-control input-sm">
                                 </div>-->
+
+                            <div class="form-group">
+                                <label for="tipo">Tipo</label>
+                                <select id="tipo" name="tipo" class="form-control" >
+                                    <option value="">Escoge tipo...</option>
+                                    <option value="incidencias" <?=($tipo == 'incidencias' ? ' selected="selected" ' : '')?>>Incidencias</option>
+                                    <option value="pedidos" <?=($tipo == 'pedidos' ? ' selected="selected" ' : '')?>>Pedidos</option>
+
+                                </select>
                             </div>
+                            <div class="form-group">
+                                <input type="hidden" name="generar_informe" value="si">
+                                <button type="submit" id="submit_button" class="form-control input-sm">Generar</button>
+                            </div>
+                            <!--<div class="form-group">
+                                <input type="hidden" name="filtrar_anio" value="si">
+                                <input type="submit" value="Generar" class="form-control input-sm">
+                            </div>-->
+                        </div>
                         </form>
                     </div>
                 </div>
@@ -56,8 +74,8 @@
             <div class="row">
                 <div class="col-lg-12">
                     <?
-                    if (!empty($anio)) { ?>
-                        <p><a href="<?=base_url().$controlador?>/exportar_sistemas_seguridad/<?=$anio?>" class="btn exportar"><i class="glyphicon glyphicon-file"></i> Exportar Excel</a></p>
+                    if (!empty($anio) && !empty($valor_resultado)) { ?>
+                        <p><a href="<?=base_url().$controlador?>/exportar_sistemas_seguridad/<?=$anio?>/<?=$tipo?>" class="btn exportar"><i class="glyphicon glyphicon-file"></i> Exportar Excel</a></p>
                         <div class="table-responsive">
                         <table cellpadding="0" cellspacing="0" class="table table-striped table-bordered table-hover table-borde-lineal table-sistemas-seguridad">
 
@@ -103,7 +121,13 @@
                                 }
                                 ?>
                             </tbody>
-                        <?php } ?>
+                        <?php } else {
+                            ?>
+
+                                <p class="message warning"><i class="glyphicon glyphicon-warning-sign"></i> No hay datos de <?=$tipo?> para el <?=$anio?>ñ.</p>
+
+                            <?php
+                        }?>
 
                          </table>
                         </div>

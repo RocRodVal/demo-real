@@ -6,7 +6,15 @@
     <div class="row">
         <div class="col-lg-12">
             <h1 class="page-header"><?php echo $title ?>
-                <a href="#" onclick="history.go(-1);return false;" class="btn btn-danger right">Volver</a>
+                <?php
+                if (($status_pds=='Finalizada') || ($status_pds=='Cancelada')) {
+                    ?>
+                    <a href="<?=site_url('tienda/estado_incidencias/cerradas') ?>" class="btn btn-danger right">Volver</a>
+                <?php } else { ?>
+                    <a href="<?=site_url('tienda/estado_incidencias/abiertas')?>" class="btn btn-danger right">Volver</a>
+
+                <?php } ?>
+                <!--<a href="#" onclick="history.go(-1);return false;" class="btn btn-danger right">Volver</a>-->
             </h1>
         </div>
     </div>

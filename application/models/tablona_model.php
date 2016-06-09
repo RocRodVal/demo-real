@@ -117,21 +117,35 @@ class Tablona_model extends CI_Model {
      * Tabla temporal en la BBDD que nos guardara los datos del historico de las incidencias de un año determinado
      * en el momento que pasaron a estado "En visita"
      */
-    public function crear_historicotemp($anio,$status) {
+    public function crear_historicotemp($anio,$status,$tipo) {
         /**
          * SELECT id_incidencia,status_pds,min(fecha) FROM demoreal.historico where status_pds="En visita" AND YEAR(fecha)="2016"
         group by id_incidencia
          */
         $this->db->query(" DROP TABLE IF EXISTS historico_temp; ");
-        $this->db->query('
+        if($tipo=='incidencias') {
+            $this->db->query('
                 CREATE TEMPORARY TABLE historico_temp AS
                 (
                     SELECT id_incidencia,MIN(fecha) as fecha ,status_pds
                     FROM historico
-                    WHERE YEAR(fecha) = "'.$anio.'" AND status_pds="'.$status.'"
+                    WHERE YEAR(fecha) = "' . $anio . '" AND status_pds="' . $status . '"
                     GROUP BY id_incidencia
                 );
             ');
+        }else {
+            $this->db->query('
+                CREATE TEMPORARY TABLE historico_temp AS
+                (
+                    SELECT id_pedido,MIN(fecha) as fecha ,status
+                    FROM pedidos_historico
+                    WHERE YEAR(fecha) = "' . $anio . '" AND status="' . $status . '"
+                    GROUP BY id_pedido
+                );
+            ');
+        }
+
+      //  echo $this->db->last_query();
 
     }
 

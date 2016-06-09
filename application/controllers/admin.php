@@ -365,7 +365,6 @@ class Admin extends CI_Controller
 
 
 
-
             $data['incidencias'] = $incidencias;
             $data['tipo'] = $tipo;
 
@@ -1170,17 +1169,78 @@ class Admin extends CI_Controller
 
     public function insert_chat()
     {
+
         if ($this->auth->is_auth()) {
             $id_pds = $this->uri->segment(3);
-            $id_inc = $this->uri->segment(4);
+            $id = $this->uri->segment(4);
+
+            $tabla = 'incidencia';
+            $url="admin/operar_incidencia/$id_pds/$id";
 
             $xcrud = xcrud_get_instance();
             $this->load->model('chat_model');
 
-            $config['upload_path'] = dirname($_SERVER["SCRIPT_FILENAME"]) . '/chats/';
-            $config['upload_url'] = base_url() . '/chats/';
+            $config['upload_path'] = dirname($_SERVER["SCRIPT_FILENAME"]) . '/uploads/chats/';
+            $config['upload_url'] = base_url() . '/uploads/chats/';
             $config['allowed_types'] = 'gif|jpg|png';
-            $new_name = $id_inc . '-' . time();
+            $new_name = $id . '-' . time();
+            $config['file_name'] = $new_name;
+            $config['overwrite'] = TRUE;
+            $config['max_size'] = '10000KB';
+
+            $this->load->library('upload', $config);
+
+            $foto = NULL;
+
+            if ($this->upload->do_upload()) {
+                $foto = $new_name.$this->upload->data()["file_ext"];
+            } else {
+                $error = 'Ha fallado la carga de la foto.';
+            }
+
+            $texto_chat = $this->input->post('texto_chat');
+            $texto_chat = $this->strip_html_tags($texto_chat);
+
+            if ($foto != '' || $texto_chat != '' && $texto_chat != ' ') {
+                    $data = array(
+                        'fecha' => date('Y-m-d H:i:s'),
+                        'id_incidencia' => $id,
+                        'agent' => 'altabox',
+                        'texto' => $texto_chat,
+                        'foto' => $foto,
+                        'status' => 1,
+                    );
+
+                $chat = $this->chat_model->insert_chat($data,$tabla);
+
+                if ($chat['add']) {
+                    redirect($url);
+                }
+            } else {
+                redirect($url);
+            }
+
+        } else {
+            redirect('admin', 'refresh');
+        }
+    }
+
+    public function insert_chat_pedido()
+    {
+
+        if ($this->auth->is_auth()) {
+            $id_pds = $this->uri->segment(3);
+            $id = $this->uri->segment(4);
+            $tabla="pedido";
+            $url="admin/operar_pedido/$id/$id_pds";
+
+            $xcrud = xcrud_get_instance();
+            $this->load->model('chat_model');
+
+            $config['upload_path'] = dirname($_SERVER["SCRIPT_FILENAME"]) . '/uploads/chats/';
+            $config['upload_url'] = base_url() . '/uploads/chats/';
+            $config['allowed_types'] = 'gif|jpg|png';
+            $new_name = $id . '-' . time();
             $config['file_name'] = $new_name;
             $config['overwrite'] = TRUE;
             $config['max_size'] = '10000KB';
@@ -1200,22 +1260,22 @@ class Admin extends CI_Controller
 
             if ($foto != '' || $texto_chat != '' && $texto_chat != ' ') {
 
-                $data = array(
-                    'fecha' => date('Y-m-d H:i:s'),
-                    'id_incidencia' => $id_inc,
-                    'agent' => 'altabox',
-                    'texto' => $texto_chat,
-                    'foto' => $foto,
-                    'status' => 1,
-                );
+                    $data = array(
+                        'fecha' => date('Y-m-d H:i:s'),
+                        'id_pedido' => $id,
+                        'agent' => 'altabox',
+                        'texto' => $texto_chat,
+                        'foto' => $foto,
+                        'status' => 1,
+                    );
 
-                $chat = $this->chat_model->insert_chat_incidencia($data);
+                $chat = $this->chat_model->insert_chat($data,$tabla);
 
                 if ($chat['add']) {
-                    redirect('admin/operar_incidencia/' . $id_pds . '/' . $id_inc);
+                    redirect($url);
                 }
             } else {
-                redirect('admin/operar_incidencia/' . $id_pds . '/' . $id_inc);
+                redirect($url);
             }
 
         } else {
@@ -6033,7 +6093,7 @@ class Admin extends CI_Controller
             /**
              * Crear los filtros
              */
-            $array_filtros = array('anio' => '');
+            $array_filtros = array('anio' => '','tipo'=>'incidencias');
 
             // Consultar a la session si ya se ha buscado algo y guardado allí.
             $array_sesion = $this->get_filtros($array_filtros);
@@ -6048,20 +6108,23 @@ class Admin extends CI_Controller
 
             $title = 'Análisis de consumo de Sistemas de seguridad';
             $anio='';
+            $tipo='incidencias';
             if (!empty($_POST)) {
 
                 $anio=$_POST['anio'];
-                $estado="En visita";
+                $tipo=$_POST['tipo'];
+                if ($tipo=='incidencias'){$estado="En visita";}
+                else {$estado='Enviado';}
                 if (!empty($anio)) {
-                    $this->tablona_model->crear_historicotemp($anio,$estado);
+                    $this->tablona_model->crear_historicotemp($anio,$estado,$tipo);
 
-                    $title .= ' ' . $anio;
+                    $title .= ' ' . $anio." - ".$tipo;
                     setlocale(LC_ALL, 'es_ES');
 
                     $xcrud_1 = xcrud_get_instance();
                     $xcrud_1->table_name('Alarmas');
 
-                    $alarmas=$this->alarma_model->get_alarmas();
+                    $alarmas=$this->alarma_model->get_alarmas($tipo);
 
                     // Rango de meses que mostrarán las columnas de la tabla, basándome en el mínimo y máximo mes que hay incidencias, este año.
                     $rango_meses = $this->informe_model->get_rango_meses($anio);
@@ -6071,8 +6134,8 @@ class Admin extends CI_Controller
                     $data["ultimo_mes"] = $rango_meses->max;
                     $data["meses_columna"] = $meses_columna;
 
-                    $resultado = $this->alarma_model->get_sistemas_seguridad_totales();
-//print_r($resultado);exit;
+                    $resultado = $this->alarma_model->get_sistemas_seguridad_totales($tipo);
+
                     $valor_resultado = $this->alarma_model->get_array_sistemas_seguridad($resultado,$rango_meses->min,$rango_meses->max,$alarmas);
 
                     $data['valor_resultado'] = $valor_resultado;
@@ -6080,6 +6143,7 @@ class Admin extends CI_Controller
             }
             $data['title']=$title;
             $data['anio']=$anio;
+            $data['tipo']=$tipo;
 
             /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
             $this->data->add($data);
@@ -6097,12 +6161,12 @@ class Admin extends CI_Controller
     /**
      * Funcion que exporta los datos de las alarmas utilizadas en un año
      */
-    public function exportar_sistemas_seguridad($anio,$formato=NULL) {
+    public function exportar_sistemas_seguridad($anio,$tipo='incidencias',$formato=NULL) {
         if ($this->auth->is_auth())
         {
             $ext = (!is_null($formato) ? $formato : $this->ext);    // Formato para exportaciones, especficiado o desde CFG
             $this->load->model('alarma_model');
-            $data['alarmas'] = $this->alarma_model->exportar_sistemas_seguridad($anio,$ext);
+            $data['alarmas'] = $this->alarma_model->exportar_sistemas_seguridad($anio,$tipo,$ext);
         }
         else
         {
@@ -6827,8 +6891,8 @@ class Admin extends CI_Controller
                 $data['title'] = 'Pedidos abiertos';
                 $data['title2'] = 'pedidos abiertos';
             }else {
-                $data['title'] = 'Pedidos cerrados';
-                $data['title2'] = 'pedidos cerrados';
+                $data['title'] = 'Pedidos finalizados';
+                $data['title2'] = 'pedidos finalizados';
             }
 
 
@@ -6853,12 +6917,12 @@ class Admin extends CI_Controller
 
             $pedidos = $this->pedido_model->get_pedidos($page,$cfg_pagination,$array_orden,$tipo,0);
             // print_r($pedidos);
-            /*foreach ($pedidos as $pedido) {
-                $pedido->detalle = $this->pedido_model->get_detalle($pedido->id,$data['id_pds']);
+            foreach ($pedidos as $pedido) {
+               // $pedido->detalle = $this->pedido_model->get_detalle($pedido->id,$data['id_pds']);
                // $incidencia->display = $this->sfid_model->get_display($incidencia->id_displays_pds);
-                //$incidencia->nuevos  = $this->chat_model->contar_nuevos($incidencia->id_incidencia,$incidencia->reference);
+                $pedido->nuevos  = $this->chat_model->contar_nuevos($pedido->id,$pedido->reference,"pedidos");
                 //$incidencia->intervencion = $this->intervencion_model->get_intervencion_incidencia($incidencia->id_incidencia);
-            }*/
+            }
 
             //print_r($pedidos);exit;
 
@@ -6969,9 +7033,9 @@ class Admin extends CI_Controller
             $data['soluciones'] = $this->tienda_model->get_soluciones_incidencia();
 */
 
-          /*  $chats = $this->chat_model->get_chat_incidencia_pds($pedido['id_incidencia']);
-            $leido = $this->chat_model->marcar_leido($pedido['id_incidencia'],$sfid['reference']);
-            $data['chats'] = $chats;*/
+            $chats = $this->chat_model->get_chat_pds($id_pedido,"pedidos");
+            $leido = $this->chat_model->marcar_leido($id_pedido,$sfid['reference'],"pedidos");
+            $data['chats'] = $chats;
 
             $data['title'] = 'Operativa pedido Ref. '.$data['id_pedido_url'];
 

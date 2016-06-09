@@ -158,9 +158,25 @@ class Pedido_model extends CI_Model {
  * */
     public function get_pedidos($page = 1, $cfg_pagination = NULL,$array_orden= NULL, $tipo="abiertos",$id_pds,$filtros=NULL) {
 
+        $arr_agentes_excluidos = $this->chat_model->get_agentes_excluidos();
+        $agentes_excluidos = "";
+
+        if(count($arr_agentes_excluidos)  > 0){
+            foreach($arr_agentes_excluidos as $agente) $agentes_excluidos .= ("'".$agente."',");
+
+        }
+        $agentes_excluidos  = rtrim($agentes_excluidos,",");
 
         $this->db->select("pedidos.*,pds.reference as reference, pds.commercial,province.province as provincia,
-                           territory.territory as territory",FALSE)
+                           territory.territory as territory,
+                            (SELECT COUNT(*)
+                                FROM pedidos_chat
+                                JOIN pedidos p ON pedidos_chat.id_pedido = p.id
+                                JOIN pds  ON pds.id_pds = p.id_pds
+                                JOIN agent ON pedidos_chat.agent = agent.sfid
+                                WHERE pedidos_chat.status = 'Nuevo'
+                                AND p.id = pedidos_chat.id_pedido
+                                AND agent.type NOT IN ($agentes_excluidos)) as nuevos",FALSE)
 
             ->join('pds','pedidos.id_pds = pds.id_pds','left outer')
             ->join('province','pds.province= province.id_province','left')
@@ -193,7 +209,7 @@ class Pedido_model extends CI_Model {
 */
 
 
-        /* Obtenemos la condición por tipo de incidencia */
+        /* Obtenemos la condición por tipo de pedido */
         $this->db->where($this->get_condition_pedidos($tipo));
 
         $campo_orden = $orden = NULL;

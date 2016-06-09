@@ -314,7 +314,7 @@ class Tienda extends CI_Controller {
             foreach ($incidencias as $incidencia) {
                 $incidencia->device = $this->sfid_model->get_device($incidencia->id_devices_pds);
                 $incidencia->display = $this->sfid_model->get_display($incidencia->id_displays_pds);
-                $incidencia->nuevos  = $this->chat_model->contar_nuevos($incidencia->id_incidencia,$incidencia->reference);
+                $incidencia->nuevos  = $this->chat_model->contar_nuevos($incidencia->id_incidencia,'altabox');
                 $incidencia->intervencion = $this->intervencion_model->get_intervencion_incidencia($incidencia->id_incidencia);
             }
 
@@ -1111,9 +1111,79 @@ class Tienda extends CI_Controller {
 			redirect('tienda','refresh');
 		}
 	}
-	
 
-	public function insert_chat($id_incidencia)
+    public function insert_chat($id,$tabla='incidencia')
+    {
+        if($this->session->userdata('logged_in'))
+        {
+            $data['id_pds'] = $this->session->userdata('id_pds');
+            $data['sfid'] = $this->session->userdata('sfid');
+
+            $xcrud = xcrud_get_instance();
+            $this->load->model(array('chat_model', 'sfid_model'));
+
+            $config['upload_path'] = dirname($_SERVER["SCRIPT_FILENAME"]) . '/uploads/chats/';
+            $config['upload_url'] = base_url() . '/uploads/chats/';
+            $config['allowed_types'] = 'gif|jpg|png';
+            $new_name = $id . '-' . time();
+            $config['file_name'] = $new_name;
+            $config['overwrite'] = TRUE;
+            $config['max_size'] = '10000KB';
+
+            $this->load->library('upload', $config);
+
+            $foto = NULL;
+
+            if ($this->upload->do_upload()) {
+                $foto = $new_name.$this->upload->data()["file_ext"];
+            } else {
+                echo 'Ha fallado la carga de la foto.';
+            }
+
+            $texto_chat = $this->input->post('texto_chat');
+            $texto_chat = $this->strip_html_tags($texto_chat);
+            if($tabla=='incidencia') {
+                if ($foto != '' || $texto_chat != '' && $texto_chat != ' ') {
+                    $data = array(
+                        'fecha' => date('Y-m-d H:i:s'),
+                        'id_incidencia' => $id,
+                        'agent' => $data['sfid'],
+                        'texto' => $texto_chat,
+                        'foto' => $foto,
+                        'status' => 1,
+                    );
+                }
+            }
+            else {
+                if ($foto != '' || $texto_chat != '' && $texto_chat != ' ') {
+                    $data = array(
+                        'fecha' => date('Y-m-d H:i:s'),
+                        'id_pedido' => $id,
+                        'agent' => $data['sfid'],
+                        'texto' => $texto_chat,
+                        'foto' => $foto,
+                        'status' => 1,
+                    );
+                }
+            }
+            //print_r($data); exit;
+            $chat = $this->chat_model->insert_chat($data,$tabla);
+
+            if ($chat['add']) {
+                redirect('tienda/detalle_'.$tabla.'/' . $id.'/'.$data['id_pds']);
+            }
+
+            else{
+                redirect('tienda/detalle_'.$tabla.'/' . $id.'/'.$data['id_pds']);
+            }
+        }
+        else
+        {
+            redirect('tienda','refresh');
+        }
+    }
+
+	public function insert_chat_old($id_incidencia)
 	{
 		if($this->session->userdata('logged_in'))
 		{
@@ -1739,7 +1809,7 @@ class Tienda extends CI_Controller {
             $xcrud = xcrud_get_instance();
 
 
-            $this->load->model(array('pedido_model', 'tienda_model', 'sfid_model'));
+            $this->load->model(array('pedido_model', 'tienda_model', 'sfid_model','chat_model'));
             $this->load->library('app/paginationlib');
 
             $sfid = $this->sfid_model->get_pds($data['id_pds']);
@@ -1844,17 +1914,18 @@ class Tienda extends CI_Controller {
 
             $pedidos = $this->pedido_model->get_pedidos($page,$cfg_pagination,$array_orden,$tipo,$data['id_pds']);
            // print_r($pedidos);
-            /*foreach ($pedidos as $pedido) {
-                $pedido->detalle = $this->pedido_model->get_detalle($pedido->id,$data['id_pds']);
+            foreach ($pedidos as $pedido) {
+               // $pedido->detalle = $this->pedido_model->get_detalle($pedido->id,$data['id_pds']);
                // $incidencia->display = $this->sfid_model->get_display($incidencia->id_displays_pds);
-                //$incidencia->nuevos  = $this->chat_model->contar_nuevos($incidencia->id_incidencia,$incidencia->reference);
+                $pedido->nuevos  = $this->chat_model->contar_nuevos($pedido->id,'altabox',"pedidos");
                 //$incidencia->intervencion = $this->intervencion_model->get_intervencion_incidencia($incidencia->id_incidencia);
-            }*/
+            }
 
             //print_r($pedidos);exit;
 
             $data['pedidos'] = $pedidos;
             $data['tipo'] = $tipo;
+            //$data['chats'] = $chats;
 
             /* LISTADO DE TERRITORIOS PARA EL SELECT */
             //$data["territorios"] = $this->tienda_model->get_territorios();
@@ -1923,10 +1994,10 @@ class Tienda extends CI_Controller {
 
                 //echo "id_pedido ".$data['id_pedido'];
                 //print_r($data['detalle']); exit;
-               /* $chats = $this->chat_model->get_chat_incidencia_pds($pedido['id_incidencia']);
-                $leido = $this->chat_model->marcar_leido($pedido['id_incidencia'],'altabox');
+                $chats = $this->chat_model->get_chat_pds($pedido->id,'pedidos');
+                $leido = $this->chat_model->marcar_leido($pedido->id,'altabox','pedidos');
                 $data['chats'] = $chats;
-*/
+
                 $data['title'] = 'Estado del pedido Ref. '.$id_pedido;
 
                 /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..

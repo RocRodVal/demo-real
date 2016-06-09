@@ -49,7 +49,14 @@
                                 </li>
                             </ul>
                         </li>
-
+                    <?php $estado_pedidos = array("pedidos","abiertos","finalizados","operar_pedido"); ?>
+                    <li <?=(($this->uri->segment(2)==='pedidos') || ($this->uri->segment(3)==='abiertos') || ($this->uri->segment(3)==='finalizados') || ($this->uri->segment(2)==='operar_pedido'))?'class="active"':''?>>
+                        <a href="#"><i class="fa fa-dashboard fa-file-text-o"></i> Estado pedidos  <span class="fa arrow"></span></a>
+                        <ul class="nav nav-second-level">
+                            <li><a <?=($this->uri->segment(3)==='abiertos')?'class="active"':''?> href="<?=site_url($acceso.'/pedidos/abiertos')?>">Pedidos abiertos &raquo;</a></li>
+                            <li><a <?=($this->uri->segment(3)=='finalizados')?'class="active"':''?> href="<?=site_url($acceso.'/pedidos/finalizados')?>">Pedidos finalizados &raquo;</a></li>
+                        </ul>
+                    </li>
                         <?php
                         $maestros = array('clientes','contactos','alarmas','dispositivos','muebles','puntos_de_venta','categorias_pdv','razones_parada','soluciones_ejecutadas');
                         ?>
@@ -71,7 +78,7 @@
                         <!--<li><a <?=($this->uri->segment(1)==='intervencion')?'class="active"':''?> href="<?=site_url('intervencion')?>"><i class="fa fa-cog fa-fw"></i> Intervenciones</a></li>-->
                         <li><a <?=($this->uri->segment(1)==='inventario')?'class="active"':''?> href="<?=site_url('inventario')?>"><i class="fa fa-table fa-fw"></i> Depósito</a></li>
                         <?php               
-                        $almacenes = array('almacen','alta_dispositivos_almacen','alta_dispositivos_ok','baja_dispositivos_almacen','baja_dispositivos_ok','baja_dispositivos_ko','alarmas_almacen','diario_almacen','informe_sistemas_seguridad','pedidos','operar_pedido');
+                        $almacenes = array('almacen','alta_dispositivos_almacen','alta_dispositivos_ok','baja_dispositivos_almacen','baja_dispositivos_ok','baja_dispositivos_ko','alarmas_almacen','diario_almacen','informe_sistemas_seguridad');
                         ?>                      
                         <li <?=(in_array($this->uri->segment(2), $almacenes))?'class="active"':''?>>
                             <a href="#"><i class="fa fa-cubes fa-fw"></i> Almacén<span class="fa arrow"></span></a>
@@ -87,13 +94,7 @@
                                             <li><a <?=($this->uri->segment(2)=='informe_sistemas_seguridad')?'class="active"':''?> href="<?=site_url($acceso.'/informe_sistemas_seguridad')?>"><i class="fa fa-bars"></i> Análisis de consumo &raquo;</a></li>
                                         </ul>
                                 </li>
-                                <li <?=(($this->uri->segment(2)==='pedidos') || ($this->uri->segment(3)==='abiertos') || ($this->uri->segment(3)==='finalizados') || ($this->uri->segment(2)==='operar_pedido'))?'class="active"':''?>>
-                                    <a href="#">Pedidos  <span class="fa arrow"></span></a>
-                                    <ul class="nav nav-second-level">
-                                        <li><a <?=($this->uri->segment(3)==='abiertos')?'class="active"':''?> href="<?=site_url($acceso.'/pedidos/abiertos')?>"><i class="fa fa-tasks"></i> Pedidos abiertos &raquo;</a></li>
-                                        <li><a <?=($this->uri->segment(3)=='finalizados')?'class="active"':''?> href="<?=site_url($acceso.'/pedidos/finalizados')?>"><i class="fa fa-bars"></i> Pedidos finalizados &raquo;</a></li>
-                                    </ul>
-                                </li>
+
                         	</ul>
                         </li>		
                         <?php               

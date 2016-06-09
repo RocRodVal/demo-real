@@ -40,7 +40,7 @@
                                             <?php
                                             if ($chat->foto <> '') {
                                                 ?>
-                                                <p><img src="<?= site_url('uploads/chats/' . $chat->foto) ?>"  width="100%"/></p>
+                                                <p><img src="<?= site_url('chats/' . $chat->foto) ?>"  width="100%"/></p>
                                             <?php
                                             }
                                             ?>
@@ -71,7 +71,7 @@
                                             <?php
                                             if ($chat->foto <> '') {
                                                 ?>
-                                                <p><img src="<?= site_url('uploads/chats/' . $chat->foto) ?>" width="100%"/></p>
+                                                <p><img src="<?= site_url('chats/' . $chat->foto) ?>" width="100%"/></p>
                                             <?php
                                             }
                                             ?>
@@ -90,7 +90,7 @@
             }
             ?>
         </div>
-        <form action="<?= site_url('admin/insert_chat/'.$id_pds_url.'/'.$id_inc_url) ?>" method="post"
+        <form action="<?= site_url('admin/insert_chat_pedido/'.$id_pds_url.'/'.$id_pedido_url) ?>" method="post"
               class="content_auto form_login" enctype="multipart/form-data">
             <div class="row">
                 <div class="col-lg-10">

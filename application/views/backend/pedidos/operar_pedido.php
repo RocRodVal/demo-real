@@ -97,7 +97,7 @@
                     </div>
                 </div>
             </div>
-            <?php //$this->load->view('backend/chat.php'); ?>
+            <?php $this->load->view('backend/pedidos/chat.php'); ?>
         </div>
         <div class="col-lg-6 col-md-6">
             <div class="panel panel-default">
