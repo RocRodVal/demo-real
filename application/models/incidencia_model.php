@@ -248,7 +248,7 @@ class Incidencia_model extends CI_Model {
 
         $agentes_excluidos  = rtrim($agentes_excluidos,",");
 
-       /* $this->db->select("incidencias.*,pds.reference as reference, pds_supervisor.titulo as supervisor, province.province as provincia, device.brand_device as fabricante,
+        $this->db->select("incidencias.*,pds.reference as reference, pds_supervisor.titulo as supervisor, province.province as provincia, device.brand_device as fabricante,
                            territory.territory as territory,
                            (SELECT brand_device.brand from brand_device  WHERE id_brand_device = fabricante) as brand,
                            (SELECT COUNT(*)
@@ -258,11 +258,8 @@ class Incidencia_model extends CI_Model {
                                 JOIN agent ON chat.agent = agent.sfid
                                 WHERE chat.status = 'Nuevo'
                                 AND incidencias.id_incidencia = chat.id_incidencia
-                                AND agent.type NOT IN ($agentes_excluidos)) as nuevos",FALSE)*/
+                                AND agent.type NOT IN ($agentes_excluidos)) as nuevos",FALSE)
 
-        $this->db->select("incidencias.*,pds.reference as reference, pds_supervisor.titulo as supervisor, province.province as provincia, device.brand_device as fabricante,
-                           territory.territory as territory,
-                           (SELECT brand_device.brand from brand_device  WHERE id_brand_device = fabricante) as brand",FALSE)
 
                  ->join('pds','incidencias.id_pds = pds.id_pds','left outer')
                  ->join('intervenciones_incidencias','intervenciones_incidencias.id_incidencia= incidencias.id_incidencia','left')
