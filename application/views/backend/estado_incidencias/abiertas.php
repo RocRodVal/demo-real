@@ -345,7 +345,7 @@
 		                                <td><strong><?php echo $incidencia->status_pds ?></strong></td>
 
 		                                <td>
-                                            <a href="<?=site_url('admin/operar_incidencia/'.$incidencia->id_pds.'/'.$incidencia->id_incidencia)?>#chat"><strong> <i class="fa fa-whatsapp <?=($incidencia->nuevos["nuevos"] > 0) ? 'chat_nuevo' :'chat_leido'  /*($incidencia->nuevos['nuevos']<>'0')?'chat_nuevo':'chat_leido'*/ ?>"> <?=$incidencia->nuevos["nuevos"]?></i></strong></a></td>
+                                            <a href="<?=site_url('admin/operar_incidencia/'.$incidencia->id_pds.'/'.$incidencia->id_incidencia)?>#chat"><strong> <i class="fa fa-whatsapp <?=($incidencia->nuevos > 0) ? 'chat_nuevo' :'chat_leido'  /*($incidencia->nuevos['nuevos']<>'0')?'chat_nuevo':'chat_leido'*/ ?>"> <?=$incidencia->nuevos?></i></strong></a></td>
 		                            </tr>
 		                        <?php
 		                        }
