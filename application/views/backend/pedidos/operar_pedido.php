@@ -68,6 +68,18 @@
                             } ?>>Enviado</a>
                             <span class="fecha_status"><?=$historico_fecha_enviado?></span>
                         </div>
+                        <?php
+                        if (($pedido->status!='Nuevo') || ($pedido->status!='En proceso') ||($pedido->status!='Pendiente material')){
+                            ?>
+                            <div class="col-lg-7 labelText white">Imprimir albaran</div>
+                            <div class="col-lg-5 labelBtn white">
+                                <a href="<?= site_url('admin/imprimir_pedido/' . $id_pedido_url . '/' . $id_pds_url ) ?>"
+                                   classBtn="status" class="btn btn-success" <?php if (($pedido->status=='Nuevo') || ($pedido->status=='En proceso') ||($pedido->status=='Pendiente material')) {
+                                    echo 'disabled';
+                                } ?>>Imprimir</a>
+                            </div>
+                        <?php }
+                        ?>
                         <div class="col-lg-7 labelText white">Material recibido en tienda</div>
                         <div class="col-lg-5 labelBtn white">
                             <a href="<?= site_url('admin/update_pedido/' . $id_pedido_url . '/' . $id_pds_url . '/5') ?>"
@@ -175,10 +187,10 @@
 
 
                         <tr>
-                            <td colspan="2"><h3>Otra información</h3></td>
+                            <td colspan="2"><h3>Persona de contacto</h3></td>
                         </tr>
                         <tr>
-                            <th>Persona:</th><td><?=$pedido->contacto?></td>
+                            <th>Nombre:</th><td><?=$pedido->contacto?></td>
                         </tr>
                         <tr>
                             <th>Teléfono:</th>

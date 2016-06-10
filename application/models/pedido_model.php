@@ -60,6 +60,9 @@ class Pedido_model extends CI_Model {
         if ($id_pds!=0) {
             $this->db->where('pedidos.id_pds', $id_pds);
         }
+        /** Aplicar filtros desde el array, de manera manual **/
+        if(isset($filtros["id_pedido"])    && !empty($filtros["id_pedido"]))      $this->db->where('pedidos.id',$filtros['id_pedido']);
+        if(isset($filtros["reference"])    && !empty($filtros["reference"]))      $this->db->where('reference',$filtros['reference']);
         /**
          * Determinado el tipo por parámetro añadir distinción de tipo: abiertos o cerrados.
          */
@@ -187,9 +190,9 @@ class Pedido_model extends CI_Model {
 
 
         /** Aplicar filtros desde el array, de manera manual **/
-   /*     if(isset($filtros["status"])        && !empty($filtros["status"]))          $this->db->where('incidencias.status',$filtros['status']);
-        if(isset($filtros["status_pds"])    && !empty($filtros["status_pds"]))      $this->db->where('incidencias.status_pds',$filtros['status_pds']);
-        if(isset($filtros["id_incidencia"]) && !empty($filtros["id_incidencia"]))   $this->db->where('incidencias.id_incidencia',$filtros['id_incidencia']);
+        if(isset($filtros["id_pedido"])        && !empty($filtros["id_pedido"]))          $this->db->where('pedidos.id',$filtros['id_pedido']);
+        if(isset($filtros["reference"])    && !empty($filtros["reference"]))      $this->db->where('reference',$filtros['reference']);
+   /*     if(isset($filtros["id_incidencia"]) && !empty($filtros["id_incidencia"]))   $this->db->where('incidencias.id_incidencia',$filtros['id_incidencia']);
         if(isset($filtros["territory"])     && !empty($filtros["territory"]))       $this->db->where('pds.territory',$filtros['territory']);
         if(isset($filtros["brand_device"])  && !empty($filtros["brand_device"]))    $this->db->where('device.brand_device',$filtros['brand_device']);
 
@@ -311,7 +314,6 @@ class Pedido_model extends CI_Model {
 
         $acceso = $this->uri->segment(1);
 
-
         // Array de títulos de campo para la exportación XLS/CSV
         $arr_titulos = array('Id pedido','SFID','Fecha','Tienda','Territorio','Provincia','Contacto','Teléfono','Email',
             'Estado','Última modificación','Fecha cierre');
@@ -362,14 +364,18 @@ class Pedido_model extends CI_Model {
             $sql .=  ' AND pedidos.id_pds=' . $id_pds;
         }
 
+        /** Aplicar filtros desde el array, de manera manual **/
+        if(isset($filtros["id_pedido"]) && !empty($filtros["id_pedido"]))      $sql.= ' AND pedidos.id ='.$filtros['id_pedido'];
+        if(isset($filtros["reference"]) && !empty($filtros["reference"]))      $sql.= ' AND reference = "'.$filtros['reference'].'"';
+
         $f="Finalizado";
         $c="Cancelado";
         if($tipo==="abiertos") {
             $sTitleFilename = "Pedidos_abiertos";
-            $sql .= (' AND pedidos.status !="'.$f.'" AND pedidos.status !="'.$c.'"');
+            $sql .= (' AND pedidos.status !="'.$f.'" AND pedidos.status !="'.$c.'" ');
         }
         else {
-            $sql .= ' AND pedidos.status="'.$f.'" OR pedidos.status="'.$c. '"';
+            $sql .= ' AND pedidos.status="'.$f.'" OR pedidos.status="'.$c. '" ';
             $sTitleFilename = "Pedidos_finalizados";
         }
 
@@ -393,6 +399,8 @@ class Pedido_model extends CI_Model {
         else {
             $sql .= 'ORDER BY pds.commercial ASC ,pedidos.id DESC';
         }
+
+
         $query = $this->db->query($sql);
 
         $resultado=$query->result();

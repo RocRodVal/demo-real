@@ -49,7 +49,7 @@
                                 </div>-->
 
                             <div class="form-group">
-                                <label for="tipo">Tipo</label>
+                                <label for="tipo">Origen</label>
                                 <select id="tipo" name="tipo" class="form-control" >
                                     <option value="">Escoge tipo...</option>
                                     <option value="incidencias" <?=($tipo == 'incidencias' ? ' selected="selected" ' : '')?>>Incidencias</option>
@@ -102,7 +102,6 @@
                         </thead>
                             <tbody>
                                 <?php
-
                                 if (!empty($valor_resultado)) {
                                     foreach ($valor_resultado as $clave => $valor) {
                                         echo "<tr>";
@@ -122,18 +121,20 @@
                                 ?>
                             </tbody>
                         <?php } else {
+                            $cadena="";
+                            if (!empty($tipo)) {
+                                $cadena=" de ".$tipo;
+                                if (!empty($anio)) {
+                                    $cadena.=" para el año ".$anio;
+                                }
+                            }
                             ?>
-
-                                <p class="message warning"><i class="glyphicon glyphicon-warning-sign"></i> No hay datos de <?=$tipo?> para el <?=$anio?>ñ.</p>
-
+                                <p class="message warning"><i class="glyphicon glyphicon-warning-sign"></i> No hay datos <?=$cadena?></p>
                             <?php
                         }?>
-
                          </table>
                         </div>
                 </div>
-
             </div>
-
         </div>
         <!-- /#page-wrapper -->

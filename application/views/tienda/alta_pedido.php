@@ -5,14 +5,15 @@
         -moz-transition: width 2s, height 2s, -moz-transform 2s;
         -webkit-transition: width 2s, height 2s, -webkit-transform 2s;
         -o-transition: width 2s, height 2s,-o-transform 2s;
+
     }
     .zoom:hover{
         /* tranformamos el elemento al pasar el mouse por encima al doble de
         su tamaño con scale(2). */
-        transform : scale(4);
-        -moz-transform : scale(4); /* Firefox */
-        -webkit-transform : scale(4); /* Chrome - Safari */
-        -o-transform : scale(4); /* Opera */
+        transform : scale(4,3);
+        -moz-transform : scale(4,3); /* Firefox */
+        -webkit-transform : scale(4,3); /* Chrome - Safari */
+        -o-transform : scale(4,3); /* Opera */
     }
 </style>
 
@@ -27,83 +28,50 @@
     </div>
     <div class="row">
         <div class="col-lg-12">
-    <?php
-    if(!empty($message)) {
-        echo $message;
-    } else {
-    ?>
-</div>
-    <form
-        action="<?= site_url('tienda/insert_pedido') ?>"
-        method="post" class="content_auto form_login" enctype="multipart/form-data">
+            <?php
+            if(!empty($message)) {
+                echo $message;
+            } else {
+            ?>
+        </div>
+    <form action="<?= site_url('tienda/insert_pedido') ?>" method="post" class="content_auto form_login" enctype="multipart/form-data">
         <div class="row">
-            <div class="col-lg-offset-1 col-lg-8">
+            <div class="col-lg-3">
                 <div class="panel panel-default">
                     <div class="panel-body">
                         <div class="row">
                             <div class="col-lg-12">
-                                <div class="row">
-                                    <div class="col-lg-12">
-                                        <div class="col-lg-5">
-                                            <label>Datos de contacto</label>
-                                            <div class="form-group"></div>
-                                            <div class="form-group"></div>
-                                            <div class="form-group">
-                                                <div class="input-group">
-                                                    <div class="input-group-addon"><code>*</code><i class="fa fa-user"></i></div>
-                                                    <input class="form-control" name="contacto" id="contacto"
-                                                           placeholder="Nombre y apellidos">
-                                                </div>
-                                                <div class="input-group">
-                                                    <div class="input-group-addon"><code>*</code><i class="fa fa-phone"></i></div>
-                                                    <input type="phone" class="form-control" name="phone" id="phone"
-                                                           placeholder="Teléfono">
-                                                </div>
-                                                <div class="input-group">
-                                                    <div class="input-group-addon"><code></code><i class="fa fa-envelope-o"></i></div>
-                                                    <input type="phone" class="form-control" name="email" id="email"
-                                                           placeholder="Email">
-                                                </div>
-                                            </div>
+                                <div class="col-lg-12">
+                                    <label>Datos de contacto</label>
+                                    <div class="form-group"></div>
+                                    <div class="form-group"></div>
+                                    <div class="form-group">
+                                        <div class="input-group">
+                                            <div class="input-group-addon"><code>*</code><i class="fa fa-user"></i></div>
+                                            <input class="form-control" name="contacto" id="contacto" placeholder="Nombre y apellidos">
+                                        </div>
+                                        <div class="input-group">
+                                            <div class="input-group-addon"><code>*</code><i class="fa fa-phone"></i></div>
+                                            <input type="phone" class="form-control" name="phone" id="phone"
+                                                   placeholder="Teléfono">
+                                        </div>
+                                        <div class="input-group">
+                                            <div class="input-group-addon"><code></code><i class="fa fa-envelope-o"></i></div>
+                                            <input type="phone" class="form-control" name="email" id="email"
+                                                   placeholder="Email">
                                         </div>
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-8">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div class="row">
 
-
-<!--                                    <div class="col-lg-12">
-                                        <label>Alarmas</label>
-                                        <div id="alerta">
-                                            <i class="fa fa-exclamation-triangle" style="color: orange"></i><code>Debe indicar una cantidad mayor que cero para alguna alarma</code>
-                                        </div>
-                                        <br>
-                                        <div class="col-lg-10">
-                                        <?php
-                                        foreach($alarmas as $alarma){
-                                        ?>
-
-                                            <div class="col-lg-1">
-                                                <?php
-                                                //echo site_url('application/uploads/' . $alarma->imagen );
-                                                if (file_exists('application/uploads/' . $alarma->imagen )) {
-                                                ?>
-                                                <img
-                                                    src="<?= site_url('application/uploads/' . $alarma->imagen . '') ?>" style="max-height: 30px;"/>
-                                                <?php }
-                                                ?>
-                                            </div>
-                                            <div class="col-lg-8">
-                                                <input class="form-control" name="alarmas[]" id="alarmas" value="<?=$alarma->alarm?>"
-                                                       disabled>
-                                                </div>
-                                            <div class="col-lg-1">
-                                                <input class="form-control" name="cantidades[<?=$alarma->id_alarm?>]" id="cantidades" value="" placeholder="0">
-                                            </div>
-                                        <?php
-                                        } ?>
-                                        </div>
-                                    </div>
-                        </div> -->
                             <div class="col-lg-12">
                                 <div id="alerta">
                                     <i class="fa fa-exclamation-triangle" style="color: orange"></i><code>Debe indicar una cantidad mayor que cero para alguna alarma</code>
@@ -122,22 +90,22 @@
 
                                         <?php
                                         foreach ($alarmas as $alarma) {
-                                        ?>
-                                        <tr>
-                                            <td width="20%"> <?php
-                                                if (file_exists('application/uploads/' . $alarma->imagen )) {
-                                                ?>
-                                                    <img class="zoom" src="<?= site_url('application/uploads/' . $alarma->imagen . '')?>" height="40px" width="60px/" >
-                                                    <!--<a class="thickbox" href="<?= site_url('application/uploads/' . $alarma->imagen . '')?>">
+                                            ?>
+                                            <tr>
+                                                <td width="20%"> <?php
+                                                    if (file_exists('application/uploads/' . $alarma->imagen )) {
+                                                        ?>
+                                                        <img class="zoom" src="<?= site_url('application/uploads/' . $alarma->imagen . '')?>" height="40px" width="60px/">
+                                                        <!--<a class="thickbox" href="<?= site_url('application/uploads/' . $alarma->imagen . '')?>">
                                                         <img height="30" class="alignleft" alt="" src="<?= site_url('application/uploads/' . $alarma->imagen . '')?>"/>
                                                     </a>-->
-                                                <?php } ?>
+                                                    <?php } ?>
                                                 </td>
-                                            <td width="50%">
-                                                <input class="form-control" name="alarmas[]" id="alarmas" value="<?=$alarma->alarm?>" disabled>
-                                            </td>
-                                            <td width="10%"><input class="form-control" name="cantidades[<?=$alarma->id_alarm?>]" id="cantidades" value="" placeholder="0"></td>
-                                        </tr>
+                                                <td width="50%">
+                                                    <input class="form-control" name="alarmas[]" id="alarmas" value="<?=$alarma->alarm?>" disabled>
+                                                </td>
+                                                <td width="10%"><input class="form-control" name="cantidades[<?=$alarma->id_alarm?>]" id="cantidades" value="" placeholder="0"></td>
+                                            </tr>
                                         <?php } ?>
                                         </tbody>
                                     </table>
@@ -151,10 +119,11 @@
                             </div>
                         </div>
                     </div>
-                    </div>
+                </div>
             </div>
         </div>
     </form>
     <?php } ?>
+    </div>
 </div>
 <!-- /#page-wrapper -->

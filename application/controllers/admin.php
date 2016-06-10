@@ -6820,6 +6820,7 @@ class Admin extends CI_Controller
     public function pedidos($tipo="abiertos")
     {
         if ($this->session->userdata('logged_in')) {
+            //$data['sfid'] = $this->session->userdata('sfid');
 
             $xcrud = xcrud_get_instance();
 
@@ -6840,21 +6841,21 @@ class Admin extends CI_Controller
             /**
              * Crear los filtros
              */
-            /*   $array_filtros = array(
-                   'status_pds'=>'',
+             $array_filtros = array(
+                   'status'=>'',
                    'brand_device'=>'',
                    'id_display'=>'',
                    'id_device'=>'',
-                   'id_incidencia'=>'',
-                   'reference'=> $data['sfid']
-               );*/
+                   'id_pedido'=>'',
+                   'reference'=>''
+               );
 
             /* BORRAR BUSQUEDA */
-            /* $borrar_busqueda = $this->uri->segment(4);
+             $borrar_busqueda = $this->uri->segment(4);
              if($borrar_busqueda === "borrar_busqueda")
              {
                  $this->delete_filtros($array_filtros);
-                 redirect(site_url("/tienda/estado_incidencias/".$tipo),'refresh');
+                 redirect(site_url("/admin/pedidos/".$tipo),'refresh');
              }
              // Consultar a la session si ya se ha buscado algo y guardado allí.
              $array_sesion = $this->get_filtros($array_filtros);
@@ -6863,10 +6864,10 @@ class Admin extends CI_Controller
              if($this->input->post('do_busqueda')==="si") $array_sesion = $this->set_filtros($array_filtros);
 
              /* Creamos al vuelo las variables que vienen de los filtros */
-            /*   foreach($array_filtros as $filtro=>$value){
+               foreach($array_filtros as $filtro=>$value){
                    $$filtro = $array_sesion[$filtro];
                    $data[$filtro] = $array_sesion[$filtro]; // Pasamos los valores a la vista.
-               }*/
+               }
 
 
             // viene del form de ordenacion
@@ -6898,7 +6899,7 @@ class Admin extends CI_Controller
 
             $per_page = 20;
 
-            $total_pedidos = $this->pedido_model->get_pedidos_quantity(0,$tipo);   // Sacar el total de pedidos, para el paginador
+            $total_pedidos = $this->pedido_model->get_pedidos_quantity(0,$tipo,$array_sesion);   // Sacar el total de pedidos, para el paginador
 
             $cfg_pagination = $this->paginationlib->init_pagination("admin/pedidos/".$tipo."/page/",$total_pedidos,$per_page,$segment);
 
@@ -6915,7 +6916,7 @@ class Admin extends CI_Controller
             $data['n_final'] = $bounds["n_final"];
             $data["pagination_helper"]   = $this->pagination;
 
-            $pedidos = $this->pedido_model->get_pedidos($page,$cfg_pagination,$array_orden,$tipo,0);
+            $pedidos = $this->pedido_model->get_pedidos($page,$cfg_pagination,$array_orden,$tipo,0,$array_sesion);
             // print_r($pedidos);
             foreach ($pedidos as $pedido) {
                // $pedido->detalle = $this->pedido_model->get_detalle($pedido->id,$data['id_pds']);
@@ -7404,8 +7405,8 @@ class Admin extends CI_Controller
                 'brand_device'=>'',
                 'id_display'=>'',
                 'id_device'=>'',
-                'id_incidencia'=>'',
-                'reference'=> $data['sfid']
+                'id_pedido'=>'',
+                'reference'=> ''
             );
             $array_sesion = $this->get_filtros($array_filtros);
 
