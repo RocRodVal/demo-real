@@ -3523,7 +3523,82 @@ class Admin extends CI_Controller
         }
     }
 
+    public function alta_dispositivos_almacen_imei()
+    {
+        if ($this->auth->is_auth())
+        {
+            $xcrud = xcrud_get_instance();
+            $this->load->model('tienda_model');
 
+            $data['devices'] = $this->tienda_model->get_devices();
+            $data['pds'] = $this->tienda_model->get_devices();
+
+            $data['title'] = 'Alta masiva dispositivos';
+
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
+            $this->load->view('backend/header', $data);
+            $this->load->view('backend/navbar', $data);
+            $this->load->view('backend/alta_dispositivos_almacen_imei', $data);
+            $this->load->view('backend/footer');
+        }
+        else
+        {
+            redirect('admin', 'refresh');
+        }
+    }
+
+    /*
+     * Damos de alta los dispositivos con su imei
+     */
+    public function alta_dispositivos_almacen_imei_update()
+    {
+        if ($this->auth->is_auth())
+        {
+            $this->load->model('tienda_model');
+
+            $data = array(
+                'id_device' => $this->input->post('dipositivo_almacen'),
+                'alta' => date('Y-m-d H:i:s'),
+                'IMEI' => NULL,
+                'mac' => NULL,
+                'serial' => NULL,
+                'barcode' => NULL,
+                'id_color_device' => NULL,
+                'id_complement_device' => NULL,
+                'id_status_device' => NULL,
+                'id_status_packaging_device' => NULL,
+                'picture_url_1' => NULL,
+                'picture_url_2' => NULL,
+                'picture_url_3' => NULL,
+                'description' => NULL,
+                'owner' => $this->input->post('owner_dipositivo_almacen'),
+                'status' => 1,
+            );
+
+            $i = 0;
+            $imeis = $this->input->post("imeis");
+            $array_imeis = explode("\n", $imeis);
+
+            while ($i < count($array_imeis))
+            {
+                $data['IMEI']=$array_imeis[$i];
+                $this->tienda_model->alta_dispositivos_almacen_update($data,$this->input->post('units_dipositivo_almacen'));
+                $i = $i + 1;
+            }
+
+            $this->session->set_flashdata("id_device",$this->input->post('dipositivo_almacen'));
+            $this->session->set_flashdata("num",count($array_imeis));
+
+            redirect('admin/alta_dispositivos_ok', 'refresh');
+        }
+        else
+        {
+            redirect('admin', 'refresh');
+        }
+    }
     public function alta_dispositivos_almacen_update()
     {
         if ($this->auth->is_auth())
@@ -3636,6 +3711,61 @@ class Admin extends CI_Controller
         }
     }
 
+    public function baja_dispositivos_almacen_imei()
+    {
+        if ($this->auth->is_auth())
+        {
+            $xcrud = xcrud_get_instance();
+            $this->load->model('tienda_model');
+
+            $data['devices'] = $this->tienda_model->get_devices();
+
+            $data['title'] = 'Baja masiva dispositivos';
+
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
+            $this->load->view('backend/header', $data);
+            $this->load->view('backend/navbar', $data);
+            $this->load->view('backend/baja_dispositivos_almacen_imei', $data);
+            $this->load->view('backend/footer');
+        }
+        else
+        {
+            redirect('admin', 'refresh');
+        }
+    }
+
+
+    public function baja_dispositivos_almacen_imei_update()
+    {
+        if ($this->auth->is_auth())
+        {
+            $this->load->model('tienda_model');
+
+            $imeis = $this->input->post("imeis");
+            $array_imeis = explode("\n", $imeis);
+
+            $num = $this->tienda_model->baja_dispositivos_almacen_imei_update($this->input->post('dipositivo_almacen'),$this->input->post('owner_dipositivo_almacen'),$this->input->post('destino_dipositivo_almacen'),$array_imeis);
+
+            $this->session->set_flashdata("id_device", $this->input->post('dipositivo_almacen'));
+//echo $num." / ".count($array_imeis); exit;
+            if($num == count($array_imeis)) {
+                $this->session->set_flashdata("num", $num);
+                redirect('admin/baja_dispositivos_ok', 'refresh');
+            }else{
+                $this->session->set_flashdata("num", count($array_imeis));
+                $this->session->set_flashdata("mensaje", " porque los datos no son correctos");
+                redirect('admin/baja_dispositivos_ko', 'refresh');
+            }
+        }
+        else
+        {
+            redirect('admin', 'refresh');
+        }
+    }
+
     public function baja_dispositivos_almacen_update()
     {
         if ($this->auth->is_auth())
@@ -3653,6 +3783,7 @@ class Admin extends CI_Controller
                 redirect('admin/baja_dispositivos_ok', 'refresh');
             }else{
                 $this->session->set_flashdata("num", $this->input->post('units_dipositivo_almacen'));
+                $this->session->set_flashdata("mensaje", " ya que el stock actual en el almacén es 0");
                 redirect('admin/baja_dispositivos_ko', 'refresh');
             }
         }
@@ -3713,6 +3844,7 @@ class Admin extends CI_Controller
 
             $id_device = $this->session->flashdata("id_device");
             $num = $this->session->flashdata("num");
+            $mensaje = $this->session->flashdata("mensaje");
 
 
             if(!empty($id_device) && !empty($num)) {
@@ -3721,6 +3853,7 @@ class Admin extends CI_Controller
                 $data["title"] = "Baja masiva dispositivos";
 
                 $data["num"] = $num;
+                $data["mensaje"] = $mensaje;
                 $data["modelo"] = $device["device"];
 
                 /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..

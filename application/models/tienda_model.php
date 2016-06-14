@@ -48,7 +48,6 @@ class Tienda_model extends CI_Model {
 		$this->db->insert('devices_almacen',$data);
 		$id=$this->db->insert_id();
 
-
         // Insertar operación de baja en el histórico
         $elemento = array(
             'id_material_incidencia' => NULL,
@@ -82,19 +81,18 @@ class Tienda_model extends CI_Model {
         FROM devices_almacen
         WHERE id_device=$id_device AND owner='$owner' AND status = 'En stock' ")->row();
 
-
     if($contar->contador > 0) {
 
-        $units = ($units > $contar->contador) ? $contar->contador : $units;
+        $units = (($units > $contar->contador) ? $contar->contador : $units);
 
         $this->db->select("id_devices_almacen,id_device");
         $this->db->where("id_device",$id_device);
         $this->db->where('owner', $owner);
+        //$this->db->where_in('imei', $imeis);
         $this->db->where('status', 'En stock');
         $this->db->limit($units);
         $dispositivos_a_borrar = $this->db->get("devices_almacen")->result();
         $total_baja =  $this->db->affected_rows();
-
 
         $cont = 0;
         // Recorremos los dispositivos a borrar.
@@ -103,10 +101,11 @@ class Tienda_model extends CI_Model {
             $id_devices_almacen = $dispositivo_baja->id_devices_almacen;
 
             // Borrado lógico del dispositivo.
-            $this->db->set('status', '"Baja"', FALSE);
+            $this->db->set('status','"Baja"', FALSE);
             $this->db->where('id_devices_almacen', $id_devices_almacen);
             $this->db->update('devices_almacen');
 
+            //echo $this->db->last_query(); exit;
             // Insertar operación de baja en el histórico
             $data = array(
                 'id_material_incidencia' => NULL,
@@ -129,9 +128,76 @@ class Tienda_model extends CI_Model {
         return -1;
     }
 
+    }
+    /*
+     * Dar de baja dispositivos segun  los imeis
+     */
+    public function baja_dispositivos_almacen_imei_update($id_device,$owner,$status,$imeis=null)
+    {
+        $separados=implode(',',$imeis);
+        $condicion="";
+        if($status==3) {
+            $condicion=" AND status='En stock'";
+        }elseif ($status==4){
+            $condicion=" AND status='Enviado'";
+        }
 
-}
+        $sql="SELECT COUNT(id_device) as contador
+        FROM devices_almacen
+        WHERE id_device=$id_device AND owner='".$owner."' AND imei IN ($separados) ".$condicion;
 
+        $contar = $this->db->query($sql)->row();
+        //echo "CONTAR ".$contar->contador; exit;
+        //echo $sql; exit;
+        if($contar->contador > 0) {
+
+            $units = (count($imeis) > $contar->contador) ? $contar->contador : count($imeis);
+
+            $this->db->select("id_devices_almacen,id_device");
+            $this->db->where("id_device",$id_device);
+            $this->db->where('owner', $owner);
+            $this->db->where_in('imei', $imeis);
+            $this->db->where('status', $status);
+            $this->db->limit($units);
+            $dispositivos_a_borrar = $this->db->get("devices_almacen")->result();
+            $total_baja =  $this->db->affected_rows();
+
+            $cont = 0;
+            // Recorremos los dispositivos a borrar.
+            foreach($dispositivos_a_borrar as $dispositivo_baja){
+                $id_device = $dispositivo_baja->id_device;
+                $id_devices_almacen = $dispositivo_baja->id_devices_almacen;
+
+                // Borrado lógico del dispositivo.
+                $this->db->set('status', $status, FALSE);
+                $this->db->where('id_devices_almacen', $id_devices_almacen);
+                $this->db->update('devices_almacen');
+
+                //echo $this->db->last_query(); exit;
+                // Insertar operación de baja en el histórico
+                $data = array(
+                    'id_material_incidencia' => NULL,
+                    'id_devices_almacen' => NULL,
+                    'id_devices_almacen_new' => $id_devices_almacen,
+                    'id_alarm' => NULL,
+                    'id_device'=>$id_device,
+                    'id_incidencia' => NULL,
+                    'id_cliente' => NULL,
+                    'fecha' => date('Y-m-d H:i:s'),
+                    'cantidad' => (1), // En positivo porque luego la función lo pasará a negativo
+                    'procesado' => 1
+                );
+                $this->alta_historico_io($data,NULL);
+                $cont++;
+            }
+            return $total_baja;
+
+        }else{
+            return -1;
+        }
+
+
+    }
     /**
      * Método que devuelve el operador (instalador) consultado por ID
      * @param $id_operador
@@ -267,9 +333,56 @@ class Tienda_model extends CI_Model {
         $this->db->set('reference',''.$sfid.'-'.time());
 		$this->db->where('reference', $sfid);
 		$this->db->update('pds');
-	}	
-	
-	public function get_stock_cruzado() {
+	}
+
+    public function get_stock_cruzado() {
+
+        $query = $this->db->query('
+
+		SELECT temporal.id_device, brand_device.brand, temporal.device, unidades_pds,unidades_transito,
+		(CASE WHEN unidades_pds = 0 THEN 0 ELSE CEIL(unidades_pds * 0.05 + 2) END) as stock_necesario,
+		unidades_almacen,
+		(unidades_almacen - (CASE WHEN unidades_pds = 0 THEN 0 ELSE CEIL(unidades_pds * 0.05 + 2) END)) as balance,
+		temporal.status
+		FROM (
+		        SELECT device.id_device, device.brand_device, device.device, device.status,
+                    (
+                        SELECT COUNT(*)
+                        FROM devices_pds
+                        WHERE (devices_pds.id_device = device.id_device) AND
+                        (devices_pds.status = "Alta" || devices_pds.status = "Incidencia")
+                    )
+                    as unidades_pds,
+
+                    (
+                        SELECT  COUNT(*)
+                        FROM devices_almacen
+                        WHERE (devices_almacen.id_device = device.id_device) AND
+                        (devices_almacen.status = "En stock")
+                    )
+                    as unidades_almacen,
+                    ( SELECT COUNT(*)
+                    FROM devices_almacen
+                    WHERE (devices_almacen.id_device = device.id_device) AND (devices_almacen.status = "Enviado") )
+                    as unidades_transito
+
+                    FROM device
+                ) as temporal
+
+        JOIN brand_device ON temporal.brand_device = brand_device.id_brand_device
+        WHERE temporal.status = "Alta" AND (
+                    (unidades_pds > 0 OR unidades_almacen > 0)
+                OR  (unidades_pds = 0 AND unidades_almacen > 0)
+                OR  (unidades_pds > 0 AND unidades_almacen = 0)
+               )
+        ORDER BY brand_device.brand ASC, temporal.device ASC ');
+
+
+//echo $this->db->last_query(); exit;
+
+        return $query->result();
+    }
+    public function get_stock_cruzado_old() {
 	
 		$query = $this->db->query('
 
@@ -306,7 +419,7 @@ class Tienda_model extends CI_Model {
         ORDER BY brand_device.brand ASC, temporal.device ASC ');
 
 
-
+//echo $this->db->last_query(); exit;
 
 		return $query->result();
 	}
@@ -380,7 +493,7 @@ class Tienda_model extends CI_Model {
 
         $resultados = $this->get_stock_cruzado();
 
-        $arr_titulos = array('Id dispositivo','Fabricante','Dispositivo','Ud. pds','Stock necesario','Uds. Almacén','Balance');
+        $arr_titulos = array('Id dispositivo','Fabricante','Dispositivo','Ud. pds','Uds. Transito','Stock necesario','Uds. Almacén','Balance');
         $excluir = array('status');
         $datos = preparar_array_exportar($resultados,$arr_titulos,$excluir);
         exportar_fichero($formato,$datos,"Balance_Dispositivos__".date("d-m-Y"));

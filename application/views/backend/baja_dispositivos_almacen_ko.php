@@ -7,7 +7,7 @@
     </div>
     <div class="row">
         <p>&nbsp;</p>
-        <p class="message warning"><i class="glyphicon glyphicon-warning-sign"></i> No se han podido dar de baja <?=$num?> terminales del modelo <strong><?=$modelo?></strong>, ya que el stock actual en el almacén es 0.</p>
+        <p class="message warning"><i class="glyphicon glyphicon-warning-sign"></i> No se han podido dar de baja <?=$num?> terminales del modelo <strong><?=$modelo?></strong>, <?=$mensaje?>.</p>
     </div>
 </div>
 <!-- /#page-wrapper -->
