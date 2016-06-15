@@ -262,7 +262,7 @@ class Incidencia_model extends CI_Model {
 
 
                  ->join('pds','incidencias.id_pds = pds.id_pds','left outer')
-                 ->join('intervenciones_incidencias','intervenciones_incidencias.id_incidencia= incidencias.id_incidencia','left')
+                 //->join('intervenciones_incidencias','intervenciones_incidencias.id_incidencia= incidencias.id_incidencia','left')
                  ->join('pds_supervisor','pds.id_supervisor= pds_supervisor.id','left')
                  ->join('province','pds.province= province.id_province','left')
                  ->join('displays_pds','incidencias.id_displays_pds= displays_pds.id_displays_pds','left outer')
@@ -288,7 +288,10 @@ class Incidencia_model extends CI_Model {
         if(isset($filtros["id_provincia"])  && !empty($filtros["id_provincia"]))    $this->db->where('province.id_province',$filtros['id_provincia']);
 
         if(isset($filtros["reference"])     && !empty($filtros["reference"]))       $this->db->where('reference',$filtros['reference']);
-        if(isset($filtros["id_intervencion"])&& !empty($filtros["id_intervencion"]))$this->db->where('intervenciones_incidencias.id_intervencion',$filtros['id_intervencion']);
+        if(isset($filtros["id_intervencion"])&& !empty($filtros["id_intervencion"])){
+            $this->db->where('intervenciones_incidencias.id_intervencion',$filtros['id_intervencion'])
+                ->join('intervenciones_incidencias','intervenciones_incidencias.id_incidencia= incidencias.id_incidencia','left');
+        }
 
         if(isset($filtros["id_tipo"])       && !empty($filtros["id_tipo"]))         $this->db->where('pds.id_tipo',$filtros['id_tipo']);
         if(isset($filtros["id_subtipo"])    && !empty($filtros["id_subtipo"]))      $this->db->where('pds.id_subtipo',$filtros['id_subtipo']);
