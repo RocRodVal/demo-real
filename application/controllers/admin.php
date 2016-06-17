@@ -1310,6 +1310,9 @@ class Admin extends CI_Controller
 
         $incidencia = $this->tienda_model->get_incidencia($id_inc);
 
+        /*
+         * Se pasa a procesar la incidencia, por lo que la posición del mueble pasa a estar en estado = 'Incidencia'
+         */
         if ($status == 2) {
 
             if ($incidencia['fail_device'] == 1) {
@@ -1366,15 +1369,31 @@ class Admin extends CI_Controller
         }
 
         /**
+         * Botón Recogida de material : pone en transito a almacen el dispositivo que ha generado la incidencia
+         */
+        if ($status == 7)
+        {
+            if ($incidencia['fail_device'] == 1) {
+                $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'],$status,$id_inc);
+            }
+        }
+        /**
          * CIERRE FORZOSO
          */
         if (($status == 8) AND ($status_ext == 'ext'))
         {
 
             if ($incidencia['fail_device'] == 1) {
-                $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'], 4,$id_inc);
+                $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'],$status,$id_inc);
             }
             $this->tienda_model->incidencia_update_cierre($id_inc, $fecha_cierre);
+        }else {
+            if ($status == 8) {
+                if ($incidencia['fail_device'] == 1) {
+                    $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'],9,$id_inc);
+                }
+                $this->tienda_model->incidencia_update_cierre($id_inc, $fecha_cierre);
+            }
         }
 
         /**
