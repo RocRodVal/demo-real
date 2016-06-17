@@ -69,23 +69,36 @@
                         </li>
                         <!--<li><a <?=($this->uri->segment(2)==='auditorias')?'class="active"':''?> href="<?=site_url($acceso.'/auditorias')?>"><i class="fa fa-list-alt fa-fw"></i> Auditorías</a></li>-->
                         <!--<li><a <?=($this->uri->segment(1)==='intervencion')?'class="active"':''?> href="<?=site_url('intervencion')?>"><i class="fa fa-cog fa-fw"></i> Intervenciones</a></li>-->
-                        <li><a <?=($this->uri->segment(1)==='inventario')?'class="active"':''?> href="<?=site_url('inventario')?>"><i class="fa fa-table fa-fw"></i> Depósito</a></li>
+                        <?php
+                        $deposito = array('balance','incidencias','dispositivos_almacen','dispositivos_tiendas','muebles_tiendas','alarmas__almacen');
+                        ?>
+                            <li <?=(in_array($this->uri->segment(2), $deposito) && ($this->uri->segment(1)==='inventario'))?'class="active"':''?>>
+                                <a href="#"><i class="fa fa-table fa-fw"></i> Depósito<span class="fa arrow"></span></a>
+                                <ul class="nav nav-second-level">
+                                    <li><a <?=(($this->uri->segment(1)==='inventario') && ($this->uri->segment(2)==='balance')) ?'class="active"':''?> href="<?=site_url('inventario/balance')?>">Balance &raquo;</a></li>
+                                    <li><a <?=(($this->uri->segment(1)==='inventario') && ($this->uri->segment(2)==='incidencias')) ?'class="active"':''?> href="<?=site_url('inventario/incidencias')?>">Incidencias dispositivo &raquo;</a></li>
+                                    <li><a <?=(($this->uri->segment(1)==='inventario') && ($this->uri->segment(2)==='alarmas__almacen')) ?'class="active"':''?> href="<?=site_url('inventario/alarmas__almacen')?>">Alarmas almacen &raquo;</a></li>
+                                    <li><a <?=(($this->uri->segment(1)==='inventario') && ($this->uri->segment(2)==='dispositivos_almacen')) ?'class="active"':''?> href="<?=site_url('inventario/dispositivos_almacen')?>">Dispositivos almacen &raquo;</a></li>
+                                    <li><a <?=(($this->uri->segment(1)==='inventario') && ($this->uri->segment(2)==='dispositivos_tiendas'))?'class="active"':''?> href="<?=site_url('inventario/dispositivos_tiendas')?>">Dispositivos tiendas &raquo;</a></li>
+                                    <li><a <?=(($this->uri->segment(1)==='inventario') && ($this->uri->segment(2)==='muebles_tiendas')) ?'class="active"':''?> href="<?=site_url('inventario/muebles_tiendas')?>">Muebles tiendas &raquo;</a></li>
+                                </ul>
+                        </li>
                         <?php               
-                        $almacenes = array('almacen','alta_dispositivos_almacen','alta_dispositivos_almacen_imei','alta_dispositivos_ok','baja_dispositivos_almacen','baja_dispositivos_almacen_imei','baja_dispositivos_ok','baja_dispositivos_ko','alarmas_almacen','diario_almacen','informe_sistemas_seguridad');
+                        $almacenes = array('almacen','alta_dispositivos_almacen','alta_dispositivos_ok','baja_dispositivos_almacen','baja_dispositivos_ok','baja_dispositivos_ko','alarmas_almacen','diario_almacen','informe_sistemas_seguridad');
                         ?>                      
                         <li <?=(in_array($this->uri->segment(2), $almacenes))?'class="active"':''?>>
                             <a href="#"><i class="fa fa-cubes fa-fw"></i> Almacén<span class="fa arrow"></span></a>
                             <ul class="nav nav-second-level">                        
                            		<li><a <?=($this->uri->segment(2)==='almacen')?'class="active"':''?> href="<?=site_url($acceso.'/almacen')?>"> Inventario &raquo;</a></li>
                            		<li><a <?=(in_array($this->uri->segment(2),array('alta_dispositivos_almacen','alta_dispositivos_ok')))?'class="active"':''?> href="<?=site_url($acceso.'/alta_dispositivos_almacen')?>"> Alta masiva dispositivos &raquo;</a></li>
-                                <li><a <?=(in_array($this->uri->segment(2),array('alta_dispositivos_almacen_imei','alta_dispositivos_ok')))?'class="active"':''?> href="<?=site_url($acceso.'/alta_dispositivos_almacen_imei')?>"> Alta masiva dispositivos con imei &raquo;</a></li>
+                                <!--<li><a <?=(in_array($this->uri->segment(2),array('alta_dispositivos_almacen_imei','alta_dispositivos_ok')))?'class="active"':''?> href="<?=site_url($acceso.'/alta_dispositivos_almacen_imei')?>"> Alta masiva dispositivos con imei &raquo;</a></li>-->
                            		<li><a <?=(in_array($this->uri->segment(2),array('baja_dispositivos_almacen','baja_dispositivos_ok','baja_dispositivos_ko')))?'class="active"':''?> href="<?=site_url($acceso.'/baja_dispositivos_almacen')?>"> Baja masiva dispositivos &raquo;</a></li>
-                                <li><a <?=(in_array($this->uri->segment(2),array('baja_dispositivos_almacen_imei','baja_dispositivos_ok','baja_dispositivos_ko')))?'class="active"':''?> href="<?=site_url($acceso.'/baja_dispositivos_almacen_imei')?>"> Baja masiva dispositivos imei &raquo;</a></li>
+                                <!--<li><a <?=(in_array($this->uri->segment(2),array('baja_dispositivos_almacen_imei','baja_dispositivos_ok','baja_dispositivos_ko')))?'class="active"':''?> href="<?=site_url($acceso.'/baja_dispositivos_almacen_imei')?>"> Baja masiva dispositivos imei &raquo;</a></li>-->
                                 <li><a <?=($this->uri->segment(2)==='diario_almacen')?'class="active"':''?> href="<?=site_url($acceso.'/diario_almacen')?>"> Diario almacén &raquo;</a></li>
                                 <li <?=(($this->uri->segment(2)==='alarmas_almacen') || ($this->uri->segment(2)==='informe_sistemas_seguridad'))?'class="active"':''?>>
                                     <a href="#">Sistemas de seguridad  <span class="fa arrow"></span></a>
                                         <ul class="nav nav-second-level">
-                                            <li><a <?=($this->uri->segment(2)==='alarmas_almacen')?'class="active"':''?> href="<?=site_url($acceso.'/alarmas_almacen')?>"><i class="fa fa-tasks"></i> Gestión &raquo;</a></li>
+                                            <li><a <?=( $this->uri->segment(2)==='alarmas_almacen')?'class="active"':''?> href="<?=site_url($acceso.'/alarmas_almacen')?>"><i class="fa fa-tasks"></i> Gestión &raquo;</a></li>
                                             <li><a <?=($this->uri->segment(2)=='informe_sistemas_seguridad')?'class="active"':''?> href="<?=site_url($acceso.'/informe_sistemas_seguridad')?>"><i class="fa fa-bars"></i> Análisis de consumo &raquo;</a></li>
                                         </ul>
                                 </li>

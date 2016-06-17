@@ -7,7 +7,7 @@
     </div>
     <div class="row">
         <p>&nbsp;</p>
-        <p class="message success"><i class="glyphicon glyphicon-ok"></i> Se han dado de baja <?=$num?> terminales del modelo <strong><?=$modelo?></strong> en el almacén correctamente.</p>
+        <p class="message success"><i class="glyphicon glyphicon-ok"></i> Se han <?=$mensaje?> <?=$num?> terminales del modelo <strong><?=$modelo?></strong> en el almacén correctamente.</p>
     </div>
 </div>
 <!-- /#page-wrapper -->

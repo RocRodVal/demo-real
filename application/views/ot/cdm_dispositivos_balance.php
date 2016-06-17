@@ -21,6 +21,7 @@
                                     <th>Marca</th>
                                     <th>Modelo</th>
                                     <th>Unidades tienda</th>
+                                    <th>Unidades en transito</th>
                                     <th>Stock necesario</th>
                                     <th>Deposito en almacén</th>
                                     <th>Balance</th>
@@ -40,21 +41,22 @@
                                     $class_balance = ($balance < 0 && $marcar_celda) ? 'notice' : '';
 
                                     //if($stock->unidades_pds > 0 || $stock->unidades_almacen > 0)
-                                    if(
+                                   /* if(
                                             ($stock->unidades_pds > 0 || $stock->unidades_almacen > 0) //
 
                                     )
-                                    {
+                                    {*/
                                     ?>
                                     <tr>
                                         <td><?php echo $stock->brand ?></td>
                                         <td><?php echo $stock->device ?></td>
                                         <td><?php echo $stock->unidades_pds ?></td>
+                                        <td><?php echo $stock->unidades_transito ?></td>
                                         <td><?php echo $stock->stock_necesario ?></td>
                                         <td class="<?=$class_almacen?>"><?php echo $stock->unidades_almacen ?></td>
                                         <td class="<?=$class_balance?>"><?php echo $balance ?></td>
                                     </tr>
-                                        <?php } ?>
+                                        <?php ///} ?>
                                 <?php
                                 }
                                 ?>

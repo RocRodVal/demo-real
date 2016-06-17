@@ -39,11 +39,11 @@
                                     $class_balance = ($balance < 0 && $marcar_celda) ? 'notice' : '';
 
 
-                                    if(
+                                   /* if(
                                             ($stock->unidades_pds > 0 || $stock->unidades_almacen > 0) //
 
                                     )
-                                    {
+                                    {*/
                                     ?>
                                     <tr>
                                         <td><?php echo $stock->brand ?></td>
@@ -54,7 +54,7 @@
                                         <td class="<?=$class_almacen?>"><?php echo $stock->unidades_almacen ?></td>
                                         <td class="<?=$class_balance?>"><?php echo $balance ?></td>
                                     </tr>
-                                        <?php } ?>
+                                        <?php  //} ?>
                                 <?php
                                 }
                                 ?>

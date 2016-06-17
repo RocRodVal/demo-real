@@ -8,8 +8,10 @@
             <div class="row">
                 <div class="col-lg-12">
                     <?php
-                    if (empty($stocks)) {
-                        echo '<p>No hay datos.</p>';
+                    if (empty($stocks) ) {
+                        if($opcion==1) {
+                            echo '<p>No hay datos.</p>';
+                        }
                     } else {
                         ?>
                         <h1 class="page-header">Balance de activos <a href="<?=site_url('inventario/exportar_balance_activos/xls');?>" title="Exportar Excel">Exportar Excel</a></h1>
@@ -51,11 +53,10 @@
                                     $class_balance = ($balance < 0 && $marcar_celda) ? 'notice' : '';
 
                                     //if($stock->unidades_pds > 0 || $stock->unidades_almacen > 0)
-                                    if(
-                                            ($stock->unidades_pds > 0 || $stock->unidades_almacen > 0) //
+                                    /*if(        ($stock->unidades_pds > 0 || $stock->unidades_almacen > 0) //
 
                                     )
-                                    {
+                                    {*/
                                     ?>
                                     <tr>
                                         <td><?php echo $stock->brand ?></td>
@@ -66,7 +67,7 @@
                                         <td class="<?=$class_almacen?>"><?php echo $stock->unidades_almacen ?></td>
                                         <td class="<?=$class_balance?>"><?php echo $balance ?></td>
                                     </tr>
-                                        <?php } ?>
+                                        <?php //} ?>
                                 <?php
                                 }
                                 ?>
@@ -83,7 +84,9 @@
 		        <div class="col-lg-12">
 		            <?php
 		            if (empty($stocks_dispositivos)) {
-		                echo '<p>No hay datos.</p>';
+                        if($opcion==2) {
+                            echo '<p>No hay datos.</p>';
+                        }
 		            } else {
 		            ?>
 		            	<h1 class="page-header">Incidencias por dispositivo</h1>
@@ -122,7 +125,9 @@
                 <div class="col-lg-12">
                     <?php
                     if (empty($devices_almacen)) {
-                        echo '<p>No hay dispositivos.</p>';
+                        if($opcion==3) {
+                            echo '<p>No hay dispositivos.</p>';
+                        }
                     } else {
                         ?>
                         <h1 class="page-header">Dispositivos almacén</h1>
@@ -157,7 +162,9 @@
                 <div class="col-lg-12">
                     <?php
                     if (empty($alarms_almacen)) {
-                        echo '<p>No hay alarmas.</p>';
+                        if($opcion==6) {
+                            echo '<p>No hay alarmas.</p>';
+                        }
                     } else {
                         ?>
                         <h1 class="page-header">Alarmas almacén</h1>
@@ -195,7 +202,9 @@
                 <div class="col-lg-12">
                     <?php
                     if (empty($devices_pds)) {
+                    if($opcion==4) {
                         echo '<p>No hay dispositivos.</p>';
+                    }
                     } else {
                         ?>
                         <h1 class="page-header">Dispositivos tiendas</h1>
@@ -229,8 +238,10 @@
             <div class="row">
                 <div class="col-lg-12">
                     <?php
-                    if (empty($displays_pds)) {
+                    if (empty($displays_pds) ) {
+                    if($opcion==5) {
                         echo '<p>No hay muebles.</p>';
+                    }
                     } else {
                         ?>
                         <h1 class="page-header">Muebles tiendas</h1>

@@ -15,13 +15,14 @@
 		                        <tr>
 		                            <th>Dispositivo</th>
 		                            <th>Unidades</th>
+									<th>Destino</th>
 		                            <th>Dueño</th>
 		                        </tr>
 		                        </thead>
 		                        <tbody>
 		                            <tr>
 		                                <td>
-		                                <select id="dipositivo_almacen" name="dipositivo_almacen" style="width:500px">
+		                                <select id="dipositivo_almacen" name="dipositivo_almacen" style="width:300px">
 		                              	<?php
 		                        		foreach ($devices as $device_almacen) {
 		                            	?>
@@ -32,7 +33,13 @@
 		                                </select>
 		                                </td>
 		                                <td><input type="text" id="units_dipositivo_almacen" name="units_dipositivo_almacen" onkeypress='return event.charCode >= 48 && event.charCode <= 57'/></td>
-		                                <td>
+										<td>
+											<select id="destino_dipositivo_almacen" name="destino_dipositivo_almacen" style="width:150px">
+												<option value="4">En transito</option>
+												<option value="5">Baja</option>
+											</select>
+										</td>
+										<td>
 		                                <select id="owner_dipositivo_almacen" name="owner_dipositivo_almacen" style="width:50px">
 		                              	<option value="ET">ET</option>                               
 		                                <option value="OT">OT</option>

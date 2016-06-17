@@ -73,13 +73,17 @@ class Tienda_model extends CI_Model {
 	}	
 	
 	
-	public function baja_dispositivos_almacen_update($id_device,$owner,$units)
+	public function baja_dispositivos_almacen_update($id_device,$owner,$units,$status)
     {
+        $condicion=" AND status='En stock'";
+        $status_anterior =1;
+        if ($status==5) {
+            $condicion=" AND status='Transito'";
+            $status_anterior=4;
+        }
 
-        $contar = $this->db->query("
-        SELECT COUNT(id_device) as contador
-        FROM devices_almacen
-        WHERE id_device=$id_device AND owner='$owner' AND status = 'En stock' ")->row();
+        $sql= "SELECT COUNT(id_device) as contador FROM devices_almacen WHERE id_device=$id_device AND owner='$owner'".$condicion;
+        $contar = $this->db->query($sql)->row();
 
     if($contar->contador > 0) {
 
@@ -89,11 +93,11 @@ class Tienda_model extends CI_Model {
         $this->db->where("id_device",$id_device);
         $this->db->where('owner', $owner);
         //$this->db->where_in('imei', $imeis);
-        $this->db->where('status', 'En stock');
+        $this->db->where('status', $status_anterior);
         $this->db->limit($units);
         $dispositivos_a_borrar = $this->db->get("devices_almacen")->result();
         $total_baja =  $this->db->affected_rows();
-
+//echo $total_baja; exit;
         $cont = 0;
         // Recorremos los dispositivos a borrar.
         foreach($dispositivos_a_borrar as $dispositivo_baja){
@@ -101,7 +105,7 @@ class Tienda_model extends CI_Model {
             $id_devices_almacen = $dispositivo_baja->id_devices_almacen;
 
             // Borrado lógico del dispositivo.
-            $this->db->set('status','"Baja"', FALSE);
+            $this->db->set('status',$status, FALSE);
             $this->db->where('id_devices_almacen', $id_devices_almacen);
             $this->db->update('devices_almacen');
 
@@ -129,75 +133,7 @@ class Tienda_model extends CI_Model {
     }
 
     }
-    /*
-     * Dar de baja dispositivos segun  los imeis
-     */
-    public function baja_dispositivos_almacen_imei_update($id_device,$owner,$status,$imeis=null)
-    {
-        $separados=implode(',',$imeis);
-        $condicion="";
-        if($status==3) {
-            $condicion=" AND status='En stock'";
-        }elseif ($status==4){
-            $condicion=" AND status='Enviado'";
-        }
 
-        $sql="SELECT COUNT(id_device) as contador
-        FROM devices_almacen
-        WHERE id_device=$id_device AND owner='".$owner."' AND imei IN ($separados) ".$condicion;
-
-        $contar = $this->db->query($sql)->row();
-        //echo "CONTAR ".$contar->contador; exit;
-        //echo $sql; exit;
-        if($contar->contador > 0) {
-
-            $units = (count($imeis) > $contar->contador) ? $contar->contador : count($imeis);
-
-            $this->db->select("id_devices_almacen,id_device");
-            $this->db->where("id_device",$id_device);
-            $this->db->where('owner', $owner);
-            $this->db->where_in('imei', $imeis);
-            $this->db->where('status', $status);
-            $this->db->limit($units);
-            $dispositivos_a_borrar = $this->db->get("devices_almacen")->result();
-            $total_baja =  $this->db->affected_rows();
-
-            $cont = 0;
-            // Recorremos los dispositivos a borrar.
-            foreach($dispositivos_a_borrar as $dispositivo_baja){
-                $id_device = $dispositivo_baja->id_device;
-                $id_devices_almacen = $dispositivo_baja->id_devices_almacen;
-
-                // Borrado lógico del dispositivo.
-                $this->db->set('status', $status, FALSE);
-                $this->db->where('id_devices_almacen', $id_devices_almacen);
-                $this->db->update('devices_almacen');
-
-                //echo $this->db->last_query(); exit;
-                // Insertar operación de baja en el histórico
-                $data = array(
-                    'id_material_incidencia' => NULL,
-                    'id_devices_almacen' => NULL,
-                    'id_devices_almacen_new' => $id_devices_almacen,
-                    'id_alarm' => NULL,
-                    'id_device'=>$id_device,
-                    'id_incidencia' => NULL,
-                    'id_cliente' => NULL,
-                    'fecha' => date('Y-m-d H:i:s'),
-                    'cantidad' => (1), // En positivo porque luego la función lo pasará a negativo
-                    'procesado' => 1
-                );
-                $this->alta_historico_io($data,NULL);
-                $cont++;
-            }
-            return $total_baja;
-
-        }else{
-            return -1;
-        }
-
-
-    }
     /**
      * Método que devuelve el operador (instalador) consultado por ID
      * @param $id_operador
@@ -363,18 +299,14 @@ class Tienda_model extends CI_Model {
                     as unidades_almacen,
                     ( SELECT COUNT(*)
                     FROM devices_almacen
-                    WHERE (devices_almacen.id_device = device.id_device) AND (devices_almacen.status = "Enviado") )
+                    WHERE (devices_almacen.id_device = device.id_device) AND (devices_almacen.status = "Transito") )
                     as unidades_transito
 
                     FROM device
                 ) as temporal
 
         JOIN brand_device ON temporal.brand_device = brand_device.id_brand_device
-        WHERE temporal.status = "Alta" AND (
-                    (unidades_pds > 0 OR unidades_almacen > 0)
-                OR  (unidades_pds = 0 AND unidades_almacen > 0)
-                OR  (unidades_pds > 0 AND unidades_almacen = 0)
-               )
+        WHERE temporal.status = "Alta"
         ORDER BY brand_device.brand ASC, temporal.device ASC ');
 
 
@@ -2286,9 +2218,70 @@ class Tienda_model extends CI_Model {
 		$this->db->where('id_incidencia',$id);
 		$this->db->update('incidencias');
 	}
-		
+
+    public function incidencia_update_device_pds($id_devices_pds,$status,$id_incidencia = NULL)
+    {
+
+        $ahora = date("Y-m-d H:i:s");
+        if ($status==4) {
+            /*
+             * Guardamos los datos de la posicion que genero la incidencia y el devices_pds al que afecta la incidencia se da de baja
+             */
+            $query = $this->db->select('*')
+                ->where('id_devices_pds', $id_devices_pds)
+                ->get('devices_pds');
+            $device_pds = $query->row();
+
+            /*
+         * Guardamos los datos del dispositivo que se queda en la tienda y la entrada en devices_almacen que va a ser instalada para solucionar la incidencia se da de baja
+         */
+            $sql= "SELECT * FROM devices_almacen WHERE id_devices_almacen = (SELECT max(id_devices_almacen) FROM material_incidencias WHERE id_incidencia=$id_incidencia)";
+            $device_almacen=$this->db->query($sql)->row();
+            //echo $sql."<br>"    ;
+            //print_r($device_almacen); exit;
+
+            $sql= "UPDATE devices_almacen SET status='Baja' WHERE id_devices_almacen =".$device_almacen->id_devices_almacen;
+            $this->db->query($sql);
+
+            /*
+             * Insertar el dispositivo instalado en la posición del mueble
+             */
+            $data = array(
+                'client_type_pds'   => 1,
+                'id_pds'            =>  $device_pds->id_pds,
+                'id_displays_pds'   => $device_pds->id_displays_pds,
+                'id_display'        => $device_pds->id_display,
+                'alta'              => $ahora,
+                'position'          => $device_pds->position,
+                'id_device'         => $device_almacen->id_device,
+                'IMEI'              => $device_almacen->IMEI,
+                'mac'               => $device_almacen->mac,
+                'serial'            => $device_almacen->serial,
+                'barcode'           => $device_almacen->barcode,
+                'status'            => 1
+            );
+
+            $this->db->insert('devices_pds', $data);
+        }
+        $this->db->set('status', $status, FALSE);
+        $this->db->where('id_devices_pds',$id_devices_pds);
+        $this->db->update('devices_pds');
+
+
+        /**
+         * Cambiar last_updated
+         */
+        if(!is_null($id_incidencia)){
+
+            $this->db->set('last_updated', "'$ahora'", FALSE);
+            $this->db->where('id_incidencia',$id_incidencia);
+            $this->db->update('incidencias');
+        }
+
+
+    }
 	
-	public function incidencia_update_device_pds($id_devices_pds,$status,$id_incidencia = NULL)
+	public function incidencia_update_device_pds_old($id_devices_pds,$status,$id_incidencia = NULL)
 	{
 		$this->db->set('status', $status, FALSE);
 		$this->db->where('id_devices_pds',$id_devices_pds);
@@ -2660,6 +2653,22 @@ class Tienda_model extends CI_Model {
 
     }
 
+
+    public function actualizar_devices_almacen($id_inc)
+    {
+        $sql="SELECT id_devices_almacen FROM material_incidencias WHERE id_incidencia=$id_inc";
+        $material_incidencia=$this->db->query($sql)->result();
+
+        if(!empty($material_incidencia)) {
+            foreach ($material_incidencia as $m) {
+                $sql = "UPDATE devices_almacen SET status='Transito' WHERE id_devices_almacen =$m->id_devices_almacen";
+                //echo $sql;
+                $exito = $this->db->query($sql);
+            }
+        }
+
+        return $exito;
+    }
 
 }
 

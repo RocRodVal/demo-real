@@ -1323,9 +1323,9 @@ class Admin extends CI_Controller
         if ($status == 5) {
             $intervencion = $this->intervencion_model->get_intervencion_incidencia($id_inc);
 
-            $this->tienda_model->reservar_dispositivos($this->input->post('dipositivo_almacen_1'),3);
-            $this->tienda_model->reservar_dispositivos($this->input->post('dipositivo_almacen_2'),3);
-            $this->tienda_model->reservar_dispositivos($this->input->post('dipositivo_almacen_3'),3);
+            $this->tienda_model->reservar_dispositivos($this->input->post('dipositivo_almacen_1'),2);
+            $this->tienda_model->reservar_dispositivos($this->input->post('dipositivo_almacen_2'),2);
+            $this->tienda_model->reservar_dispositivos($this->input->post('dipositivo_almacen_3'),2);
 
             $dispositivos = $this->tienda_model->get_devices_incidencia($id_inc);
             $alarmas = $this->tienda_model->get_alarms_incidencia($id_inc);
@@ -1359,7 +1359,8 @@ class Admin extends CI_Controller
             $this->tienda_model->incidencia_update_cierre($id_inc, $fecha_cierre);
 
             if ($incidencia['fail_device'] == 1) {
-                $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'], 1);
+                //Ponemos la posicion que genero la incidencia en Baja y creamos una nueva para el dispositivo que queda instalado
+                $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'],4,$id_inc);
             }
 
         }
@@ -1371,7 +1372,7 @@ class Admin extends CI_Controller
         {
 
             if ($incidencia['fail_device'] == 1) {
-                $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'], 1,$id_inc);
+                $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'], 4,$id_inc);
             }
             $this->tienda_model->incidencia_update_cierre($id_inc, $fecha_cierre);
         }
@@ -1402,6 +1403,7 @@ class Admin extends CI_Controller
             // Se va a proceder a la notificación de la incidencia por lo que el material asignado ya será inamovible
             // Y por tanto deberá procesarse (procesado=1) y así verse en el histórico Diario de almacén.
             $this->tienda_model->procesar_historico_incidencia($id_inc);
+            $this->tienda_model->actualizar_devices_almacen($id_inc);
 
             redirect('admin/imprimir_incidencia/'.$id_pds.'/'.$id_inc.'/'.$envio_mail, 'refresh');
         }
@@ -3523,82 +3525,6 @@ class Admin extends CI_Controller
         }
     }
 
-    public function alta_dispositivos_almacen_imei()
-    {
-        if ($this->auth->is_auth())
-        {
-            $xcrud = xcrud_get_instance();
-            $this->load->model('tienda_model');
-
-            $data['devices'] = $this->tienda_model->get_devices();
-            $data['pds'] = $this->tienda_model->get_devices();
-
-            $data['title'] = 'Alta masiva dispositivos';
-
-            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
-            $this->data->add($data);
-            $data = $this->data->getData();
-            /////
-            $this->load->view('backend/header', $data);
-            $this->load->view('backend/navbar', $data);
-            $this->load->view('backend/alta_dispositivos_almacen_imei', $data);
-            $this->load->view('backend/footer');
-        }
-        else
-        {
-            redirect('admin', 'refresh');
-        }
-    }
-
-    /*
-     * Damos de alta los dispositivos con su imei
-     */
-    public function alta_dispositivos_almacen_imei_update()
-    {
-        if ($this->auth->is_auth())
-        {
-            $this->load->model('tienda_model');
-
-            $data = array(
-                'id_device' => $this->input->post('dipositivo_almacen'),
-                'alta' => date('Y-m-d H:i:s'),
-                'IMEI' => NULL,
-                'mac' => NULL,
-                'serial' => NULL,
-                'barcode' => NULL,
-                'id_color_device' => NULL,
-                'id_complement_device' => NULL,
-                'id_status_device' => NULL,
-                'id_status_packaging_device' => NULL,
-                'picture_url_1' => NULL,
-                'picture_url_2' => NULL,
-                'picture_url_3' => NULL,
-                'description' => NULL,
-                'owner' => $this->input->post('owner_dipositivo_almacen'),
-                'status' => 1,
-            );
-
-            $i = 0;
-            $imeis = $this->input->post("imeis");
-            $array_imeis = explode("\n", $imeis);
-
-            while ($i < count($array_imeis))
-            {
-                $data['IMEI']=$array_imeis[$i];
-                $this->tienda_model->alta_dispositivos_almacen_update($data,$this->input->post('units_dipositivo_almacen'));
-                $i = $i + 1;
-            }
-
-            $this->session->set_flashdata("id_device",$this->input->post('dipositivo_almacen'));
-            $this->session->set_flashdata("num",count($array_imeis));
-
-            redirect('admin/alta_dispositivos_ok', 'refresh');
-        }
-        else
-        {
-            redirect('admin', 'refresh');
-        }
-    }
     public function alta_dispositivos_almacen_update()
     {
         if ($this->auth->is_auth())
@@ -3628,7 +3554,7 @@ class Admin extends CI_Controller
 
             while ($i < $this->input->post('units_dipositivo_almacen'))
             {
-                $this->tienda_model->alta_dispositivos_almacen_update($data,$this->input->post('units_dipositivo_almacen'));
+                $this->tienda_model->alta_dispositivos_almacen_update($data);
                 $i = $i + 1;
             }
 
@@ -3711,79 +3637,34 @@ class Admin extends CI_Controller
         }
     }
 
-    public function baja_dispositivos_almacen_imei()
-    {
-        if ($this->auth->is_auth())
-        {
-            $xcrud = xcrud_get_instance();
-            $this->load->model('tienda_model');
-
-            $data['devices'] = $this->tienda_model->get_devices();
-
-            $data['title'] = 'Baja masiva dispositivos';
-
-            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
-            $this->data->add($data);
-            $data = $this->data->getData();
-            /////
-            $this->load->view('backend/header', $data);
-            $this->load->view('backend/navbar', $data);
-            $this->load->view('backend/baja_dispositivos_almacen_imei', $data);
-            $this->load->view('backend/footer');
-        }
-        else
-        {
-            redirect('admin', 'refresh');
-        }
-    }
-
-
-    public function baja_dispositivos_almacen_imei_update()
-    {
-        if ($this->auth->is_auth())
-        {
-            $this->load->model('tienda_model');
-
-            $imeis = $this->input->post("imeis");
-            $array_imeis = explode("\n", $imeis);
-
-            $num = $this->tienda_model->baja_dispositivos_almacen_imei_update($this->input->post('dipositivo_almacen'),$this->input->post('owner_dipositivo_almacen'),$this->input->post('destino_dipositivo_almacen'),$array_imeis);
-
-            $this->session->set_flashdata("id_device", $this->input->post('dipositivo_almacen'));
-//echo $num." / ".count($array_imeis); exit;
-            if($num == count($array_imeis)) {
-                $this->session->set_flashdata("num", $num);
-                redirect('admin/baja_dispositivos_ok', 'refresh');
-            }else{
-                $this->session->set_flashdata("num", count($array_imeis));
-                $this->session->set_flashdata("mensaje", " porque los datos no son correctos");
-                redirect('admin/baja_dispositivos_ko', 'refresh');
-            }
-        }
-        else
-        {
-            redirect('admin', 'refresh');
-        }
-    }
-
     public function baja_dispositivos_almacen_update()
     {
         if ($this->auth->is_auth())
         {
             $this->load->model('tienda_model');
 
-            $num = $this->tienda_model->baja_dispositivos_almacen_update($this->input->post('dipositivo_almacen'),$this->input->post('owner_dipositivo_almacen'),$this->input->post('units_dipositivo_almacen'));
+            $num = $this->tienda_model->baja_dispositivos_almacen_update($this->input->post('dipositivo_almacen'),$this->input->post('owner_dipositivo_almacen'),$this->input->post('units_dipositivo_almacen'),$this->input->post('destino_dipositivo_almacen'));
 
             $this->session->set_flashdata("id_device", $this->input->post('dipositivo_almacen'));
 
-
-
             if($num >= 0) {
                 $this->session->set_flashdata("num", $num);
+                if ($this->input->post('destino_dipositivo_almacen')==4) {
+                    $this->session->set_flashdata("mensaje1", " puesto en transito ");
+                }
+                else {
+                    $this->session->set_flashdata("mensaje1", " dado de baja ");
+                }
                 redirect('admin/baja_dispositivos_ok', 'refresh');
             }else{
                 $this->session->set_flashdata("num", $this->input->post('units_dipositivo_almacen'));
-                $this->session->set_flashdata("mensaje", " ya que el stock actual en el almacén es 0");
+                if ($this->input->post('destino_dipositivo_almacen')==4) {
+                    $this->session->set_flashdata("mensaje1", " poner en transito ");
+                }
+                else {
+                    $this->session->set_flashdata("mensaje1", " dar de baja ");
+                }
+                $this->session->set_flashdata("mensaje2", " ya que el stock actual en el almacén es 0");
                 redirect('admin/baja_dispositivos_ko', 'refresh');
             }
         }
@@ -3805,6 +3686,7 @@ class Admin extends CI_Controller
 
             $id_device = $this->session->flashdata("id_device");
             $num = $this->session->flashdata("num");
+            $mensaje = $this->session->flashdata("mensaje1");
 
 
             if(!empty($id_device) && !empty($num)) {
@@ -3814,6 +3696,7 @@ class Admin extends CI_Controller
 
                 $data["num"] = $num;
                 $data["modelo"] = $device["device"];
+                $data["mensaje"] = $mensaje;
 
                 /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
                 $this->data->add($data);
@@ -3844,7 +3727,8 @@ class Admin extends CI_Controller
 
             $id_device = $this->session->flashdata("id_device");
             $num = $this->session->flashdata("num");
-            $mensaje = $this->session->flashdata("mensaje");
+            $mensaje1 = $this->session->flashdata("mensaje1");
+            $mensaje2 = $this->session->flashdata("mensaje2");
 
 
             if(!empty($id_device) && !empty($num)) {
@@ -3853,7 +3737,8 @@ class Admin extends CI_Controller
                 $data["title"] = "Baja masiva dispositivos";
 
                 $data["num"] = $num;
-                $data["mensaje"] = $mensaje;
+                $data["mensaje1"] = $mensaje1;
+                $data["mensaje2"] = $mensaje2;
                 $data["modelo"] = $device["device"];
 
                 /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
