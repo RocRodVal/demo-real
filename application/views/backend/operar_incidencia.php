@@ -365,7 +365,7 @@
                                         foreach ($material_dispositivos as $material_dispositivos_item) {
                                             ?>
                                             <tr>
-                                                <td><?php echo $material_dispositivos_item->barcode ?></td>
+                                                <td><?php echo $material_dispositivos_item->imei ?></td>
                                                 <td><?php echo $material_dispositivos_item->device ?></td>
                                                 <td><?php echo $material_dispositivos_item->cantidad ?></td>
                                                 <?php if($material_editable) { ?>

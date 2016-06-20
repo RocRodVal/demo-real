@@ -1291,7 +1291,7 @@ class Admin extends CI_Controller
 
 
         $xcrud = xcrud_get_instance();
-        $this->load->model(array('tienda_model','intervencion_model'));
+        $this->load->model(array('tienda_model'));
 
         $sfid = $this->tienda_model->get_pds($id_pds);
 
@@ -1363,7 +1363,7 @@ class Admin extends CI_Controller
 
             if ($incidencia['fail_device'] == 1) {
                 //Ponemos la posicion que genero la incidencia en Baja y creamos una nueva para el dispositivo que queda instalado
-                $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'],4,$id_inc);
+                $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'],$status,$id_inc);
             }
 
         }
@@ -1434,6 +1434,137 @@ class Admin extends CI_Controller
 
     }
 
+    public function update_incidencia_old()
+    {
+        $id_pds = $this->uri->segment(3);
+        $id_inc = $this->uri->segment(4);
+        $status_pds = $this->uri->segment(5);
+        $status = $this->uri->segment(6);
+        $status_ext = $this->uri->segment(7);
+
+
+        $xcrud = xcrud_get_instance();
+        $this->load->model(array('tienda_model','intervencion_model'));
+
+        $sfid = $this->tienda_model->get_pds($id_pds);
+
+        $data['id_pds'] = 'ABX/PDS-' . $sfid['id_pds'];
+        $data['commercial'] = $sfid['commercial'];
+        $data['territory'] = $sfid['territory'];
+        $data['reference'] = $sfid['reference'];
+        $data['address'] = $sfid['address'];
+        $data['zip'] = $sfid['zip'];
+        $data['city'] = $sfid['city'];
+
+        $data['id_pds_ulr'] = $id_pds;
+        $data['id_inc_ulr'] = $id_inc;
+
+        $this->tienda_model->incidencia_update($id_inc, $status_pds, $status);
+
+        $incidencia = $this->tienda_model->get_incidencia($id_inc);
+
+        if ($status == 2) {
+
+            if ($incidencia['fail_device'] == 1) {
+                $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'], 2);
+            }
+        }
+
+        /**
+         * Botón Asignar material
+         */
+        if ($status == 5) {
+            $intervencion = $this->intervencion_model->get_intervencion_incidencia($id_inc);
+
+            $this->tienda_model->reservar_dispositivos($this->input->post('dipositivo_almacen_1'),3);
+            $this->tienda_model->reservar_dispositivos($this->input->post('dipositivo_almacen_2'),3);
+            $this->tienda_model->reservar_dispositivos($this->input->post('dipositivo_almacen_3'),3);
+
+            $dispositivos = $this->tienda_model->get_devices_incidencia($id_inc);
+            $alarmas = $this->tienda_model->get_alarms_incidencia($id_inc);
+
+            $facturacion_data= array(
+                'fecha' => date('Y-m-d H:i:s'),
+                'id_pds' => $id_pds,
+                'id_intervencion' => $intervencion,
+                'id_incidencia' => $id_inc,
+                'id_displays_pds' => $incidencia['id_displays_pds'],
+                'units_device' => $dispositivos['dispositivos'],
+                'units_alarma' => $alarmas['alarmas'],
+                'description' => NULL
+            );
+
+            $this->tienda_model->facturacion($facturacion_data);
+        }
+
+
+
+        $fecha_cierre = $this->input->post('fecha_cierre');
+
+        if(empty($fecha_cierre)) { $fecha_cierre = date('Y-m-d H:i:s'); }
+
+        /**
+         * Botón resolver Incidencia : Recoge fecha de resolución y hace la operación
+         */
+        if ($status == 6)
+        {
+
+            $this->tienda_model->incidencia_update_cierre($id_inc, $fecha_cierre);
+
+            if ($incidencia['fail_device'] == 1) {
+                $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'], 1);
+            }
+
+        }
+
+        /**
+         * CIERRE FORZOSO
+         */
+        if (($status == 8) AND ($status_ext == 'ext'))
+        {
+
+            if ($incidencia['fail_device'] == 1) {
+                $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'], 1,$id_inc);
+            }
+            $this->tienda_model->incidencia_update_cierre($id_inc, $fecha_cierre);
+        }
+
+        /**
+         * Guardar incidcencia en el histórico
+         */
+        $data = array(
+            'fecha' => date('Y-m-d H:i:s'),
+            'id_incidencia' => $id_inc,
+            'id_pds' => $id_pds,
+            'description' => NULL,
+            'agent' => $this->session->userdata('sfid'),
+            'status_pds' => $status_pds,
+            'status' => $status
+        );
+
+        $this->tienda_model->historico($data);
+
+
+        /**
+         * Notificación a instalador
+         */
+        if ($status == 5)
+        {
+            $envio_mail = $this->uri->segment(7);
+
+            // Se va a proceder a la notificación de la incidencia por lo que el material asignado ya será inamovible
+            // Y por tanto deberá procesarse (procesado=1) y así verse en el histórico Diario de almacén.
+            $this->tienda_model->procesar_historico_incidencia($id_inc);
+
+            redirect('admin/imprimir_incidencia/'.$id_pds.'/'.$id_inc.'/'.$envio_mail, 'refresh');
+        }
+        else
+        {
+            redirect('admin/operar_incidencia/'.$id_pds.'/'.$id_inc, 'refresh');
+        }
+
+
+    }
 
     public function reset_incidencia_status()
     {

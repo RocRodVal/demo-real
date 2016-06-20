@@ -1739,7 +1739,7 @@ class Tienda_model extends CI_Model {
 	public function get_material_dispositivos($id) {
 	
 		$query = $this->db->select('material_incidencias.id_material_incidencias AS id_material_incidencias,
-		        devices_almacen.id_devices_almacen AS id_devices_almacen, device.device AS device, devices_almacen.barcode AS barcode, material_incidencias.cantidad AS cantidad')
+		        devices_almacen.id_devices_almacen AS id_devices_almacen, device.device AS device, devices_almacen.IMEI AS imei, material_incidencias.cantidad AS cantidad')
 		->join('devices_almacen','devices_almacen.id_devices_almacen = material_incidencias.id_devices_almacen')
 		->join('device','devices_almacen.id_device = device.id_device')
 		->where('material_incidencias.id_incidencia',$id)
@@ -2227,13 +2227,23 @@ class Tienda_model extends CI_Model {
          * Cuando se resuelve la incidencia
          */
         switch ($status) {
-            case ($status==4):
+
+            case ($status==2): /*Cuando se revisa la incidenica*/
+                $this->db->set('status', $status, FALSE);
+                $this->db->where('id_devices_pds', $id_devices_pds);
+                $this->db->update('devices_pds');
+                break;
+
+            case ($status==6): /* se resuelve la incidencia*/
                 /* Guardamos los datos de la posicion que genero la incidencia y el devices_pds al que afecta la incidencia se da de baja */
                 $query = $this->db->select('*')
                 ->where('id_devices_pds', $id_devices_pds)
                 ->get('devices_pds');
                 $device_pds = $query->row();
 
+                /* poner de baja la posicion que origino la incidencia*/
+                $sql = "UPDATE devices_pds SET status='Baja' WHERE id_devices_pds =".$device_pds->id_devices_pds;
+                $this->db->query($sql);
                 /*
                  * Guardamos los datos del dispositivo que se queda en la tienda y la entrada en devices_almacen que va a ser instalada para solucionar la incidencia se da de baja
                  */
@@ -2245,18 +2255,18 @@ class Tienda_model extends CI_Model {
 
                 /* Insertar el dispositivo instalado en la posición del mueble */
                 $data = array(
-                'client_type_pds' => 1,
-                'id_pds' => $device_pds->id_pds,
-                'id_displays_pds' => $device_pds->id_displays_pds,
-                'id_display' => $device_pds->id_display,
-                'alta' => $ahora,
-                'position' => $device_pds->position,
-                'id_device' => $device_almacen->id_device,
-                'IMEI' => $device_almacen->IMEI,
-                'mac' => $device_almacen->mac,
-                'serial' => $device_almacen->serial,
-                'barcode' => $device_almacen->barcode,
-                'status' => 1
+                        'client_type_pds' => $device_pds->client_type_pds,
+                        'id_pds' => $device_pds->id_pds,
+                        'id_displays_pds' => $device_pds->id_displays_pds,
+                        'id_display' => $device_pds->id_display,
+                        'alta' => $ahora,
+                        'position' => $device_pds->position,
+                        'id_device' => $device_almacen->id_device,
+                        'IMEI' => $device_almacen->IMEI,
+                        'mac' => $device_almacen->mac,
+                        'serial' => $device_almacen->serial,
+                        'barcode' => $device_almacen->barcode,
+                        'status' => 1
                 );
 
                 $this->db->insert('devices_pds', $data);
@@ -2300,7 +2310,7 @@ class Tienda_model extends CI_Model {
                 break;
 
             default:
-                $this->db->set('status', $status, FALSE);
+                $this->db->set('status', 4, FALSE);
                 $this->db->where('id_devices_pds', $id_devices_pds);
                 $this->db->update('devices_pds');
 
