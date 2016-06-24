@@ -2241,20 +2241,24 @@ class Tienda_model extends CI_Model {
                 ->get('devices_pds');
                 $device_pds = $query->row();
 
-                /* poner de baja la posicion que origino la incidencia*/
-                $sql = "UPDATE devices_pds SET status='Baja' WHERE id_devices_pds =".$device_pds->id_devices_pds;
-                $this->db->query($sql);
                 /*
                  * Guardamos los datos del dispositivo que se queda en la tienda y la entrada en devices_almacen que va a ser instalada para solucionar la incidencia se da de baja
                  */
-                $sql = "SELECT * FROM devices_almacen WHERE id_devices_almacen = (SELECT max(id_devices_almacen) FROM material_incidencias WHERE id_incidencia=$id_incidencia)";
-                $device_almacen = $this->db->query($sql)->row();
+                $sql = "SELECT id_devices_almacen FROM material_incidencias WHERE id_incidencia=$id_incidencia AND id_alarm IS NULL";
+                if($this->db->query($sql)->num_rows ==1) {
 
-                $sql = "UPDATE devices_almacen SET status='Baja' WHERE id_devices_almacen =".$device_almacen->id_devices_almacen;
-                $this->db->query($sql);
+                    $sql = "SELECT * FROM devices_almacen WHERE id_devices_almacen = (SELECT id_devices_almacen FROM material_incidencias WHERE id_incidencia=$id_incidencia AND id_alarm IS NULL)";
+                    $device_almacen = $this->db->query($sql)->row();
+                    $sql = "UPDATE devices_almacen SET status='Baja' WHERE id_devices_almacen =" . $device_almacen->id_devices_almacen;
+                    $this->db->query($sql);
 
-                /* Insertar el dispositivo instalado en la posición del mueble */
-                $data = array(
+                    /* poner de baja la posicion que origino la incidencia*/
+                    $sql = "UPDATE devices_pds SET status='Baja' WHERE id_devices_pds =".$device_pds->id_devices_pds;
+                    $this->db->query($sql);
+
+
+                    /* Insertar el dispositivo instalado en la posición del mueble */
+                    $data = array(
                         'client_type_pds' => $device_pds->client_type_pds,
                         'id_pds' => $device_pds->id_pds,
                         'id_displays_pds' => $device_pds->id_displays_pds,
@@ -2267,9 +2271,15 @@ class Tienda_model extends CI_Model {
                         'serial' => $device_almacen->serial,
                         'barcode' => $device_almacen->barcode,
                         'status' => 1
-                );
+                    );
 
-                $this->db->insert('devices_pds', $data);
+                    $this->db->insert('devices_pds', $data);
+                    }
+                else {
+                    /* poner de baja la posicion que origino la incidencia*/
+                    $sql = "UPDATE devices_pds SET status='Alta' WHERE id_devices_pds =".$id_devices_pds;
+                    $this->db->query($sql);
+                }
                 //echo $this->db->last_query()."<br>";
 
             break;
@@ -2284,19 +2294,24 @@ class Tienda_model extends CI_Model {
                     ->get('devices_pds');
                 $device_pds = $query->row();
 
-                $data = array(
-                    'id_device' => $device_pds->id_device,
-                    'alta' => $ahora,
-                    'IMEI' => $device_pds->IMEI,
-                    'mac' => $device_pds->mac,
-                    'serial' => $device_pds->serial,
-                    'barcode' => $device_pds->barcode,
-                    'status' => 4,
-                    'owner' => "ET"
-                );
-                $this->db->insert('devices_almacen', $data);
+                if ($device_pds->status=='Baja') {
+                    $data = array(
+                        'id_device' => $device_pds->id_device,
+                        'alta' => $ahora,
+                        'IMEI' => $device_pds->IMEI,
+                        'mac' => $device_pds->mac,
+                        'serial' => $device_pds->serial,
+                        'barcode' => $device_pds->barcode,
+                        'status' => 4,
+                        'owner' => "ET",
+                        'id_devices_pds' => $device_pds->id_devices_pds
+                    );
+                    $this->db->insert('devices_almacen', $data);
+                }
                 break;
+            case ($status==8): /*Cuando de hace el cierre forzoso de la incidencia*/
 
+                break;
             case ($status==9): /*Ya se ha recogido el material y se cierra la incidencia*/
                 /*insertar en almacen el dispositivo que origino la incidencia en estado en transito*/
                 /* Guardamos los datos de la posicion que genero la incidencia y el devices_pds al que afecta la incidencia se da de baja */
@@ -2305,8 +2320,13 @@ class Tienda_model extends CI_Model {
                     ->get('devices_pds');
                 $device_pds = $query->row();
 
-                $sql = "UPDATE devices_almacen SET status=1 WHERE  status=4 AND IMEI='$device_pds->IMEI' AND id_device=$device_pds->id_device";
-                $this->db->query($sql);
+                //print_r($device_pds); exit;
+
+                if ($device_pds->status=='Baja') {
+                    $sql = "UPDATE devices_almacen SET status='En stock' WHERE  status='Transito' AND id_device=$device_pds->id_device AND id_devices_pds=$device_pds->id_devices_pds";
+                    //echo $sql; exit;
+                    $this->db->query($sql);
+                }
                 break;
 
             default:
@@ -2704,18 +2724,18 @@ class Tienda_model extends CI_Model {
 
     public function actualizar_devices_almacen($id_inc)
     {
-        $sql="SELECT id_devices_almacen FROM material_incidencias WHERE id_incidencia=$id_inc";
-        $material_incidencia=$this->db->query($sql)->result();
 
-        if(!empty($material_incidencia)) {
+        $sql="SELECT id_devices_almacen FROM material_incidencias WHERE id_incidencia=$id_inc AND id_devices_almacen IS NOT NULL";
+        $material_incidencia=$this->db->query($sql)->result();
+        if(!empty($material_incidencia) && count($material_incidencia)==1) {
             foreach ($material_incidencia as $m) {
                 $sql = "UPDATE devices_almacen SET status='Transito' WHERE id_devices_almacen =$m->id_devices_almacen";
                 //echo $sql;
-                $exito = $this->db->query($sql);
+                $this->db->query($sql);
             }
         }
 
-        return $exito;
+        //return $exito;
     }
 
 }
