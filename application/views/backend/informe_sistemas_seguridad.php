@@ -72,6 +72,7 @@
                                 <th>Alarma</th>
                                 <th>Código</th>
                                 <th>Fabricante</th>
+                                <th>Dueño</th>
                                    <?php
 
                                    foreach($meses_columna as $clave=>$valor)
@@ -86,11 +87,15 @@
                                 <?php
 
                                 if (!empty($valor_resultado)) {
+
                                     foreach ($valor_resultado as $clave => $valor) {
+                                        $nombre_alarma=explode("_",$clave);
+
                                         echo "<tr>";
-                                        echo "<th>$clave</th>";
+                                        echo "<th>$nombre_alarma[0]</th>";
                                         echo "<th>" . $valor['code'] . "</th>";
                                         echo "<th>" . $valor['fabricante'] . "</th>";
+                                        echo "<th>" . $valor['dueno'] . "</th>";
                                         if(!is_null($primer_mes)) {
                                             for ($i = $primer_mes; $i <= $ultimo_mes; $i++) {
                                                 echo "<td>$valor[$i]</td>";

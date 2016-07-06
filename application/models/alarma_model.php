@@ -19,8 +19,9 @@ class Alarma_model extends CI_Model {
 	/* TIPOS ALARMAS */
 	public function get_alarmas()
 	{
-		$query = $this->db->select('code,brand as fabricante,alarm')
+		$query = $this->db->select('code,brand as fabricante,alarm,client_alarm, client as dueno')
 			->join('brand_alarm','brand_alarm.id_brand_alarm=alarm.brand_alarm')
+			->join('client','client.id_client=alarm.client_alarm')
 			->order_by('alarm ASC')
 			->get('alarm');
 
@@ -33,12 +34,12 @@ class Alarma_model extends CI_Model {
 	 */
 	public function get_sistemas_seguridad_totales() {
 		$sql = "
-            SELECT sum(m.cantidad) as total,a.alarm as alarm,month(h.fecha) as mes
+            SELECT sum(m.cantidad) as total,a.alarm as alarm,month(h.fecha) as mes,client_alarm,a.code as code
             FROM demoreal.material_incidencias as m
             INNER JOIN historico_temp h ON h.id_incidencia=m.id_incidencia
             INNER JOIN alarm a ON a.id_alarm = m.id_alarm
             WHERE m.id_alarm IS NOT NULL
-            GROUP BY a.alarm,mes
+            GROUP BY a.alarm,client_alarm,mes
             ORDER BY a.alarm ASC";
 //	INNER JOIN brand_alarm b ON b.id_brand_alarm=a.brand_alarm
 		$query_1 = $this->db->query($sql);
@@ -58,21 +59,22 @@ class Alarma_model extends CI_Model {
 		if(!is_null($array))
 		{
 			foreach($alarmas as $alarma)  {
-				$data[$alarma->alarm]['code'] = $alarma->code;
-				$data[$alarma->alarm]['fabricante'] = $alarma->fabricante;
+				$data[$alarma->alarm."_".$alarma->client_alarm]['code'] = $alarma->code;
+				$data[$alarma->alarm."_".$alarma->client_alarm]['fabricante'] = $alarma->fabricante;
+				$data[$alarma->alarm."_".$alarma->client_alarm]['dueno'] = $alarma->dueno;
+				$data[$alarma->alarm."_".$alarma->client_alarm]['client_alarm'] = $alarma->client_alarm;
 				for ($i=$min;$i<=$max;$i++) {
 					foreach($array as $a) {
-						if (($a->mes == $i) && ($a->alarm == $alarma->alarm)) {
-							$data[$alarma->alarm][$i] = $a->total;
+						if (($a->mes == $i) && ($a->client_alarm == $alarma->client_alarm) && ($a->code == $alarma->code) && ($a->alarm == $alarma->alarm)) {
+							$data[$alarma->alarm."_".$alarma->client_alarm][$i] = $a->total;
 							break;
 						} else {
-							$data[$alarma->alarm][$i] = "0";
+							$data[$alarma->alarm."_".$alarma->client_alarm][$i] = "0";
 						}
 					}
 				}
 			}
 		}
-		//print_r($data); exit;
 		return $data;
 	}
 	/*
@@ -97,8 +99,8 @@ class Alarma_model extends CI_Model {
 
 		$valor_resultado = $this->get_array_sistemas_seguridad($resultado,$rango_meses->min,$rango_meses->max,$alarmas);
 
-		$arr_titulos = array('Alarma','Código','Fabricante');
-		$camp=array('tipo_alarma','code','fabricante');
+		$arr_titulos = array('Alarma','Código','Fabricante','Dueño');
+		$camp=array('tipo_alarma','code','fabricante','dueno');
 		foreach($meses_columna as $key => $mes) {
 			array_push($arr_titulos,$mes);
 			array_push($camp,$key);
@@ -110,10 +112,11 @@ class Alarma_model extends CI_Model {
 		$contador=1;
 		foreach($valor_resultado as $key=>$campos)
 		{
+			$alarma=explode("_",$key);
 			foreach($camp as $c=>$valor)
 			{
 				if($c==0){
-					$datos[$contador][$c] = $key;
+					$datos[$contador][$c] = $alarma[0];
 				}else {
 					$datos[$contador][$c] = $campos[$valor];
 				}
