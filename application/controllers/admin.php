@@ -6398,7 +6398,7 @@ class Admin extends CI_Controller
             $valor_resultados_1 = $this->informe_model->get_array_incidencias_totales($resultados_1);
 
 
-            $dias_operativos = $this->informe_model->get_dias_operativos_mes($rango_meses);
+            $dias_operativos = $this->informe_model->get_dias_operativos_mes($rango_meses,$este_anio);
             $total_dias_operativos = $this->informe_model->get_total_array($dias_operativos);
 
 
