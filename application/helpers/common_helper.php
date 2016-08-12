@@ -39,7 +39,7 @@ function contar_domingos($fechaInicio,$fechaFin)
 }//fin de domingos
 
 
-/*Funcion que devuelve los dias domingo que caen entre 2 fechas*/
+/*Funcion que devuelve los dias que caen entre 2 fechas excepto domingos*/
 function contar_dias_excepto($mes,$anio,$pasarDias=array('Sun'),$dia_actual = NULL)
 {
 
@@ -47,10 +47,11 @@ function contar_dias_excepto($mes,$anio,$pasarDias=array('Sun'),$dia_actual = NU
     $total_dias = 0;
 
     $fecha1 = strtotime(date($anio.'-'.$mes.'-01'));
-    $fecha2 = strtotime(date($anio.'-'.$mes.'-t'));
+    //$fecha2 = strtotime(date($anio.'-'.$mes.'-t'));
+    $fecha2=strtotime(date($anio.'-'.$mes.'-'.(date("d",mktime(0,0,0,$mes+1,1,$anio)-1))));
 
     for($fecha1;$fecha1<=$fecha2;$fecha1=strtotime('+1 day ' . date('Y-m-d',$fecha1))){
-        if(!is_null($dia_actual) && strcmp(date('Y-m-d',$fecha1),date("Y-m-".$dia_actual)) ==0) break;
+        if(!is_null($dia_actual) && ($anio==date("Y")) && strcmp(date('Y-m-d',$fecha1),date("Y-m-".$dia_actual)) ==0) break;
         foreach($pasarDias as $dia) {
 
             if ((strcmp(date('D', $fecha1), $dia) == 0)) {
