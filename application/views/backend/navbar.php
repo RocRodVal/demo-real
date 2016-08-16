@@ -49,8 +49,8 @@
                                 </li>
                             </ul>
                         </li>
-                    <?php $estado_pedidos = array("pedidos","abiertos","finalizados","operar_pedido"); ?>
-                    <li <?=(($this->uri->segment(2)==='pedidos') || ($this->uri->segment(3)==='abiertos') || ($this->uri->segment(3)==='finalizados') || ($this->uri->segment(2)==='operar_pedido'))?'class="active"':''?>>
+                    <?php $estado_pedidos = array("pedidos","abiertos","finalizados","operar_pedido","imprimir_pedido"); ?>
+                    <li <?=(($this->uri->segment(2)==='pedidos') || ($this->uri->segment(3)==='abiertos') || ($this->uri->segment(3)==='finalizados') || ($this->uri->segment(2)==='operar_pedido') || ($this->uri->segment(2)==='imprimir_pedido'))?'class="active"':''?>>
                         <a href="#"><i class="fa fa-dashboard fa-file-text-o"></i> Estado pedidos  <span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level">
                             <li><a <?=($this->uri->segment(3)==='abiertos')?'class="active"':''?> href="<?=site_url($acceso.'/pedidos/abiertos')?>">Pedidos abiertos &raquo;</a></li>
