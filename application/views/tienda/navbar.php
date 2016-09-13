@@ -15,7 +15,7 @@
             <div class="navbar-default sidebar" role="navigation">
                 <div class="sidebar-nav navbar-collapse">
                     <ul class="nav" id="side-menu" style="margin-top:20px;">
-                        <?php $estado_incidencias = array("estado_incidencias");
+                        <?php $estado_incidencias = array("estado_incidencias","detalle_incidencia");
                         $estado_incidencias_inner = array();
                         ?>
 

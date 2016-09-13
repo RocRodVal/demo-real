@@ -236,9 +236,12 @@ class Incidencia_model extends CI_Model {
 	 *  filtradas si procede, y el subconjunto limitado paginado si procede
 	 *
 	 * */
-    public function get_estado_incidencias($page = 1, $cfg_pagination = NULL,$array_orden= NULL,$filtros=NULL, $tipo="abiertas") {
+    public function get_estado_incidencias($page = 1, $cfg_pagination = NULL,$array_orden= NULL,$filtros=NULL, $tipo="abiertas",$arr_agentes_excluidos=NULL) {
 
-        $arr_agentes_excluidos = $this->chat_model->get_agentes_excluidos();
+        if (empty($arr_agentes_excluidos)) {
+           // echo "entra en el vario";
+            $arr_agentes_excluidos = $this->chat_model->get_agentes_excluidos();
+        }
         $agentes_excluidos = "";
 
         if(count($arr_agentes_excluidos)  > 0){
@@ -253,16 +256,18 @@ class Incidencia_model extends CI_Model {
                            (SELECT brand_device.brand from brand_device  WHERE id_brand_device = fabricante) as brand,
                            (SELECT COUNT(*)
                                 FROM chat
-                                JOIN incidencias inc ON chat.id_incidencia = inc.id_incidencia
-                                JOIN pds  ON pds.id_pds = inc.id_pds
+                               
                                 JOIN agent ON chat.agent = agent.sfid
                                 WHERE chat.status = 'Nuevo'
                                 AND incidencias.id_incidencia = chat.id_incidencia
-                                AND agent.type NOT IN ($agentes_excluidos)) as nuevos",FALSE)
-
+                                AND agent.type NOT IN ($agentes_excluidos)) as nuevos,device.device, display.display",FALSE)
+/*
+ *  JOIN incidencias inc ON chat.id_incidencia = inc.id_incidencia
+                                JOIN pds  ON pds.id_pds = inc.id_pds
+ */
 
                  ->join('pds','incidencias.id_pds = pds.id_pds','left outer')
-                 //->join('intervenciones_incidencias','intervenciones_incidencias.id_incidencia= incidencias.id_incidencia','left')
+                 ->join('intervenciones_incidencias','intervenciones_incidencias.id_incidencia= incidencias.id_incidencia','left')
                  ->join('pds_supervisor','pds.id_supervisor= pds_supervisor.id','left')
                  ->join('province','pds.province= province.id_province','left')
                  ->join('displays_pds','incidencias.id_displays_pds= displays_pds.id_displays_pds','left outer')
@@ -288,10 +293,7 @@ class Incidencia_model extends CI_Model {
         if(isset($filtros["id_provincia"])  && !empty($filtros["id_provincia"]))    $this->db->where('province.id_province',$filtros['id_provincia']);
 
         if(isset($filtros["reference"])     && !empty($filtros["reference"]))       $this->db->where('reference',$filtros['reference']);
-        if(isset($filtros["id_intervencion"])&& !empty($filtros["id_intervencion"])){
-            $this->db->where('intervenciones_incidencias.id_intervencion',$filtros['id_intervencion'])
-                ->join('intervenciones_incidencias','intervenciones_incidencias.id_incidencia= incidencias.id_incidencia','left');
-        }
+        if(isset($filtros["id_intervencion"])&& !empty($filtros["id_intervencion"]))$this->db->where('intervenciones_incidencias.id_intervencion',$filtros['id_intervencion']);
 
         if(isset($filtros["id_tipo"])       && !empty($filtros["id_tipo"]))         $this->db->where('pds.id_tipo',$filtros['id_tipo']);
         if(isset($filtros["id_subtipo"])    && !empty($filtros["id_subtipo"]))      $this->db->where('pds.id_subtipo',$filtros['id_subtipo']);
@@ -320,7 +322,8 @@ class Incidencia_model extends CI_Model {
 
         $query =   $this->db->get('incidencias',$cfg_pagination['per_page'], ($page-1) * $cfg_pagination['per_page']);
          //
-      //  echo $this->db->last_query();
+       // echo $this->db->last_query();
+      //  exit;
 
         return $query->result();
     }
@@ -714,7 +717,7 @@ class Incidencia_model extends CI_Model {
         /* Obtener el resultado */
         $query =  $this->db->get('incidencias')->row();
 
-        //echo $this->db->last_query();
+      //  echo $this->db->last_query();
 
         return $query->cantidad;
 
