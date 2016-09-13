@@ -338,7 +338,7 @@ class Admin extends CI_Controller
             }
 
             $per_page = 100;
-            $total_incidencias =10000;// $this->incidencia_model->get_estado_incidencias_quantity($array_sesion,$tipo);   // Sacar el total de incidencias, para el paginador
+            $total_incidencias = $this->incidencia_model->get_estado_incidencias_quantity($array_sesion,$tipo);   // Sacar el total de incidencias, para el paginador
             $cfg_pagination = $this->paginationlib->init_pagination("admin/estado_incidencias/$tipo/page/",$total_incidencias,$per_page,$segment);
 
 
