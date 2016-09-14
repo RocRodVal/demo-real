@@ -265,21 +265,25 @@
 		                                <td><?php echo $incidencia->reference ?></td>
 		                                <td><?php echo date_format(date_create($incidencia->fecha), 'd/m/Y'); ?></td>
 		                                <?php 
-		                                if (!isset($incidencia->device['device']))
+		                                //if (!isset($incidencia->device['device']))
+                                        if (!isset($incidencia->device))
 		                                {
 		                                	$dispositivo = 'Retirado';
 		                                }
 		                                else
 		                                {
-		                                	$dispositivo = $incidencia->device['device']; 
+                                            $dispositivo = $incidencia->device;
+		                                	//$dispositivo = $incidencia->device['device'];
 		                                }
-		                                if (!isset($incidencia->display['display']))
+		                                if (!isset($incidencia->display))
+                                            //if (!isset($incidencia->display['display']))
 		                                {
 		                                	$mueble = 'Retirado';
 		                                }
 		                                else
 		                                {
-		                                	$mueble = $incidencia->display['display'];
+		                                	$mueble = $incidencia->display;
+                                            //$mueble = $incidencia->display['display'];
 		                                }		                                		
 		                                ?>
 
@@ -317,7 +321,7 @@
                                         <?php /*<td><strong><?php echo $incidencia->status ?></strong></td>*/?>
 		                                <td><strong><?php echo $incidencia->status_pds ?></strong></td>
 
-		                                <td><a href="<?=site_url($controlador.'/detalle_incidencia/'.$incidencia->id_incidencia.'/'.$incidencia->id_pds)?>#chat"><strong><i class="fa fa-whatsapp <?=($incidencia->nuevos['nuevos']<>'0')?'chat_nuevo':'chat_leido'?>"></i></strong></a></td>
+		                                <td><a href="<?=site_url($controlador.'/detalle_incidencia/'.$incidencia->id_incidencia.'/'.$incidencia->id_pds)?>#chat"><strong><i class="fa fa-whatsapp <?=($incidencia->nuevos<>'0')?'chat_nuevo':'chat_leido'?>"></i></strong></a></td>
 		                            </tr>
 		                        <?php
 		                        }

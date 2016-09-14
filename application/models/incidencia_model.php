@@ -328,7 +328,7 @@ class Incidencia_model extends CI_Model {
 
         $query =   $this->db->get('incidencias',$cfg_pagination['per_page'], ($page-1) * $cfg_pagination['per_page']);
          //
-        echo "<br><br>".$this->db->last_query();
+      //  echo "<br><br>".$this->db->last_query();
       //  exit;
 
         return $query->result();
@@ -655,9 +655,9 @@ class Incidencia_model extends CI_Model {
             ->join('devices_pds','incidencias.id_devices_pds=devices_pds.id_devices_pds','left outer')
             ->join('device','devices_pds.id_device=device.id_device','left outer')
             ->join('territory','territory.id_territory=pds.territory','left outer')
-            ->join('brand_device','device.brand_device = brand_device.id_brand_device','left outer')
-            ->join('intervenciones_incidencias','intervenciones_incidencias.id_incidencia= incidencias.id_incidencia','left')
-            ->join('type_incidencia','type_incidencia.id_type_incidencia= incidencias.id_type_incidencia','left');
+            ->join('brand_device','device.brand_device = brand_device.id_brand_device','left outer');
+         //   ->join('intervenciones_incidencias','intervenciones_incidencias.id_incidencia= incidencias.id_incidencia','left')
+         //   ->join('type_incidencia','type_incidencia.id_type_incidencia= incidencias.id_type_incidencia','left');
 
 
         /** Aplicar filtros desde el array, de manera manual **/
@@ -693,11 +693,15 @@ class Incidencia_model extends CI_Model {
         }
         if(isset($filtros["id_tipo_incidencia"]) && !empty($filtros["id_tipo_incidencia"])) {
             //$this->db->where('incidencias.fail_device','1');
+            $this->db->join('type_incidencia','type_incidencia.id_type_incidencia= incidencias.id_type_incidencia','left');
             $this->db->where('type_incidencia.id_type_incidencia',$filtros['id_tipo_incidencia']);
         }
 
         if(isset($filtros["reference"]) && !empty($filtros["reference"])) $this->db->where('reference',$filtros['reference']);
-        if(isset($filtros["id_intervencion"]) && !empty($filtros["id_intervencion"])) $this->db->where('intervenciones_incidencias.id_intervencion',$filtros['id_intervencion']);
+        if(isset($filtros["id_intervencion"]) && !empty($filtros["id_intervencion"]))  {
+            $this->db->join('intervenciones_incidencias','intervenciones_incidencias.id_incidencia= incidencias.id_incidencia','left');
+            $this->db->where('intervenciones_incidencias.id_intervencion',$filtros['id_intervencion']);
+        }
 
         if(isset($filtros["id_tipo"]) && !empty($filtros["id_tipo"])) {
             $this->db->where('pds.id_tipo',$filtros['id_tipo']);
@@ -723,7 +727,7 @@ class Incidencia_model extends CI_Model {
         /* Obtener el resultado */
         $query =  $this->db->get('incidencias')->row();
 
-        echo $this->db->last_query();
+       // echo $this->db->last_query();
 
         return $query->cantidad;
 
