@@ -274,21 +274,21 @@
                                             <td><?php echo $incidencia->reference ?></td>
                                             <td><?php echo date_format(date_create($incidencia->fecha), 'd/m/Y'); ?></td>
                                             <?php
-                                            if (!isset($incidencia->device['device']))
+                                            if (!isset($incidencia->device))
                                             {
                                                 $dispositivo = 'Retirado';
                                             }
                                             else
                                             {
-                                                $dispositivo = $incidencia->device['device'];
+                                                $dispositivo = $incidencia->device;
                                             }
-                                            if (!isset($incidencia->display['display']))
+                                            if (!isset($incidencia->display))
                                             {
                                                 $mueble = 'Retirado';
                                             }
                                             else
                                             {
-                                                $mueble = $incidencia->display['display'];
+                                                $mueble = $incidencia->display;
                                             }
                                             ?>
                                             <td class="principal"><?=($incidencia->alarm_display==1)?'Mueble: '.$mueble:'Dispositivo: '.$dispositivo?></td>

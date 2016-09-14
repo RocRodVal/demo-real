@@ -308,13 +308,14 @@ class Tienda extends CI_Controller {
             $data['n_inicial'] = $bounds["n_inicial"];
             $data['n_final'] = $bounds["n_final"];
             $data["pagination_helper"]   = $this->pagination;
+            $arr_agentes_excluidos=array(1,9,11,12);
 
-            $incidencias = $this->incidencia_model->get_estado_incidencias($page,$cfg_pagination,$array_orden,$array_sesion,$tipo);
+            $incidencias = $this->incidencia_model->get_estado_incidencias($page,$cfg_pagination,$array_orden,$array_sesion,$tipo,$arr_agentes_excluidos);
 
             foreach ($incidencias as $incidencia) {
-                $incidencia->device = $this->sfid_model->get_device($incidencia->id_devices_pds);
-                $incidencia->display = $this->sfid_model->get_display($incidencia->id_displays_pds);
-                $incidencia->nuevos  = $this->chat_model->contar_nuevos($incidencia->id_incidencia,$incidencia->reference);
+               // $incidencia->device = $this->sfid_model->get_device($incidencia->id_devices_pds);
+                //$incidencia->display = $this->sfid_model->get_display($incidencia->id_displays_pds);
+               // $incidencia->nuevos  = $this->chat_model->contar_nuevos($incidencia->id_incidencia,$incidencia->reference);
                 $incidencia->intervencion = $this->intervencion_model->get_intervencion_incidencia($incidencia->id_incidencia);
             }
 

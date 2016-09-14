@@ -16,7 +16,7 @@
             <div class="navbar-default sidebar" role="navigation">
                 <div class="sidebar-nav navbar-collapse">
                     <ul class="nav" id="side-menu" style="margin-top:20px;">
-                        <?php $estado_incidencias = array("estado_incidencias","incidencias_exp","cdm_incidencias");
+                        <?php $estado_incidencias = array("estado_incidencias","incidencias_exp","cdm_incidencias","operar_incidencia");
                            // $cdm = array('cdm_incidencias');
                             $estado_incidencias_inner = array();
                             $arr_anios = array();
@@ -30,8 +30,8 @@
                             <a href="#"><i class="fa fa-dashboard fa-fw"></i> Estado incidencias <span class="fa arrow"></span></a>
 
                             <ul class="nav nav-second-level">
-                                <li><a <?=($this->uri->segment(2)==='abiertas')?'class="active"':''?> href="<?=site_url($acceso.'/estado_incidencias/abiertas')?>"> Incidencias abiertas &raquo;</a></li>
-                                <li><a <?=($this->uri->segment(2)==='cerradas')?'class="active"':''?> href="<?=site_url($acceso.'/estado_incidencias/cerradas')?>"> Incidencias cerradas &raquo;</a></li>
+                                <li><a <?=(($this->uri->segment(2)==='estado_incidencias') && ($this->uri->segment(3)==='abiertas')) ?'class="active"':''?> href="<?=site_url($acceso.'/estado_incidencias/abiertas')?>"> Incidencias abiertas &raquo;</a></li>
+                                <li><a <?=(($this->uri->segment(2)==='estado_incidencias') && ($this->uri->segment(3)==='cerradas'))?'class="active"':''?> href="<?=site_url($acceso.'/estado_incidencias/cerradas')?>"> Incidencias cerradas &raquo;</a></li>
                               <?php /*  <li><a <?=($this->uri->segment(3)==='incidencias')?'class="active"':''?> href="<?=site_url($acceso.'/incidencias')?>"> Exportar todas &raquo;</a></li> */ ?>
                                 <li><a <?=($this->uri->segment(2)==='incidencias_exp')?'class="active"':''?> href="<?=site_url($acceso.'/incidencias_exp')?>"> Exportar todas &raquo;</a></li>
                                 <li <?=($this->uri->segment(2)==='cdm_incidencias')?'class="active"':''?>>
