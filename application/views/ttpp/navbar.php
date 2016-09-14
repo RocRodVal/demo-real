@@ -29,7 +29,7 @@
                         {
                         ?>
 
-                            <?php $estado_incidencias = array("estado_incidencias");
+                            <?php $estado_incidencias = array("estado_incidencias","detalle_incidencia");
                             $estado_incidencias_inner = array();
                             ?>
 
