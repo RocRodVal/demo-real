@@ -226,7 +226,7 @@
 
                             <p><a href="<?=base_url()?>territorio/exportar_incidencias/cerradas" class="btn exportar"><i class="glyphicon glyphicon-file"></i> Exportar Excel</a></p>
                             <div class="table-responsive">
-                                <table class="table table-striped table-bordered table-hover table-sorting" id="table_incidencias_cerradas"  data-order-form="form_orden_cerradas">
+                                <table class="table table-striped table-bordered table-hover table-sorting" id="table_incidencias_dashboard"  data-order-form="form_orden">
                                     <thead>
                                     <tr>
                                         <th class="sorting" data-rel="incidencias.id_incidencia"    data-order="">Ref.</th>
@@ -320,7 +320,7 @@
                                     ?>
                                     </tbody>
                                 </table>
-                                <form action="<?=base_url()?>territorio/estado_incidencias/cerradas" method="post" id="form_orden_cerradas">
+                                <form action="<?=base_url()?>territorio/estado_incidencias/cerradas" method="post" id="form_orden">
                                     <input type="hidden" name="form_orden_campo_orden"  value="">
                                     <input type="hidden" name="form_orden_orden_campo" value="">
                                     <input type="hidden" name="form"  value="">
@@ -329,7 +329,7 @@
                                 </form>
                                 <script>
                                     <?php if(!empty($campo_orden) && !empty($orden_campo)) {?>
-                                        marcarOrdenacion('table_incidencias_cerradas','<?=$campo_orden?>','<?=$orden_campo ?>');
+                                        marcarOrdenacion('table_incidencias_dashboard','<?=$campo_orden?>','<?=$orden_campo ?>');
                                     <?php } ?>
                                 </script>
                             </div>

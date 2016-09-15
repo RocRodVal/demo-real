@@ -249,7 +249,7 @@
 		                            <th                                                                     >Interv.</th>
 		                            <?php /*<th class="sorting" data-rel="incidencias.status"    data-order="">Estado SAT</th>*/ ?>
                                     <th class="sorting" data-rel="incidencias.status_pds"    data-order="">Estado PDS</th>
-		                            <th>Chat offline</th>
+		                            <th class="sorting" data-rel="nuevos"    data-order="desc">Chat offline</th>
 		                        </tr>
 		                        </thead>
 		                        <tbody>

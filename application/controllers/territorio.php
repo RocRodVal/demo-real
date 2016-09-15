@@ -286,9 +286,9 @@ class Territorio extends CI_Controller {
 
             // viene del form de ordenacion
             $do_orden = $this->input->post('ordenar');
-            if($do_orden==='true') {
+           // if($do_orden==='true') {
                 $array_orden = $this->set_orden($this->input->post('form'));
-            }
+            //}
 
             // Obtener el campo a ordenar, primero de Session y despues del post, si procede..
             $array_orden = $this->get_orden();
