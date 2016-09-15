@@ -1,12 +1,13 @@
 <?php
 if (!empty($tipoC)) {
     if($mensajes_nuevosC > 1){ ?>
-        <a href="../estado_incidencias/cerradas" data-rel="nuevos"  data-order="desc" data-order-form="form_orden_<?=$tipo?>" class="mensajes_nuevosC blink">Tienes <?=$mensajes_nuevosC?> mensajes nuevos de inc. <?=ucwords($tipoC)?></a>
+        <a href="../estado_incidencias/cerradas?campo_orden=nuevos&orden_campo=desc" data-rel="nuevos"  data-order="desc" data-order-form="form_orden_<?=$tipoC?>" class="mensajes_nuevosC blink">Tienes <?=$mensajes_nuevosC?> mensajes nuevos de inc. <?=ucwords($tipoC)?></a>
         <?php
     }
     elseif($mensajes_nuevosC == 1)
+        //?orden_campo=desc&campo_orden=nuevos
     {?>
-        <a href="../estado_incidencias/cerradas" data-rel="nuevos"  data-order="desc" data-order-form="form_orden_<?=$tipo?>" class="mensajes_nuevosC blink">Tienes <?=$mensajes_nuevosC?> mensaje nuevo de inc. <?=ucwords($tipoC)?></a>
+        <a href="../estado_incidencias/cerradas?campo_orden=nuevos&orden_campo=desc" data-rel="nuevos"  data-order="desc" data-order-form="form_orden_<?=$tipoC?>" class="mensajes_nuevosC blink">Tienes <?=$mensajes_nuevosC?> mensaje nuevo de inc. <?=ucwords($tipoC)?></a>
     <?php }
 }
 else {

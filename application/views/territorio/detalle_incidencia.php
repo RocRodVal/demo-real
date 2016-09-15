@@ -3,7 +3,8 @@
     <div class="row">
         <div class="col-lg-12">
             <h1 class="page-header"><?php echo $title ?>
-            	<a onclick="history.go(-1);return false;" class="btn btn-danger right">Volver</a>
+            	<!--<a onclick="history.go(-1);return false;" class="btn btn-danger right">Volver</a>-->
+                <a href="<?=site_url('territorio/estado_incidencias/'. ((($status_pds !="Resuelta" ) && ($status_pds !="Cerrada" ) && ($status_pds !="Cancelada" ) && ($status_pds !="Pendiente recogida" ) && ($status_pds !="Finalizada" ))? "abiertas": "cerradas")); ?>" class="btn btn-danger right">Volver</a>
             </h1>
         </div>
     </div>

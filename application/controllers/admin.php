@@ -189,11 +189,16 @@ class Admin extends CI_Controller
 
     public function set_orden($formulario)
     {
-
+        //print_r($_GET);
         $array_orden = array();
-        $campo_orden = $this->input->post($formulario . '_campo_orden');
-        $orden_campo = $this->input->post($formulario . '_orden_campo');
+        if (!empty($_GET)) {
+            $campo_orden = $_GET['campo_orden'];
+            $orden_campo = $_GET['orden_campo'];
+        }else {
 
+            $campo_orden = $this->input->post($formulario . '_campo_orden');
+            $orden_campo = $this->input->post($formulario . '_orden_campo');
+        }
         $this->session->set_userdata('campo_orden', $campo_orden);
         $this->session->set_userdata('orden_campo', $orden_campo);
 
@@ -209,6 +214,7 @@ class Admin extends CI_Controller
         $sess_campo_orden = $this->session->userdata('campo_orden');
         $sess_orden_campo = $this->session->userdata('orden_campo');
         $array_orden = NULL;
+
         if(!empty($sess_campo_orden)){
             $array_orden = array();
             if(!empty($sess_orden_campo)){
@@ -310,10 +316,13 @@ class Admin extends CI_Controller
 
 
             // viene del form de ordenacion
-            $do_orden = $this->input->post('ordenar');
-            if($do_orden==='true') {
-                $array_orden = $this->set_orden($this->input->post('form'));
-            }
+            //$do_orden = $this->input->post('ordenar');
+            //print_r($this->input->post('form'));
+            //if($do_orden==='true') {
+            $array_orden = $this->set_orden($this->input->post('form'));
+            //}else {
+
+            //}
 
             // Obtener el campo a ordenar, primero de Session y despues del post, si procede..
             $array_orden = $this->get_orden();
