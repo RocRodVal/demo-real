@@ -402,7 +402,7 @@ class Informe_model extends CI_Model
             $query = $this->db->get($aQuery["table"]);
         }
 
-print_r($this->db->last_query());
+//print_r($this->db->last_query());
         //exit;
         return $query->result();
 
