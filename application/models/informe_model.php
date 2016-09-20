@@ -212,12 +212,14 @@ class Informe_model extends CI_Model
             $aQuery["joins"]["displays_pds"]  = "displays_pds.id_pds = pds.id_pds";
             $aQuery["joins"]["display"]  = "display.id_display = displays_pds.id_display";
             $aQuery["where"]["displays_pds.status"] = "Alta";
+           // $aQuery["where"]["displays_pds.id_display"] = "devices_pds.id_display";
         }
 
         if(!is_null($id_device) || !is_null($brand_device)){
             $aQuery["joins"]["devices_pds"]  = "devices_pds.id_pds=pds.id_pds";
             $aQuery["joins"]["device"]  = "device.id_device=devices_pds.id_device";
             $aQuery["where"]["devices_pds.status"] = "Alta";
+
         }
 
 
@@ -227,7 +229,12 @@ class Informe_model extends CI_Model
         if(!is_null($id_tipologia)) $aQuery["where_in"]["pds.id_tipologia"] = $id_tipologia;
 
 
-        if(!is_null($id_display))   $aQuery["where_in"]["displays_pds.id_display"] = $id_display;
+        if(!is_null($id_display)) {
+            $aQuery["where_in"]["displays_pds.id_display"] = $id_display;
+            if (!is_null($id_device)) {
+                $aQuery["where_in"]["devices_pds.id_display"] = $id_display;
+            }
+        }
         if(!is_null($id_device))    $aQuery["where_in"]["devices_pds.id_device"] = $id_device;
         if(!is_null($territory))    $aQuery["where_in"]["pds.territory"] = $territory;
         if(!is_null($brand_device)) $aQuery["where_in"]["device.brand_device"] = $brand_device;
@@ -395,7 +402,8 @@ class Informe_model extends CI_Model
             $query = $this->db->get($aQuery["table"]);
         }
 
-//print_r($this->db->last_query()); exit;
+//print_r($this->db->last_query());
+        //exit;
         return $query->result();
 
     }
