@@ -2999,7 +2999,7 @@ class Admin extends CI_Controller
         $xcrud_1->order_by('position', 'asc');
         $xcrud_1->show_primary_ai_column(true);
         $xcrud_1->unset_numbers();
-        $xcrud_1->start_minimized(false);
+        $xcrud_1->start_minimized(true);
 
         /*$xcrud_2 = xcrud_get_instance();
         $xcrud_2->table('alarms_display_pds');
@@ -3021,25 +3021,32 @@ class Admin extends CI_Controller
         $xcrud_3->table('devices_pds');
         $xcrud_3->table_name('Inventario dispositivos');
         $xcrud_3->relation('client_type_pds', 'client', 'id_client', 'client');
-        $xcrud_3->relation('id_pds', 'pds', 'id_pds', 'reference');
-        $xcrud_3->relation('id_displays_pds', 'displays_pds', 'id_displays_pds', 'id_displays_pds');
-        $xcrud_3->relation('id_display', 'display', 'id_display', 'display');
-        $xcrud_3->relation('id_device', 'device', 'id_device', 'device');
+        $xcrud_3->relation('id_pds', 'pds', 'id_pds', 'reference',array('status' => 'Alta'));
+        //$xcrud_3->relation('id_displays_pds', 'displays_pds', 'id_displays_pds', 'id_displays_pds',array('status' => 'Alta'),'','','','','id_pds','id_pds');
+        $xcrud_3->relation('id_display', 'display', 'id_display', 'display',array('status' => 'Alta','positions >'=>0));
+
+        $xcrud_3->relation('id_device', 'device', 'id_device', 'device',array('status' => 'Alta'));
         $xcrud_3->relation('id_color_device', 'color_device', 'id_color_device', 'color_device');
         $xcrud_3->relation('id_complement_device', 'complement_device', 'id_complement_device', 'complement_device');
         $xcrud_3->relation('id_status_device', 'status_device', 'id_status_device', 'status_device');
         $xcrud_3->relation('id_status_packaging_device', 'status_packaging_device', 'id_status_packaging_device', 'status_packaging_device');
         $xcrud_3->change_type('picture_url_1', 'image');
         $xcrud_3->change_type('picture_url_2', 'image');
-        $xcrud_3->change_type('picture_url_3', 'image');
+        $xcrud_3->change_type('picture_url_3', 'image');$xcrud_3->change_type('id_displays_pds', 'image');
         $xcrud_3->modal('picture_url_1');
         $xcrud_3->modal('picture_url_2');
         $xcrud_3->modal('picture_url_3');
-        $xcrud_3->label('client_type_pds', 'Cliente')->label('id_devices_pds', 'REF.')->label('id_pds', 'SFID')->label('id_displays_pds', 'Cod. mueble')->label('id_display', 'Mueble')->label('alta', 'Fecha de alta')->label('position', 'Posición')->label('id_device', 'Dispositivo')->label('IMEI', 'IMEI')->label('mac', 'MAC')->label('serial', 'Nº de serie')->label('barcode', 'Código de barras')->label('id_color_device', 'Color')->label('id_complement_device', 'Complementos')->label('id_status_device', 'Estado dispositivo')->label('id_status_packaging_device', 'Estado packaging')->label('picture_url_1', 'Foto #1')->label('picture_url_2', 'Foto #2')->label('picture_url_3', 'Foto #3')->label('description', 'Comentarios')->label('status', 'Estado');
-        $xcrud_3->columns('client_type_pds,id_devices_pds,id_pds,id_displays_pds,id_display,id_device,position,IMEI,mac,status');
-        $xcrud_3->fields('client_type_pds,id_devices_pds,id_pds,id_displays_pds,id_display,alta,id_device,position,serial,IMEI,mac,barcode,id_color_device,id_complement_device,id_status_device,id_status_packaging_device,picture_url_1,picture_url_2,picture_url_3,description,status');
+        $xcrud_3->label('client_type_pds', 'Cliente')->label('id_devices_pds', 'REF.')->label('id_pds', 'SFID')->label('id_display', 'Mueble')->label('alta', 'Fecha de alta')->label('position', 'Posición')->label('id_device', 'Dispositivo')->label('IMEI', 'IMEI')->label('mac', 'MAC')->label('serial', 'Nº de serie')->label('barcode', 'Código de barras')->label('id_color_device', 'Color')->label('id_complement_device', 'Complementos')->label('id_status_device', 'Estado dispositivo')->label('id_status_packaging_device', 'Estado packaging')->label('picture_url_1', 'Foto #1')->label('picture_url_2', 'Foto #2')->label('picture_url_3', 'Foto #3')->label('description', 'Comentarios')->label('status', 'Estado');
+        $xcrud_3->columns('client_type_pds,id_devices_pds,id_pds,id_display,id_device,position,IMEI,mac,status');
+        $xcrud_3->fields('client_type_pds,id_devices_pds,id_displays_pds,id_pds,id_display,alta,id_device,position,serial,IMEI,mac,barcode,id_color_device,id_complement_device,id_status_device,id_status_packaging_device,picture_url_1,picture_url_2,picture_url_3,description,status');
 
-         $xcrud_3->where('status',array('Alta','Incidencia'));
+        $xcrud_3->before_insert('obtener_id_displays_pds');
+        $xcrud_3->before_update('obtener_id_displays_pds');
+        //$xcrud_3->validation_required('lastName',2)->validation_required('firstName',2)->validation_required('jobTitle');
+        //$xcrud_3->validation_required('email');
+       // $xcrud_3->validation_pattern('reference','email');
+
+        $xcrud_3->where('status',array('Alta','Incidencia'));
         $xcrud_3->order_by('id_pds', 'asc');
         $xcrud_3->order_by('id_displays_pds', 'asc');
         $xcrud_3->order_by('position', 'asc');
@@ -3258,17 +3265,17 @@ class Admin extends CI_Controller
             $xcrud->table('devices_pds');
             $xcrud->table_name(' ');
             $xcrud->relation('client_type_pds', 'client', 'id_client', 'client');
-            $xcrud->relation('id_pds', 'pds', 'id_pds', 'reference');
-            $xcrud->relation('id_displays_pds', 'displays_pds', 'id_displays_pds', 'id_displays_pds');
-            $xcrud->relation('id_display', 'display', 'id_display', 'display');
-            $xcrud->relation('id_device', 'device', 'id_device', 'device');
+            $xcrud->relation('id_pds', 'pds', 'id_pds', 'reference',array('status' => 'Alta'));
+            $xcrud->relation('id_displays_pds', 'displays_pds', 'id_displays_pds', 'id_displays_pds',array('status' => 'Alta'));
+            $xcrud->relation('id_display', 'display', 'id_display', 'display',array('status' => 'Alta'));
+            $xcrud->relation('id_device', 'device', 'id_device', 'device',array('status' => 'Alta'));
             $xcrud->relation('id_color_device', 'color_device', 'id_color_device', 'color_device');
             $xcrud->relation('id_complement_device', 'complement_device', 'id_complement_device', 'complement_device');
             $xcrud->relation('id_status_device', 'status_device', 'id_status_device', 'status_device');
             $xcrud->relation('id_status_packaging_device', 'status_packaging_device', 'id_status_packaging_device', 'status_packaging_device');
             $xcrud->label('client_type_pds', 'Cliente')->label('id_devices_pds', 'REF.')->label('id_pds', 'SFID')->label('id_displays_pds', 'Cod. mueble')->label('id_display', 'Mueble')->label('alta', 'Fecha de alta')->label('position', 'Posición')->label('id_device', 'Dispositivo')->label('IMEI', 'IMEI')->label('mac', 'MAC')->label('serial', 'Nº de serie')->label('barcode', 'Código de barras')->label('id_color_device', 'Color')->label('id_complement_device', 'Complementos')->label('id_status_device', 'Estado dispositivo')->label('id_status_packaging_device', 'Estado packaging')->label('picture_url_1', 'Foto #1')->label('picture_url_2', 'Foto #2')->label('picture_url_3', 'Foto #3')->label('description', 'Comentarios')->label('status', 'Estado');
             $xcrud->columns('client_type_pds,id_devices_pds,id_pds,id_displays_pds,id_display,id_device,position,IMEI, serial ,mac');
-            $xcrud->fields('client_type_pds,id_devices_pds,id_pds,id_displays_pds,id_display,alta,id_device,position,serial,IMEI,mac,barcode,id_color_device,id_complement_device,id_status_device,id_status_packaging_device,picture_url_1,picture_url_2,picture_url_3,description');
+            $xcrud->fields('client_type_pds,id_devices_pds,id_displays_pds,id_display,alta,id_device,position,serial,IMEI,mac,barcode,id_color_device,id_complement_device,id_status_device,id_status_packaging_device,picture_url_1,picture_url_2,picture_url_3,description');
             $xcrud->where('id_pds', $pds->id_pds);
             $xcrud->order_by('id_displays_pds', 'asc');
             $xcrud->order_by('position', 'asc');

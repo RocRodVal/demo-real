@@ -142,3 +142,21 @@ function before_list_example($list, $xcrud)
 {
     var_dump($list);
 }
+
+function obtener_id_displays_pds($postdata , $xcrud) {
+
+    $x =  Xcrud_db::get_instance();
+    //$x->db->query("SELECT id_displays_pds FROM id_dispplays_pds WHERE id_pds = " . $postdata['id_pds'] ." and id_display=".$postdata['id_display']);
+    $numero=$x->query("SELECT id_displays_pds FROM displays_pds WHERE id_pds = " . $postdata->get('id_pds')." and id_display=".$postdata->get('id_display'));
+    if($numero>0){
+        $row = $x->row();
+        $postdata->set('id_displays_pds', $row['id_displays_pds']);
+        //$xcrud->set_exception('simple_upload', 'dato obtenido '.$postdata->get('id_displays_pds'), 'error');
+        return '<input type="hidden" readonly class="xcrud-input" name="id_displays_pds" value="' . $row['id_displays_pds'] .'" />';
+    } else {
+        $xcrud->set_exception('simple_upload', 'No existe el mueble para la tienda', 'error');
+        return '<input type="hidden" readonly class="xcrud-input" name="id_displays_pds" value="" />';
+    }
+
+//return $postdata->get("id_displays_pds");
+}
