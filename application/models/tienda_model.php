@@ -2122,9 +2122,27 @@ class Tienda_model extends CI_Model {
 
 
 	}
+    public function historico_fecha($id,$status,$tabla=null) {
+        if($id != FALSE) {
+            if($tabla=="pedidos") {
+                $query = $this->db->select('pedidos_historico.fecha')
+                    ->where('pedidos_historico.id_pedido', $id)
+                    ->where('pedidos_historico.status', $status)
+                    ->get('pedidos_historico');
+            }else {
+                $query = $this->db->select('historico.fecha')
+                    ->where('historico.id_incidencia', $id)
+                    ->where('historico.status', $status)
+                    ->get('historico');
+            }
+            return $query->row_array();
+        }
+        else {
+            return FALSE;
+        }
+    }
 
-
-	public function historico_fecha($id,$status) {
+    public function historico_fecha_old($id,$status) {
 		if($id != FALSE) {
 			$query = $this->db->select('historico.fecha')
 			->where('historico.id_incidencia',$id)
