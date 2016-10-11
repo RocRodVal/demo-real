@@ -372,10 +372,10 @@ class Pedido_model extends CI_Model {
         $c="Cancelado";
         if($tipo==="abiertos") {
             $sTitleFilename = "Pedidos_abiertos";
-            $sql .= (' AND pedidos.status !="'.$f.'" AND pedidos.status !="'.$c.'" ');
+            $sql .= ' AND (pedidos.status !="'.$f.'" AND pedidos.status !="'.$c.'") ';
         }
         else {
-            $sql .= ' AND pedidos.status="'.$f.'" OR pedidos.status="'.$c. '" ';
+            $sql .= ' AND (pedidos.status="'.$f.'" OR pedidos.status="'.$c. '") ';
             $sTitleFilename = "Pedidos_finalizados";
         }
 
@@ -402,7 +402,7 @@ class Pedido_model extends CI_Model {
 
 
         $query = $this->db->query($sql);
-
+       // echo $this->db->last_query();exit;
         $resultado=$query->result();
 
         $datos = preparar_array_exportar($resultado, $arr_titulos, $excluir);

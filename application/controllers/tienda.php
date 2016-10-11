@@ -1112,9 +1112,79 @@ class Tienda extends CI_Controller {
 			redirect('tienda','refresh');
 		}
 	}
-	
 
-	public function insert_chat($id_incidencia)
+    public function insert_chat($id,$tabla='incidencia')
+    {
+        if($this->session->userdata('logged_in'))
+        {
+            $data['id_pds'] = $this->session->userdata('id_pds');
+            $data['sfid'] = $this->session->userdata('sfid');
+
+            $xcrud = xcrud_get_instance();
+            $this->load->model(array('chat_model', 'sfid_model'));
+
+            $config['upload_path'] = dirname($_SERVER["SCRIPT_FILENAME"]) . '/uploads/chats/';
+            $config['upload_url'] = base_url() . '/uploads/chats/';
+            $config['allowed_types'] = 'gif|jpg|png';
+            $new_name = $id . '-' . time();
+            $config['file_name'] = $new_name;
+            $config['overwrite'] = TRUE;
+            $config['max_size'] = '10000KB';
+
+            $this->load->library('upload', $config);
+
+            $foto = NULL;
+
+            if ($this->upload->do_upload()) {
+                $foto = $new_name.$this->upload->data()["file_ext"];
+            } else {
+                echo 'Ha fallado la carga de la foto.';
+            }
+
+            $texto_chat = $this->input->post('texto_chat');
+            $texto_chat = $this->strip_html_tags($texto_chat);
+            if($tabla=='incidencia') {
+                if ($foto != '' || $texto_chat != '' && $texto_chat != ' ') {
+                    $data = array(
+                        'fecha' => date('Y-m-d H:i:s'),
+                        'id_incidencia' => $id,
+                        'agent' => $data['sfid'],
+                        'texto' => $texto_chat,
+                        'foto' => $foto,
+                        'status' => 1,
+                    );
+                }
+            }
+            else {
+                if ($foto != '' || $texto_chat != '' && $texto_chat != ' ') {
+                    $data = array(
+                        'fecha' => date('Y-m-d H:i:s'),
+                        'id_pedido' => $id,
+                        'agent' => $data['sfid'],
+                        'texto' => $texto_chat,
+                        'foto' => $foto,
+                        'status' => 1,
+                    );
+                }
+            }
+            //print_r($data); exit;
+            $chat = $this->chat_model->insert_chat($data,$tabla);
+
+            if ($chat['add']) {
+                redirect('tienda/detalle_'.$tabla.'/' . $id.'/'.$data['id_pds']);
+            }
+
+            else{
+                redirect('tienda/detalle_'.$tabla.'/' . $id.'/'.$data['id_pds']);
+            }
+        }
+        else
+        {
+            redirect('tienda','refresh');
+        }
+    }
+
+	public function insert_chat_old($id_incidencia)
 	{
 		if($this->session->userdata('logged_in'))
 		{

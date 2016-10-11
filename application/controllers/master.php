@@ -3923,6 +3923,240 @@ class Master extends CI_Controller {
         $this->load->view('common/mantenimiento', $data);
         $this->load->view('backend/footer');
     }
+
+    /**
+     * Tabla de pedidos segun el tipo
+     */
+    public function pedidos($tipo="abiertos")
+    {
+        if ($this->session->userdata('logged_in')) {
+
+            $xcrud = xcrud_get_instance();
+            $this->load->model(array('pedido_model', 'tienda_model', 'sfid_model'));
+            $this->load->library('app/paginationlib');
+
+
+            // Comprobar si existe el segmento PAGE en la URI, si no inicializar a 1..
+            $get_page = $this->uri->segment(5); echo ($this->uri->segment(6));
+            if( $this->uri->segment(4) == "page") {
+                $page = ( ! empty($get_page) ) ? $get_page : 1 ;
+                $segment = 5;
+            }else{
+                $page = 1;
+                $segment = null;
+            }
+
+            /**
+             * Crear los filtros
+             */
+            $array_filtros = array(
+                'status'=>'',
+                'brand_device'=>'',
+                'id_display'=>'',
+                'id_device'=>'',
+                'id_pedido'=>'',
+                'reference'=>''
+            );
+
+            /* BORRAR BUSQUEDA */
+            $borrar_busqueda = $this->uri->segment(4);
+            if($borrar_busqueda === "borrar_busqueda")
+            {
+                $this->delete_filtros($array_filtros);
+                redirect(site_url("/admin/pedidos/".$tipo),'refresh');
+            }
+            // Consultar a la session si ya se ha buscado algo y guardado allí.
+            $array_sesion = $this->get_filtros($array_filtros);
+            // Buscar en el POST si hay busqueda, y si la hay usarla y guardarla además en sesion
+
+            if($this->input->post('do_busqueda')==="si") $array_sesion = $this->set_filtros($array_filtros);
+
+            /* Creamos al vuelo las variables que vienen de los filtros */
+            foreach($array_filtros as $filtro=>$value){
+                $$filtro = $array_sesion[$filtro];
+                $data[$filtro] = $array_sesion[$filtro]; // Pasamos los valores a la vista.
+            }
+
+
+            // viene del form de ordenacion
+            $do_orden = $this->input->post('ordenar');
+            if($do_orden==='true') {
+                $array_orden = $this->set_orden($this->input->post('form'));
+            }
+
+            // Obtener el campo a ordenar, primero de Session y despues del post, si procede..
+            $array_orden = $this->get_orden();
+            if(count($array_orden) > 0) {
+                foreach ($array_orden as $key => $value) {
+                    $data["campo_orden"] = $key;
+                    $data["orden_campo"] = $value;
+                }
+            }else{
+                $data["campo_orden"] = NULL;
+                $data["orden_campo"] = NULL;
+            }
+
+            if ($tipo=="abiertos") {
+                $data['title'] = 'Pedidos abiertos';
+                $data['title2'] = 'pedidos abiertos';
+            }else {
+                $data['title'] = 'Pedidos finalizados';
+                $data['title2'] = 'pedidos finalizados';
+            }
+
+
+            $per_page = 20;
+
+            $total_pedidos = $this->pedido_model->get_pedidos_quantity(0,$tipo,$array_sesion);   // Sacar el total de pedidos, para el paginador
+
+            $cfg_pagination = $this->paginationlib->init_pagination("admin/pedidos/".$tipo."/page/",$total_pedidos,$per_page,$segment);
+
+
+            $this->load->library('pagination',$cfg_pagination);
+            $this->pagination->initialize($cfg_pagination);
+
+            $bounds = $this->paginationlib->get_bounds($total_pedidos,$page,$per_page);
+
+            // Indicamos si habrá que mostrar el paginador en la vista
+            $data['show_paginator'] = $bounds["show_paginator"];
+            $data['num_resultados'] = $bounds["num_resultados"];
+            $data['n_inicial'] = $bounds["n_inicial"];
+            $data['n_final'] = $bounds["n_final"];
+            $data["pagination_helper"]   = $this->pagination;
+
+            $pedidos = $this->pedido_model->get_pedidos($page,$cfg_pagination,$array_orden,$tipo,0,$array_sesion);
+
+            foreach ($pedidos as $pedido) {
+                $pedido->nuevos  = $this->chat_model->contar_nuevos($pedido->id,$pedido->reference,"pedidos");
+            }
+
+
+
+            $data['pedidos'] = $pedidos;
+            $data['tipo'] = $tipo;
+
+            /* LISTADO DE TERRITORIOS PARA EL SELECT */
+            //$data["territorios"] = $this->tienda_model->get_territorios();
+            /* LISTADO DE FABRICANTES PARA EL SELECT */
+            //$data["fabricantes"] = $this->tienda_model->get_fabricantes();
+            /* LISTADO DE MUEBLES PARA EL SELECT */
+            //$data["muebles"] = $this->tienda_model->get_muebles();
+            /* LISTADO DE TERMINALES PARA EL SELECT */
+            //$data["terminales"] = $this->tienda_model->get_terminales();
+
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
+            $this->load->view('master/header', $data);
+            $this->load->view('master/navbar', $data);
+            $this->load->view('master/pedidos/pedidos', $data);
+            $this->load->view('master/footer');
+        } else {
+            redirect('master', 'refresh');
+        }
+    }
+
+    /*
+    * Obtener el detalle de un pedido seleccionado
+    */
+    public function detalle_pedido($id_pedido)
+    {
+        if($this->session->userdata('logged_in'))
+        {
+            $data['id_pds'] = $this->session->userdata('id_pds');
+            $data['sfid']   = $this->session->userdata('sfid');
+
+            $xcrud = xcrud_get_instance();
+            $this->load->model(array('chat_model','sfid_model','pedido_model'));
+
+            $sfid = $this->sfid_model->get_pds($data['id_pds']);
+
+            $data['id_pds']     = $sfid['id_pds'];
+            $data['commercial'] = $sfid['commercial'];
+            $data['territory']  = $sfid['territory'];
+            $data['reference']  = $sfid['reference'];
+            $data['address']    = $sfid['address'];
+            $data['zip']        = $sfid['zip'];
+            $data['city']       = $sfid['city'];
+
+
+
+            $pedido = $this->pedido_model->get_pedido($id_pedido,$data['id_pds']);
+
+            if($pedido == FALSE)
+            {
+                redirect('master','refresh');
+            }
+            else
+            {
+                $data['id_pedido']   = $pedido->id;
+                $data['fecha']           = $pedido->fecha;
+                $data['id_pds']          = $pedido->id_pds;
+                $data['contacto']        = $pedido->contacto;
+                $data['phone']           = $pedido->phone;
+                $data['email']           = $pedido->email;
+                $data['status']      = $pedido->status;
+
+                $data['detalle'] = $this->pedido_model->get_detalle($id_pedido,$data['id_pds']);
+
+                $chats = $this->chat_model->get_chat_pds($pedido->id,'pedidos');
+                //$leido = $this->chat_model->marcar_leido($pedido->id,'altabox','pedidos');
+                $data['chats'] = $chats;
+
+                $data['title'] = 'Estado del pedido Ref. '.$id_pedido;
+
+                /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+                $this->data->add($data);
+                $data = $this->data->getData();
+                /////
+                $this->load->view('master/header',$data);
+                $this->load->view('master/navbar',$data);
+                $this->load->view('master/pedidos/detalle_pedido',$data);
+                $this->load->view('master/footer');
+            }
+        }
+        else
+        {
+            redirect('master','refresh');
+        }
+    }
+    /*
+    * exportar el listado de pedidos
+    */
+    public function exportar_pedidos($tipo="abiertos")
+    {
+        if ($this->session->userdata('logged_in')) {
+            $xcrud = xcrud_get_instance();
+            //$data['id_pds'] = $this->session->userdata('id_pds');
+            $data['sfid'] = $this->session->userdata('sfid');
+            $id_pds=null;
+
+            $this->load->model(array('pedido_model'));
+            // $tipo = $this->uri->segment(3); // TIPO DE pedido
+
+            // Filtros
+            $array_filtros = array(
+                'status_pds'=>'',
+                'brand_device'=>'',
+                'id_display'=>'',
+                'id_device'=>'',
+                'id_pedido'=>'',
+                'reference'=> ''
+            );
+            $array_sesion = $this->get_filtros($array_filtros);
+
+
+            // Obtener el campo a ordenar, primero de Session y despues del post, si procede..
+            $array_orden = $this->get_orden();
+
+            $this->pedido_model->exportar_pedidos( $id_pds,$array_orden, $array_sesion, $tipo);
+
+
+        } else {
+            redirect('master', 'refresh');
+        }
+    }
 }
 /* End of file admin.php */
 /* Location: ./application/controllers/admin.php */
