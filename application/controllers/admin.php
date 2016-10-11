@@ -6908,7 +6908,7 @@ class Admin extends CI_Controller
             $this->pagination->initialize($cfg_pagination);
 
             $bounds = $this->paginationlib->get_bounds($total_pedidos,$page,$per_page);
-//print_r($bounds);exit;
+
             // Indicamos si habrá que mostrar el paginador en la vista
             $data['show_paginator'] = $bounds["show_paginator"];
             $data['num_resultados'] = $bounds["num_resultados"];
@@ -6917,27 +6917,14 @@ class Admin extends CI_Controller
             $data["pagination_helper"]   = $this->pagination;
 
             $pedidos = $this->pedido_model->get_pedidos($page,$cfg_pagination,$array_orden,$tipo,0,$array_sesion);
-            // print_r($pedidos);
-            foreach ($pedidos as $pedido) {
-               // $pedido->detalle = $this->pedido_model->get_detalle($pedido->id,$data['id_pds']);
-               // $incidencia->display = $this->sfid_model->get_display($incidencia->id_displays_pds);
-                $pedido->nuevos  = $this->chat_model->contar_nuevos($pedido->id,$pedido->reference,"pedidos");
-                //$incidencia->intervencion = $this->intervencion_model->get_intervencion_incidencia($incidencia->id_incidencia);
-            }
 
-            //print_r($pedidos);exit;
+            foreach ($pedidos as $pedido) {
+                $pedido->nuevos  = $this->chat_model->contar_nuevos($pedido->id,$pedido->reference,"pedidos");
+            }
 
             $data['pedidos'] = $pedidos;
             $data['tipo'] = $tipo;
 
-            /* LISTADO DE TERRITORIOS PARA EL SELECT */
-            //$data["territorios"] = $this->tienda_model->get_territorios();
-            /* LISTADO DE FABRICANTES PARA EL SELECT */
-            //$data["fabricantes"] = $this->tienda_model->get_fabricantes();
-            /* LISTADO DE MUEBLES PARA EL SELECT */
-            //$data["muebles"] = $this->tienda_model->get_muebles();
-            /* LISTADO DE TERMINALES PARA EL SELECT */
-            //$data["terminales"] = $this->tienda_model->get_terminales();
 
             /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
             $this->data->add($data);

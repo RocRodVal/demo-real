@@ -46,7 +46,14 @@
                                 </ul>
 
                             </li>
-
+                            <?php $estado_pedidos = array("pedidos","abiertos","finalizados","detalle_pedido"); ?>
+                            <li <?=(($this->uri->segment(2)==='pedidos') || ($this->uri->segment(3)==='abiertos') || ($this->uri->segment(3)==='finalizados') || ($this->uri->segment(2)==='detalle_pedido'))?'class="active"':''?>>
+                                <a href="#"><i class="fa fa-dashboard fa-file-text-o"></i> Estado pedidos  <span class="fa arrow"></span></a>
+                                <ul class="nav nav-second-level">
+                                    <li><a <?=($this->uri->segment(3)==='abiertos')?'class="active"':''?> href="<?=site_url($acceso.'/pedidos/abiertos')?>">Pedidos abiertos &raquo;</a></li>
+                                    <li><a <?=($this->uri->segment(3)=='finalizados')?'class="active"':''?> href="<?=site_url($acceso.'/pedidos/finalizados')?>">Pedidos finalizados &raquo;</a></li>
+                                </ul>
+                            </li>
                         <?php
                             /*
                             <li><a <?=($this->uri->segment(2)==='incidencias')?'class="active"':''?> href="<?=site_url('master/incidencias')?>"><i class="fa fa-wrench fa-fw"></i> Export incidencias</a></li>*/

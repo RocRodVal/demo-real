@@ -97,9 +97,17 @@
                     <div class="col-lg-12">
                         <?php
                         if (empty($pedidos)) {
-                            echo '<p class="message warning"><i class="glyphicon glyphicon-warning-sign"></i> No hay '.$title2.'.</p>';  }
+                            echo '<p class="message warning"><i class="glyphicon glyphicon-warning-sign"></i> No hay '.$title2.'.</p>'; ?>
+
+
+                            <?php  /*if(! empty($buscar_sfid) || ! empty($buscar_incidencia)) { ?>
+                            <a href="<?=base_url()?>admin/dashboard/borrar_busqueda/#incidencias_abiertas" class="reiniciar_busqueda"> <i class="glyphicon glyphicon-remove"></i> Reiniciar</a>
+                        <?php }*/  ?>
+
+                        <?php }
                         else {
-                         if($show_paginator) { ?>
+                        ?>
+                        <?php if($show_paginator) { ?>
                             <div class="pagination">
                                 <ul class="pagination">
                                     <?php echo "".$pagination_helper->create_links(); ?>
@@ -107,6 +115,7 @@
                                 <p>Encontrados <?=$num_resultados?> resultados. Mostrando del <?=$n_inicial?> al <?=$n_final?>.</p>
                             </div>
                         <?php
+
                             }
                             else { ?>
                                 <div class="pagination">
@@ -136,17 +145,15 @@
                                     ?>
                                     <tr>
                                         <td>
-                                            <a href="<?=site_url('admin/operar_pedido/'.$pedido->id.'/'.$pedido->id_pds)?>"><?php echo $pedido->id?></a>
-                                        </td>
+
+                                            <a href="<?=site_url('master/detalle_pedido/'.$pedido->id.'/'.$pedido->id_pds)?>">
+                                                <?php echo $pedido->id?></a></td>
                                         <td><?php echo date_format(date_create($pedido->fecha), 'd/m/Y'); ?></td>
                                         <td><?php echo $pedido->reference ?></td>
                                         <td><?php echo $pedido->commercial ?></td>
                                         <td><?=(!empty($pedido->territory)? $pedido->territory : '-')?></td>
                                         <td><strong><?php echo $pedido->status ?></strong></td>
-                                        <td>
-                                            <a href="<?=site_url('admin/operar_pedido/'.$pedido->id.'/'.$pedido->id_pds)?>#chat"><strong> <i class="fa fa-whatsapp <?=($pedido->nuevos['nuevos'] > 0) ? 'chat_nuevo' :'chat_leido' ?>"> <?=$pedido->nuevos['nuevos']?></i></strong></a>
-                                        </td>
-
+                                        <td><strong><i class="fa fa-whatsapp <?=($pedido->nuevos['nuevos']<>'0')?'chat_nuevo':'chat_leido'?>"><?=$pedido->nuevos['nuevos']?></i></strong></td>
                                     </tr>
                                     <?php
                                 }
