@@ -1193,7 +1193,8 @@ class Admin extends CI_Controller
             $foto = NULL;
 
             if ($this->upload->do_upload()) {
-                $foto = $new_name.$this->upload->data()["file_ext"];
+                $dataF)$this->upload->data();
+                $foto = $new_name.$dataF["file_ext"];
             } else {
                 $error = 'Ha fallado la carga de la foto.';
             }
