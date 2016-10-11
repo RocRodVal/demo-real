@@ -1113,7 +1113,7 @@ class Tienda extends CI_Controller {
 		}
 	}
 
-  /*  public function insert_chat($id,$tabla='incidencia')
+    public function insert_chat($id,$tabla='incidencia')
     {
         if($this->session->userdata('logged_in'))
         {
@@ -1182,9 +1182,9 @@ class Tienda extends CI_Controller {
         {
             redirect('tienda','refresh');
         }
-    }*/
+    }
 
-	public function insert_chat($id_incidencia)
+	public function insert_chat_old($id_incidencia)
 	{
 		if($this->session->userdata('logged_in'))
 		{
