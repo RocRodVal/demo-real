@@ -375,7 +375,7 @@ class Pedido_model extends CI_Model {
             $sql .= (' AND pedidos.status !="'.$f.'" AND pedidos.status !="'.$c.'" ');
         }
         else {
-            $sql .= ' AND pedidos.status="'.$f.'" OR pedidos.status="'.$c. '" ';
+            $sql .= ' AND (pedidos.status="'.$f.'" OR pedidos.status="'.$c. '") ';
             $sTitleFilename = "Pedidos_finalizados";
         }
 
