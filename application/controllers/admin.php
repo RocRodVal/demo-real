@@ -1232,6 +1232,64 @@ class Admin extends CI_Controller
         }
     }
 
+    public function insert_chat_pedido()
+    {
+
+        if ($this->auth->is_auth()) {
+            $id_pds = $this->uri->segment(3);
+            $id = $this->uri->segment(4);
+            $tabla="pedido";
+            $url="admin/operar_pedido/$id/$id_pds";
+
+            $xcrud = xcrud_get_instance();
+            $this->load->model('chat_model');
+
+            $config['upload_path'] = dirname($_SERVER["SCRIPT_FILENAME"]) . '/uploads/chats/';
+            $config['upload_url'] = base_url() . '/uploads/chats/';
+            $config['allowed_types'] = 'gif|jpg|png';
+            $new_name = $id . '-' . time();
+            $config['file_name'] = $new_name;
+            $config['overwrite'] = TRUE;
+            $config['max_size'] = '10000KB';
+
+            $this->load->library('upload', $config);
+
+            $foto = NULL;
+
+            if ($this->upload->do_upload()) {
+                $foto = $new_name;
+            } else {
+                $error = 'Ha fallado la carga de la foto.';
+            }
+
+            $texto_chat = $this->input->post('texto_chat');
+            $texto_chat = $this->strip_html_tags($texto_chat);
+
+            if ($foto != '' || $texto_chat != '' && $texto_chat != ' ') {
+
+                $data = array(
+                    'fecha' => date('Y-m-d H:i:s'),
+                    'id_pedido' => $id,
+                    'agent' => 'altabox',
+                    'texto' => $texto_chat,
+                    'foto' => $foto,
+                    'status' => 1,
+                );
+
+                $chat = $this->chat_model->insert_chat($data,$tabla);
+
+                if ($chat['add']) {
+                    redirect($url);
+                }
+            } else {
+                redirect($url);
+            }
+
+        } else {
+            redirect('admin', 'refresh');
+        }
+    }
+
     public function strip_html_tags($text)
     {
         $text = preg_replace(
@@ -2225,8 +2283,8 @@ class Admin extends CI_Controller
         $xcrud_3->change_type('picture_url', 'image');
         $xcrud_3->modal('picture_url');
         $xcrud_3->label('id_alarm', 'Identificador')->label('client_alarm', 'Cliente')->label('brand_alarm', 'Fabricante')->label('type_alarm', 'Tipo')->label('code', 'Código')->label('alarm', 'Modelo')->label('picture_url', 'Foto')->label('description', 'Comentarios')->label('units', 'Unidades')->label('status', 'Estado');
-        $xcrud_3->columns('id_alarm,client_alarm,brand_alarm,type_alarm,code,alarm,picture_url,status');
-        $xcrud_3->fields('client_alarm,brand_alarm,type_alarm,code,alarm,picture_url,description,status');
+        $xcrud_3->columns('id_alarm,client_alarm,brand_alarm,type_alarm,code,alarm,picture_url,status,elemento_conectado');
+        $xcrud_3->fields('client_alarm,brand_alarm,type_alarm,code,alarm,picture_url,description,status,elemento_conectado');
         $xcrud_3->order_by('code');
 
         // Ocultar el botón de borrar para evitar borrados accidentales mientras no existan constraints en BD:
@@ -6715,7 +6773,602 @@ class Admin extends CI_Controller
             $this->load->view('backend/cdm_incidencias',$data);
             $this->load->view('backend/footer');
         } else {
-            redirect('master', 'refresh');
+            redirect('admin', 'refresh');
+        }
+    }
+
+    /**
+     * Tabla de pedidos segun el tipo
+     */
+    public function pedidos($tipo="abiertos")
+    {
+        if ($this->session->userdata('logged_in')) {
+            //$data['sfid'] = $this->session->userdata('sfid');
+
+            $xcrud = xcrud_get_instance();
+
+            $this->load->model(array('pedido_model', 'tienda_model', 'sfid_model'));
+            $this->load->library('app/paginationlib');
+
+
+            // Comprobar si existe el segmento PAGE en la URI, si no inicializar a 1..
+            $get_page = $this->uri->segment(5); echo ($this->uri->segment(6));
+            if( $this->uri->segment(4) == "page") {
+                $page = ( ! empty($get_page) ) ? $get_page : 1 ;
+                $segment = 5;
+            }else{
+                $page = 1;
+                $segment = null;
+            }
+
+            /**
+             * Crear los filtros
+             */
+            $array_filtros = array(
+                'status'=>'',
+                'brand_device'=>'',
+                'id_display'=>'',
+                'id_device'=>'',
+                'id_pedido'=>'',
+                'reference'=>''
+            );
+
+            /* BORRAR BUSQUEDA */
+            $borrar_busqueda = $this->uri->segment(4);
+            if($borrar_busqueda === "borrar_busqueda")
+            {
+                $this->delete_filtros($array_filtros);
+                redirect(site_url("/admin/pedidos/".$tipo),'refresh');
+            }
+            // Consultar a la session si ya se ha buscado algo y guardado allí.
+            $array_sesion = $this->get_filtros($array_filtros);
+            // Buscar en el POST si hay busqueda, y si la hay usarla y guardarla además en sesion
+
+            if($this->input->post('do_busqueda')==="si") $array_sesion = $this->set_filtros($array_filtros);
+
+            /* Creamos al vuelo las variables que vienen de los filtros */
+            foreach($array_filtros as $filtro=>$value){
+                $$filtro = $array_sesion[$filtro];
+                $data[$filtro] = $array_sesion[$filtro]; // Pasamos los valores a la vista.
+            }
+
+
+            // viene del form de ordenacion
+            $do_orden = $this->input->post('ordenar');
+            if($do_orden==='true') {
+                $array_orden = $this->set_orden($this->input->post('form'));
+            }
+
+            // Obtener el campo a ordenar, primero de Session y despues del post, si procede..
+            $array_orden = $this->get_orden();
+            if(count($array_orden) > 0) {
+                foreach ($array_orden as $key => $value) {
+                    $data["campo_orden"] = $key;
+                    $data["orden_campo"] = $value;
+                }
+            }else{
+                $data["campo_orden"] = NULL;
+                $data["orden_campo"] = NULL;
+            }
+
+            if ($tipo=="abiertos") {
+                $data['title'] = 'Pedidos abiertos';
+                $data['title2'] = 'pedidos abiertos';
+            }else {
+                $data['title'] = 'Pedidos finalizados';
+                $data['title2'] = 'pedidos finalizados';
+            }
+
+
+            $per_page = 20;
+
+            $total_pedidos = $this->pedido_model->get_pedidos_quantity(0,$tipo,$array_sesion);   // Sacar el total de pedidos, para el paginador
+
+            $cfg_pagination = $this->paginationlib->init_pagination("admin/pedidos/".$tipo."/page/",$total_pedidos,$per_page,$segment);
+
+
+            $this->load->library('pagination',$cfg_pagination);
+            $this->pagination->initialize($cfg_pagination);
+
+            $bounds = $this->paginationlib->get_bounds($total_pedidos,$page,$per_page);
+
+            // Indicamos si habrá que mostrar el paginador en la vista
+            $data['show_paginator'] = $bounds["show_paginator"];
+            $data['num_resultados'] = $bounds["num_resultados"];
+            $data['n_inicial'] = $bounds["n_inicial"];
+            $data['n_final'] = $bounds["n_final"];
+            $data["pagination_helper"]   = $this->pagination;
+
+            $pedidos = $this->pedido_model->get_pedidos($page,$cfg_pagination,$array_orden,$tipo,0,$array_sesion);
+
+            foreach ($pedidos as $pedido) {
+                $pedido->nuevos  = $this->chat_model->contar_nuevos($pedido->id,$pedido->reference,"pedidos");
+            }
+
+            $data['pedidos'] = $pedidos;
+            $data['tipo'] = $tipo;
+
+
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
+            $this->load->view('backend/header', $data);
+            $this->load->view('backend/navbar', $data);
+            $this->load->view('backend/pedidos/pedidos', $data);
+            $this->load->view('backend/footer');
+        } else {
+            redirect('admin', 'refresh');
+        }
+    }
+
+    /*
+     * Realizar los diferentes pasos de gestion de un pedido de sistemas de seguridad
+     */
+    public function operar_pedido()
+    {
+        if ($this->auth->is_auth()) {
+
+            $tabla="pedidos";
+            $id_pds = $this->uri->segment(4);
+            $id_pedido = $this->uri->segment(3);
+
+            $xcrud = xcrud_get_instance();
+            $this->load->model(array('chat_model', 'intervencion_model', 'tienda_model', 'sfid_model','pedido_model'));
+
+            $sfid = $this->tienda_model->get_pds($id_pds);
+
+            $data["pds"] = $sfid;
+
+            $data['id_pds'] = 'ABX/PDS-' . $sfid['id_pds'];
+            ////$data['type_pds'] = $sfid['pds'];
+            $data['commercial'] = $sfid['commercial'];
+            $data['territory'] = $sfid['territory'];
+            $data['reference'] = $sfid['reference'];
+            $data['address'] = $sfid['address'];
+            $data['zip'] = $sfid['zip'];
+            $data['city'] = $sfid['city'];
+            $data['province'] = $sfid['province'];
+            $data['phone_pds'] = $sfid['phone'];
+
+            $data['id_pds_url'] = $id_pds;
+            $data['id_pedido_url'] = $id_pedido;
+
+
+            $pedido = $this->pedido_model->get_pedido($id_pedido,$id_pds);
+            $detalle = $this->pedido_model->get_detalle($id_pedido,$id_pds);
+            $data['last_update'] = date("d/m/Y",strtotime($pedido->last_update));
+            $data['status'] = $pedido->status;
+
+            $historico_proceso = $this->tienda_model->historico_fecha($id_pedido,'En proceso',$tabla);
+            $data['historico_proceso'] =  isset($historico_proceso['fecha']) ? date("d/m/Y",strtotime($historico_proceso['fecha'])) : '';
+
+            /*  $historico_instalador_asignado = $this->tienda_model->historico_fecha($id_pedido,'Instalador asignado');
+              $data['historico_instalador_asignado'] =  isset($historico_instalador_asignado['fecha']) ? date("d/m/Y",strtotime($historico_instalador_asignado['fecha'])) : '';
+
+              $historico_material_asignado = $this->tienda_model->historico_fecha($id_pedido,'Material asignado');
+              $data['historico_material_asignado'] =  isset($historico_material_asignado['fecha']) ? date("d/m/Y",strtotime($historico_material_asignado['fecha'])) : '';
+  */
+            $historico_fecha_enviado = $this->tienda_model->historico_fecha($id_pedido,'Enviado',$tabla);
+            $data['historico_fecha_enviado'] =  isset($historico_fecha_enviado['fecha']) ? date("d/m/Y",strtotime($historico_fecha_enviado['fecha'])) : '';
+
+            $historico_fecha_recibido = $this->tienda_model->historico_fecha($id_pedido,'Recibido',$tabla);
+            $data['historico_fecha_recibido'] =  isset($historico_fecha_recibido['fecha']) ? date("d/m/Y",strtotime($historico_fecha_recibido['fecha'])) : '';
+
+            $historico_fecha_finzalizado = $this->tienda_model->historico_fecha($id_pedido,'Finalizado',$tabla);
+            $data['historico_fecha_finalizado'] =  isset($historico_fecha_finzalizado['fecha']) ? date("d/m/Y",strtotime($historico_fecha_finzalizado['fecha'])) : '';
+
+            // $pedido['intervencion'] = $this->intervencion_model->get_intervencion_incidencia($id_pedido);
+
+            // $pedido['device'] = $this->sfid_model->get_device($pedido['id_devices_pds']);
+            //$pedido['display'] = $this->sfid_model->get_display($pedido['id_displays_pds']);
+            $data['pedido'] = $pedido;
+            $data['detalle'] = $detalle;
+
+
+            /*  $data['fail_device'] = $pedido['fail_device'];
+              $data['alarm_display'] = $pedido['alarm_display'];
+              $data['alarm_device'] = $pedido['alarm_device'];
+              $data['alarm_garra'] = $pedido['alarm_garra'];*/
+
+            /*  $material_editable = $this->material_editable($pedido['status']);
+              $data['material_editable'] = $material_editable;*/
+
+            /* $material_dispositivos = $this->tienda_model->get_material_dispositivos($pedido['id']);
+             $data['material_dispositivos'] = $material_dispositivos;
+
+             $material_alarmas = $this->tienda_model->get_material_alarmas($pedido['id']);
+             $data['material_alarmas'] = $material_alarmas;
+
+             $data['tipos_incidencia'] = $this->tienda_model->get_tipos_incidencia();
+             $data['soluciones'] = $this->tienda_model->get_soluciones_incidencia();
+ */
+
+            $chats = $this->chat_model->get_chat_pds($id_pedido,"pedidos");
+            $leido = $this->chat_model->marcar_leido($id_pedido,$sfid['reference'],"pedidos");
+            $data['chats'] = $chats;
+
+            $data['title'] = 'Operativa pedido Ref. '.$data['id_pedido_url'];
+
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
+
+            $this->load->view('backend/header', $data);
+            $this->load->view('backend/navbar', $data);
+            $this->load->view('backend/pedidos/operar_pedido', $data);
+            $this->load->view('backend/footer');
+        } else {
+            redirect('admin', 'refresh');
+        }
+    }
+
+    /*
+     * Actualizar el pedido segun el paso en el que nos encontremos
+     */
+    public function update_pedido()
+    {
+        $id_pds = $this->uri->segment(4);
+        $id_pedido = $this->uri->segment(3);
+        //$status_pds = $this->uri->segment(5);
+        $status = $this->uri->segment(5);
+        //$status_ext = $this->uri->segment(6);
+
+
+        $xcrud = xcrud_get_instance();
+        $this->load->model(array('tienda_model','pedido_model'));
+
+        $sfid = $this->tienda_model->get_pds($id_pds);
+
+        $data['id_pds'] = 'ABX/PDS-' . $sfid['id_pds'];
+        $data['commercial'] = $sfid['commercial'];
+        $data['territory'] = $sfid['territory'];
+        $data['reference'] = $sfid['reference'];
+        $data['address'] = $sfid['address'];
+        $data['zip'] = $sfid['zip'];
+        $data['city'] = $sfid['city'];
+
+        $data['id_pds_ulr'] = $id_pds;
+        $data['id_pedido_ulr'] = $id_pedido;
+
+        $this->pedido_model->pedido_update($id_pedido, $status);
+
+        $pedido = $this->pedido_model->get_pedido($id_pedido,$id_pds);
+
+        $fecha_cierre = $this->input->post('fecha_cierre');
+        if(empty($fecha_cierre)) { $fecha_cierre = date('Y-m-d H:i:s'); }
+
+        /**
+         * Botón finalizar pedido : Recoge fecha de resolución
+         * Boton cancelar pedido: Recoge la fecha y la pone como fecha de cierre
+         */
+        if (($status == 6) || ($status==7))
+        {
+            $this->pedido_model->pedido_update_cierre($id_pedido, $fecha_cierre);
+        }
+
+        /**
+         * CIERRE FORZOSO
+         */
+        if ($status == 8)
+        {
+            $this->pedido_model->pedido_update_cierre($id_pedido, $fecha_cierre);
+            //Le ponemos estado Finalizado
+            $this->pedido_model->pedido_update($id_pedido, 6);
+        }
+
+        /**
+         * Guardar pedido en el histórico
+         */
+        $data = array(
+            'fecha' => date('Y-m-d H:i:s'),
+            'id_pedido' => $id_pedido,
+            'id_pds' => $id_pds,
+            'description' => NULL,
+            'agent' => $this->session->userdata('sfid'),
+            'status' => $status
+        );
+
+
+
+        $seguir =true;
+        if ($status == 2) {
+            //Debemos comprobar si hay stock para atender el pedido y sino debe ponerse el pedido en estado "Pnediente material"
+            $seguir = $this->pedido_model->comprobar_stock($id_pedido,$id_pds);
+
+        }
+        if (!$seguir && $status == 2){
+            $this->pedido_model->pedido_update($id_pedido, 3); //Ponemos el pedido pendiente de material
+            $data['status']=3;
+            $this->pedido_model->historico($data);
+            redirect('admin/pedido_pendiente_material/'.$id_pedido.'/'.$id_pds, 'refresh');
+            // echo "ERROR - no hay stock suficiente se queda el pedido en estado pendiente material"; exit;
+        } else {
+            if($status == 2) {
+                $this->pedido_model->restar_stock_alarmas($id_pedido, $id_pds);
+            }
+        }
+        // $fecha_cierre = $this->input->post('fecha_cierre');
+
+        $this->pedido_model->historico($data);
+        /**
+         * Envio de material
+         */
+        if ($status == 4)
+        {
+            $envio_mail = $this->uri->segment(7);
+
+            // Se va a proceder a la generación del albaran del pedido
+            // Y por tanto deberá procesarse (procesado=1) y así verse en el histórico Diario de almacén.
+            //$this->tienda_model->procesar_historico_incidencia($id_pedido);
+
+            redirect('admin/imprimir_pedido/'.$id_pedido.'/'.$id_pds.'/'.$envio_mail, 'refresh');
+        }
+        else
+        {
+            redirect('admin/operar_pedido/'.$id_pedido.'/'.$id_pds ,'refresh');
+        }
+
+    }
+
+    /*
+     * Cuando se va a enviar el material se imprime un albaran del envio
+     */
+    public function imprimir_pedido()
+    {
+        if ($this->auth->is_auth()) {
+            $id_pds = $this->uri->segment(4);
+            $id_pedido = $this->uri->segment(3);
+            $envio_mail=$this->uri->segment(5);
+
+            $tabla="pedidos";
+
+            $xcrud = xcrud_get_instance();
+            $this->load->model(array( 'tienda_model','pedido_model'));
+            $this->load->helper(array('dompdf', 'file'));
+
+            $sfid = $this->tienda_model->get_pds($id_pds);
+
+            $data['id_pds'] = 'ABX/PDS-' . $sfid['id_pds'];
+            $data['commercial'] = $sfid['commercial'];
+            $data['territory'] = $sfid['territory'];
+            $data['reference'] = $sfid['reference'];
+            $data['address'] = $sfid['address'];
+            $data['zip'] = $sfid['zip'];
+            $data['city'] = $sfid['city'];
+            $data['province'] = $sfid['province'];
+            $data['phone_pds'] = $sfid['phone'];
+
+            $data['id_pds_url'] = $id_pds;
+            $data['id_pedido_url'] = $id_pedido;
+
+
+
+            $pedido = $this->pedido_model->get_pedido($id_pedido,$id_pds);
+
+
+
+            $historico_material_enproceso = $this->tienda_model->historico_fecha($id_pedido,'En proceso',$tabla);
+
+            if (isset($historico_material_enproceso['fecha']))
+            {
+                $data['historico_material_enproceso'] = $historico_material_enproceso['fecha'];
+            }
+            else
+            {
+                $data['historico_material_enproceso'] = '---';
+            }
+
+            $historico_fecha_enviado = $this->tienda_model->historico_fecha($id_pedido,'Enviado',$tabla);
+
+            if (isset($historico_fecha_enviado['fecha']))
+            {
+                $data['historico_fecha_enviado'] = $historico_fecha_enviado['fecha'];
+            }
+            else
+            {
+                $data['historico_fecha_enviado'] = '---';
+            }
+
+            $data['pedido'] = $pedido;
+
+
+            $detallePedido = $this->pedido_model->get_detalle($id_pedido,$id_pds);
+
+            $data['detallePedido'] = $detallePedido;
+            $data['title'] = 'DOCUMENTACIÓN DE DETALLE DE PEDIDO';
+
+            // Salida PDF
+            $html = $this->load->view('backend/pedidos/imprimir_pedido', $data, true);
+            $filename_pdf = 'pedido-'.$pedido->id;
+            $created_pdf = pdf_create($html, $filename_pdf,FALSE);
+
+            file_put_contents("uploads/pedidos/".$filename_pdf.".pdf",$created_pdf);
+            $attach =  "uploads/pedidos/".$filename_pdf.".pdf";
+
+
+
+            /** ENVIO DEL EMAIL al operador*/
+
+            /*if($envio_mail === "notificacion")
+            {
+
+
+                $mail_operador = $info_intervencion->operador->email;
+                $mail_cc = $info_intervencion->operador->email_cc;
+
+
+                if (!empty($mail_cc)) {
+                    $a_mail_cc = explode(",", $mail_cc);
+                    foreach ($a_mail_cc as $key => $mail) {
+                        $a_mail_cc[$key] = trim($mail);
+                    }
+                    $mail_cc = implode(",", $a_mail_cc);
+                }
+
+
+                if (empty($mail_operador)) {
+                    $data['email_sent'] = FALSE;
+                } else {
+                    /**
+                     * El asunto al ir en los headers del email, no puede pasar de 62 caracteres. Ahora hay margen pero si en el futuro el email
+                     * se ve raramente, revisad que el asunto no haya crecido más de 62 chars, en primer lugar.
+                     */
+            /*  $subject = "DEMOREAL / SFID " . $sfid['reference'] . " / INC " . $incidencia['id_incidencia'] . " / INT " . $incidencia['intervencion'];
+
+              $message_operador = "Asunto: " . $subject . "\r\n\r\n";
+              $message_operador .= "En referencia a los datos indicados en Asunto, adjunto remitimos parte para la intervención." . "\r\n";
+              $message_operador .= "Recordamos los pasos principales del procedimiento:" . "\r\n\r\n";
+              $message_operador .= "1) Realizar intervención dentro de las 48h siguientes a la recepción del email." . "\r\n";
+              $message_operador .= "2) Enviar el presente parte rellenado y con la firma de la persona encargada de la tienda al email demoreal@focusonemotions.com." . "\r\n";
+              $message_operador .= "3) Preparar en bolsa independiente todo el material sobrante y defectuoso separado por incidencia." . "\r\n";
+              $message_operador .= "4) Enviar email con el material preparado a demoreal@focusonemotions.com." . "\r\n";
+              $message_operador .= "Demo Real" . "\r\n";
+              $message_operador .= "http://demoreal.focusonemotions.com/" . "\r\n\n";
+
+              $this->email->from('demoreal@focusonemotions.com', 'Demo Real');
+
+              if($mail_operador=="no-reply@altabox.net"){
+                  // No enviamos mail, si el instalador es por defecto, y tiene la cuenta no-reply
+              }else {
+                  $this->email->to($mail_operador);
+              }
+
+              if (!empty($mail_cc)) {
+                  $this->email->cc($mail_cc);
+              }
+              /** COMENTADO AVISO COPIA */
+            /*       $this->email->bcc('demoreal@focusonemotions.com');
+
+                   $this->email->subject($subject);
+                   $this->email->message($message_operador);
+
+                   $this->email->attach($attach);
+
+                   if ($this->email->send()) {
+                       $data['email_sent'] = TRUE;
+                   } else {
+                       $data['email_sent'] = FALSE;
+                   }
+                   $this->email->clear();
+               }
+               /** FIN ENVIO DEL EMAIL al operador*/
+
+            /*
+                        }else{
+                            $data['email_sent'] = NULL; // Descarga sin notificacion
+                        }*/
+            // Paso a vista
+            $data['title'] = 'Generación del albaran para el pedido ['.$pedido->id .']';
+            $data['filename_pdf'] = $filename_pdf;
+
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
+
+            $this->load->view('backend/header', $data);
+            $this->load->view('backend/navbar', $data);
+            $this->load->view('backend/pedidos/descargar_albaran', $data);
+            $this->load->view('backend/footer');
+
+
+
+        } else {
+            redirect('admin', 'refresh');
+        }
+    }
+
+    /*
+     * Indicar que el pedido ya ha sido creado y el id del mismo
+     */
+    public function pedido_pendiente_material($id_pedido,$id_pds)
+    {
+        if($this->session->userdata('logged_in'))
+        {
+            $data['id_pds'] = $id_pds;
+            $data['id_pedido']   = $id_pedido;
+
+            //$referencia = $this->uri->segment(3);
+
+            $xcrud = xcrud_get_instance();
+            $this->load->model('sfid_model');
+
+            $sfid               = $this->sfid_model->get_pds($data['id_pds']);
+            $data['id_pds']     = $sfid['id_pds'];
+            $data['commercial'] = $sfid['commercial'];
+            $data['reference']  = $sfid['reference'];
+            $data['address']    = $sfid['address'];
+            $data['zip']        = $sfid['zip'];
+            $data['city']       = $sfid['city'];
+
+            $data['title']   = 'Pedido pendiente de material';
+            $data['content'] = 'El pedido con referencia '.$id_pedido.' no puede ser procesado ahora mismo por no haber material suficiente en el almacen.';
+
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
+            $this->load->view('backend/header',$data);
+            $this->load->view('backend/navbar',$data);
+            $this->load->view('backend/content',$data);
+            $this->load->view('backend/footer');
+        }
+        else
+        {
+            redirect('admin','refresh');
+        }
+    }
+
+    /**
+     * Método llamado desde la vista de Impresión del albaran del pedido para descargar un PDF en el equipo.
+     * @param $filename
+     */
+    public function descargar_albaran($filename)
+    {
+
+        $f = $filename.".pdf";
+        header("Content-type: application/octet-stream");
+        header("Content-Disposition: attachment; filename=\"$f\"\n");
+        $fp=fopen("uploads/pedidos/$f", "r");
+        fpassthru($fp);
+    }
+
+    /*
+     * exportar el listado de pedidos
+     */
+    public function exportar_pedidos($tipo="abiertos")
+    {
+        if ($this->session->userdata('logged_in')) {
+            $xcrud = xcrud_get_instance();
+            //$data['id_pds'] = $this->session->userdata('id_pds');
+            $data['sfid'] = $this->session->userdata('sfid');
+            $id_pds=null;
+
+            $this->load->model(array('pedido_model'));
+            // $tipo = $this->uri->segment(3); // TIPO DE pedido
+
+            // Filtros
+            $array_filtros = array(
+                'status_pds'=>'',
+                'brand_device'=>'',
+                'id_display'=>'',
+                'id_device'=>'',
+                'id_pedido'=>'',
+                'reference'=> ''
+            );
+            $array_sesion = $this->get_filtros($array_filtros);
+
+
+            // Obtener el campo a ordenar, primero de Session y despues del post, si procede..
+            $array_orden = $this->get_orden();
+
+            $this->pedido_model->exportar_pedidos( $id_pds,$array_orden, $array_sesion, $tipo);
+
+
+        } else {
+            redirect('admin', 'refresh');
         }
     }
 }
