@@ -1134,8 +1134,8 @@ class Tienda extends CI_Controller {
             $this->load->library('upload', $config);
 
             $foto = NULL;
-            $dataF=$this->upload->data();
             if ($this->upload->do_upload()) {
+                $dataF=$this->upload->data();
                 $foto = $new_name.$dataF["file_ext"];
             } else {
                 echo 'Ha fallado la carga de la foto.';
