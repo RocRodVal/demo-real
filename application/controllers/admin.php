@@ -7408,7 +7408,7 @@ class Admin extends CI_Controller
         } else {
             redirect('admin', 'refresh');
         }
-    }
+    } 
 
 }
 /* End of file admin.php */
