@@ -144,15 +144,17 @@ class Alarma_model extends CI_Model {
         $this->load->model('tablona_model');
         $this->load->helper('common');
 
-        // Rango de meses que mostrarán las columnas de la tabla, basándome en el mínimo y máximo mes que hay incidencias, este año.
-        $rango_meses = $this->informe_model->get_rango_meses($anio);
-        $meses_columna = $this->informe_model->get_meses_columna($rango_meses->min,$rango_meses->max);
-
         if ($tipo=='incidencias') {$estado="En visita"; }
         else { $estado="Enviado";}
+        
+        // Rango de meses que mostrarán las columnas de la tabla, basándome en el mínimo y máximo mes que hay incidencias, este año.
+        $rango_meses = $this->informe_model->get_rango_meses($anio,$tipo);
+        $meses_columna = $this->informe_model->get_meses_columna($rango_meses->min,$rango_meses->max);
+
+
 
         $this->tablona_model->crear_historicotemp($anio,$estado,$tipo);
-        $alarmas=$this->get_alarmas($tipo);
+        $alarmas=$this->get_alarmas();
         $resultado = $this->get_sistemas_seguridad_totales($tipo);
 
         $valor_resultado = $this->get_array_sistemas_seguridad($resultado,$rango_meses->min,$rango_meses->max,$alarmas);

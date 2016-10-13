@@ -6095,7 +6095,7 @@ class Admin extends CI_Controller
                     $xcrud_1 = xcrud_get_instance();
                     $xcrud_1->table_name('Alarmas');
 
-                    $alarmas=$this->alarma_model->get_alarmas($tipo);
+                    $alarmas=$this->alarma_model->get_alarmas();
 
                     // Rango de meses que mostrarán las columnas de la tabla, basándome en el mínimo y máximo mes que hay incidencias, este año.
                     $rango_meses = $this->informe_model->get_rango_meses($anio,$tipo);
