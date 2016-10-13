@@ -117,7 +117,7 @@ class Tablona_model extends CI_Model {
      * Tabla temporal en la BBDD que nos guardara los datos del historico de las incidencias de un año determinado
      * en el momento que pasaron a estado "En visita"
      */
-    public function crear_historicotemp($anio,$status,$tipo) {
+    public function crear_historicotemp($anio,$status,$tipo="incidencias") {
         /**
          * SELECT id_incidencia,status_pds,min(fecha) FROM demoreal.historico where status_pds="En visita" AND YEAR(fecha)="2016"
         group by id_incidencia

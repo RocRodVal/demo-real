@@ -6107,7 +6107,7 @@ class Admin extends CI_Controller
                     $data["meses_columna"] = $meses_columna;
 
                     $resultado = $this->alarma_model->get_sistemas_seguridad_totales($tipo);
-
+//print_r($resultado); exit;
                     $valor_resultado = $this->alarma_model->get_array_sistemas_seguridad($resultado,$rango_meses->min,$rango_meses->max,$alarmas);
                     //print_r($valor_resultado);exit;
                     $data['valor_resultado'] = $valor_resultado;
@@ -6133,12 +6133,12 @@ class Admin extends CI_Controller
     /**
      * Funcion que exporta los datos de las alarmas utilizadas en un año
      */
-    public function exportar_sistemas_seguridad($anio,$formato=NULL) {
+    public function exportar_sistemas_seguridad($anio,$tipo="incidencias",$formato=NULL) {
         if ($this->auth->is_auth())
         {
             $ext = (!is_null($formato) ? $formato : $this->ext);    // Formato para exportaciones, especficiado o desde CFG
             $this->load->model('alarma_model');
-            $data['alarmas'] = $this->alarma_model->exportar_sistemas_seguridad($anio,$ext);
+            $data['alarmas'] = $this->alarma_model->exportar_sistemas_seguridad($anio,$tipo,$ext);
         }
         else
         {
