@@ -2353,10 +2353,11 @@ class Admin extends CI_Controller
             ->label('picture_url', 'Foto')
             ->label('description', 'Comentarios')
             ->label('units', 'Unidades')
-            ->label('status', 'Estado');
+            ->label('status', 'Estado')
+            ->label('elemento_conectado', 'Elemento conectado');
         $xcrud->order_by('client_alarm');
-        $xcrud->columns('client_alarm,brand_alarm,type_alarm,code,alarm,picture_url,units,status');
-        $xcrud->fields('client_alarm,brand_alarm,type_alarm,code,alarm,picture_url,description,units,status');
+        $xcrud->columns('client_alarm,brand_alarm,type_alarm,code,alarm,picture_url,units,status,elemento_conectado');
+        $xcrud->fields('client_alarm,brand_alarm,type_alarm,code,alarm,picture_url,description,units,status,elemento_conectado');
 
         $xcrud->before_update("historico_io_alarmas_before_update","../libraries/diario_almacen.php");
 
@@ -6076,14 +6077,20 @@ class Admin extends CI_Controller
 
             $title = 'Análisis de consumo de Sistemas de seguridad';
             $anio='';
+            $tipo='incidencias';
             if (!empty($_POST)) {
 
                 $anio=$_POST['anio'];
-                $estado="En visita";
-                if (!empty($anio)) {
-                    $this->tablona_model->crear_historicotemp($anio,$estado);
+                $tipo=$_POST['tipo'];
+                if ($tipo=='incidencias'){
+                    $estado="En visita";}
+                else {
+                    $estado='Enviado';}
 
-                    $title .= ' ' . $anio;
+                if (!empty($anio)) {
+                    $this->tablona_model->crear_historicotemp($anio,$estado,$tipo);
+
+                    $title .= ' ' . $anio." - ".$tipo;
                     setlocale(LC_ALL, 'es_ES');
 
                     $xcrud_1 = xcrud_get_instance();
@@ -6092,22 +6099,23 @@ class Admin extends CI_Controller
                     $alarmas=$this->alarma_model->get_alarmas();
 
                     // Rango de meses que mostrarán las columnas de la tabla, basándome en el mínimo y máximo mes que hay incidencias, este año.
-                    $rango_meses = $this->informe_model->get_rango_meses($anio);
+                    $rango_meses = $this->informe_model->get_rango_meses($anio,$tipo);
                     // $primer_mes = $rango_meses->min;
                     $meses_columna = $this->informe_model->get_meses_columna($rango_meses->min,$rango_meses->max);
                     $data["primer_mes"] =  $rango_meses->min;;
                     $data["ultimo_mes"] = $rango_meses->max;
                     $data["meses_columna"] = $meses_columna;
 
-                    $resultado = $this->alarma_model->get_sistemas_seguridad_totales();
-//print_r($resultado);exit;
-                    $valor_resultado = $this->alarma_model->get_array_sistemas_seguridad($resultado,$rango_meses->min,$rango_meses->max,$alarmas);
+                    $resultado = $this->alarma_model->get_sistemas_seguridad_totales($tipo);
 
+                    $valor_resultado = $this->alarma_model->get_array_sistemas_seguridad($resultado,$rango_meses->min,$rango_meses->max,$alarmas);
+                    //print_r($valor_resultado);exit;
                     $data['valor_resultado'] = $valor_resultado;
                 }
             }
             $data['title']=$title;
             $data['anio']=$anio;
+            $data['tipo']=$tipo;
 
             /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
             $this->data->add($data);

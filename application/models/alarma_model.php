@@ -11,19 +11,22 @@ class Alarma_model extends CI_Model {
     public function get_alarmas($tipo='incidencias')
     {
         if ($tipo=='incidencias') {
-            $query = $this->db->select('code,brand as fabricante,alarm')
+            $query = $this->db->select('code,brand as fabricante,alarm,client_alarm, client as dueno')
                 ->join('brand_alarm', 'brand_alarm.id_brand_alarm=alarm.brand_alarm')
+                ->join('client','client.id_client=alarm.client_alarm')
                 ->order_by('alarm ASC')
                 ->get('alarm');
 
         }
         else {
-            $query = $this->db->select('code,brand as fabricante,alarm')
+            $query = $this->db->select('code,brand as fabricante,alarm,client_alarm, client as dueno')
                 ->join('brand_alarm', 'brand_alarm.id_brand_alarm=alarm.brand_alarm')
+                ->join('client','client.id_client=alarm.client_alarm')
                 ->where('alarm.elemento_conectado',1)
                 ->order_by('alarm ASC')
                 ->get('alarm');
         }
+        //echo $this->db->last_query(); exit;
         return $query->result();
     }
 
@@ -35,7 +38,7 @@ class Alarma_model extends CI_Model {
 
         if($tipo=='incidencias') {
             $sql = "
-            SELECT sum(m.cantidad) as total,a.alarm as alarm,month(h.fecha) as mes
+            SELECT sum(m.cantidad) as total,a.alarm as alarm,month(h.fecha) as mes,client_alarm,a.code as code
             FROM demoreal.material_incidencias as m
             INNER JOIN historico_temp h ON h.id_incidencia=m.id_incidencia
             INNER JOIN alarm a ON a.id_alarm = m.id_alarm
@@ -44,7 +47,7 @@ class Alarma_model extends CI_Model {
             ORDER BY a.alarm ASC";
         } else {
             $sql = "
-            SELECT sum(p.cantidad) as total,a.alarm as alarm,month(h.fecha) as mes
+            SELECT sum(p.cantidad) as total,a.alarm as alarm,month(h.fecha) as mes,client_alarm,a.code as code
             FROM demoreal.pedidos_detalle as p
             INNER JOIN historico_temp h ON h.id_pedido=p.id_pedido
             INNER JOIN alarm a ON a.id_alarm = p.id_alarma
@@ -52,7 +55,7 @@ class Alarma_model extends CI_Model {
             ORDER BY a.alarm ASC";
         }
 //	INNER JOIN brand_alarm b ON b.id_brand_alarm=a.brand_alarm
-        //echo $sql;
+        //echo $sql; exit;
         $query_1 = $this->db->query($sql);
 
         return $query_1->result();
@@ -105,7 +108,8 @@ class Alarma_model extends CI_Model {
 	public function get_array_sistemas_seguridad($array = NULL,$min,$max,$alarmas)
 	{
 		$data = array();
-
+//print_r($alarmas); echo "<br><br>";
+  //      print_r($array); exit;
 		if(!is_null($array))
 		{
 			foreach($alarmas as $alarma)  {
@@ -140,21 +144,23 @@ class Alarma_model extends CI_Model {
         $this->load->model('tablona_model');
         $this->load->helper('common');
 
-        // Rango de meses que mostrarán las columnas de la tabla, basándome en el mínimo y máximo mes que hay incidencias, este año.
-        $rango_meses = $this->informe_model->get_rango_meses($anio);
-        $meses_columna = $this->informe_model->get_meses_columna($rango_meses->min,$rango_meses->max);
-
         if ($tipo=='incidencias') {$estado="En visita"; }
         else { $estado="Enviado";}
 
+        // Rango de meses que mostrarán las columnas de la tabla, basándome en el mínimo y máximo mes que hay incidencias, este año.
+        $rango_meses = $this->informe_model->get_rango_meses($anio,$tipo);
+        $meses_columna = $this->informe_model->get_meses_columna($rango_meses->min,$rango_meses->max);
+
+
+
         $this->tablona_model->crear_historicotemp($anio,$estado,$tipo);
-        $alarmas=$this->get_alarmas($tipo);
+        $alarmas=$this->get_alarmas();
         $resultado = $this->get_sistemas_seguridad_totales($tipo);
 
         $valor_resultado = $this->get_array_sistemas_seguridad($resultado,$rango_meses->min,$rango_meses->max,$alarmas);
 
-        $arr_titulos = array('Alarma','Código','Fabricante');
-        $camp=array('tipo_alarma','code','fabricante');
+        $arr_titulos = array('Alarma','Código','Fabricante','Dueño');
+        $camp=array('tipo_alarma','code','fabricante','dueno');
         foreach($meses_columna as $key => $mes) {
             array_push($arr_titulos,$mes);
             array_push($camp,$key);
