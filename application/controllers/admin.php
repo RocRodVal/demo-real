@@ -6076,20 +6076,26 @@ class Admin extends CI_Controller
 
             $title = 'Análisis de consumo de Sistemas de seguridad';
             $anio='';
+            $tipo='incidencias';
             if (!empty($_POST)) {
 
                 $anio=$_POST['anio'];
-                $estado="En visita";
-                if (!empty($anio)) {
-                    $this->tablona_model->crear_historicotemp($anio,$estado);
+                $tipo=$_POST['tipo'];
+                if ($tipo=='incidencias'){
+                    $estado="En visita";}
+                else {
+                    $estado='Enviado';}
 
-                    $title .= ' ' . $anio;
+                if (!empty($anio)) {
+                    $this->tablona_model->crear_historicotemp($anio,$estado,$tipo);
+
+                    $title .= ' ' . $anio." - ".$tipo;
                     setlocale(LC_ALL, 'es_ES');
 
                     $xcrud_1 = xcrud_get_instance();
                     $xcrud_1->table_name('Alarmas');
 
-                    $alarmas=$this->alarma_model->get_alarmas();
+                    $alarmas=$this->alarma_model->get_alarmas($tipo);
 
                     // Rango de meses que mostrarán las columnas de la tabla, basándome en el mínimo y máximo mes que hay incidencias, este año.
                     $rango_meses = $this->informe_model->get_rango_meses($anio);
@@ -6099,15 +6105,16 @@ class Admin extends CI_Controller
                     $data["ultimo_mes"] = $rango_meses->max;
                     $data["meses_columna"] = $meses_columna;
 
-                    $resultado = $this->alarma_model->get_sistemas_seguridad_totales();
-//print_r($resultado);exit;
-                    $valor_resultado = $this->alarma_model->get_array_sistemas_seguridad($resultado,$rango_meses->min,$rango_meses->max,$alarmas);
+                    $resultado = $this->alarma_model->get_sistemas_seguridad_totales($tipo);
 
+                    $valor_resultado = $this->alarma_model->get_array_sistemas_seguridad($resultado,$rango_meses->min,$rango_meses->max,$alarmas);
+                    print_r($valor_resultado);exit;
                     $data['valor_resultado'] = $valor_resultado;
                 }
             }
             $data['title']=$title;
             $data['anio']=$anio;
+            $data['tipo']=$tipo;
 
             /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
             $this->data->add($data);

@@ -37,7 +37,7 @@ class Tablona_model extends CI_Model {
     }
 
     /*
-     * Creamos una tabla en la BBDD con los datos sobre las intervenciones / incidencias de un año determinado
+     * Creamos una tabla en la BBDD con los datos sobre las intervenciones / incidencias de un aï¿½o determinado
      */
 	public function crear_facturaciontemp($anio) {
 
@@ -83,7 +83,7 @@ class Tablona_model extends CI_Model {
 /*$this->db->query('SELECT COUNT(id_incidencia) as cantidad, YEAR(f.fecha) as anio, MONTH(f.fecha) as mes,
             ('.$sql_aux.') as total
                                                 FROM incidencias f
-                                                WHERE YEAR(f.fecha) = "'.$este_anio.'" AND f.tipo_averia = "Avería"
+                                                WHERE YEAR(f.fecha) = "'.$este_anio.'" AND f.tipo_averia = "Averï¿½a"
                                                 '.$ctrl_no_cancelada.'
                                                 GROUP BY mes');
 
@@ -114,25 +114,38 @@ class Tablona_model extends CI_Model {
     }
 
     /*
-     * Tabla temporal en la BBDD que nos guardara los datos del historico de las incidencias de un año determinado
+     * Tabla temporal en la BBDD que nos guardara los datos del historico de las incidencias de un aÃ±o determinado
      * en el momento que pasaron a estado "En visita"
      */
-    public function crear_historicotemp($anio,$status) {
+    public function crear_historicotemp($anio,$status,$tipo) {
         /**
          * SELECT id_incidencia,status_pds,min(fecha) FROM demoreal.historico where status_pds="En visita" AND YEAR(fecha)="2016"
         group by id_incidencia
          */
         $this->db->query(" DROP TABLE IF EXISTS historico_temp; ");
-        $this->db->query('
+        if($tipo=='incidencias') {
+            $this->db->query('
                 CREATE TEMPORARY TABLE historico_temp AS
                 (
                     SELECT id_incidencia,MIN(fecha) as fecha ,status_pds
                     FROM historico
-                    WHERE YEAR(fecha) = "'.$anio.'" AND status_pds="'.$status.'"
+                    WHERE YEAR(fecha) = "' . $anio . '" AND status_pds="' . $status . '"
                     GROUP BY id_incidencia
                 );
             ');
+        }else {
+            $this->db->query('
+                CREATE TEMPORARY TABLE historico_temp AS
+                (
+                    SELECT id_pedido,MIN(fecha) as fecha ,status
+                    FROM pedidos_historico
+                    WHERE YEAR(fecha) = "' . $anio . '" AND status="' . $status . '"
+                    GROUP BY id_pedido
+                );
+            ');
+        }
 
+        //  echo $this->db->last_query();
     }
 
 }
