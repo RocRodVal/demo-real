@@ -109,8 +109,8 @@ class Alarma_model extends CI_Model {
 	{
 		$data = array();
 //print_r($alarmas); echo "<br><br>";
-  //      print_r($array); exit;
-		if(!is_null($array))
+        //print_r($array); exit;
+		if((!is_null($array)) && (!empty($array)))
 		{
 			foreach($alarmas as $alarma)  {
 				$data[$alarma->alarm."_".$alarma->client_alarm]['code'] = $alarma->code;

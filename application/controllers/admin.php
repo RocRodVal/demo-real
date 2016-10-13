@@ -6107,7 +6107,7 @@ class Admin extends CI_Controller
                     $data["meses_columna"] = $meses_columna;
 
                     $resultado = $this->alarma_model->get_sistemas_seguridad_totales($tipo);
-
+//print_r($resultado); exit;
                     $valor_resultado = $this->alarma_model->get_array_sistemas_seguridad($resultado,$rango_meses->min,$rango_meses->max,$alarmas);
                     //print_r($valor_resultado);exit;
                     $data['valor_resultado'] = $valor_resultado;
