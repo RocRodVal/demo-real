@@ -2353,10 +2353,11 @@ class Admin extends CI_Controller
             ->label('picture_url', 'Foto')
             ->label('description', 'Comentarios')
             ->label('units', 'Unidades')
-            ->label('status', 'Estado');
+            ->label('status', 'Estado')
+            ->label('elemento_conectado', 'Elemento conectado');
         $xcrud->order_by('client_alarm');
-        $xcrud->columns('client_alarm,brand_alarm,type_alarm,code,alarm,picture_url,units,status');
-        $xcrud->fields('client_alarm,brand_alarm,type_alarm,code,alarm,picture_url,description,units,status');
+        $xcrud->columns('client_alarm,brand_alarm,type_alarm,code,alarm,picture_url,units,status,elemento_conectado');
+        $xcrud->fields('client_alarm,brand_alarm,type_alarm,code,alarm,picture_url,description,units,status,elemento_conectado');
 
         $xcrud->before_update("historico_io_alarmas_before_update","../libraries/diario_almacen.php");
 
