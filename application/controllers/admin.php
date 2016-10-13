@@ -6133,12 +6133,12 @@ class Admin extends CI_Controller
     /**
      * Funcion que exporta los datos de las alarmas utilizadas en un año
      */
-    public function exportar_sistemas_seguridad($anio,$formato=NULL) {
+    public function exportar_sistemas_seguridad($anio,$tipo="incidencias",$formato=NULL) {
         if ($this->auth->is_auth())
         {
             $ext = (!is_null($formato) ? $formato : $this->ext);    // Formato para exportaciones, especficiado o desde CFG
             $this->load->model('alarma_model');
-            $data['alarmas'] = $this->alarma_model->exportar_sistemas_seguridad($anio,$ext);
+            $data['alarmas'] = $this->alarma_model->exportar_sistemas_seguridad($anio,$tipo,$ext);
         }
         else
         {
