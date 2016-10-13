@@ -459,10 +459,14 @@ class Informe_model extends CI_Model
 
 
 
-    public function get_rango_meses($anio=NULL)
+    public function get_rango_meses($anio=NULL,$tipo="incidencias")
     {
         if(is_null($anio)) $anio = date("Y");
-        $rango_meses = $this->db->query("SELECT MONTH(MIN(fecha)) as min, MONTH(MAX(fecha)) as max FROM incidencias WHERE YEAR(fecha)='$anio'")->row();
+        if($tipo=="incidencias") {
+            $rango_meses = $this->db->query("SELECT MONTH(MIN(fecha)) as min, MONTH(MAX(fecha)) as max FROM incidencias WHERE YEAR(fecha)='$anio'")->row();
+        }else {
+            $rango_meses = $this->db->query("SELECT MONTH(MIN(fecha)) as min, MONTH(MAX(fecha)) as max FROM pedidos WHERE YEAR(fecha)='$anio'")->row();
+        }
 
         $this->setRangoMeses($rango_meses);
         return $rango_meses;

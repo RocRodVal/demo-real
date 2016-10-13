@@ -26,6 +26,7 @@ class Alarma_model extends CI_Model {
                 ->order_by('alarm ASC')
                 ->get('alarm');
         }
+        //echo $this->db->last_query(); exit;
         return $query->result();
     }
 
@@ -54,7 +55,7 @@ class Alarma_model extends CI_Model {
             ORDER BY a.alarm ASC";
         }
 //	INNER JOIN brand_alarm b ON b.id_brand_alarm=a.brand_alarm
-        //echo $sql;
+        //echo $sql; exit;
         $query_1 = $this->db->query($sql);
 
         return $query_1->result();
@@ -107,7 +108,8 @@ class Alarma_model extends CI_Model {
 	public function get_array_sistemas_seguridad($array = NULL,$min,$max,$alarmas)
 	{
 		$data = array();
-
+//print_r($alarmas); echo "<br><br>";
+  //      print_r($array); exit;
 		if(!is_null($array))
 		{
 			foreach($alarmas as $alarma)  {

@@ -6098,7 +6098,7 @@ class Admin extends CI_Controller
                     $alarmas=$this->alarma_model->get_alarmas($tipo);
 
                     // Rango de meses que mostrarán las columnas de la tabla, basándome en el mínimo y máximo mes que hay incidencias, este año.
-                    $rango_meses = $this->informe_model->get_rango_meses($anio);
+                    $rango_meses = $this->informe_model->get_rango_meses($anio,$tipo);
                     // $primer_mes = $rango_meses->min;
                     $meses_columna = $this->informe_model->get_meses_columna($rango_meses->min,$rango_meses->max);
                     $data["primer_mes"] =  $rango_meses->min;;
