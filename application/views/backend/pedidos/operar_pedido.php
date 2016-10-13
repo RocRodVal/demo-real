@@ -1,3 +1,21 @@
+<style type="text/css">
+    .zoom{
+        /* Aumentamos la anchura y altura durante 2 segundos */
+        transition: width 2s, height 2s, transform 2s;
+        -moz-transition: width 2s, height 2s, -moz-transform 2s;
+        -webkit-transition: width 2s, height 2s, -webkit-transform 2s;
+        -o-transition: width 2s, height 2s,-o-transform 2s;
+
+    }
+    .zoom:hover{
+        /* tranformamos el elemento al pasar el mouse por encima al doble de
+        su tamaño con scale(2). */
+        transform : scale(3,2);
+        -moz-transform : scale(3,2); /* Firefox */
+        -webkit-transform : scale(3,2); /* Chrome - Safari */
+        -o-transform : scale(3,2); /* Opera */
+    }
+</style>
 <!-- #page-wrapper -->
 <div id="page-wrapper">
     <div class="row">
@@ -167,8 +185,11 @@
                                             foreach ($detalle as $d) {
                                                 ?>
                                                 <tr>
-                                                    <td><img src="<?= site_url('application/uploads/' . $d->imagen . '') ?>"
-                                                            title="<?=strtoupper($d->alarm) ?>" style="max-height: 55px;"/></td>
+                                                    <td>
+                                                      <!--  <img class="zoom" src="<?= site_url('application/uploads/' . $d->imagen . '')?>" height="40px" width="80px/">-->
+                                                       <img src="<?= site_url('application/uploads/' . $d->imagen . '') ?>"
+                                                            title="<?=strtoupper($d->alarm) ?>" style="max-width:200px; max-height: 75px;"/>
+                                                    </td>
                                                     <td><?php echo $d->code ?></td>
                                                     <td><?php echo $d->alarm ?></td>
                                                     <td><?php echo $d->cantidad ?></td>

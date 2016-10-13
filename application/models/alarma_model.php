@@ -146,7 +146,7 @@ class Alarma_model extends CI_Model {
 
         if ($tipo=='incidencias') {$estado="En visita"; }
         else { $estado="Enviado";}
-        
+
         // Rango de meses que mostrarán las columnas de la tabla, basándome en el mínimo y máximo mes que hay incidencias, este año.
         $rango_meses = $this->informe_model->get_rango_meses($anio,$tipo);
         $meses_columna = $this->informe_model->get_meses_columna($rango_meses->min,$rango_meses->max);
