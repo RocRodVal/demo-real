@@ -93,8 +93,42 @@ class Chat_model extends CI_Model {
 
     }
 
+    public function contar_nuevos($id,$agent,$tabla='incidencias') {
+        if($id != FALSE)
+        {
+            if ($tabla=='incidencias') {
+                $query = $this->db->select('COUNT(*) AS nuevos')
+                    ->join('agent', 'agent.sfid=chat.agent')
+                    ->where('chat.id_incidencia', $id)
+                    ->where('chat.agent', $agent)
+                    ->where('chat.status', 'Nuevo')
+                    //$tipo_agente = $this->get_agentes_excluidos();
+                    //$query = $this->db->where_not_in('agent.type',$tipo_agente)
+                    ->get('chat');
+            }
+            else {
+                $query = $this->db->select('COUNT(*) AS nuevos')
+                    ->join('agent', 'agent.sfid=pedidos_chat.agent')
+                    ->where('pedidos_chat.id_pedido', $id)
+                    ->where('pedidos_chat.agent', $agent)
+                    ->where('pedidos_chat.status', 'Nuevo')
+                    //$tipo_agente = $this->get_agentes_excluidos();
+                    //$query = $this->db->where_not_in('agent.type',$tipo_agente)
+                    ->get('pedidos_chat');
+            }
 
-    public function contar_nuevos($id_incidencia,$agent) {
+
+
+            ///echo $this->db->last_query(); exit;
+            return $query->row_array();
+        }
+        else
+        {
+            return FALSE;
+        }
+    }
+
+    public function contar_nuevos_old($id_incidencia,$agent) {
 		if($id_incidencia != FALSE)
 		{
 			$query = $this->db->select('COUNT(*) AS nuevos')
@@ -116,10 +150,28 @@ class Chat_model extends CI_Model {
 		{
 			return FALSE;
 		}
-	}	
+	}
+
+    public function marcar_leido($id,$agent,$tabla='incidencias')
+    {
+        if ($tabla=='incidencias') {
+            $this->db->set('status', 2, FALSE);
+            $this->db->where('id_incidencia', $id);
+            $this->db->where('agent', $agent);
+            $this->db->where('status !=', 'Privado');
+            $this->db->update('chat');
+        }
+        else {
+            $this->db->set('status', 2, FALSE);
+            $this->db->where('id_pedido', $id);
+            $this->db->where('agent', $agent);
+            $this->db->where('status !=', 'Privado');
+            $this->db->update('pedidos_chat');
+        }
+        //echo $this->db->last_query(); exit;
+    }
 	
-	
-	public function marcar_leido($id_incidencia,$agent)
+	public function marcar_leido_old($id_incidencia,$agent)
 	{
 		$this->db->set('status', 2, FALSE);
 		$this->db->where('id_incidencia',$id_incidencia);
@@ -135,7 +187,47 @@ class Chat_model extends CI_Model {
 		$id = $this->db->insert_id();
 		return array('add' => (isset($id)) ? $id : FALSE, 'id' => $id);
 
-	}	
+	}
+
+    public function insert_chat($data,$tabla="incidencia")
+    {
+
+        if ($tabla == 'incidencia') {
+            $this->db->insert('chat', $data);
+        }
+        else {
+            $this->db->insert('pedidos_chat', $data);
+        }
+        //echo $this->db->last_query();exit;
+        $id = $this->db->insert_id();
+        return array('add' => (isset($id)) ? $id : FALSE, 'id' => $id);
+
+    }
+
+    public function get_chat_pds($id,$tabla='incidencias') {
+        if($id != FALSE)
+        {
+            if ($tabla=='pedidos') {
+                $query = $this->db->select('pedidos_chat.*')
+                    ->where('pedidos_chat.id_pedido', $id)
+                    ->where('pedidos_chat.status <>', 'Privado')
+                    ->order_by('pedidos_chat.fecha ASC')
+                    ->get('pedidos_chat');
+            }
+            else {
+                $query = $this->db->select('chat.*')
+                    ->where('chat.id_incidencia', $id)
+                    ->where('status <>', 'Privado')
+                    ->order_by('chat.fecha ASC')
+                    ->get('chat');
+            }
+            return $query->result();
+        }
+        else
+        {
+            return FALSE;
+        }
+    }
 
 }
 
