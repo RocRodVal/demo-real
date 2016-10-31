@@ -2,10 +2,10 @@
         <div id="page-wrapper">
             <div class="row">
                 <div class="col-lg-12">
-                    <h1 class="page-header"><?php echo $title ?></h1>
+                    <h1 class="page-header"><?php echo $title ?><a href="<?=site_url('admin/exportar_dispositivos_almacen/xls');?>" title="Exportar Excel">Exportar Excel</a></h1>
                 </div>
             </div>
-		    <div class="row">
+		<!--  <div class="row">
 		        <div class="col-lg-12">
 		            <?php
 		            if (empty($devices)) {
@@ -74,11 +74,12 @@
 		            }
 		            ?>
 		        </div>
-		    </div>   		    
+		    </div>-->
 		    <div class="row">
 		        <div class="col-lg-12">
 		         <?php echo $content; ?>
 		        </div>
 		    </div>		    	            
         </div>
+
         <!-- /#page-wrapper -->

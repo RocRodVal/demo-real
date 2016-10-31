@@ -106,6 +106,21 @@ class Intervencion extends CI_Controller
                 //cambiamos el estado de la incidencia a asignada
                 $status = 4;
                 $result = $this->intervencion_model->change_status_incidencia($incidencia_id, $status);
+
+                $this->load->model('tienda_model');
+
+                /*** Guardar incidcencia en el histórico*/
+                $data = array(
+                    'fecha' => date('Y-m-d H:i:s'),
+                    'id_incidencia' => $incidencia_id,
+                    'id_pds' => $pds_id,
+                    'description' => NULL,
+                    'agent' => $this->session->userdata('sfid'),
+                    'status_pds' => 2,
+                    'status' => $status
+                );
+                $this->tienda_model->historico($data);
+
                 $this->data['data'] = $result;
 
 

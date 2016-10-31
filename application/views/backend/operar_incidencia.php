@@ -123,39 +123,44 @@
 
                                 <?php } ?>
 
-                        <div class="col-lg-7 labelText grey">Resolver incidencia<br /><br /></div>
+                        <div class="col-lg-7 labelText grey">Sustitución de terminales <br /></div>
+                        <form action="<?= site_url('admin/update_incidencia/' . $id_pds_url . '/' . $id_inc_url . '/4/10') ?>" method="post">
+                            <div class="col-lg-5 labelBtn grey">
+                                <input type="hidden" value="si" id="sustituido"/>
+                                <input type="submit" value="sustituir" name="submit" class="btn btn-success"
+                                       classBtn="status" class="btn btn-success" <?php if (($incidencia['status'] != 'Comunicada')
+                                       ||(is_null($incidencia['id_devices_pds'])) || ($status_device_incidencia=='NoSustituir')){
+                                    echo 'disabled';
+                                } ?> />
+                                <?php // echo "ESTHER ".$status_device_incidencia;?>
+                            </div>
+                        </form>
+
+                        <div class="col-lg-7 labelText white">Resolver incidencia<br /><br /></div>
 		                <form action="<?= site_url('admin/update_incidencia/' . $id_pds_url . '/' . $id_inc_url . '/4/6') ?>" method="post">
-		                <div class="col-lg-5 labelBtn grey">
+		                <div class="col-lg-5 labelBtn white">
 		                    <input type="date" name="fecha_cierre" id="fecha_cierre" value="Fecha"   <?php if ($incidencia['status_pds'] == 'Finalizada') { echo 'disabled'; } ?> ><br />
 		                    <input type="submit" value="Resolver" name="submit" class="btn btn-success" classBtn="status" class="btn btn-success" <?php if ($incidencia['status'] != 'Comunicada') {
                                 echo 'disabled';
                             } ?> />
                             <span class="fecha_status"><?=$historico_fecha_resuelta?></span>
 		                </div>
-		                </form>                        
-                        <!-- //
+		                </form>
+                        <div class="col-lg-7 labelText grey">Emisión de recogida de material</div>
                         <div class="col-lg-5 labelBtn grey">
-                            <a href="<?= site_url('admin/update_incidencia/' . $id_pds_url . '/' . $id_inc_url . '/4/6') ?>"
-                               classBtn="status" class="btn btn-success" <?php if ($incidencia['status'] != 'Comunicada') {
-                                echo 'disabled';
-                            } ?>>Resolver</a>
-                        </div>
-                        //-->
-                        <div class="col-lg-7 labelText white">Emisión de recogida de material</div>
-                        <div class="col-lg-5 labelBtn white">
                             <a href="<?= site_url('admin/update_incidencia/' . $id_pds_url . '/' . $id_inc_url . '/4/7') ?>"
                                classBtn="status" class="btn btn-success" <?php if ($incidencia['status'] != 'Resuelta') {
                                 echo 'disabled';
                             } ?>>Recogida</a>
                         </div>
-                        <div class="col-lg-7 labelText grey">Material recogido</div>
-                        <div class="col-lg-5 labelBtn grey">
+                        <div class="col-lg-7 labelText white">Material recogido</div>
+                        <div class="col-lg-5 labelBtn white">
                             <a href="<?= site_url('admin/update_incidencia/' . $id_pds_url . '/' . $id_inc_url . '/4/8') ?>"
                                classBtn="status" class="btn btn-success" <?php if ($incidencia['status'] != 'Pendiente recogida') {
                                 echo 'disabled';
                             } ?>>Cerrar</a>
                         </div>
-                        <div class="col-lg-12 labelText white"><i class="fa fa-fire-extinguisher fa-fw"></i> Usar con cuidado</div>
+                        <div class="col-lg-12 labelText grey"><i class="fa fa-fire-extinguisher fa-fw"></i> Usar con cuidado</div>
                         <!--//
                         <div class="col-lg-7 labelText grey">Puesta a cero (borrado pasos previos)</div>
                         <div class="col-lg-5 labelBtn grey">
@@ -163,8 +168,8 @@
                                classBtn="status" class="btn btn-danger">Puesta a cero</a></td>
                         </div>
                         //-->                         
-                        <div class="col-lg-7 labelText white">Cierre forzoso (act. externas)</div>
-                        <div class="col-lg-5 labelBtn white">
+                        <div class="col-lg-7 labelText grey">Cierre forzoso (act. externas)</div>
+                        <div class="col-lg-5 labelBtn grey">
                             <a href="<?= site_url('admin/update_incidencia/' . $id_pds_url . '/' . $id_inc_url . '/4/8/ext') ?>"
 
                                classBtn="status" class="btn btn-danger" <?php if ($incidencia['status_pds'] == 'Finalizada') { echo 'disabled'; } ?>>Cierre forzoso</a>
@@ -233,7 +238,12 @@
                         </tr>
                         <?php
                             if (!isset($incidencia['device']['device'])) {$dispositivo = 'Retirado';}
-                            else { $dispositivo = $incidencia['device']['device']; }
+                            else {
+                                $dispositivo = $incidencia['device']['device'];
+                                if (!empty($incidencia['device']['IMEI'])) {
+                                    $dispositivo .= " - " . $incidencia['device']['IMEI'];
+                                }
+                            }
                             if (!isset($incidencia['display']['display'])) { $mueble = 'Retirado'; }
                             else { $mueble = $incidencia['display']['display']; }
                         ?>
@@ -260,8 +270,8 @@
                                         </tr>
 
                                         <tr>
-                                            <th colspan="2"><label for="tipo_averia">Razón de parada de incidencia: </label></th>
-                                            <td colspan="3"><select id="tipo_averia" name="tipo_averia">
+                                            <th colspan="1"><label for="tipo_averia">Razón de parada de incidencia: </label></th>
+                                            <td colspan="4"><select id="tipo_averia" name="tipo_averia">
                                                     <option value="NULL">-- Sin asignar --</option>
                                                     <?php
                                                     /* razones de parada de incidencias*/
@@ -365,7 +375,7 @@
                                         foreach ($material_dispositivos as $material_dispositivos_item) {
                                             ?>
                                             <tr>
-                                                <td><?php echo $material_dispositivos_item->barcode ?></td>
+                                                <td><?php echo $material_dispositivos_item->imei ?></td>
                                                 <td><?php echo $material_dispositivos_item->device ?></td>
                                                 <td><?php echo $material_dispositivos_item->cantidad ?></td>
                                                 <?php if($material_editable) { ?>

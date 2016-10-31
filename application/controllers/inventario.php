@@ -619,6 +619,215 @@ class Inventario extends CI_Controller {
 		$this->load->view('backend/footer');
 	}
 
+    public function balance()
+    {
+        if($this->auth->is_auth())
+        {
+            $xcrud = xcrud_get_instance();
+            $this->load->model('tienda_model');
+
+            //$data['stocks']          = $this->tienda_model->get_stock();
+            $data['stocks']          = $this->tienda_model->get_stock_cruzado();
+            //print_r($data['stocks']); exit;
+            //    $data['stocks_dispositivos']  = $this->tienda_model->get_cdm_dispositivos();
+
+            //	$data['alarms_almacen']  = $this->tienda_model->get_alarms_almacen_reserva();
+            //	$data['devices_almacen'] = $this->tienda_model->get_devices_almacen();
+            //	$data['displays_pds']    = $this->tienda_model->get_displays_total();
+            //	$data['devices_pds']     = $this->tienda_model->get_devices_total();
+
+            $data['title']   = 'Depósito';
+            $data['opcion'] =1;
+
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
+            $this->load->view('backend/header', $data);
+            $this->load->view('backend/navbar', $data);
+            $this->load->view('backend/inventario/cdm_dispositivos', $data);
+            $this->load->view('backend/footer');
+        }
+        else
+        {
+            redirect('admin','refresh');
+        }
+    }
+
+    public function incidencias()
+    {
+        if($this->auth->is_auth())
+        {
+            $xcrud = xcrud_get_instance();
+            $this->load->model('tienda_model');
+
+            //$data['stocks']          = $this->tienda_model->get_stock();
+            //$data['stocks']          = $this->tienda_model->get_stock_cruzado();
+            //print_r($data['stocks']); exit;
+            $data['stocks_dispositivos']  = $this->tienda_model->get_cdm_dispositivos();
+
+            //$data['alarms_almacen']  = $this->tienda_model->get_alarms_almacen_reserva();
+            //$data['devices_almacen'] = $this->tienda_model->get_devices_almacen();
+            //	$data['displays_pds']    = $this->tienda_model->get_displays_total();
+            //	$data['devices_pds']     = $this->tienda_model->get_devices_total();
+
+            $data['title']   = 'Incidencias';
+            $data['opcion'] =2;
+
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
+            $this->load->view('backend/header', $data);
+            $this->load->view('backend/navbar', $data);
+            $this->load->view('backend/inventario/cdm_dispositivos', $data);
+            $this->load->view('backend/footer');
+        }
+        else
+        {
+            redirect('admin','refresh');
+        }
+    }
+
+    public function alarmas_en_almacen()
+    {
+        if($this->auth->is_auth())
+        {
+            $xcrud = xcrud_get_instance();
+            $this->load->model('tienda_model');
+
+            //$data['stocks']          = $this->tienda_model->get_stock();
+            //$data['stocks']          = $this->tienda_model->get_stock_cruzado();
+            //print_r($data['stocks']); exit;
+            //$data['stocks_dispositivos']  = $this->tienda_model->get_cdm_dispositivos();
+
+            $data['alarms_almacen']  = $this->tienda_model->get_alarms_almacen_reserva();
+            //$data['devices_almacen'] = $this->tienda_model->get_devices_almacen();
+            //	$data['displays_pds']    = $this->tienda_model->get_displays_total();
+            //	$data['devices_pds']     = $this->tienda_model->get_devices_total();
+
+            $data['title']   = 'Depósito';
+            $data['opcion'] = 6;
+
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
+            $this->load->view('backend/header', $data);
+            $this->load->view('backend/navbar', $data);
+            $this->load->view('backend/inventario/cdm_dispositivos', $data);
+            $this->load->view('backend/footer');
+        }
+        else
+        {
+            redirect('admin','refresh');
+        }
+    }
+
+    public function dispositivos_almacen()
+    {
+        if($this->auth->is_auth())
+        {
+            $xcrud = xcrud_get_instance();
+            $this->load->model('tienda_model');
+
+            //$data['stocks']          = $this->tienda_model->get_stock();
+            //$data['stocks']          = $this->tienda_model->get_stock_cruzado();
+            //print_r($data['stocks']); exit;
+            //$data['stocks_dispositivos']  = $this->tienda_model->get_cdm_dispositivos();
+
+            //$data['alarms_almacen']  = $this->tienda_model->get_alarms_almacen_reserva();
+            $data['devices_almacen'] = $this->tienda_model->get_devices_almacen();
+            //	$data['displays_pds']    = $this->tienda_model->get_displays_total();
+            //	$data['devices_pds']     = $this->tienda_model->get_devices_total();
+
+            $data['title']   = 'Depósito';
+            $data['opcion'] =3;
+
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
+            $this->load->view('backend/header', $data);
+            $this->load->view('backend/navbar', $data);
+            $this->load->view('backend/inventario/cdm_dispositivos', $data);
+            $this->load->view('backend/footer');
+        }
+        else
+        {
+            redirect('admin','refresh');
+        }
+    }
+
+    public function dispositivos_tiendas()
+    {
+        if($this->auth->is_auth())
+        {
+            $xcrud = xcrud_get_instance();
+            $this->load->model('tienda_model');
+
+            //$data['stocks']          = $this->tienda_model->get_stock();
+            //$data['stocks']          = $this->tienda_model->get_stock_cruzado();
+            //print_r($data['stocks']); exit;
+            //$data['stocks_dispositivos']  = $this->tienda_model->get_cdm_dispositivos();
+
+            //$data['alarms_almacen']  = $this->tienda_model->get_alarms_almacen_reserva();
+            //$data['devices_almacen'] = $this->tienda_model->get_devices_almacen();
+            //	$data['displays_pds']    = $this->tienda_model->get_displays_total();
+            $data['devices_pds']     = $this->tienda_model->get_devices_total();
+
+            $data['title']   = 'Depósito';
+            $data['opcion'] = 4;
+
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
+            $this->load->view('backend/header', $data);
+            $this->load->view('backend/navbar', $data);
+            $this->load->view('backend/inventario/cdm_dispositivos', $data);
+            $this->load->view('backend/footer');
+        }
+        else
+        {
+            redirect('admin','refresh');
+        }
+    }
+    public function muebles_tiendas()
+    {
+        if($this->auth->is_auth())
+        {
+            $xcrud = xcrud_get_instance();
+            $this->load->model('tienda_model');
+
+            //$data['stocks']          = $this->tienda_model->get_stock();
+            //$data['stocks']          = $this->tienda_model->get_stock_cruzado();
+            //print_r($data['stocks']); exit;
+            //$data['stocks_dispositivos']  = $this->tienda_model->get_cdm_dispositivos();
+
+            //$data['alarms_almacen']  = $this->tienda_model->get_alarms_almacen_reserva();
+            //$data['devices_almacen'] = $this->tienda_model->get_devices_almacen();
+            $data['displays_pds']    = $this->tienda_model->get_displays_total();
+            //$data['devices_pds']     = $this->tienda_model->get_devices_total();
+
+            $data['title']   = 'Depósito';
+            $data['opcion'] = 5;
+
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
+            $this->load->view('backend/header', $data);
+            $this->load->view('backend/navbar', $data);
+            $this->load->view('backend/inventario/cdm_dispositivos', $data);
+            $this->load->view('backend/footer');
+        }
+        else
+        {
+            redirect('admin','refresh');
+        }
+    }
+
 }
 /* End of file admin.php */
 /* Location: ./application/controllers/admin.php */

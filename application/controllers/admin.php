@@ -237,6 +237,7 @@ class Admin extends CI_Controller
         return $resultado;
     }
 
+
     /**
      * Tabla de incidencias cuyo tipo son "abiertas" o "cerradas"
      * (Antiguo dashboard)
@@ -493,6 +494,7 @@ class Admin extends CI_Controller
         $n_status_sat["Pendiente recogida"] = 7;
         $n_status_sat["Cerrada"] = 8;
         $n_status_sat["Cancelada"] = 9;
+        $n_status_sat["Sustituido"] = 10;
 
 
         if($n_status_sat[$status] == 1 || $n_status_sat[$status] >= $n_status_sat["Comunicada"]) $resultado = FALSE;
@@ -881,10 +883,6 @@ class Admin extends CI_Controller
             $data['id_pds_url'] = $id_pds;
             $data['id_inc_url'] = $id_inc;
 
-
-
-
-
             $incidencia = $this->tienda_model->get_incidencia($id_inc);
 
             $data['last_updated'] = date("d/m/Y",strtotime($incidencia['last_updated']));
@@ -910,6 +908,12 @@ class Admin extends CI_Controller
             $incidencia['display'] = $this->sfid_model->get_display($incidencia['id_displays_pds']);
             $data['incidencia'] = $incidencia;
 
+            if (!empty($incidencia['id_devices_pds'])) {
+                $resultado = $this->incidencia_model->get_statusdevice_incidencia($incidencia['id_devices_pds'], $id_inc);
+                if(!empty($resultado)) {
+                     $data['status_device_incidencia'] = $resultado['status'];
+                 }
+            } else {$data['status_device_incidencia']='NoSustituir';}
 
             $data['fail_device'] = $incidencia['fail_device'];
             $data['alarm_display'] = $incidencia['alarm_display'];
@@ -1359,6 +1363,170 @@ class Admin extends CI_Controller
 
 
         $xcrud = xcrud_get_instance();
+        $this->load->model(array('tienda_model'));
+
+        $sfid = $this->tienda_model->get_pds($id_pds);
+
+        $data['id_pds'] = 'ABX/PDS-' . $sfid['id_pds'];
+        $data['commercial'] = $sfid['commercial'];
+        $data['territory'] = $sfid['territory'];
+        $data['reference'] = $sfid['reference'];
+        $data['address'] = $sfid['address'];
+        $data['zip'] = $sfid['zip'];
+        $data['city'] = $sfid['city'];
+
+        $data['id_pds_ulr'] = $id_pds;
+        $data['id_inc_ulr'] = $id_inc;
+
+        if($status!=10) {
+            $this->tienda_model->incidencia_update($id_inc, $status_pds, $status);
+        }
+
+        $incidencia = $this->tienda_model->get_incidencia($id_inc);
+
+        if ($status == 2) {
+
+            if ($incidencia['fail_device'] == 1) {
+                $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'], 2);
+            }
+        }
+
+        /**
+         * Botón Asignar material
+         */
+        if ($status == 5) {
+            $intervencion = $this->intervencion_model->get_intervencion_incidencia($id_inc);
+
+            $this->tienda_model->reservar_dispositivos($this->input->post('dipositivo_almacen_1'),3);
+            $this->tienda_model->reservar_dispositivos($this->input->post('dipositivo_almacen_2'),3);
+            $this->tienda_model->reservar_dispositivos($this->input->post('dipositivo_almacen_3'),3);
+
+            $dispositivos = $this->tienda_model->get_devices_incidencia($id_inc);
+            $alarmas = $this->tienda_model->get_alarms_incidencia($id_inc);
+
+            $facturacion_data= array(
+                'fecha' => date('Y-m-d H:i:s'),
+                'id_pds' => $id_pds,
+                'id_intervencion' => $intervencion,
+                'id_incidencia' => $id_inc,
+                'id_displays_pds' => $incidencia['id_displays_pds'],
+                'units_device' => $dispositivos['dispositivos'],
+                'units_alarma' => $alarmas['alarmas'],
+                'description' => NULL
+            );
+
+            $this->tienda_model->facturacion($facturacion_data);
+        }
+
+
+        $fecha_cierre = $this->input->post('fecha_cierre');
+
+        if(empty($fecha_cierre)) { $fecha_cierre = date('Y-m-d H:i:s'); }
+
+        /**
+         * Botón resolver Incidencia : Recoge fecha de resolución y hace la operación
+         * Si no se ha sustituido terminal => ponemos la fecha del cierre y la posicion que generó la incidencia pasa a estar
+         * en Alta
+         */
+        if ($status == 6)
+        {
+            $this->tienda_model->incidencia_update_cierre($id_inc, $fecha_cierre);
+
+           // if ($incidencia['tipo_averia'] == "Averia") {
+                $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'], $status,$id_inc);
+            //}
+        }
+
+        /**
+         * Botón Recogida de material : pone en transito a almacen el dispositivo que ha generado la incidencia
+         */
+        if ($status == 7)
+        {
+            if ($incidencia['tipo_averia'] != 'Robo') {
+                $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'],$status,$id_inc);
+            }else {
+
+            }
+        }
+        /**
+         * CIERRE FORZOSO
+         */
+        if (($status == 8) AND ($status_ext == 'ext'))
+        {
+            if (!is_null($incidencia['id_devices_pds'])) {
+                $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'], 1,$id_inc);
+            }
+            $this->tienda_model->incidencia_update_cierre($id_inc, $fecha_cierre);
+        }else {
+            if ($status == 8) {
+
+                if (!is_null($incidencia['id_devices_pds'])) {
+
+                    $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'],9,$id_inc);
+                }
+                $this->tienda_model->incidencia_update_cierre($id_inc, $fecha_cierre);
+            }
+        }
+
+        /**
+         * Botón Sustituir terminales : Pone el terminal enviado en la posicioin del mueble
+         */
+        if ($status == 10)
+        {
+            //$this->tienda_model->incidencia_update_cierre($id_inc, $fecha_cierre);
+            if (!is_null($incidencia['id_devices_pds'])) {
+                //echo "va por el if";
+                $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'], $status,$id_inc);
+            }
+           // $status=6;
+
+        }
+        /**
+         * Guardar incidcencia en el histórico
+         */
+        $data = array(
+            'fecha' => date('Y-m-d H:i:s'),
+            'id_incidencia' => $id_inc,
+            'id_pds' => $id_pds,
+            'description' => NULL,
+            'agent' => $this->session->userdata('sfid'),
+            'status_pds' => $status_pds,
+            'status' => $status
+        );
+
+        $this->tienda_model->historico($data);
+
+
+        /**
+         * Notificación a instalador
+         */
+        if ($status == 5)
+        {
+            $envio_mail = $this->uri->segment(7);
+
+            // Se va a proceder a la notificación de la incidencia por lo que el material asignado ya será inamovible
+            // Y por tanto deberá procesarse (procesado=1) y así verse en el histórico Diario de almacén.
+            $this->tienda_model->procesar_historico_incidencia($id_inc);
+            $this->tienda_model->actualizar_devices_almacen($id_inc);
+
+            redirect('admin/imprimir_incidencia/'.$id_pds.'/'.$id_inc.'/'.$envio_mail, 'refresh');
+        }
+        else
+        {
+            redirect('admin/operar_incidencia/'.$id_pds.'/'.$id_inc, 'refresh');
+        }
+    }
+
+    public function update_incidencia_old()
+    {
+        $id_pds = $this->uri->segment(3);
+        $id_inc = $this->uri->segment(4);
+        $status_pds = $this->uri->segment(5);
+        $status = $this->uri->segment(6);
+        $status_ext = $this->uri->segment(7);
+
+
+        $xcrud = xcrud_get_instance();
         $this->load->model(array('tienda_model','intervencion_model'));
 
         $sfid = $this->tienda_model->get_pds($id_pds);
@@ -1432,21 +1600,16 @@ class Admin extends CI_Controller
 
         }
 
-        /**
-         * CIERRE FORZOSO
-         */
+        /*** CIERRE FORZOSO */
         if (($status == 8) AND ($status_ext == 'ext'))
         {
-
             if ($incidencia['fail_device'] == 1) {
                 $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'], 1,$id_inc);
             }
             $this->tienda_model->incidencia_update_cierre($id_inc, $fecha_cierre);
         }
 
-        /**
-         * Guardar incidcencia en el histórico
-         */
+        /*** Guardar incidcencia en el histórico*/
         $data = array(
             'fecha' => date('Y-m-d H:i:s'),
             'id_incidencia' => $id_inc,
@@ -1460,9 +1623,7 @@ class Admin extends CI_Controller
         $this->tienda_model->historico($data);
 
 
-        /**
-         * Notificación a instalador
-         */
+        /*** Notificación a instalador*/
         if ($status == 5)
         {
             $envio_mail = $this->uri->segment(7);
@@ -1477,10 +1638,7 @@ class Admin extends CI_Controller
         {
             redirect('admin/operar_incidencia/'.$id_pds.'/'.$id_inc, 'refresh');
         }
-
-
     }
-
 
     public function reset_incidencia_status()
     {
@@ -3711,6 +3869,42 @@ class Admin extends CI_Controller
         {
             $this->load->model('tienda_model');
 
+            $num = $this->tienda_model->baja_dispositivos_almacen_update($this->input->post('dipositivo_almacen'),$this->input->post('owner_dipositivo_almacen'),$this->input->post('units_dipositivo_almacen'),$this->input->post('destino_dipositivo_almacen'));
+
+            $this->session->set_flashdata("id_device", $this->input->post('dipositivo_almacen'));
+
+            if($num >= 0) {
+                $this->session->set_flashdata("num", $num);
+                if ($this->input->post('destino_dipositivo_almacen')==4) {
+                    $this->session->set_flashdata("mensaje1", " puesto en transito ");
+                }
+                else {
+                    $this->session->set_flashdata("mensaje1", " dado de baja ");
+                }
+                redirect('admin/baja_dispositivos_ok', 'refresh');
+            }else{
+                $this->session->set_flashdata("num", $this->input->post('units_dipositivo_almacen'));
+                if ($this->input->post('destino_dipositivo_almacen')==4) {
+                    $this->session->set_flashdata("mensaje1", " poner en transito ");
+                }
+                else {
+                    $this->session->set_flashdata("mensaje1", " dar de baja ");
+                }
+                $this->session->set_flashdata("mensaje2", " ya que el stock actual en el almacén es 0");
+                redirect('admin/baja_dispositivos_ko', 'refresh');
+            }
+        }
+        else
+        {
+            redirect('admin', 'refresh');
+        }
+    }
+    public function baja_dispositivos_almacen_update_old()
+    {
+        if ($this->auth->is_auth())
+        {
+            $this->load->model('tienda_model');
+
             $num = $this->tienda_model->baja_dispositivos_almacen_update($this->input->post('dipositivo_almacen'),$this->input->post('owner_dipositivo_almacen'),$this->input->post('units_dipositivo_almacen'));
 
             $this->session->set_flashdata("id_device", $this->input->post('dipositivo_almacen'));
@@ -3743,7 +3937,7 @@ class Admin extends CI_Controller
 
             $id_device = $this->session->flashdata("id_device");
             $num = $this->session->flashdata("num");
-
+            $mensaje = $this->session->flashdata("mensaje1");
 
             if(!empty($id_device) && !empty($num)) {
                 $device = $this->tienda_model->get_device($id_device);
@@ -3752,6 +3946,7 @@ class Admin extends CI_Controller
 
                 $data["num"] = $num;
                 $data["modelo"] = $device["device"];
+                $data["mensaje"] = $mensaje;
 
                 /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
                 $this->data->add($data);
@@ -3782,7 +3977,8 @@ class Admin extends CI_Controller
 
             $id_device = $this->session->flashdata("id_device");
             $num = $this->session->flashdata("num");
-
+            $mensaje1 = $this->session->flashdata("mensaje1");
+            $mensaje2 = $this->session->flashdata("mensaje2");
 
             if(!empty($id_device) && !empty($num)) {
                 $device = $this->tienda_model->get_device($id_device);
@@ -3790,6 +3986,8 @@ class Admin extends CI_Controller
                 $data["title"] = "Baja masiva dispositivos";
 
                 $data["num"] = $num;
+                $data["mensaje1"] = $mensaje1;
+                $data["mensaje2"] = $mensaje2;
                 $data["modelo"] = $device["device"];
 
                 /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
@@ -7380,6 +7578,68 @@ class Admin extends CI_Controller
             redirect('admin', 'refresh');
         }
     }
+
+    public function inventario_dispositivos()
+    {
+        $this->load->model('tienda_model');
+
+       // $data['devices'] = $this->tienda_model->get_devices_almacen();
+       // $data['alarmas'] = $this->tienda_model->get_alarms_almacen_reserva();
+
+        $xcrud = xcrud_get_instance();
+        $xcrud->table('devices_almacen');
+        $xcrud->table_name('Inventario dispositivos');
+        $xcrud->relation('id_device', 'device', 'id_device', 'device');
+        $xcrud->relation('id_color_device', 'color_device', 'id_color_device', 'color_device');
+        $xcrud->relation('id_complement_device', 'complement_device', 'id_complement_device', 'complement_device');
+        $xcrud->relation('id_status_device', 'status_device', 'id_status_device', 'status_device');
+        $xcrud->relation('id_status_packaging_device', 'status_packaging_device', 'id_status_packaging_device', 'status_packaging_device');
+        $xcrud->change_type('picture_url_1', 'image');
+        $xcrud->change_type('picture_url_2', 'image');
+        $xcrud->change_type('picture_url_3', 'image');
+        $xcrud->modal('picture_url_1');
+        $xcrud->modal('picture_url_2');
+        $xcrud->modal('picture_url_3');
+        $xcrud->label('id_devices_almacen', 'Ref.')->label('alta', 'Fecha de alta')->label('id_device', 'Dispositivo')->label('serial', 'Nº de serie')->label('IMEI', 'IMEI')->label('mac', 'MAC')->label('barcode', 'Código de barras')->label('id_color_device', 'Color')->label('id_complement_device', 'Complementos')->label('id_status_device', 'Estado dispositivo')->label('id_status_packaging_device', 'Estado packaging')->label('picture_url_1', 'Foto #1')->label('picture_url_2', 'Foto #2')->label('picture_url_3', 'Foto #3')->label('description', 'Comentarios')->label('owner', 'Dueño')->label('status', 'Estado');
+        $xcrud->columns('id_devices_almacen,id_device,IMEI,mac,barcode,status');
+        $xcrud->fields('id_devices_almacen,alta,id_device,serial,IMEI,mac,barcode,id_color_device,id_complement_device,id_status_device,id_status_packaging_device,picture_url_1,picture_url_2,picture_url_3,description,owner,status');
+        $xcrud->order_by('id_device', 'asc');
+        $xcrud->order_by('status', 'asc');
+        $xcrud->order_by('id_devices_almacen', 'asc');
+        $xcrud->show_primary_ai_column(true);
+        $xcrud->unset_numbers();
+      //  $xcrud->start_minimized(true);
+
+     /*   $xcrud_2 = xcrud_get_instance();
+        $xcrud_2->table('alarm');
+        $xcrud_2->table_name('Inventario alarmas');
+        $xcrud_2->relation('type_alarm', 'type_alarm', 'id_type_alarm', 'type');
+        $xcrud_2->relation('brand_alarm', 'brand_alarm', 'id_brand_alarm', 'brand');
+        $xcrud_2->change_type('picture_url', 'image');
+        $xcrud_2->modal('picture_url');
+        $xcrud_2->label('brand_alarm', 'Fabricante')->label('type_alarm', 'Tipo')->label('code', 'Código')->label('alarm', 'Modelo')->label('picture_url', 'Foto')->label('description', 'Comentarios')->label('units', 'Unidades')->label('status', 'Estado');
+        $xcrud_2->columns('brand_alarm,type_alarm,code,alarm,picture_url,units,status');
+        $xcrud_2->fields('brand_alarm,type_alarm,code,alarm,picture_url,description,units,status');
+        $xcrud_2->order_by('code', 'asc');
+        $xcrud_2->order_by('alarm', 'asc');
+        $xcrud_2->unset_numbers();
+        $xcrud_2->start_minimized(true);*/
+
+        $data['title'] = 'Inventario';
+        $data['content'] = $xcrud->render();
+    //    $data['content'] = $data['content'] . $xcrud_2->render();
+
+        /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+        $this->data->add($data);
+        $data = $this->data->getData();
+        /////
+        $this->load->view('backend/header', $data);
+        $this->load->view('backend/navbar', $data);
+        $this->load->view('backend/almacen', $data);
+        $this->load->view('backend/footer');
+    }
+
+
 }
 /* End of file admin.php */
 /* Location: ./application/controllers/admin.php */
