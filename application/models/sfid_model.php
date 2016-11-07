@@ -170,6 +170,7 @@ class Sfid_model extends CI_Model {
 				->where('devices_pds.id_displays_pds',$id_displays_pds)
 				->where('devices_pds.status != "SAT"')
 				->where('devices_pds.status != "Baja"')
+                ->where('devices_pds.status != "RMA"')
 				->order_by('devices_pds.position')
 				->get('devices_pds');
 

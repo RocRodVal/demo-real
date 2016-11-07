@@ -495,6 +495,7 @@ class Admin extends CI_Controller
         $n_status_sat["Cerrada"] = 8;
         $n_status_sat["Cancelada"] = 9;
         $n_status_sat["Sustituido"] = 10;
+        $n_status_sat["SustituidoRMA"] = 11;
 
 
         if($n_status_sat[$status] == 1 || $n_status_sat[$status] >= $n_status_sat["Comunicada"]) $resultado = FALSE;
@@ -1378,7 +1379,7 @@ class Admin extends CI_Controller
         $data['id_pds_ulr'] = $id_pds;
         $data['id_inc_ulr'] = $id_inc;
 
-        if($status!=10) {
+        if (($status!=10) || ($status!=11)) {
             $this->tienda_model->incidencia_update($id_inc, $status_pds, $status);
         }
 
@@ -1442,11 +1443,11 @@ class Admin extends CI_Controller
          */
         if ($status == 7)
         {
-            if ($incidencia['tipo_averia'] != 'Robo') {
+//            if ($incidencia['tipo_averia'] != 'Robo') {
                 $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'],$status,$id_inc);
-            }else {
+  //          }else {
 
-            }
+    //        }
         }
         /**
          * CIERRE FORZOSO
@@ -1479,6 +1480,19 @@ class Admin extends CI_Controller
                 $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'], $status,$id_inc);
             }
            // $status=6;
+
+        }
+        /*
+         * Cuando la incidencia es un Robo y el dispositivo que lo genero vuelve a almacen como RMA
+         */
+        if ($status == 11)
+        {
+            //$this->tienda_model->incidencia_update_cierre($id_inc, $fecha_cierre);
+            if (!is_null($incidencia['id_devices_pds'])) {
+                //echo "va por el if";
+                $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'], $status,$id_inc);
+            }
+            // $status=6;
 
         }
         /**
