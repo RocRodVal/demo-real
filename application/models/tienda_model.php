@@ -334,7 +334,7 @@ class Tienda_model extends CI_Model {
         $query = $this->db->query('
 
 		SELECT temporal.id_device, brand_device.brand, temporal.device, unidades_pds,unidades_transito,
-		(CASE WHEN unidades_pds = 0 THEN 0 ELSE CEIL(unidades_pds * 0.05 + 2) END) as stock_necesario,
+		(CASE WHEN unidades_pds = 0 THEN 0 ELSE CEIL(unidades_pds * 0.05 + 2) END) as stock_necesario,unidades_rma,
 		unidades_almacen,
 		(unidades_almacen - (CASE WHEN unidades_pds = 0 THEN 0 ELSE CEIL(unidades_pds * 0.05 + 2) END)) as balance,
 		temporal.status
@@ -357,8 +357,14 @@ class Tienda_model extends CI_Model {
                     as unidades_almacen,
                     ( SELECT COUNT(*)
                     FROM devices_almacen
-                    WHERE (devices_almacen.id_device = device.id_device) AND (devices_almacen.status = "Transito") )
-                    as unidades_transito
+                    WHERE (devices_almacen.id_device = device.id_device) AND (devices_almacen.status = "Transito") 
+                    )
+                    as unidades_transito,
+                    ( SELECT COUNT(*)
+                    FROM devices_almacen
+                    WHERE (devices_almacen.id_device = device.id_device) AND (devices_almacen.status = "RMA") 
+                    )
+                    as unidades_rma
 
                     FROM device
                 ) as temporal
@@ -474,7 +480,7 @@ class Tienda_model extends CI_Model {
     /*
     * Generar Exportacion de datos con el stock cruzado (NUEVA FUNCION).
     */
-    public function exportar_stock_cruzado($formato="csv") {
+    public function exportar_stock_cruzado($formato="csv",$controler="admin") {
 
         $this->load->dbutil();
         $this->load->helper('file');
@@ -483,9 +489,17 @@ class Tienda_model extends CI_Model {
 
 
         $resultados = $this->get_stock_cruzado();
+        if($controler=="admin") {
+            $arr_titulos = array('Id dispositivo', 'Fabricante', 'Dispositivo', 'Ud. pds', 'Uds. Transito', 'Stock necesario', 'Uds. Almacén RMA',
+                'Uds. Almacén', 'Balance');
+            $excluir = array('status');
+        }
+        else {
+            $arr_titulos = array('Id dispositivo', 'Fabricante', 'Dispositivo', 'Ud. pds', 'Uds. Transito', 'Stock necesario',
+                'Uds. Almacén', 'Balance');
+            $excluir = array('unidades_rma','status');
+        }
 
-        $arr_titulos = array('Id dispositivo','Fabricante','Dispositivo','Ud. pds','Uds. Transito','Stock necesario','Uds. Almacén','Balance');
-        $excluir = array('status');
         $datos = preparar_array_exportar($resultados,$arr_titulos,$excluir);
         exportar_fichero($formato,$datos,"Balance_Dispositivos__".date("d-m-Y"));
 
@@ -2372,12 +2386,12 @@ class Tienda_model extends CI_Model {
                     $device_almacen = $this->db->query($sql)->row();
                     $sql = "UPDATE devices_almacen SET status='Baja' WHERE id_devices_almacen =" . $device_almacen->id_devices_almacen;
                     $this->db->query($sql);
-echo $sql."<br>";
+//echo $sql."<br>";
                     /* poner como RMA la posicion que origino la incidencia*/
                     $sql = "UPDATE devices_pds SET status='RMA' WHERE id_devices_pds =".$device_pds->id_devices_pds;
                     $this->db->query($sql);
 
-echo $sql;
+//echo $sql;
                     /* Insertar el dispositivo instalado en la posición del mueble */
                     $data = array(
                         'client_type_pds' => $device_pds->client_type_pds,
@@ -2430,7 +2444,7 @@ echo $sql;
                         ->get('devices_pds');
                     $device_pds = $query->row();
 
-                    if ($device_pds->status == 'Baja') {
+                    if (($device_pds->status == 'Baja') || ($device_pds->status == 'RMA')) {
                         $data = array(
                             'id_device' => $device_pds->id_device,
                             'alta' => $ahora,
@@ -2443,8 +2457,6 @@ echo $sql;
                             'id_devices_pds' => $device_pds->id_devices_pds
                         );
                         $this->db->insert('devices_almacen', $data);
-                    }else {
-
                     }
                 }
                 break;
@@ -2478,6 +2490,9 @@ echo $sql;
                     if ($device_pds->status=='RMA') {
                         $sql = "UPDATE devices_almacen SET status='RMA' WHERE  status='Transito' AND id_device=$device_pds->id_device AND id_devices_pds=$device_pds->id_devices_pds";
                         //echo $sql; exit;
+                        $this->db->query($sql);
+
+                        $sql = "UPDATE devices_pds SET status='Baja' WHERE id_devices_pds =".$device_pds->id_devices_pds;
                         $this->db->query($sql);
                     } else {
                         if (!empty($material)) {

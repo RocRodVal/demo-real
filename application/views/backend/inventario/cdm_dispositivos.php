@@ -25,6 +25,7 @@
                             <th>Unidades tienda</th>
                             <th>Unidades en transito</th>
                             <th>Stock necesario</th>
+                            <th>Deposito en almacén RMA</th>
                             <th>Deposito en almacén</th>
                             <th>Balance</th>
                         </tr>
@@ -64,6 +65,7 @@
                                 <td><?php echo $stock->unidades_pds ?></td>
                                 <td><?php echo $stock->unidades_transito ?></td>
                                 <td><?php echo $necesitamos ?></td>
+                                <td><?php echo $stock->unidades_rma ?></td>
                                 <td class="<?=$class_almacen?>"><?php echo $stock->unidades_almacen ?></td>
                                 <td class="<?=$class_balance?>"><?php echo $balance ?></td>
                             </tr>

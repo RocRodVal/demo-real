@@ -633,7 +633,8 @@ class Incidencia_model extends CI_Model {
         }
         else
         {
-            $cond = '((incidencias.status = "Resuelta" || incidencias.status = "Pendiente recogida" || incidencias.status = "Cerrada" || incidencias.status = "Cancelada")
+            $cond = '((incidencias.status = "Resuelta" || incidencias.status = "Pendiente recogida" || incidencias.status = "Cerrada" || incidencias.status = "Cancelada"
+                    || incidencias.status = "Sustituido" || incidencias.status = "SustituidoRMA")
                     && (incidencias.status_pds = "Finalizada" || incidencias.status_pds = "Cancelada")) ';
         }
 

@@ -2088,9 +2088,10 @@ class Master extends CI_Controller {
     {
         if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 9))
         {
+            //print_r($this->session->userdata); exit;
             $ext = (!is_null($formato) ? $formato : $this->ext);    // Formato para exportaciones, especficiado o desde CFG
             $this->load->model('tienda_model');
-            $data['stocks'] = $this->tienda_model->exportar_stock_cruzado($ext);
+            $data['stocks'] = $this->tienda_model->exportar_stock_cruzado($ext,$this->session->userdata('sfid'));
         }
         else
         {
