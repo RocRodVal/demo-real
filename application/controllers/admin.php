@@ -3271,7 +3271,7 @@ class Admin extends CI_Controller
         $xcrud_3->columns('client_type_pds,id_devices_pds,id_pds,id_displays_pds,id_display,id_device,position,IMEI,mac,status');
         $xcrud_3->fields('client_type_pds,id_devices_pds,id_pds,id_displays_pds,id_display,alta,id_device,position,serial,IMEI,mac,barcode,id_color_device,id_complement_device,id_status_device,id_status_packaging_device,picture_url_1,picture_url_2,picture_url_3,description,status');
 
-         $xcrud_3->where('status',array('Alta','Incidencia'));
+         $xcrud_3->where('status',array('Alta','Incidencia','Baja','RMA'));
         $xcrud_3->order_by('id_pds', 'asc');
         $xcrud_3->order_by('id_displays_pds', 'asc');
         $xcrud_3->order_by('position', 'asc');
