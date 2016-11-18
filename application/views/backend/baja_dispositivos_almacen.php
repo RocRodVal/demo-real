@@ -15,7 +15,8 @@
 							<tr>
 								<th>Dispositivo</th>
 								<th>Unidades</th>
-								<th>Destino</th>
+								<th>Estado inicial</th>
+								<th>Estado final</th>
 								<th>Dueño</th>
 							</tr>
 							</thead>
@@ -34,7 +35,16 @@
 								</td>
 								<td><input type="text" id="units_dipositivo_almacen" name="units_dipositivo_almacen" onkeypress='return event.charCode >= 48 && event.charCode <= 57'/></td>
 								<td>
+									<select id="inicio_dipositivo_almacen" name="inicio_dipositivo_almacen" style="width:150px">
+										<option value="1">En stock</option>
+										<option value="2">Reservado</option>
+										<option value="4">En transito</option>
+									</select>
+								</td>
+								<td>
 									<select id="destino_dipositivo_almacen" name="destino_dipositivo_almacen" style="width:150px">
+										<option value="1">En stock</option>
+										<option value="2">Reservado</option>
 										<option value="4">En transito</option>
 										<option value="5">Baja</option>
 									</select>

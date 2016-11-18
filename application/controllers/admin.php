@@ -153,10 +153,11 @@ class Admin extends CI_Controller
      * la variable de sesión de ese nombre
      */
     public function delete_filtros($array_filtros,$array_excepciones=array()){
+
         if(is_array($array_filtros)){
-            foreach($array_filtros as $filtro){
-                if(!in_array($filtro,$array_excepciones)) {
-                    $this->session->unset_userdata($filtro);
+            foreach($array_filtros as $key =>$filtro){
+                if(!in_array($key,$array_excepciones)) {
+                    $this->session->unset_userdata($key);
                 }
             }
         }
@@ -291,6 +292,7 @@ class Admin extends CI_Controller
             );
 
             /* BORRAR BUSQUEDA */
+            //echo  $this->uri->segment(4);exit;
             $borrar_busqueda = $this->uri->segment(4);
             if($borrar_busqueda === "borrar_busqueda")
             {
@@ -862,6 +864,8 @@ class Admin extends CI_Controller
 
             $id_pds = $this->uri->segment(3);
             $id_inc = $this->uri->segment(4);
+            $recogida = $this->uri->segment(5)? $this->uri->segment(5):'';
+
 
             $xcrud = xcrud_get_instance();
             $this->load->model(array('chat_model', 'intervencion_model', 'tienda_model', 'sfid_model'));
@@ -883,6 +887,7 @@ class Admin extends CI_Controller
 
             $data['id_pds_url'] = $id_pds;
             $data['id_inc_url'] = $id_inc;
+            $data['recogida'] = $recogida;
 
             $incidencia = $this->tienda_model->get_incidencia($id_inc);
 
@@ -903,19 +908,34 @@ class Admin extends CI_Controller
             $historico_fecha_resuelta = $this->tienda_model->historico_fecha($id_inc,'Resuelta');
             $data['historico_fecha_resuelta'] =  isset($historico_fecha_resuelta['fecha']) ? date("d/m/Y",strtotime($historico_fecha_resuelta['fecha'])) : '';
 
+
+
+
             $incidencia['intervencion'] = $this->intervencion_model->get_intervencion_incidencia($id_inc);
 
             $incidencia['device'] = $this->sfid_model->get_device($incidencia['id_devices_pds']);
             $incidencia['display'] = $this->sfid_model->get_display($incidencia['id_displays_pds']);
             $data['incidencia'] = $incidencia;
+            $data['historico_fecha_sustituido'] ='';
 
             if (!empty($incidencia['id_devices_pds'])) {
                 $resultado = $this->incidencia_model->get_statusdevice_incidencia($incidencia['id_devices_pds'], $id_inc);
                 if(!empty($resultado)) {
-                     $data['status_device_incidencia'] = $resultado['status'];
+                    $data['status_device_incidencia'] = $resultado['status'];
+
+                    $historico_fecha_sust = $this->tienda_model->historico_fecha($id_inc,'Sustituido');
+                   // print_r($historico_fecha_sust);
+                    if (isset($historico_fecha_sust['fecha'])) {
+                        $data['historico_fecha_sustituido'] =date("d/m/Y", strtotime($historico_fecha_sust['fecha']));
+                    }else {
+                        $historico_fecha_sustRMA = $this->tienda_model->historico_fecha($id_inc,'SustituidoRMA');
+                        if (isset($historico_fecha_sustRMA['fecha'])) {
+                            $data['historico_fecha_sustituido'] =date("d/m/Y",strtotime($historico_fecha_sustRMA['fecha']));
+                        }
+                    }
                  }
             } else {$data['status_device_incidencia']='NoSustituir';}
-
+//echo $data['status_device_incidencia']; exit;
             $data['fail_device'] = $incidencia['fail_device'];
             $data['alarm_display'] = $incidencia['alarm_display'];
             $data['alarm_device'] = $incidencia['alarm_device'];
@@ -1461,10 +1481,13 @@ class Admin extends CI_Controller
         }else {
             if ($status == 8) {
 
-                if (!is_null($incidencia['id_devices_pds'])) {
-
-                    $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'],9,$id_inc);
-                }
+                //if (!is_null($incidencia['id_devices_pds'])) {
+                    //print_r($this->tienda_model->get_devices_incidencia($incidencia['id_incidencia'])); exit;
+                    $disp=$this->tienda_model->get_devices_incidencia($incidencia['id_incidencia']);
+                    if ($disp['dispositivos']>0) {
+                        $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'], 9, $id_inc);
+                    }
+                //}
                 $this->tienda_model->incidencia_update_cierre($id_inc, $fecha_cierre);
             }
         }
@@ -3303,8 +3326,8 @@ class Admin extends CI_Controller
         $data['content'] = $data['content'] . $xcrud_3->render();
         ///$data['content'] = $data['content'] . $xcrud_4->render();
 
-        $data['displays'] = $this->tienda_model->get_displays_total();
-        $data['devices'] = $this->tienda_model->get_devices_total();
+        //$data['displays'] = $this->tienda_model->get_displays_total();
+        //$data['devices'] = $this->tienda_model->get_devices_total();
 
 
         /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
@@ -3883,28 +3906,63 @@ class Admin extends CI_Controller
         {
             $this->load->model('tienda_model');
 
-            $num = $this->tienda_model->baja_dispositivos_almacen_update($this->input->post('dipositivo_almacen'),$this->input->post('owner_dipositivo_almacen'),$this->input->post('units_dipositivo_almacen'),$this->input->post('destino_dipositivo_almacen'));
+            $num = $this->tienda_model->baja_dispositivos_almacen_update($this->input->post('dipositivo_almacen'),$this->input->post('owner_dipositivo_almacen'),
+                $this->input->post('units_dipositivo_almacen'),$this->input->post('inicio_dipositivo_almacen'),$this->input->post('destino_dipositivo_almacen'));
 
             $this->session->set_flashdata("id_device", $this->input->post('dipositivo_almacen'));
-
+            $this->session->set_flashdata("mensaje1","");
+            $this->session->set_flashdata("num", $num);
             if($num >= 0) {
-                $this->session->set_flashdata("num", $num);
-                if ($this->input->post('destino_dipositivo_almacen')==4) {
-                    $this->session->set_flashdata("mensaje1", " puesto en transito ");
-                }
-                else {
-                    $this->session->set_flashdata("mensaje1", " dado de baja ");
-                }
+
+                switch ($this->input->post('destino_dipositivo_almacen')){
+                    case 1:{
+                        $this->session->set_flashdata("mensaje1", " puesto en stock ");
+                        break;
+                    }
+                    case 2:{
+                        $this->session->set_flashdata("mensaje1", " puesto en reservado ");
+                        break;
+                    }
+                    case 4:{
+                        $this->session->set_flashdata("mensaje1", " puesto en transito ");
+                        break;
+                    }
+                    case 5:{
+                        $this->session->set_flashdata("mensaje1", " dado de baja ");
+                        break;
+                    }
+                };
+
                 redirect('admin/baja_dispositivos_ok', 'refresh');
             }else{
                 $this->session->set_flashdata("num", $this->input->post('units_dipositivo_almacen'));
-                if ($this->input->post('destino_dipositivo_almacen')==4) {
-                    $this->session->set_flashdata("mensaje1", " poner en transito ");
+
+                switch ($this->input->post('destino_dipositivo_almacen')){
+                    case 1:{
+                        $this->session->set_flashdata("mensaje1", " poner en stock ");
+                        break;
+                    }
+                    case 2:{
+                        $this->session->set_flashdata("mensaje1", " poner en reservado ");
+                        break;
+                    }
+                    case 4:{
+                        $this->session->set_flashdata("mensaje1", " poner en transito ");
+                        break;
+                    }
+                    case 5:{
+                        $this->session->set_flashdata("mensaje1", " dar de baja ");
+                        break;
+                    }
+                };
+
+              /*  if ($this->input->post('destino_dipositivo_almacen')==4) {
+
                 }
                 else {
-                    $this->session->set_flashdata("mensaje1", " dar de baja ");
-                }
-                $this->session->set_flashdata("mensaje2", " ya que el stock actual en el almacén es 0");
+
+                }*/
+                $this->session->set_flashdata("mensaje2", " ya que el stock en el almacen es 0");
                 redirect('admin/baja_dispositivos_ko', 'refresh');
             }
         }
@@ -3970,6 +4028,7 @@ class Admin extends CI_Controller
                 $this->load->view('backend/navbar', $data);
                 $this->load->view('backend/baja_dispositivos_almacen_ok', $data);
                 $this->load->view('backend/footer');
+
             }else{
                 redirect('admin/alta_dispositivos_almacen', 'refresh');
             }
@@ -7035,6 +7094,7 @@ class Admin extends CI_Controller
             );
 
             /* BORRAR BUSQUEDA */
+
             $borrar_busqueda = $this->uri->segment(4);
             if($borrar_busqueda === "borrar_busqueda")
             {
@@ -7639,7 +7699,7 @@ class Admin extends CI_Controller
         $xcrud_2->unset_numbers();
         $xcrud_2->start_minimized(true);*/
 
-        $data['title'] = 'Inventario';
+        $data['title'] = 'Dispositivos';
         $data['content'] = $xcrud->render();
     //    $data['content'] = $data['content'] . $xcrud_2->render();
 

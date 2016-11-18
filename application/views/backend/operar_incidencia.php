@@ -24,7 +24,12 @@
             <div class="col-lg-12">
                 <h1 class="page-header"><?php echo $title ?>
                     <!--<a onclick="history.go(-1);return false;" class="btn btn-danger right">Volver</a>-->
+                    <? if (!empty($recogida)) { ?>
+                        <a href="<?=site_url('inventario/dispositivos_recogida') ?>" class="btn btn-danger right">Volver</a>
+                    <?php
+                    }else { ?>
                     <a href="<?=site_url('admin/estado_incidencias/'. ((($status_pds !="Resuelta" ) && ($status_pds !="Cerrada" ) && ($status_pds !="Cancelada" ) && ($status_pds !="Pendiente recogida" ))? "abiertas": "cerradas")); ?>" class="btn btn-danger right">Volver</a>
+                    <?php } ?>
                 </h1>
             </div>
     </div>
@@ -136,7 +141,9 @@
                                        ||(is_null($incidencia['id_devices_pds'])) || ($status_device_incidencia=='NoSustituir')){
                                     echo 'disabled';
                                 } ?> />
+
                                 <?php // echo "ESTHER ".$status_device_incidencia;?>
+
                             </div>
                         </form>
 
@@ -150,9 +157,12 @@
                             echo 'disabled';
                         } ?> />
                         <?php // echo "ESTHER ".$status_device_incidencia;?>
+                                <span class="fecha_status"><?=$historico_fecha_sustituido?></span>
                     </div>
                     </form>
-                      <?php  }
+
+                      <?php
+                        }
                       else { ?>
                           <form action="<?= site_url('admin/update_incidencia/' . $id_pds_url . '/' . $id_inc_url . '/4/10') ?>" method="post">
                               <div class="col-lg-5 labelBtn grey">
@@ -163,8 +173,10 @@
                                       echo 'disabled';
                                   } ?> />
                                   <?php // echo "ESTHER ".$status_device_incidencia;?>
+                                  <span class="fecha_status"><?=$historico_fecha_sustituido?></span>
                               </div>
                           </form>
+
                       <?php }
                       ?>
 

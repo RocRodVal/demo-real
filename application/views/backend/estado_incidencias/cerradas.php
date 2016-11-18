@@ -68,8 +68,9 @@
                                     <label for="status">Estado SAT: </label>
                                     <select name="status" id="status" class="form-control input-sm">
                                         <option value="" <?php echo ($status==="") ? 'selected="selected"' : ''?>>Cualquier estado</option>
-
                                         <option value="Resuelta" <?php echo ($status==="Resuelta") ? 'selected="selected"' : ''?>>Resuelta</option>
+                                        <option value="Sustituido" <?php echo ($status==="Sustituido") ? 'selected="selected"' : ''?>>Sustituido</option>
+                                        <option value="SustituidoRMA" <?php echo ($status==="SustituidoRMA") ? 'selected="selected"' : ''?>>SustituidoRMA</option>
                                         <option value="Pendiente recogida" <?php echo ($status==="Pendiente recogida") ? 'selected="selected"' : ''?>>Pendiente recogida</option>
                                         <option value="Cerrada" <?php echo ($status==="Cerrada") ? 'selected="selected"' : ''?>>Cerrada</option>
                                         <option value="Cancelada" <?php echo ($status==="Cancelada") ? 'selected="selected"' : ''?>>Cancelada</option>
@@ -206,6 +207,11 @@
                                     <div class="form-group">
                                         <input type="hidden" name="do_busqueda" value="si">
                                         <input type="submit" value="Buscar" id="submit_button" class="form-control input-sm">
+                                    </div>
+                                </div>
+                                <div class="col-lg-1">
+                                    <div class="form-group">
+                                        <a href="<?=base_url()?>admin/estado_incidencias/<?=$tipo?>/borrar_busqueda" class="reiniciar_busqueda form-control input-sm">Reiniciar</a>
                                     </div>
                                 </div>
                                 <div class="clearfix"></div>

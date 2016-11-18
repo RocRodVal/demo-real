@@ -636,7 +636,7 @@ class Inventario extends CI_Controller {
             //	$data['displays_pds']    = $this->tienda_model->get_displays_total();
             //	$data['devices_pds']     = $this->tienda_model->get_devices_total();
 
-            $data['title']   = 'Depósito';
+            $data['title']   = 'Dispositivos';
             $data['opcion'] =1;
 
             /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
@@ -671,7 +671,7 @@ class Inventario extends CI_Controller {
             //	$data['displays_pds']    = $this->tienda_model->get_displays_total();
             //	$data['devices_pds']     = $this->tienda_model->get_devices_total();
 
-            $data['title']   = 'Incidencias';
+            $data['title']   = 'Dispositivos';
             $data['opcion'] =2;
 
             /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
@@ -706,7 +706,7 @@ class Inventario extends CI_Controller {
             //	$data['displays_pds']    = $this->tienda_model->get_displays_total();
             //	$data['devices_pds']     = $this->tienda_model->get_devices_total();
 
-            $data['title']   = 'Depósito';
+            $data['title']   = 'Sistemas de seguridad';
             $data['opcion'] = 6;
 
             /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
@@ -741,8 +741,35 @@ class Inventario extends CI_Controller {
             //	$data['displays_pds']    = $this->tienda_model->get_displays_total();
             //	$data['devices_pds']     = $this->tienda_model->get_devices_total();
 
-            $data['title']   = 'Depósito';
+            $data['title'] = 'Dispositvos';
             $data['opcion'] =3;
+
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
+            $this->load->view('backend/header', $data);
+            $this->load->view('backend/navbar', $data);
+            $this->load->view('backend/inventario/cdm_dispositivos', $data);
+            $this->load->view('backend/footer');
+        }
+        else
+        {
+            redirect('admin','refresh');
+        }
+    }
+    /*Listado de los dispositivos que están pendientes de que lleguen a almacen tras la resolucion de una incidencia*/
+    public function dispositivos_recogida()
+    {
+        if($this->auth->is_auth())
+        {
+            $xcrud = xcrud_get_instance();
+            $this->load->model('tienda_model');
+
+            $data['devices_recogida'] = $this->tienda_model->get_devices_recogida();
+
+            $data['title']   = 'Dispositivos';
+            $data['opcion'] =7;
 
             /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
             $this->data->add($data);
@@ -776,7 +803,7 @@ class Inventario extends CI_Controller {
             //	$data['displays_pds']    = $this->tienda_model->get_displays_total();
             $data['devices_pds']     = $this->tienda_model->get_devices_total();
 
-            $data['title']   = 'Depósito';
+            $data['title']   = 'Dispositivos';
             $data['opcion'] = 4;
 
             /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
@@ -810,7 +837,7 @@ class Inventario extends CI_Controller {
             $data['displays_pds']    = $this->tienda_model->get_displays_total();
             //$data['devices_pds']     = $this->tienda_model->get_devices_total();
 
-            $data['title']   = 'Depósito';
+            $data['title']   = 'Muebles';
             $data['opcion'] = 5;
 
             /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..

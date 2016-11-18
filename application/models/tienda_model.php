@@ -73,31 +73,75 @@ class Tienda_model extends CI_Model {
         return $id;
 	}
 
-    public function baja_dispositivos_almacen_update($id_device,$owner,$units,$status)
+    public function baja_dispositivos_almacen_update($id_device,$owner,$units,$status_inc,$status_dest)
     {
-        $condicion=" AND status='En stock'";
-        $status_anterior =1;
-        if ($status==5) {
-            $condicion=" AND status='Transito'";
-            $status_anterior=4;
+        $join="";
+        switch ($status_inc){
+            case 1: {
+                $condicion=" AND status='En stock'";
+                $statusI="En stock";
+                break;
+            }
+            case 2:{
+                $condicion=" AND material_incidencias.id_devices_almacen IS NULL AND status='Reservado'";
+                $join="LEFT JOIN material_incidencias ON material_incidencias.id_devices_almacen=devices_almacen.id_devices_almacen ";
+                $statusI="Reservado";
+                break;
+            }
+            case 4: {
+                $condicion=" AND material_incidencias.id_devices_almacen IS NULL AND status='Transito' AND id_devices_pds IS NULL";
+                $join="LEFT JOIN material_incidencias ON material_incidencias.id_devices_almacen=devices_almacen.id_devices_almacen ";
+                $statusI="Transito";
+                break;
+            }
+           /* case 5: {
+                $condicion=" AND status='Baja'";
+                $statusI="Baja";
+                break;
+            }*/
+            default: $condicion="";
         }
 
-        $sql= "SELECT COUNT(id_device) as contador FROM devices_almacen WHERE id_device=$id_device AND owner='$owner'".$condicion;
-        $contar = $this->db->query($sql)->row();
+        switch ($status_dest){
+            case 1: {
+                $statusD="'En stock'";
+                break;
+            }
+            case 2:{
+                $statusD="'Reservado'";
+                break;
+            }
+            case 4: {
+                $statusD="'Transito'";
+                break;
+            }
+            case 5: {
+                $statusD="'Baja'";
+                break;
+            }
 
+        }
+
+
+        $sql= "SELECT COUNT(id_device) as contador FROM devices_almacen ".$join ." WHERE id_device=$id_device AND owner='$owner'".$condicion;
+        $contar = $this->db->query($sql)->row();
+//echo $sql; exit;
         if($contar->contador > 0) {
 
             $units = (($units > $contar->contador) ? $contar->contador : $units);
-
-            $this->db->select("id_devices_almacen,id_device");
+            $sql= "SELECT devices_almacen.id_devices_almacen,devices_almacen.id_device FROM devices_almacen ".$join ." 
+            WHERE id_device=$id_device AND owner='$owner'".$condicion." LIMIT ".$units;
+            /*$this->db->select("id_devices_almacen,id_device");
+            //$this->db->join("material_incidencias",);
             $this->db->where("id_device",$id_device);
             $this->db->where('owner', $owner);
             //$this->db->where_in('imei', $imeis);
-            $this->db->where('status', $status_anterior);
-            $this->db->limit($units);
-            $dispositivos_a_borrar = $this->db->get("devices_almacen")->result();
+            $this->db->where('status', $statusI);
+            $this->db->limit($units);*/
+            $dispositivos_a_borrar = $this->db->query($sql)->result();
             $total_baja =  $this->db->affected_rows();
 //echo $total_baja; exit;
+            //echo $this->db->last_query(); exit;
             $cont = 0;
             // Recorremos los dispositivos a borrar.
             foreach($dispositivos_a_borrar as $dispositivo_baja){
@@ -105,7 +149,7 @@ class Tienda_model extends CI_Model {
                 $id_devices_almacen = $dispositivo_baja->id_devices_almacen;
 
                 // Borrado lógico del dispositivo.
-                $this->db->set('status',$status, FALSE);
+                $this->db->set('status',$statusD, FALSE);
                 $this->db->where('id_devices_almacen', $id_devices_almacen);
                 $this->db->update('devices_almacen');
 
@@ -333,7 +377,7 @@ class Tienda_model extends CI_Model {
 
         $query = $this->db->query('
 
-		SELECT temporal.id_device, brand_device.brand, temporal.device, unidades_pds,unidades_transito,
+		SELECT temporal.id_device, brand_device.brand, temporal.device, unidades_pds,unidades_transito, unidades_reservado,
 		(CASE WHEN unidades_pds = 0 THEN 0 ELSE CEIL(unidades_pds * 0.05 + 2) END) as stock_necesario,unidades_rma,
 		unidades_almacen,
 		(unidades_almacen - (CASE WHEN unidades_pds = 0 THEN 0 ELSE CEIL(unidades_pds * 0.05 + 2) END)) as balance,
@@ -360,6 +404,11 @@ class Tienda_model extends CI_Model {
                     WHERE (devices_almacen.id_device = device.id_device) AND (devices_almacen.status = "Transito") 
                     )
                     as unidades_transito,
+                    ( SELECT COUNT(*)
+                    FROM devices_almacen
+                    WHERE (devices_almacen.id_device = device.id_device) AND (devices_almacen.status = "Reservado") 
+                    )
+                    as unidades_reservado,
                     ( SELECT COUNT(*)
                     FROM devices_almacen
                     WHERE (devices_almacen.id_device = device.id_device) AND (devices_almacen.status = "RMA") 
@@ -490,14 +539,14 @@ class Tienda_model extends CI_Model {
 
         $resultados = $this->get_stock_cruzado();
         if($controler=="admin") {
-            $arr_titulos = array('Id dispositivo', 'Fabricante', 'Dispositivo', 'Ud. pds', 'Uds. Transito', 'Stock necesario', 'Uds. Almacén RMA',
+            $arr_titulos = array('Id dispositivo', 'Fabricante', 'Dispositivo', 'Ud. pds', 'Uds. Transito', 'Uds. Reservadas','Stock necesario', 'Uds. Almacén RMA',
                 'Uds. Almacén', 'Balance');
             $excluir = array('status');
         }
         else {
             $arr_titulos = array('Id dispositivo', 'Fabricante', 'Dispositivo', 'Ud. pds', 'Uds. Transito', 'Stock necesario',
                 'Uds. Almacén', 'Balance');
-            $excluir = array('unidades_rma','status');
+            $excluir = array('unidades_reservado','unidades_rma','status');
         }
 
         $datos = preparar_array_exportar($resultados,$arr_titulos,$excluir);
@@ -1786,6 +1835,24 @@ class Tienda_model extends CI_Model {
 		return $query->result();
 	}
 
+    /* dispositivos que no han llegado al almacen tras la resolucion de la incidencia bien sea porque se asignaron y no se usaron
+    o porque genero la incidencia y no se ha enviado a almacen*/
+    public function get_devices_recogida() {
+        /* Terminales que asignaron a la incidencia pero no se usaron*/
+        $sql="SELECT m.id_incidencia,i.id_pds, d.* ,'Se asigno pero no se uso' as descripcion
+              FROM material_incidencias m
+              INNER JOIN devices_almacen a ON a.id_devices_almacen=m.id_devices_almacen AND a.status='Transito'
+              INNER JOIN incidencias i ON i.id_incidencia=m.id_incidencia AND i.status='Pendiente recogida'
+              INNER JOIN device d ON d.id_device=a.id_device
+              UNION
+              SELECT i.id_incidencia,i.id_pds,d.*,'genero la incidencia' as descripcion
+              FROM devices_almacen a
+              INNER JOIN incidencias i ON i.id_devices_pds = a.id_devices_pds AND a.status='Transito' AND i.status='Pendiente recogida'
+              INNER JOIN device d ON d.id_device=a.id_device";
+
+        return $this->db->query($sql)->result();
+    }
+
     public function get_devices_almacen_exportar() {
 
         $query = $this->db->select('device.device, COUNT(devices_almacen.id_device) AS unidades')
@@ -1820,7 +1887,7 @@ class Tienda_model extends CI_Model {
 		->where('material_incidencias.id_devices_almacen <>','')
 		->order_by('device.device')
 		->get('material_incidencias');
-	
+	//echo $this->db->last_query(); exit;
 		return $query->result();
 	}
 	
@@ -2409,7 +2476,7 @@ class Tienda_model extends CI_Model {
                     );
 
                     $this->db->insert('devices_pds', $data);
-                }//echo $this->db->last_query(); echo "<br>";
+                }
                 break;
                 /* se resuelve la incidencia*/
             case ($status==6):
@@ -2421,16 +2488,14 @@ class Tienda_model extends CI_Model {
                         JOIN incidencias ON incidencias.id_devices_pds=devices_pds.id_devices_pds WHERE  
                         incidencias.id_incidencia=$id_incidencia $condicion";
                 $resultado = $this->db->query($sql)->row_array();
-                    //echo $sql."<br>".$resultado['status']."<br> ";
-                    //print_r($resultado);
+
                 if ((!empty($resultado)) && ($resultado['status'] == "Incidencia")) {
-//echo "entra en el if";
                         /* poner de Alta la posicion que origino la incidencia*/
                     $sql = "UPDATE devices_pds SET status='Alta' WHERE id_devices_pds =" . $id_devices_pds;
                     $this->db->query($sql);
-                 //   echo "<br>".$this->db->last_query()."<br>";
+
                 }
-                //echo $this->db->last_query()."<br>";
+
                 break;
             /*
              * Cuando se pulsa el boton de recogida de material se debe hacer una entrada en el almacen para el dispositvo que origino la incidencia
@@ -2465,7 +2530,7 @@ class Tienda_model extends CI_Model {
                 break;
             case ($status==9): /*Ya se ha recogido el material y se cierra la incidencia*/
 
-            /*insertar en almacen el dispositivo que origino la incidencia en estado en transito*/
+                /*insertar en almacen el dispositivo que origino la incidencia en estado en transito*/
                 /* Guardamos los datos de la posicion que genero la incidencia y el devices_pds al que afecta la incidencia se da de baja */
                 $query = $this->db->select('*')
                     ->where('id_devices_pds', $id_devices_pds)
@@ -2479,15 +2544,13 @@ class Tienda_model extends CI_Model {
                     ->get('material_incidencias');*/
 
                 $material = $this->db->query($sql)->row();
-               // echo $this->db->last_query();
-                //print_r($material); exit;
-
-                if ($device_pds->status=='Baja') {
+//print_r($device_pds);
+                if (!empty($device_pds) && $device_pds->status=='Baja') {
                     $sql = "UPDATE devices_almacen SET status='En stock' WHERE  status='Transito' AND id_device=$device_pds->id_device AND id_devices_pds=$device_pds->id_devices_pds";
                     //echo $sql; exit;
                     $this->db->query($sql);
                 } else{
-                    if ($device_pds->status=='RMA') {
+                    if (!empty($device_pds) && $device_pds->status=='RMA') {
                         $sql = "UPDATE devices_almacen SET status='RMA' WHERE  status='Transito' AND id_device=$device_pds->id_device AND id_devices_pds=$device_pds->id_devices_pds";
                         //echo $sql; exit;
                         $this->db->query($sql);
@@ -2501,7 +2564,7 @@ class Tienda_model extends CI_Model {
                         }
                     }
                 }
-
+//echo $this->db->last_query(); exit;
                 break;
 
             default:

@@ -24,6 +24,7 @@
                             <th>Modelo</th>
                             <th>Unidades tienda</th>
                             <th>Unidades en transito</th>
+                            <th>Unidades reservadas</th>
                             <th>Stock necesario</th>
                             <th>Deposito en almacén RMA</th>
                             <th>Deposito en almacén</th>
@@ -64,6 +65,7 @@
                                 <td><?php echo $stock->device ?></td>
                                 <td><?php echo $stock->unidades_pds ?></td>
                                 <td><?php echo $stock->unidades_transito ?></td>
+                                <td><?php echo $stock->unidades_reservado ?></td>
                                 <td><?php echo $necesitamos ?></td>
                                 <td><?php echo $stock->unidades_rma ?></td>
                                 <td class="<?=$class_almacen?>"><?php echo $stock->unidades_almacen ?></td>
@@ -262,6 +264,46 @@
                             <tr>
                                 <td><?php echo $display_pds->display ?></td>
                                 <td><?php echo $display_pds->unidades ?></td>
+                            </tr>
+                            <?php
+                        }
+                        ?>
+                        </tbody>
+                    </table>
+                </div>
+                <?php
+            }
+            ?>
+        </div>
+    </div>
+    <!-- Material que esta pendiente de recoger-->
+    <div class="row">
+        <div class="col-lg-12">
+            <?php
+            if (empty($devices_recogida)) {
+                if($opcion==7) {
+                    echo '<p>No hay dispositivos pendientes de recogida.</p>';
+                }
+            } else {
+                ?>
+                <h1 class="page-header">Disposivos pendientes de recoger</h1>
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered table-hover" id="dataTables-example">
+                        <thead>
+                        <tr>
+                            <th>Incidencia</th>
+                            <th>Modelo</th>
+                            <th>Descripcion</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <?php
+                        foreach ($devices_recogida as $recogida) {
+                            ?>
+                            <tr>
+                                <td><a href="<?=site_url("admin/operar_incidencia/".$recogida->id_pds."/".$recogida->id_incidencia)."/recogida";?>"><?php echo $recogida->id_incidencia ?></a></td>
+                                <td><?php echo $recogida->device ?></td>
+                                <td><?php echo $recogida->descripcion ?></td>
                             </tr>
                             <?php
                         }
