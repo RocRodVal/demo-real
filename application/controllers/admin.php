@@ -1381,7 +1381,7 @@ class Admin extends CI_Controller
         $status_pds = $this->uri->segment(5);
         $status = $this->uri->segment(6);
         $status_ext = $this->uri->segment(7);
-
+//echo $id_pds ." / ".$id_inc." / ".$status_pds." / ".$status." / ".$status_ext; exit;
 
         $xcrud = xcrud_get_instance();
         $this->load->model(array('tienda_model'));
@@ -1474,8 +1474,9 @@ class Admin extends CI_Controller
          */
         if (($status == 8) AND ($status_ext == 'ext'))
         {
+            //echo "If stado=8 y ext";exit;
             if (!is_null($incidencia['id_devices_pds'])) {
-                $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'], 1,$id_inc);
+                $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'], 8,$id_inc);
             }
             $this->tienda_model->incidencia_update_cierre($id_inc, $fecha_cierre);
         }else {
