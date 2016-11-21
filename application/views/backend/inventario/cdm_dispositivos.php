@@ -7,7 +7,7 @@
     </div>
     <div class="row">
         <div class="col-lg-12">
-            <?php if (!empty($stocks) ) { ?>
+            <?php if ( $opcion==1 ) { ?>
             <div class="filtro">
                 <form action="<?=base_url()?>inventario/balance" method="post" class="filtros form-mini autosubmit col-lg-12">
                     <div class="col-lg-2">
