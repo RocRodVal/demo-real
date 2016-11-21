@@ -7,6 +7,7 @@
     </div>
     <div class="row">
         <div class="col-lg-12">
+            <?php if (!empty($stocks) ) { ?>
             <div class="filtro">
                 <form action="<?=base_url()?>inventario/balance" method="post" class="filtros form-mini autosubmit col-lg-12">
                     <div class="col-lg-2">
@@ -40,10 +41,11 @@
                     <input type="hidden" name="do_busqueda" value="si">
                 </div>
             </form>
-        </div>
-            <div class="clearfix"></div>
+            </div>
+                <div class="clearfix"></div>
+                <h1 class="page-header">Balance de activos <a href="<?=site_url('inventario/exportar_balance_activos/xls');?>" title="Exportar Excel">Exportar Excel</a></h1>
+        <?php } ?>
 
-        <h1 class="page-header">Balance de activos <a href="<?=site_url('inventario/exportar_balance_activos/xls');?>" title="Exportar Excel">Exportar Excel</a></h1>
             <?php
             if (empty($stocks) ) {
                 if($opcion==1) {
