@@ -373,7 +373,16 @@ class Tienda_model extends CI_Model {
 		$this->db->update('pds');
 	}
 
-    public function get_stock_cruzado() {
+    public function get_stock_cruzado($array_filtros=NULL) {
+
+        //print_r($array_filtros);
+        $where='';
+        if(isset($array_filtros["id_modelo"]) && !empty($array_filtros["id_modelo"])) {
+            $where .= ' AND temporal.id_device = ' . $array_filtros['id_modelo'];
+        }
+        if(isset($array_filtros["id_marca"]) && !empty($array_filtros["id_marca"])) {
+            $where .= ' AND brand_device.id_brand_device = ' . $array_filtros['id_marca'];
+        }
 
         $query = $this->db->query('
 
@@ -419,8 +428,7 @@ class Tienda_model extends CI_Model {
                 ) as temporal
 
         JOIN brand_device ON temporal.brand_device = brand_device.id_brand_device
-        WHERE temporal.status = "Alta"
-        ORDER BY brand_device.brand ASC, temporal.device ASC ');
+        WHERE temporal.status = "Alta" ' .$where. ' ORDER BY brand_device.brand ASC, temporal.device ASC ');
 
 
 //echo $this->db->last_query(); exit;
@@ -529,7 +537,7 @@ class Tienda_model extends CI_Model {
     /*
     * Generar Exportacion de datos con el stock cruzado (NUEVA FUNCION).
     */
-    public function exportar_stock_cruzado($formato="csv",$controler="admin") {
+    public function exportar_stock_cruzado($formato="csv",$controler="admin",$array_filtros=NULL) {
 
         $this->load->dbutil();
         $this->load->helper('file');
@@ -537,7 +545,7 @@ class Tienda_model extends CI_Model {
         $this->load->helper('download');
 
 
-        $resultados = $this->get_stock_cruzado();
+        $resultados = $this->get_stock_cruzado($array_filtros);
         if($controler=="admin") {
             $arr_titulos = array('Id dispositivo', 'Fabricante', 'Dispositivo', 'Ud. pds', 'Uds. Transito', 'Uds. Reservadas','Stock necesario', 'Uds. Almacén RMA',
                 'Uds. Almacén', 'Balance');

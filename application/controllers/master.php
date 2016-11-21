@@ -152,10 +152,17 @@ class Master extends CI_Controller {
      * la variable de sesión de ese nombre
      */
     public function delete_filtros($array_filtros,$array_excepciones=array()){
-        if(is_array($array_filtros)){
+        /*if(is_array($array_filtros)){
             foreach($array_filtros as $filtro){
                 if(!in_array($filtro,$array_excepciones)) {
                     $this->session->unset_userdata($filtro);
+                }
+            }
+        }*/
+        if(is_array($array_filtros)){
+            foreach($array_filtros as $key =>$filtro){
+                if(!in_array($key,$array_excepciones)) {
+                    $this->session->unset_userdata($key);
                 }
             }
         }
@@ -1940,7 +1947,37 @@ class Master extends CI_Controller {
         $xcrud = xcrud_get_instance();
         $this->load->model('tienda_model');
 
-        $data['stocks'] = $this->tienda_model->get_stock_cruzado();
+        /** Crear los filtros*/
+        $array_filtros = array(
+            'id_modelo' =>  '',
+            'id_marca'  =>  ''
+        );
+
+
+        // Consultar a la session si ya se ha buscado algo y guardado allí.
+        $array_sesion = $this->get_filtros($array_filtros);
+
+        /* BORRAR BUSQUEDA */
+        //echo  $this->uri->segment(4);exit;
+        $borrar_busqueda = $this->uri->segment(3);
+        if($borrar_busqueda === "borrar_busqueda")
+        {
+            $this->delete_filtros($array_filtros);
+            //print_r($array_filtros);
+            redirect(site_url("/master/cdm_dispositivos_balance"),'refresh');
+        }
+
+        if($this->input->post('do_busqueda')==="si") $array_sesion = $this->set_filtros($array_filtros);
+
+        /* Creamos al vuelo las variables que vienen de los filtros */
+        foreach($array_filtros as $filtro=>$value){
+            $$filtro = $array_sesion[$filtro];
+            $data[$filtro] = $array_sesion[$filtro]; // Pasamos los valores a la vista.
+        }
+
+        $data['modelos']=$this->tienda_model->get_terminales();
+        $data['marcas'] =$this->tienda_model->get_fabricantes();
+        $data['stocks'] = $this->tienda_model->get_stock_cruzado($array_sesion);
         // $data['stocks_dispositivos']  = $this->tienda_model->get_cdm_dispositivos();
 
         $data['title']   = 'Dispositivos';

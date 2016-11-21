@@ -7,6 +7,43 @@
     </div>
     <div class="row">
         <div class="col-lg-12">
+            <div class="filtro">
+                <form action="<?=base_url()?>inventario/balance" method="post" class="filtros form-mini autosubmit col-lg-12">
+                    <div class="col-lg-2">
+                        <label for="id_marca">Marca: </label>
+                        <select name="id_marca" id="id_marca" class="form-control input-sm">
+                            <option value="" <?php echo ($id_marca==="") ? 'selected="selected"' : ''?>>Cualquiera...</option>
+                            <?php foreach($marcas as $marca){
+                                echo '<option value="'.$marca->id_brand_device.'"
+                                                    '.(($id_marca == $marca->id_brand_device) ?  ' selected="selected" ' : '' ).'
+                                                >'.$marca->brand.'</option>';
+                            }?>
+                        </select>
+                    </div>
+                    <div class="col-lg-3">
+                        <label for="id_modelo">Modelo: </label>
+                        <select name="id_modelo" id="id_modelo" class="form-control input-sm">
+                            <option value="" <?php echo ($id_modelo==="") ? 'selected="selected"' : ''?>>Cualquiera...</option>
+                            <?php foreach($modelos as $modelo){
+                                echo '<option value="'.$modelo->id_device.'"
+                                                    '.(($id_modelo == $modelo->id_device) ?  ' selected="selected" ' : '' ).'
+                                                >'.$modelo->device.'</option>';
+                            }?>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <a href="<?=base_url()?>inventario/balance/borrar_busqueda" class="reiniciar_busqueda form-control input-sm">Reiniciar</a>
+                    </div>
+
+                <div class="form-group">
+                    <input type="hidden" name="do_busqueda" value="si">
+                </div>
+            </form>
+        </div>
+            <div class="clearfix"></div>
+
+        <h1 class="page-header">Balance de activos <a href="<?=site_url('inventario/exportar_balance_activos/xls');?>" title="Exportar Excel">Exportar Excel</a></h1>
             <?php
             if (empty($stocks) ) {
                 if($opcion==1) {
@@ -14,7 +51,6 @@
                 }
             } else {
                 ?>
-                <h1 class="page-header">Balance de activos <a href="<?=site_url('inventario/exportar_balance_activos/xls');?>" title="Exportar Excel">Exportar Excel</a></h1>
                 <div class="table-responsive">
 
                     <table class="table table-striped table-bordered table-hover" id="dataTables-example">
@@ -44,7 +80,8 @@
 
                             }else
                             {
-                                $necesitamos = round($stock->unidades_pds * 0.05) + 2;
+                                //$necesitamos = round($stock->unidades_pds * 0.05) + 2;
+                                $necesitamos = $stock->stock_necesario;
                             }
 
                             $balance = $stock->unidades_almacen - $necesitamos;
