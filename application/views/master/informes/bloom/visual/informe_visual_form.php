@@ -83,7 +83,7 @@
 
                                 <div class="form-group">
                                     <?php   if($generado_visual===TRUE)    {?>
-                                        <a href="<?=base_url($controlador."/informe_visual/reset")?>" class="reiniciar_busqueda"> <i class="glyphicon glyphicon-remove"></i> Resetear informe</a>
+                                        <a href="<?=base_url($controlador."/informe_visual/reset")?>" class="reiniciar_busqueda form-control input-sm"> Resetear informe</a>
                                     <?php } ?>
                                 </div>
 

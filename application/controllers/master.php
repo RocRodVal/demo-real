@@ -4001,7 +4001,7 @@ class Master extends CI_Controller {
             if($borrar_busqueda === "borrar_busqueda")
             {
                 $this->delete_filtros($array_filtros);
-                redirect(site_url("/admin/pedidos/".$tipo),'refresh');
+                redirect(site_url("/master/pedidos/".$tipo),'refresh');
             }
             // Consultar a la session si ya se ha buscado algo y guardado allí.
             $array_sesion = $this->get_filtros($array_filtros);

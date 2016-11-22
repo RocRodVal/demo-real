@@ -37,7 +37,7 @@
 
                     <div class="form-group">
                             <?php   if($generado_planograma===TRUE)    {?>
-                                <a href="<?=base_url("ot/informe_planogramas/reset")?>" class="reiniciar_busqueda"> <i class="glyphicon glyphicon-remove"></i> Resetear informe</a>
+                                <a href="<?=base_url("ot/informe_planogramas/reset")?>" class="reiniciar_busqueda form-control input-sm"> Resetear informe</a>
                             <?php } ?>
                         </div>
 
