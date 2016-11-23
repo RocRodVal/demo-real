@@ -3363,8 +3363,8 @@ class Admin extends CI_Controller
 
 
         $xcrud_1->label('id_historico_almacen','Ref.')->label('id_device', 'Dispositivo maestro')->label('id_devices_almacen', 'Id. Dispositivo almacén')->label('id_client', 'Dueño')->label('fecha', 'Fecha')
-            ->label('unidades', 'Unidades');
-        $xcrud_1->columns('id_historico_almacen,id_device,id_devices_almacen,id_client,fecha,unidades');
+            ->label('unidades', 'Unidades')->label('status', 'Estado');
+        $xcrud_1->columns('id_historico_almacen,id_device,id_devices_almacen,id_client,fecha,unidades,status');
         $xcrud_1->where('procesado',1);
         $xcrud_1->where('id_alarm IS NULL');
 

@@ -60,7 +60,8 @@ class Tienda_model extends CI_Model {
             'id_cliente' => NULL,
             'fecha' => $data["alta"],
             'cantidad' => (-1), // En negativo porque luego la función lo multiplica por -1
-            'procesado' => 1
+            'procesado' => 1,
+            'status'    =>'En stock'
         );
         $this->alta_historico_io($elemento,NULL);
 
@@ -104,19 +105,19 @@ class Tienda_model extends CI_Model {
 
         switch ($status_dest){
             case 1: {
-                $statusD="'En stock'";
+                $statusD="En stock";
                 break;
             }
             case 2:{
-                $statusD="'Reservado'";
+                $statusD="Reservado";
                 break;
             }
             case 4: {
-                $statusD="'Transito'";
+                $statusD="Transito";
                 break;
             }
             case 5: {
-                $statusD="'Baja'";
+                $statusD="Baja";
                 break;
             }
 
@@ -149,7 +150,7 @@ class Tienda_model extends CI_Model {
                 $id_devices_almacen = $dispositivo_baja->id_devices_almacen;
 
                 // Borrado lógico del dispositivo.
-                $this->db->set('status',$statusD, FALSE);
+                $this->db->set('status',"'".$statusD."'", FALSE);
                 $this->db->where('id_devices_almacen', $id_devices_almacen);
                 $this->db->update('devices_almacen');
 
@@ -165,7 +166,8 @@ class Tienda_model extends CI_Model {
                     'id_cliente' => NULL,
                     'fecha' => date('Y-m-d H:i:s'),
                     'cantidad' => (1), // En positivo porque luego la función lo pasará a negativo
-                    'procesado' => 1
+                    'procesado' => 1,
+                    'status'    => $statusD
                 );
                 $this->alta_historico_io($data,NULL);
                 $cont++;
@@ -2735,7 +2737,8 @@ class Tienda_model extends CI_Model {
                 'id_client' => $dueno,
                 'fecha' => $data['fecha'],
                 'unidades' => ($data['cantidad'] * (-1)),
-                'procesado' => $procesado
+                'procesado' => $procesado,
+                'status'    => $data['status']
             );
 
 
