@@ -2695,7 +2695,7 @@ class Tienda_model extends CI_Model {
 
         $tipo = (is_null($data['id_alarm'])) ? "device" : "alarm";
 
-
+print_r($data); exit;
         if($tipo==="device")            // ES DE TIPO TERMINAL
         {
 
@@ -2706,7 +2706,7 @@ class Tienda_model extends CI_Model {
                                           JOIN material_incidencias ON incidencias.id_incidencia = material_incidencias.id_incidencia
                                           WHERE material_incidencias.id_devices_almacen=".$data['id_devices_almacen'])->result()[0]; **/
             if(!empty($data['id_devices_almacen'])) {
-                $q_dueno = $this->db->query("SELECT DISTINCT(client_display) as id_client, device.id_device as id_device FROM display
+                $q_dueno = $this->db->query("SELECT DISTINCT(client_display) as id_client, device.id_device as id_device,devices_almacen.status FROM display
                                           JOIN displays_pds ON display.id_display = displays_pds.id_display
                                           JOIN incidencias ON displays_pds.id_displays_pds = incidencias.id_displays_pds
                                           JOIN material_incidencias ON incidencias.id_incidencia = material_incidencias.id_incidencia
@@ -2719,12 +2719,14 @@ class Tienda_model extends CI_Model {
                 $id_device = $q_dueno->id_device;
                 $dueno = $q_dueno->id_client;
                 $procesado = 0;
+                $status=$q_dueno->status;
                 $id_devices_almacen = $data['id_devices_almacen'];
 
             }else{
                 $id_device = $data["id_device"];
                 $dueno = NULL;
                 $procesado = $data["procesado"];
+                $status=NULL;
                 $id_devices_almacen = $data['id_devices_almacen_new'];
             }
 
@@ -2738,7 +2740,7 @@ class Tienda_model extends CI_Model {
                 'fecha' => $data['fecha'],
                 'unidades' => ($data['cantidad'] * (-1)),
                 'procesado' => $procesado,
-                'status'    => $data['status']
+                'status'    => $status
             );
 
 
@@ -2766,7 +2768,7 @@ class Tienda_model extends CI_Model {
             $this->db->insert('historico_io',$elemento);
         }
 
-
+//echo $this->db->last_query(); exit;
 
     }
 
@@ -2797,9 +2799,11 @@ class Tienda_model extends CI_Model {
         if(! is_null($id_incidencia))
         {
             $historico_io['procesado'] = 1;
+            $historico_io['status'] = "Transito";
 
             $this->db->where('id_incidencia',$id_incidencia);
             $this->db->update('historico_io',$historico_io);
+
         }
 
     }

@@ -1820,11 +1820,10 @@ class Admin extends CI_Controller
                 'id_pds' => $id_pds,
                 'id_alarm' => NULL,
                 'id_devices_almacen' => $this->input->post('dipositivo_almacen_1'),
-                'cantidad' => $this->input->post('units_dipositivo_almacen_1')
+                'cantidad'  => $this->input->post('units_dipositivo_almacen_1')
             );
-
-            $this->tienda_model->incidencia_update_material($dipositivo_almacen_1);
             $this->tienda_model->reservar_dispositivos($this->input->post('dipositivo_almacen_1'),2);
+            $this->tienda_model->incidencia_update_material($dipositivo_almacen_1);
             $this->tienda_model->update_dispositivos($this->input->post('dipositivo_almacen_1'),$this->input->post('imei_1'),$this->input->post('mac_1'),$this->input->post('serial_1'),$this->input->post('barcode_1'));
         }
 
@@ -1839,8 +1838,8 @@ class Admin extends CI_Controller
                 'cantidad' => $this->input->post('units_dipositivo_almacen_2')
             );
 
-            $this->tienda_model->incidencia_update_material($dipositivo_almacen_2);
             $this->tienda_model->reservar_dispositivos($this->input->post('dipositivo_almacen_2'),2);
+            $this->tienda_model->incidencia_update_material($dipositivo_almacen_2);
             $this->tienda_model->update_dispositivos($this->input->post('dipositivo_almacen_2'),$this->input->post('imei_2'),$this->input->post('mac_2'),$this->input->post('serial_2'),$this->input->post('barcode_2'));
 
         }
@@ -1856,8 +1855,8 @@ class Admin extends CI_Controller
                 'cantidad' => $this->input->post('units_dipositivo_almacen_3')
             );
 
-            $this->tienda_model->incidencia_update_material($dipositivo_almacen_3);
             $this->tienda_model->reservar_dispositivos($this->input->post('dipositivo_almacen_3'),2);
+            $this->tienda_model->incidencia_update_material($dipositivo_almacen_3);
             $this->tienda_model->update_dispositivos($this->input->post('dipositivo_almacen_3'),$this->input->post('imei_3'),$this->input->post('mac_3'),$this->input->post('serial_3'),$this->input->post('barcode_3'));
         }
 
@@ -3365,7 +3364,7 @@ class Admin extends CI_Controller
         $xcrud_1->label('id_historico_almacen','Ref.')->label('id_device', 'Dispositivo maestro')->label('id_devices_almacen', 'Id. Dispositivo almacén')->label('id_client', 'Dueño')->label('fecha', 'Fecha')
             ->label('unidades', 'Unidades')->label('status', 'Estado');
         $xcrud_1->columns('id_historico_almacen,id_device,id_devices_almacen,id_client,fecha,unidades,status');
-        $xcrud_1->where('procesado',1);
+       // $xcrud_1->where('procesado',1);
         $xcrud_1->where('id_alarm IS NULL');
 
         $xcrud_1->order_by('fecha', 'desc');
