@@ -93,7 +93,8 @@
                                             ?>
                                             <tr>
                                                 <td width="20%"> <?php
-                                                    if (file_exists('application/uploads/' . $alarma->imagen )) {
+                                                    if (!is_null($alarma->imagen)) {
+                                                    //if (is_file('application/uploads/' . $alarma->imagen )) {
                                                         ?>
                                                         <img class="zoom" src="<?= site_url('application/uploads/' . $alarma->imagen . '')?>" height="40px" width="60px/">
                                                         <!--<a class="thickbox" href="<?= site_url('application/uploads/' . $alarma->imagen . '')?>">
