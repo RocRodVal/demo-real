@@ -222,8 +222,15 @@
                                 foreach ($detalle as $d) {
                                 ?>
                                     <tr>
-                                        <td><img src="<?= site_url('application/uploads/' . $d->imagen . '') ?>"
-                                                 title="<?=$d->alarm ?>" style="max-height: 35px;"/></td>
+                                        <td>
+                                            <?php
+                                            if (!is_null($d->imagen)) {
+                                            // if (is_file('application/uploads/' . $d->imagen )) {
+                                            ?>
+                                            <img src="<?= site_url('application/uploads/' . $d->imagen . '') ?>"
+                                                 title="<?=$d->alarm ?>" style="max-height: 35px;"/>
+                                            <?php } ?>
+                                        </td>
                                         <td><?php echo $d->alarm ?></td>
                                         <td><?php echo $d->cantidad ?></td>
                                     </tr>

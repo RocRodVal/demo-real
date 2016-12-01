@@ -188,12 +188,12 @@
                                                     <td>
                                                         <?php
                                                         if (!is_null($d->imagen)) {
-                                                            if (is_file('application/uploads/' . $d->imagen )) {
+                                                           // if (is_file('application/uploads/' . $d->imagen )) {
                                                             ?>
                                                             <!--  <img class="zoom" src="<?= site_url('application/uploads/' . $d->imagen . '')?>" height="40px" width="80px/">-->
                                                             <img src="<?= site_url('application/uploads/' . $d->imagen . '') ?>"
                                                                 title="<?=strtoupper($d->alarm) ?>" style="max-width:200px; max-height: 75px;"/>
-                                                            <?php }
+                                                            <?php //}
                                                         } ?>
                                                     </td>
                                                     <td><?php echo $d->code ?></td>
