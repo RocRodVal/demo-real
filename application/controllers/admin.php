@@ -1415,7 +1415,7 @@ class Admin extends CI_Controller
         /**
          * Botón Asignar material
          */
-        if ($status == 5) {
+      /*  if ($status == 5) {
             $intervencion = $this->intervencion_model->get_intervencion_incidencia($id_inc);
 
             $this->tienda_model->reservar_dispositivos($this->input->post('dipositivo_almacen_1'),3);
@@ -1437,7 +1437,7 @@ class Admin extends CI_Controller
             );
 
             $this->tienda_model->facturacion($facturacion_data);
-        }
+        }*/
 
 
         $fecha_cierre = $this->input->post('fecha_cierre');
@@ -1498,25 +1498,18 @@ class Admin extends CI_Controller
          */
         if ($status == 10)
         {
-            //$this->tienda_model->incidencia_update_cierre($id_inc, $fecha_cierre);
             if (!is_null($incidencia['id_devices_pds'])) {
-                //echo "va por el if";
                 $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'], $status,$id_inc);
             }
-           // $status=6;
-
         }
         /*
          * Cuando la incidencia es un Robo y el dispositivo que lo genero vuelve a almacen como RMA
          */
         if ($status == 11)
         {
-            //$this->tienda_model->incidencia_update_cierre($id_inc, $fecha_cierre);
             if (!is_null($incidencia['id_devices_pds'])) {
-                //echo "va por el if";
                 $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'], $status,$id_inc);
             }
-            // $status=6;
 
         }
         /**
@@ -3356,14 +3349,14 @@ class Admin extends CI_Controller
         $xcrud_1 = xcrud_get_instance();
         $xcrud_1->table('historico_io');
         $xcrud_1->table_name('Histórico de dispositivos');
-        $xcrud_1->relation('id_client', 'client', 'id_client', 'client');
+        //$xcrud_1->relation('id_client', 'client', 'id_client', 'client');
         $xcrud_1->relation('id_device', 'device', 'id_device', 'device');
+        $xcrud_1->join('id_devices_almacen','devices_almacen', 'id_devices_almacen');
 
 
-
-        $xcrud_1->label('id_historico_almacen','Ref.')->label('id_device', 'Dispositivo maestro')->label('id_devices_almacen', 'Id. Dispositivo almacén')->label('id_client', 'Dueño')->label('fecha', 'Fecha')
+        $xcrud_1->label('id_historico_almacen','Ref.')->label('id_device', 'Dispositivo maestro')->label('id_devices_almacen', 'Id. Dispositivo almacén')->label('devices_almacen.IMEI', 'IMEI')->label('fecha', 'Fecha')
             ->label('unidades', 'Unidades')->label('status', 'Estado');
-        $xcrud_1->columns('id_historico_almacen,id_device,id_devices_almacen,id_client,fecha,unidades,status');
+        $xcrud_1->columns('id_historico_almacen,id_device,id_devices_almacen,devices_almacen.IMEI,fecha,unidades,status');
        // $xcrud_1->where('procesado',1);
         $xcrud_1->where('id_alarm IS NULL');
 
