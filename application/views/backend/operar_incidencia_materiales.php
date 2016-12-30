@@ -101,7 +101,7 @@
                                             <?php
                                             foreach ($devices_almacen as $device_almacen) {
                                             ?>
-                                                <option value="<?php echo $device_almacen->id_devices_almacen ?>"><?php echo $device_almacen->device ?> [<?php echo $device_almacen->serial ?>] (<?php echo $device_almacen->owner ?>)</option>
+                                                <option value="<?php echo $device_almacen->id_devices_almacen ?>"><?php echo $device_almacen->device ?> [<?php echo $device_almacen->IMEI ?>] (<?php echo $device_almacen->owner ?>)</option>
                                             <?php
                                             }
                                             ?>

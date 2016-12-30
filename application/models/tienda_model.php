@@ -828,11 +828,12 @@ class Tienda_model extends CI_Model {
 	
 	
 	public function search_dispositivo_id($id) {
+
 		if($id != FALSE) {
 			$query = $this->db->select('devices_almacen.*')
 			->where('devices_almacen.id_devices_almacen',$id)
 			->get('devices_almacen');
-	
+
 			return $query->result();
 		}
 		else {
@@ -1954,10 +1955,9 @@ class Tienda_model extends CI_Model {
 		->join('device','devices_almacen.id_device = device.id_device')
 		->where('devices_almacen.status','En stock')
 		->order_by('device.device')
-		->order_by('devices_almacen.serial')
+		->order_by('devices_almacen.imei desc')
 		->get('devices_almacen');
 
-	
 		return $query->result();
 	}
 

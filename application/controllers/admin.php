@@ -1817,7 +1817,18 @@ class Admin extends CI_Controller
             );
             $this->tienda_model->reservar_dispositivos($this->input->post('dipositivo_almacen_1'),2);
             $this->tienda_model->incidencia_update_material($dipositivo_almacen_1);
-            $this->tienda_model->update_dispositivos($this->input->post('dipositivo_almacen_1'),$this->input->post('imei_1'),$this->input->post('mac_1'),$this->input->post('serial_1'),$this->input->post('barcode_1'));
+
+            /*Si el dispositivo seleccionado ya tiene un IMEI y no metemos otro nos quedamos con el que ya tenia*/
+            $imei=$this->input->post('imei_1');
+            if (empty($imei)) {
+                $resultado=$this->tienda_model->search_dispositivo_id($this->input->post('dipositivo_almacen_1'));
+            }
+            if(!empty($resultado)){
+                foreach($resultado as $r) {
+                    $imei = $r->IMEI;
+                }
+            }
+            $this->tienda_model->update_dispositivos($this->input->post('dipositivo_almacen_1'),$imei,$this->input->post('mac_1'),$this->input->post('serial_1'),$this->input->post('barcode_1'));
         }
 
         if ($this->input->post('units_dipositivo_almacen_2') <> '')
@@ -1833,7 +1844,17 @@ class Admin extends CI_Controller
 
             $this->tienda_model->reservar_dispositivos($this->input->post('dipositivo_almacen_2'),2);
             $this->tienda_model->incidencia_update_material($dipositivo_almacen_2);
-            $this->tienda_model->update_dispositivos($this->input->post('dipositivo_almacen_2'),$this->input->post('imei_2'),$this->input->post('mac_2'),$this->input->post('serial_2'),$this->input->post('barcode_2'));
+
+            $imei=$this->input->post('imei_2');
+            if (empty($imei)) {
+                $resultado=$this->tienda_model->search_dispositivo_id($this->input->post('dipositivo_almacen_2'));
+            }
+            if(!empty($resultado)){
+                foreach($resultado as $r) {
+                    $imei = $r->IMEI;
+                }
+            }
+            $this->tienda_model->update_dispositivos($this->input->post('dipositivo_almacen_2'),$imei,$this->input->post('mac_2'),$this->input->post('serial_2'),$this->input->post('barcode_2'));
 
         }
 
@@ -1850,7 +1871,17 @@ class Admin extends CI_Controller
 
             $this->tienda_model->reservar_dispositivos($this->input->post('dipositivo_almacen_3'),2);
             $this->tienda_model->incidencia_update_material($dipositivo_almacen_3);
-            $this->tienda_model->update_dispositivos($this->input->post('dipositivo_almacen_3'),$this->input->post('imei_3'),$this->input->post('mac_3'),$this->input->post('serial_3'),$this->input->post('barcode_3'));
+
+            $imei=$this->input->post('imei_3');
+            if (empty($imei)) {
+                $resultado=$this->tienda_model->search_dispositivo_id($this->input->post('dipositivo_almacen_23'));
+            }
+            if(!empty($resultado)){
+                foreach($resultado as $r) {
+                    $imei = $r->IMEI;
+                }
+            }
+            $this->tienda_model->update_dispositivos($this->input->post('dipositivo_almacen_3'),$imei,$this->input->post('mac_3'),$this->input->post('serial_3'),$this->input->post('barcode_3'));
         }
 
         // RECEPCION DE 10 CAMPOS DE ALARMAS
