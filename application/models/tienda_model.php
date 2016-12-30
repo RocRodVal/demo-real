@@ -2582,7 +2582,7 @@ class Tienda_model extends CI_Model {
                         INNER JOIN devices_almacen d ON d.id_devices_almacen=m.id_devices_almacen
                         WHERE m.id_incidencia=$id_incidencia AND m.id_devices_almacen IS NOT NULL";
                 $material = $this->db->query($sql)->row();
-                
+
                 if (!empty($material)) {
                     $sql = "UPDATE devices_almacen SET status='En stock' WHERE  (status='Transito' || status='Reservado') AND id_devices_almacen=$material->id_devices_almacen";
                     $this->db->query($sql);
@@ -2624,9 +2624,11 @@ class Tienda_model extends CI_Model {
                         WHERE id_incidencia=$id_incidencia";
                 $material = $this->db->query($sql)->row();
 
-                $sql="SELECT * FROM devices_almacen WHERE status='Transito' AND id_device=$device_pds->id_device AND id_devices_pds=$device_pds->id_devices_pds";
-                $result=$this->db->query($sql)->row();
-
+                $result = null;
+                if (!empty($device_pds)) {
+                    $sql = "SELECT * FROM devices_almacen WHERE status='Transito' AND id_device=$device_pds->id_device AND id_devices_pds=$device_pds->id_devices_pds";
+                    $result = $this->db->query($sql)->row();
+                }
 
                 if (!empty($device_pds) && $device_pds->status == 'Baja') {
                     if (!empty($result)) {
