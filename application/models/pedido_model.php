@@ -190,7 +190,7 @@ class Pedido_model extends CI_Model {
 
 
         /** Aplicar filtros desde el array, de manera manual **/
-        if(isset($filtros["id_pedido"])        && !empty($filtros["id_pedido"]))          $this->db->where('pedidos.id',$filtros['id_pedido']);
+        if(isset($filtros["id_pedido"])    && !empty($filtros["id_pedido"]))      $this->db->where('pedidos.id',$filtros['id_pedido']);
         if(isset($filtros["reference"])    && !empty($filtros["reference"]))      $this->db->where('reference',$filtros['reference']);
    /*     if(isset($filtros["id_incidencia"]) && !empty($filtros["id_incidencia"]))   $this->db->where('incidencias.id_incidencia',$filtros['id_incidencia']);
         if(isset($filtros["territory"])     && !empty($filtros["territory"]))       $this->db->where('pds.territory',$filtros['territory']);
@@ -216,12 +216,12 @@ class Pedido_model extends CI_Model {
         $this->db->where($this->get_condition_pedidos($tipo));
 
         $campo_orden = $orden = NULL;
-        if(count($array_orden) > 0) {
+        /*if(count($array_orden) > 0) {
             foreach ($array_orden as $key=>$value){
                 $campo_orden = $key;
                 $orden = $value;
             }
-        }
+        }*/
         if(!is_null($campo_orden) && !empty($campo_orden) && !is_null($orden) && !empty($orden)) {
             $s_orden = $campo_orden. " ".$orden;
             $this->db->order_by($s_orden);
@@ -231,7 +231,7 @@ class Pedido_model extends CI_Model {
 
         $query =   $this->db->get('pedidos',$cfg_pagination['per_page'], ($page-1) * $cfg_pagination['per_page']);
         //
-         // echo $this->db->last_query(); exit;
+         //echo $this->db->last_query(); exit;
 
         return $query->result();
     }
