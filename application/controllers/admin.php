@@ -1479,7 +1479,7 @@ class Admin extends CI_Controller
                 $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'], 8,$id_inc);
             }
             $this->tienda_model->incidencia_update_cierre($id_inc, $fecha_cierre);
-        }else {
+        }else { //CIERRE de la incidencia normal
             if ($status == 8) {
 
                 //if (!is_null($incidencia['id_devices_pds'])) {

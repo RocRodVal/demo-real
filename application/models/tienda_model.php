@@ -2397,6 +2397,180 @@ class Tienda_model extends CI_Model {
                 $this->db->update('devices_pds');
                 break;
 
+            /* se resuelve la incidencia*/
+            case ($status == 6):
+                $condicion = "";
+                if (!empty($id_devices_pds)) {
+                    $condicion = "AND incidencias.id_devices_pds=$id_devices_pds ";
+                }
+                $sql = "SELECT devices_pds.status FROM devices_pds 
+                        JOIN incidencias ON incidencias.id_devices_pds=devices_pds.id_devices_pds WHERE  
+                        incidencias.id_incidencia=$id_incidencia $condicion";
+                $resultado = $this->db->query($sql)->row_array();
+
+                if ((!empty($resultado)) && ($resultado['status'] == "Incidencia")) {
+                    /* poner de Alta la posicion que origino la incidencia*/
+                    $sql = "UPDATE devices_pds SET status='Alta' WHERE id_devices_pds =" . $id_devices_pds;
+                    $this->db->query($sql);
+                }
+                break;
+
+            /* Cuando se pulsa el boton de recogida de material se debe hacer una entrada en el almacen para el dispositvo que origino la incidencia*/
+            case ($status == 7):
+                /*insertar en almacen el dispositivo que origino la incidencia en estado en transito*/
+                /* Guardamos los datos de la posicion que genero la incidencia y el devices_pds al que afecta la incidencia se da de baja */
+                if (!empty($id_devices_pds)) {
+                    $query = $this->db->select('*')
+                        ->where('id_devices_pds', $id_devices_pds)
+                        ->get('devices_pds');
+                    $device_pds = $query->row();
+
+                    $query= $this->db->select('*')
+                            ->where('id_incidencia', $id_incidencia)
+                            ->get('incidencias');
+                    $incidencia=$query->row();
+
+
+                    if ((($device_pds->status == 'Baja') && ($incidencia->tipo_averia!='Robo')) || (($device_pds->status == 'RMA') && ($incidencia->tipo_averia=='Robo'))) {
+                        $data = array(
+                            'id_device' => $device_pds->id_device,
+                            'alta' => $ahora,
+                            'IMEI' => $device_pds->IMEI,
+                            'mac' => $device_pds->mac,
+                            'serial' => $device_pds->serial,
+                            'barcode' => $device_pds->barcode,
+                            'status' => 4,
+                            'owner' => "ET",
+                            'id_devices_pds' => $device_pds->id_devices_pds
+                        );
+                       // print_r($data); exit;
+                        $this->db->insert('devices_almacen', $data);
+
+                        /*Insertar en el historico del almacen el estado del dispositivo*/
+                        $elemento = array(
+                            'id_material_incidencia' => NULL,
+                            'id_devices_almacen'    => $this->db->insert_id(),
+                            'id_alarm' => NULL,
+                            'id_device'=>$device_pds->id_device,
+                            'id_incidencia' => $id_incidencia,
+                            'id_client' => NULL,
+                            'fecha' => date('Y-m-d H:i:s'),
+                            'unidades' => 1,
+                            'procesado' => 1,
+                            'status'    => 'Transito'
+                        );
+                        $this->db->insert('historico_io',$elemento);
+                    }
+                }
+                break;
+
+            case ($status == 8): /*Cuando de hace el cierre forzoso de la incidencia*/
+                /*El material que se haya asignado ya este en transito o reservado pasara a Stock*/
+                $sql = "SELECT * FROM material_incidencias m
+                        INNER JOIN devices_almacen d ON d.id_devices_almacen=m.id_devices_almacen
+                        WHERE m.id_incidencia=$id_incidencia AND m.id_devices_almacen IS NOT NULL";
+                $material = $this->db->query($sql)->row();
+
+                if (!empty($material)) {
+                    $sql = "UPDATE devices_almacen SET status='En stock' WHERE  (status='Transito' || status='Reservado') AND id_devices_almacen=$material->id_devices_almacen";
+                    $this->db->query($sql);
+
+                    /*Insertar en el historico del almacen el estado del dispositivo*/
+                    $elemento = array(
+                        'id_material_incidencia' => $material->id_material_incidencias,
+                        'id_devices_almacen'    =>  $material->id_devices_almacen,
+                        'id_device'=>$material->id_device,
+                        'id_incidencia' => $id_incidencia,
+                        'fecha' => date('Y-m-d H:i:s'),
+                        'unidades' => 1,
+                        'procesado' => 1,
+                        'status'    => 'En stock'
+                    );
+                    $this->db->insert('historico_io',$elemento);
+                }
+                /*La posicion que general la incidencia pasa a estar en Alta*/
+                $sql = "UPDATE devices_pds SET status='Alta' WHERE id_devices_pds =" . $id_devices_pds;
+                $this->db->query($sql);
+
+                break;
+
+            case ($status == 9): /*Ya se ha recogido el material y se cierra la incidencia*/
+                /*insertar en almacen el dispositivo que origino la incidencia en estado en transito*/
+                /* Guardamos los datos de la posicion que genero la incidencia y el devices_pds al que afecta la incidencia se da de baja */
+                $query = $this->db->select('*')
+                    ->where('id_devices_pds', $id_devices_pds)
+                    ->get('devices_pds');
+                $device_pds = $query->row();
+
+                $status='En stock';
+                $id_devices_almacen=NULL;
+                $id_device=NULL;
+                $id_material_incidencia=NULL;
+
+                $sql = "SELECT * FROM material_incidencias m
+                        INNER JOIN devices_almacen d ON d.id_devices_almacen=m.id_devices_almacen
+                        WHERE id_incidencia=$id_incidencia";
+                $material = $this->db->query($sql)->row();
+
+                //$result = null;
+                if (!empty($device_pds)) {
+
+                    $sql = "SELECT * FROM devices_almacen WHERE status='Transito' AND id_device=$device_pds->id_device AND id_devices_pds=$device_pds->id_devices_pds";
+                    $result = $this->db->query($sql)->row();
+
+               //     echo "RESULT "; echo print_r($result);
+                }
+                //echo "RESULT ".print_r($result); echo "<br>"; exit;
+                //exit;
+                if (!empty($device_pds) && $device_pds->status == 'Baja') {
+
+                    if (!empty($result)) {
+                        $id_devices_almacen=$result->id_devices_almacen;
+                        $id_device=$result->id_device;
+                        $sql = "UPDATE devices_almacen SET status='En stock' WHERE  id_devices_almacen=$result->id_devices_almacen";
+                        $this->db->query($sql);
+                    }
+                } else {
+                    if (!empty($device_pds) && $device_pds->status == 'RMA') {
+                        $status='RMA';
+
+                        if (!empty($result)) {
+                            $id_devices_almacen=$result->id_devices_almacen;
+                            $id_device=$result->id_device;
+                            $sql = "UPDATE devices_almacen SET status='RMA' WHERE  id_devices_almacen=$result->id_devices_almacen";
+                            $this->db->query($sql);
+                        }
+                        $sql = "UPDATE devices_pds SET status='Baja' WHERE id_devices_pds =" . $device_pds->id_devices_pds;
+                        $this->db->query($sql);
+                    } else {
+                        if (!empty($material)) {
+                            $id_devices_almacen=$material->id_devices_almacen;
+                            $id_device=$material->id_device;
+                            $id_material_incidencia=$material->id_material_incidencias;
+
+                            $sql = "UPDATE devices_almacen SET status='En stock' WHERE  status='Transito' AND id_devices_almacen=$material->id_devices_almacen";
+                            $this->db->query($sql);
+                        }
+                    }
+                }
+//echo $status."<br>"; echo $this->db->last_query(); echo "<br>"; print_r($result); exit;
+                /*Insertar en el historico del almacen el estado del dispositivo*/
+                $elemento = array(
+                    'id_material_incidencia' => $id_material_incidencia,
+                    'id_devices_almacen' => $id_devices_almacen,
+                    'id_alarm' => NULL,
+                    'id_device'=>$id_device,
+                    'id_incidencia' => $id_incidencia,
+                    'id_client' => NULL,
+                    'fecha' => date('Y-m-d H:i:s'),
+                    'unidades' => 1,
+                    'procesado' => 1,
+                    'status'    => $status
+                );
+                $this->db->insert('historico_io',$elemento);
+
+                break;
+
             case ($status == 10): /* se sustituyen los terminales implicados en la incidencia*/
                 /* Guardamos los datos de la posicion que genero la incidencia y el devices_pds al que afecta la incidencia se da de baja */
                 $query = $this->db->select('*')
@@ -2515,166 +2689,6 @@ class Tienda_model extends CI_Model {
                     );
                     $this->db->insert('devices_pds', $data);
                 }
-                break;
-            /* se resuelve la incidencia*/
-            case ($status == 6):
-                $condicion = "";
-                if (!empty($id_devices_pds)) {
-                    $condicion = "AND incidencias.id_devices_pds=$id_devices_pds ";
-                }
-                $sql = "SELECT devices_pds.status FROM devices_pds 
-                        JOIN incidencias ON incidencias.id_devices_pds=devices_pds.id_devices_pds WHERE  
-                        incidencias.id_incidencia=$id_incidencia $condicion";
-                $resultado = $this->db->query($sql)->row_array();
-
-                if ((!empty($resultado)) && ($resultado['status'] == "Incidencia")) {
-                    /* poner de Alta la posicion que origino la incidencia*/
-                    $sql = "UPDATE devices_pds SET status='Alta' WHERE id_devices_pds =" . $id_devices_pds;
-                    $this->db->query($sql);
-                }
-                break;
-
-            /* Cuando se pulsa el boton de recogida de material se debe hacer una entrada en el almacen para el dispositvo que origino la incidencia*/
-            case ($status == 7):
-                /*insertar en almacen el dispositivo que origino la incidencia en estado en transito*/
-                /* Guardamos los datos de la posicion que genero la incidencia y el devices_pds al que afecta la incidencia se da de baja */
-                if (!empty($id_devices_pds)) {
-                    $query = $this->db->select('*')
-                        ->where('id_devices_pds', $id_devices_pds)
-                        ->get('devices_pds');
-                    $device_pds = $query->row();
-
-                    if (($device_pds->status == 'Baja') || ($device_pds->status == 'RMA')) {
-                        $data = array(
-                            'id_device' => $device_pds->id_device,
-                            'alta' => $ahora,
-                            'IMEI' => $device_pds->IMEI,
-                            'mac' => $device_pds->mac,
-                            'serial' => $device_pds->serial,
-                            'barcode' => $device_pds->barcode,
-                            'status' => 4,
-                            'owner' => "ET",
-                            'id_devices_pds' => $device_pds->id_devices_pds
-                        );
-                        $this->db->insert('devices_almacen', $data);
-
-                        /*Insertar en el historico del almacen el estado del dispositivo*/
-                        $elemento = array(
-                            'id_material_incidencia' => NULL,
-                            'id_devices_almacen'    => $this->db->insert_id(),
-                            'id_alarm' => NULL,
-                            'id_device'=>$device_pds->id_device,
-                            'id_incidencia' => $id_incidencia,
-                            'id_client' => NULL,
-                            'fecha' => date('Y-m-d H:i:s'),
-                            'unidades' => 1,
-                            'procesado' => 1,
-                            'status'    => 'Transito'
-                        );
-                        $this->db->insert('historico_io',$elemento);
-                    }
-                }
-                break;
-
-            case ($status == 8): /*Cuando de hace el cierre forzoso de la incidencia*/
-                /*El material que se haya asignado ya este en transito o reservado pasara a Stock*/
-                $sql = "SELECT * FROM material_incidencias m
-                        INNER JOIN devices_almacen d ON d.id_devices_almacen=m.id_devices_almacen
-                        WHERE m.id_incidencia=$id_incidencia AND m.id_devices_almacen IS NOT NULL";
-                $material = $this->db->query($sql)->row();
-
-                if (!empty($material)) {
-                    $sql = "UPDATE devices_almacen SET status='En stock' WHERE  (status='Transito' || status='Reservado') AND id_devices_almacen=$material->id_devices_almacen";
-                    $this->db->query($sql);
-
-                    /*Insertar en el historico del almacen el estado del dispositivo*/
-                    $elemento = array(
-                        'id_material_incidencia' => $material->id_material_incidencias,
-                        'id_devices_almacen'    =>  $material->id_devices_almacen,
-                        'id_device'=>$material->id_device,
-                        'id_incidencia' => $id_incidencia,
-                        'fecha' => date('Y-m-d H:i:s'),
-                        'unidades' => 1,
-                        'procesado' => 1,
-                        'status'    => 'En stock'
-                    );
-                    $this->db->insert('historico_io',$elemento);
-                }
-                /*La posicion que general la incidencia pasa a estar en Alta*/
-                $sql = "UPDATE devices_pds SET status='Alta' WHERE id_devices_pds =" . $id_devices_pds;
-                $this->db->query($sql);
-
-                break;
-
-            case ($status == 9): /*Ya se ha recogido el material y se cierra la incidencia*/
-                /*insertar en almacen el dispositivo que origino la incidencia en estado en transito*/
-                /* Guardamos los datos de la posicion que genero la incidencia y el devices_pds al que afecta la incidencia se da de baja */
-                $query = $this->db->select('*')
-                    ->where('id_devices_pds', $id_devices_pds)
-                    ->get('devices_pds');
-                $device_pds = $query->row();
-
-                $status='En stock';
-                $id_devices_almacen=NULL;
-                $id_device=NULL;
-                $id_material_incidencia=NULL;
-
-                $sql = "SELECT * FROM material_incidencias m
-                        INNER JOIN devices_almacen d ON d.id_devices_almacen=m.id_devices_almacen
-                        WHERE id_incidencia=$id_incidencia";
-                $material = $this->db->query($sql)->row();
-
-                $result = null;
-                if (!empty($device_pds)) {
-                    $sql = "SELECT * FROM devices_almacen WHERE status='Transito' AND id_device=$device_pds->id_device AND id_devices_pds=$device_pds->id_devices_pds";
-                    $result = $this->db->query($sql)->row();
-                }
-
-                if (!empty($device_pds) && $device_pds->status == 'Baja') {
-                    if (!empty($result)) {
-                        $id_devices_almacen=$result->id_devices_almacen;
-                        $id_device=$result->id_device;
-                        $sql = "UPDATE devices_almacen SET status='En stock' WHERE  id_devices_almacen=$result->id_devices_almacen";
-                        $this->db->query($sql);
-                    }
-                } else {
-                    if (!empty($device_pds) && $device_pds->status == 'RMA') {
-                        $status='RMA';
-                        if (!empty($resul)) {
-                            $id_devices_almacen=$result->id_devices_almacen;
-                            $id_device=$result->id_device;
-                            $sql = "UPDATE devices_almacen SET status='RMA' WHERE  id_devices_almacen=$result->id_devices_almacen";
-                            $this->db->query($sql);
-                        }
-                        $sql = "UPDATE devices_pds SET status='Baja' WHERE id_devices_pds =" . $device_pds->id_devices_pds;
-                        $this->db->query($sql);
-                    } else {
-                        if (!empty($material)) {
-                            $id_devices_almacen=$material->id_devices_almacen;
-                            $id_device=$material->id_device;
-                            $id_material_incidencia=$material->id_material_incidencias;
-
-                            $sql = "UPDATE devices_almacen SET status='En stock' WHERE  status='Transito' AND id_devices_almacen=$material->id_devices_almacen";
-                            $this->db->query($sql);
-                        }
-                    }
-                }
-
-                /*Insertar en el historico del almacen el estado del dispositivo*/
-                $elemento = array(
-                    'id_material_incidencia' => $id_material_incidencia,
-                    'id_devices_almacen' => $id_devices_almacen,
-                    'id_alarm' => NULL,
-                    'id_device'=>$id_device,
-                    'id_incidencia' => $id_incidencia,
-                    'id_client' => NULL,
-                    'fecha' => date('Y-m-d H:i:s'),
-                    'unidades' => 1,
-                    'procesado' => 1,
-                    'status'    => $status
-                );
-                $this->db->insert('historico_io',$elemento);
-
                 break;
 
             default:
