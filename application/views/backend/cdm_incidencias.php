@@ -70,12 +70,21 @@
                                 <th>Total incidencias</th>
                                 <?php
                                 $mes_idx = $primer_mes;
-                                foreach($tabla_1 as $clave=>$valor)
+                                /*foreach($tabla_1 as $clave=>$valor)
                                 {
                                     echo "<td>";
                                     echo ($valor->total_incidencias > 0)
                                         ? "<a href='".base_url('informe/exportar_cdm_incidencias/'.$anio.'/'.$mes_idx)."' >".$valor->total_incidencias."</a>"
                                         : $valor->total_incidencias ;
+                                    echo "</td>";
+                                    $mes_idx++;
+                                }*/
+                                foreach($tabla_1 as $valor)
+                                {
+                                    echo "<td>";
+                                    echo ($valor > 0)
+                                        ? "<a href='".base_url('informe/exportar_cdm_incidencias/'.$anio.'/'.$mes_idx)."' >".$valor."</a>"
+                                        : $valor ;
                                     echo "</td>";
                                     $mes_idx++;
                                 }

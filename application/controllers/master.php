@@ -827,7 +827,7 @@ class Master extends CI_Controller {
             // Sacamos la primera línea. Total incidencias
             $resultados_1 = $this->informe_model->get_cmd_incidencias_totales($este_anio,$ctrl_no_cancelada);
             $total_incidencias_total = $this->informe_model->get_total_cdm_incidencias($resultados_1);
-            $valor_resultados_1 = $this->informe_model->get_array_incidencias_totales($resultados_1);
+            $valor_resultados_1 = $this->informe_model->get_array_incidencias_totales($rango_meses,$resultados_1);
 
 
             $dias_operativos = $this->informe_model->get_dias_operativos_mes($rango_meses,$este_anio);
@@ -840,7 +840,7 @@ class Master extends CI_Controller {
 
             $nombre_mes = array();
 
-            $data["tabla_1"] = $resultados_1;
+            $data["tabla_1"] = $valor_resultados_1;
 
 
             /**

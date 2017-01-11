@@ -6766,8 +6766,7 @@ class Admin extends CI_Controller
             // Sacamos la primera línea. Total incidencias
             $resultados_1 = $this->informe_model->get_cmd_incidencias_totales($este_anio,$ctrl_no_cancelada);
             $total_incidencias_total = $this->informe_model->get_total_cdm_incidencias($resultados_1);
-            $valor_resultados_1 = $this->informe_model->get_array_incidencias_totales($resultados_1);
-
+            $valor_resultados_1 = $this->informe_model->get_array_incidencias_totales($rango_meses,$resultados_1);
 
             $dias_operativos = $this->informe_model->get_dias_operativos_mes($rango_meses,$este_anio);
             $total_dias_operativos = $this->informe_model->get_total_array($dias_operativos);
@@ -6779,7 +6778,7 @@ class Admin extends CI_Controller
 
             $nombre_mes = array();
 
-            $data["tabla_1"] = $resultados_1;
+            $data["tabla_1"] = $valor_resultados_1;
 
 
             /**
@@ -7144,8 +7143,10 @@ class Admin extends CI_Controller
                 $array_orden = $this->set_orden($this->input->post('form'));
             }
 
+
             // Obtener el campo a ordenar, primero de Session y despues del post, si procede..
             $array_orden = $this->get_orden();
+            //print_r($array_orden); exit;
             if(count($array_orden) > 0) {
                 foreach ($array_orden as $key => $value) {
                     $data["campo_orden"] = $key;

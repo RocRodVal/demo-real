@@ -458,8 +458,35 @@ class Informe_model extends CI_Model
     }
 
 
-
     public function get_rango_meses($anio=NULL,$tipo="incidencias")
+    {
+        $anioactual=date("Y");
+        $rango_meses = (object) array("min"=>1,"max"=>1);
+
+        if(is_null($anio)) {
+            $rango_meses->max=date("n");
+        } else{
+            if ($anioactual==$anio){
+                $rango_meses->max=date("n");
+            }else{
+                if ($anio==2015){
+                    $rango_meses->min=3;
+                }
+                $rango_meses->max=12;
+            }
+        }
+
+        /* if($tipo=="incidencias") {
+             $rango_meses = $this->db->query("SELECT MONTH(MIN(fecha)) as min, MONTH(MAX(fecha)) as max FROM incidencias WHERE YEAR(fecha)='$anio'")->row();
+         }else {
+             $rango_meses = $this->db->query("SELECT MONTH(MIN(fecha)) as min, MONTH(MAX(fecha)) as max FROM pedidos WHERE YEAR(fecha)='$anio'")->row();
+         }*/
+
+        $this->setRangoMeses($rango_meses);
+        return $rango_meses;
+    }
+
+    public function get_rango_meses_old($anio=NULL,$tipo="incidencias")
     {
         if(is_null($anio)) $anio = date("Y");
         if($tipo=="incidencias") {
@@ -539,11 +566,47 @@ class Informe_model extends CI_Model
     }
 
     /**
+     * Devuelve en bruto un array simple [mes]=>valor las incidencias, si no hay incidencias rellena con valor 0
+     * @param null $array_incidencias
+     * @return array
+     */
+    public function get_array_incidencias_totales($rango_meses=NULL,$array_incidencias = NULL)
+    {
+        //$mesFinal=1;
+        $data_inc = array();
+
+        if(!is_null($array_incidencias))
+        {
+            for($i=$rango_meses->min;$i<=$rango_meses->max;$i++) {
+                $existe=false;
+                foreach ($array_incidencias as $inc) {
+                    if ($i==$inc->mes){
+                        $data_inc[$inc->mes] = $inc->total_incidencias;
+                        //$mesFinal=$inc->mes;
+                        $existe=true;
+                        break;
+                    }
+                }
+                if (!$existe){
+                    $data_inc[$i]=0;
+                }
+
+            }
+           /* if ($mesFinal<$i){
+                for ($j=$mesFinal+1;$j<=$rango_meses->max;$j++){
+                    $data_inc[$j]=0;
+                }
+            }*/
+        }
+        return $data_inc;
+    }
+
+    /**
      * Devuelve en bruto un array simple [mes]=>valor las incidencias
      * @param null $array_incidencias
      * @return array
      */
-    public function get_array_incidencias_totales($array_incidencias = NULL)
+    public function get_array_incidencias_totales_old($array_incidencias = NULL)
     {
         $data_inc = array();
         if(!is_null($array_incidencias))
@@ -1563,6 +1626,6 @@ class Informe_model extends CI_Model
         return $query_1->result();
     }*/
 
-   
+
 
 }
