@@ -80,12 +80,17 @@
                                 <label for="reference">SFID: </label>
                                 <input type="text" name="reference" id="reference" class="form-control input-sm" placeholder="SFID" <?php echo (!empty($reference)) ? ' value="'.$reference.'" ' : ''?> />
                             </div>
-                            <div class="col-lg-1">
+                            <div class="col-lg-2">
                                 <div class="form-group">
                                     <input type="hidden" name="do_busqueda" value="si">
                                     <input type="submit" value="Buscar" id="submit_button" class="form-control input-sm">
                                 </div>
                             </div>
+                                <div class="col-lg-2">
+                                    <div class="form-group">
+                                        <a href="<?=base_url()?>admin/pedidos/<?=$tipo?>/borrar_busqueda" class="reiniciar_busquedaP form-control input-sm">Reiniciar</a>
+                                    </div>
+                                </div>
                             <div class="clearfix"></div>
 
                         </form>

@@ -85,7 +85,6 @@
                                     <option value="Material asignado" <?php echo ($status==="Material asignado") ? 'selected="selected"' : ''?>>Material asignado</option>
                                     <option value="Comunicada" <?php echo ($status==="Comunicada") ? 'selected="selected"' : ''?>>Comunicadas</option>
 
-
                                 </select>
                             </div>
                             <div class="col-lg-3">
@@ -212,12 +211,15 @@
                                 <label for="id_intervencion">Id. intervención: </label>
                                 <input type="text" name="id_intervencion" id="id_intervencion" class="form-control input-sm" placeholder="Id. intervención" <?php echo (!empty($id_intervencion)) ? ' value="'.$id_intervencion.'" ' : ''?> />
                             </div>
-                            <div class="col-lg-1">
+                            <div class="col-lg-2">
                                 <div class="form-group">
                                     <input type="hidden" name="do_busqueda" value="si">
                                     <input type="submit" value="Buscar" id="submit_button" class="form-control input-sm">
+                                    <a href="<?=base_url()?>admin/estado_incidencias/<?=$tipo?>/borrar_busqueda" class="reiniciar_busqueda form-control input-sm">Reiniciar</a>
                                 </div>
+
                             </div>
+
                             <div class="clearfix"></div>
 
                         </form>
@@ -255,7 +257,7 @@
 		                            <th class="sorting" data-rel="incidencias.id_incidencia"    data-order="">Ref.</th>
 		                            <th class="sorting" data-rel="pds.reference"                data-order="">SFID</th>
 		                            <th class="sorting" data-rel="incidencias.fecha"            data-order="desc">Fecha alta</th>
-		                            <th class="principal"                                                             >Elemento afectado</th>
+		                            <th class="principal">Elemento afectado</th>
 
 
                                     <?php /*

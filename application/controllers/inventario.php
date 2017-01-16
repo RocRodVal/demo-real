@@ -56,6 +56,72 @@ class Inventario extends CI_Controller {
 	}
 
 
+    /**
+     * Función que guarda en sesión el valor de los filtros del POST, al venir de un form de filtrado
+     * @param $array_filtros
+     */
+    public function set_filtros($array_filtros){
+        $array_valores = NULL;
+        if(is_array($array_filtros))
+        {
+            $array_valores = array();
+            foreach ($array_filtros as $filter=>$value)
+            {
+                if(empty($value)) {
+                    $valor_filter = $this->input->post($filter);
+                }else{
+                    $valor_filter  = $value;
+                }
+                $this->session->set_userdata($filter, $valor_filter);
+                $array_valores[$filter] = $valor_filter;
+            }
+
+        }
+        return $array_valores;
+    }
+
+
+    /**
+     * Método que borra de la sesión, X variables, pasado sus nombres en un array
+     * Si el parámetro es un array (de variables), lo recorremos y eliminamos de la sesión cualquier valor que tenga
+     * la variable de sesión de ese nombre
+     */
+    public function delete_filtros($array_filtros,$array_excepciones=array()){
+
+        if(is_array($array_filtros)){
+            foreach($array_filtros as $key =>$filtro){
+                if(!in_array($key,$array_excepciones)) {
+                    $this->session->unset_userdata($key);
+                }
+            }
+        }
+    }
+
+    /**
+     * Recibe el array de filtros (campos del buscador/filtrador) y buscará su valor en la sesión, y cargará otro array
+     * con los pares VARIABLE=>VALOR SESION.
+     * @param $array_filtros
+     * @return array|null
+     */
+    public function get_filtros($array_filtros){
+        $array_session = NULL;
+
+        if(is_array($array_filtros)){
+            $array_session = array();
+            foreach($array_filtros as $filter=>$value){
+
+                if(!empty($value)){
+                    $sess_filter = $value;
+                }else {
+                    $sess_filter = $this->session->userdata($filter);
+                }
+                $array_session[$filter] = (!empty($sess_filter)) ? $sess_filter : NULL;
+
+            }
+        }
+        return $array_session;
+    }
+
 
     /**
      * Método del controlador, que invoca al modelo para generar un CSV con el balance de activos.
@@ -65,8 +131,37 @@ class Inventario extends CI_Controller {
         if($this->auth->is_auth())
         {
             $ext = (!is_null($formato) ? $formato : $this->ext);    // Formato para exportaciones, especficiado o desde CFG
+
+            /** Crear los filtros           */
+            $array_filtros = array(
+                'id_modelo' =>  '',
+                'id_marca'  =>  ''
+            );
+
+
+            // Consultar a la session si ya se ha buscado algo y guardado allí.
+            $array_sesion = $this->get_filtros($array_filtros);
+
+            /* BORRAR BUSQUEDA */
+            //echo  $this->uri->segment(4);exit;
+            $borrar_busqueda = $this->uri->segment(3);
+            if($borrar_busqueda === "borrar_busqueda")
+            {
+                $this->delete_filtros($array_filtros);
+                //print_r($array_filtros);
+                redirect(site_url("/inventario/balance"),'refresh');
+            }
+
+            if($this->input->post('do_busqueda')==="si") $array_sesion = $this->set_filtros($array_filtros);
+
+            /* Creamos al vuelo las variables que vienen de los filtros */
+            foreach($array_filtros as $filtro=>$value){
+                $$filtro = $array_sesion[$filtro];
+                $data[$filtro] = $array_sesion[$filtro]; // Pasamos los valores a la vista.
+            }
+
             $this->load->model('tienda_model');
-            $data['stocks'] = $this->tienda_model->exportar_stock_cruzado($ext);
+            $data['stocks'] = $this->tienda_model->exportar_stock_cruzado($ext,"admin",$array_sesion);
         }
         else
         {
@@ -618,6 +713,266 @@ class Inventario extends CI_Controller {
 		$this->load->view('backend/planograma_display', $data);
 		$this->load->view('backend/footer');
 	}
+
+    public function balance()
+    {
+        if($this->auth->is_auth())
+        {
+            $xcrud = xcrud_get_instance();
+            $this->load->model('tienda_model');
+
+            /**
+             * Crear los filtros
+             */
+            $array_filtros = array(
+                'id_modelo' =>  '',
+                'id_marca'  =>  ''
+            );
+
+
+            // Consultar a la session si ya se ha buscado algo y guardado allí.
+            $array_sesion = $this->get_filtros($array_filtros);
+
+            /* BORRAR BUSQUEDA */
+            //echo  $this->uri->segment(4);exit;
+            $borrar_busqueda = $this->uri->segment(3);
+            if($borrar_busqueda === "borrar_busqueda")
+            {
+                $this->delete_filtros($array_filtros);
+                //print_r($array_filtros);
+                redirect(site_url("/inventario/balance"),'refresh');
+            }
+
+            if($this->input->post('do_busqueda')==="si") $array_sesion = $this->set_filtros($array_filtros);
+
+            /* Creamos al vuelo las variables que vienen de los filtros */
+            foreach($array_filtros as $filtro=>$value){
+                $$filtro = $array_sesion[$filtro];
+                $data[$filtro] = $array_sesion[$filtro]; // Pasamos los valores a la vista.
+            }
+
+            $data['modelos']=$this->tienda_model->get_terminales();
+            $data['marcas']=$this->tienda_model->get_fabricantes();
+            $data['stocks'] = $this->tienda_model->get_stock_cruzado($array_sesion);
+
+            $data['title']   = 'Dispositivos';
+            $data['opcion'] =1;
+
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
+            $this->load->view('backend/header', $data);
+            $this->load->view('backend/navbar', $data);
+            $this->load->view('backend/inventario/cdm_dispositivos', $data);
+            $this->load->view('backend/footer');
+        }
+        else
+        {
+            redirect('admin','refresh');
+        }
+    }
+
+    public function incidencias()
+    {
+        if($this->auth->is_auth())
+        {
+            $xcrud = xcrud_get_instance();
+            $this->load->model('tienda_model');
+
+            //$data['stocks']          = $this->tienda_model->get_stock();
+            //$data['stocks']          = $this->tienda_model->get_stock_cruzado();
+            //print_r($data['stocks']); exit;
+            $data['stocks_dispositivos']  = $this->tienda_model->get_cdm_dispositivos();
+
+            //$data['alarms_almacen']  = $this->tienda_model->get_alarms_almacen_reserva();
+            //$data['devices_almacen'] = $this->tienda_model->get_devices_almacen();
+            //	$data['displays_pds']    = $this->tienda_model->get_displays_total();
+            //	$data['devices_pds']     = $this->tienda_model->get_devices_total();
+
+            $data['title']   = 'Dispositivos';
+            $data['opcion'] =2;
+
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
+            $this->load->view('backend/header', $data);
+            $this->load->view('backend/navbar', $data);
+            $this->load->view('backend/inventario/cdm_dispositivos', $data);
+            $this->load->view('backend/footer');
+        }
+        else
+        {
+            redirect('admin','refresh');
+        }
+    }
+
+    public function alarmas_en_almacen()
+    {
+        if($this->auth->is_auth())
+        {
+            $xcrud = xcrud_get_instance();
+            $this->load->model('tienda_model');
+
+            //$data['stocks']          = $this->tienda_model->get_stock();
+            //$data['stocks']          = $this->tienda_model->get_stock_cruzado();
+            //print_r($data['stocks']); exit;
+            //$data['stocks_dispositivos']  = $this->tienda_model->get_cdm_dispositivos();
+
+            $data['alarms_almacen']  = $this->tienda_model->get_alarms_almacen_reserva();
+            //$data['devices_almacen'] = $this->tienda_model->get_devices_almacen();
+            //	$data['displays_pds']    = $this->tienda_model->get_displays_total();
+            //	$data['devices_pds']     = $this->tienda_model->get_devices_total();
+
+            $data['title']   = 'Sistemas de seguridad';
+            $data['opcion'] = 6;
+
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
+            $this->load->view('backend/header', $data);
+            $this->load->view('backend/navbar', $data);
+            $this->load->view('backend/inventario/cdm_dispositivos', $data);
+            $this->load->view('backend/footer');
+        }
+        else
+        {
+            redirect('admin','refresh');
+        }
+    }
+
+    public function dispositivos_almacen()
+    {
+        if($this->auth->is_auth())
+        {
+            $xcrud = xcrud_get_instance();
+            $this->load->model('tienda_model');
+
+            //$data['stocks']          = $this->tienda_model->get_stock();
+            //$data['stocks']          = $this->tienda_model->get_stock_cruzado();
+            //print_r($data['stocks']); exit;
+            //$data['stocks_dispositivos']  = $this->tienda_model->get_cdm_dispositivos();
+
+            //$data['alarms_almacen']  = $this->tienda_model->get_alarms_almacen_reserva();
+            $data['devices_almacen'] = $this->tienda_model->get_devices_almacen();
+            //	$data['displays_pds']    = $this->tienda_model->get_displays_total();
+            //	$data['devices_pds']     = $this->tienda_model->get_devices_total();
+
+            $data['title'] = 'Dispositvos';
+            $data['opcion'] =3;
+
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
+            $this->load->view('backend/header', $data);
+            $this->load->view('backend/navbar', $data);
+            $this->load->view('backend/inventario/cdm_dispositivos', $data);
+            $this->load->view('backend/footer');
+        }
+        else
+        {
+            redirect('admin','refresh');
+        }
+    }
+    /*Listado de los dispositivos que están pendientes de que lleguen a almacen tras la resolucion de una incidencia*/
+    public function dispositivos_recogida()
+    {
+        if($this->auth->is_auth())
+        {
+            $xcrud = xcrud_get_instance();
+            $this->load->model('tienda_model');
+
+            $data['devices_recogida'] = $this->tienda_model->get_devices_recogida();
+
+            $data['title']   = 'Dispositivos';
+            $data['opcion'] =7;
+
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
+            $this->load->view('backend/header', $data);
+            $this->load->view('backend/navbar', $data);
+            $this->load->view('backend/inventario/cdm_dispositivos', $data);
+            $this->load->view('backend/footer');
+        }
+        else
+        {
+            redirect('admin','refresh');
+        }
+    }
+
+    public function dispositivos_tiendas()
+    {
+        if($this->auth->is_auth())
+        {
+            $xcrud = xcrud_get_instance();
+            $this->load->model('tienda_model');
+
+            //$data['stocks']          = $this->tienda_model->get_stock();
+            //$data['stocks']          = $this->tienda_model->get_stock_cruzado();
+            //print_r($data['stocks']); exit;
+            //$data['stocks_dispositivos']  = $this->tienda_model->get_cdm_dispositivos();
+
+            //$data['alarms_almacen']  = $this->tienda_model->get_alarms_almacen_reserva();
+            //$data['devices_almacen'] = $this->tienda_model->get_devices_almacen();
+            //	$data['displays_pds']    = $this->tienda_model->get_displays_total();
+            $data['devices_pds']     = $this->tienda_model->get_devices_total();
+
+            $data['title']   = 'Dispositivos';
+            $data['opcion'] = 4;
+
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
+            $this->load->view('backend/header', $data);
+            $this->load->view('backend/navbar', $data);
+            $this->load->view('backend/inventario/cdm_dispositivos', $data);
+            $this->load->view('backend/footer');
+        }
+        else
+        {
+            redirect('admin','refresh');
+        }
+    }
+    public function muebles_tiendas()
+    {
+        if($this->auth->is_auth())
+        {
+            $xcrud = xcrud_get_instance();
+            $this->load->model('tienda_model');
+
+            //$data['stocks']          = $this->tienda_model->get_stock();
+            //$data['stocks']          = $this->tienda_model->get_stock_cruzado();
+            //print_r($data['stocks']); exit;
+            //$data['stocks_dispositivos']  = $this->tienda_model->get_cdm_dispositivos();
+
+            //$data['alarms_almacen']  = $this->tienda_model->get_alarms_almacen_reserva();
+            //$data['devices_almacen'] = $this->tienda_model->get_devices_almacen();
+            $data['displays_pds']    = $this->tienda_model->get_displays_total();
+            //$data['devices_pds']     = $this->tienda_model->get_devices_total();
+
+            $data['title']   = 'Muebles';
+            $data['opcion'] = 5;
+
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
+            $this->load->view('backend/header', $data);
+            $this->load->view('backend/navbar', $data);
+            $this->load->view('backend/inventario/cdm_dispositivos', $data);
+            $this->load->view('backend/footer');
+        }
+        else
+        {
+            redirect('admin','refresh');
+        }
+    }
 
 }
 /* End of file admin.php */

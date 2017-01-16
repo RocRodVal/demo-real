@@ -200,7 +200,7 @@ class Ot extends CI_Controller {
             $this->load->model('tienda_model');
             $ext = (!is_null($formato) ? $formato : $this->ext);    // Formato para exportaciones, especficiado o desde CFG
 
-            $data['stocks'] = $this->tienda_model->exportar_stock_cruzado($ext);
+            $data['stocks'] = $this->tienda_model->exportar_stock_cruzado($ext,$this->session->userdata('sfid'));
         }
         else
         {

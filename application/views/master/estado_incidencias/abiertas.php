@@ -189,6 +189,11 @@
                                     <input type="submit" value="Buscar" id="submit_button" class="form-control input-sm">
                                 </div>
                             </div>
+                            <div class="col-lg-1">
+                                <div class="form-group">
+                                    <a href="<?=base_url($controlador)?>/estado_incidencias/abiertas/borrar_busqueda" class="reiniciar_busqueda form-control input-sm">Reiniciar</a>
+                                </div>
+                            </div>
                             <div class="clearfix"></div>
 
                         </form>

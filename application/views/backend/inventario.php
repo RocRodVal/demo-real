@@ -10,7 +10,7 @@
                     <?php echo $content ?>
                 </div>
             </div>
-		    <div class="row">
+		 <!--   <div class="row">
 		        <div class="col-lg-12">
 		            <?php
 		            if (empty($devices)) {
@@ -79,7 +79,7 @@
 		            }
 		            ?>
 		        </div>
-		    </div>             
+		    </div>    -->
 
 
         </div>

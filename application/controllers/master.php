@@ -152,10 +152,17 @@ class Master extends CI_Controller {
      * la variable de sesión de ese nombre
      */
     public function delete_filtros($array_filtros,$array_excepciones=array()){
-        if(is_array($array_filtros)){
+        /*if(is_array($array_filtros)){
             foreach($array_filtros as $filtro){
                 if(!in_array($filtro,$array_excepciones)) {
                     $this->session->unset_userdata($filtro);
+                }
+            }
+        }*/
+        if(is_array($array_filtros)){
+            foreach($array_filtros as $key =>$filtro){
+                if(!in_array($key,$array_excepciones)) {
+                    $this->session->unset_userdata($key);
                 }
             }
         }
@@ -820,7 +827,7 @@ class Master extends CI_Controller {
             // Sacamos la primera línea. Total incidencias
             $resultados_1 = $this->informe_model->get_cmd_incidencias_totales($este_anio,$ctrl_no_cancelada);
             $total_incidencias_total = $this->informe_model->get_total_cdm_incidencias($resultados_1);
-            $valor_resultados_1 = $this->informe_model->get_array_incidencias_totales($resultados_1);
+            $valor_resultados_1 = $this->informe_model->get_array_incidencias_totales($rango_meses,$resultados_1);
 
 
             $dias_operativos = $this->informe_model->get_dias_operativos_mes($rango_meses,$este_anio);
@@ -833,7 +840,7 @@ class Master extends CI_Controller {
 
             $nombre_mes = array();
 
-            $data["tabla_1"] = $resultados_1;
+            $data["tabla_1"] = $valor_resultados_1;
 
 
             /**
@@ -1940,7 +1947,37 @@ class Master extends CI_Controller {
         $xcrud = xcrud_get_instance();
         $this->load->model('tienda_model');
 
-        $data['stocks'] = $this->tienda_model->get_stock_cruzado();
+        /** Crear los filtros*/
+        $array_filtros = array(
+            'id_modelo' =>  '',
+            'id_marca'  =>  ''
+        );
+
+
+        // Consultar a la session si ya se ha buscado algo y guardado allí.
+        $array_sesion = $this->get_filtros($array_filtros);
+
+        /* BORRAR BUSQUEDA */
+        //echo  $this->uri->segment(4);exit;
+        $borrar_busqueda = $this->uri->segment(3);
+        if($borrar_busqueda === "borrar_busqueda")
+        {
+            $this->delete_filtros($array_filtros);
+            //print_r($array_filtros);
+            redirect(site_url("/master/cdm_dispositivos_balance"),'refresh');
+        }
+
+        if($this->input->post('do_busqueda')==="si") $array_sesion = $this->set_filtros($array_filtros);
+
+        /* Creamos al vuelo las variables que vienen de los filtros */
+        foreach($array_filtros as $filtro=>$value){
+            $$filtro = $array_sesion[$filtro];
+            $data[$filtro] = $array_sesion[$filtro]; // Pasamos los valores a la vista.
+        }
+
+        $data['modelos']=$this->tienda_model->get_terminales();
+        $data['marcas'] =$this->tienda_model->get_fabricantes();
+        $data['stocks'] = $this->tienda_model->get_stock_cruzado($array_sesion);
         // $data['stocks_dispositivos']  = $this->tienda_model->get_cdm_dispositivos();
 
         $data['title']   = 'Dispositivos';
@@ -2088,9 +2125,10 @@ class Master extends CI_Controller {
     {
         if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 9))
         {
+            //print_r($this->session->userdata); exit;
             $ext = (!is_null($formato) ? $formato : $this->ext);    // Formato para exportaciones, especficiado o desde CFG
             $this->load->model('tienda_model');
-            $data['stocks'] = $this->tienda_model->exportar_stock_cruzado($ext);
+            $data['stocks'] = $this->tienda_model->exportar_stock_cruzado($ext,$this->session->userdata('sfid'));
         }
         else
         {
@@ -3963,7 +4001,7 @@ class Master extends CI_Controller {
             if($borrar_busqueda === "borrar_busqueda")
             {
                 $this->delete_filtros($array_filtros);
-                redirect(site_url("/admin/pedidos/".$tipo),'refresh');
+                redirect(site_url("/master/pedidos/".$tipo),'refresh');
             }
             // Consultar a la session si ya se ha buscado algo y guardado allí.
             $array_sesion = $this->get_filtros($array_filtros);

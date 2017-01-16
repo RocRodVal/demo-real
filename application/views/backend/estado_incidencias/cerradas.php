@@ -68,8 +68,9 @@
                                     <label for="status">Estado SAT: </label>
                                     <select name="status" id="status" class="form-control input-sm">
                                         <option value="" <?php echo ($status==="") ? 'selected="selected"' : ''?>>Cualquier estado</option>
-
                                         <option value="Resuelta" <?php echo ($status==="Resuelta") ? 'selected="selected"' : ''?>>Resuelta</option>
+                                        <option value="Sustituido" <?php echo ($status==="Sustituido") ? 'selected="selected"' : ''?>>Sustituido</option>
+                                        <option value="SustituidoRMA" <?php echo ($status==="SustituidoRMA") ? 'selected="selected"' : ''?>>SustituidoRMA</option>
                                         <option value="Pendiente recogida" <?php echo ($status==="Pendiente recogida") ? 'selected="selected"' : ''?>>Pendiente recogida</option>
                                         <option value="Cerrada" <?php echo ($status==="Cerrada") ? 'selected="selected"' : ''?>>Cerrada</option>
                                         <option value="Cancelada" <?php echo ($status==="Cancelada") ? 'selected="selected"' : ''?>>Cancelada</option>
@@ -202,15 +203,14 @@
                                     <label for="id_intervencion">Id. intervención: </label>
                                     <input type="text" name="id_intervencion" id="id_intervencion" class="form-control input-sm" placeholder="Id. intervención" <?php echo (!empty($id_intervencion)) ? ' value="'.$id_intervencion.'" ' : ''?> />
                                 </div>
-                                <div class="col-lg-1">
+                                <div class="col-lg-2">
                                     <div class="form-group">
                                         <input type="hidden" name="do_busqueda" value="si">
                                         <input type="submit" value="Buscar" id="submit_button" class="form-control input-sm">
+                                        <a href="<?=base_url()?>admin/estado_incidencias/<?=$tipo?>/borrar_busqueda" class="reiniciar_busqueda form-control input-sm">Reiniciar</a>
                                     </div>
                                 </div>
                                 <div class="clearfix"></div>
-
-
                             </form>
                         </div>
                         </div>

@@ -633,7 +633,8 @@ class Incidencia_model extends CI_Model {
         }
         else
         {
-            $cond = '((incidencias.status = "Resuelta" || incidencias.status = "Pendiente recogida" || incidencias.status = "Cerrada" || incidencias.status = "Cancelada")
+            $cond = '((incidencias.status = "Resuelta" || incidencias.status = "Pendiente recogida" || incidencias.status = "Cerrada" || incidencias.status = "Cancelada"
+                    || incidencias.status = "Sustituido" || incidencias.status = "SustituidoRMA")
                     && (incidencias.status_pds = "Finalizada" || incidencias.status_pds = "Cancelada")) ';
         }
 
@@ -913,7 +914,20 @@ class Incidencia_model extends CI_Model {
         return $titulo_incidencias_estado->result();
     }
 
+    /* obtenemos el estado en el que esta la posicion de la incidencia*/
+    public function get_statusdevice_incidencia($id_devices_pds,$id_incidencia) {
 
+
+            $query = $this->db->select('devices_pds.status')
+                ->join('devices_pds','devices_pds.id_devices_pds = incidencias.id_devices_pds')
+                ->where('id_incidencia',$id_incidencia)
+                ->where('incidencias.id_devices_pds',$id_devices_pds)
+               // ->group_by('devices_pds.id_device')
+             //   ->order_by('device')
+                ->get('incidencias');
+//echo $this->db->last_query();
+            return $query->row_array();
+    }
 
 }
 
