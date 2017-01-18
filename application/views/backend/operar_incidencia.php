@@ -42,7 +42,9 @@
                 <div class="panel-body incidenciaEstado">
                     <div class="row">
                         <div class="col-lg-7 labelText grey">Última modificación:</div>
-                        <div class="col-lg-5 labelBtn grey"><?php echo $last_updated ?></div>
+                        <div class="col-lg-5 labelText grey"><?php echo $last_updated ?></div>
+
+                        <div class="col-lg-12 labelText white"></div>
 
                         <div class="col-lg-7 labelText grey">Revisión de incidencia</div>
                         <div class="col-lg-5 labelBtn grey">
@@ -79,8 +81,6 @@
 
                         </div>                       
                         <div class="col-lg-7 labelText white">Imprimir documentación</div>
-
-
                             <?php if($incidencia['status']==='Comunicada'){ ?>
                                 <div class="col-lg-5 labelBtn white">
                                     <a href="<?= site_url('admin/update_incidencia/' . $id_pds_url . '/' . $id_inc_url . '/3/5') ?>" classBtn="status" class="btn btn-success">Volver a imprimir</a>
@@ -182,14 +182,22 @@
 
                         <div class="col-lg-7 labelText white">Resolver incidencia<br /><br /></div>
 		                <form action="<?= site_url('admin/update_incidencia/' . $id_pds_url . '/' . $id_inc_url . '/4/6') ?>" method="post">
-		                <div class="col-lg-5 labelBtn white">
-		                    <input type="date" name="fecha_cierre" id="fecha_cierre" value="Fecha"   <?php if ($incidencia['status_pds'] == 'Finalizada') { echo 'disabled'; } ?> ><br />
-		                    <input type="submit" value="Resolver" name="submit" class="btn btn-success" classBtn="status" class="btn btn-success"
-                                <?php if (($incidencia['status'] != 'Comunicada') && ($incidencia['status'] != 'Sustituido')  && ($incidencia['status'] != 'SustituidoRMA')){
-                                echo 'disabled';
-                            } ?> />
-                            <span class="fecha_status"><?=$historico_fecha_resuelta?></span>
-                                </div>
+                            <div class="col-lg-5 labelBtn white">
+                                <?php
+                                if (!empty($fecha_resuelta)) {
+                                    $fecha = explode("/", $fecha_resuelta);
+                                    $fecha_resuelta = $fecha[2] . "-" . $fecha[1] . "-" . $fecha[0];
+                                } else $fecha_resuelta='';
+                                ?>
+                                <input type="date" name="fecha_cierre" id="fecha_cierre" value="<?=$fecha_resuelta?>"
+                                    <?php if (($incidencia['status'] != 'Comunicada')
+                                        && ($incidencia['status'] != 'Sustituido')  && ($incidencia['status'] != 'SustituidoRMA')) { echo 'disabled'; }; ?> />
+                                <br/>
+                                <input type="submit" value="Resolver" name="submit" class="btn btn-success" classBtn="status" class="btn btn-success"
+                                    <?php if (($incidencia['status'] != 'Comunicada') && ($incidencia['status'] != 'Sustituido')  && ($incidencia['status'] != 'SustituidoRMA')){
+                                        echo 'disabled'; } ?> />
+                                <span class="fecha_status"><?=$historico_fecha_resuelta?></span>
+                            </div>
 		                </form>
                         <div class="col-lg-7 labelText grey">Emisión de recogida de material</div>
                         <div class="col-lg-5 labelBtn grey">
