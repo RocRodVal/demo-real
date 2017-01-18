@@ -907,8 +907,7 @@ class Admin extends CI_Controller
 
             $historico_fecha_resuelta = $this->tienda_model->historico_fecha($id_inc,'Resuelta');
             $data['historico_fecha_resuelta'] =  isset($historico_fecha_resuelta['fecha']) ? date("d/m/Y",strtotime($historico_fecha_resuelta['fecha'])) : '';
-
-
+            $data['fecha_resuelta'] = isset($incidencia['fecha_cierre']) ? date("d/m/Y",strtotime($incidencia['fecha_cierre'])) : '';
 
 
             $incidencia['intervencion'] = $this->intervencion_model->get_intervencion_incidencia($id_inc);
