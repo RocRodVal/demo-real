@@ -911,9 +911,11 @@ class Admin extends CI_Controller
 
 
             $incidencia['intervencion'] = $this->intervencion_model->get_intervencion_incidencia($id_inc);
-
+            //print_r($incidencia);echo "<br>";
             $incidencia['device'] = $this->sfid_model->get_device($incidencia['id_devices_pds']);
             $incidencia['display'] = $this->sfid_model->get_display($incidencia['id_displays_pds']);
+            //echo print_r($incidencia['display']);;
+
             $data['incidencia'] = $incidencia;
             $data['historico_fecha_sustituido'] ='';
 
@@ -1412,30 +1414,10 @@ class Admin extends CI_Controller
         }
 
         /**
-         * Botón Asignar material
+         * Botón Imprimir documentacion
          */
-      /*  if ($status == 5) {
-            $intervencion = $this->intervencion_model->get_intervencion_incidencia($id_inc);
+      /* if ($status == 5) {
 
-            $this->tienda_model->reservar_dispositivos($this->input->post('dipositivo_almacen_1'),3);
-            $this->tienda_model->reservar_dispositivos($this->input->post('dipositivo_almacen_2'),3);
-            $this->tienda_model->reservar_dispositivos($this->input->post('dipositivo_almacen_3'),3);
-
-            $dispositivos = $this->tienda_model->get_devices_incidencia($id_inc);
-            $alarmas = $this->tienda_model->get_alarms_incidencia($id_inc);
-
-            $facturacion_data= array(
-                'fecha' => date('Y-m-d H:i:s'),
-                'id_pds' => $id_pds,
-                'id_intervencion' => $intervencion,
-                'id_incidencia' => $id_inc,
-                'id_displays_pds' => $incidencia['id_displays_pds'],
-                'units_device' => $dispositivos['dispositivos'],
-                'units_alarma' => $alarmas['alarmas'],
-                'description' => NULL
-            );
-
-            $this->tienda_model->facturacion($facturacion_data);
         }*/
 
 
@@ -1533,6 +1515,28 @@ class Admin extends CI_Controller
         if ($status == 5)
         {
             $envio_mail = $this->uri->segment(7);
+
+            $intervencion = $this->intervencion_model->get_intervencion_incidencia($id_inc);
+
+           /* $this->tienda_model->reservar_dispositivos($this->input->post('dipositivo_almacen_1'),3);
+            $this->tienda_model->reservar_dispositivos($this->input->post('dipositivo_almacen_2'),3);
+            $this->tienda_model->reservar_dispositivos($this->input->post('dipositivo_almacen_3'),3);*/
+
+            $dispositivos = $this->tienda_model->get_devices_incidencia($id_inc);
+            $alarmas = $this->tienda_model->get_alarms_incidencia($id_inc);
+
+            $facturacion_data= array(
+                'fecha' => date('Y-m-d H:i:s'),
+                'id_pds' => $id_pds,
+                'id_intervencion' => $intervencion,
+                'id_incidencia' => $id_inc,
+                'id_displays_pds' => $incidencia['id_displays_pds'],
+                'units_device' => $dispositivos['dispositivos'],
+                'units_alarma' => $alarmas['alarmas'],
+                'description' => NULL
+            );
+
+            $this->tienda_model->facturacion($facturacion_data);
 
             // Se va a proceder a la notificación de la incidencia por lo que el material asignado ya será inamovible
             // Y por tanto deberá procesarse (procesado=1) y así verse en el histórico Diario de almacén.
@@ -4756,7 +4760,7 @@ class Admin extends CI_Controller
             $this->load->model(array('tienda_model','sfid_model'));
 
             $fecha_inicio = $this->input->post('fecha_inicio');
-            $fecha_fin    = $this->input->post('fecha_fin');
+            $fecha_fin    = $this->input->post('fecha_fin')." 23:59:59";
             $instalador = $this->input->post('instalador'); $instalador = (empty($instalador)) ? 0 : $instalador;
             $dueno = $this->input->post('dueno');   $dueno = (empty($dueno)) ? 0 : $dueno;
 
@@ -4823,7 +4827,7 @@ class Admin extends CI_Controller
 
 
             $fecha_inicio = $this->input->post('fecha_inicio');
-            $fecha_fin    = $this->input->post('fecha_fin');
+            $fecha_fin    = $this->input->post('fecha_fin')." 23:59:59";
             $instalador = $this->input->post('instalador'); $instalador = (is_null($instalador) || empty($instalador)) ? 0 : $instalador;
             $dueno = $this->input->post('dueno');           $dueno = (is_null($dueno) || empty($dueno)) ? 0 : $dueno;
 
@@ -4892,7 +4896,7 @@ class Admin extends CI_Controller
             $this->load->model(array('tienda_model','sfid_model'));
 
             $fecha_inicio = $this->input->post('fecha_inicio');
-            $fecha_fin    = $this->input->post('fecha_fin');
+            $fecha_fin    = $this->input->post('fecha_fin')." 23:59:59";
             $fabricante = $this->input->post('fabricante');   $fabricante = (empty($fabricante)) ? 0 : $fabricante;
 
             $fabricantes = $this->db->query("SELECT id_client, client FROM client WHERE status='Alta' AND facturable = 1 and type_profile_client=2")->result();
