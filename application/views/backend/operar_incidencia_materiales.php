@@ -107,14 +107,14 @@
                                             ?>
                                             </select>
 		                                </td>
-		                                <td><input type="text" size="2" maxlength="1" id="units_dipositivo_almacen_1" name="units_dipositivo_almacen_1" onkeypress='this.value=1' /></td>
-                                        <td><input type="text" size="15" maxlength="15" id="imei_1" name="imei_1" /></td>
-                                        <td><input type="text" size="15" id="mac_1" name="mac_1" /></td>
-                                        <td><input type="text" size="15" id="serial_1" name="serial_1" /></td>
-                                        <td><input type="text" size="15" id="barcode_1" name="barcode_1" /></td>
+		                                <td><input type="text" size="2" maxlength="1" id="units_dipositivo_almacen_1" name="units_dipositivo_almacen_1" value="1" readonly="readonly" /></td>
+                                        <td><input type="text" size="20" maxlength="20" id="imei_1" name="imei_1" /></td>
+                                        <td><input type="text" size="20" id="mac_1" name="mac_1" /></td>
+                                        <td><input type="text" size="20" id="serial_1" name="serial_1" /></td>
+                                        <td><input type="text" size="20" id="barcode_1" name="barcode_1" /></td>
 		                            </tr>
 
-		                            <tr>
+		                         <!--   <tr>
 		                                <td>
                                             <select id="dipositivo_almacen_2" name="dipositivo_almacen_2" width="375" style="width:375px">
                                             <?php
@@ -127,10 +127,10 @@
                                             </select>
 		                                </td>
 		                                <td><input type="text" size="2" maxlength="1" id="units_dipositivo_almacen_2" name="units_dipositivo_almacen_2" onkeypress='this.value=1' /></td>
-                                        <td><input type="text" size="15" maxlength="15" name="imei_2" /></td>
-                                        <td><input type="text" size="15" id="mac_2" name="mac_2" /></td>
-                                        <td><input type="text" size="15" id="serial_2" name="serial_2" /></td>
-                                        <td><input type="text" size="15" id="barcode_2" name="barcode_2" /></td>
+                                        <td><input type="text" size="20" maxlength="20" name="imei_2" /></td>
+                                        <td><input type="text" size="20" id="mac_2" name="mac_2" /></td>
+                                        <td><input type="text" size="20" id="serial_2" name="serial_2" /></td>
+                                        <td><input type="text" size="20" id="barcode_2" name="barcode_2" /></td>
 		                            </tr>
 		                            <tr>
 		                                <td>
@@ -145,11 +145,11 @@
                                             </select>
 		                                </td>
 		                                <td><input type="text" size="2" maxlength="1" id="units_dipositivo_almacen_3" name="units_dipositivo_almacen_3" onkeypress='this.value=1' /></td>
-                                        <td><input type="text"  size="15" maxlength="15" id="imei_3" name="imei_3" /></td>
-                                        <td><input type="text" size="15" id="mac_3" name="mac_3" /></td>
-                                        <td><input type="text" size="15" id="serial_3" name="serial_3" /></td>
-                                        <td><input type="text" size="15" id="barcode_3" name="barcode_3" /></td>
-		                            </tr>
+                                        <td><input type="text"  size="20" maxlength="20" id="imei_3" name="imei_3" /></td>
+                                        <td><input type="text" size="20" id="mac_3" name="mac_3" /></td>
+                                        <td><input type="text" size="20" id="serial_3" name="serial_3" /></td>
+                                        <td><input type="text" size="20" id="barcode_3" name="barcode_3" /></td>
+		                            </tr>-->
 		                        </tbody>
 		                    </table>
 		                </div>

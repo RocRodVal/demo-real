@@ -306,8 +306,223 @@ class Ot extends CI_Controller {
             redirect('ot','refresh');
         }
     }
+    /*
+     * Informe de puntos de venta
+     */
+    public function informe_pdv()
+    {
+
+        if($this->auth->is_auth()) {
+            $xcrud = xcrud_get_instance();
+            $this->load->model('sfid_model');
+            $this->load->model('tienda_model');
+            $this->load->model('informe_model');
+            $this->load->model('categoria_model');
+
+            $data["title"] = "Informe de Puntos de Venta (Bloom)";
 
 
+            $resultados = array();
+
+            $codigoSAT = "";
+
+           // $data["codigoSAT"] = $codigoSAT;
+
+            $data["generado"] = FALSE;
+
+            $data["resultados"] = $resultados;
+
+            $data["muebles"] = $this->tienda_model->get_displays_demoreal();
+
+            $data["pds_tipos"] = $this->categoria_model->get_tipos_pds();
+            $data["pds_subtipos"] = $this->categoria_model->get_subtipos_pds();
+            $data["pds_segmentos"] = $this->categoria_model->get_segmentos_pds();
+            $data["pds_tipologias"] = $this->categoria_model->get_tipologias();
+
+            $data["terminales"] = $this->tienda_model->get_devices_demoreal();
+            /* LISTADO DE TERRITORIOS PARA EL SELECT */
+            $data["territorios"] = $this->tienda_model->get_territorios();
+            /* LISTADO DE FABRICANTES PARA EL SELECT */
+            $data["fabricantes"] = $this->tienda_model->get_fabricantes();
+
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
+            $this->load->view('master/header', $data);
+            $this->load->view('ot/navbar', $data);
+            $this->load->view('ot/informes/pdv/informe_puntos_venta_form', $data);
+            $this->load->view('ot/informes/pdv/informe_puntos_venta', $data);
+            $this->load->view('master/footer');
+        }
+        else
+        {
+            redirect('ot','refresh');
+        }
+    }
+
+    /**
+     * Método que se llama por AJAX desde el Informe PDV, al añadir o quitar un elemento del multifiltro.
+     */
+    public function resultado_pdv($exportar = NULL,$formato=NULL)
+    {
+        if($this->auth->is_auth()) {
+            $xcrud = xcrud_get_instance();
+
+            $this->load->model('informe_model');
+
+            $ext = (!is_null($formato) ? $formato : $this->ext);    // Formato para exportaciones, especficiado o desde CFG
+
+            $arr_campos = array(
+                "id_tipo" => '',
+                "id_subtipo" => '',
+                "id_segmento" => '',
+                "id_tipologia" => '',
+                "id_display" => '',
+                "id_device" => '',
+                "territory" => '',
+                "brand_device" => ''
+            );
+
+            foreach ($arr_campos as $campo => $valor) {
+                $$campo = $valor;
+                $data[$campo] = $valor;
+            }
+
+            $campo_orden = NULL;
+            $ordenacion = NULL;
+
+            $total_registros = 0;
+
+            $controlador_origen = "ot"; //  Controlador por defecto
+
+
+            if ($this->input->post("generar_informe") === "si") {
+
+
+                $controlador_origen = $this->input->post("controlador");
+                $data["controlador"] = $controlador_origen;
+
+                $campos_sess_informe = array();
+                // TIPO TIENDA
+                $id_tipo = array();
+                $campos_sess_informe["id_tipo"] = NULL;
+                if (is_array($this->input->post("id_tipo_multi"))) {
+                    foreach ($this->input->post("id_tipo_multi") as $tt) $id_tipo[] = $tt;
+                    $campos_sess_informe["id_tipo"] = $id_tipo;
+                }
+
+                // SUBTIPO TIENDA
+                $id_subtipo = array();
+                $campos_sess_informe["id_subtipo"] = NULL;
+                if (is_array($this->input->post("id_subtipo_multi"))) {
+                    foreach ($this->input->post("id_subtipo_multi") as $tt) $id_subtipo[] = $tt;
+                    $campos_sess_informe["id_subtipo"] = $id_subtipo;
+                }
+
+                // SEGMENTO TIENDA
+                $id_segmento = array();
+                $campos_sess_informe["id_segmento"] = NULL;
+                if (is_array($this->input->post("id_segmento_multi"))) {
+                    foreach ($this->input->post("id_segmento_multi") as $tt) $id_segmento[] = $tt;
+                    $campos_sess_informe["id_segmento"] = $id_segmento;
+                }
+
+                // TIPOLOGIA TIENDA
+                $id_tipologia = array();
+                $campos_sess_informe["id_tipologia"] = NULL;
+                if (is_array($this->input->post("id_tipologia_multi"))) {
+                    foreach ($this->input->post("id_tipologia_multi") as $tt) $id_tipologia[] = $tt;
+                    $campos_sess_informe["id_tipologia"] = $id_tipologia;
+                }
+
+                // MUEBLE
+                $id_display = array();
+                $campos_sess_informe["id_display"] = NULL;
+                if (is_array($this->input->post("id_display_multi"))) {
+                    foreach ($this->input->post("id_display_multi") as $tt) $id_display[] = $tt;
+                    $campos_sess_informe["id_display"] = $id_display;
+                }
+                // DEVICE
+                $id_device = array();
+                $campos_sess_informe["id_device"] = NULL;
+                if (is_array($this->input->post("id_device_multi"))) {
+                    foreach ($this->input->post("id_device_multi") as $tt) $id_device[] = $tt;
+                    $campos_sess_informe["id_device"] = $id_device;
+                }
+
+
+                // TERRITORY
+                $territory = array();
+                $campos_sess_informe["territory"] = NULL;
+                if (is_array($this->input->post("territory_multi"))) {
+                    foreach ($this->input->post("territory_multi") as $tt) $territory[] = $tt;
+                    $campos_sess_informe["territory"] = $territory;
+                }
+
+                // DEVICE BRAND
+                $brand_device = array();
+                $campos_sess_informe["brand_device"] = NULL;
+                if (is_array($this->input->post("brand_device_multi"))) {
+                    foreach ($this->input->post("brand_device_multi") as $tt) $brand_device[] = $tt;
+                    $campos_sess_informe["brand_device"] = $brand_device;
+                }
+
+                // Guardamos en la sesión el objeto $campos_sess_informe
+                $this->session->set_userdata("campos_sess",$campos_sess_informe);
+                $this->session->set_userdata("generado",TRUE);
+
+                $data["id_tipo"] = $id_tipo;
+                $data["id_subtipo"] = $id_subtipo;
+                $data["id_segmento"] = $id_segmento;
+                $data["id_tipologia"] = $id_tipologia;
+
+
+                $data["id_display"] = $id_display;
+                $data["id_device"] = $id_device;
+                $data["territory"] = $territory;
+                $data["brand_device"] = $brand_device;
+
+                $data["generado"] = TRUE;
+                $data["controlador"] = $this->uri->segment(1);
+
+            }
+
+
+            // Recuperar de la sesion
+            if($this->session->userdata("generado"))
+            {
+                foreach($this->session->userdata("campos_sess") as $nombre_var=>$valores)
+                {
+                    $$nombre_var = $valores;             // Creamos variable al vuelo..
+                    $data[$nombre_var] = $valores;      // Guardamos los mismos valores para la variable de la vista.
+                }
+            }
+
+
+            if(is_null($exportar))
+            {
+                $resultados = $this->informe_model->get_informe_pdv($data);
+                //print_r($resultados); exit;
+                $data["total_registros"] = count($resultados);
+                $data["resultados"] = $resultados;
+
+                $resp = $this->load->view('ot/informes/pdv/informe_puntos_venta_ajax', $data, TRUE);
+                echo $resp;
+
+            }
+            // Informe CSV
+            else
+            {
+                if ($exportar=="exportarT") {
+                    $data=array();
+                }
+
+                $this->informe_model->exportar_informe_pdv($data,$ext);
+            }
+
+        }
+    }
     /**
      * Punto de entrada del Informe sobre planogramas.
      * Mostrará la vista principal con el formulario de filtrado, y recogerá los datos enviados y los procesará

@@ -2664,6 +2664,9 @@ class Master extends CI_Controller {
             // Informe CSV
             else
             {
+                if ($exportar=="exportarT") {
+                    $data=array();
+                }
 
                 $this->informe_model->exportar_informe_pdv($data,$ext);
             }

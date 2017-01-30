@@ -68,12 +68,13 @@
                                                 'informe_visual',
                                                     'informe_visual_mueble_sfid',
                                                     'informe_visual_terminal',
-                                                    'informe_visual_ficha_terminal'); ?>
+                                                    'informe_visual_ficha_terminal,
+                                                    informe_pdv'); ?>
 
                         <li <?=(in_array($this->uri->segment(2), $inf))?'class="active"':''?>>
                             <a href="#"><i class="fa fa-sitemap fa-file"></i> Informes <span class="fa arrow"></span></a>
                             <ul class="nav nav-second-level">
-
+                                <li><a <?=($this->uri->segment(2)==='informe_pdv')?'class="active"':''?> href="<?=site_url('ot/informe_pdv')?>"> Puntos de Venta &raquo;</a></li>
                                 <li><a <?=(in_array($this->uri->segment(2),
                                         array( 'informe_planogramas',
                                         'informe_planograma_mueble_pds',
