@@ -383,8 +383,8 @@ class Tienda_model extends CI_Model {
         $query = $this->db->query('
 
 		SELECT temporal.id_device, brand_device.brand, temporal.device, unidades_pds,unidades_transito, unidades_reservado,
-		(CASE WHEN unidades_pds = 0 THEN 0 ELSE CEIL(unidades_pds * 0.05 + 2) END) as stock_necesario,unidades_rma,
-		unidades_almacen,
+		unidades_rma,unidades_almacen, (unidades_pds + unidades_transito + unidades_reservado + unidades_rma + unidades_almacen) as total,
+		(CASE WHEN unidades_pds = 0 THEN 0 ELSE CEIL(unidades_pds * 0.05 + 2) END) as stock_necesario,
 		(unidades_almacen - (CASE WHEN unidades_pds = 0 THEN 0 ELSE CEIL(unidades_pds * 0.05 + 2) END)) as balance,
 		temporal.status
 		FROM (
@@ -543,13 +543,13 @@ class Tienda_model extends CI_Model {
 
         $resultados = $this->get_stock_cruzado($array_filtros);
         if($controler=="admin") {
-            $arr_titulos = array('Id dispositivo', 'Fabricante', 'Dispositivo', 'Ud. pds', 'Uds. Transito', 'Uds. Reservadas','Stock necesario', 'Uds. Almacén RMA',
-                'Uds. Almacén', 'Balance');
+            $arr_titulos = array('Id dispositivo', 'Fabricante', 'Dispositivo', 'Ud. pds', 'Uds. Transito', 'Uds. Reservadas','Uds. Almacén RMA',
+                'Uds. Almacén','Total', 'Stock necesario', 'Balance');
             $excluir = array('status');
         }
         else {
-            $arr_titulos = array('Id dispositivo', 'Fabricante', 'Dispositivo', 'Ud. pds', 'Uds. Transito', 'Stock necesario',
-                'Uds. Almacén', 'Balance');
+            $arr_titulos = array('Id dispositivo', 'Fabricante', 'Dispositivo', 'Ud. pds', 'Uds. Transito',
+                'Uds. Almacén', 'Total', 'Stock necesario', 'Balance');
             $excluir = array('unidades_reservado','unidades_rma','status');
         }
 
