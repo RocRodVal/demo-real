@@ -1834,7 +1834,7 @@ class Admin extends CI_Controller
             $this->tienda_model->update_dispositivos($this->input->post('dipositivo_almacen_1'),$imei,$this->input->post('mac_1'),$this->input->post('serial_1'),$this->input->post('barcode_1'));
         }
 
-        if ($this->input->post('units_dipositivo_almacen_2') <> '')
+       /* if ($this->input->post('units_dipositivo_almacen_2') <> '')
         {
             $dipositivo_almacen_2 = array(
                 'fecha' => date('Y-m-d H:i:s'),
@@ -1885,7 +1885,7 @@ class Admin extends CI_Controller
                 }
             }
             $this->tienda_model->update_dispositivos($this->input->post('dipositivo_almacen_3'),$imei,$this->input->post('mac_3'),$this->input->post('serial_3'),$this->input->post('barcode_3'));
-        }
+        }*/
 
         // RECEPCION DE 10 CAMPOS DE ALARMAS
         /*for($i = 1; $i <= 10; $i++)
@@ -3273,7 +3273,9 @@ class Admin extends CI_Controller
         $xcrud_1->relation('id_tipologia', 'pds_tipologia','id', 'titulo');
         //id_tipo,id_subtipo,id_segmento,id_tipologia,
 
-        $xcrud_1->label('client_type_pds', 'Cliente')->label('id_displays_pds', 'REF.')->label('id_type_pds', 'Tipo')->label('id_pds', 'SFID')->label('id_panelado', 'Panelado')->label('id_display', 'Mueble')->label('position', 'Posición Orange')->label('description', 'Comentarios')->label('status', 'Estado');
+        $xcrud_1->label('client_type_pds', 'Cliente')->label('id_displays_pds', 'REF.')->label('id_type_pds', 'Tipo')->label('id_pds', 'SFID')->
+        label('id_panelado', 'Panelado')->label('id_display', 'Mueble')->label('position', 'Posición Orange')->label('description', 'Comentarios')->
+        label('status', 'Estado');
         $xcrud_1->columns('client_type_pds,id_displays_pds,id_pds,id_tipo,id_subtipo,id_segmento,id_tipologia,id_display,position,status');
         $xcrud_1->fields('client_type_pds,id_displays_pds,id_pds,id_tipo,id_subtipo,id_segmento,id_tipologia,id_pds,id_display,position,description,status');
         $xcrud_1->where('status',array('Alta','Incidencia'));
@@ -3317,9 +3319,11 @@ class Admin extends CI_Controller
         $xcrud_3->modal('picture_url_1');
         $xcrud_3->modal('picture_url_2');
         $xcrud_3->modal('picture_url_3');
-        $xcrud_3->label('client_type_pds', 'Cliente')->label('id_devices_pds', 'REF.')->label('id_pds', 'SFID')->label('id_displays_pds', 'Cod. mueble')->label('id_display', 'Mueble')->label('alta', 'Fecha de alta')->label('position', 'Posición')->label('id_device', 'Dispositivo')->label('IMEI', 'IMEI')->label('mac', 'MAC')->label('serial', 'Nº de serie')->label('barcode', 'Código de barras')->label('id_color_device', 'Color')->label('id_complement_device', 'Complementos')->label('id_status_device', 'Estado dispositivo')->label('id_status_packaging_device', 'Estado packaging')->label('picture_url_1', 'Foto #1')->label('picture_url_2', 'Foto #2')->label('picture_url_3', 'Foto #3')->label('description', 'Comentarios')->label('status', 'Estado');
-        $xcrud_3->columns('client_type_pds,id_devices_pds,id_pds,id_displays_pds,id_display,id_device,position,IMEI,mac,status');
-        $xcrud_3->fields('client_type_pds,id_devices_pds,id_pds,id_displays_pds,id_display,alta,id_device,position,serial,IMEI,mac,barcode,id_color_device,id_complement_device,id_status_device,id_status_packaging_device,picture_url_1,picture_url_2,picture_url_3,description,status');
+        $xcrud_3->label('client_type_pds', 'Cliente')->label('id_devices_pds', 'REF.')->label('id_pds', 'SFID')->label('id_displays_pds', 'Cod. mueble')->
+        label('id_display', 'Mueble')->label('alta', 'Fecha de alta')->label('position', 'Posición')->label('id_device', 'Dispositivo')->
+        label('IMEI', 'IMEI')->label('serial', 'S/N')->label('serial', 'Nº de serie')->label('barcode', 'Código de barras')->label('id_color_device', 'Color')->label('id_complement_device', 'Complementos')->label('id_status_device', 'Estado dispositivo')->label('id_status_packaging_device', 'Estado packaging')->label('picture_url_1', 'Foto #1')->label('picture_url_2', 'Foto #2')->label('picture_url_3', 'Foto #3')->label('description', 'Comentarios')->label('status', 'Estado');
+        $xcrud_3->columns('client_type_pds,id_devices_pds,id_pds,id_displays_pds,id_display,id_device,position,IMEI,serial,status');
+        $xcrud_3->fields('client_type_pds,id_devices_pds,id_pds,id_displays_pds,id_display,alta,id_device,position,serial,IMEI,serial,barcode,id_color_device,id_complement_device,id_status_device,id_status_packaging_device,picture_url_1,picture_url_2,picture_url_3,description,status');
 
          $xcrud_3->where('status',array('Alta','Incidencia','Baja','RMA'));
         $xcrud_3->order_by('id_pds', 'asc');

@@ -34,10 +34,7 @@
                         <div id="multifiltro_id_tipo" class="multifiltro">
                             <input name="id_tipo_next" id="id_tipo_next" type="hidden" value="0">
                             <div id="multi_id_tipo">
-                                <?php /*<div class="linea">
-                                    <label class="auto"></label> <input type="hidden" name="panelado_1" value="1">
-                                    <a href="#" onclick="eliminar_filtro();"><i class="glyphicon glyphicon-remove"></i></a>
-                                </div>*/?>
+
                             </div>
                         </div>
                     </div>
@@ -54,10 +51,7 @@
                         <div id="multifiltro_id_subtipo" class="multifiltro">
                             <input name="id_subtipo_next" id="id_subtipo_next" type="hidden" value="0">
                             <div id="multi_id_subtipo">
-                                <?php /*<div class="linea">
-                                    <label class="auto"></label> <input type="hidden" name="panelado_1" value="1">
-                                    <a href="#" onclick="eliminar_filtro();"><i class="glyphicon glyphicon-remove"></i></a>
-                                </div>*/?>
+
                             </div>
                         </div>
                     </div>
@@ -75,10 +69,7 @@
                         <div id="multifiltro_id_segmento" class="multifiltro">
                             <input name="id_segmento_next" id="id_segmento_next" type="hidden" value="0">
                             <div id="multi_id_segmento">
-                                <?php /*<div class="linea">
-                                    <label class="auto"></label> <input type="hidden" name="panelado_1" value="1">
-                                    <a href="#" onclick="eliminar_filtro();"><i class="glyphicon glyphicon-remove"></i></a>
-                                </div>*/?>
+
                             </div>
                         </div>
                     </div>
@@ -96,10 +87,7 @@
                         <div id="multifiltro_id_tipologia" class="multifiltro">
                             <input name="id_tipologia_next" id="id_tipologia_next" type="hidden" value="0">
                             <div id="multi_id_tipologia">
-                                <?php /*<div class="linea">
-                                    <label class="auto"></label> <input type="hidden" name="panelado_1" value="1">
-                                    <a href="#" onclick="eliminar_filtro();"><i class="glyphicon glyphicon-remove"></i></a>
-                                </div>*/?>
+
                             </div>
                         </div>
                     </div>
@@ -118,10 +106,7 @@
                         <div id="multifiltro_id_display" class="multifiltro">
                             <input name="id_display_next" id="id_display_next" type="hidden" value="0">
                             <div id="multi_id_display">
-                                <?php /*<div class="linea">
-                                    <label class="auto"></label> <input type="hidden" name="panelado_1" value="1">
-                                    <a href="#" onclick="eliminar_filtro();"><i class="glyphicon glyphicon-remove"></i></a>
-                                </div>*/?>
+
                             </div>
                         </div>
 
@@ -142,10 +127,7 @@
                         <div id="multifiltro_id_device" class="multifiltro">
                             <input name="id_device_next" id="id_device_next" type="hidden" value="0">
                             <div id="multi_id_device">
-                                <?php /*<div class="linea">
-                                    <label class="auto"></label> <input type="hidden" name="panelado_1" value="1">
-                                    <a href="#" onclick="eliminar_filtro();"><i class="glyphicon glyphicon-remove"></i></a>
-                                </div>*/?>
+
                             </div>
                         </div>
 
@@ -167,10 +149,7 @@
                         <div id="multifiltro_territory" class="multifiltro">
                             <input name="territory_next" id="territory_next" type="hidden" value="0">
                             <div id="multi_territory">
-                                <?php /*<div class="linea">
-                                    <label class="auto"></label> <input type="hidden" name="panelado_1" value="1">
-                                    <a href="#" onclick="eliminar_filtro();"><i class="glyphicon glyphicon-remove"></i></a>
-                                </div>*/?>
+
                             </div>
                         </div>
 
@@ -191,26 +170,18 @@
                         <div id="multifiltro_brand_device" class="multifiltro">
                             <input name="brand_device_next" id="brand_device_next" type="hidden" value="0">
                             <div id="multi_brand_device">
-                                <?php /*<div class="linea">
-                                    <label class="auto"></label> <input type="hidden" name="panelado_1" value="1">
-                                    <a href="#" onclick="eliminar_filtro();"><i class="glyphicon glyphicon-remove"></i></a>
-                                </div>*/?>
+
                             </div>
                         </div>
 
                     </div>
 
-                    <?php /*<div class="form-group">
-                        <input type="submit" onclick="enviar_form_ajax('#form_ajax'); return false;">
-                    </div>*/?>
-
                 </div>
-
                 <div class="col-sm-12">
                     <a href="<?=site_url($controlador.'/resultado_pdv/exportarT');?>">Exportar todos</a>
                 </div>
-            </form>
 
+            </form>
 
         </div>
     </div>
