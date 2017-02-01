@@ -380,10 +380,19 @@ class Tienda_model extends CI_Model {
             $where .= ' AND brand_device.id_brand_device = ' . $array_filtros['id_marca'];
         }
 
-        $query = $this->db->query('
+        $this->db->query(" DROP VIEW IF EXISTS robados;");
+        /*Creación de una vista que guarda los datos de los terminales robados y que no han llegado al almacen*/
+        $this->db->query("CREATE VIEW robados AS SELECT devices_pds.id_device,COUNT(*) as suma FROM devices_pds 
+                      INNER JOIN incidencias ON incidencias.id_devices_pds=devices_pds.id_devices_pds 
+                      WHERE devices_pds.status = \"Baja\" AND incidencias.tipo_averia=\"Robo\" and devices_pds.id_devices_pds NOT IN 
+                      (select id_devices_pds from devices_almacen where id_devices_pds IS NOT NULL)
+                      GROUP BY devices_pds.id_device");
 
+        $query = $this->db->query('
 		SELECT temporal.id_device, brand_device.brand, temporal.device, unidades_pds,unidades_transito, unidades_reservado,
-		unidades_rma,unidades_almacen, (unidades_pds + unidades_transito + unidades_reservado + unidades_rma + unidades_almacen) as total,
+		unidades_rma,unidades_almacen, (case when unidades_robadas is NULL then 0 else unidades_robadas end) as unidades_robadas,
+		(case when unidades_robadas is NULL then (unidades_pds + unidades_transito + unidades_reservado + unidades_rma + unidades_almacen) 
+		else (unidades_pds + unidades_transito + unidades_reservado + unidades_rma + unidades_almacen+unidades_robadas) end) as total,
 		(CASE WHEN unidades_pds = 0 THEN 0 ELSE CEIL(unidades_pds * 0.05 + 2) END) as stock_necesario,
 		(unidades_almacen - (CASE WHEN unidades_pds = 0 THEN 0 ELSE CEIL(unidades_pds * 0.05 + 2) END)) as balance,
 		temporal.status
@@ -418,14 +427,17 @@ class Tienda_model extends CI_Model {
                     FROM devices_almacen
                     WHERE (devices_almacen.id_device = device.id_device) AND (devices_almacen.status = "RMA") 
                     )
-                    as unidades_rma
+                    as unidades_rma,
+                    ( SELECT suma FROM robados  
+                      WHERE robados.id_device = device.id_device 
+                      ) 
+                    as unidades_robadas 
 
                     FROM device
                 ) as temporal
 
         JOIN brand_device ON temporal.brand_device = brand_device.id_brand_device
         WHERE temporal.status = "Alta" ' .$where. ' ORDER BY brand_device.brand ASC, temporal.device ASC ');
-
 
 //echo $this->db->last_query(); exit;
 
@@ -435,7 +447,6 @@ class Tienda_model extends CI_Model {
 	public function get_stock_cruzado_old() {
 	
 		$query = $this->db->query('
-
 		SELECT temporal.id_device, brand_device.brand, temporal.device, unidades_pds,
 		(CASE WHEN unidades_pds = 0 THEN 0 ELSE CEIL(unidades_pds * 0.05 + 2) END) as stock_necesario,
 		unidades_almacen,
@@ -467,8 +478,6 @@ class Tienda_model extends CI_Model {
                 OR  (unidades_pds > 0 AND unidades_almacen = 0)
                )
         ORDER BY brand_device.brand ASC, temporal.device ASC ');
-
-
 
 
 		return $query->result();
@@ -542,16 +551,16 @@ class Tienda_model extends CI_Model {
 
 
         $resultados = $this->get_stock_cruzado($array_filtros);
-        if($controler=="admin") {
-            $arr_titulos = array('Id dispositivo', 'Fabricante', 'Dispositivo', 'Ud. pds', 'Uds. Transito', 'Uds. Reservadas','Uds. Almacén RMA',
-                'Uds. Almacén','Total', 'Stock necesario', 'Balance');
+        //if($controler=="admin") {
+            $arr_titulos = array('Id dispositivo', 'Fabricante', 'Dispositivo', 'Uds. tienda', 'Uds. Transito',
+                'Uds. Reservadas','Uds. Almacén RMA','Uds. Almacén','Uds. Robadas','Total', 'Stock necesario', 'Balance');
             $excluir = array('status');
-        }
+        /*}
         else {
             $arr_titulos = array('Id dispositivo', 'Fabricante', 'Dispositivo', 'Ud. pds', 'Uds. Transito',
                 'Uds. Almacén', 'Total', 'Stock necesario', 'Balance');
             $excluir = array('unidades_reservado','unidades_rma','status');
-        }
+        }*/
 
         $datos = preparar_array_exportar($resultados,$arr_titulos,$excluir);
         exportar_fichero($formato,$datos,"Balance_Dispositivos__".date("d-m-Y"));

@@ -92,6 +92,70 @@ class Ot extends CI_Controller {
         }
     }
 
+    /**
+     * Función que guarda en sesión el valor de los filtros del POST, al venir de un form de filtrado
+     * @param $array_filtros
+     */
+    public function set_filtros($array_filtros){
+        $array_valores = NULL;
+        if(is_array($array_filtros))
+        {
+            $array_valores = array();
+            foreach ($array_filtros as $filter=>$value)
+            {
+                if(empty($value)) {
+                    $valor_filter = $this->input->post($filter);
+                }else{
+                    $valor_filter  = $value;
+                }
+                $this->session->set_userdata($filter, $valor_filter);
+                $array_valores[$filter] = $valor_filter;
+            }
+
+        }
+        return $array_valores;
+    }
+
+
+    /**
+     * Método que borra de la sesión, X variables, pasado sus nombres en un array
+     * Si el parámetro es un array (de variables), lo recorremos y eliminamos de la sesión cualquier valor que tenga
+     * la variable de sesión de ese nombre
+     */
+    public function delete_filtros($array_filtros,$array_excepciones=array()){
+        if(is_array($array_filtros)){
+            foreach($array_filtros as $key =>$filtro){
+                if(!in_array($key,$array_excepciones)) {
+                    $this->session->unset_userdata($key);
+                }
+            }
+        }
+    }
+
+    /**
+     * Recibe el array de filtros (campos del buscador/filtrador) y buscará su valor en la sesión, y cargará otro array
+     * con los pares VARIABLE=>VALOR SESION.
+     * @param $array_filtros
+     * @return array|null
+     */
+    public function get_filtros($array_filtros){
+        $array_session = NULL;
+
+        if(is_array($array_filtros)){
+            $array_session = array();
+            foreach($array_filtros as $filter=>$value){
+
+                if(!empty($value)){
+                    $sess_filter = $value;
+                }else {
+                    $sess_filter = $this->session->userdata($filter);
+                }
+                $array_session[$filter] = (!empty($sess_filter)) ? $sess_filter : NULL;
+
+            }
+        }
+        return $array_session;
+    }
 
     /*
      * Depósito - Inventario de dispositivos para Oferta Táctica
@@ -135,13 +199,36 @@ class Ot extends CI_Controller {
         {
             $xcrud = xcrud_get_instance();
             $this->load->model('tienda_model');
-            $data['stocks'] = $this->tienda_model->get_stock_cruzado();
 
+            /** Crear los filtros*/
+            $array_filtros = array(
+                'id_modelo' =>  '',
+                'id_marca'  =>  ''
+            );
 
-           // $data['stocks_dispositivos']  = $this->tienda_model->get_cdm_dispositivos();
+            // Consultar a la session si ya se ha buscado algo y guardado allí.
+            $array_sesion = $this->get_filtros($array_filtros);
 
+            /* BORRAR BUSQUEDA */
+            $borrar_busqueda = $this->uri->segment(3);
+            if($borrar_busqueda === "borrar_busqueda")
+            {
+                $this->delete_filtros($array_filtros);
+                redirect(site_url("/ot/cdm_dispositivos_balance"),'refresh');
+            }
+
+            if($this->input->post('do_busqueda')==="si") $array_sesion = $this->set_filtros($array_filtros);
+
+            /* Creamos al vuelo las variables que vienen de los filtros */
+            foreach($array_filtros as $filtro=>$value){
+                $$filtro = $array_sesion[$filtro];
+                $data[$filtro] = $array_sesion[$filtro]; // Pasamos los valores a la vista.
+            }
+
+            $data['modelos']=$this->tienda_model->get_terminales();
+            $data['marcas'] =$this->tienda_model->get_fabricantes();
+            $data['stocks'] = $this->tienda_model->get_stock_cruzado($array_sesion);
             $data['title']   = 'Dispositivos';
-
 
             /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
             $this->data->add($data);
@@ -154,7 +241,7 @@ class Ot extends CI_Controller {
         }
         else
         {
-            redirect('master','refresh');
+            redirect('ot','refresh');
         }
     }
 
@@ -187,7 +274,7 @@ class Ot extends CI_Controller {
         }
         else
         {
-            redirect('master','refresh');
+            redirect('ot','refresh');
         }
     }
     /**
@@ -200,11 +287,39 @@ class Ot extends CI_Controller {
             $this->load->model('tienda_model');
             $ext = (!is_null($formato) ? $formato : $this->ext);    // Formato para exportaciones, especficiado o desde CFG
 
-            $data['stocks'] = $this->tienda_model->exportar_stock_cruzado($ext,$this->session->userdata('sfid'));
+            /** Crear los filtros           */
+            $array_filtros = array(
+                'id_modelo' =>  '',
+                'id_marca'  =>  ''
+            );
+
+
+            // Consultar a la session si ya se ha buscado algo y guardado allí.
+            $array_sesion = $this->get_filtros($array_filtros);
+
+            /* BORRAR BUSQUEDA */
+            //echo  $this->uri->segment(4);exit;
+            $borrar_busqueda = $this->uri->segment(3);
+            if($borrar_busqueda === "borrar_busqueda")
+            {
+                $this->delete_filtros($array_filtros);
+                //print_r($array_filtros);
+                redirect(site_url("/ot/cdm_dispositivos_balance"),'refresh');
+            }
+
+            if($this->input->post('do_busqueda')==="si") $array_sesion = $this->set_filtros($array_filtros);
+
+            /* Creamos al vuelo las variables que vienen de los filtros */
+            foreach($array_filtros as $filtro=>$value){
+                $$filtro = $array_sesion[$filtro];
+                $data[$filtro] = $array_sesion[$filtro]; // Pasamos los valores a la vista.
+            }
+
+            $data['stocks'] = $this->tienda_model->exportar_stock_cruzado($ext,$this->session->userdata('sfid'),$array_sesion);
         }
         else
         {
-            redirect('master','refresh');
+            redirect('ot','refresh');
         }
     }
 

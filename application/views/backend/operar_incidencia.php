@@ -28,7 +28,10 @@
                         <a href="<?=site_url('inventario/dispositivos_recogida') ?>" class="btn btn-danger right">Volver</a>
                     <?php
                     }else { ?>
-                    <a href="<?=site_url('admin/estado_incidencias/'. ((($status_pds !="Resuelta" ) && ($status_pds !="Cerrada" ) && ($status_pds !="Cancelada" ) && ($status_pds !="Pendiente recogida" ))? "abiertas": "cerradas")); ?>" class="btn btn-danger right">Volver</a>
+                    <a href="<?=site_url('admin/estado_incidencias/'. ((($status_pds !="Resuelta" ) &&
+                            ($status_pds !="Cerrada" ) && ($status_pds !="Cancelada" ) &&
+                            ($status_pds !="Pendiente recogida" ) && ($status_pds !="SustituidoRMA" ) &&
+                            ($status_pds !="Sustituido" ))? "abiertas": "cerradas")); ?>" class="btn btn-danger right">Volver</a>
                     <?php } ?>
                 </h1>
             </div>
@@ -127,57 +130,73 @@
                             </div>
 
                                 <?php } ?>
+                        <?php if (!empty($material_dispositivos)) { ?>
+                            <div class="col-lg-7 labelText grey">Sustitución de terminales <br/></div>
+                            <?php
+                            if ($incidencia['tipo_averia'] == 'Robo') {
+                                /*Si la incidencia es un robo puede ser necesario que vuelva el terminal que lo genero com RMA*/
+                                ?>
+                                <form
+                                    action="<?= site_url('admin/update_incidencia/' . $id_pds_url . '/' . $id_inc_url . '/4/10') ?>"
+                                    method="post">
+                                    <div class="col-lg-2 labelBtn grey">
+                                        <input type="hidden" value="si" id="sustituido"/>
+                                        <input type="submit" value="sustituir" name="submit" class="btn btn-success"
+                                               classBtn="status"
+                                               class="btn btn-success" <?php if (($incidencia['status'] != 'Comunicada')
+                                            || (is_null($incidencia['id_devices_pds'])) || ($status_device_incidencia == 'NoSustituir')
+                                        ) {
+                                            echo 'disabled';
+                                        } ?> />
 
-                        <div class="col-lg-7 labelText grey">Sustitución de terminales <br /></div>
+                                        <?php // echo "ESTHER ".$status_device_incidencia;?>
+
+                                    </div>
+                                </form>
+
+
+                                <form
+                                    action="<?= site_url('admin/update_incidencia/' . $id_pds_url . '/' . $id_inc_url . '/4/11') ?>"
+                                    method="post">
+                                    <div class="col-lg-3 labelBtn grey">
+                                        <input type="hidden" value="si" id="sustituidoRMA"/>
+                                        <input type="submit" value="sustituir / RMA" name="submit"
+                                               class="btn btn-success"
+                                               classBtn="status"
+                                               class="btn btn-success" <?php if (($incidencia['status'] != 'Comunicada')
+                                            || (is_null($incidencia['id_devices_pds'])) || ($status_device_incidencia == 'NoSustituir')
+                                        ) {
+                                            echo 'disabled';
+                                        } ?> />
+                                        <?php // echo "ESTHER ".$status_device_incidencia;?>
+                                        <span class="fecha_status"><?= $historico_fecha_sustituido ?></span>
+                                    </div>
+                                </form>
+
+                                <?php
+                            } else { ?>
+                                <form
+                                    action="<?= site_url('admin/update_incidencia/' . $id_pds_url . '/' . $id_inc_url . '/4/10') ?>"
+                                    method="post">
+                                    <div class="col-lg-5 labelBtn grey">
+                                        <input type="hidden" value="si" id="sustituido"/>
+                                        <input type="submit" value="sustituir" name="submit" class="btn btn-success"
+                                               classBtn="status"
+                                               class="btn btn-success" <?php if (($incidencia['status'] != 'Comunicada')
+                                            || (is_null($incidencia['id_devices_pds'])) || ($status_device_incidencia == 'NoSustituir')
+                                        ) {
+                                            echo 'disabled';
+                                        } ?> />
+                                        <?php // echo "ESTHER ".$status_device_incidencia;?>
+                                        <span class="fecha_status"><?= $historico_fecha_sustituido ?></span>
+                                    </div>
+                                </form>
+
+                            <?php }
+                        } else { ?>
+                            <div class="col-lg-12 labelText grey"></div>
                         <?php
-                        if($incidencia['tipo_averia'] == 'Robo') {
-                            /*Si la incidencia es un robo puede ser necesario que vuelva el terminal que lo genero com RMA*/
-                            ?>
-                        <form action="<?= site_url('admin/update_incidencia/' . $id_pds_url . '/' . $id_inc_url . '/4/10') ?>" method="post">
-                            <div class="col-lg-2 labelBtn grey">
-                                <input type="hidden" value="si" id="sustituido"/>
-                                <input type="submit" value="sustituir" name="submit" class="btn btn-success"
-                                       classBtn="status" class="btn btn-success" <?php if (($incidencia['status'] != 'Comunicada')
-                                       ||(is_null($incidencia['id_devices_pds'])) || ($status_device_incidencia=='NoSustituir')){
-                                    echo 'disabled';
-                                } ?> />
-
-                                <?php // echo "ESTHER ".$status_device_incidencia;?>
-
-                            </div>
-                        </form>
-
-
-                        <form action="<?= site_url('admin/update_incidencia/' . $id_pds_url . '/' . $id_inc_url . '/4/11') ?>" method="post">
-                            <div class="col-lg-3 labelBtn grey">
-                                <input type="hidden" value="si" id="sustituidoRMA"/>
-                                <input type="submit" value="sustituir / RMA" name="submit" class="btn btn-success"
-                                       classBtn="status" class="btn btn-success" <?php if (($incidencia['status'] != 'Comunicada')
-                            ||(is_null($incidencia['id_devices_pds'])) || ($status_device_incidencia=='NoSustituir')){
-                            echo 'disabled';
-                        } ?> />
-                        <?php // echo "ESTHER ".$status_device_incidencia;?>
-                                <span class="fecha_status"><?=$historico_fecha_sustituido?></span>
-                    </div>
-                    </form>
-
-                      <?php
                         }
-                      else { ?>
-                          <form action="<?= site_url('admin/update_incidencia/' . $id_pds_url . '/' . $id_inc_url . '/4/10') ?>" method="post">
-                              <div class="col-lg-5 labelBtn grey">
-                                  <input type="hidden" value="si" id="sustituido"/>
-                                  <input type="submit" value="sustituir" name="submit" class="btn btn-success"
-                                         classBtn="status" class="btn btn-success" <?php if (($incidencia['status'] != 'Comunicada')
-                                      ||(is_null($incidencia['id_devices_pds'])) || ($status_device_incidencia=='NoSustituir')){
-                                      echo 'disabled';
-                                  } ?> />
-                                  <?php // echo "ESTHER ".$status_device_incidencia;?>
-                                  <span class="fecha_status"><?=$historico_fecha_sustituido?></span>
-                              </div>
-                          </form>
-
-                      <?php }
                       ?>
 
                         <div class="col-lg-7 labelText white">Resolver incidencia<br /><br /></div>

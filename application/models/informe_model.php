@@ -751,6 +751,7 @@ class Informe_model extends CI_Model
     }
 /*
  * Creamos tablas temporales con los datos de las fechas de las incidencias del año que nos pasan por parametro.
+ * Para la fecha en proceso se le suma un día a la que hemos guardado en el historico
  */
     public function crear_temporal_incidencias_finalizadas($anio = NULL)
     {
@@ -768,7 +769,7 @@ class Informe_model extends CI_Model
                             AS(
                                 SELECT H.id_incidencia,
                                 i.fecha as fecha_entrada,
-                                (SELECT  h1.fecha FROM temp_historico_fechas h1 WHERE h1.status_pds = 'En proceso' AND h1.id_incidencia = H.id_incidencia ) as fecha_proceso,
+                                DATE_ADD((SELECT h1.fecha FROM temp_historico_fechas h1 WHERE h1.status_pds = 'En proceso' AND h1.id_incidencia = H.id_incidencia ),INTERVAL 1 DAY) as fecha_proceso, 
                                 (SELECT  h2.fecha FROM temp_historico_fechas h2 WHERE YEAR(h2.fecha) = $anio AND h2.status_pds = 'Finalizada' AND h2.id_incidencia = H.id_incidencia ) as fecha_finalizada,
                                 i.fecha_cierre,
                                 i.status_pds,
@@ -847,14 +848,14 @@ class Informe_model extends CI_Model
         }
         else {
             $this->crear_temporal_incidencias_finalizadas($anio);
-
+            //echo $this->db->last_query(); echo "\n";
             $sql ="SELECT COUNT(id_incidencia) as cantidad, YEAR(fecha_entrada) as anio, MONTH(fecha_entrada) as mes FROM historico_incidencias_fechas
                     WHERE YEAR(fecha_entrada) = $anio AND (fecha_cierre IS NOT NULL ||  fecha_cierre IS NULL && status_pds = 'Finalizada')
                     AND if (fecha_cierre is null,workdaydiff(fecha_finalizada,fecha_proceso) >3,workdaydiff(fecha_cierre,fecha_proceso) > 3)
                     GROUP BY anio,mes;";
         }
         $query = $this->db->query($sql)->result();
-
+//echo $this->db->last_query(); exit;
         $this->db->query(" DROP TABLE IF EXISTS temp_historico_fechas;");
 
         $resultado = $this->rellenar_con_ceros($anio,$query,$meses_columna);
@@ -964,6 +965,7 @@ class Informe_model extends CI_Model
         }
         else {
             $this->crear_temporal_incidencias_finalizadas($anio);
+          //  echo $this->db->last_query()."<br>";
             if ($menos72 == 1) {
                 $sql = "SELECT id_incidencia
                         FROM historico_incidencias_fechas
@@ -986,8 +988,9 @@ class Informe_model extends CI_Model
             }
 
         }
-        $query = $this->db->query($sql)->result();
 
+        $query = $this->db->query($sql)->result();
+      //  echo $this->db->last_query(); exit;
         $this->db->query(" DROP TABLE IF EXISTS temp_historico_fechas;");
 
         $ids = array();
