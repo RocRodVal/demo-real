@@ -52,10 +52,18 @@
                     echo '<p>No hay datos.</p>';
                 }
             } else {
-                ?>
+                 if($show_paginator) { ?>
+                    <div class="pagination">
+                        <ul class="pagination">
+                            <?php echo "".$pagination_helper->create_links(); ?>
+                        </ul>
+                        <p>Encontrados <?=$num_resultados?> resultados. Mostrando del <?=$n_inicial?> al <?=$n_final?>.</p>
+                    </div>
+                <?php } ?>
                 <div class="table-responsive">
 
-                    <table class="table table-striped table-bordered table-hover" id="dataTables-example">
+                    <!--<table class="table table-striped table-bordered table-hover" id="dataTables-example">-->
+                    <table class="table table-striped table-bordered table-hover table-borde-lineal table-sistemas-seguridad">
                         <thead>
                         <tr>
                             <th>Marca</th>
@@ -63,8 +71,8 @@
                             <th>Uds. tienda</th>
                             <th>Uds. en transito</th>
                             <th>Uds. reservadas</th>
-                            <th>Deposito en almacén RMA</th>
-                            <th>Deposito en almacén</th>
+                            <th>Uds. en almacén RMA</th>
+                            <th>Uds. en almacén</th>
                             <th>Uds. Robadas</th>
                             <th>Total</th>
                             <th>Stock necesario</th>
@@ -102,8 +110,8 @@
                             {*/
                             ?>
                             <tr>
-                                <td><?php echo $stock->brand ?></td>
-                                <td><?php echo $stock->device ?></td>
+                                <th class="balance"><?php echo $stock->brand ?></th>
+                                <th class="balance"><?php echo $stock->device ?></th>
                                 <td><?php echo $stock->unidades_pds ?></td>
                                 <td><?php echo $stock->unidades_transito ?></td>
                                 <td><?php echo $stock->unidades_reservado ?></td>

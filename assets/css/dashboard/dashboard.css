@@ -182,6 +182,7 @@ div.multifiltro div.linea{ padding: 0 0 0 0;  }
     border-bottom: 1px solid #ddd;
 }
 .table-borde-lineal>tbody>tr>th{ font-size:13px; text-align: right; vertical-align: middle; width: 16%;}
+.table-borde-lineal>tbody>tr>th.balance{ font-size:13px; text-align: center; vertical-align: middle; width: 0%;}
 .table-borde-lineal>tbody>tr>td.total{ font-weight: bold; border-left:1px solid #ddd;}
 .table-borde-lineal>tbody>tr.separador>td{ font-size: 1px; height: 2px;
     padding: 0; background:#f60;} .table-borde-lineal>tbody>tr.separador:hover>td:hover{background:#f60;}

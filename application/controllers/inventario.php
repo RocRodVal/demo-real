@@ -720,6 +720,19 @@ class Inventario extends CI_Controller {
         {
             $xcrud = xcrud_get_instance();
             $this->load->model('tienda_model');
+            $this->load->library('app/paginationlib');
+
+            // Comprobar si existe el segmento PAGE en la URI, si no inicializar a 1..
+            $get_page = $this->uri->segment(4);
+            if( $this->uri->segment(3) == "page") {
+                $page = ( ! empty($get_page) ) ? $get_page : 1 ;
+                $segment = 4;
+            }else{
+                $page = 1;
+                $segment = null;
+            }
+
+
 
             /**
              * Crear los filtros
@@ -751,9 +764,30 @@ class Inventario extends CI_Controller {
                 $data[$filtro] = $array_sesion[$filtro]; // Pasamos los valores a la vista.
             }
 
-            $data['modelos']=$this->tienda_model->get_terminales();
+            /* PAGINACION */
+            $per_page = 15;
+            $total_devices = $this->tienda_model->get_devices_quantity($array_sesion);   // Sacar el total de incidencias, para el paginador
+            $cfg_pagination = $this->paginationlib->init_pagination("inventario/balance/page/",$total_devices,$per_page,$segment);
+
+
+            $this->load->library('pagination',$cfg_pagination);
+            $this->pagination->initialize($cfg_pagination);
+
+            $bounds = $this->paginationlib->get_bounds($total_devices,$page,$per_page);
+
+            // Indicamos si habrá que mostrar el paginador en la vista
+            $data['show_paginator'] = $bounds["show_paginator"];
+            $data['num_resultados'] = $bounds["num_resultados"];
+            $data['n_inicial'] = $bounds["n_inicial"];
+            $data['n_final'] = $bounds["n_final"];
+            $data["pagination_helper"]   = $this->pagination;
+
+
+
+            $data['modelos']=$this->tienda_model->get_devices();
             $data['marcas']=$this->tienda_model->get_fabricantes();
-            $data['stocks'] = $this->tienda_model->get_stock_cruzado($array_sesion);
+
+            $data['stocks'] = $this->tienda_model->get_stock_cruzado($array_sesion,$page, $cfg_pagination);
 
             $data['title']   = 'Dispositivos';
             $data['opcion'] =1;

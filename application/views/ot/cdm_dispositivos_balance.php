@@ -49,8 +49,8 @@
                         ?>
                         <h1 class="page-header">Balance de activos <a href="<?=site_url('ot/exportar_balance_activos');?>" title="Exportar Excel">Exportar Excel</a></h1>
                         <div class="table-responsive">
-
-                            <table class="table table-striped table-bordered table-hover" id="dataTables-example">
+                            <table class="table table-striped table-bordered table-hover table-borde-lineal table-sistemas-seguridad" id="dataTables-example">
+                            <!--<table class="table table-striped table-bordered table-hover" id="dataTables-example">-->
                                 <thead>
                                 <tr>
                                     <th>Marca</th>
@@ -93,8 +93,8 @@
                                     {*/
                                     ?>
                                     <tr>
-                                        <td><?php echo $stock->brand ?></td>
-                                        <td><?php echo $stock->device ?></td>
+                                        <th class="balance"><?php echo $stock->brand ?></th>
+                                        <th class="balance"><?php echo $stock->device ?></th>
                                         <td><?php echo $stock->unidades_pds ?></td>
                                         <td><?php echo $stock->unidades_transito ?></td>
                                         <td><?php echo $stock->unidades_reservado ?></td>

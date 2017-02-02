@@ -369,9 +369,12 @@ class Tienda_model extends CI_Model {
 		$this->db->update('pds');
 	}
 
-    public function get_stock_cruzado($array_filtros=NULL) {
+	/*
+	 * Calculo del stock para el cuadro del balance
+	 */
+    public function get_stock_cruzado($array_filtros=NULL,$page = 1, $cfg_pagination = NULL) {
 
-        //print_r($array_filtros);
+        //Preparamos la consulta con los filtros de la busqueda en el caso de que se haya seleccionado alguno
         $where='';
         if(isset($array_filtros["id_modelo"]) && !empty($array_filtros["id_modelo"])) {
             $where .= ' AND temporal.id_device = ' . $array_filtros['id_modelo'];
@@ -380,11 +383,24 @@ class Tienda_model extends CI_Model {
             $where .= ' AND brand_device.id_brand_device = ' . $array_filtros['id_marca'];
         }
 
+        $limit='';
+        if(!empty($cfg_pagination)) {
+        if ($page==1) {
+            $limit=" LIMIT ".$page  *$cfg_pagination['per_page'];
+        } else {
+            if($page>1){
+                $limit=" LIMIT ".($page-1) *$cfg_pagination['per_page'].",".  $cfg_pagination['per_page'];
+            }
+        }}
+
+        $ctrl_no_cancelada = " AND (status_pds != 'Cancelada' && status != 'Cancelada') ";
+
         $this->db->query(" DROP VIEW IF EXISTS robados;");
         /*Creación de una vista que guarda los datos de los terminales robados y que no han llegado al almacen*/
         $this->db->query("CREATE VIEW robados AS SELECT devices_pds.id_device,COUNT(*) as suma FROM devices_pds 
                       INNER JOIN incidencias ON incidencias.id_devices_pds=devices_pds.id_devices_pds 
-                      WHERE devices_pds.status = \"Baja\" AND incidencias.tipo_averia=\"Robo\" and devices_pds.id_devices_pds NOT IN 
+                      WHERE devices_pds.status = \"Baja\" AND incidencias.tipo_averia=\"Robo\" and 
+                      incidencias.status_pds=\"Finalizada\" and devices_pds.id_devices_pds NOT IN 
                       (select id_devices_pds from devices_almacen where id_devices_pds IS NOT NULL)
                       GROUP BY devices_pds.id_device");
 
@@ -437,7 +453,7 @@ class Tienda_model extends CI_Model {
                 ) as temporal
 
         JOIN brand_device ON temporal.brand_device = brand_device.id_brand_device
-        WHERE temporal.status = "Alta" ' .$where. ' ORDER BY brand_device.brand ASC, temporal.device ASC ');
+        WHERE temporal.status = "Alta" ' .$where. ' ORDER BY brand_device.brand ASC, temporal.device ASC '.$limit);
 
 //echo $this->db->last_query(); exit;
 
@@ -1889,7 +1905,31 @@ class Tienda_model extends CI_Model {
 	
 		return $query->result();
 	}
-		
+
+	/*
+	 * Cantidad de terminales que están dados de alta
+	 */
+    public function get_devices_quantity($array_filtros=NULL) {
+       // $where='';
+        if(isset($array_filtros["id_modelo"]) && !empty($array_filtros["id_modelo"])) {
+            //$where .= ' AND device.id_device = ' . $array_filtros['id_modelo'];
+            $this->db->where('device.id_device',$array_filtros['id_modelo']);
+        }
+        if(isset($array_filtros["id_marca"]) && !empty($array_filtros["id_marca"])) {
+
+            $this->db->join('brand_device','brand_device.id_brand_device=device.brand_device')
+            ->where('brand_device.id_brand_device',$array_filtros['id_marca']);
+
+            //$where .= ' AND brand_device.id_brand_device = ' . $array_filtros['id_marca'];
+        }
+        $query = $this->db->select('count(*) as cantidad')
+        ->where('device.status','Alta')
+            ->order_by('device')
+            ->get('device');
+        //return $query->cantidad;
+        //echo $this->db->last_query(); exit;
+        return $query->row()->cantidad;
+    }
 	
 	public function get_material_dispositivos($id) {
 	
@@ -2851,7 +2891,7 @@ class Tienda_model extends CI_Model {
                 $id_device = $data["id_device"];
                 $dueno = NULL;
                 $procesado = $data["procesado"];
-                $status=NULL;
+                $status=$data['status'];
                 $id_devices_almacen = $data['id_devices_almacen_new'];
             }
 
@@ -2868,8 +2908,8 @@ class Tienda_model extends CI_Model {
                 'status'    => $status
             );
 
-
-            $this->db->insert('historico_io',$elemento);
+           // print_r($elemento);
+          //  $this->db->insert('historico_io',$elemento);
 
         }
         elseif($tipo==="alarm")         // ES DE TIPO ALARMA
@@ -2890,9 +2930,9 @@ class Tienda_model extends CI_Model {
             );
 
 
-            $this->db->insert('historico_io',$elemento);
-        }
 
+        }
+        $this->db->insert('historico_io',$elemento);
 //echo $this->db->last_query(); exit;
 
     }
