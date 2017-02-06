@@ -716,6 +716,9 @@ class Inventario extends CI_Controller {
 
     public function balance()
     {
+
+        $this->session->userdata['user_data']=='admin';
+
         if($this->auth->is_auth())
         {
             $xcrud = xcrud_get_instance();

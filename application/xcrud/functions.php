@@ -1,4 +1,6 @@
 <?php
+require (APPPATH . '/models/deposito_model.php'); // configuration
+//require ( 'system/core/Model.php'); // configuration
 function publish_action($xcrud)
 {
     if ($xcrud->get('primary'))
@@ -141,4 +143,40 @@ function format_phone($new_phone)
 function before_list_example($list, $xcrud)
 {
     var_dump($list);
+}
+
+// funcion para que inserte en el historico_io si hay un cambio de estado
+function inventario_dispositivos_historicoIO($postdata,  $xcrud){
+
+    //$xcrud guarda el ID del elemento a actualziar
+    //$postdata tenemos los datos para actualizar el dispositivo
+
+    $deposito=new Deposito_model();
+    /*consultamos el estado anterior del dispositivo*/
+    $result = $deposito->db->select('*')
+        ->where("id_devices_almacen",$xcrud)
+        ->get('devices_almacen')->row_array();
+    $estado_anterior=$result['status'];
+
+    switch ($postdata->get('status')){
+        case 'En stock':    $unidades=1; break;
+        case "Reservado":   $unidades=-1; break;
+        case "Baja":        $unidades=-1; break;
+        case "Transito":    $unidades=-1; break;
+        case "RMA":         $unidades=1; break;
+    }
+    $elemento = array(
+        'id_devices_almacen'        => $xcrud,
+        'id_device'                 => $postdata->get('id_device'),
+        'id_alarm'                  => NULL,
+        'id_client'                 => $postdata->get('id_cliente'),
+        'fecha'                     => date("Y-m-d H:i:s"),
+        'unidades'                  => $unidades, // En negativo porque luego la función lo multiplica por -1
+        'id_incidencia'             => NULL,
+        'procesado'                 => 1,
+        'id_material_incidencia'    => $postdata->get('id_material_incidencia'),
+        'status'                    => $postdata->get('status')
+    );
+    $deposito->alta_historico_io($elemento,$estado_anterior);
+
 }

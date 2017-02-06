@@ -385,15 +385,14 @@ class Tienda_model extends CI_Model {
 
         $limit='';
         if(!empty($cfg_pagination)) {
-        if ($page==1) {
-            $limit=" LIMIT ".$page  *$cfg_pagination['per_page'];
-        } else {
-            if($page>1){
-                $limit=" LIMIT ".($page-1) *$cfg_pagination['per_page'].",".  $cfg_pagination['per_page'];
+            if ($page==1) {
+                $limit=" LIMIT ".$page  *$cfg_pagination['per_page'];
+            } else {
+                if($page>1){
+                    $limit=" LIMIT ".($page-1) *$cfg_pagination['per_page'].",".  $cfg_pagination['per_page'];
+                }
             }
-        }}
-
-        $ctrl_no_cancelada = " AND (status_pds != 'Cancelada' && status != 'Cancelada') ";
+        }
 
         $this->db->query(" DROP VIEW IF EXISTS robados;");
         /*Creación de una vista que guarda los datos de los terminales robados y que no han llegado al almacen*/
@@ -502,7 +501,7 @@ class Tienda_model extends CI_Model {
     /*
      * Generar CSV con el stock cruzado (Balance de activos).
      */
-    public function get_stock_cruzado_csv() {
+   /* public function get_stock_cruzado_csv() {
 
         $this->load->dbutil();
         $this->load->helper('file');
@@ -550,7 +549,7 @@ class Tienda_model extends CI_Model {
         force_download('Demo_Real-Balance_Activos.csv', $data);
 
 
-    }
+    }*/
 
 
 

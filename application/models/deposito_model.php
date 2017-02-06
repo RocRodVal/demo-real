@@ -1,5 +1,5 @@
 <?php
-
+require ( 'system/core/Model.php'); // configuration
 class Deposito_model extends CI_Model {
 
 	public function __construct()	{
@@ -344,7 +344,13 @@ class Deposito_model extends CI_Model {
 		{
 			return FALSE;
 		}
-	}	
+	}
+
+    public function alta_historico_io($elemento,$estado_anterior){
+        if ($estado_anterior!=$elemento['status']) {
+            $this->db->insert('historico_io', $elemento);
+        }
+    }
 	
 }
 

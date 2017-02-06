@@ -328,7 +328,7 @@ class Incidencia_model extends CI_Model {
 
         $query =   $this->db->get('incidencias',$cfg_pagination['per_page'], ($page-1) * $cfg_pagination['per_page']);
          //
-      //  echo "<br><br>".$this->db->last_query();
+       //echo "<br><br>".$this->db->last_query();
       //  exit;
 
         return $query->result();
@@ -864,6 +864,16 @@ class Incidencia_model extends CI_Model {
             }
         }
 
+    }
+
+    /**
+     * Devuelve los distintos estados de incidencia, pero que se estén usando en alguna incidencia
+     * @return mixed
+     */
+    public function get_historico($id_incidencia)
+    {
+        $query = $this->db->query("SELECT DISTINCT(status_pds) FROM incidencias ");
+        return $query->result();
     }
 
 

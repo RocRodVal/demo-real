@@ -10,6 +10,8 @@ class Tienda extends CI_Controller {
 		$this->load->library(array('email','encrypt','form_validation','session'));
         $this->load->library('uri');
 
+        $this->load->library('auth',array(1));
+
         // Carga de la clase de Colección de datos, para pasar variables a la vista.
         $this->load->library('data');
         $this->data->set("controlador","tienda");
@@ -33,7 +35,11 @@ class Tienda extends CI_Controller {
 		$this->form_validation->set_rules('sfid-login','SFID','required|xss_clean');
 		$this->form_validation->set_rules('password','password','required|xss_clean');
 
+
+
+        // Ya está logueado....
         $entrada = $this->data->get("entrada");
+        if($this->auth->is_auth()) redirect($entrada);
 
 
 		if ($this->form_validation->run() == true)
@@ -200,12 +206,13 @@ class Tienda extends CI_Controller {
      */
     public function estado_incidencias($tipo)
     {
-        if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 1)) {
+        //if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 1)) {
+        if($this->auth->is_auth())
+        {
             $data['id_pds'] = $this->session->userdata('id_pds');
             $data['sfid'] = $this->session->userdata('sfid');
 
             $xcrud = xcrud_get_instance();
-
 
             $this->load->model(array('intervencion_model', 'incidencia_model', 'tienda_model', 'sfid_model','chat_model'));
             $this->load->library('app/paginationlib');
@@ -347,7 +354,9 @@ class Tienda extends CI_Controller {
 
     public function exportar_incidencias($tipo="abiertas",$formato=NULL)
     {
-        if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 1)) {
+        //if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 1)) {
+        if($this->auth->is_auth())
+        {
             $xcrud = xcrud_get_instance();
             $data['id_pds'] = $this->session->userdata('id_pds');
             $data['sfid'] = $this->session->userdata('sfid');
