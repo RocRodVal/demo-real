@@ -55,7 +55,7 @@
 
             <div class="row">
                 <div class="col-lg-12">
-                    <?
+                    <?php
                     if (!empty($anio)) { ?>
                         <p><a href="<?=base_url().$controlador?>/exportar_sistemas_seguridad/<?=$anio?>" class="btn exportar"><i class="glyphicon glyphicon-file"></i> Exportar Excel</a></p>
                         <div class="table-responsive">

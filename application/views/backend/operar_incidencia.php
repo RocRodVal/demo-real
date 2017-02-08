@@ -24,7 +24,7 @@
             <div class="col-lg-12">
                 <h1 class="page-header"><?php echo $title ?>
                     <!--<a onclick="history.go(-1);return false;" class="btn btn-danger right">Volver</a>-->
-                    <? if (!empty($recogida)) { ?>
+                    <?php if (!empty($recogida)) { ?>
                         <a href="<?=site_url('inventario/dispositivos_recogida') ?>" class="btn btn-danger right">Volver</a>
                     <?php
                     }else { ?>

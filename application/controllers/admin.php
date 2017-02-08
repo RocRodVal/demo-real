@@ -3123,7 +3123,8 @@ class Admin extends CI_Controller
 
     public function descripcion()
     {
-        if ($this->session->userdata('logged_in')) {
+        //if ($this->session->userdata('logged_in')) {
+        if ($this->auth->is_auth()) {
             $session_data = $this->session->userdata('logged_in');
             $data['sfid'] = $this->session->userdata('sfid');
             $data['agent_id'] = $this->session->userdata('agent_id');
@@ -6553,7 +6554,8 @@ class Admin extends CI_Controller
 
     public function logout()
     {
-        if ($this->session->userdata('logged_in')) {
+        //if ($this->session->userdata('logged_in')) {
+        if ($this->auth->is_auth()) {
             $this->session->unset_userdata('logged_in');
             $this->session->sess_destroy();
         }
@@ -7092,7 +7094,8 @@ class Admin extends CI_Controller
      */
     public function pedidos($tipo="abiertos")
     {
-        if ($this->session->userdata('logged_in')) {
+        //if ($this->session->userdata('logged_in')) {
+        if ($this->auth->is_auth()) {
             //$data['sfid'] = $this->session->userdata('sfid');
 
             $xcrud = xcrud_get_instance();
@@ -7653,7 +7656,8 @@ class Admin extends CI_Controller
      */
     public function exportar_pedidos($tipo="abiertos")
     {
-        if ($this->session->userdata('logged_in')) {
+        //if ($this->session->userdata('logged_in')) {
+        if ($this->auth->is_auth()) {
             $xcrud = xcrud_get_instance();
             //$data['id_pds'] = $this->session->userdata('id_pds');
             $data['sfid'] = $this->session->userdata('sfid');

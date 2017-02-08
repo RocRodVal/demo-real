@@ -392,7 +392,8 @@ class Tienda extends CI_Controller {
 
     public function dashboard()
     {
-        if ($this->session->userdata('logged_in')) {
+        //if ($this->session->userdata('logged_in')) {
+        if ($this->auth->is_auth()) {
             $data['id_pds'] = $this->session->userdata('id_pds');
             $data['sfid'] = $this->session->userdata('sfid');
 
@@ -694,7 +695,8 @@ class Tienda extends CI_Controller {
 
     public function dashboard_exportar()
     {
-        if ($this->session->userdata('logged_in')) {
+       // if ($this->session->userdata('logged_in')) {
+        if ($this->auth->is_auth()) {
             $xcrud = xcrud_get_instance();
 
 

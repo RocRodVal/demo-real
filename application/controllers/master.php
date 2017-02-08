@@ -3998,7 +3998,8 @@ class Master extends CI_Controller {
      */
     public function pedidos($tipo="abiertos")
     {
-        if ($this->session->userdata('logged_in')) {
+        //if ($this->session->userdata('logged_in')) {
+        if ($this->auth->is_auth()) {
 
             $xcrud = xcrud_get_instance();
             $this->load->model(array('pedido_model', 'tienda_model', 'sfid_model'));
@@ -4195,7 +4196,8 @@ class Master extends CI_Controller {
     */
     public function exportar_pedidos($tipo="abiertos")
     {
-        if ($this->session->userdata('logged_in')) {
+       //if ($this->session->userdata('logged_in')) {
+        if ($this->auth->is_auth()) {
             $xcrud = xcrud_get_instance();
             //$data['id_pds'] = $this->session->userdata('id_pds');
             $data['sfid'] = $this->session->userdata('sfid');
