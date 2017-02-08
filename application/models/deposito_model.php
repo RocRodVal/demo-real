@@ -346,11 +346,7 @@ class Deposito_model extends CI_Model {
 		}
 	}
 
-    public function alta_historico_io($elemento,$estado_anterior){
-        if ($estado_anterior!=$elemento['status']) {
-            $this->db->insert('historico_io', $elemento);
-        }
-    }
+
 	
 }
 

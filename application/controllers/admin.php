@@ -7659,7 +7659,6 @@ class Admin extends CI_Controller
         //if ($this->session->userdata('logged_in')) {
         if ($this->auth->is_auth()) {
             $xcrud = xcrud_get_instance();
-            //$data['id_pds'] = $this->session->userdata('id_pds');
             $data['sfid'] = $this->session->userdata('sfid');
             $id_pds=null;
 
@@ -7711,12 +7710,13 @@ class Admin extends CI_Controller
         $xcrud->modal('picture_url_2');
         $xcrud->modal('picture_url_3');
         $xcrud->label('id_devices_almacen', 'Ref.')->label('alta', 'Fecha de alta')->label('id_device', 'Dispositivo')->label('serial', 'Nº de serie')->label('IMEI', 'IMEI')->label('mac', 'MAC')->label('barcode', 'Código de barras')->label('id_color_device', 'Color')->label('id_complement_device', 'Complementos')->label('id_status_device', 'Estado dispositivo')->label('id_status_packaging_device', 'Estado packaging')->label('picture_url_1', 'Foto #1')->label('picture_url_2', 'Foto #2')->label('picture_url_3', 'Foto #3')->label('description', 'Comentarios')->label('owner', 'Dueño')->label('status', 'Estado');
-        $xcrud->columns('id_devices_almacen,id_device,IMEI,mac,barcode,status');
-        $xcrud->fields('id_devices_almacen,alta,id_device,serial,IMEI,mac,barcode,id_color_device,id_complement_device,id_status_device,id_status_packaging_device,picture_url_1,picture_url_2,picture_url_3,description,owner,status');
+        $xcrud->columns('id_devices_almacen,id_device,IMEI,serial,barcode,status');
+        $xcrud->fields('id_devices_almacen,alta,id_device,serial,IMEI,serial,barcode,id_color_device,id_complement_device,id_status_device,id_status_packaging_device,picture_url_1,picture_url_2,picture_url_3,description,owner,status');
         $xcrud->order_by('id_device', 'asc');
         $xcrud->order_by('status', 'asc');
         $xcrud->order_by('id_devices_almacen', 'asc');
         $xcrud->show_primary_ai_column(true);
+        $xcrud->before_update("inventario_dispositivos_historicoIO","../libraries/diario_almacen.php");
         $xcrud->unset_numbers();
       //  $xcrud->start_minimized(true);
 
@@ -7749,6 +7749,94 @@ class Admin extends CI_Controller
         $this->load->view('backend/footer');
     }
 
+
+    /*Recepcion de terminales en RMA procedentes de incidencia*/
+    public function recepcion_rma()
+    {
+        if ($this->auth->is_auth()) {
+            $xcrud = xcrud_get_instance();
+
+            $this->load->model('tienda_model');
+
+            $devices=$this->tienda_model->get_devices();
+
+            $data['title'] = 'Recepción terminales RMA por Incidencia';
+            $data['devices']=$devices;
+
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
+         //   print_r($data);
+            $this->load->view('backend/header', $data);
+            $this->load->view('backend/navbar', $data);
+            $this->load->view('backend/recepcion_rma_inc', $data);
+            $this->load->view('backend/footer');
+        }
+        else {
+            redirect('admin', 'refresh');
+        }
+    }
+
+    /* Insertar los datos del RMA en el almacen*/
+    public function insert_rma_almacen(){
+        if ($this->auth->is_auth()) {
+
+            $xcrud = xcrud_get_instance();
+            $this->load->model('tienda_model');
+            $this->load->model('incidencia_model');
+            //print_r($this);exit;
+
+            $imei = $this->input->post('imei');
+            $serial = $this->input->post('serial');
+            $status = "RMA";
+            $id_device = $this->input->post('id_device');
+            $id_incidencia = $this->input->post('id_incidencia');
+            $fecha = date("Y-m-d H:i:s");
+
+            /*buscar el devices_pds afectado por la incidencia $id_incidencia*/
+            if (!empty($id_incidencia)) {
+                $incidencia = $this->incidencia_model->get_incidencia($id_incidencia);
+            }
+
+            /*Si existe la incidencia que nos han indicado entonces podemos guardar los datos*/
+            if (!empty($incidencia)) {
+
+                $elemento = array(
+                    'id_device' => $id_device,
+                    'alta' => $fecha,
+                    'imei' => $imei,
+                    'serial' => $serial,
+                    'owner' => 'ET',
+                    'status' => $status,
+                    'id_devices_pds' => $incidencia['id_devices_pds']
+                );
+               // $deposito = new Deposito_model();
+                $id_devices_almacen = $this->tienda_model->alta_device_almacen($elemento);
+
+                $elemento = array(
+                    'id_material_incidencia' => NULL,
+                    'id_devices_almacen' => $id_devices_almacen,
+                    'id_device' => $id_device,
+                    'id_alarm' => NULL,
+                    'id_client' => NULL,
+                    'fecha' => $fecha,
+                    'unidades' => -1,
+                    'id_incidencia' =>  $id_incidencia,
+                    'procesado' => 1,
+                    'status' => $status
+                );
+                $this->tienda_model->alta_historicoIo($elemento);
+
+            } else {
+
+                $data['error']="La incidencia ".$id_incidencia." no existe";
+
+            }
+
+            redirect('admin/recepcion_rma', 'refresh');
+        }
+    }
 
 }
 /* End of file admin.php */

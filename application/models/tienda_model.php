@@ -6,7 +6,6 @@ class Tienda_model extends CI_Model {
 		$this->load->database();
         $this->load->model("incidencia_model");
         $this->load->model("intervencion_model");
-
 	}
 
 	
@@ -3151,6 +3150,31 @@ class Tienda_model extends CI_Model {
 
         //return $exito;
     }
+
+    /*
+	 * insertamos los datos de un dispositivo del almacen en el historico
+	 */
+    public function alta_historicoIo($elemento,$estado_anterior=NULL){
+        if(!empty($estado_anterior)) {
+            if ($estado_anterior != $elemento['status']) {
+                $this->db->insert('historico_io', $elemento);
+            }
+        }
+        else {
+            $this->db->insert('historico_io', $elemento);
+        }
+    }
+
+    /*insertamos un device en almacen*/
+    public function alta_device_almacen($elemento){
+
+        if (!empty($elemento)) {
+            $this->db->insert('devices_almacen', $elemento);
+            $id=$this->db->insert_id();
+            return $id;
+        }
+    }
+
 
 }
 

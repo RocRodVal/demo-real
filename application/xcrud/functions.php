@@ -1,5 +1,6 @@
 <?php
-require (APPPATH . '/models/deposito_model.php'); // configuration
+
+//require (APPPATH . '/models/tienda_model.php'); // configuration
 //require ( 'system/core/Model.php'); // configuration
 function publish_action($xcrud)
 {
@@ -145,15 +146,16 @@ function before_list_example($list, $xcrud)
     var_dump($list);
 }
 
-// funcion para que inserte en el historico_io si hay un cambio de estado
-function inventario_dispositivos_historicoIO($postdata,  $xcrud){
+/*
+ * funcion para que inserte en el historico_io si hay un cambio de estado
+ * $xcrud guarda el ID del elemento a actualziar
+   $postdata tenemos los datos para actualizar el dispositivo
+ */
+/*function inventario_dispositivos_historicoIO($postdata,  $xcrud){
 
-    //$xcrud guarda el ID del elemento a actualziar
-    //$postdata tenemos los datos para actualizar el dispositivo
-
-    $deposito=new Deposito_model();
-    /*consultamos el estado anterior del dispositivo*/
-    $result = $deposito->db->select('*')
+    $tienda=new Tienda_model();
+    /*consultamos el estado anterior del dispositivo
+    $result = $tienda->db->select('*')
         ->where("id_devices_almacen",$xcrud)
         ->get('devices_almacen')->row_array();
     $estado_anterior=$result['status'];
@@ -177,6 +179,31 @@ function inventario_dispositivos_historicoIO($postdata,  $xcrud){
         'id_material_incidencia'    => $postdata->get('id_material_incidencia'),
         'status'                    => $postdata->get('status')
     );
-    $deposito->alta_historico_io($elemento,$estado_anterior);
+
+    $tienda->alta_historicoIo($elemento,$estado_anterior);
 
 }
+*/
+/**
+ * Callback para el xcrud, previo a actualización de alarma masiva.
+ */
+/*function historico_io_alarmas_before_update($postdata, $primary)
+
+{
+    $id_alarm = $primary;      // Clave primaria del XCrud
+    $id_client = $postdata->get("client_alarm");
+
+    $CI =& get_instance();
+    $query = $CI->db->query("SELECT units as unidades_previas FROM alarm WHERE id_alarm=$id_alarm");
+
+    $unidades_actuales = $postdata->get('units');
+    $unidades_previas = $query->row()->unidades_previas;
+
+
+    $incremento = $unidades_actuales - $unidades_previas; // Valor positivo: entrada, Valor negativo: salida.
+
+    $fecha = time();
+    $sql = "INSERT INTO historico_io (id_alarm, id_client, unidades) VALUES($id_alarm,$id_client,$incremento)";
+    $CI->db->query($sql);
+
+}*/

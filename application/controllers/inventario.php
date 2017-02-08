@@ -735,8 +735,6 @@ class Inventario extends CI_Controller {
                 $segment = null;
             }
 
-
-
             /**
              * Crear los filtros
              */
@@ -745,12 +743,10 @@ class Inventario extends CI_Controller {
                 'id_marca'  =>  ''
             );
 
-
             // Consultar a la session si ya se ha buscado algo y guardado allí.
             $array_sesion = $this->get_filtros($array_filtros);
 
             /* BORRAR BUSQUEDA */
-            //echo  $this->uri->segment(4);exit;
             $borrar_busqueda = $this->uri->segment(3);
             if($borrar_busqueda === "borrar_busqueda")
             {
