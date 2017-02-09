@@ -107,7 +107,7 @@
                                             ?>
                                             </select>
 		                                </td>
-		                                <td><input type="text" size="2" maxlength="1" id="units_dipositivo_almacen_1" name="units_dipositivo_almacen_1" value="" /></td>
+		                                <td><input type="text" size="2" maxlength="1" id="units_dipositivo_almacen_1" name="units_dipositivo_almacen_1" value=""/></td>
                                         <td><input type="text" size="20" maxlength="20" id="imei_1" name="imei_1" /></td>
                                         <td><input type="text" size="20" id="mac_1" name="mac_1" /></td>
                                         <td><input type="text" size="20" id="serial_1" name="serial_1" /></td>
