@@ -1117,8 +1117,8 @@ class Ttpp extends CI_Controller {
 	
 	public function logout()
 	{
-		if($this->session->userdata('logged_in'))
-		{		
+		//if($this->session->userdata('logged_in'))
+        if ($this->auth->is_auth()) {
 			$this->session->unset_userdata('logged_in');
             $this->session->sess_destroy();
 		}	

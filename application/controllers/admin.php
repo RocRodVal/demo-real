@@ -7095,6 +7095,7 @@ class Admin extends CI_Controller
     public function pedidos($tipo="abiertos")
     {
         //if ($this->session->userdata('logged_in')) {
+
         if ($this->auth->is_auth()) {
             //$data['sfid'] = $this->session->userdata('sfid');
 
@@ -7601,8 +7602,9 @@ class Admin extends CI_Controller
      */
     public function pedido_pendiente_material($id_pedido,$id_pds)
     {
-        if($this->session->userdata('logged_in'))
-        {
+       // if($this->session->userdata('logged_in'))
+        if ($this->auth->is_auth()) {
+
             $data['id_pds'] = $id_pds;
             $data['id_pedido']   = $id_pedido;
 
@@ -7762,7 +7764,7 @@ class Admin extends CI_Controller
 
             $data['title'] = 'Recepción terminales RMA por Incidencia';
             $data['devices']=$devices;
-
+            $data['message']='';
             /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
             $this->data->add($data);
             $data = $this->data->getData();
@@ -7799,6 +7801,11 @@ class Admin extends CI_Controller
                 $incidencia = $this->incidencia_model->get_incidencia($id_incidencia);
             }
 
+            $devices=$this->tienda_model->get_devices();
+            $data['title'] = 'Recepción terminales RMA por Incidencia';
+            $data['devices']=$devices;
+            $data['message']='';
+
             /*Si existe la incidencia que nos han indicado entonces podemos guardar los datos*/
             if (!empty($incidencia)) {
 
@@ -7827,15 +7834,22 @@ class Admin extends CI_Controller
                     'status' => $status
                 );
                 $this->tienda_model->alta_historicoIo($elemento);
+                $data['message'] = "Dispositivo con IMEI: \"".$imei."\" registrado correctamente";
 
             } else {
-
-                $data['error']="La incidencia ".$id_incidencia." no existe";
-
+                $data['message'] = "La incidencia ".$id_incidencia." no existe";
             }
-
-            redirect('admin/recepcion_rma', 'refresh');
+        }else {
+            redirect('admin', 'refresh');
         }
+
+        $this->data->add($data);
+        $data = $this->data->getData();
+
+        $this->load->view('backend/header', $data);
+        $this->load->view('backend/navbar', $data);
+        $this->load->view('backend/recepcion_rma_inc', $data);
+        $this->load->view('backend/footer');
     }
 
 }

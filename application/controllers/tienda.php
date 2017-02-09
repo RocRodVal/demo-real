@@ -392,8 +392,9 @@ class Tienda extends CI_Controller {
 	
 	public function alta_incidencia()
 	{
-		if($this->session->userdata('logged_in'))
-		{
+		//f($this->session->userdata('logged_in'))
+        if ($this->auth->is_auth()) {
+
 			$data['id_pds'] = $this->session->userdata('id_pds');
 			$data['sfid']   = $this->session->userdata('sfid');
 		
@@ -440,8 +441,9 @@ class Tienda extends CI_Controller {
 	
 	public function alta_incidencia_mueble()
 	{
-		if($this->session->userdata('logged_in'))
-		{
+		//if($this->session->userdata('logged_in'))
+        if ($this->auth->is_auth()) {
+
 			$data['id_pds'] = $this->session->userdata('id_pds');
 			$data['sfid']   = $this->session->userdata('sfid');
 		
@@ -485,8 +487,9 @@ class Tienda extends CI_Controller {
 	
 	public function alta_incidencia_dispositivo()
 	{
-		if($this->session->userdata('logged_in'))
-		{
+		//if($this->session->userdata('logged_in'))
+        if ($this->auth->is_auth()) {
+
 			$data['id_pds'] = $this->session->userdata('id_pds');
 			$data['sfid']   = $this->session->userdata('sfid');
 		
@@ -542,8 +545,9 @@ class Tienda extends CI_Controller {
 	
 	public function alta_incidencia_mueble_alarma()
 	{
-		if($this->session->userdata('logged_in'))
-		{
+		//if($this->session->userdata('logged_in'))
+        if ($this->auth->is_auth()) {
+
 			$data['id_pds'] = $this->session->userdata('id_pds');
 			$data['sfid']   = $this->session->userdata('sfid');
 	
@@ -586,8 +590,9 @@ class Tienda extends CI_Controller {
 	
 	public function detalle_incidencia($id_incidencia)
 	{
-		if($this->session->userdata('logged_in'))
-		{
+		//if($this->session->userdata('logged_in'))
+        if ($this->auth->is_auth()) {
+
 			$data['id_pds'] = $this->session->userdata('id_pds');
 			$data['sfid']   = $this->session->userdata('sfid');
 	
@@ -682,8 +687,9 @@ class Tienda extends CI_Controller {
 
     public function insert_chat($id,$tabla='incidencia')
     {
-        if($this->session->userdata('logged_in'))
-        {
+       //if($this->session->userdata('logged_in'))
+        if ($this->auth->is_auth()) {
+
             $data['id_pds'] = $this->session->userdata('id_pds');
             $data['sfid'] = $this->session->userdata('sfid');
 
@@ -751,10 +757,11 @@ class Tienda extends CI_Controller {
         }
     }
 
-	public function insert_chat_old($id_incidencia)
+	/*public function insert_chat_old($id_incidencia)
 	{
-		if($this->session->userdata('logged_in'))
-		{
+		//if($this->session->userdata('logged_in'))
+        if ($this->auth->is_auth()) {
+
 			$data['id_pds'] = $this->session->userdata('id_pds');
 			$data['sfid']   = $this->session->userdata('sfid');
 	
@@ -809,7 +816,7 @@ class Tienda extends CI_Controller {
 		{
 			redirect('tienda','refresh');
 		}
-	}
+	}*/
 	
 	
 	public function strip_html_tags($text)
@@ -844,8 +851,9 @@ class Tienda extends CI_Controller {
 	
 	public function insert_incidencia()
 	{
-		if($this->session->userdata('logged_in'))
-		{
+		//if($this->session->userdata('logged_in'))
+        if ($this->auth->is_auth()) {
+
 			$data['id_pds'] = $this->session->userdata('id_pds');
 			$data['sfid']   = $this->session->userdata('sfid');
 		
@@ -955,8 +963,8 @@ class Tienda extends CI_Controller {
 	
 	public function insert_incidencia_mueble_alarma()
 	{
-		if($this->session->userdata('logged_in'))
-		{		
+		//if($this->session->userdata('logged_in'))
+        if ($this->auth->is_auth()) {
 			$data['id_pds'] = $this->session->userdata('id_pds');
 			$data['sfid']   = $this->session->userdata('sfid');
 		
@@ -1029,8 +1037,9 @@ class Tienda extends CI_Controller {
 	
 	public function alta_incidencia_gracias()
 	{
-		if($this->session->userdata('logged_in'))
-		{
+		//if($this->session->userdata('logged_in'))
+        if ($this->auth->is_auth()) {
+
 			$data['id_pds'] = $this->session->userdata('id_pds');
 			$data['sfid']   = $this->session->userdata('sfid');
 			
@@ -1068,8 +1077,8 @@ class Tienda extends CI_Controller {
 	
 	public function ayuda($tipo)
 	{
-		if($this->session->userdata('logged_in'))
-		{
+		//if($this->session->userdata('logged_in'))
+        if ($this->auth->is_auth()) {
 			$data['id_pds'] = $this->session->userdata('id_pds');
 			$data['sfid']   = $this->session->userdata('sfid');
 
@@ -1129,8 +1138,9 @@ class Tienda extends CI_Controller {
 	
 	public function manuales()
 	{
-		if($this->session->userdata('logged_in'))
-		{
+		//if($this->session->userdata('logged_in'))
+        if ($this->auth->is_auth()) {
+
 			$data['id_pds'] = $this->session->userdata('id_pds');
 			$data['sfid']   = $this->session->userdata('sfid');
 	
@@ -1167,8 +1177,8 @@ class Tienda extends CI_Controller {
 
 	public function logout()
 	{
-		if($this->session->userdata('logged_in'))
-		{		
+		//if($this->session->userdata('logged_in'))
+        if ($this->auth->is_auth()) {
 			$this->session->unset_userdata('logged_in');
             $this->session->sess_destroy();
 		}	
@@ -1196,8 +1206,8 @@ class Tienda extends CI_Controller {
      */
     public function alta_pedido()
     {
-        if($this->session->userdata('logged_in') && $this->session->userdata('hacePedidos'))
-        {
+        //if($this->session->userdata('logged_in') && $this->session->userdata('hacePedidos'))
+        if ($this->auth->is_auth()  && $this->session->userdata('hacePedidos')) {
             $data['id_pds'] = $this->session->userdata('id_pds');
             $data['sfid']   = $this->session->userdata('sfid');
 
@@ -1240,7 +1250,8 @@ class Tienda extends CI_Controller {
      */
     public function insert_pedido()
     {
-        if($this->session->userdata('logged_in') && $this->session->userdata('hacePedidos'))
+      //  if($this->session->userdata('logged_in') && $this->session->userdata('hacePedidos'))
+        if ($this->auth->is_auth() && $this->session->userdata('hacePedidos'))
         {
             $data['id_pds'] = $this->session->userdata('id_pds');
             //$data['sfid']   = $this->session->userdata('sfid');
@@ -1329,7 +1340,7 @@ class Tienda extends CI_Controller {
      */
     public function alta_pedido_gracias()
     {
-        if($this->session->userdata('logged_in')  && $this->session->userdata('hacePedidos'))
+        if ($this->auth->is_auth() && $this->session->userdata('hacePedidos'))
         {
             $data['id_pds'] = $this->session->userdata('id_pds');
             $data['sfid']   = $this->session->userdata('sfid');
@@ -1370,7 +1381,7 @@ class Tienda extends CI_Controller {
      */
     public function pedidos($tipo="abiertos")
     {
-        if ($this->session->userdata('logged_in') && ($this->session->userdata('hacePedidos'))) {
+        if ($this->auth->is_auth() && ($this->session->userdata('hacePedidos'))) {
             $data['id_pds'] = $this->session->userdata('id_pds');
             $data['sfid'] = $this->session->userdata('sfid');
 
@@ -1522,7 +1533,7 @@ class Tienda extends CI_Controller {
      */
     public function detalle_pedido($id_pedido)
     {
-        if($this->session->userdata('logged_in') && ($this->session->userdata('hacePedidos')))
+        if ($this->auth->is_auth() && ($this->session->userdata('hacePedidos')))
         {
             $data['id_pds'] = $this->session->userdata('id_pds');
             $data['sfid']   = $this->session->userdata('sfid');
@@ -1589,7 +1600,7 @@ class Tienda extends CI_Controller {
      */
     public function exportar_pedidos($tipo="abiertos")
     {
-        if ($this->session->userdata('logged_in') && ($this->session->userdata('hacePedidos'))) {
+        if ($this->auth->is_auth() && ($this->session->userdata('hacePedidos'))) {
             $xcrud = xcrud_get_instance();
             $data['id_pds'] = $this->session->userdata('id_pds');
             $data['sfid'] = $this->session->userdata('sfid');

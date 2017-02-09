@@ -36,7 +36,8 @@ class Ot extends CI_Controller {
         $entrada = "ot/cdm_dispositivos_balance";
 
         // Ya está logueado....
-        if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 11)) redirect($entrada);
+        //if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 11)) redirect($entrada);
+        if ($this->auth->is_auth()) {redirect($entrada);}
 
 		if ($this->form_validation->run() == true)
 		{
@@ -1076,7 +1077,8 @@ class Ot extends CI_Controller {
 
 	public function logout()
 	{
-		if($this->session->userdata('logged_in'))
+		//if($this->session->userdata('logged_in'))
+        if($this->auth->is_auth())
 		{		
 			$this->session->unset_userdata('logged_in');
             $this->session->sess_destroy();
