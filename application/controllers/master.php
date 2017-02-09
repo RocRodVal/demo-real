@@ -2125,10 +2125,38 @@ class Master extends CI_Controller {
     {
         if($this->session->userdata('logged_in') && ($this->session->userdata('type') == 9))
         {
-            //print_r($this->session->userdata); exit;
             $ext = (!is_null($formato) ? $formato : $this->ext);    // Formato para exportaciones, especficiado o desde CFG
+
+            /** Crear los filtros           */
+            $array_filtros = array(
+                'id_modelo' =>  '',
+                'id_marca'  =>  ''
+            );
+
+
+            // Consultar a la session si ya se ha buscado algo y guardado allí.
+            $array_sesion = $this->get_filtros($array_filtros);
+
+            /* BORRAR BUSQUEDA */
+            //echo  $this->uri->segment(4);exit;
+            $borrar_busqueda = $this->uri->segment(3);
+            if($borrar_busqueda === "borrar_busqueda")
+            {
+                $this->delete_filtros($array_filtros);
+                //print_r($array_filtros);
+                redirect(site_url("/master/cdm_dispositivos_balance"),'refresh');
+            }
+
+            if($this->input->post('do_busqueda')==="si") $array_sesion = $this->set_filtros($array_filtros);
+
+            /* Creamos al vuelo las variables que vienen de los filtros */
+            foreach($array_filtros as $filtro=>$value){
+                $$filtro = $array_sesion[$filtro];
+                $data[$filtro] = $array_sesion[$filtro]; // Pasamos los valores a la vista.
+            }
+
             $this->load->model('tienda_model');
-            $data['stocks'] = $this->tienda_model->exportar_stock_cruzado($ext,$this->session->userdata('sfid'));
+            $data['stocks'] = $this->tienda_model->exportar_stock_cruzado($ext,$this->session->userdata('sfid'),$array_sesion);
         }
         else
         {
@@ -3970,7 +3998,8 @@ class Master extends CI_Controller {
      */
     public function pedidos($tipo="abiertos")
     {
-        if ($this->session->userdata('logged_in')) {
+        //if ($this->session->userdata('logged_in')) {
+        if ($this->auth->is_auth()) {
 
             $xcrud = xcrud_get_instance();
             $this->load->model(array('pedido_model', 'tienda_model', 'sfid_model'));
@@ -4167,7 +4196,8 @@ class Master extends CI_Controller {
     */
     public function exportar_pedidos($tipo="abiertos")
     {
-        if ($this->session->userdata('logged_in')) {
+       //if ($this->session->userdata('logged_in')) {
+        if ($this->auth->is_auth()) {
             $xcrud = xcrud_get_instance();
             //$data['id_pds'] = $this->session->userdata('id_pds');
             $data['sfid'] = $this->session->userdata('sfid');

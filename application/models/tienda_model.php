@@ -6,7 +6,6 @@ class Tienda_model extends CI_Model {
 		$this->load->database();
         $this->load->model("incidencia_model");
         $this->load->model("intervencion_model");
-
 	}
 
 	
@@ -369,9 +368,12 @@ class Tienda_model extends CI_Model {
 		$this->db->update('pds');
 	}
 
-    public function get_stock_cruzado($array_filtros=NULL) {
+	/*
+	 * Calculo del stock para el cuadro del balance
+	 */
+    public function get_stock_cruzado($array_filtros=NULL,$page = 1, $cfg_pagination = NULL) {
 
-        //print_r($array_filtros);
+        //Preparamos la consulta con los filtros de la busqueda en el caso de que se haya seleccionado alguno
         $where='';
         if(isset($array_filtros["id_modelo"]) && !empty($array_filtros["id_modelo"])) {
             $where .= ' AND temporal.id_device = ' . $array_filtros['id_modelo'];
@@ -380,11 +382,32 @@ class Tienda_model extends CI_Model {
             $where .= ' AND brand_device.id_brand_device = ' . $array_filtros['id_marca'];
         }
 
-        $query = $this->db->query('
+        $limit='';
+        if(!empty($cfg_pagination)) {
+            if ($page==1) {
+                $limit=" LIMIT ".$page  *$cfg_pagination['per_page'];
+            } else {
+                if($page>1){
+                    $limit=" LIMIT ".($page-1) *$cfg_pagination['per_page'].",".  $cfg_pagination['per_page'];
+                }
+            }
+        }
 
+        $this->db->query(" DROP VIEW IF EXISTS robados;");
+        /*Creación de una vista que guarda los datos de los terminales robados y que no han llegado al almacen*/
+        $this->db->query("CREATE VIEW robados AS SELECT devices_pds.id_device,COUNT(*) as suma FROM devices_pds 
+                      INNER JOIN incidencias ON incidencias.id_devices_pds=devices_pds.id_devices_pds 
+                      WHERE devices_pds.status = \"Baja\" AND incidencias.tipo_averia=\"Robo\" and 
+                      incidencias.status_pds=\"Finalizada\" and devices_pds.id_devices_pds NOT IN 
+                      (select id_devices_pds from devices_almacen where id_devices_pds IS NOT NULL)
+                      GROUP BY devices_pds.id_device");
+
+        $query = $this->db->query('
 		SELECT temporal.id_device, brand_device.brand, temporal.device, unidades_pds,unidades_transito, unidades_reservado,
-		(CASE WHEN unidades_pds = 0 THEN 0 ELSE CEIL(unidades_pds * 0.05 + 2) END) as stock_necesario,unidades_rma,
-		unidades_almacen,
+		unidades_rma,unidades_almacen, (case when unidades_robadas is NULL then 0 else unidades_robadas end) as unidades_robadas,
+		(case when unidades_robadas is NULL then (unidades_pds + unidades_transito + unidades_reservado + unidades_rma + unidades_almacen) 
+		else (unidades_pds + unidades_transito + unidades_reservado + unidades_rma + unidades_almacen+unidades_robadas) end) as total,
+		(CASE WHEN unidades_pds = 0 THEN 0 ELSE CEIL(unidades_pds * 0.05 + 2) END) as stock_necesario,
 		(unidades_almacen - (CASE WHEN unidades_pds = 0 THEN 0 ELSE CEIL(unidades_pds * 0.05 + 2) END)) as balance,
 		temporal.status
 		FROM (
@@ -418,14 +441,17 @@ class Tienda_model extends CI_Model {
                     FROM devices_almacen
                     WHERE (devices_almacen.id_device = device.id_device) AND (devices_almacen.status = "RMA") 
                     )
-                    as unidades_rma
+                    as unidades_rma,
+                    ( SELECT suma FROM robados  
+                      WHERE robados.id_device = device.id_device 
+                      ) 
+                    as unidades_robadas 
 
                     FROM device
                 ) as temporal
 
         JOIN brand_device ON temporal.brand_device = brand_device.id_brand_device
-        WHERE temporal.status = "Alta" ' .$where. ' ORDER BY brand_device.brand ASC, temporal.device ASC ');
-
+        WHERE temporal.status = "Alta" ' .$where. ' ORDER BY brand_device.brand ASC, temporal.device ASC '.$limit);
 
 //echo $this->db->last_query(); exit;
 
@@ -435,7 +461,6 @@ class Tienda_model extends CI_Model {
 	public function get_stock_cruzado_old() {
 	
 		$query = $this->db->query('
-
 		SELECT temporal.id_device, brand_device.brand, temporal.device, unidades_pds,
 		(CASE WHEN unidades_pds = 0 THEN 0 ELSE CEIL(unidades_pds * 0.05 + 2) END) as stock_necesario,
 		unidades_almacen,
@@ -469,15 +494,13 @@ class Tienda_model extends CI_Model {
         ORDER BY brand_device.brand ASC, temporal.device ASC ');
 
 
-
-
 		return $query->result();
 	}
 
     /*
      * Generar CSV con el stock cruzado (Balance de activos).
      */
-    public function get_stock_cruzado_csv() {
+   /* public function get_stock_cruzado_csv() {
 
         $this->load->dbutil();
         $this->load->helper('file');
@@ -525,7 +548,7 @@ class Tienda_model extends CI_Model {
         force_download('Demo_Real-Balance_Activos.csv', $data);
 
 
-    }
+    }*/
 
 
 
@@ -542,16 +565,16 @@ class Tienda_model extends CI_Model {
 
 
         $resultados = $this->get_stock_cruzado($array_filtros);
-        if($controler=="admin") {
-            $arr_titulos = array('Id dispositivo', 'Fabricante', 'Dispositivo', 'Ud. pds', 'Uds. Transito', 'Uds. Reservadas','Stock necesario', 'Uds. Almacén RMA',
-                'Uds. Almacén', 'Balance');
+        //if($controler=="admin") {
+            $arr_titulos = array('Id dispositivo', 'Fabricante', 'Dispositivo', 'Uds. tienda', 'Uds. Transito',
+                'Uds. Reservadas','Uds. Almacén RMA','Uds. Almacén','Uds. Robadas','Total', 'Stock necesario', 'Balance');
             $excluir = array('status');
-        }
+        /*}
         else {
-            $arr_titulos = array('Id dispositivo', 'Fabricante', 'Dispositivo', 'Ud. pds', 'Uds. Transito', 'Stock necesario',
-                'Uds. Almacén', 'Balance');
+            $arr_titulos = array('Id dispositivo', 'Fabricante', 'Dispositivo', 'Ud. pds', 'Uds. Transito',
+                'Uds. Almacén', 'Total', 'Stock necesario', 'Balance');
             $excluir = array('unidades_reservado','unidades_rma','status');
-        }
+        }*/
 
         $datos = preparar_array_exportar($resultados,$arr_titulos,$excluir);
         exportar_fichero($formato,$datos,"Balance_Dispositivos__".date("d-m-Y"));
@@ -1880,7 +1903,31 @@ class Tienda_model extends CI_Model {
 	
 		return $query->result();
 	}
-		
+
+	/*
+	 * Cantidad de terminales que están dados de alta
+	 */
+    public function get_devices_quantity($array_filtros=NULL) {
+       // $where='';
+        if(isset($array_filtros["id_modelo"]) && !empty($array_filtros["id_modelo"])) {
+            //$where .= ' AND device.id_device = ' . $array_filtros['id_modelo'];
+            $this->db->where('device.id_device',$array_filtros['id_modelo']);
+        }
+        if(isset($array_filtros["id_marca"]) && !empty($array_filtros["id_marca"])) {
+
+            $this->db->join('brand_device','brand_device.id_brand_device=device.brand_device')
+            ->where('brand_device.id_brand_device',$array_filtros['id_marca']);
+
+            //$where .= ' AND brand_device.id_brand_device = ' . $array_filtros['id_marca'];
+        }
+        $query = $this->db->select('count(*) as cantidad')
+        ->where('device.status','Alta')
+            ->order_by('device')
+            ->get('device');
+        //return $query->cantidad;
+        //echo $this->db->last_query(); exit;
+        return $query->row()->cantidad;
+    }
 	
 	public function get_material_dispositivos($id) {
 	
@@ -2842,7 +2889,7 @@ class Tienda_model extends CI_Model {
                 $id_device = $data["id_device"];
                 $dueno = NULL;
                 $procesado = $data["procesado"];
-                $status=NULL;
+                $status=$data['status'];
                 $id_devices_almacen = $data['id_devices_almacen_new'];
             }
 
@@ -2859,8 +2906,8 @@ class Tienda_model extends CI_Model {
                 'status'    => $status
             );
 
-
-            $this->db->insert('historico_io',$elemento);
+           // print_r($elemento);
+          //  $this->db->insert('historico_io',$elemento);
 
         }
         elseif($tipo==="alarm")         // ES DE TIPO ALARMA
@@ -2881,9 +2928,9 @@ class Tienda_model extends CI_Model {
             );
 
 
-            $this->db->insert('historico_io',$elemento);
-        }
 
+        }
+        $this->db->insert('historico_io',$elemento);
 //echo $this->db->last_query(); exit;
 
     }
@@ -3103,6 +3150,31 @@ class Tienda_model extends CI_Model {
 
         //return $exito;
     }
+
+    /*
+	 * insertamos los datos de un dispositivo del almacen en el historico
+	 */
+    public function alta_historicoIo($elemento,$estado_anterior=NULL){
+        if(!empty($estado_anterior)) {
+            if ($estado_anterior != $elemento['status']) {
+                $this->db->insert('historico_io', $elemento);
+            }
+        }
+        else {
+            $this->db->insert('historico_io', $elemento);
+        }
+    }
+
+    /*insertamos un device en almacen*/
+    public function alta_device_almacen($elemento){
+
+        if (!empty($elemento)) {
+            $this->db->insert('devices_almacen', $elemento);
+            $id=$this->db->insert_id();
+            return $id;
+        }
+    }
+
 
 }
 

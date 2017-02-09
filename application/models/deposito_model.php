@@ -1,5 +1,5 @@
 <?php
-
+require ( 'system/core/Model.php'); // configuration
 class Deposito_model extends CI_Model {
 
 	public function __construct()	{
@@ -344,7 +344,9 @@ class Deposito_model extends CI_Model {
 		{
 			return FALSE;
 		}
-	}	
+	}
+
+
 	
 }
 

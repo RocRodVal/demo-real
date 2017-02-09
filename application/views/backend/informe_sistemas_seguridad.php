@@ -5,25 +5,6 @@
             <h1 class="page-header"><?php echo $title ?></h1>
         </div>
     </div>
-    <!--  <div class="filtro">
-                <form action="<?=site_url($controlador."/informe_sistemas_seguridad/")?>" method="post" class="filtros form-mini col-lg-12">
-                    <div class="col-lg-1">
-                        <label for="anio">Anio:</label>
-                        <select name="anio" id ="anio" class="form-mini input-sm">
-                            <option value="" <?=($anio=="" ? ' selected="selected" ':'')?>>Selecciona</option>
-                            <?php
-    echo '<option value="2015" '. ($anio=="2015" ? ' selected="selected" ':'').'>2015</option>';
-    echo '<option value="2016"'. ($anio=="2016" ? ' selected="selected" ':'').'>2016</option>';
-    ?>
-                        </select>
-                    </div>
-                    <div class="col-lg-1">
-                        <input type="hidden" name="filtrar_anio" value="si">
-                        <input type="submit" value="Generar" class="form-control input-sm">
-                    </div>
-                </form>
-            </div> -->
-
     <div class="row">
         <div class="col-lg-12">
             <div class="row buscador">
@@ -33,20 +14,14 @@
                             <label for="anio">Año</label>
                             <select id="anio" name="anio" class="form-control">
                                 <option value="">Escoge año...</option>
-
                                 <?php
-                                //for($i=2015;$i<=getdate()['year'];$i++) {
                                 for($i=2015;$i<=date("Y");$i++) {
                                     echo '<option value="'.$i.'" ' . ($anio == $i ? ' selected="selected" ' : '') . '>'.$i.'</option>';
-                                    //  echo '<option value="2016"' . ($anio == "2016" ? ' selected="selected" ' : '') . '>2016</option>';
                                 }
                                 ?>
                             </select>
                         </div>
-                        <!--<div class="form-group">
-                            <input type="hidden" name="filtrar_anio" value="si">
-                            <input type="submit" value="Generar" class="form-control input-sm">
-                        </div>-->
+
 
                         <div class="form-group">
                             <label for="tipo">Origen</label>
@@ -61,10 +36,6 @@
                             <input type="hidden" name="generar_informe" value="si">
                             <button type="submit" id="submit_button" class="form-control input-sm">Generar</button>
                         </div>
-                        <!--<div class="form-group">
-                            <input type="hidden" name="filtrar_anio" value="si">
-                            <input type="submit" value="Generar" class="form-control input-sm">
-                        </div>-->
                     </div>
                 </form>
             </div>
@@ -73,7 +44,7 @@
 
     <div class="row">
         <div class="col-lg-12">
-            <?
+            <?php
             if (!empty($anio) && !empty($valor_resultado)) { ?>
             <p><a href="<?=base_url().$controlador?>/exportar_sistemas_seguridad/<?=$anio?>/<?=$tipo?>" class="btn exportar"><i class="glyphicon glyphicon-file"></i> Exportar Excel</a></p>
             <div class="table-responsive">
@@ -92,13 +63,11 @@
                         <th>Fabricante</th>
                         <th>Dueño</th>
                         <?php
-
                         foreach($meses_columna as $clave=>$valor)
                         {
                             echo "<th>".$valor."</th>";
                         }
                         ?>
-
                     </tr>
                     </thead>
                     <tbody>
@@ -122,15 +91,15 @@
                     }
                     ?>
                     </tbody>
-                    <?php } else {
-                        $cadena="";
-                        if (!empty($tipo)) {
-                            $cadena=" de ".$tipo;
-                            if (!empty($anio)) {
-                                $cadena.=" para el año ".$anio;
-                            }
-                        }
-                        ?>
+      <?php } else {
+          $cadena="";
+          if (!empty($tipo)) {
+              $cadena=" de ".$tipo;
+              if (!empty($anio)) {
+                  $cadena.=" para el año ".$anio;
+              }
+          }
+          ?>
                         <p class="message warning"><i class="glyphicon glyphicon-warning-sign"></i> No hay datos <?=$cadena?></p>
                         <?php
                     }?>
