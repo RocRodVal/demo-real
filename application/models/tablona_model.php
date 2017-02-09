@@ -43,7 +43,7 @@ class Tablona_model extends CI_Model {
 
 		$this->db->query(" DROP TABLE IF EXISTS facturacion_temp; ");
 		$this->db->query('
-                CREATE TEMPORARY TABLE facturacion_temp AS
+                CREATE TEMPORARY TABLE facturacion_temp  AS
                 (
                     SELECT f.fecha as fecha, COUNT(f.id_incidencia) AS incidencias,  SUM(f.units_device) AS dispositivos, SUM(f.units_alarma) AS otros
                     FROM facturacion f
@@ -125,7 +125,7 @@ class Tablona_model extends CI_Model {
         $this->db->query(" DROP TABLE IF EXISTS historico_temp; ");
         if($tipo=='incidencias') {
             $this->db->query('
-                CREATE TEMPORARY TABLE historico_temp AS
+                CREATE TEMPORARY TABLE historico_temp (INDEX(id_incidencia)) AS
                 (
                     SELECT id_incidencia,MIN(fecha) as fecha ,status_pds
                     FROM historico
@@ -135,7 +135,7 @@ class Tablona_model extends CI_Model {
             ');
         }else {
             $this->db->query('
-                CREATE TEMPORARY TABLE historico_temp AS
+                CREATE TEMPORARY TABLE historico_temp (INDEX(id_pedido)) AS
                 (
                     SELECT id_pedido,MIN(fecha) as fecha ,status
                     FROM pedidos_historico

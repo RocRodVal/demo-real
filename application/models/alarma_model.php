@@ -245,6 +245,7 @@ class Alarma_model extends CI_Model {
             ->join('brand_alarm','brand_alarm.id_brand_alarm=alarm.brand_alarm')
             ->join('type_alarm','type_alarm.id_type_alarm=alarm.type_alarm')
             ->where('alarm.elemento_conectado',1)
+            ->where('alarm.status','Alta')
             ->order_by('alarm ASC')
             ->get('alarm');
 
