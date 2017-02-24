@@ -1205,15 +1205,17 @@ class Admin extends CI_Controller
 
     public function insert_chat()
     {
+
         if ($this->auth->is_auth()) {
+
             $id_pds = $this->uri->segment(3);
             $id_inc = $this->uri->segment(4);
 
             $xcrud = xcrud_get_instance();
             $this->load->model('chat_model');
 
-            $config['upload_path'] = dirname($_SERVER["SCRIPT_FILENAME"]) . '/chats/';
-            $config['upload_url'] = base_url() . '/chats/';
+            $config['upload_path'] = dirname($_SERVER["SCRIPT_FILENAME"]) . '/uploads/chats/';
+            $config['upload_url'] = base_url() . 'uploads/chats/';
             $config['allowed_types'] = 'gif|jpg|png';
             $new_name = $id_inc . '-' . time();
             $config['file_name'] = $new_name;
@@ -1229,6 +1231,7 @@ class Admin extends CI_Controller
                 $foto = $new_name.$dataF["file_ext"];
             } else {
                 echo 'Ha fallado la carga de la foto.';
+                //$error = 'Ha fallado la carga de la foto.'
             }
 
             $texto_chat = $this->input->post('texto_chat');
@@ -1284,9 +1287,12 @@ class Admin extends CI_Controller
             $foto = NULL;
 
             if ($this->upload->do_upload()) {
-                $foto = $new_name;
+                //$foto = $new_name;
+                $dataF=$this->upload->data();
+                $foto = $new_name.$dataF["file_ext"];
             } else {
-                $error = 'Ha fallado la carga de la foto.';
+                //$error = 'Ha fallado la carga de la foto.';
+                echo 'Ha fallado la carga de la foto.';
             }
 
             $texto_chat = $this->input->post('texto_chat');
