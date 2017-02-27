@@ -17,7 +17,7 @@
 								<th>Unidades</th>
 								<th>Estado inicial</th>
 								<th>Estado final</th>
-								<th>Dueño</th>
+								<th>IMEIs</th>
 							</tr>
 							</thead>
 							<tbody>
@@ -38,6 +38,7 @@
 									<select id="inicio_dipositivo_almacen" name="inicio_dipositivo_almacen" style="width:150px">
 										<option value="1">En stock</option>
 										<option value="2">Reservado</option>
+										<option value="3">Televenta</option>
 										<option value="4">En transito</option>
 									</select>
 								</td>
@@ -45,14 +46,19 @@
 									<select id="destino_dipositivo_almacen" name="destino_dipositivo_almacen" style="width:150px">
 										<option value="1">En stock</option>
 										<option value="2">Reservado</option>
+										<option value="3">Televenta</option>
 										<option value="4">En transito</option>
 										<option value="5">Baja</option>
 									</select>
 								</td>
 								<td>
+									<textarea id="imeis" name="imeis" rows="8" cols="40"></textarea>
+								</td>
+
+								<td hidden>
 									<select id="owner_dipositivo_almacen" name="owner_dipositivo_almacen" style="width:50px">
 										<option value="ET">ET</option>
-										<option value="OT">OT</option>
+
 									</select>
 								</td>
 							</tr>

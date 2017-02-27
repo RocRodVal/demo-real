@@ -51,6 +51,7 @@
             case "Reservado":   $unidades=-1; break;
             case "Baja":        $unidades=-1; break;
             case "Transito":    $unidades=-1; break;
+            case "Televenta":   $unidades=-1; break;
             case "RMA":         $unidades=-1; break;
         }
 

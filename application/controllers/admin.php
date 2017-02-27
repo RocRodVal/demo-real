@@ -3942,10 +3942,12 @@ class Admin extends CI_Controller
     {
         if ($this->auth->is_auth())
         {
+
             $this->load->model('tienda_model');
 
             $num = $this->tienda_model->baja_dispositivos_almacen_update($this->input->post('dipositivo_almacen'),$this->input->post('owner_dipositivo_almacen'),
-                $this->input->post('units_dipositivo_almacen'),$this->input->post('inicio_dipositivo_almacen'),$this->input->post('destino_dipositivo_almacen'));
+                $this->input->post('units_dipositivo_almacen'),$this->input->post('inicio_dipositivo_almacen'),$this->input->post('destino_dipositivo_almacen'),
+                $this->input->post('imeis'));
 
             $this->session->set_flashdata("id_device", $this->input->post('dipositivo_almacen'));
             $this->session->set_flashdata("mensaje1","");
@@ -3959,6 +3961,10 @@ class Admin extends CI_Controller
                     }
                     case 2:{
                         $this->session->set_flashdata("mensaje1", " puesto en reservado ");
+                        break;
+                    }
+                    case 3:{
+                        $this->session->set_flashdata("mensaje1", " puesto en televenta ");
                         break;
                     }
                     case 4:{
@@ -3982,6 +3988,10 @@ class Admin extends CI_Controller
                     }
                     case 2:{
                         $this->session->set_flashdata("mensaje1", " poner en reservado ");
+                        break;
+                    }
+                    case 3:{
+                        $this->session->set_flashdata("mensaje1", " poner en televenta ");
                         break;
                     }
                     case 4:{
@@ -7717,7 +7727,10 @@ class Admin extends CI_Controller
         $xcrud->modal('picture_url_1');
         $xcrud->modal('picture_url_2');
         $xcrud->modal('picture_url_3');
-        $xcrud->label('id_devices_almacen', 'Ref.')->label('alta', 'Fecha de alta')->label('id_device', 'Dispositivo')->label('serial', 'Nº de serie')->label('IMEI', 'IMEI')->label('mac', 'MAC')->label('barcode', 'Código de barras')->label('id_color_device', 'Color')->label('id_complement_device', 'Complementos')->label('id_status_device', 'Estado dispositivo')->label('id_status_packaging_device', 'Estado packaging')->label('picture_url_1', 'Foto #1')->label('picture_url_2', 'Foto #2')->label('picture_url_3', 'Foto #3')->label('description', 'Comentarios')->label('owner', 'Dueño')->label('status', 'Estado');
+        $xcrud->label('id_devices_almacen', 'Ref.')->label('alta', 'Fecha de alta')->label('id_device', 'Dispositivo')->label('serial', 'Nº de serie')
+            ->label('IMEI', 'IMEI')->label('mac', 'MAC')->label('barcode', 'Código de barras')->label('id_color_device', 'Color')->label('id_complement_device', 'Complementos')
+            ->label('id_status_device', 'Estado dispositivo')->label('id_status_packaging_device', 'Estado packaging')->label('picture_url_1', 'Foto #1')
+            ->label('picture_url_2', 'Foto #2')->label('picture_url_3', 'Foto #3')->label('description', 'Comentarios')->label('owner', 'Dueño')->label('status', 'Estado');
         $xcrud->columns('id_devices_almacen,id_device,IMEI,serial,barcode,status');
         $xcrud->fields('id_devices_almacen,alta,id_device,serial,IMEI,serial,barcode,id_color_device,id_complement_device,id_status_device,id_status_packaging_device,picture_url_1,picture_url_2,picture_url_3,description,owner,status');
         $xcrud->order_by('id_device', 'asc');
