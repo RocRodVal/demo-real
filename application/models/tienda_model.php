@@ -172,7 +172,7 @@ class Tienda_model extends CI_Model {
             $units = (($units > $contar->contador) ? $contar->contador : $units);
             $sql= "SELECT devices_almacen.id_devices_almacen,devices_almacen.id_device FROM devices_almacen ".$join ." 
             WHERE id_device=$id_device AND owner='$owner'".$condicion." LIMIT ".$units;
-
+//echo $sql."<br>";
             $dispositivos_a_borrar = $this->db->query($sql)->result();
             $total_baja =  $this->db->affected_rows();
             $cont = 0;
@@ -185,16 +185,17 @@ class Tienda_model extends CI_Model {
 
                 if ($agregarIMEI){
                     $this->db->set('IMEI',trim($array_imeis[$cont],"'"));
-                }
-                if (!empty($array_imeis)) {
-                    $this->db->where('IMEI',trim($array_imeis[$cont],"'"));
+                } else {
+                    if (!empty($array_imeis)) {
+                        $this->db->where('IMEI', trim($array_imeis[$cont], "'"));
+                    }
                 }
                 // Borrado lógico del dispositivo.
                 $this->db->set('status',$statusD);
                 $this->db->where('id_devices_almacen', $id_devices_almacen);
                 $this->db->update('devices_almacen');
 
-                  echo $this->db->last_query()."<br>";
+               // echo $this->db->last_query()."<br>";
                 // Insertar operación de baja en el histórico
                 $data = array(
                     'id_devices_almacen' => $id_devices_almacen,
@@ -208,7 +209,7 @@ class Tienda_model extends CI_Model {
                 //echo $this->db->last_query()."<br>";
                 $cont++;
             }
-
+//exit;
             return $total_baja;
 
         }else{
@@ -449,8 +450,10 @@ class Tienda_model extends CI_Model {
         $query = $this->db->query('
 		SELECT temporal.id_device, brand_device.brand, temporal.device, unidades_pds,unidades_transito, unidades_reservado,
 		unidades_rma,unidades_almacen, (case when unidades_robadas is NULL then 0 else unidades_robadas end) as unidades_robadas,
-		(case when unidades_robadas is NULL then (unidades_pds + unidades_transito + unidades_reservado + unidades_rma + unidades_almacen) 
-		else (unidades_pds + unidades_transito + unidades_reservado + unidades_rma + unidades_almacen+unidades_robadas) end) as total,
+		unidades_televenta,
+		(case when unidades_robadas is NULL then (unidades_pds + unidades_transito + unidades_reservado + unidades_rma + 
+		unidades_almacen+unidades_televenta) else (unidades_pds + unidades_transito + unidades_reservado + unidades_rma + 
+		unidades_almacen+unidades_robadas+unidades_televenta) end) as total,
 		(CASE WHEN unidades_pds = 0 THEN 0 ELSE CEIL(unidades_pds * 0.05 + 2) END) as stock_necesario,
 		(unidades_almacen - (CASE WHEN unidades_pds = 0 THEN 0 ELSE CEIL(unidades_pds * 0.05 + 2) END)) as balance,
 		temporal.status
@@ -489,7 +492,12 @@ class Tienda_model extends CI_Model {
                     ( SELECT suma FROM robados  
                       WHERE robados.id_device = device.id_device 
                       ) 
-                    as unidades_robadas 
+                    as unidades_robadas,
+                      ( SELECT COUNT(*)
+                        FROM devices_almacen
+                        WHERE (devices_almacen.id_device = device.id_device) AND (devices_almacen.status = "Televenta") 
+                    )
+                    as unidades_televenta
 
                     FROM device
                 ) as temporal
@@ -611,7 +619,7 @@ class Tienda_model extends CI_Model {
         $resultados = $this->get_stock_cruzado($array_filtros);
         //if($controler=="admin") {
             $arr_titulos = array('Id dispositivo', 'Fabricante', 'Dispositivo', 'Uds. tienda', 'Uds. Transito',
-                'Uds. Reservadas','Uds. Almacén RMA','Uds. Almacén','Uds. Robadas','Total', 'Stock necesario', 'Balance');
+                'Uds. Reservadas','Uds. Almacén RMA','Uds. Almacén','Uds. Robadas','Uds. Televenta','Total', 'Stock necesario', 'Balance');
             $excluir = array('status');
         /*}
         else {

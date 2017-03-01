@@ -61,6 +61,7 @@
                                     <th>Deposito en almacén RMA</th>
                                     <th>Deposito en almacén</th>
                                     <th>Uds. Robadas</th>
+                                    <th>Uds. Televenta</th>
                                     <th>Total</th>
                                     <th>Stock necesario</th>
                                     <th>Balance</th>
@@ -101,6 +102,7 @@
                                         <td><?php echo $stock->unidades_rma ?></td>
                                         <td class="<?=$class_almacen?>"><?php echo $stock->unidades_almacen ?></td>
                                         <td><?php echo $stock->unidades_robadas ?></td>
+                                        <td><?php echo $stock->unidades_televenta ?></td>
                                         <td><?=$stock->total?></td>
                                         <td><?php echo $necesitamos ?></td>
                                         <td class="<?=$class_balance?>"><?php echo $balance ?></td>
