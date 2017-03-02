@@ -237,7 +237,7 @@ echo $sql."<br>";
                 //echo $this->db->last_query()."<br>";
                 $cont++;
             }
-exit;
+//exit;
             return $cont;
 
         } else {
