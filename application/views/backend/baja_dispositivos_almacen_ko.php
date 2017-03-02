@@ -7,7 +7,8 @@
     </div>
     <div class="row">
         <p>&nbsp;</p>
-        <p class="message warning"><i class="glyphicon glyphicon-warning-sign"></i> No se han podido <?=$mensaje1?> <?=$num?> terminales del modelo <strong><?=$modelo?></strong>, <?=$mensaje2?>.</p>
+        <p class="message warning"><i class="glyphicon glyphicon-warning-sign"></i> No se han podido <?=$mensaje1?> <?=$num?> terminales del modelo <strong><?=$modelo?></strong>,
+            <?=$mensaje2?>.</p>
     </div>
 </div>
 <!-- /#page-wrapper -->

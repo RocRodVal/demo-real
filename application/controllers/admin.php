@@ -3952,7 +3952,10 @@ class Admin extends CI_Controller
             $this->session->set_flashdata("id_device", $this->input->post('dipositivo_almacen'));
             $this->session->set_flashdata("mensaje1","");
             $this->session->set_flashdata("num", $num);
-            if($num >= 0) {
+//echo $num; exit;
+//            exit;
+
+            if($num != -1) {
 
                 switch ($this->input->post('destino_dipositivo_almacen')){
                     case 1:{
@@ -7733,6 +7736,7 @@ class Admin extends CI_Controller
             ->label('picture_url_2', 'Foto #2')->label('picture_url_3', 'Foto #3')->label('description', 'Comentarios')->label('owner', 'Dueño')->label('status', 'Estado');
         $xcrud->columns('id_devices_almacen,id_device,IMEI,serial,barcode,status');
         $xcrud->fields('id_devices_almacen,alta,id_device,serial,IMEI,serial,barcode,id_color_device,id_complement_device,id_status_device,id_status_packaging_device,picture_url_1,picture_url_2,picture_url_3,description,owner,status');
+        $xcrud->where('status!=','Enviado');
         $xcrud->order_by('id_device', 'asc');
         $xcrud->order_by('status', 'asc');
         $xcrud->order_by('id_devices_almacen', 'asc');
