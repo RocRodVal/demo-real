@@ -77,7 +77,7 @@ class Tienda_model extends CI_Model {
 	 * Actualiza el estado de los terminales. En el caso de que nos envien IMEIs de éstos se cambiara el estado a los
 	 * dispositivos que tengan ese IMEI
 	 */
-    public function baja_dispositivos_almacen_update($id_device,$owner,$units,$status_inc,$status_dest,$imeis=NULL)
+    public function baja_dispositivos_almacen_update($id_device,$units,$status_inc,$status_dest,$imeis=NULL)
     {
         $join="";
 
@@ -130,7 +130,7 @@ class Tienda_model extends CI_Model {
                     $condicionImei=" AND IMEI IS NULL";
                 }
 
-                $condicion=" AND material_incidencias.id_devices_almacen IS NULL AND status='Reservado' ".$condicionImei;
+                $condicion=" AND material_incidencias.id_devices_almacen IS NULL AND id_device=".$id_device." AND status='Reservado' ".$condicionImei;
                 $join="LEFT JOIN material_incidencias ON material_incidencias.id_devices_almacen=devices_almacen.id_devices_almacen ";
                 $statusI="Reservado";
                 break;
@@ -142,7 +142,7 @@ class Tienda_model extends CI_Model {
                     $condicionImei=" AND IMEI IS NULL";
                 }
 
-                $condicion=" AND status='Televenta' ".$condicionImei;
+                $condicion=" AND status='Televenta' AND id_device=".$id_device." ".$condicionImei;
                 //$join="LEFT JOIN material_incidencias ON material_incidencias.id_devices_almacen=devices_almacen.id_devices_almacen ";
                 $statusI="Televenta";
                 break;
@@ -153,7 +153,7 @@ class Tienda_model extends CI_Model {
                 }else {
                     $condicionImei=" AND IMEI IS NULL";
                 }
-                $condicion=" AND material_incidencias.id_devices_almacen IS NULL AND status='Transito' AND id_devices_pds IS NULL ".$condicionImei;
+                $condicion=" AND material_incidencias.id_devices_almacen IS NULL AND status='Transito' AND id_device=".$id_device." AND id_devices_pds IS NULL ".$condicionImei;
                 $join="LEFT JOIN material_incidencias ON material_incidencias.id_devices_almacen=devices_almacen.id_devices_almacen ";
                 $statusI="Transito";
                 break;

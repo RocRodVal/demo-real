@@ -3945,7 +3945,7 @@ class Admin extends CI_Controller
 
             $this->load->model('tienda_model');
 
-            $num = $this->tienda_model->baja_dispositivos_almacen_update($this->input->post('dipositivo_almacen'),$this->input->post('owner_dipositivo_almacen'),
+            $num = $this->tienda_model->baja_dispositivos_almacen_update($this->input->post('dipositivo_almacen'),
                 $this->input->post('units_dipositivo_almacen'),$this->input->post('inicio_dipositivo_almacen'),$this->input->post('destino_dipositivo_almacen'),
                 $this->input->post('imeis'));
 
