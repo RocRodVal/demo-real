@@ -194,13 +194,12 @@ class Tienda_model extends CI_Model {
     if (!$error) {
         $sql = "SELECT COUNT(id_device) as contador FROM devices_almacen " . $join . " WHERE id_device=$id_device " . $condicion;
         $contar = $this->db->query($sql)->row();
-echo $sql."<br>";
-  //  print_r($contar);
+
         if ($contar->contador > 0) {
             $units = (($units > $contar->contador) ? $contar->contador : $units);
             $sql = "SELECT devices_almacen.id_devices_almacen,devices_almacen.id_device FROM devices_almacen " . $join . " 
                 WHERE id_device=$id_device " . $condicion . " LIMIT " . $units;
-echo $sql."<br>";
+
             $dispositivos_a_borrar = $this->db->query($sql)->result();
             //$total_baja =  $this->db->affected_rows();
             $cont = 0;
@@ -223,7 +222,7 @@ echo $sql."<br>";
                 $this->db->where('id_devices_almacen', $id_devices_almacen);
                 $this->db->update('devices_almacen');
 
-                    echo $this->db->last_query()."<br>";
+                 //   echo $this->db->last_query()."<br>";
                 // Insertar operación de baja en el histórico
                 $data = array(
                     'id_devices_almacen' => $id_devices_almacen,
@@ -237,7 +236,7 @@ echo $sql."<br>";
                 //echo $this->db->last_query()."<br>";
                 $cont++;
             }
-//exit;
+
             return $cont;
 
         } else {
