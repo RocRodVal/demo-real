@@ -346,6 +346,7 @@
                         <tr>
                             <th>Incidencia</th>
                             <th>Modelo</th>
+                            <th>IMEI</th>
                             <th>Descripcion</th>
                         </tr>
                         </thead>
@@ -356,6 +357,7 @@
                             <tr>
                                 <td><a href="<?=site_url("admin/operar_incidencia/".$recogida->id_pds."/".$recogida->id_incidencia)."/recogida";?>"><?php echo $recogida->id_incidencia ?></a></td>
                                 <td><?php echo $recogida->device ?></td>
+                                <td><?php echo $recogida->IMEI ?></td>
                                 <td><?php echo $recogida->descripcion ?></td>
                             </tr>
                             <?php

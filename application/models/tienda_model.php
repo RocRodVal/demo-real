@@ -1964,13 +1964,13 @@ serial,barcode,id_color_device,id_complement_device,id_status_device,id_status_p
     o porque genero la incidencia y no se ha enviado a almacen*/
     public function get_devices_recogida() {
         /* Terminales que asignaron a la incidencia pero no se usaron*/
-        $sql="SELECT m.id_incidencia,i.id_pds, d.* ,'Se asigno pero no se uso' as descripcion
+        $sql="SELECT m.id_incidencia,i.id_pds, a.IMEI as IMEI,d.* ,'Se asigno pero no se uso' as descripcion
               FROM material_incidencias m
               INNER JOIN devices_almacen a ON a.id_devices_almacen=m.id_devices_almacen AND a.status='Transito'
               INNER JOIN incidencias i ON i.id_incidencia=m.id_incidencia AND i.status='Pendiente recogida'
               INNER JOIN device d ON d.id_device=a.id_device
               UNION
-              SELECT i.id_incidencia,i.id_pds,d.*,'genero la incidencia' as descripcion
+              SELECT i.id_incidencia,i.id_pds,a.IMEI as IMEI,d.*,'genero la incidencia' as descripcion
               FROM devices_almacen a
               INNER JOIN incidencias i ON i.id_devices_pds = a.id_devices_pds AND a.status='Transito' AND i.status='Pendiente recogida'
               INNER JOIN device d ON d.id_device=a.id_device";
