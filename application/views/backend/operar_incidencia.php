@@ -283,6 +283,9 @@
                             <th>Estado:</th> <td><?php echo $incidencia['status'] ?></td>
                         </tr>
                         <tr>
+                            <th>Estados:</th> <td><?php echo $estados ?></td>
+                        </tr>
+                        <tr>
                             <th>Fecha asignación material:</th>
                             <?php if (!empty($historico_material_asignado)) { ?>
                                <td><?php echo $historico_material_asignado; ?></td>

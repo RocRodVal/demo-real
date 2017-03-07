@@ -868,7 +868,7 @@ class Admin extends CI_Controller
 
 
             $xcrud = xcrud_get_instance();
-            $this->load->model(array('chat_model', 'intervencion_model', 'tienda_model', 'sfid_model'));
+            $this->load->model(array('chat_model', 'intervencion_model', 'tienda_model', 'sfid_model','incidencia_model'));
 
             $sfid = $this->tienda_model->get_pds($id_pds);
 
@@ -891,6 +891,19 @@ class Admin extends CI_Controller
 
             $incidencia = $this->tienda_model->get_incidencia($id_inc);
 
+            $estados = $this->incidencia_model->get_estados($id_inc);
+            $data['estados']="";
+            $primero=true;
+            foreach ($estados as $e){
+                if ($primero) {
+                    $data['estados'] .= $e['status'];
+                    $primero=false;
+                }else {
+                    $data['estados'] .= ", ".$e['status'];
+
+                }
+            }
+
             $data['last_updated'] = date("d/m/Y",strtotime($incidencia['last_updated']));
             $data['status_pds'] = $incidencia['status'];
             $historico_revisada = $this->tienda_model->historico_fecha($id_inc,'Revisada');
@@ -911,10 +924,8 @@ class Admin extends CI_Controller
 
 
             $incidencia['intervencion'] = $this->intervencion_model->get_intervencion_incidencia($id_inc);
-            //print_r($incidencia);echo "<br>";
             $incidencia['device'] = $this->sfid_model->get_device($incidencia['id_devices_pds']);
             $incidencia['display'] = $this->sfid_model->get_display($incidencia['id_displays_pds']);
-            //echo print_r($incidencia['display']);;
 
             $data['incidencia'] = $incidencia;
             $data['historico_fecha_sustituido'] ='';
@@ -925,7 +936,6 @@ class Admin extends CI_Controller
                     $data['status_device_incidencia'] = $resultado['status'];
 
                     $historico_fecha_sust = $this->tienda_model->historico_fecha($id_inc,'Sustituido');
-                   // print_r($historico_fecha_sust);
                     if (isset($historico_fecha_sust['fecha'])) {
                         $data['historico_fecha_sustituido'] =date("d/m/Y", strtotime($historico_fecha_sust['fecha']));
                     }else {
@@ -936,7 +946,7 @@ class Admin extends CI_Controller
                     }
                  }
             } else {$data['status_device_incidencia']='NoSustituir';}
-//echo $data['status_device_incidencia']; exit;
+
             $data['fail_device'] = $incidencia['fail_device'];
             $data['alarm_display'] = $incidencia['alarm_display'];
             $data['alarm_device'] = $incidencia['alarm_device'];
@@ -1476,7 +1486,7 @@ class Admin extends CI_Controller
                         $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'], 9, $id_inc);
                     }
                 //}
-                $this->tienda_model->incidencia_update_cierre($id_inc, $fecha_cierre);
+               // $this->tienda_model->incidencia_update_cierre($id_inc, $fecha_cierre);
             }
         }
 
