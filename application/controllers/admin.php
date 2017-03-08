@@ -1476,7 +1476,7 @@ class Admin extends CI_Controller
                         $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'], 9, $id_inc);
                     }
                 //}
-                $this->tienda_model->incidencia_update_cierre($id_inc, $fecha_cierre);
+               // $this->tienda_model->incidencia_update_cierre($id_inc, $fecha_cierre);
             }
         }
 
