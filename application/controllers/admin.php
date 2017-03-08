@@ -1399,11 +1399,12 @@ class Admin extends CI_Controller
             $this->tienda_model->incidencia_update_cierre($id_inc, $fecha_cierre);
         }else { //CIERRE de la incidencia normal
             if ($status == 8) {
-                    $disp=$this->tienda_model->get_devices_incidencia($incidencia['id_incidencia']);
-                    if ($disp['dispositivos']>0) {
-                        $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'], 9, $id_inc);
-                    }
-					$this->tienda_model->incidencia_update_cierre($id_inc, $fecha_cierre);            }
+                $disp = $this->tienda_model->get_devices_incidencia($incidencia['id_incidencia']);
+                if ($disp['dispositivos'] > 0) {
+                    $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'], 9, $id_inc);
+                }
+                //$this->tienda_model->incidencia_update_cierre($id_inc, $fecha_cierre);            }
+            }
         }
 
         /**  Botón Sustituir terminales : Pone el terminal enviado en la posicioin del mueble */
