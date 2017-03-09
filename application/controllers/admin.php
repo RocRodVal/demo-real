@@ -1,243 +1,33 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 
-class Admin extends CI_Controller
+
+
+class Admin extends MY_Controller
 {
 
     function __construct()
     {
         parent::__construct();
-        $this->load->database();
-        $this->load->helper(array('email', 'text', 'xcrud'));
 
-        $this->load->library(array('email', 'encrypt', 'form_validation', 'session','pagination'));
-        $this->load->library('uri');
+        // Ctrl configuration
+        $this->setController('admin');
+        $this->setViewsFolder('backend');
+        $this->setEnvironmentProfile('admin');
+        $this->setHomeAction('estado_incidencias/abiertas');
+
+        // Load Auth and check Entorno
         $this->load->library('auth',array(10));
-
-        // Carga de la clase de Colección de datos, para pasar variables a la vista.
-        $this->load->library('data');
-        $this->data->set("controlador","admin");
-        $this->data->set("acceso","admin");
-        $this->data->set("accion_home","estado_incidencias/abiertas");
-        $this->data->set("entrada",($this->data->get("controlador") . '/' . $this->data->get("accion_home")));
-
-        $this->load->config('files');
-        $this->cfg = $this->config->config;
-        $this->export = config_item("export");
-        $this->ext = $this->export["default_ext"];
-
-
-
+        $this->auth->check_entorno('admin');
     }
 
-
-    public function index()
+    /**
+     * Callback para el login
+     * @param int $type
+     */
+    public function do_login()
     {
-        $xcrud = xcrud_get_instance();
-        $this->load->model('user_model');
-
-
-
-        $this->form_validation->set_rules('sfid-login', 'SFID', 'required|xss_clean');
-        $this->form_validation->set_rules('password', 'password', 'required|xss_clean');
-        $this->form_validation->set_message('login_error', '"Username" or "Password" are incorrect.');
-
-
-        // Ya está logueado....
-        $entrada = $this->data->get("entrada");
-        if($this->auth->is_auth()) redirect($entrada);
-
-        if ($this->form_validation->run() == true) {
-            $data = array(
-                'sfid' => strtolower($this->input->post('sfid-login')),
-                'password' => $this->input->post('password'),
-            );
-        }
-
-        if ($this->form_validation->run() == true) {
-            $this->form_validation->set_rules('sfid-login','SFID','callback_do_login');
-
-            if($this->form_validation->run() == true){
-                redirect($entrada);
-            }else{
-                $data['message'] = (validation_errors() ? validation_errors() : ($this->session->flashdata('message')));
-            }
-
-        }
-
-        $data['message'] = (validation_errors() ? validation_errors() : ($this->session->flashdata('message')));
-
-        $data['title'] = 'Login';
-
-
-        /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
-        $this->data->add($data);
-        $data = $this->data->getData();
-        /////
-        $this->load->view('backend/header', $data);
-        $this->load->view('backend/login', $data);
-        $this->load->view('backend/footer');
-
+        return parent::do_login();
     }
-
-
-    public function do_login(){
-
-        $this->load->model('user_model');
-        $data = array(
-            'sfid' => strtolower($this->input->post('sfid-login')),
-            'password' => sha1($this->input->post('password')),
-        );
-        if($this->user_model->login_admin($data)){
-            return true;
-        }else{
-            // Redirigir al entorno adecuado al usuario logueado...
-            $entorno =$this->user_model->login_entorno($data);
-            if($entorno != FALSE) redirect($entorno,"refresh");
-
-            $this->form_validation->set_message('do_login','"Username" or "password" are incorrect.');
-            return false;
-        }
-    }
-
-
-    /**
-     *  Método que inicializa la paginación y devuelve el array de configuración de la misma
-     *
-     * @param $uri          URL Base que contendrá la paginación
-     * @param $total_rows   Total de filas a paginar
-     * @param int $per_page Numero de filas por página
-     * @param int $segment  Segmento de la URI que corresponderá al nº de página
-     * @return $config array con la configuración del paginador
-     */
-    /* public function init_pagination($uri,$total_rows,$per_page=10,$segment=4){
-
-         $ci                          =& get_instance();
-         $config['per_page']          = $per_page;
-         $config['uri_segment']       = $segment;
-         $config['base_url']          = base_url().$uri;
-         $config['total_rows']        = $total_rows;
-         $config['use_page_numbers']  = TRUE;
-
-         $ci->pagination->initialize($config);
-         return $config;
-     }*/
-
-    /**
-     * Función que guarda en sesión el valor de los filtros del POST, al venir de un form de filtrado
-     * @param $array_filtros
-     */
-    public function set_filtros($array_filtros){
-        $array_valores = NULL;
-        if(is_array($array_filtros))
-        {
-            $array_valores = array();
-            foreach ($array_filtros as $filter=>$value)
-            {
-                if(empty($value)) {
-                    $valor_filter = $this->input->post($filter);
-                }else{
-                    $valor_filter  = $value;
-                }
-                $this->session->set_userdata($filter, $valor_filter);
-                $array_valores[$filter] = $valor_filter;
-            }
-
-        }
-        return $array_valores;
-    }
-
-
-    /**
-     * Método que borra de la sesión, X variables, pasado sus nombres en un array
-     * Si el parámetro es un array (de variables), lo recorremos y eliminamos de la sesión cualquier valor que tenga
-     * la variable de sesión de ese nombre
-     */
-    public function delete_filtros($array_filtros,$array_excepciones=array()){
-
-        if(is_array($array_filtros)){
-            foreach($array_filtros as $key =>$filtro){
-                if(!in_array($key,$array_excepciones)) {
-                    $this->session->unset_userdata($key);
-                }
-            }
-        }
-    }
-
-    /**
-     * Recibe el array de filtros (campos del buscador/filtrador) y buscará su valor en la sesión, y cargará otro array
-     * con los pares VARIABLE=>VALOR SESION.
-     * @param $array_filtros
-     * @return array|null
-     */
-    public function get_filtros($array_filtros){
-        $array_session = NULL;
-
-        if(is_array($array_filtros)){
-            $array_session = array();
-            foreach($array_filtros as $filter=>$value){
-
-                if(!empty($value)){
-                    $sess_filter = $value;
-                }else {
-                    $sess_filter = $this->session->userdata($filter);
-                }
-                $array_session[$filter] = (!empty($sess_filter)) ? $sess_filter : NULL;
-
-            }
-        }
-        return $array_session;
-    }
-
-    public function set_orden($formulario)
-    {
-        //print_r($_GET);
-        $array_orden = array();
-        if (!empty($_GET)) {
-            $campo_orden = $_GET['campo_orden'];
-            $orden_campo = $_GET['orden_campo'];
-        }else {
-
-            $campo_orden = $this->input->post($formulario . '_campo_orden');
-            $orden_campo = $this->input->post($formulario . '_orden_campo');
-        }
-        $this->session->set_userdata('campo_orden', $campo_orden);
-        $this->session->set_userdata('orden_campo', $orden_campo);
-
-        $array_orden[$campo_orden]= $orden_campo;
-
-        return $array_orden;
-
-    }
-
-
-    public function get_orden()
-    {
-        $sess_campo_orden = $this->session->userdata('campo_orden');
-        $sess_orden_campo = $this->session->userdata('orden_campo');
-        $array_orden = NULL;
-
-        if(!empty($sess_campo_orden)){
-            $array_orden = array();
-            if(!empty($sess_orden_campo)){
-                $array_orden[$sess_campo_orden] = $sess_orden_campo;
-            }else{
-                $array_orden[$sess_campo_orden] = "ASC";
-            }
-        }
-        return $array_orden;
-    }
-
-
-
-    public function get_multifiltro_post($nombre_campo){
-
-        $resultado = array();
-        foreach($this->input->post($nombre_campo) as $valor_post){
-            $resultado[] = $valor_post;
-        }
-        return $resultado;
-    }
-
 
     /**
      * Tabla de incidencias cuyo tipo son "abiertas" o "cerradas"
@@ -424,8 +214,6 @@ class Admin extends CI_Controller
         }
     }
 
-
-
     public function exportar_incidencias($tipo="abiertas",$formato=NULL,$porrazon=NULL)
     {
         if ($this->auth->is_auth()) {
@@ -474,12 +262,10 @@ class Admin extends CI_Controller
         }
     }
 
-
     /**
      * Método que comprueba si una incidencia ya está comunicada, o en un paso posterior.
      * Devuelve true si lo está y false en caso contrario.
      */
-
     public function material_editable($status=''){
         $resultado = TRUE;
 
@@ -503,8 +289,6 @@ class Admin extends CI_Controller
         if($n_status_sat[$status] == 1 || $n_status_sat[$status] >= $n_status_sat["Comunicada"]) $resultado = FALSE;
         return $resultado;
     }
-
-
 
     public function material_retorno()
     {
@@ -533,7 +317,6 @@ class Admin extends CI_Controller
             redirect('admin', 'refresh');
         }
     }
-
 
     public function cambio_sfid($sfid_enuso=NULL)
     {
@@ -564,7 +347,6 @@ class Admin extends CI_Controller
             redirect('admin', 'refresh');
         }
     }
-
 
     public function cierre_pdv($sfid='', $paso = NULL, $resultado=NULL)
     {
@@ -609,8 +391,6 @@ class Admin extends CI_Controller
         }
     }
 
-
-
     public function update_cierre_pdv($paso=0)
     {
         if ($this->auth->is_auth())
@@ -652,29 +432,6 @@ class Admin extends CI_Controller
             {
                 redirect('admin/cierre_pdv/' . $sfid . '/' . $paso . '/' . $continuar_proceso, 'refresh');
             }
-        }
-        else
-        {
-            redirect('admin', 'refresh');
-        }
-    }
-
-
-    public function update_cierre_pdv_OLD()
-    {
-        if ($this->auth->is_auth())
-        {
-            $this->load->model(array('tienda_model', 'sfid_model'));
-
-            /* TODO Gestionar cierre incidencias */
-            $this->tienda_model->borrar_agente($this->input->post('reference'));
-            /* TODO Listado material retorno */
-            $this->tienda_model->borrar_dispositivos($this->input->post('reference'));
-            $this->tienda_model->borrar_muebles($this->input->post('reference'));
-            $this->tienda_model->cerrar_pds($this->input->post('reference'));
-            //$this->tienda_model->borrar_pds($this->input->post('reference'));
-
-            redirect('admin/cierre_pdv', 'refresh');
         }
         else
         {
@@ -770,10 +527,6 @@ class Admin extends CI_Controller
                 if (!$existe_panelado) {
                     redirect('admin/apertura_pdv/nopanelado/' . $sfid, 'refresh');
                 } else {
-                    /*$this->tienda_model->borrar_dispositivos($sfid);
-                    $this->tienda_model->borrar_muebles($sfid);*/
-
-                    //redirect('admin/get_inventarios_sfid/'.$this->input->post('reference').'/alta/volver/apertura_pdv');
                     redirect('admin/apertura_pdv/existe/' . $sfid, 'refresh');
                 }
             }
@@ -783,8 +536,6 @@ class Admin extends CI_Controller
             redirect('admin', 'refresh');
         }
     }
-
-
 
     public function update_dispositivo()
     {
@@ -813,7 +564,6 @@ class Admin extends CI_Controller
             redirect('admin', 'refresh');
         }
     }
-
 
     public function update_sfid()
     {
@@ -975,7 +725,6 @@ class Admin extends CI_Controller
         }
     }
 
-
     public function actualizar_averia()
     {
         if ($this->auth->is_auth())
@@ -1014,7 +763,6 @@ class Admin extends CI_Controller
             $envio_mail=$this->uri->segment(5);
 
 
-
             $xcrud = xcrud_get_instance();
             $this->load->model(array('chat_model', 'intervencion_model', 'tienda_model', 'sfid_model'));
             $this->load->helper(array('dompdf', 'file'));
@@ -1035,12 +783,7 @@ class Admin extends CI_Controller
             $data['id_inc_url'] = $id_inc;
 
 
-
             $incidencia = $this->tienda_model->get_incidencia($id_inc);
-
-
-
-
 
             $historico_material_asignado = $this->tienda_model->historico_fecha($id_inc,'Material asignado');
 
@@ -1065,6 +808,9 @@ class Admin extends CI_Controller
             }
 
             $incidencia['intervencion'] = $this->intervencion_model->get_intervencion_incidencia($id_inc);
+
+
+
             $incidencia['device'] = $this->sfid_model->get_device($incidencia['id_devices_pds']);
             $incidencia['display'] = $this->sfid_model->get_display($incidencia['id_displays_pds']);
             $data['incidencia'] = $incidencia;
@@ -1081,7 +827,11 @@ class Admin extends CI_Controller
             $data['chats'] = $chats;
 
 
+
             $info_intervencion = $this->intervencion_model->get_info_intervencion($incidencia['intervencion']);
+
+
+
             $data['id_parte'] = $info_intervencion->operador->id_parte;
 
 
@@ -1097,73 +847,73 @@ class Admin extends CI_Controller
             $attach =  "uploads/intervenciones/".$filename_pdf.".pdf";
 
 
+            $data['email_sent'] = FALSE;
 
             /** ENVIO DEL EMAIL al operador*/
 
             if($envio_mail === "notificacion")
             {
-
-
-                $mail_operador = $info_intervencion->operador->email;
-                $mail_cc = $info_intervencion->operador->email_cc;
-
-
-                if (!empty($mail_cc)) {
-                    $a_mail_cc = explode(",", $mail_cc);
-                    foreach ($a_mail_cc as $key => $mail) {
-                        $a_mail_cc[$key] = trim($mail);
-                    }
-                    $mail_cc = implode(",", $a_mail_cc);
-                }
-
-
-                if (empty($mail_operador)) {
-                    $data['email_sent'] = FALSE;
-                } else {
-                    /**
-                     * El asunto al ir en los headers del email, no puede pasar de 62 caracteres. Ahora hay margen pero si en el futuro el email
-                     * se ve raramente, revisad que el asunto no haya crecido más de 62 chars, en primer lugar.
-                     */
-                    $subject = "DEMOREAL / SFID " . $sfid['reference'] . " / INC " . $incidencia['id_incidencia'] . " / INT " . $incidencia['intervencion'];
-
-                    $message_operador = "Asunto: " . $subject . "\r\n\r\n";
-                    $message_operador .= "En referencia a los datos indicados en Asunto, adjunto remitimos parte para la intervención." . "\r\n";
-                    $message_operador .= "Recordamos los pasos principales del procedimiento:" . "\r\n\r\n";
-                    $message_operador .= "1) Realizar intervención dentro de las 48h siguientes a la recepción del email." . "\r\n";
-                    $message_operador .= "2) Enviar el presente parte rellenado y con la firma de la persona encargada de la tienda al email demoreal@focusonemotions.com." . "\r\n";
-                    $message_operador .= "3) Preparar en bolsa independiente todo el material sobrante y defectuoso separado por incidencia." . "\r\n";
-                    $message_operador .= "4) Enviar email con el material preparado a demoreal@focusonemotions.com." . "\r\n";
-                    $message_operador .= "Demo Real" . "\r\n";
-                    $message_operador .= "http://demoreal.focusonemotions.com/" . "\r\n\n";
-
-                    $this->email->from('demoreal@focusonemotions.com', 'Demo Real');
-
-                    if($mail_operador=="no-reply@altabox.net"){
-                        // No enviamos mail, si el instalador es por defecto, y tiene la cuenta no-reply
-                    }else {
-                        $this->email->to($mail_operador);
-                    }
+                // Envío de mail sólo en produccion
+                if(ENVIRONMENT === 'production')
+                {
+                    $mail_operador = $info_intervencion->operador->email;
+                    $mail_cc = $info_intervencion->operador->email_cc;
 
                     if (!empty($mail_cc)) {
-                        $this->email->cc($mail_cc);
+                        $a_mail_cc = explode(",", $mail_cc);
+                        foreach ($a_mail_cc as $key => $mail) {
+                            $a_mail_cc[$key] = trim($mail);
+                        }
+                        $mail_cc = implode(",", $a_mail_cc);
                     }
-                    /** COMENTADO AVISO COPIA */
-                    $this->email->bcc('demoreal@focusonemotions.com');
 
-                    $this->email->subject($subject);
-                    $this->email->message($message_operador);
-
-                    $this->email->attach($attach);
-
-                    if ($this->email->send()) {
-                        $data['email_sent'] = TRUE;
-                    } else {
+                    if (empty($mail_operador)) {
                         $data['email_sent'] = FALSE;
-                    }
-                    $this->email->clear();
-                }
-                /** FIN ENVIO DEL EMAIL al operador*/
+                    } else {
+                        /**
+                         * El asunto al ir en los headers del email, no puede pasar de 62 caracteres. Ahora hay margen pero si en el futuro el email
+                         * se ve raramente, revisad que el asunto no haya crecido más de 62 chars, en primer lugar.
+                         */
+                        $subject = "DEMOREAL / SFID " . $sfid['reference'] . " / INC " . $incidencia['id_incidencia'] . " / INT " . $incidencia['intervencion'];
 
+                        $message_operador = "Asunto: " . $subject . "\r\n\r\n";
+                        $message_operador .= "En referencia a los datos indicados en Asunto, adjunto remitimos parte para la intervención." . "\r\n";
+                        $message_operador .= "Recordamos los pasos principales del procedimiento:" . "\r\n\r\n";
+                        $message_operador .= "1) Realizar intervención dentro de las 48h siguientes a la recepción del email." . "\r\n";
+                        $message_operador .= "2) Enviar el presente parte rellenado y con la firma de la persona encargada de la tienda al email demoreal@focusonemotions.com." . "\r\n";
+                        $message_operador .= "3) Preparar en bolsa independiente todo el material sobrante y defectuoso separado por incidencia." . "\r\n";
+                        $message_operador .= "4) Enviar email con el material preparado a demoreal@focusonemotions.com." . "\r\n";
+                        $message_operador .= "Demo Real" . "\r\n";
+                        $message_operador .= "http://demoreal.focusonemotions.com/" . "\r\n\n";
+
+                        $this->email->from('demoreal@focusonemotions.com', 'Demo Real');
+
+                        if ($mail_operador == "no-reply@altabox.net") {
+                            // No enviamos mail, si el instalador es por defecto, y tiene la cuenta no-reply
+                        } else {
+                            $this->email->to($mail_operador);
+                        }
+
+                        if (!empty($mail_cc)) {
+                            $this->email->cc($mail_cc);
+                        }
+                        /** COMENTADO AVISO COPIA */
+                        $this->email->bcc('demoreal@focusonemotions.com');
+
+                        $this->email->subject($subject);
+                        $this->email->message($message_operador);
+
+                        $this->email->attach($attach);
+
+                        if ($this->email->send()) {
+                            $data['email_sent'] = TRUE;
+                        } else {
+                            $data['email_sent'] = FALSE;
+                        }
+                        $this->email->clear();
+                    }
+                }
+                    /** FIN ENVIO DEL EMAIL al operador*/
 
             }else{
                 $data['email_sent'] = NULL; // Descarga sin notificacion
@@ -1205,9 +955,7 @@ class Admin extends CI_Controller
 
     public function insert_chat()
     {
-
         if ($this->auth->is_auth()) {
-
             $id_pds = $this->uri->segment(3);
             $id_inc = $this->uri->segment(4);
 
@@ -1215,7 +963,7 @@ class Admin extends CI_Controller
             $this->load->model('chat_model');
 
             $config['upload_path'] = dirname($_SERVER["SCRIPT_FILENAME"]) . '/uploads/chats/';
-            $config['upload_url'] = base_url() . 'uploads/chats/';
+            $config['upload_url'] = base_url() . '/uploads/chats/';
             $config['allowed_types'] = 'gif|jpg|png';
             $new_name = $id_inc . '-' . time();
             $config['file_name'] = $new_name;
@@ -1231,7 +979,6 @@ class Admin extends CI_Controller
                 $foto = $new_name.$dataF["file_ext"];
             } else {
                 echo 'Ha fallado la carga de la foto.';
-                //$error = 'Ha fallado la carga de la foto.'
             }
 
             $texto_chat = $this->input->post('texto_chat');
@@ -1323,35 +1070,6 @@ class Admin extends CI_Controller
         }
     }
 
-    public function strip_html_tags($text)
-    {
-        $text = preg_replace(
-            array(
-                // Remove invisible content
-                '@<head[^>]*?>.*?</head>@siu',
-                '@<script[^>]*?.*?</script>@siu',
-                '@<object[^>]*?.*?</object>@siu',
-                '@<embed[^>]*?.*?</embed>@siu',
-                '@<noscript[^>]*?.*?</noscript>@siu',
-                '@<noembed[^>]*?.*?</noembed>@siu',
-                // Add line breaks before and after blocks
-                '@</?((address)|(blockquote)|(center)|(del))@iu',
-                '@</?((div)|(h[1-9])|(ins)|(isindex)|(p)|(pre))@iu',
-                '@</?((dir)|(dl)|(dt)|(dd)|(li)|(menu)|(ol)|(ul))@iu',
-                '@</?((table)|(th)|(td)|(caption))@iu',
-                '@</?((form)|(button)|(fieldset)|(legend)|(input))@iu',
-                '@</?((label)|(select)|(optgroup)|(option)|(textarea))@iu',
-                '@</?((frameset)|(frame)|(iframe))@iu',
-            ),
-            array(
-                ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
-                "\n\$0", "\n\$0", "\n\$0", "\n\$0", "\n\$0", "\n\$0",
-                "\n\$0", "\n\$0",
-            ),
-            $text);
-        return strip_tags($text);
-    }
-
     public function listado_panelados()
     {
 
@@ -1379,7 +1097,6 @@ class Admin extends CI_Controller
         $this->load->view('backend/maestro', $data);
         $this->load->view('backend/footer');
     }
-
 
     public function update_incidencia()
     {
@@ -1414,6 +1131,25 @@ class Admin extends CI_Controller
 
         if ($status == 2) {
 
+
+            //////////////////////////////////////////////////////////////////////////////////
+            //                                                                              //
+            //             Comunicación  con Realdooh VU: Cambio estado REVISADA            //
+            //                                                                              //
+            //////////////////////////////////////////////////////////////////////////////////
+            //                                                                              //
+                set_estado_incidencia_realdooh([                                            //
+                    'drId'=>  $this->uri->segment(4)                                        //
+                ],[                                                                         //
+                    'user'=> $sfid['reference'],                                            //
+                    'password' => 'demoreal'                                                //
+                                                                                            //
+                ], 'revised=1' );                                                           //
+                                                                                            //
+            //                                                                              //
+            //////////////////////////////////////////////////////////////////////////////////
+
+
             if ($incidencia['fail_device'] == 1) {
                 $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'], 2);
             }
@@ -1422,11 +1158,6 @@ class Admin extends CI_Controller
         /**
          * Botón Imprimir documentacion
          */
-      /* if ($status == 5) {
-
-        }*/
-
-
         $fecha_cierre = $this->input->post('fecha_cierre');
 
         if(empty($fecha_cierre)) { $fecha_cierre = date('Y-m-d H:i:s'); }
@@ -1443,6 +1174,22 @@ class Admin extends CI_Controller
            // if ($incidencia['tipo_averia'] == "Averia") {
                 $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'], $status,$id_inc);
             //}
+
+            //////////////////////////////////////////////////////////////////////////////////
+            //                                                                              //
+            //             Comunicación  con Realdooh VU: Cambio estado RESUELTA            //
+            //                                                                              //
+            //////////////////////////////////////////////////////////////////////////////////
+            //                                                                              //
+                            set_estado_incidencia_realdooh([
+                                'drId'=>  $this->uri->segment(4)
+                            ],[
+                                'user'=> $sfid['reference'],
+                                'password' => 'demoreal'
+
+                            ], 'resolved=1' );                                              //
+            //                                                                              //
+            //////////////////////////////////////////////////////////////////////////////////
         }
 
         /**
@@ -1450,11 +1197,7 @@ class Admin extends CI_Controller
          */
         if ($status == 7)
         {
-//            if ($incidencia['tipo_averia'] != 'Robo') {
-                $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'],$status,$id_inc);
-  //          }else {
-
-    //        }
+            $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'],$status,$id_inc);
         }
         /**
          * CIERRE FORZOSO
@@ -1468,18 +1211,14 @@ class Admin extends CI_Controller
             $this->tienda_model->incidencia_update_cierre($id_inc, $fecha_cierre);
         }else { //CIERRE de la incidencia normal
             if ($status == 8) {
-
-                //if (!is_null($incidencia['id_devices_pds'])) {
-                    //print_r($this->tienda_model->get_devices_incidencia($incidencia['id_incidencia'])); exit;
                     $disp=$this->tienda_model->get_devices_incidencia($incidencia['id_incidencia']);
                     if ($disp['dispositivos']>0) {
                         $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'], 9, $id_inc);
                     }
                 //}
-               // $this->tienda_model->incidencia_update_cierre($id_inc, $fecha_cierre);
+                //$this->tienda_model->incidencia_update_cierre($id_inc, $fecha_cierre);
             }
         }
-
         /**
          * Botón Sustituir terminales : Pone el terminal enviado en la posicioin del mueble
          */
@@ -1524,10 +1263,6 @@ class Admin extends CI_Controller
 
             $intervencion = $this->intervencion_model->get_intervencion_incidencia($id_inc);
 
-           /* $this->tienda_model->reservar_dispositivos($this->input->post('dipositivo_almacen_1'),3);
-            $this->tienda_model->reservar_dispositivos($this->input->post('dipositivo_almacen_2'),3);
-            $this->tienda_model->reservar_dispositivos($this->input->post('dipositivo_almacen_3'),3);*/
-
             $dispositivos = $this->tienda_model->get_devices_incidencia($id_inc);
             $alarmas = $this->tienda_model->get_alarms_incidencia($id_inc);
 
@@ -1549,128 +1284,23 @@ class Admin extends CI_Controller
             $this->tienda_model->procesar_historico_incidencia($id_inc);
             $this->tienda_model->actualizar_devices_almacen($id_inc);
 
-            redirect('admin/imprimir_incidencia/'.$id_pds.'/'.$id_inc.'/'.$envio_mail, 'refresh');
-        }
-        else
-        {
-            redirect('admin/operar_incidencia/'.$id_pds.'/'.$id_inc, 'refresh');
-        }
-    }
 
-    public function update_incidencia_old()
-    {
-        $id_pds = $this->uri->segment(3);
-        $id_inc = $this->uri->segment(4);
-        $status_pds = $this->uri->segment(5);
-        $status = $this->uri->segment(6);
-        $status_ext = $this->uri->segment(7);
+            //////////////////////////////////////////////////////////////////////////////////
+            //                                                                              //
+            //             Comunicación  con Realdooh VU: Cambio estado EN VISITA           //
+            //                                                                              //
+            //////////////////////////////////////////////////////////////////////////////////
+            //                                                                              //
+                                set_estado_incidencia_realdooh([
+                                    'drId'=>  $this->uri->segment(4)
+                                ],[
+                                    'user'=> $sfid['reference'],
+                                    'password' => 'demoreal'
 
+                                ], 'visited=1' );                                           //
+            //                                                                              //
+            //////////////////////////////////////////////////////////////////////////////////
 
-        $xcrud = xcrud_get_instance();
-        $this->load->model(array('tienda_model','intervencion_model'));
-
-        $sfid = $this->tienda_model->get_pds($id_pds);
-
-        $data['id_pds'] = 'ABX/PDS-' . $sfid['id_pds'];
-        $data['commercial'] = $sfid['commercial'];
-        $data['territory'] = $sfid['territory'];
-        $data['reference'] = $sfid['reference'];
-        $data['address'] = $sfid['address'];
-        $data['zip'] = $sfid['zip'];
-        $data['city'] = $sfid['city'];
-
-        $data['id_pds_ulr'] = $id_pds;
-        $data['id_inc_ulr'] = $id_inc;
-
-        $this->tienda_model->incidencia_update($id_inc, $status_pds, $status);
-
-        $incidencia = $this->tienda_model->get_incidencia($id_inc);
-
-        if ($status == 2) {
-
-            if ($incidencia['fail_device'] == 1) {
-                $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'], 2);
-            }
-        }
-
-        /**
-         * Botón Asignar material
-         */
-        if ($status == 5) {
-            $intervencion = $this->intervencion_model->get_intervencion_incidencia($id_inc);
-
-            $this->tienda_model->reservar_dispositivos($this->input->post('dipositivo_almacen_1'),3);
-            $this->tienda_model->reservar_dispositivos($this->input->post('dipositivo_almacen_2'),3);
-            $this->tienda_model->reservar_dispositivos($this->input->post('dipositivo_almacen_3'),3);
-
-            $dispositivos = $this->tienda_model->get_devices_incidencia($id_inc);
-            $alarmas = $this->tienda_model->get_alarms_incidencia($id_inc);
-
-            $facturacion_data= array(
-                'fecha' => date('Y-m-d H:i:s'),
-                'id_pds' => $id_pds,
-                'id_intervencion' => $intervencion,
-                'id_incidencia' => $id_inc,
-                'id_displays_pds' => $incidencia['id_displays_pds'],
-                'units_device' => $dispositivos['dispositivos'],
-                'units_alarma' => $alarmas['alarmas'],
-                'description' => NULL
-            );
-
-            $this->tienda_model->facturacion($facturacion_data);
-        }
-
-
-
-        $fecha_cierre = $this->input->post('fecha_cierre');
-
-        if(empty($fecha_cierre)) { $fecha_cierre = date('Y-m-d H:i:s'); }
-
-        /**
-         * Botón resolver Incidencia : Recoge fecha de resolución y hace la operación
-         */
-        if ($status == 6)
-        {
-
-            $this->tienda_model->incidencia_update_cierre($id_inc, $fecha_cierre);
-
-            if ($incidencia['fail_device'] == 1) {
-                $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'], 1);
-            }
-
-        }
-
-        /*** CIERRE FORZOSO */
-        if (($status == 8) AND ($status_ext == 'ext'))
-        {
-            if ($incidencia['fail_device'] == 1) {
-                $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'], 1,$id_inc);
-            }
-            $this->tienda_model->incidencia_update_cierre($id_inc, $fecha_cierre);
-        }
-
-        /*** Guardar incidcencia en el histórico*/
-        $data = array(
-            'fecha' => date('Y-m-d H:i:s'),
-            'id_incidencia' => $id_inc,
-            'id_pds' => $id_pds,
-            'description' => NULL,
-            'agent' => $this->session->userdata('sfid'),
-            'status_pds' => $status_pds,
-            'status' => $status
-        );
-
-        $this->tienda_model->historico($data);
-
-
-        /*** Notificación a instalador*/
-        if ($status == 5)
-        {
-            $envio_mail = $this->uri->segment(7);
-
-            // Se va a proceder a la notificación de la incidencia por lo que el material asignado ya será inamovible
-            // Y por tanto deberá procesarse (procesado=1) y así verse en el histórico Diario de almacén.
-            $this->tienda_model->procesar_historico_incidencia($id_inc);
 
             redirect('admin/imprimir_incidencia/'.$id_pds.'/'.$id_inc.'/'.$envio_mail, 'refresh');
         }
@@ -1840,78 +1470,7 @@ class Admin extends CI_Controller
             $this->tienda_model->update_dispositivos($this->input->post('dipositivo_almacen_1'),$imei,$this->input->post('mac_1'),$this->input->post('serial_1'),$this->input->post('barcode_1'));
         }
 
-       /* if ($this->input->post('units_dipositivo_almacen_2') <> '')
-        {
-            $dipositivo_almacen_2 = array(
-                'fecha' => date('Y-m-d H:i:s'),
-                'id_incidencia' => $id_inc,
-                'id_pds' => $id_pds,
-                'id_alarm' => NULL,
-                'id_devices_almacen' => $this->input->post('dipositivo_almacen_2'),
-                'cantidad' => $this->input->post('units_dipositivo_almacen_2')
-            );
 
-            $this->tienda_model->reservar_dispositivos($this->input->post('dipositivo_almacen_2'),2);
-            $this->tienda_model->incidencia_update_material($dipositivo_almacen_2);
-
-            $imei=$this->input->post('imei_2');
-            if (empty($imei)) {
-                $resultado=$this->tienda_model->search_dispositivo_id($this->input->post('dipositivo_almacen_2'));
-            }
-            if(!empty($resultado)){
-                foreach($resultado as $r) {
-                    $imei = $r->IMEI;
-                }
-            }
-            $this->tienda_model->update_dispositivos($this->input->post('dipositivo_almacen_2'),$imei,$this->input->post('mac_2'),$this->input->post('serial_2'),$this->input->post('barcode_2'));
-
-        }
-
-        if ($this->input->post('units_dipositivo_almacen_3') <> '')
-        {
-            $dipositivo_almacen_3 = array(
-                'fecha' => date('Y-m-d H:i:s'),
-                'id_incidencia' => $id_inc,
-                'id_pds' => $id_pds,
-                'id_alarm' => NULL,
-                'id_devices_almacen' => $this->input->post('dipositivo_almacen_3'),
-                'cantidad' => $this->input->post('units_dipositivo_almacen_3')
-            );
-
-            $this->tienda_model->reservar_dispositivos($this->input->post('dipositivo_almacen_3'),2);
-            $this->tienda_model->incidencia_update_material($dipositivo_almacen_3);
-
-            $imei=$this->input->post('imei_3');
-            if (empty($imei)) {
-                $resultado=$this->tienda_model->search_dispositivo_id($this->input->post('dipositivo_almacen_23'));
-            }
-            if(!empty($resultado)){
-                foreach($resultado as $r) {
-                    $imei = $r->IMEI;
-                }
-            }
-            $this->tienda_model->update_dispositivos($this->input->post('dipositivo_almacen_3'),$imei,$this->input->post('mac_3'),$this->input->post('serial_3'),$this->input->post('barcode_3'));
-        }*/
-
-        // RECEPCION DE 10 CAMPOS DE ALARMAS
-        /*for($i = 1; $i <= 10; $i++)
-        {
-            if ($this->input->post('units_alarma_alamacen_'.$i) <> '' && $this->input->post('units_alarma_almacen_'.$i) <> '0')
-            {
-                $var_alarma = "alarma_almacen_".$i;
-                $$var_alarma = array(
-                    'fecha' => date('Y-m-d H:i:s'),
-                    'id_incidencia' => $id_inc,
-                    'id_pds' => $id_pds,
-                    'id_alarm' => $this->input->post('alarma_almacen_'.$i),
-                    'id_devices_almacen' => NULL,
-                    'cantidad' => $this->input->post('units_alarma_almacen_'.$i)
-                );
-
-                $this->tienda_model->incidencia_update_material($$var_alarma);
-                $this->tienda_model->borrar_alarmas($this->input->post('alarma_almacen_'.$i),$this->input->post('units_alarma_almacen_'.$i));
-            }
-        }*/
         if ($this->input->post('units_alarma_almacen_1') <> '' && $this->input->post('units_alarma_almacen_1') <> '0')
         {
             $alarma_almacen_1 = array(
@@ -2080,7 +1639,6 @@ class Admin extends CI_Controller
         redirect('admin/operar_incidencia/'.$id_pds.'/'.$id_inc, 'refresh');
     }
 
-
     public function insert_comentario_incidencia()
     {
         $id_pds = $this->uri->segment(3);
@@ -2177,7 +1735,6 @@ class Admin extends CI_Controller
         }
     }
 
-
     public function desasignar_incidencia_materiales()
     {
         if ($this->auth->is_auth()) {
@@ -2199,8 +1756,6 @@ class Admin extends CI_Controller
             redirect('admin', 'refresh');
         }
     }
-
-
 
     public function carga_datos_dispositivo()
     {
@@ -2229,7 +1784,6 @@ class Admin extends CI_Controller
         }
     }
 
-
     public function clientes()
     {
         $xcrud = xcrud_get_instance();
@@ -2257,7 +1811,6 @@ class Admin extends CI_Controller
         $this->load->view('backend/content', $data);
         $this->load->view('backend/footer');
     }
-
 
     public function incidencias()
     {
@@ -2318,7 +1871,6 @@ class Admin extends CI_Controller
             redirect('admin', 'refresh');
         }
     }
-
 
     public function incidencias_exp()
     {
@@ -2433,7 +1985,6 @@ class Admin extends CI_Controller
         }
     }
 
-
     public function contactos()
     {
         $xcrud_1 = xcrud_get_instance();
@@ -2477,7 +2028,6 @@ class Admin extends CI_Controller
         $this->load->view('backend/footer');
     }
 
-
     public function alarmas()
     {
         $xcrud_1 = xcrud_get_instance();
@@ -2519,36 +2069,10 @@ class Admin extends CI_Controller
         // Ocultar el botón de borrar para evitar borrados accidentales mientras no existan constraints en BD:
         $xcrud_3->unset_remove();
 
-        /*
-         *  NO USADO
-         * $xcrud_4 = xcrud_get_instance();
-        $xcrud_4->table('alarms_display');
-        $xcrud_4->table_name('Relación alarmas mueble');
-        $xcrud_4->relation('client_type_pds', 'client', 'id_client', 'client');
-        $xcrud_4->relation('id_display', 'display', 'id_display', 'display');
-        $xcrud_4->relation('id_alarm', 'alarm', 'id_alarm', 'alarm');
-        $xcrud_4->label('client_type_pds', 'Cliente')->label('id_display', 'Mueble')->label('id_alarm', 'Alarma')->label('description', 'Comentarios')->label('status', 'Estado');
-        $xcrud_4->columns('client_type_pds,id_display,id_alarm,status');
-        $xcrud_4->fields('client_type_pds,id_display,id_alarm,description,status');
-        
-        $xcrud_5 = xcrud_get_instance();
-        $xcrud_5->table('alarms_device_display');
-        $xcrud_5->table_name('Relación alarmas dispositivo');
-        $xcrud_5->relation('client_type_pds', 'client', 'id_client', 'client');
-        $xcrud_5->relation('id_device', 'device', 'id_device', 'device');
-        $xcrud_5->relation('id_display', 'display', 'id_display', 'display');
-        $xcrud_5->relation('id_alarm', 'alarm', 'id_alarm', 'alarm');
-        $xcrud_5->label('client_type_pds', 'Cliente')->label('id_device', 'Dispositivo')->label('id_display', 'Mueble')->label('id_alarm', 'Alarma')->label('description', 'Comentarios')->label('status', 'Estado');
-        $xcrud_5->columns('client_type_pds,id_device,id_display,id_alarm,status');
-        $xcrud_5->fields('client_type_pds,id_device,id_display,id_alarm,description,status');*/
-
         $data['title'] = 'Alarmas';
         $data['content'] = $xcrud_1->render();
         $data['content'] = $data['content'] . $xcrud_2->render();
         $data['content'] = $data['content'] . $xcrud_3->render();
-        /* NO USADO
-        $data['content'] = $data['content'] . $xcrud_4->render();
-        $data['content'] = $data['content'] . $xcrud_5->render();*/
 
         /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
         $this->data->add($data);
@@ -2559,8 +2083,6 @@ class Admin extends CI_Controller
         $this->load->view('backend/content', $data);
         $this->load->view('backend/footer');
     }
-
-
 
     public function alarmas_almacen()
     {
@@ -2601,11 +2123,6 @@ class Admin extends CI_Controller
         $this->load->view('backend/content', $data);
         $this->load->view('backend/footer');
     }
-
-
-
-
-
 
     public function dispositivos()
     {
@@ -2659,22 +2176,10 @@ class Admin extends CI_Controller
         $this->load->view('backend/footer');
     }
 
-
     public function muebles()
     {
-        /*$xcrud_1 = xcrud_get_instance();
-        $xcrud_1->table('panelado');
-        $xcrud_1->table_name('Panelado');
-        $xcrud_1->relation('client_panelado', 'client', 'id_client', 'client');
-        $xcrud_1->relation('type_pds', 'type_pds', 'id_type_pds', 'pds');
-        $xcrud_1->change_type('picture_url', 'image');
-        $xcrud_1->label('id_panelado', 'Identificador')->label('client_panelado', 'Cliente')->label('type_pds', 'Tipo punto de venta')->label('panelado', 'Panelado Orange')->label('panelado_abx', 'REF.')->label('picture_url', 'Foto')->label('description', 'Comentarios')->label('status', 'Estado');
-        $xcrud_1->columns('id_panelado,client_panelado,type_pds,panelado,panelado_abx,status');
-        $xcrud_1->fields('client_panelado,type_pds,panelado,panelado_abx,picture_url,description,status');*/
 
         // Ocultar el botón de borrar para evitar borrados accidentales mientras no existan constraints en BD:
-
-
         $xcrud_2 = xcrud_get_instance();
         $xcrud_2->table('displays_categoria');
         $xcrud_2->table_name('Muebles categoría');
@@ -2744,81 +2249,6 @@ class Admin extends CI_Controller
         $this->load->view('backend/footer');
     }
 
-
-
-    public function muebles_OLD()
-    {
-        $xcrud_1 = xcrud_get_instance();
-        $xcrud_1->table('panelado');
-        $xcrud_1->table_name('Panelado');
-        $xcrud_1->relation('client_panelado', 'client', 'id_client', 'client');
-        $xcrud_1->relation('type_pds', 'type_pds', 'id_type_pds', 'pds');
-        $xcrud_1->change_type('picture_url', 'image');
-        $xcrud_1->label('id_panelado', 'Identificador')->label('client_panelado', 'Cliente')->label('type_pds', 'Tipo punto de venta')->label('panelado', 'Panelado Orange')->label('panelado_abx', 'REF.')->label('picture_url', 'Foto')->label('description', 'Comentarios')->label('status', 'Estado');
-        $xcrud_1->columns('id_panelado,client_panelado,type_pds,panelado,panelado_abx,status');
-        $xcrud_1->fields('client_panelado,type_pds,panelado,panelado_abx,picture_url,description,status');
-
-        // Ocultar el botón de borrar para evitar borrados accidentales mientras no existan constraints en BD:
-        $xcrud_1->unset_remove();
-
-        $xcrud_2 = xcrud_get_instance();
-        $xcrud_2->table('displays_panelado');
-        $xcrud_2->table_name('Muebles panelado');
-        $xcrud_2->relation('client_panelado', 'client', 'id_client', 'client');
-        $xcrud_2->relation('id_panelado', 'panelado', 'id_panelado', 'panelado_abx');
-        $xcrud_2->relation('id_display', 'display', 'id_display', 'display');
-        $xcrud_2->label('id_displays_panelado', 'Identificador')->label('client_panelado', 'Cliente')->label('id_panelado', 'REF.')->label('id_display', 'Modelo')->label('position', 'Posición')->label('description', 'Comentarios')->label('status', 'Estado');
-        $xcrud_2->columns('id_displays_panelado,client_panelado,id_panelado,id_display,position,status');
-        $xcrud_2->fields('client_panelado,id_panelado,id_display,position,description,status');
-
-        // Ocultar el botón de borrar para evitar borrados accidentales mientras no existan constraints en BD:
-        $xcrud_2->unset_remove();
-
-        $xcrud_3 = xcrud_get_instance();
-        $xcrud_3->table('display');
-        $xcrud_3->table_name('Modelo');
-        $xcrud_3->relation('client_display', 'client', 'id_client', 'client');
-        $xcrud_3->change_type('picture_url', 'image');
-        $xcrud_3->change_type('canvas_url', 'file');
-        $xcrud_3->modal('picture_url');
-        $xcrud_3->label('id_display', 'Identificador')->label('client_display', 'Cliente')->label('display', 'Modelo')->label('picture_url', 'Foto')->label('canvas_url', 'SVG')->label('description', 'Comentarios')->label('positions', 'Posiciones')->label('status', 'Estado');
-        $xcrud_3->columns('id_display,client_display,display,picture_url,positions,status');
-        $xcrud_3->fields('client_display,display,picture_url,canvas_url,description,positions,status');
-
-        // Ocultar el botón de borrar para evitar borrados accidentales mientras no existan constraints en BD:
-        $xcrud_3->unset_remove();
-
-        $xcrud_4 = xcrud_get_instance();
-        $xcrud_4->table('devices_display');
-        $xcrud_4->table_name('Dispositivos mueble');
-        $xcrud_4->relation('client_panelado', 'client', 'id_client', 'client');
-        $xcrud_4->relation('id_display', 'display', 'id_display', 'display');
-        $xcrud_4->relation('id_device', 'device', 'id_device', 'device');
-        $xcrud_4->label('id_devices_display', 'Identificador')->label('client_panelado', 'Cliente')->label('id_panelado', 'REF.')->label('id_display', 'Mueble')->label('id_device', 'Dispositivo')->label('position', 'Posición')->label('description', 'Comentarios')->label('status', 'Estado');
-        $xcrud_4->columns('id_devices_display,client_panelado,id_display,id_device,position,status');
-        $xcrud_4->fields('client_panelado,id_display,id_device,position,description,status');
-
-        // Ocultar el botón de borrar para evitar borrados accidentales mientras no existan constraints en BD:
-        $xcrud_4->unset_remove();
-
-        $data['title'] = 'Muebles';
-        $data['content'] = $xcrud_1->render();
-        $data['content'] = $data['content'] . $xcrud_2->render();
-        $data['content'] = $data['content'] . $xcrud_3->render();
-        $data['content'] = $data['content'] . $xcrud_4->render();
-
-        /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
-        $this->data->add($data);
-        $data = $this->data->getData();
-        /////
-        $this->load->view('backend/header', $data);
-        $this->load->view('backend/navbar', $data);
-        $this->load->view('backend/content', $data);
-        $this->load->view('backend/footer');
-    }
-
-
-
     public function puntos_de_venta()
     {
         $xcrud_1 = xcrud_get_instance();
@@ -2845,21 +2275,6 @@ class Admin extends CI_Controller
         $xcrud_2->relation('contact_in_charge', 'contact', 'id_contact', 'contact');
         $xcrud_2->relation('contact_supervisor', 'contact', 'id_contact', 'contact');
 //
-        /*
-         *
-         *
-        PRUEBA DE CATEGORIA CON CAMPOS VINCULADOS TOTALES EN XCRUD
-        $xcrud_2->relation('id_tipo', 'pds_tipo','id','titulo');
-        $xcrud_2->relation('id_subtipo', 'pds_subtipo', 'id', 'titulo','','titulo ASC',false, '', false,'id_tipo','id_tipo');
-
-        $xcrud_2->relation('id_subtipo_tipologia', 'pds_subtipo_tipologia', 'id', 'id_tipologia','','id_tipologia ASC', false, '', false, 'id_subtipo','id_subtipo');
-        $xcrud_2->relation('id_tipologia', 'pds_tipologia', 'id', 'titulo','','titulo ASC', false, '', false, 'id','id_subtipo_tipologia');
-
-        $xcrud_2->relation('subtipo_listado', 'pds_subtipo', 'id', 'titulo','','titulo ASC','', false, '', false, 'id','id_tipo');
-        $xcrud_2->relation('id_segmento', 'pds_segmento','id', 'titulo');
-        */
-
-
         $xcrud_2->relation('id_tipo', 'pds_tipo','id','titulo');
         $xcrud_2->relation('id_subtipo', 'pds_subtipo', 'id', 'titulo','','titulo ASC',false, '', false,'id_tipo','id_tipo');
         //$xcrud_2->fk_relation('Tipología','id_tipologia', 'pds_subtipo_tipologia', 'id_subtipo', 'id_tipologia', 'pds_tipologia', 'id', 'titulo');
@@ -2910,63 +2325,6 @@ class Admin extends CI_Controller
         $this->load->view('backend/footer');
     }
 
-
-    public function puntos_de_venta_OLD()
-    {
-        $xcrud_1 = xcrud_get_instance();
-        $xcrud_1->table('type_pds');
-        $xcrud_1->table_name('Tipo');
-        $xcrud_1->relation('client_type_pds', 'client', 'id_client', 'client');
-        $xcrud_1->label('id_type_pds', 'Identificador')->label('client_type_pds', 'Cliente')->label('pds', 'Tipo')->label('description', 'Comentarios')->label('status', 'Estado');
-        $xcrud_1->columns('id_type_pds,client_type_pds,pds,status');
-        $xcrud_1->fields('client_type_pds,pds,description,status');
-
-        // Ocultar el botón de borrar para evitar borrados accidentales mientras no existan constraints en BD:
-        $xcrud_1->unset_remove();
-
-        $xcrud_2 = xcrud_get_instance();
-        $xcrud_2->table('pds');
-        $xcrud_2->table_name('Tienda');
-        $xcrud_2->relation('client_pds', 'client', 'id_client', 'client');
-        $xcrud_2->relation('type_pds', 'type_pds', 'id_type_pds', 'pds');
-        $xcrud_2->relation('territory', 'territory', 'id_territory', 'territory');
-        $xcrud_2->relation('panelado_pds', 'panelado', 'id_panelado', 'panelado_abx');
-        $xcrud_2->relation('type_via', 'type_via', 'id_type_via', 'via');
-        $xcrud_2->relation('province', 'province', 'id_province', 'province');
-        $xcrud_2->relation('county', 'county', 'id_county', 'county');
-        $xcrud_2->relation('contact_contact_person', 'contact', 'id_contact', 'contact');
-        $xcrud_2->relation('contact_in_charge', 'contact', 'id_contact', 'contact');
-        $xcrud_2->relation('contact_supervisor', 'contact', 'id_contact', 'contact');
-        $xcrud_2->change_type('picture_url', 'image');
-        $xcrud_2->modal('picture_url');
-        //$xcrud_2->readonly('reference');
-        $xcrud_2->disabled('reference','edit');
-        $xcrud_2->sum('m2_total', 'm2_fo', 'm2_bo');
-        $xcrud_2->label('id_pds', 'Identificador')->label('client_pds', 'Cliente')->label('reference', 'SFID')->label('type_pds', 'Tipo')->label('territory', 'Territorio')->label('panelado_pds', 'Panelado')->label('dispo', 'Disposición')->label('commercial', 'Nombre comercial')->label('cif', 'CIF')->label('picture_url', 'Foto')->label('m2_fo', 'M2 front-office')->label('m2_bo', 'M2 back-office')->label('m2_total', 'M2 total')->label('type_via', 'Tipo vía')->label('address', 'Dirección')->label('zip', 'C.P.')->label('city', 'Ciudad')->label('province', 'Provincia')->label('county', 'CC.AA.')->label('schedule', 'Horario')->label('phone', 'Teléfono')->label('mobile', 'Móvil')->label('email', 'Email')->label('contact_contact_person', 'Contacto')->label('contact_in_charge', 'Encargado')->label('contact_supervisor', 'Supervisor')->label('status', 'Estado');
-        $xcrud_2->columns('id_pds,client_pds,reference,type_pds,panelado_pds,commercial,territory,status');
-        $xcrud_2->fields('client_pds,reference,type_pds,panelado_pds,dispo,commercial,cif,territory,picture_url,m2_fo,m2_bo,m2_total,type_via,address,zip,city,province,county,schedule,phone,mobile,email,contact_contact_person,contact_in_charge,contact_supervisor,status');
-
-        $xcrud_2->validation_required('province');
-
-        // Ocultar el botón de borrar para evitar borrados accidentales mientras no existan constraints en BD:
-        $xcrud_2->unset_remove();
-
-        $data['title'] = 'Puntos de venta';
-        $data['content'] = $xcrud_1->render();
-        $data['content'] = $data['content'] . $xcrud_2->render();
-
-        /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
-        $this->data->add($data);
-        $data = $this->data->getData();
-        /////
-        $this->load->view('backend/header', $data);
-        $this->load->view('backend/navbar', $data);
-        $this->load->view('backend/content', $data);
-        $this->load->view('backend/footer');
-    }
-
-
-
     public function categorias_pdv()
     {
         $xcrud_1 = xcrud_get_instance();
@@ -2988,15 +2346,7 @@ class Admin extends CI_Controller
         $xcrud_2->columns('id,titulo,orden');
         $xcrud_2->columns('titulo');
         $xcrud_2->columns('orden');
-        /* SIN EL CAMPO ORDEN
-        $xcrud_2 = xcrud_get_instance();
-        $xcrud_2->table('pds_tipologia');
-        $xcrud_2->table_name('Definir Tipologías de PDS');
-        // $xcrud_1->relation('client_type_pds', 'client', 'id_client', 'client');
-        $xcrud_2->label('id', 'Id.')->label('titulo', 'Título');
-        $xcrud_2->columns('id,titulo');
-        $xcrud_2->fields('titulo');
-*/
+
 
         $xcrud_3 = xcrud_get_instance();
         $xcrud_3->table('pds_subtipo');
@@ -3021,15 +2371,6 @@ class Admin extends CI_Controller
         $xcrud_4->columns('titulo');
         $xcrud_4->columns('orden');
 
-        /* SIN EL CAMPO ORDEN
-        $xcrud_4 = xcrud_get_instance();
-        $xcrud_4->table('pds_segmento');
-        $xcrud_4->table_name('Definir Segmentos de PDS');
-        $xcrud_4->label('id', 'Id.')->label('titulo', 'Título');
-        $xcrud_4->columns('id,titulo');
-        $xcrud_4->fields('titulo');*/
-
-
         $data['title'] = 'Categorización de PDS: Tipo, Subtipo, Segmento, Tipología';
         $data['content'] = $xcrud_1->render();
         $data['content'] .= $xcrud_2->render();
@@ -3047,32 +2388,6 @@ class Admin extends CI_Controller
         $this->load->view('backend/footer');
 
     }
-
-  /*  public function tipos_incidencia()
-    {
-        $xcrud = xcrud_get_instance();
-        $xcrud->table('type_incidencia');
-        $xcrud->table_name('Tipos de incidencia');
-        $xcrud->label('id_type_incidencia','Identificador')->label('title', 'Título');
-        $xcrud->columns('id_type_incidencia,title');
-        $xcrud->fields('title');
-        $xcrud->order_by('id_type_incidencia');
-
-        // Ocultar el botón de borrar para evitar borrados accidentales mientras no existan constraints en BD:
-        $xcrud->unset_remove();
-
-        $data['title'] = 'Tipos de incidencia';
-        $data['content'] = $xcrud->render();
-
-        /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
-        $this->data->add($data);
-        $data = $this->data->getData();
-        /////
-        $this->load->view('backend/header', $data);
-        $this->load->view('backend/navbar', $data);
-        $this->load->view('backend/content', $data);
-        $this->load->view('backend/footer');
-    }*/
 
     public function razones_parada()
     {
@@ -3126,11 +2441,10 @@ class Admin extends CI_Controller
         $this->load->view('backend/footer');
     }
 
-
     public function descripcion()
     {
-        //if ($this->session->userdata('logged_in')) {
-        if ($this->auth->is_auth()) {
+        if ($this->auth->is_auth())
+        {
             $session_data = $this->session->userdata('logged_in');
             $data['sfid'] = $this->session->userdata('sfid');
             $data['agent_id'] = $this->session->userdata('agent_id');
@@ -3154,109 +2468,6 @@ class Admin extends CI_Controller
         } else {
             redirect('admin', 'refresh');
         }
-    }
-
-
-    public function inventarios_OLD()
-    {
-        $this->load->model('tienda_model');
-
-        $data['displays'] = $this->tienda_model->get_displays_total();
-        $data['devices'] = $this->tienda_model->get_devices_total();
-
-        $xcrud_1 = xcrud_get_instance();
-        $xcrud_1->table('displays_pds');
-        $xcrud_1->table_name('Inventario muebles');
-        $xcrud_1->relation('client_type_pds', 'client', 'id_client', 'client');
-        $xcrud_1->relation('id_pds', 'pds', 'id_pds', 'reference');
-        $xcrud_1->relation('id_type_pds', 'type_pds', 'id_type_pds', 'pds');
-        $xcrud_1->relation('id_panelado', 'panelado', 'id_panelado', 'panelado_abx');
-        $xcrud_1->relation('id_display', 'display', 'id_display', 'display');
-        $xcrud_1->label('client_type_pds', 'Cliente')->label('id_displays_pds', 'REF.')->label('id_type_pds', 'Tipo')->label('id_pds', 'SFID')->label('id_panelado', 'Panelado')->label('id_display', 'Mueble')->label('position', 'Posición Orange')->label('description', 'Comentarios')->label('status', 'Estado');
-        $xcrud_1->columns('client_type_pds,id_displays_pds,id_type_pds,id_pds,id_panelado,id_display,position,status');
-        $xcrud_1->fields('client_type_pds,id_displays_pds,id_type_pds,id_pds,id_panelado,id_display,position,description,status');
-        $xcrud_1->order_by('id_pds', 'asc');
-        $xcrud_1->order_by('position', 'asc');
-        $xcrud_1->show_primary_ai_column(true);
-        $xcrud_1->unset_numbers();
-        $xcrud_1->start_minimized(true);
-
-        $xcrud_2 = xcrud_get_instance();
-        $xcrud_2->table('alarms_display_pds');
-        $xcrud_2->table_name('Inventario alarmas mueble');
-        $xcrud_2->relation('client_type_pds', 'client', 'id_client', 'client');
-        $xcrud_2->relation('id_pds', 'pds', 'id_pds', 'reference');
-        $xcrud_2->relation('id_displays_pds', 'displays_pds', 'id_displays_pds', 'id_displays_pds');
-        $xcrud_2->relation('id_alarm', 'alarm', 'id_alarm', 'alarm');
-        $xcrud_2->label('client_type_pds', 'Cliente')->label('id_alarms_display_pds', 'REF.')->label('id_pds', 'SFID')->label('id_displays_pds', 'Cod. mueble')->label('id_alarm', 'Alarma')->label('description', 'Comentarios')->label('status', 'Estado');
-        $xcrud_2->columns('client_type_pds,id_alarms_display_pds,id_pds,id_displays_pds,id_alarm,status');
-        $xcrud_2->fields('client_type_pds,id_alarms_display_pds,id_pds,id_displays_pds,id_alarm,description,status');
-        $xcrud_2->order_by('id_pds', 'asc');
-        $xcrud_2->order_by('id_displays_pds', 'asc');
-        $xcrud_2->show_primary_ai_column(true);
-        $xcrud_2->unset_numbers();
-        $xcrud_2->start_minimized(true);
-
-        $xcrud_3 = xcrud_get_instance();
-        $xcrud_3->table('devices_pds');
-        $xcrud_3->table_name('Inventario dispositivos');
-        $xcrud_3->relation('client_type_pds', 'client', 'id_client', 'client');
-        $xcrud_3->relation('id_pds', 'pds', 'id_pds', 'reference');
-        $xcrud_3->relation('id_displays_pds', 'displays_pds', 'id_displays_pds', 'id_displays_pds');
-        $xcrud_3->relation('id_display', 'display', 'id_display', 'display');
-        $xcrud_3->relation('id_device', 'device', 'id_device', 'device');
-        $xcrud_3->relation('id_color_device', 'color_device', 'id_color_device', 'color_device');
-        $xcrud_3->relation('id_complement_device', 'complement_device', 'id_complement_device', 'complement_device');
-        $xcrud_3->relation('id_status_device', 'status_device', 'id_status_device', 'status_device');
-        $xcrud_3->relation('id_status_packaging_device', 'status_packaging_device', 'id_status_packaging_device', 'status_packaging_device');
-        $xcrud_3->change_type('picture_url_1', 'image');
-        $xcrud_3->change_type('picture_url_2', 'image');
-        $xcrud_3->change_type('picture_url_3', 'image');
-        $xcrud_3->modal('picture_url_1');
-        $xcrud_3->modal('picture_url_2');
-        $xcrud_3->modal('picture_url_3');
-        $xcrud_3->label('client_type_pds', 'Cliente')->label('id_devices_pds', 'REF.')->label('id_pds', 'SFID')->label('id_displays_pds', 'Cod. mueble')->label('id_display', 'Mueble')->label('alta', 'Fecha de alta')->label('position', 'Posición')->label('id_device', 'Dispositivo')->label('IMEI', 'IMEI')->label('mac', 'MAC')->label('serial', 'Nº de serie')->label('barcode', 'Código de barras')->label('id_color_device', 'Color')->label('id_complement_device', 'Complementos')->label('id_status_device', 'Estado dispositivo')->label('id_status_packaging_device', 'Estado packaging')->label('picture_url_1', 'Foto #1')->label('picture_url_2', 'Foto #2')->label('picture_url_3', 'Foto #3')->label('description', 'Comentarios')->label('status', 'Estado');
-        $xcrud_3->columns('client_type_pds,id_devices_pds,id_pds,id_displays_pds,id_display,id_device,position,IMEI,mac,status');
-        $xcrud_3->fields('client_type_pds,id_devices_pds,id_pds,id_displays_pds,id_display,alta,id_device,position,serial,IMEI,mac,barcode,id_color_device,id_complement_device,id_status_device,id_status_packaging_device,picture_url_1,picture_url_2,picture_url_3,description,status');
-        $xcrud_3->order_by('id_pds', 'asc');
-        $xcrud_3->order_by('id_displays_pds', 'asc');
-        $xcrud_3->order_by('position', 'asc');
-        $xcrud_3->show_primary_ai_column(true);
-        $xcrud_3->unset_numbers();
-        $xcrud_3->start_minimized(true);
-
-        $xcrud_4 = xcrud_get_instance();
-        $xcrud_4->table('alarms_device_pds');
-        $xcrud_4->table_name('Inventario alarmas dispositivo');
-        $xcrud_4->relation('client_type_pds', 'client', 'id_client', 'client');
-        $xcrud_4->relation('id_pds', 'pds', 'id_pds', 'reference');
-        $xcrud_4->relation('id_devices_pds', 'devices_pds', 'id_devices_pds', 'id_devices_pds');
-        $xcrud_4->relation('id_displays_pds', 'displays_pds', 'id_displays_pds', 'id_displays_pds');
-        $xcrud_4->relation('id_alarm', 'alarm', 'id_alarm', 'alarm');
-        $xcrud_4->label('client_type_pds', 'Cliente')->label('id_alarms_device_pds', 'REF.')->label('id_pds', 'SFID')->label('id_devices_pds', 'Cod. dispositivo')->label('id_displays_pds', 'Cod. mueble')->label('id_alarm', 'Alarma')->label('description', 'Comentarios')->label('status', 'Estado');
-        $xcrud_4->columns('client_type_pds,id_alarms_device_pds,id_pds,id_devices_pds,id_displays_pds,id_alarm,status');
-        $xcrud_4->fields('client_type_pds,id_alarms_device_pds,id_pds,id_devices_pds,id_displays_pds,id_alarm,description,status');
-        $xcrud_4->order_by('id_pds', 'asc');
-        $xcrud_4->order_by('id_displays_pds', 'asc');
-        $xcrud_4->order_by('id_devices_pds', 'asc');
-        $xcrud_4->show_primary_ai_column(true);
-        $xcrud_4->unset_numbers();
-        $xcrud_4->start_minimized(true);
-
-        $data['title'] = 'Inventarios tiendas';
-        $data['content'] = $xcrud_1->render();
-        $data['content'] = $data['content'] . $xcrud_2->render();
-        $data['content'] = $data['content'] . $xcrud_3->render();
-        $data['content'] = $data['content'] . $xcrud_4->render();
-
-        /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
-        $this->data->add($data);
-        $data = $this->data->getData();
-        /////
-        $this->load->view('backend/header', $data);
-        $this->load->view('backend/navbar', $data);
-        $this->load->view('backend/inventario', $data);
-        $this->load->view('backend/footer');
     }
 
     public function inventarios()
@@ -3283,7 +2494,7 @@ class Admin extends CI_Controller
         $xcrud_1->label('client_type_pds', 'Cliente')->label('id_displays_pds', 'REF.')->label('id_type_pds', 'Tipo')->label('id_pds', 'SFID')->
         label('id_panelado', 'Panelado')->label('id_display', 'Mueble')->label('position', 'Posición Orange')->label('description', 'Comentarios')->
         label('status', 'Estado');
-        $xcrud_1->columns('client_type_pds,id_displays_pds,id_pds,id_tipo,id_subtipo,id_segmento,id_tipologia,id_display,position,status');
+        $xcrud_1->columns('client_type_pds,id_displays_pds,id_pds,id_display,position,status');
         $xcrud_1->fields('client_type_pds,id_displays_pds,id_pds,id_tipo,id_subtipo,id_segmento,id_tipologia,id_pds,id_display,position,description,status');
         $xcrud_1->where('status',array('Alta','Incidencia'));
         $xcrud_1->order_by('id_pds', 'asc');
@@ -3292,27 +2503,11 @@ class Admin extends CI_Controller
         $xcrud_1->unset_numbers();
         $xcrud_1->start_minimized(false);
 
-        /*$xcrud_2 = xcrud_get_instance();
-        $xcrud_2->table('alarms_display_pds');
-        $xcrud_2->table_name('Inventario alarmas mueble');
-        $xcrud_2->relation('client_type_pds', 'client', 'id_client', 'client');
-        $xcrud_2->relation('id_pds', 'pds', 'id_pds', 'reference');
-        $xcrud_2->relation('id_displays_pds', 'displays_pds', 'id_displays_pds', 'id_displays_pds');
-        $xcrud_2->relation('id_alarm', 'alarm', 'id_alarm', 'alarm');
-        $xcrud_2->label('client_type_pds', 'Cliente')->label('id_alarms_display_pds', 'REF.')->label('id_pds', 'SFID')->label('id_displays_pds', 'Cod. mueble')->label('id_alarm', 'Alarma')->label('description', 'Comentarios')->label('status', 'Estado');
-        $xcrud_2->columns('client_type_pds,id_alarms_display_pds,id_pds,id_displays_pds,id_alarm,status');
-        $xcrud_2->fields('client_type_pds,id_alarms_display_pds,id_pds,id_displays_pds,id_alarm,description,status');
-        $xcrud_2->order_by('id_pds', 'asc');
-        $xcrud_2->order_by('id_displays_pds', 'asc');
-        $xcrud_2->show_primary_ai_column(true);
-        $xcrud_2->unset_numbers();
-        $xcrud_2->start_minimized(true);*/
-
         $xcrud_3 = xcrud_get_instance();
         $xcrud_3->table('devices_pds');
         $xcrud_3->table_name('Inventario dispositivos');
         $xcrud_3->relation('client_type_pds', 'client', 'id_client', 'client');
-        $xcrud_3->relation('id_pds', 'pds', 'id_pds', 'reference');
+        $xcrud_3->relation('id_pds', 'pds', 'id_pds', 'reference')->where('status','Alta');
         $xcrud_3->relation('id_displays_pds', 'displays_pds', 'id_displays_pds', 'id_displays_pds');
         $xcrud_3->relation('id_display', 'display', 'id_display', 'display');
         $xcrud_3->relation('id_device', 'device', 'id_device', 'device');
@@ -3332,7 +2527,7 @@ class Admin extends CI_Controller
         $xcrud_3->columns('client_type_pds,id_devices_pds,id_pds,id_displays_pds,id_display,id_device,position,IMEI,serial,status');
         $xcrud_3->fields('client_type_pds,id_devices_pds,id_pds,id_displays_pds,id_display,alta,id_device,position,serial,IMEI,serial,barcode,id_color_device,id_complement_device,id_status_device,id_status_packaging_device,picture_url_1,picture_url_2,picture_url_3,description,status');
 
-         $xcrud_3->where('status',array('Alta','Incidencia','Baja','RMA'));
+        $xcrud_3->where('status',array('Alta','Incidencia','Baja','RMA'));
         $xcrud_3->order_by('id_pds', 'asc');
         $xcrud_3->order_by('id_displays_pds', 'asc');
         $xcrud_3->order_by('position', 'asc');
@@ -3340,33 +2535,10 @@ class Admin extends CI_Controller
         $xcrud_3->unset_numbers();
         $xcrud_3->start_minimized(false);
 
-        /*$xcrud_4 = xcrud_get_instance();
-        $xcrud_4->table('alarms_device_pds');
-        $xcrud_4->table_name('Inventario alarmas dispositivo');
-        $xcrud_4->relation('client_type_pds', 'client', 'id_client', 'client');
-        $xcrud_4->relation('id_pds', 'pds', 'id_pds', 'reference');
-        $xcrud_4->relation('id_devices_pds', 'devices_pds', 'id_devices_pds', 'id_devices_pds');
-        $xcrud_4->relation('id_displays_pds', 'displays_pds', 'id_displays_pds', 'id_displays_pds');
-        $xcrud_4->relation('id_alarm', 'alarm', 'id_alarm', 'alarm');
-        $xcrud_4->label('client_type_pds', 'Cliente')->label('id_alarms_device_pds', 'REF.')->label('id_pds', 'SFID')->label('id_devices_pds', 'Cod. dispositivo')->label('id_displays_pds', 'Cod. mueble')->label('id_alarm', 'Alarma')->label('description', 'Comentarios')->label('status', 'Estado');
-        $xcrud_4->columns('client_type_pds,id_alarms_device_pds,id_pds,id_devices_pds,id_displays_pds,id_alarm,status');
-        $xcrud_4->fields('client_type_pds,id_alarms_device_pds,id_pds,id_devices_pds,id_displays_pds,id_alarm,description,status');
-        $xcrud_4->order_by('id_pds', 'asc');
-        $xcrud_4->order_by('id_displays_pds', 'asc');
-        $xcrud_4->order_by('id_devices_pds', 'asc');
-        $xcrud_4->show_primary_ai_column(true);
-        $xcrud_4->unset_numbers();
-        $xcrud_4->start_minimized(true);*/
-
         $data['title'] = 'Inventarios tiendas';
         $data['content'] = $xcrud_1->render();
         //$data['content'] = $data['content'] . $xcrud_2->render();
         $data['content'] = $data['content'] . $xcrud_3->render();
-        ///$data['content'] = $data['content'] . $xcrud_4->render();
-
-        //$data['displays'] = $this->tienda_model->get_displays_total();
-        //$data['devices'] = $this->tienda_model->get_devices_total();
-
 
         /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
         $this->data->add($data);
@@ -3379,6 +2551,7 @@ class Admin extends CI_Controller
     }
 
     /**
+     * diario_almacen()
      * Método de entrada a Diario Almacén (Histórico de E/S de Alarmas).
      *  Por una parte, existe histórico de alarmas masivas
      *  Por otra, histórico sobre las alarmas asignadas para incidencias.
@@ -3452,7 +2625,6 @@ class Admin extends CI_Controller
 
     }
 
-
     /**
      * Método que crea un listado del inventario de dispositivos que habrá en una tienda de SFID
      * pasado como parámetro como el tercer segmento de la URL.
@@ -3478,8 +2650,6 @@ class Admin extends CI_Controller
                 $id_pds = $pds->id_pds;
             }
 
-
-
                 if (!empty($id_pds)) {
                     $query = $this->db->select('*')->where('id_pds', $id_pds)->get('pds');
                     $pds = $query->row();
@@ -3489,9 +2659,6 @@ class Admin extends CI_Controller
             }
 
     }
-
-
-
 
     public function get_inventarios_sfid_alta($pds='')
     {
@@ -3526,11 +2693,8 @@ class Admin extends CI_Controller
 
     }
 
-
     public function get_info_inventarios_pds($pds)
     {
-
-
         $data['id_pds'] = 'ABX/PDS-' . $pds->id_pds;
         $data['commercial'] = $pds->commercial;
 
@@ -3585,6 +2749,7 @@ class Admin extends CI_Controller
         }
 
     }
+
     public function inventarios_panelados()
     {
         $this->load->model('tienda_model');
@@ -3642,7 +2807,6 @@ class Admin extends CI_Controller
         $this->load->view('backend/inventario_panelados', $data);
         $this->load->view('backend/footer');
     }
-
 
     public function inventarios_planogramas()
     {
@@ -3760,9 +2924,6 @@ class Admin extends CI_Controller
         $this->load->view('backend/almacen', $data);
         $this->load->view('backend/footer');
     }
-
-
-
     /**
      * Método del controlador, que invoca al modelo para generar un CSV con el inventario de dispositivos en almacén.
      */
@@ -3798,7 +2959,6 @@ class Admin extends CI_Controller
         }
     }
 
-
     public function alta_dispositivos_almacen()
     {
         if ($this->auth->is_auth())
@@ -3824,7 +2984,6 @@ class Admin extends CI_Controller
             redirect('admin', 'refresh');
         }
     }
-
 
     public function alta_dispositivos_almacen_update()
     {
@@ -3873,7 +3032,6 @@ class Admin extends CI_Controller
             redirect('admin', 'refresh');
         }
     }
-
 
     public function alta_dispositivos_ok()
     {
@@ -4009,33 +3167,6 @@ class Admin extends CI_Controller
             redirect('admin', 'refresh');
         }
     }
-    public function baja_dispositivos_almacen_update_old()
-    {
-        if ($this->auth->is_auth())
-        {
-            $this->load->model('tienda_model');
-
-            $num = $this->tienda_model->baja_dispositivos_almacen_update($this->input->post('dipositivo_almacen'),$this->input->post('owner_dipositivo_almacen'),$this->input->post('units_dipositivo_almacen'));
-
-            $this->session->set_flashdata("id_device", $this->input->post('dipositivo_almacen'));
-
-
-
-            if($num >= 0) {
-                $this->session->set_flashdata("num", $num);
-                redirect('admin/baja_dispositivos_ok', 'refresh');
-            }else{
-                $this->session->set_flashdata("num", $this->input->post('units_dipositivo_almacen'));
-                redirect('admin/baja_dispositivos_ko', 'refresh');
-            }
-        }
-        else
-        {
-            redirect('admin', 'refresh');
-        }
-    }
-
-
 
     public function baja_dispositivos_ok()
     {
@@ -4076,7 +3207,6 @@ class Admin extends CI_Controller
             redirect('admin', 'refresh');
         }
     }
-
 
     public function baja_dispositivos_ko()
     {
@@ -4135,7 +3265,6 @@ class Admin extends CI_Controller
         $this->load->view('backend/content', $data);
         $this->load->view('backend/footer');
     }
-
 
     public function alta_incidencia()
     {
@@ -4263,6 +3392,10 @@ class Admin extends CI_Controller
         $this->load->view('backend/footer');
     }
 
+    /**
+     * @Deprecated
+     */
+    /*
     public function exp_alta_incidencia_device()
     {
         $id_pds = $this->uri->segment(3);
@@ -4317,9 +3450,7 @@ class Admin extends CI_Controller
         $this->load->view('backend/navbar', $data);
         $this->load->view('backend/exp_alta_incidencia_device', $data);
         $this->load->view('backend/footer');
-    }
-
-
+    }*/
     public function alta_incidencia_robo()
     {
         $id_pds = $this->uri->segment(3);
@@ -4386,7 +3517,6 @@ class Admin extends CI_Controller
             echo "File upload failed";
         }
     }
-
 
     public function alta_incidencia_mueble()
     {
@@ -4502,7 +3632,6 @@ class Admin extends CI_Controller
         $this->load->view('backend/footer');
     }
 
-
     public function planograma_mueble()
     {
         $id_pds = $this->uri->segment(3);
@@ -4544,223 +3673,6 @@ class Admin extends CI_Controller
         $this->load->view('backend/footer');
     }
 
-
-    public function alta_incidencia_device()
-    {
-        $id_pds = $this->uri->segment(3);
-        $denuncia = $this->uri->segment(4);
-        $id_dis = $this->uri->segment(5);
-        $id_dev = $this->uri->segment(6);
-
-        $xcrud = xcrud_get_instance();
-        $this->load->model('tienda_model');
-
-        $sfid = $this->tienda_model->get_pds($id_pds);
-
-        $data['id_pds'] = 'ABX/PDS-' . $sfid['id_pds'];
-        $data['commercial'] = $sfid['commercial'];
-        $data['territory'] = $sfid['territory'];
-        $data['reference'] = $sfid['reference'];
-        $data['address'] = $sfid['address'];
-        $data['zip'] = $sfid['zip'];
-        $data['city'] = $sfid['city'];
-        $data['denuncia'] = $this->uri->segment(4);
-
-        $display = $this->tienda_model->get_display($id_dis);
-
-        $data['id_display'] = $display['id_display'];
-        $data['display'] = $display['display'];
-        $data['picture_url_dis'] = $display['picture_url'];
-
-
-        $device = $this->tienda_model->get_device($id_dev);
-
-        $data['id_device'] = $device['id_device'];
-        $data['device'] = $device['device'];
-        $data['picture_url_dev'] = $device['picture_url'];
-        $data['device_'] = $device;
-
-        $data['id_pds_url'] = $id_pds;
-        $data['id_dis_url'] = $id_dis;
-        $data['id_dev_url'] = $id_dev;
-
-        $data['title'] = 'Alta incidencia';
-
-        /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
-        $this->data->add($data);
-        $data = $this->data->getData();
-        /////
-        $this->load->view('backend/header', $data);
-        $this->load->view('backend/navbar', $data);
-        $this->load->view('backend/alta_incidencia_device', $data);
-        $this->load->view('backend/footer');
-    }
-
-
-    public function insert_incidencia()
-    {
-
-        $id_pds = $this->uri->segment(3);
-        $denuncia = $this->uri->segment(4);
-        $id_dis = $this->uri->segment(5);
-        $id_dev = $this->uri->segment(6);
-
-        $xcrud = xcrud_get_instance();
-        $this->load->model('tienda_model');
-
-        /*
-        if ($this->form_validation->run() == true)
-        {
-            */
-        if ($denuncia == 'no-robo') {
-            $denuncia = '';
-        };
-
-        if ($this->input->post('tipo_averia') == 1) {
-            $tipo_averia = 'Robo';
-        } else {
-            $tipo_averia = 'Avería';
-        }
-
-        $description_1 = $this->input->post('description_1');
-        $description_1 = $this->strip_html_tags($description_1);
-
-
-        $ahora = date("Y-m-d H:i:s");
-
-        $data = array(
-            'fecha' => date('Y-m-d H:i:s'),
-            'fecha_cierre'    	=> NULL,
-            'id_pds' => $id_pds,
-            'id_displays_pds' => $id_dis,
-            'id_devices_pds' => $id_dev,
-            'tipo_averia' => $this->input->post('tipo_averia'),
-            'alarm_display' => $this->input->post('alarm_display'),
-            'alarm_device' => $this->input->post('alarm_device'),
-            'alarm_garra' => $this->input->post('alarm_garra'),
-            'description_1' => $description_1,
-            'description_2' => '',
-            'description_3' => '',
-            'parte_pdf' => '',
-            'denuncia' => $denuncia,
-            'foto_url' => '',
-            'foto_url_2' => '',
-            'foto_url_3' => '',
-            'contacto' => $this->input->post('contacto'),
-            'phone' => $this->input->post('phone'),
-            'email' => $this->input->post('email'),
-            'id_operador' => NULL,
-            'intervencion' => NULL,
-            'status_pds' => 1,
-            'status' => 1,
-            'last_updated' => $ahora,
-        );
-
-        //}
-
-        $incidencia = $this->tienda_model->insert_incidencia($data);
-
-
-        //if ($this->tienda_model->insert_incidencia($data))
-        if ($incidencia['add']) {
-
-            $pds = $this->tienda_model->get_pds($id_pds);
-
-
-            $message_admin = 'Se ha registrado una nueva incidencia.' . "\r\n\r\n";
-            $message_admin .= 'La tienda con SFID ' . $pds['reference'] . ' ha creado una incidencia. En http://demoreal.focusonemotions.com/ podrás revisar la misma.' . "\r\n\r\n";
-            $message_admin .= 'Atentamente,' . "\r\n\r\n";
-            $message_admin .= 'Demo Real' . "\r\n";
-            $message_admin .= 'http://demoreal.focusonemotions.com/' . "\r\n";
-
-            $this->email->from('no-reply@altabox.net', 'Demo Real');
-            $this->email->to('gzapico@altabox.net');
-            //$this->email->cc('gzapico@altabox.net');
-            //$this->email->bcc('gzapico@altabox.net');
-            //$this->email->subject('Demo Real - Registro de incidencia #'.$incidencia['id']);
-            $this->email->subject('Demo Real - Registro de incidencia');
-            $this->email->message($message_admin);
-            $this->email->send();
-
-            $this->email->clear();
-
-
-            $message_pds = 'Se ha registrado una nueva incidencia.' . "\r\n\r\n";
-            $message_pds .= 'En breve recibirá más información de la evolución de la misma.' . "\r\n\r\n";
-            $message_pds .= 'Atentamente,' . "\r\n\r\n";
-            $message_pds .= 'Demo Real' . "\r\n";
-            $message_pds .= 'http://demoreal.focusonemotions.com/' . "\r\n";
-
-            $this->email->from('no-reply@altabox.net', 'Demo Real');
-            //$this->email->to(strtolower($this->input->post('email')));
-            $this->email->to('gzapico@altabox.net');
-            //$this->email->cc('gzapico@altabox.net');
-            //$this->email->bcc('gzapico@altabox.net');
-            //$this->email->subject('Demo Real - Registro de incidencia #'.$incidencia['id']);
-            $this->email->subject('Demo Real - Registro de incidencia');
-            $this->email->message($message_pds);
-            //$this->email->send();
-
-            redirect('admin/alta_incidencia_gracias');
-        } else {
-            $this->data['message'] = (validation_errors() ? validation_errors() : ($this->session->flashdata('message')));
-        }
-
-    }
-
-    public function alta_incidencia_gracias()
-    {
-        $xcrud = xcrud_get_instance();
-
-        if ($this->session->userdata('type') == 1) {
-            $this->load->model('tienda_model');
-
-            $sfid = $this->session->userdata('sfid');
-            $id_pds = $this->tienda_model->get_id($sfid);
-            $data['id_pds_url'] = $id_pds['id_pds'];
-            $data['id_pds'] = $id_pds['id_pds'];
-
-            $sfid = $this->tienda_model->get_pds($id_pds['id_pds']);
-            $data['commercial'] = $sfid['commercial'];
-            $data['territory'] = $sfid['territory'];
-            $data['reference'] = $sfid['reference'];
-            $data['address'] = $sfid['address'];
-            $data['zip'] = $sfid['zip'];
-            $data['city'] = $sfid['city'];
-        }
-
-        $data['title'] = 'Alta incidencia';
-        $data['content'] = 'Muchas gracias.';
-
-        /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
-        $this->data->add($data);
-        $data = $this->data->getData();
-        /////
-        $this->load->view('backend/header', $data);
-        $this->load->view('backend/navbar', $data);
-        $this->load->view('backend/content', $data);
-        $this->load->view('backend/footer');
-    }
-
-
-    public function auditorias()
-    {
-        $xcrud = xcrud_get_instance();
-
-        $data['title'] = 'Auditorías';
-        $data['content'] = 'En construcción.';
-
-        /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
-        $this->data->add($data);
-        $data = $this->data->getData();
-        /////
-        $this->load->view('backend/header', $data);
-        $this->load->view('backend/navbar', $data);
-        $this->load->view('backend/content', $data);
-        $this->load->view('backend/footer');
-    }
-
-
     public function facturacion()
     {
         if ($this->auth->is_auth()) {
@@ -4770,15 +3682,13 @@ class Admin extends CI_Controller
             $xcrud = xcrud_get_instance();
             $this->load->model(array('tienda_model','sfid_model'));
 
-            $fecha_inicio = $this->input->post('fecha_inicio');
+            $fecha_inicio = $this->input->post('fecha_inicio').  " 00:00:00";
             $fecha_fin    = $this->input->post('fecha_fin')." 23:59:59";
             $instalador = $this->input->post('instalador'); $instalador = (empty($instalador)) ? 0 : $instalador;
             $dueno = $this->input->post('dueno');   $dueno = (empty($dueno)) ? 0 : $dueno;
 
             $instaladores = $this->db->query("SELECT id_contact, contact FROM contact WHERE type_profile_contact = 1")->result();
             $duenos = $this->db->query("SELECT id_client, client FROM client WHERE status='Alta' AND facturable = 1")->result();
-
-
 
 
             $data['facturacion'] = $this->tienda_model->facturacion_estado($fecha_inicio,$fecha_fin,$instalador,$dueno);
@@ -4808,8 +3718,6 @@ class Admin extends CI_Controller
         }
     }
 
-
-
     public function exportar_facturacion($fecha_inicio=NULL,$fecha_fin=NULL,$instalador=NULL,$dueno=NULL,$formato=NULL)
     {
         if ($this->auth->is_auth()) {
@@ -4837,11 +3745,10 @@ class Admin extends CI_Controller
             $this->load->model(array('tienda_model','sfid_model'));
 
 
-            $fecha_inicio = $this->input->post('fecha_inicio');
+            $fecha_inicio = $this->input->post('fecha_inicio')." 00:00:00";
             $fecha_fin    = $this->input->post('fecha_fin')." 23:59:59";
             $instalador = $this->input->post('instalador'); $instalador = (is_null($instalador) || empty($instalador)) ? 0 : $instalador;
             $dueno = $this->input->post('dueno');           $dueno = (is_null($dueno) || empty($dueno)) ? 0 : $dueno;
-
 
 
 
@@ -4878,7 +3785,6 @@ class Admin extends CI_Controller
         }
     }
 
-
     public function exportar_intervenciones_facturacion($fecha_inicio,$fecha_fin,$instalador=NULL,$dueno=NULL,$formato=NULL)
     {
         if ($this->auth->is_auth()) {
@@ -4897,7 +3803,7 @@ class Admin extends CI_Controller
         }
     }
 
-    public function facturacion_fabricanteM()
+   public function facturacion_fabricanteM()
     {
         if ($this->auth->is_auth()) {
             $data['id_pds'] = $this->session->userdata('id_pds');
@@ -4906,7 +3812,7 @@ class Admin extends CI_Controller
             $xcrud = xcrud_get_instance();
             $this->load->model(array('tienda_model','sfid_model'));
 
-            $fecha_inicio = $this->input->post('fecha_inicio');
+            $fecha_inicio = $this->input->post('fecha_inicio')." 00:00:00";
             $fecha_fin    = $this->input->post('fecha_fin')." 23:59:59";
             $fabricante = $this->input->post('fabricante');   $fabricante = (empty($fabricante)) ? 0 : $fabricante;
 
@@ -4952,25 +3858,6 @@ class Admin extends CI_Controller
         }
     }
 
-    public function operaciones()
-    {
-        $xcrud = xcrud_get_instance();
-
-        $data['title'] = 'Operaciones';
-        $data['content'] = 'En construcción.';
-
-        /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
-        $this->data->add($data);
-        $data = $this->data->getData();
-        /////
-        $this->load->view('backend/header', $data);
-        $this->load->view('backend/navbar', $data);
-        $this->load->view('backend/content', $data);
-        $this->load->view('backend/footer');
-    }
-
-
-
     public function informe_pdv()
     {
 
@@ -4982,7 +3869,6 @@ class Admin extends CI_Controller
             $this->load->model('categoria_model');
 
             $data["title"] = "Informe de Puntos de Venta (Bloom)";
-
 
             $resultados = array();
 
@@ -5022,9 +3908,6 @@ class Admin extends CI_Controller
             redirect('admin','refresh');
         }
     }
-
-
-
 
     /**
      * Método que se llama por AJAX desde el Informe PDV, al añadir o quitar un elemento del multifiltro.
@@ -5198,96 +4081,6 @@ class Admin extends CI_Controller
         }
     }
 
-
-
-    public function informe_pdv_exportar_OLD()
-    {
-        if($this->auth->is_auth()) {
-            $xcrud = xcrud_get_instance();
-            $this->load->model('sfid_model');
-            $this->load->model('tienda_model');
-            $this->load->model('informe_model');
-
-            $data["title"] = "Informe de Puntos de Venta";
-
-            $tipo_tienda = "";
-            $panelado = "";
-            $mueble = "";
-            $terminal = "";
-
-
-            $campo_orden = NULL;
-            $ordenacion = NULL;
-
-            $total_registros = 0;
-            $generado = FALSE;
-
-            $resultados = array();
-
-            if ($this->input->post("generar_informe") === "si") {
-                $tipo_tienda = $this->input->post("tipo_tienda");
-                $panelado = $this->input->post("panelado");
-                $mueble = $this->input->post("mueble");
-                $terminal = $this->input->post("terminal");
-                $sfid = $this->input->post("sfid");
-
-
-                $data["tipo_tienda"] = $tipo_tienda;
-                $data["panelado"] = $panelado;
-                $data["mueble"] = $mueble;
-                $data["terminal"] = $terminal;
-                $data["sfid"] = $sfid;
-                $data["generado"] = TRUE;
-
-
-
-
-                $total_registros = $this->informe_model->get_informe_pdv_quantity($data);
-                $data["total_registros"] = $total_registros;
-
-
-                $this->session->set_userdata($data);
-                $generado = TRUE;
-            }else{
-
-                // OBTENER DE LA SESION, SI EXISTE
-                if( $this->session->userdata("generado")!==NULL  && $this->session->userdata("generado")===TRUE){
-
-
-
-                    $tipo_tienda = $this->session->userdata("tipo_tienda");
-                    $panelado = $this->session->userdata("panelado");
-                    $mueble = $this->session->userdata("mueble");
-                    $terminal = $this->session->userdata("terminal");
-                    $sfid = $this->session->userdata("sfid");
-                    $generado = $this->session->userdata("generado");
-                    $total_registros = $this->session->userdata("total_registros");
-
-                    $data["tipo_tienda"] = $tipo_tienda;
-                    $data["panelado"] = $panelado;
-                    $data["mueble"] = $mueble;
-                    $data["terminal"] = $terminal;
-                    $data["sfid"] = $sfid;
-                    $data["generado"] = TRUE;
-                    $data["total_registros"] = $total_registros;
-
-
-
-                }
-            }
-
-
-
-            $data["generado"] = $generado;
-
-            $this->informe_model->get_informe_csv($campo_orden,$ordenacion,$data);
-        }
-        else
-        {
-            redirect('admin','refresh');
-        }
-    }
-
     /**
      * Punto de entrada del Informe sobre planogramas.
      * Mostrará la vista principal con el formulario de filtrado, y recogerá los datos enviados y los procesará
@@ -5381,13 +4174,10 @@ class Admin extends CI_Controller
                         $data['city']       = $sfid['city'];
                         $data['id_pds_url'] = $id_pds;
 
-
                         $arr_displays_pds = $this->sfid_model->get_id_displays_pds($id_pds,$mueble_plano);
 
                         $displays = array();
                         $data['display'] = "";
-
-
 
                         if(!empty($arr_displays_pds)) {
                             $id_displays_pds = $arr_displays_pds[0]->id_displays_pds;
@@ -5403,12 +4193,7 @@ class Admin extends CI_Controller
                             $devices = $this->sfid_model->get_devices_displays_pds($id_displays_pds);
                             $data['devices'] = $devices;
                             $data['displays'] = $displays;
-
-
-
                         }
-
-
                     }
 
                     $data['subtitle'] = 'Planograma tienda: SFID-' . $sfid_plano . ' - '.$display_maestro['display'];
@@ -5420,15 +4205,12 @@ class Admin extends CI_Controller
                      */
                     $tiendas = $this->tienda_model->search_pds($sfid_plano,'Alta');
 
-
-
                     if (!empty($tiendas) && count($tiendas) == 1) {
 
                         $tienda = NULL;
                         foreach ($tiendas as $tienda_1) {
                             $tienda = $tienda_1;
                         }
-
 
                         $id_pds = $tienda->id_pds;
 
@@ -5484,15 +4266,7 @@ class Admin extends CI_Controller
                 }
             }
 
-
-
-
-
-
-
-
             $data["generado_planograma"] = $generado_planograma;
-
 
             // Comprobar si existe el segmento PAGE en la URI, si no inicializar a 1..
             $get_page = $this->uri->segment(3);
@@ -5506,17 +4280,11 @@ class Admin extends CI_Controller
 
             }
 
-
             /** COMENTADO SELECT DEMOREAL $muebles = $this->tienda_model->get_displays_demoreal(); */
             $muebles = $this->tienda_model->get_displays_demoreal();
             $data["muebles"] = $muebles;
 
             $data["vista"] = $vista;
-
-
-
-
-
 
             /* Pasar a la vista */
             /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
@@ -5542,9 +4310,7 @@ class Admin extends CI_Controller
 
             }
 
-
             $this->load->view('backend/footer');
-
 
         }
         else
@@ -5553,13 +4319,9 @@ class Admin extends CI_Controller
         }
     }
 
-
-
     public function informe_planograma_mueble_pds($id_pds, $id_dis){
         if($this->auth->is_auth())
         {
-
-
             $xcrud = xcrud_get_instance();
             $this->load->model('tienda_model');
             $this->load->model('sfid_model');
@@ -5567,7 +4329,6 @@ class Admin extends CI_Controller
             $sfid = $this->tienda_model->get_pds($id_pds);
 
             $data["generado_planograma"] = FALSE;
-
 
             $data['id_pds']     = 'ABX/PDS-'.$sfid['id_pds'];
             $data['commercial'] = $sfid['commercial'];
@@ -5624,7 +4385,6 @@ class Admin extends CI_Controller
         }
 
     }
-
 
     public function informe_planograma_terminal(){
         if($this->auth->is_auth())
@@ -5707,7 +4467,6 @@ class Admin extends CI_Controller
         }
     }
 
-
     /**
      * Tercer informe: visual (panelado)
      */
@@ -5785,8 +4544,6 @@ class Admin extends CI_Controller
             $this->session->set_userdata($data);
 
 
-
-
             /* Obtener los tipos de tienda para el select */
             /** COMENTADO SELECT DEMOREAL $muebles = $this->tienda_model->get_displays_demoreal(); */
             $muebles = $this->tienda_model->get_displays_demoreal();
@@ -5798,15 +4555,10 @@ class Admin extends CI_Controller
             $data["segmentos"] = $this->categoria_model->get_segmentos_pds($id_segmento_visual);
             $data["tipologias"] = array();
 
-
-
             $data["subtitle"] = "";
             $data["error_panelado"] = FALSE;
 
-
-
             if($generado_visual) {
-
 
                 if (empty($sfid_visual)) {
                     if (empty($id_tipo_visual) || empty($id_subtipo_visual) || empty($id_segmento_visual) || empty($id_tipologia_visual)) {
@@ -5928,8 +4680,6 @@ class Admin extends CI_Controller
             redirect('admin','refresh');
         }
     }
-
-
 
     public function informe_visual_mueble($id_mueble){
         if($this->auth->is_auth())
@@ -6093,8 +4843,6 @@ class Admin extends CI_Controller
         }
     }
 
-
-
     public function informe_visual_mueble_sfid(){
         if($this->auth->is_auth())
         {
@@ -6179,7 +4927,6 @@ class Admin extends CI_Controller
         }
 
     }
-
 
     public function informe_visual_ficha_terminal(){
         if($this->auth->is_auth())
@@ -6274,7 +5021,6 @@ class Admin extends CI_Controller
         }
     }
 
-
     /**
      * Acción de entrada del Informe: Tiendas por tipología
      */
@@ -6310,7 +5056,6 @@ class Admin extends CI_Controller
             redirect($entrada,"refresh");
         }
     }
-
 
     /**
      * Acción de entrada del Informe: Tiendas por fabricante
@@ -6506,7 +5251,6 @@ class Admin extends CI_Controller
         }
     }
 
-
     public function manuales()
     {
         if ($this->auth->is_auth()) {
@@ -6557,18 +5301,14 @@ class Admin extends CI_Controller
         }
     }
 
-
     public function logout()
     {
-        //if ($this->session->userdata('logged_in')) {
         if ($this->auth->is_auth()) {
             $this->session->unset_userdata('logged_in');
             $this->session->sess_destroy();
         }
         redirect('admin', 'refresh');
     }
-
-
 
     public function informe_backup()
     {
@@ -6721,7 +5461,6 @@ class Admin extends CI_Controller
         $this->load->view('backend/footer');
     }
 
-
     public function cdm_incidencias($anio = NULL)
     {
         if($this->auth->is_auth()){ // Control de acceso según el tipo de agente. Permiso definido en constructor
@@ -6823,9 +5562,6 @@ class Admin extends CI_Controller
             /*Numero total de intervenciones de un determinado año*/
             $resultados_3 = $this->tablona_model->get_totalIntervenciones();
 
-
-
-
             // CREAMOS UN ARRAY CON TODOS LOS MESES Y LO RELLENAMOS CON LOS RESULTADOS, SI NO                                                                                                                                                                                                                      EXISTE RESULTADO, ESE MES
             // SERA DE CANTIDAD 0
             $intervenciones_anio = array();
@@ -6873,16 +5609,6 @@ class Admin extends CI_Controller
 
 
             // Línea 3: Terminales
-            /*$resultados_5 = $this->db->query("
-                SELECT  SUM(material_incidencias.cantidad) as cantidad,
-                        MONTH(material_incidencias.fecha) as mes,
-                        YEAR(material_incidencias.fecha) as anio
-                FROM material_incidencias
-                JOIN incidencias ON material_incidencias.id_incidencia = incidencias.id_incidencia
-                WHERE incidencias.status_pds = 'Finalizada' AND YEAR(material_incidencias.fecha) = '".$este_anio."'
-                AND id_alarm IS NULL
-                GROUP BY mes
-            ");*/
             $resultados_5= $this->tablona_model->get_terminales($este_anio);
 
 
@@ -6908,13 +5634,8 @@ class Admin extends CI_Controller
             $data["terminales_anio"] = $terminales_anio;
 
 
-
             $resultados_6 = $this->tablona_model->get_IncidenciasResueltas();
 
-            /*$resultados_6 = $this->db->query("SELECT COUNT('id_incidencia') as cantidad,
-                                                MONTH(fecha) as mes, YEAR(fecha) as anio
-                                                FROM facturacion WHERE YEAR(fecha) = '".$este_anio."'
-                                                GROUP BY  anio, mes");*/
 
             // CREAMOS UN ARRAY CON TODOS LOS MESES Y LO RELLENAMOS CON LOS RESULTADOS, SI NO EXISTE RESULTADO, ESE MES
             // SERA DE CANTIDAD 0
@@ -6973,21 +5694,7 @@ class Admin extends CI_Controller
                 $data["total_media_inc_int"] = 0;
             }
 
-
             /* LINEAS NUM INC POR ROBO */
-           /* $sql_aux = 'SELECT COUNT(id_incidencia) FROM incidencias
-                        WHERE month(fecha) = mes AND YEAR(fecha) = "'.$este_anio.'" '.$ctrl_no_cancelada.' ';
-
-
-            $resultados_8 = $this->db->query('SELECT COUNT(id_incidencia) as cantidad,
-
-                                            YEAR(f.fecha) as anio, MONTH(f.fecha) as mes,
-                                            ('.$sql_aux.') as total
-
-                                                FROM incidencias f
-                                                WHERE YEAR(f.fecha) = "'.$este_anio.'" AND f.tipo_averia = "Robo"
-                                                '.$ctrl_no_cancelada.'
-                                                GROUP BY mes');*/
 
             /*LINEAS NUMERO INCIDENCIAS POR ROBO*/
             $resultados_8 = $this->tablona_model->get_IncidenciasTipo($este_anio,$ctrl_no_cancelada,'Robo');
@@ -7023,13 +5730,7 @@ class Admin extends CI_Controller
 
             /* LINEAS NUM INC POR AVERIA */
             $resultados_9 = $this->tablona_model->get_IncidenciasTipo($este_anio,$ctrl_no_cancelada,'Averia');
-                /*$this->db->query('SELECT COUNT(id_incidencia) as cantidad, YEAR(f.fecha) as anio, MONTH(f.fecha) as mes,
-            ('.$sql_aux.') as total
-                                                FROM incidencias f
-                                                WHERE YEAR(f.fecha) = "'.$este_anio.'" AND f.tipo_averia = "Avería"
-                                                '.$ctrl_no_cancelada.'
-                                                GROUP BY mes');
-*/
+
             // CREAMOS UN ARRAY CON TODOS LOS MESES Y LO RELLENAMOS CON LOS RESULTADOS, SI NO EXISTE RESULTADO, ESE MES
             // SERA DE CANTIDAD 0
             $incidencias_averia = array();
@@ -7100,8 +5801,6 @@ class Admin extends CI_Controller
      */
     public function pedidos($tipo="abiertos")
     {
-        //if ($this->session->userdata('logged_in')) {
-
         if ($this->auth->is_auth()) {
             //$data['sfid'] = $this->session->userdata('sfid');
 
@@ -7266,12 +5965,6 @@ class Admin extends CI_Controller
             $historico_proceso = $this->tienda_model->historico_fecha($id_pedido,'En proceso',$tabla);
             $data['historico_proceso'] =  isset($historico_proceso['fecha']) ? date("d/m/Y",strtotime($historico_proceso['fecha'])) : '';
 
-            /*  $historico_instalador_asignado = $this->tienda_model->historico_fecha($id_pedido,'Instalador asignado');
-              $data['historico_instalador_asignado'] =  isset($historico_instalador_asignado['fecha']) ? date("d/m/Y",strtotime($historico_instalador_asignado['fecha'])) : '';
-
-              $historico_material_asignado = $this->tienda_model->historico_fecha($id_pedido,'Material asignado');
-              $data['historico_material_asignado'] =  isset($historico_material_asignado['fecha']) ? date("d/m/Y",strtotime($historico_material_asignado['fecha'])) : '';
-  */
             $historico_fecha_enviado = $this->tienda_model->historico_fecha($id_pedido,'Enviado',$tabla);
             $data['historico_fecha_enviado'] =  isset($historico_fecha_enviado['fecha']) ? date("d/m/Y",strtotime($historico_fecha_enviado['fecha'])) : '';
 
@@ -7281,31 +5974,8 @@ class Admin extends CI_Controller
             $historico_fecha_finzalizado = $this->tienda_model->historico_fecha($id_pedido,'Finalizado',$tabla);
             $data['historico_fecha_finalizado'] =  isset($historico_fecha_finzalizado['fecha']) ? date("d/m/Y",strtotime($historico_fecha_finzalizado['fecha'])) : '';
 
-            // $pedido['intervencion'] = $this->intervencion_model->get_intervencion_incidencia($id_pedido);
-
-            // $pedido['device'] = $this->sfid_model->get_device($pedido['id_devices_pds']);
-            //$pedido['display'] = $this->sfid_model->get_display($pedido['id_displays_pds']);
             $data['pedido'] = $pedido;
             $data['detalle'] = $detalle;
-
-
-            /*  $data['fail_device'] = $pedido['fail_device'];
-              $data['alarm_display'] = $pedido['alarm_display'];
-              $data['alarm_device'] = $pedido['alarm_device'];
-              $data['alarm_garra'] = $pedido['alarm_garra'];*/
-
-            /*  $material_editable = $this->material_editable($pedido['status']);
-              $data['material_editable'] = $material_editable;*/
-
-            /* $material_dispositivos = $this->tienda_model->get_material_dispositivos($pedido['id']);
-             $data['material_dispositivos'] = $material_dispositivos;
-
-             $material_alarmas = $this->tienda_model->get_material_alarmas($pedido['id']);
-             $data['material_alarmas'] = $material_alarmas;
-
-             $data['tipos_incidencia'] = $this->tienda_model->get_tipos_incidencia();
-             $data['soluciones'] = $this->tienda_model->get_soluciones_incidencia();
- */
 
             $chats = $this->chat_model->get_chat_pds($id_pedido,"pedidos");
             $leido = $this->chat_model->marcar_leido($id_pedido,$sfid['reference'],"pedidos");
@@ -7326,7 +5996,6 @@ class Admin extends CI_Controller
             redirect('admin', 'refresh');
         }
     }
-
     /*
      * Actualizar el pedido segun el paso en el que nos encontremos
      */
@@ -7434,7 +6103,6 @@ class Admin extends CI_Controller
         }
 
     }
-
     /*
      * Cuando se va a enviar el material se imprime un albaran del envio
      */
@@ -7513,11 +6181,8 @@ class Admin extends CI_Controller
 
 
             /** ENVIO DEL EMAIL al operador*/
-
             /*if($envio_mail === "notificacion")
             {
-
-
                 $mail_operador = $info_intervencion->operador->email;
                 $mail_cc = $info_intervencion->operador->email_cc;
 
@@ -7534,54 +6199,52 @@ class Admin extends CI_Controller
                 if (empty($mail_operador)) {
                     $data['email_sent'] = FALSE;
                 } else {
-                    /**
-                     * El asunto al ir en los headers del email, no puede pasar de 62 caracteres. Ahora hay margen pero si en el futuro el email
-                     * se ve raramente, revisad que el asunto no haya crecido más de 62 chars, en primer lugar.
-                     */
-            /*  $subject = "DEMOREAL / SFID " . $sfid['reference'] . " / INC " . $incidencia['id_incidencia'] . " / INT " . $incidencia['intervencion'];
+                        //  El asunto al ir en los headers del email, no puede pasar de 62 caracteres. Ahora hay margen pero si en el futuro el email
+                        //  se ve raramente, revisad que el asunto no haya crecido más de 62 chars, en primer lugar.
+                       $subject = "DEMOREAL / SFID " . $sfid['reference'] . " / INC " . $incidencia['id_incidencia'] . " / INT " . $incidencia['intervencion'];
 
-              $message_operador = "Asunto: " . $subject . "\r\n\r\n";
-              $message_operador .= "En referencia a los datos indicados en Asunto, adjunto remitimos parte para la intervención." . "\r\n";
-              $message_operador .= "Recordamos los pasos principales del procedimiento:" . "\r\n\r\n";
-              $message_operador .= "1) Realizar intervención dentro de las 48h siguientes a la recepción del email." . "\r\n";
-              $message_operador .= "2) Enviar el presente parte rellenado y con la firma de la persona encargada de la tienda al email demoreal@focusonemotions.com." . "\r\n";
-              $message_operador .= "3) Preparar en bolsa independiente todo el material sobrante y defectuoso separado por incidencia." . "\r\n";
-              $message_operador .= "4) Enviar email con el material preparado a demoreal@focusonemotions.com." . "\r\n";
-              $message_operador .= "Demo Real" . "\r\n";
-              $message_operador .= "http://demoreal.focusonemotions.com/" . "\r\n\n";
+                      $message_operador = "Asunto: " . $subject . "\r\n\r\n";
+                      $message_operador .= "En referencia a los datos indicados en Asunto, adjunto remitimos parte para la intervención." . "\r\n";
+                      $message_operador .= "Recordamos los pasos principales del procedimiento:" . "\r\n\r\n";
+                      $message_operador .= "1) Realizar intervención dentro de las 48h siguientes a la recepción del email." . "\r\n";
+                      $message_operador .= "2) Enviar el presente parte rellenado y con la firma de la persona encargada de la tienda al email demoreal@focusonemotions.com." . "\r\n";
+                      $message_operador .= "3) Preparar en bolsa independiente todo el material sobrante y defectuoso separado por incidencia." . "\r\n";
+                      $message_operador .= "4) Enviar email con el material preparado a demoreal@focusonemotions.com." . "\r\n";
+                      $message_operador .= "Demo Real" . "\r\n";
+                      $message_operador .= "http://demoreal.focusonemotions.com/" . "\r\n\n";
 
-              $this->email->from('demoreal@focusonemotions.com', 'Demo Real');
+                      $this->email->from('demoreal@focusonemotions.com', 'Demo Real');
 
-              if($mail_operador=="no-reply@altabox.net"){
-                  // No enviamos mail, si el instalador es por defecto, y tiene la cuenta no-reply
-              }else {
-                  $this->email->to($mail_operador);
-              }
+                      if($mail_operador=="no-reply@altabox.net"){
+                          // No enviamos mail, si el instalador es por defecto, y tiene la cuenta no-reply
+                      }else {
+                          $this->email->to($mail_operador);
+                      }
 
-              if (!empty($mail_cc)) {
-                  $this->email->cc($mail_cc);
-              }
-              /** COMENTADO AVISO COPIA */
-            /*       $this->email->bcc('demoreal@focusonemotions.com');
+                      if (!empty($mail_cc)) {
+                          $this->email->cc($mail_cc);
+                      }
+                      //COMENTADO AVISO COPIA
+                      //       $this->email->bcc('demoreal@focusonemotions.com');
 
-                   $this->email->subject($subject);
-                   $this->email->message($message_operador);
+                           $this->email->subject($subject);
+                           $this->email->message($message_operador);
 
-                   $this->email->attach($attach);
+                           $this->email->attach($attach);
 
-                   if ($this->email->send()) {
-                       $data['email_sent'] = TRUE;
-                   } else {
-                       $data['email_sent'] = FALSE;
-                   }
-                   $this->email->clear();
-               }
-               /** FIN ENVIO DEL EMAIL al operador*/
+                           if ($this->email->send()) {
+                               $data['email_sent'] = TRUE;
+                           } else {
+                               $data['email_sent'] = FALSE;
+                           }
+                           $this->email->clear();
+                       }
+                       //FIN ENVIO DEL EMAIL al operador
 
-            /*
-                        }else{
-                            $data['email_sent'] = NULL; // Descarga sin notificacion
-                        }*/
+
+            }else{
+                $data['email_sent'] = NULL; // Descarga sin notificacion
+            }*/
             // Paso a vista
             $data['title'] = 'Generación del albaran para el pedido ['.$pedido->id .']';
             $data['filename_pdf'] = $filename_pdf;
@@ -7602,13 +6265,11 @@ class Admin extends CI_Controller
             redirect('admin', 'refresh');
         }
     }
-
     /*
      * Indicar que el pedido ya ha sido creado y el id del mismo
      */
     public function pedido_pendiente_material($id_pedido,$id_pds)
     {
-       // if($this->session->userdata('logged_in'))
         if ($this->auth->is_auth()) {
 
             $data['id_pds'] = $id_pds;
@@ -7644,7 +6305,6 @@ class Admin extends CI_Controller
             redirect('admin','refresh');
         }
     }
-
     /**
      * Método llamado desde la vista de Impresión del albaran del pedido para descargar un PDF en el equipo.
      * @param $filename
@@ -7658,13 +6318,11 @@ class Admin extends CI_Controller
         $fp=fopen("uploads/pedidos/$f", "r");
         fpassthru($fp);
     }
-
     /*
      * exportar el listado de pedidos
      */
     public function exportar_pedidos($tipo="abiertos")
     {
-        //if ($this->session->userdata('logged_in')) {
         if ($this->auth->is_auth()) {
             $xcrud = xcrud_get_instance();
             $data['sfid'] = $this->session->userdata('sfid');
@@ -7728,21 +6386,6 @@ class Admin extends CI_Controller
         $xcrud->unset_numbers();
       //  $xcrud->start_minimized(true);
 
-     /*   $xcrud_2 = xcrud_get_instance();
-        $xcrud_2->table('alarm');
-        $xcrud_2->table_name('Inventario alarmas');
-        $xcrud_2->relation('type_alarm', 'type_alarm', 'id_type_alarm', 'type');
-        $xcrud_2->relation('brand_alarm', 'brand_alarm', 'id_brand_alarm', 'brand');
-        $xcrud_2->change_type('picture_url', 'image');
-        $xcrud_2->modal('picture_url');
-        $xcrud_2->label('brand_alarm', 'Fabricante')->label('type_alarm', 'Tipo')->label('code', 'Código')->label('alarm', 'Modelo')->label('picture_url', 'Foto')->label('description', 'Comentarios')->label('units', 'Unidades')->label('status', 'Estado');
-        $xcrud_2->columns('brand_alarm,type_alarm,code,alarm,picture_url,units,status');
-        $xcrud_2->fields('brand_alarm,type_alarm,code,alarm,picture_url,description,units,status');
-        $xcrud_2->order_by('code', 'asc');
-        $xcrud_2->order_by('alarm', 'asc');
-        $xcrud_2->unset_numbers();
-        $xcrud_2->start_minimized(true);*/
-
         $data['title'] = 'Dispositivos';
         $data['content'] = $xcrud->render();
     //    $data['content'] = $data['content'] . $xcrud_2->render();
@@ -7756,7 +6399,6 @@ class Admin extends CI_Controller
         $this->load->view('backend/almacen', $data);
         $this->load->view('backend/footer');
     }
-
 
     /*Recepcion de terminales en RMA procedentes de incidencia*/
     public function recepcion_rma()
