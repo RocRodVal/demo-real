@@ -1138,13 +1138,13 @@ class Admin extends MY_Controller
             //                                                                              //
             //////////////////////////////////////////////////////////////////////////////////
             //                                                                              //
-                set_estado_incidencia_realdooh([                                            //
+                set_estado_incidencia_realdooh(array(                                          //
                     'drId'=>  $this->uri->segment(4)                                        //
-                ],[                                                                         //
+                ),array(                                                                         //
                     'user'=> $sfid['reference'],                                            //
                     'password' => 'demoreal'                                                //
                                                                                             //
-                ], 'revised=1' );                                                           //
+                ), 'revised=1' );                                                           //
                                                                                             //
             //                                                                              //
             //////////////////////////////////////////////////////////////////////////////////
@@ -1181,13 +1181,13 @@ class Admin extends MY_Controller
             //                                                                              //
             //////////////////////////////////////////////////////////////////////////////////
             //                                                                              //
-                            set_estado_incidencia_realdooh([
+                            set_estado_incidencia_realdooh(array(
                                 'drId'=>  $this->uri->segment(4)
-                            ],[
+                            ),array(
                                 'user'=> $sfid['reference'],
                                 'password' => 'demoreal'
 
-                            ], 'resolved=1' );                                              //
+                            ), 'resolved=1' );                                              //
             //                                                                              //
             //////////////////////////////////////////////////////////////////////////////////
         }
@@ -1291,13 +1291,13 @@ class Admin extends MY_Controller
             //                                                                              //
             //////////////////////////////////////////////////////////////////////////////////
             //                                                                              //
-                                set_estado_incidencia_realdooh([
+                                set_estado_incidencia_realdooh(array(
                                     'drId'=>  $this->uri->segment(4)
-                                ],[
+                                ),array(
                                     'user'=> $sfid['reference'],
                                     'password' => 'demoreal'
 
-                                ], 'visited=1' );                                           //
+                                ), 'visited=1' );                                           //
             //                                                                              //
             //////////////////////////////////////////////////////////////////////////////////
 

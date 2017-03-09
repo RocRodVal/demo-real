@@ -688,14 +688,14 @@ class Tienda extends MY_Controller {
                 //                                                                             //
                 /////////////////////////////////////////////////////////////////////////////////
                                                                                                //
-                        $response = alta_incidencia_realdooh([                                             //
+                        $response = alta_incidencia_realdooh(array(                                             //
                             'drId'=>  $incidencia['id'],                                       //
                             'assetDrId' => $this->uri->segment(3),                             //
                             'userSFID' => $this->session->userdata('sfid')                     //
-                        ],[                                                                    //
+                        ),array(                                                                    //
                             'user'=>$this->session->userdata('sfid'),                          //
                             'password' => 'demoreal'                                           //
-                        ]);
+                        ));
 
 			            //print_r($response);
 			    //
