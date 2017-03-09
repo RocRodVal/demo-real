@@ -96,14 +96,14 @@ class MY_Controller extends CI_Controller
         // Comprobación ´basica...
         if ($this->form_validation->run() == true)
         {
-            $this->form_validation->set_rules('sfid-login','SFID','callback_do_login', [ 'do_login' => 'SFID o Password incorrectos']);
+            $this->form_validation->set_rules('sfid-login','SFID','callback_do_login', array('do_login' => 'SFID o Password incorrectos'));
 
             // Comprobación de usuario
             if($this->form_validation->run() == true) redirect($this->data->get('entrada'));
 
 
             // Comprobación de usuario por entorno...
-            $this->form_validation->set_rules('sfid-login','SFID','callback_do_env_login', [ 'do_login' => 'SFID o Password incorrectos']);
+            $this->form_validation->set_rules('sfid-login','SFID','callback_do_env_login', array('do_login' => 'SFID o Password incorrectos'));
             $this->form_validation->run();
 
             // Redirigir si procede
