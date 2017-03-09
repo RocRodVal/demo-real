@@ -86,10 +86,10 @@ class MY_Controller extends CI_Controller
 
         if($this->auth->is_auth()) redirect($this->data->get('entrada'));
 
-        $config = [
+        $config = array (
             [ 'field' => 'sfid-login', 'label'=> 'SFID', 'rules' => 'trim|required', 'errors'=> [ 'required'=> '%s es requerido'] ],
             [ 'field' => 'password', 'label'=> 'Password', 'rules' => 'trim|required',  'errors'=> [ 'required'=> '%s es requerido']  ]
-        ];
+        );
 
         $this->form_validation->set_rules($config);
 

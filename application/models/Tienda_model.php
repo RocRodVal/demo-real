@@ -737,7 +737,7 @@ class Tienda_model extends CI_Model {
 	
 	public function facturacion_estado($fecha_inicio,$fecha_fin,$instalador = NULL,$dueno=NULL) {
         /*cuando se cuentan las incidencias de una intervención estas deben tener id_incidencia diferente*/
-        $result = [];
+        $result = array();
 
         if($this->input->post()) {
             $query = $this->db->select('facturacion.fecha, pds.reference AS SFID, pds_tipo.titulo as tipo, pds_subtipo.titulo as subtipo,
@@ -857,7 +857,7 @@ class Tienda_model extends CI_Model {
 
     public function facturacion_estado_intervencion($fecha_inicio,$fecha_fin,$instalador = NULL,$dueno=NULL) {
 
-	    $result = [];
+	    $result = array();
 
 	    if($this->input->post()) {
             $query = $this->db->select('

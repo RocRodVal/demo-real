@@ -3,12 +3,12 @@
 
 $ci =& get_instance();
 
-$database = [
+$database = array(
     'dbhost' => $ci->db->hostname,
     'dbname' => $ci->db->database,
     'dbuser' => $ci->db->username,
     'dbpass' => $ci->db->password
-];
+);
 
 define(CONFIG_DB, $database);
 

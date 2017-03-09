@@ -1881,7 +1881,7 @@ CSSHelpers = new function(){
 			return DOMHelpers.nodeListToArray(obj.getElementsByClassName(className))
 		}
 		else {
-			var a = [];
+			var a = array();
 			var re = new RegExp(getClassReString(className));
 			var els = DOMHelpers.getAllDescendants(obj);
 			for (var i = 0, j = els.length; i < j; i++) {

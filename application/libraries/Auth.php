@@ -12,7 +12,7 @@ class Auth
     var $sess_var_auth;
 
 
-    function __construct($roles = [])
+    function __construct($roles = array())
     {
         $this->ci =& get_instance();
 
@@ -37,10 +37,10 @@ class Auth
         return $this->permitted_roles;
     }
 
-    public function is_auth($roles = [])
+    public function is_auth($roles = array())
     {
         if(!empty($roles))  {
-            if(!is_array($roles)) { $roles = [$roles];  }
+            if(!is_array($roles)) { $roles = array ($roles);  }
             $this->set_roles($roles);
         }
 

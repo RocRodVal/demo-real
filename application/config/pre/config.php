@@ -29,15 +29,15 @@ $config['base_url'] = 'http://demoreal.pre.altabox.net/orange/';
 /**
  * REALDOOH API, TEMPORARY ACTIVATION
  */
-$config['allowed_origins'] = ['localhost', 'postman.pre.altabox.net', 'demoreal.pre.altabox.net', 'realdooh.pre.altabox.net'];
+$config['allowed_origins'] = array ('localhost', 'postman.pre.altabox.net', 'demoreal.pre.altabox.net', 'realdooh.pre.altabox.net');
 
 $config['realdooh.api.url'] = 'http://realdooh.pre.altabox.net:8080/rdorangeapi/api/v1/demoreal';
 
-$config['realdooh.api'] = [
+$config['realdooh.api'] = array(
     'active' => TRUE,
     'changeStatusUrl' => $config['realdooh.api.url']. '/incident/{drId}',
     'createIncidenceUrl' => $config['realdooh.api.url'].'/incident/{drId}/asset/{assetDrId}/user/{userSFID}'
-];
+);
 
 
 /*

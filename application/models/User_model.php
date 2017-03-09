@@ -220,7 +220,7 @@ class User_model extends CI_Model {
         $password = $data['password'];
         $sdomain = ini_get('session.cookie_domain');
 
-        $response = [ 'entorno' => FALSE, 'type' => 0, 'sdomain' =>  $sdomain];
+        $response = array('entorno' => FALSE, 'type' => 0, 'sdomain' =>  $sdomain);
 
         // Acceso admin
         if($this->login_admin($data)){

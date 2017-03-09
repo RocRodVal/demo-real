@@ -29,15 +29,15 @@ $config['base_url'] = 'http://demoreal.focusonemotions.com/orange/';
 /**
  * REALDOOH API, TEMPORARY ACTIVATION
  */
-$config['allowed_origins'] = ['localhost', 'demoreal.focusonemotions.com'];
+$config['allowed_origins'] = array ('localhost', 'demoreal.focusonemotions.com');
 
 $config['realdooh.api.url'] = 'http://realdooh.pre.altabox.net:8080/api/v1/demoreal';
 
-$config['realdooh.api'] = [
+$config['realdooh.api'] = array (
     'active' => FALSE,
     'changeStatusUrl' => $config['realdooh.api.url']. '/incident/{drId}',
     'createIncidenceUrl' => $config['realdooh.api.url'].'/incident/{drId}/asset/{assetDrId}/user/{userSFID}'
-];
+);
 
 /*
 |--------------------------------------------------------------------------

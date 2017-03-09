@@ -174,14 +174,14 @@ function set_estado_incidencia_realdooh($params, $auth, $postParams = '') {
  * @param array $auth
  * @return mixed
  */
-function rest_post ($url, $urlParams = [], $auth = [], $queryParams= '') {
+function rest_post ($url, $urlParams = array(), $auth = array(), $queryParams= '') {
     // http://realdooh.pre.altabox.net:8080/rdorangeapi/api/v1/demoreal/incident/{drId}/asset/{assetDrId}/user/{userSFID}
     // Authorization: Basic aHR0cHdhdGNoOmY=    base64(User:Password)
     //$url = 'http://server.com/path';
 
     $url = replaceUrlParams($url, $urlParams);
 
-    $headers = [ "Content-type: application/json\r\n", ];
+    $headers = array("Content-type: application/json\r\n", );
 
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
@@ -203,7 +203,7 @@ function rest_post ($url, $urlParams = [], $auth = [], $queryParams= '') {
 function rest_put ($url, $urlParams, $auth, $queryParams = '') {
     // http://realdooh.pre.altabox.net:8080/rdorangeapi/api/v1/demoreal/incident/{drId}
     $url = replaceUrlParams($url, $urlParams);
-    $headers = [ "Content-type: application/json\r\n", ];
+    $headers = array ("Content-type: application/json\r\n", );
     $url .= ('?'.$queryParams);
 
     $ch = curl_init();
@@ -240,13 +240,13 @@ function file_get_contents_curl($url) {
 }
 
 
-function replaceUrlParams($url, $urlParams = []){
+function replaceUrlParams($url, $urlParams = array()){
     foreach($urlParams as $key=>$value) {
         $url  = str_replace('{'.$key.'}', $value, $url);
     }
     return $url;
 }
-function basicAuth ($auth = []){
+function basicAuth ($auth = array()){
     $strAuth = $auth['user'] . ':' . $auth['password'];
     return 'Basic '. base64_encode($strAuth);
 }
