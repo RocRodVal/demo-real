@@ -61,7 +61,7 @@ class Api extends CI_Controller
         // Intento de recuperación de campos por $_POST
         if(is_null($user)) {
             if(isset($request['sfid'])) {
-                $user = array () 'sfid' => $request['sfid'], 'password' => $request['password']);
+                $user = array ('sfid' => $request['sfid'], 'password' => $request['password']);
             }
         }
 
