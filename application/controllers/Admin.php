@@ -2109,7 +2109,7 @@ class Admin extends MY_Controller
         $xcrud->columns('client_alarm,brand_alarm,type_alarm,code,alarm,picture_url,units,status,elemento_conectado');
         $xcrud->fields('client_alarm,brand_alarm,type_alarm,code,alarm,picture_url,description,units,status,elemento_conectado');
 
-        $xcrud->before_update("historico_io_alarmas_before_update","../libraries/diario_almacen.php");
+        $xcrud->before_update("historico_io_alarmas_before_update","../libraries/Functions.php");
 
         $data['title'] = 'Gestión Sistemas de seguridad';
         $data['content'] = $xcrud->render();
@@ -2480,16 +2480,11 @@ class Admin extends MY_Controller
         $xcrud_1->table_name('Inventario muebles');
         $xcrud_1->relation('client_type_pds', 'client', 'id_client', 'client');
         $xcrud_1->relation('id_pds', 'pds', 'id_pds', 'reference');
-
-
         $xcrud_1->relation('id_display', 'display', 'id_display', 'display');
-
         $xcrud_1->relation('id_tipo', 'pds_tipo','id','titulo');
         $xcrud_1->relation('id_subtipo', 'pds_subtipo', 'id', 'titulo','','titulo ASC',false, '', false,'id_tipo','id_tipo');
-        //$xcrud_2->fk_relation('Tipología','id_tipologia', 'pds_subtipo_tipologia', 'id_subtipo', 'id_tipologia', 'pds_tipologia', 'id', 'titulo');
         $xcrud_1->relation('id_segmento', 'pds_segmento','id', 'titulo');
         $xcrud_1->relation('id_tipologia', 'pds_tipologia','id', 'titulo');
-        //id_tipo,id_subtipo,id_segmento,id_tipologia,
 
         $xcrud_1->label('client_type_pds', 'Cliente')->label('id_displays_pds', 'REF.')->label('id_type_pds', 'Tipo')->label('id_pds', 'SFID')->
         label('id_panelado', 'Panelado')->label('id_display', 'Mueble')->label('position', 'Posición Orange')->label('description', 'Comentarios')->
@@ -2507,26 +2502,28 @@ class Admin extends MY_Controller
         $xcrud_3->table('devices_pds');
         $xcrud_3->table_name('Inventario dispositivos');
         $xcrud_3->relation('client_type_pds', 'client', 'id_client', 'client');
-        $xcrud_3->relation('id_pds', 'pds', 'id_pds', 'reference')->where('status','Alta');
+        $xcrud_3->relation('id_pds', 'pds', 'id_pds', 'reference',array('status'=>'Alta'));
         $xcrud_3->relation('id_displays_pds', 'displays_pds', 'id_displays_pds', 'id_displays_pds');
-        $xcrud_3->relation('id_display', 'display', 'id_display', 'display');
+        $xcrud_3->relation('id_display', 'display', 'id_display', 'display',"positions>0");
         $xcrud_3->relation('id_device', 'device', 'id_device', 'device');
         $xcrud_3->relation('id_color_device', 'color_device', 'id_color_device', 'color_device');
         $xcrud_3->relation('id_complement_device', 'complement_device', 'id_complement_device', 'complement_device');
         $xcrud_3->relation('id_status_device', 'status_device', 'id_status_device', 'status_device');
         $xcrud_3->relation('id_status_packaging_device', 'status_packaging_device', 'id_status_packaging_device', 'status_packaging_device');
-        $xcrud_3->change_type('picture_url_1', 'image');
+       /* $xcrud_3->change_type('picture_url_1', 'image');
         $xcrud_3->change_type('picture_url_2', 'image');
         $xcrud_3->change_type('picture_url_3', 'image');
         $xcrud_3->modal('picture_url_1');
         $xcrud_3->modal('picture_url_2');
-        $xcrud_3->modal('picture_url_3');
+        $xcrud_3->modal('picture_url_3');*/
         $xcrud_3->label('client_type_pds', 'Cliente')->label('id_devices_pds', 'REF.')->label('id_pds', 'SFID')->label('id_displays_pds', 'Cod. mueble')->
         label('id_display', 'Mueble')->label('alta', 'Fecha de alta')->label('position', 'Posición')->label('id_device', 'Dispositivo')->
-        label('IMEI', 'IMEI')->label('serial', 'S/N')->label('serial', 'Nº de serie')->label('barcode', 'Código de barras')->label('id_color_device', 'Color')->label('id_complement_device', 'Complementos')->label('id_status_device', 'Estado dispositivo')->label('id_status_packaging_device', 'Estado packaging')->label('picture_url_1', 'Foto #1')->label('picture_url_2', 'Foto #2')->label('picture_url_3', 'Foto #3')->label('description', 'Comentarios')->label('status', 'Estado');
+        label('IMEI', 'IMEI')->label('serial', 'S/N')->label('serial', 'Nº de serie')->label('barcode', 'Código de barras')->label('id_color_device', 'Color')
+            ->label('id_complement_device', 'Complementos')->label('id_status_device', 'Estado dispositivo')->label('id_status_packaging_device', 'Estado packaging')
+            ->label('description', 'Comentarios')->label('status', 'Estado');
         $xcrud_3->columns('client_type_pds,id_devices_pds,id_pds,id_displays_pds,id_display,id_device,position,IMEI,serial,status');
-        $xcrud_3->fields('client_type_pds,id_devices_pds,id_pds,id_displays_pds,id_display,alta,id_device,position,serial,IMEI,serial,barcode,id_color_device,id_complement_device,id_status_device,id_status_packaging_device,picture_url_1,picture_url_2,picture_url_3,description,status');
-
+        $xcrud_3->fields('client_type_pds,id_devices_pds,id_pds,id_display,alta,id_device,position,serial,IMEI,serial,barcode,id_color_device,id_complement_device,
+        id_status_device,id_status_packaging_device,description,status');
         $xcrud_3->where('status',array('Alta','Incidencia','Baja','RMA'));
         $xcrud_3->order_by('id_pds', 'asc');
         $xcrud_3->order_by('id_displays_pds', 'asc');
@@ -2534,7 +2531,10 @@ class Admin extends MY_Controller
         $xcrud_3->show_primary_ai_column(true);
         $xcrud_3->unset_numbers();
         $xcrud_3->start_minimized(false);
-
+        $xcrud_3->after_insert("inventario_dispositivos_codigoMueble","../libraries/Functions.php");
+        $xcrud_3->before_update("update_inventario_dispositivos_codigoMueble","../libraries/Functions.php");
+        //$xcrud_3->set_exception("update_inventario_dispositivos_codigoMueble","El mueble no pertenece a la tienda",'error');
+//print_r($xcrud_3); exit;
         $data['title'] = 'Inventarios tiendas';
         $data['content'] = $xcrud_1->render();
         //$data['content'] = $data['content'] . $xcrud_2->render();
@@ -6382,7 +6382,7 @@ class Admin extends MY_Controller
         $xcrud->order_by('status', 'asc');
         $xcrud->order_by('id_devices_almacen', 'asc');
         $xcrud->show_primary_ai_column(true);
-        $xcrud->before_update("inventario_dispositivos_historicoIO","../libraries/diario_almacen.php");
+        $xcrud->before_update("inventario_dispositivos_historicoIO","../libraries/Functions.php");
         $xcrud->unset_numbers();
       //  $xcrud->start_minimized(true);
 
