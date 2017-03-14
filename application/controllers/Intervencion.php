@@ -133,6 +133,7 @@ class Intervencion extends CI_Controller
     }
 
     function addIncidenciaToIntervencion(){
+
         if (isset($_POST['incidencia_id']) && isset($_POST['intervencion_id'])) {
             $incidencia_id = $_POST['incidencia_id'];
             $intervencion_id = $_POST['intervencion_id'];
@@ -140,18 +141,32 @@ class Intervencion extends CI_Controller
             if($result==0){
                 $this->data['data']="Incidencia ya asignada";
             }
-            else if($result==true){
+            else
+                if($result==true){
                 //cambiamos el estado de la incidencia a asignada
-                $status=4;
-                $result=$this->intervencion_model->change_status_incidencia($incidencia_id,$status);
-                $this->data['data']=$result;
+                    $status=4;
+                    $result=$this->intervencion_model->change_status_incidencia($incidencia_id,$status);
 
+                    $this->load->model('tienda_model');
+                    $inc=$this->tienda_model->get_incidencia($incidencia_id);
+                    /*** Guardar incidcencia en el histórico*/
+                    $data = array(
+                        'fecha' => date('Y-m-d H:i:s'),
+                        'id_incidencia' => $incidencia_id,
+                        'id_pds' => $inc['id_pds'],
+                        'description' => NULL,
+                        'agent' => $this->session->userdata('sfid'),
+                        'status_pds' => 2,
+                        'status' => $status
+                    );
+                    $this->tienda_model->historico($data);
 
+                    $this->data['data']=$result;
 
-            }
-            else{
-                $this->data['data']=$result;
-            }
+                }
+                else{
+                   $this->data['data']=$result;
+                }
         }
         else{
 

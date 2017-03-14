@@ -134,19 +134,6 @@ class Pedido_model extends CI_Model {
         //->where('pedidos.status','Nuevo');
 
 
-
-        /** Aplicar filtros desde el array, de manera manual **/
-        /*  if(isset($filtros["status"]) && !empty($filtros["status"])) $this->db->where('pedidos.status',$filtros['status']);
-          if(isset($filtros["status_pds"]) && !empty($filtros["status_pds"])) $this->db->where('incidencias.status_pds',$filtros['status_pds']);
-          if(isset($filtros["id_incidencia"]) && !empty($filtros["id_incidencia"])) $this->db->where('incidencias.id_incidencia',$filtros['id_incidencia']);
-          */
-        /**
-         * Determinado el tipo por parámetro añadir distinción de tipo: abiertas o cerradas.
-         */
-
-        //$this->db->where($this->get_condition_pedidos("abiertos"));
-
-
         /* Obtener el resultado */
         $query =  $this->db->get('pedidos_detalle')->result();
 
@@ -192,36 +179,12 @@ class Pedido_model extends CI_Model {
         /** Aplicar filtros desde el array, de manera manual **/
         if(isset($filtros["id_pedido"])    && !empty($filtros["id_pedido"]))      $this->db->where('pedidos.id',$filtros['id_pedido']);
         if(isset($filtros["reference"])    && !empty($filtros["reference"]))      $this->db->where('reference',$filtros['reference']);
-   /*     if(isset($filtros["id_incidencia"]) && !empty($filtros["id_incidencia"]))   $this->db->where('incidencias.id_incidencia',$filtros['id_incidencia']);
-        if(isset($filtros["territory"])     && !empty($filtros["territory"]))       $this->db->where('pds.territory',$filtros['territory']);
-        if(isset($filtros["brand_device"])  && !empty($filtros["brand_device"]))    $this->db->where('device.brand_device',$filtros['brand_device']);
-
-        if(isset($filtros["id_display"])    && !empty($filtros["id_display"]))      $this->db->where('display.id_display',$filtros['id_display']);
-        if(isset($filtros["id_device"])     && !empty($filtros["id_device"]))       $this->db->where('device.id_device',$filtros['id_device']);
-        if(isset($filtros["id_supervisor"]) && !empty($filtros["id_supervisor"]))   $this->db->where('pds.id_supervisor',$filtros['id_supervisor']);
-        if(isset($filtros["id_provincia"])  && !empty($filtros["id_provincia"]))    $this->db->where('province.id_province',$filtros['id_provincia']);
-
-        if(isset($filtros["reference"])     && !empty($filtros["reference"]))       $this->db->where('reference',$filtros['reference']);
-        if(isset($filtros["id_intervencion"])&& !empty($filtros["id_intervencion"]))$this->db->where('intervenciones_incidencias.id_intervencion',$filtros['id_intervencion']);
-
-        if(isset($filtros["id_tipo"])       && !empty($filtros["id_tipo"]))         $this->db->where('pds.id_tipo',$filtros['id_tipo']);
-        if(isset($filtros["id_subtipo"])    && !empty($filtros["id_subtipo"]))      $this->db->where('pds.id_subtipo',$filtros['id_subtipo']);
-        if(isset($filtros["id_segmento"])   && !empty($filtros["id_segmento"]))     $this->db->where('pds.id_segmento',$filtros['id_segmento']);
-        if(isset($filtros["id_tipologia"])  && !empty($filtros["id_tipologia"]))    $this->db->where('pds.id_tipologia',$filtros['id_tipologia']);
-        if(isset($filtros["id_tipo_incidencia"])  && !empty($filtros["id_tipo_incidencia"]))    $this->db->where('incidencias.id_type_incidencia',$filtros['id_tipo_incidencia']);
-*/
-
 
         /* Obtenemos la condición por tipo de pedido */
         $this->db->where($this->get_condition_pedidos($tipo));
 
         $campo_orden = $orden = NULL;
-        /*if(count($array_orden) > 0) {
-            foreach ($array_orden as $key=>$value){
-                $campo_orden = $key;
-                $orden = $value;
-            }
-        }*/
+
         if(!is_null($campo_orden) && !empty($campo_orden) && !is_null($orden) && !empty($orden)) {
             $s_orden = $campo_orden. " ".$orden;
             $this->db->order_by($s_orden);
@@ -230,8 +193,6 @@ class Pedido_model extends CI_Model {
         }
 
         $query =   $this->db->get('pedidos',$cfg_pagination['per_page'], ($page-1) * $cfg_pagination['per_page']);
-        //
-         //echo $this->db->last_query(); exit;
 
         return $query->result();
     }
@@ -378,8 +339,6 @@ class Pedido_model extends CI_Model {
             $sql .= ' AND (pedidos.status="'.$f.'" OR pedidos.status="'.$c. '") ';
             $sTitleFilename = "Pedidos_finalizados";
         }
-
-       // $sql  .= ' && '.$this->get_condition_tipo_incidencia($tipo);
 
         // Montamos las cláusulas where filtro, según el array pasado como param.
         $sFiltrosFilename = "-";

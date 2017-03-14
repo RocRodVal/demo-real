@@ -894,7 +894,6 @@ class Tienda_model extends CI_Model {
 	}
 
 
-
 	function exportar_facturacion($formato="csv",$fecha_inicio,$fecha_fin,$instalador = NULL,$dueno=NULL)
 	{
 		$this->load->dbutil();
@@ -971,8 +970,6 @@ class Tienda_model extends CI_Model {
         exportar_fichero($formato,$data,'Facturacion-'.$str_filename);
 
 	}
-
-
 
 
     public function facturacion_estado_intervencion($fecha_inicio,$fecha_fin,$instalador = NULL,$dueno=NULL) {
@@ -1095,8 +1092,6 @@ class Tienda_model extends CI_Model {
             ->join('intervenciones','facturacion.id_intervencion = intervenciones.id_intervencion')
             ->join('intervenciones_incidencias','intervenciones.id_intervencion = intervenciones_incidencias.id_intervencion')
             ->join('incidencias','incidencias.id_incidencia = intervenciones_incidencias.id_incidencia')
-
-
             ->join('pds','facturacion.id_pds = pds.id_pds')
             ->join('pds_tipo','pds.id_tipo = pds_tipo.id','left')
             ->join('pds_subtipo','pds.id_subtipo = pds_subtipo.id','left')
@@ -1224,21 +1219,16 @@ class Tienda_model extends CI_Model {
                         ->join('incidencias','facturacion.id_incidencia = incidencias.id_incidencia','left')
                         ->join('client','display.client_display= client.id_client','left')
                         ->join('solucion_incidencia','solucion_incidencia.id_solucion_incidencia = incidencias.id_solucion_incidencia','left')
-                        //->join('contact','intervenciones.id_operador = contact.id_contact', 'left')
                         ->join('intervenciones','facturacion.id_intervencion = intervenciones.id_intervencion', 'left')
-                       // ->join('material_incidencias','material_incidencias.id_incidencia = incidencias.id_incidencia')
                         ->where('facturacion.fecha >=',$fecha_inicio)
                         ->where('facturacion.fecha <=',$fecha_fin)
                         ->where('client.facturable','1') //Que sea facturable
                         ->where('client.type_profile_client','2'); //Tipo de cliente fabricante
 
-           // ->where('client.id_client=',$fabricante);
-
         if(!is_null($fabricante) && !empty($fabricante)){
             $query = $this->db->where('client.id_client',$fabricante);
 
         }
-        //$query = $this->db->group_by('facturacion.id_intervencion')
         $query = $this->db->order_by('facturacion.fecha')
             ->order_by('client.client')
             ->order_by('facturacion.id_intervencion,facturacion.id_incidencia')
