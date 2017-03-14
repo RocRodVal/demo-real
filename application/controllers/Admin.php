@@ -3080,7 +3080,6 @@ class Admin extends MY_Controller
             $data['devices'] = $this->tienda_model->get_devices();
 
             $data['title'] = 'Baja masiva dispositivos';
-
             /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
             $this->data->add($data);
             $data = $this->data->getData();
@@ -3102,13 +3101,14 @@ class Admin extends MY_Controller
         {
             $this->load->model('tienda_model');
 
-            $num = $this->tienda_model->baja_dispositivos_almacen_update($this->input->post('dipositivo_almacen'),$this->input->post('owner_dipositivo_almacen'),
-                $this->input->post('units_dipositivo_almacen'),$this->input->post('inicio_dipositivo_almacen'),$this->input->post('destino_dipositivo_almacen'));
+            $num = $this->tienda_model->baja_dispositivos_almacen_update($this->input->post('dipositivo_almacen'),
+                $this->input->post('units_dipositivo_almacen'),$this->input->post('inicio_dipositivo_almacen'),$this->input->post('destino_dipositivo_almacen'),
+                $this->input->post('imeis'));
 
             $this->session->set_flashdata("id_device", $this->input->post('dipositivo_almacen'));
             $this->session->set_flashdata("mensaje1","");
             $this->session->set_flashdata("num", $num);
-            if($num >= 0) {
+            if($num != -1) {
 
                 switch ($this->input->post('destino_dipositivo_almacen')){
                     case 1:{
@@ -3117,6 +3117,10 @@ class Admin extends MY_Controller
                     }
                     case 2:{
                         $this->session->set_flashdata("mensaje1", " puesto en reservado ");
+                        break;
+                    }
+                    case 3:{
+                        $this->session->set_flashdata("mensaje1", " puesto en televenta ");
                         break;
                     }
                     case 4:{
@@ -3142,6 +3146,10 @@ class Admin extends MY_Controller
                         $this->session->set_flashdata("mensaje1", " poner en reservado ");
                         break;
                     }
+                    case 3:{
+                        $this->session->set_flashdata("mensaje1", " poner en televenta ");
+                        break;
+                    }
                     case 4:{
                         $this->session->set_flashdata("mensaje1", " poner en transito ");
                         break;
@@ -3152,12 +3160,12 @@ class Admin extends MY_Controller
                     }
                 };
 
-              /*  if ($this->input->post('destino_dipositivo_almacen')==4) {
+                /*  if ($this->input->post('destino_dipositivo_almacen')==4) {
 
-                }
-                else {
+                  }
+                  else {
 
-                }*/
+                  }*/
                 $this->session->set_flashdata("mensaje2", " ya que el stock en el almacen es 0");
                 redirect('admin/baja_dispositivos_ko', 'refresh');
             }

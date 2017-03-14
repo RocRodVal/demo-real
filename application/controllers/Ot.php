@@ -30,7 +30,7 @@ class Ot extends MY_Controller {
     /*
      * Depósito - Inventario de dispositivos para Oferta Táctica
      */
-    public function cdm_dispositivos()
+   /* public function cdm_dispositivos()
     {
         if($this->auth->is_auth())
         {
@@ -48,7 +48,7 @@ class Ot extends MY_Controller {
             $this->data->add($data);
             $data = $this->data->getData();
             /////
-            $this->load->view('master/header',$data);
+            $this->load->view('ot/header',$data);
             $this->load->view('ot/navbar',$data);
             $this->load->view('ot/cdm_dispositivos',$data);
             $this->load->view('master/footer');
@@ -57,7 +57,7 @@ class Ot extends MY_Controller {
         {
             redirect('master','refresh');
         }
-    }
+    }*/
     /*
      * Depósito - Inventario de dispositivos para Oferta Táctica
      */
@@ -103,10 +103,10 @@ class Ot extends MY_Controller {
             $this->data->add($data);
             $data = $this->data->getData();
             /////
-            $this->load->view('master/header',$data);
+            $this->load->view('ot/header',$data);
             $this->load->view('ot/navbar',$data);
             $this->load->view('ot/cdm_dispositivos_balance',$data);
-            $this->load->view('master/footer');
+            $this->load->view('ot/footer');
         }
         else
         {
@@ -135,10 +135,10 @@ class Ot extends MY_Controller {
             $this->data->add($data);
             $data = $this->data->getData();
             /////
-            $this->load->view('master/header',$data);
+            $this->load->view('ot/header',$data);
             $this->load->view('ot/navbar',$data);
             $this->load->view('ot/cdm_dispositivos_incidencias',$data);
-            $this->load->view('master/footer');
+            $this->load->view('ot/footer');
         }
         else
         {
@@ -195,7 +195,7 @@ class Ot extends MY_Controller {
     /*
      * Depósito - Inventario para Oferta Táctica
      */
-	public function cdm_inventario()
+	/*public function cdm_inventario()
 	{
         if($this->auth->is_auth())
         {
@@ -261,16 +261,16 @@ class Ot extends MY_Controller {
             $this->data->add($data);
             $data = $this->data->getData();
             /////
-			$this->load->view('master/header',$data);
+			$this->load->view('ot/header',$data);
 			$this->load->view('ot/navbar',$data);
 			$this->load->view('ot/inventario',$data);
-			$this->load->view('master/footer');
+			$this->load->view('ot/footer');
 		}
 		else
 		{
 			redirect('ot','refresh');
 		}
-	}
+	}*/
 
     /**
      * Método del controlador, que invoca al modelo para generar un CSV con el balance de activos.
@@ -330,11 +330,11 @@ class Ot extends MY_Controller {
             $this->data->add($data);
             $data = $this->data->getData();
             /////
-            $this->load->view('master/header', $data);
+            $this->load->view('ot/header', $data);
             $this->load->view('ot/navbar', $data);
             $this->load->view('ot/informes/pdv/informe_puntos_venta_form', $data);
             $this->load->view('ot/informes/pdv/informe_puntos_venta', $data);
-            $this->load->view('master/footer');
+            $this->load->view('ot/footer');
         }
         else
         {
@@ -735,7 +735,7 @@ class Ot extends MY_Controller {
             $this->data->add($data);
             $data = $this->data->getData();
             /////
-        $this->load->view('master/header', $data);
+        $this->load->view('ot/header', $data);
         $this->load->view('ot/navbar', $data);
         $this->load->view('ot/informes/planogramas/informe_planograma_form', $data);
 
@@ -755,7 +755,7 @@ class Ot extends MY_Controller {
         }
 
 
-        $this->load->view('master/footer');
+        $this->load->view('ot/footer');
 
 
     }
@@ -821,11 +821,11 @@ class Ot extends MY_Controller {
             $this->data->add($data);
             $data = $this->data->getData();
             /////
-            $this->load->view('master/header',$data);
+            $this->load->view('ot/header',$data);
             $this->load->view('ot/navbar',$data);
             $this->load->view('ot/informes/planogramas/informe_planograma_form',$data);
             $this->load->view('ot/informes/planogramas/informe_planograma_ficha_mueble',$data);
-            $this->load->view('master/footer');
+            $this->load->view('ot/footer');
         }
         else
         {
@@ -903,11 +903,11 @@ class Ot extends MY_Controller {
             $this->data->add($data);
             $data = $this->data->getData();
             /////
-        $this->load->view('master/header',$data);
+        $this->load->view('ot/header',$data);
         $this->load->view('ot/navbar',$data);
         $this->load->view('ot/informes/planogramas/informe_planograma_form',$data);
         $this->load->view('ot/informes/planogramas/informe_planograma_ficha_terminal',$data);
-        $this->load->view('master/footer');
+        $this->load->view('ot/footer');
         }
         else
         {

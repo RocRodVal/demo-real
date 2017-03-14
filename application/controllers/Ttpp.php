@@ -198,10 +198,10 @@ class Ttpp extends MY_Controller {
             $data = $this->data->getData();
             /////
 
-            $this->load->view('master/header', $data);
+            $this->load->view('ttpp/header', $data);
             $this->load->view($controlador.'/navbar', $data);
             $this->load->view($controlador.'/estado_incidencias/'.$tipo, $data);
-            $this->load->view('master/footer');
+            $this->load->view('ttpp/footer');
         } else {
             redirect('ttpp', 'refresh');
         }
@@ -340,10 +340,10 @@ class Ttpp extends MY_Controller {
 
                 $controlador = $this->data->get("controlador");
 
-				$this->load->view('master/header',$data);
+				$this->load->view('ttpp/header',$data);
 				$this->load->view($controlador.'/navbar',$data);
 				$this->load->view($controlador.'/detalle_incidencia',$data);
-				$this->load->view('master/footer');
+				$this->load->view('ttpp/footer');
 			}				
 		}
 		else
@@ -382,10 +382,10 @@ class Ttpp extends MY_Controller {
             $this->data->add($data);
             $data = $this->data->getData();
             /////
-			$this->load->view('master/header',$data);
+			$this->load->view('ttpp/header',$data);
 			$this->load->view($controlador.'/navbar',$data);
-			$this->load->view('master/inventario_planogramas',$data);
-			$this->load->view('master/footer');
+			$this->load->view('ttpp/inventario_planogramas',$data);
+			$this->load->view('ttpp/footer');
 		}
 		else
 		{
@@ -621,7 +621,7 @@ class Ttpp extends MY_Controller {
             $this->data->add($data);
             $data = $this->data->getData();
             /////
-        $this->load->view('master/header', $data);
+        $this->load->view('ttpp/header', $data);
         $this->load->view($controlador.'/navbar', $data);
         $this->load->view('ttpp/informes/informe_planograma_form', $data);
 
@@ -713,11 +713,11 @@ class Ttpp extends MY_Controller {
             $this->data->add($data);
             $data = $this->data->getData();
             /////
-            $this->load->view('master/header',$data);
+            $this->load->view('ttpp/header',$data);
             $this->load->view($controlador.'/navbar',$data);
             $this->load->view('ttpp/informes/informe_planograma_form',$data);
             $this->load->view('ttpp/informes/informe_planograma_ficha_mueble',$data);
-            $this->load->view('master/footer');
+            $this->load->view('ttpp/footer');
         }
         else
         {
@@ -797,11 +797,11 @@ class Ttpp extends MY_Controller {
         $this->data->add($data);
         $data = $this->data->getData();
         /////
-        $this->load->view('master/header',$data);
+        $this->load->view('ttpp/header',$data);
         $this->load->view($controlador.'/navbar',$data);
         $this->load->view('ttpp/informes/informe_planograma_form',$data);
         $this->load->view('ttpp/informes/informe_planograma_ficha_terminal',$data);
-        $this->load->view('master/footer');
+        $this->load->view('ttpp/footer');
         }
         else
         {
@@ -853,10 +853,10 @@ class Ttpp extends MY_Controller {
             $this->data->add($data);
             $data = $this->data->getData();
             /////
-			$this->load->view('master/header',$data);
+			$this->load->view('ttpp/header',$data);
 			$this->load->view($controlador.'/navbar',$data);
-			$this->load->view('master/ayuda',$data);
-			$this->load->view('master/footer');
+			$this->load->view('ttpp/ayuda',$data);
+			$this->load->view('ttpp/footer');
 		}
 		else
 		{
@@ -879,10 +879,10 @@ class Ttpp extends MY_Controller {
             $this->data->add($data);
             $data = $this->data->getData();
             /////
-			$this->load->view('master/header',$data);
+			$this->load->view('ttpp/header',$data);
 			$this->load->view($controlador.'/navbar',$data);
-			$this->load->view('master/manuales',$data);
-			$this->load->view('master/footer');
+			$this->load->view('ttpp/manuales',$data);
+			$this->load->view('ttpp/footer');
 		}
 		else
 		{
@@ -903,10 +903,10 @@ class Ttpp extends MY_Controller {
             $this->data->add($data);
             $data = $this->data->getData();
             /////
-			$this->load->view('master/header',$data);
+			$this->load->view('ttpp/header',$data);
 			$this->load->view($controlador.'/navbar',$data);
-			$this->load->view('master/muebles_fabricantes',$data);
-			$this->load->view('master/footer');
+			$this->load->view('ttpp/muebles_fabricantes',$data);
+			$this->load->view('ttpp/footer');
 		}
 		else
 		{
