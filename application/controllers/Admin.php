@@ -3688,9 +3688,9 @@ class Admin extends MY_Controller
             $data['sfid'] = $this->session->userdata('sfid');
 
             $xcrud = xcrud_get_instance();
-            $this->load->model(array('tienda_model','sfid_model'));
+            $this->load->model(array('tienda_model'));
 
-            $fecha_inicio = $this->input->post('fecha_inicio').  " 00:00:00";
+            $fecha_inicio = $this->input->post('fecha_inicio');//.  " 00:00:00";
             $fecha_fin    = $this->input->post('fecha_fin')." 23:59:59";
             $instalador = $this->input->post('instalador'); $instalador = (empty($instalador)) ? 0 : $instalador;
             $dueno = $this->input->post('dueno');   $dueno = (empty($dueno)) ? 0 : $dueno;
@@ -3733,7 +3733,7 @@ class Admin extends MY_Controller
             $data['sfid'] = $this->session->userdata('sfid');
 
             $xcrud = xcrud_get_instance();
-            $this->load->model(array('tienda_model','sfid_model'));
+            $this->load->model(array('tienda_model'));
 
             $ext = (!is_null($formato) ? $formato : $this->ext);    // Formato para exportaciones, especficiado o desde CFG
             $data['facturacion_csv'] = $this->tienda_model->exportar_facturacion($ext,$fecha_inicio,$fecha_fin,$instalador,$dueno);
@@ -3750,10 +3750,10 @@ class Admin extends MY_Controller
             $data['sfid'] = $this->session->userdata('sfid');
 
             $xcrud = xcrud_get_instance();
-            $this->load->model(array('tienda_model','sfid_model'));
+            $this->load->model(array('tienda_model'));
 
 
-            $fecha_inicio = $this->input->post('fecha_inicio')." 00:00:00";
+            $fecha_inicio = $this->input->post('fecha_inicio');//." 00:00:00";
             $fecha_fin    = $this->input->post('fecha_fin')." 23:59:59";
             $instalador = $this->input->post('instalador'); $instalador = (is_null($instalador) || empty($instalador)) ? 0 : $instalador;
             $dueno = $this->input->post('dueno');           $dueno = (is_null($dueno) || empty($dueno)) ? 0 : $dueno;
@@ -3798,7 +3798,7 @@ class Admin extends MY_Controller
         if ($this->auth->is_auth()) {
             $data['id_pds'] = $this->session->userdata('id_pds');
             $data['sfid'] = $this->session->userdata('sfid');
-            $this->load->model(array('tienda_model','sfid_model'));
+            $this->load->model(array('tienda_model'));
 
             $xcrud = xcrud_get_instance();
 
@@ -3818,9 +3818,9 @@ class Admin extends MY_Controller
             $data['sfid'] = $this->session->userdata('sfid');
 
             $xcrud = xcrud_get_instance();
-            $this->load->model(array('tienda_model','sfid_model'));
+            $this->load->model(array('tienda_model'));
 
-            $fecha_inicio = $this->input->post('fecha_inicio')." 00:00:00";
+            $fecha_inicio = $this->input->post('fecha_inicio');//." 00:00:00";
             $fecha_fin    = $this->input->post('fecha_fin')." 23:59:59";
             $fabricante = $this->input->post('fabricante');   $fabricante = (empty($fabricante)) ? 0 : $fabricante;
 
@@ -3856,7 +3856,7 @@ class Admin extends MY_Controller
             $data['sfid'] = $this->session->userdata('sfid');
 
             $xcrud = xcrud_get_instance();
-            $this->load->model(array('tienda_model','sfid_model'));
+            $this->load->model(array('tienda_model'));
 
             $ext = (!is_null($formato) ? $formato : $this->ext);    // Formato para exportaciones, especficiado o desde CFG
             $data['facturacion_csv'] = $this->tienda_model->exportar_facturacion_fabricanteM($ext,$fecha_inicio,$fecha_fin,$fabricante);

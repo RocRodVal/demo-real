@@ -987,6 +987,7 @@ class Tienda_model extends CI_Model {
 
 	    $result = array();
 
+
 	    if($this->input->post()) {
             $query = $this->db->select('
                     incidencias.fecha_cierre as fecha,
@@ -1128,7 +1129,7 @@ class Tienda_model extends CI_Model {
         $query = $this->db->order_by('incidencias.fecha_cierre,facturacion.id_intervencion')
             ->get('facturacion');
         $resultado = $query->result();
-echo $this->db->last_query(); exit;
+//echo $this->db->last_query(); exit;
         $titulos=array('Fecha','Intervencion','Incidencias','SFID','Tipo tienda','Subtipo tienda','Segmento tienda','Tipología tienda','Población','Provincia','Instalador','Dueño','Dispositivos','Alarmas','Cierre');
         $excluir=array('status_pds','id_incidencia');
 
@@ -1208,7 +1209,9 @@ echo $this->db->last_query(); exit;
 
     public function facturacion_fabricanteM($fecha_inicio,$fecha_fin,$fabricante=NULL) {
 
-        $query = $this->db->select('facturacion.id_incidencia as incidencia,
+        $result = array();
+        if($this->input->post()) {
+            $query = $this->db->select('facturacion.id_incidencia as incidencia,
                                     facturacion.id_intervencion as intervencion,
                                     facturacion.fecha, pds.reference AS SFID,
                                     pds.commercial as nombre,
@@ -1225,29 +1228,30 @@ echo $this->db->last_query(); exit;
                                     JOIN pds  ON pds.id_pds = inc.id_pds
                                     WHERE facturacion.id_incidencia = material_incidencias.id_incidencia
                                     AND id_devices_almacen is not null) as dispositivos')
-                        ->join('pds','facturacion.id_pds = pds.id_pds','left')
-                        ->join('displays_pds','facturacion.id_displays_pds = displays_pds.id_displays_pds','left')
-                        ->join('display','displays_pds.id_display = display.id_display','left')
-                        ->join('incidencias','facturacion.id_incidencia = incidencias.id_incidencia','left')
-                        ->join('client','display.client_display= client.id_client','left')
-                        ->join('solucion_incidencia','solucion_incidencia.id_solucion_incidencia = incidencias.id_solucion_incidencia','left')
-                        ->join('intervenciones','facturacion.id_intervencion = intervenciones.id_intervencion', 'left')
-                        ->where('facturacion.fecha >=',$fecha_inicio)
-                        ->where('facturacion.fecha <=',$fecha_fin)
-                        ->where('client.facturable','1') //Que sea facturable
-                        ->where('client.type_profile_client','2'); //Tipo de cliente fabricante
+                ->join('pds', 'facturacion.id_pds = pds.id_pds', 'left')
+                ->join('displays_pds', 'facturacion.id_displays_pds = displays_pds.id_displays_pds', 'left')
+                ->join('display', 'displays_pds.id_display = display.id_display', 'left')
+                ->join('incidencias', 'facturacion.id_incidencia = incidencias.id_incidencia', 'left')
+                ->join('client', 'display.client_display= client.id_client', 'left')
+                ->join('solucion_incidencia', 'solucion_incidencia.id_solucion_incidencia = incidencias.id_solucion_incidencia', 'left')
+                ->join('intervenciones', 'facturacion.id_intervencion = intervenciones.id_intervencion', 'left')
+                ->where('facturacion.fecha >=', $fecha_inicio)
+                ->where('facturacion.fecha <=', $fecha_fin)
+                ->where('client.facturable', '1')//Que sea facturable
+                ->where('client.type_profile_client', '2'); //Tipo de cliente fabricante
 
-        if(!is_null($fabricante) && !empty($fabricante)){
-            $query = $this->db->where('client.id_client',$fabricante);
+            if (!is_null($fabricante) && !empty($fabricante)) {
+                $query = $this->db->where('client.id_client', $fabricante);
 
+            }
+
+            $query = $this->db->order_by('facturacion.fecha')
+                ->order_by('client.client')
+                ->order_by('facturacion.id_intervencion,facturacion.id_incidencia')
+                ->get('facturacion');
+            $result = $query->result();
         }
-
-        $query = $this->db->order_by('facturacion.fecha')
-            ->order_by('client.client')
-            ->order_by('facturacion.id_intervencion,facturacion.id_incidencia')
-            ->get('facturacion');
-
-        return $query->result();
+        return $result;
     }
 
 
@@ -1310,7 +1314,7 @@ echo $this->db->last_query(); exit;
             ->get('facturacion');
 
         $resultado = $query->result();
-        echo $this->db->last_query(); exit;
+        //echo $this->db->last_query(); exit;
         $titulos=array('Intervención','Incidencia','Fecha','SFID','Nombre','Direccion','Ciudad','Mueble','Fabricante',
             'Nº terminales','Descripcion de tienda del error','Solucion','Cierre');
       //  $excluir=array('status_pds','visita');
