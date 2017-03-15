@@ -244,7 +244,9 @@
                         <div class="col-lg-5 labelBtn grey">
                             <a href="<?= site_url('admin/update_incidencia/' . $id_pds_url . '/' . $id_inc_url . '/4/8/ext') ?>"
 
-                               classBtn="status" class="btn btn-danger" <?php if ($incidencia['status_pds'] == 'Finalizada') { echo 'disabled'; } ?>>Cierre forzoso</a>
+                               classBtn="status" class="btn btn-danger" <?php if ($incidencia['status_pds'] == 'Finalizada'
+                                || $incidencia['status_pds'] == 'Cancelada' || $incidencia['status_pds'] == 'En visita')
+                               { echo 'disabled'; } ?>>Cierre forzoso</a>
 
                         </div>                             
                     </div>

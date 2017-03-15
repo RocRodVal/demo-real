@@ -79,7 +79,7 @@ function saveIntervencion() {
             }
             setInterval(function(){
                 location.reload();
-            },500);
+            },800);
 
         }).error(function (msg) {
         });
@@ -112,7 +112,7 @@ function saveIntervencion() {
             }
             setInterval(function(){
                 location.reload();
-            },500);
+            },800);
         }).error(function (msg) {
         });
 
