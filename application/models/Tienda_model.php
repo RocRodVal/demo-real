@@ -860,8 +860,18 @@ class Tienda_model extends CI_Model {
         $result = array();
 
         if($this->input->post()) {
-            $query = $this->db->select('facturacion.fecha, pds.reference AS SFID, pds_tipo.titulo as tipo, pds_subtipo.titulo as subtipo,
-			pds_segmento.titulo as segmento,  pds_tipologia.titulo as tipologia , facturacion.id_intervencion AS visita, COUNT(distinct(facturacion.id_incidencia)) AS incidencias, contact.contact AS instalador, client.client as dueno, SUM(facturacion.units_device) AS dispositivos, SUM(facturacion.units_alarma) AS otros')
+            $query = $this->db->select('facturacion.fecha, 
+                                        pds.reference AS SFID, 
+                                        pds_tipo.titulo as tipo, 
+                                        pds_subtipo.titulo as subtipo,
+			                            pds_segmento.titulo as segmento,  
+			                            pds_tipologia.titulo as tipologia , 
+			                            facturacion.id_intervencion AS visita, 
+			                            COUNT(distinct(facturacion.id_incidencia)) AS incidencias, 
+			                            contact.contact AS instalador, 
+			                            client.client as dueno, 
+			                            SUM(facturacion.units_device) AS dispositivos, 
+			                            SUM(facturacion.units_alarma) AS otros')
                 ->join('pds', 'facturacion.id_pds = pds.id_pds')
                 ->join('pds_tipo', 'pds.id_tipo = pds_tipo.id', 'left')
                 ->join('pds_subtipo', 'pds.id_subtipo = pds_subtipo.id', 'left')
@@ -914,7 +924,7 @@ class Tienda_model extends CI_Model {
                                     pds_segmento.titulo as segmento,
                                     pds_tipologia.titulo as tipologia ,
                                     facturacion.id_intervencion AS visita,
-                                    COUNT(facturacion.id_incidencia) AS incidencias,
+                                    COUNT(distinct(facturacion.id_incidencia)) AS incidencias,
                                     contact.contact AS instalador,
                                     client.client AS dueno,
                                     SUM(facturacion.units_device) AS dispositivos,
@@ -929,8 +939,8 @@ class Tienda_model extends CI_Model {
                             ->join('intervenciones','facturacion.id_intervencion = intervenciones.id_intervencion', 'left')
                             ->join('contact','intervenciones.id_operador = contact.id_contact', 'left')
                             ->join('client','display.client_display= client.id_client', 'left')
-                            ->where('facturacion.fecha >=',$fecha_inicio)
-                            ->where('facturacion.fecha <=',$fecha_fin);
+                            ->where('facturacion.fecha >=',urldecode($fecha_inicio))
+                            ->where('facturacion.fecha <=',urldecode($fecha_fin));
 
 
         if(!is_null($instalador) && !empty($instalador)){
@@ -1105,8 +1115,8 @@ class Tienda_model extends CI_Model {
             ->join('contact','intervenciones.id_operador = contact.id_contact', 'left')
             ->join('client','display.client_display= client.id_client', 'left')
 
-            ->where('incidencias.fecha_cierre >=',$fecha_inicio)
-            ->where('incidencias.fecha_cierre <=',$fecha_fin)
+            ->where('incidencias.fecha_cierre >=',urldecode($fecha_inicio))
+            ->where('incidencias.fecha_cierre <=',urldecode($fecha_fin))
         ;
         if(!is_null($instalador) && !empty($instalador)){
             $query = $this->db->where('intervenciones.id_operador',$instalador);
@@ -1118,15 +1128,15 @@ class Tienda_model extends CI_Model {
         $query = $this->db->order_by('incidencias.fecha_cierre,facturacion.id_intervencion')
             ->get('facturacion');
         $resultado = $query->result();
-
+echo $this->db->last_query(); exit;
         $titulos=array('Fecha','Intervencion','Incidencias','SFID','Tipo tienda','Subtipo tienda','Segmento tienda','Tipología tienda','Población','Provincia','Instalador','Dueño','Dispositivos','Alarmas','Cierre');
         $excluir=array('status_pds','id_incidencia');
 
         // DEFINO LAS CABECERAS DEL LISTADO A EXPORTAR
         $facturacion = array();
 
-        $indice=0;
-        $incidencias=array();
+        //$indice=0;
+        //$incidencias=array();
 
         /* Recorro las intervenciones-incidencia así, si una intervencion tiene finalizadas todas sus incidencias, lo dejamos en el array.
         Y en caso contrario lo omitimos del informe.*/
@@ -1231,6 +1241,7 @@ class Tienda_model extends CI_Model {
             $query = $this->db->where('client.id_client',$fabricante);
 
         }
+
         $query = $this->db->order_by('facturacion.fecha')
             ->order_by('client.client')
             ->order_by('facturacion.id_intervencion,facturacion.id_incidencia')
@@ -1249,7 +1260,10 @@ class Tienda_model extends CI_Model {
 
         $this->load->model(array("contact_model","client_model"));
 
-
+/*
+ * case when unidades_robadas is NULL then 0 else unidades_robadas end) as unidades_robadas,
+		unidades_televenta,
+ */
         // REALIZAMOS LA CONSULTA A LA BD
 
         $query = $this->db->select('facturacion.id_incidencia as incidencia,
@@ -1270,17 +1284,17 @@ class Tienda_model extends CI_Model {
                                     JOIN pds  ON pds.id_pds = inc.id_pds
                                     WHERE facturacion.id_incidencia = material_incidencias.id_incidencia
                                     AND id_devices_almacen is not null) as dispositivos')
-                        ->join('pds','facturacion.id_pds = pds.id_pds')
-                        ->join('displays_pds','facturacion.id_displays_pds = displays_pds.id_displays_pds')
-                        ->join('display','displays_pds.id_display = display.id_display')
+                        ->join('pds','facturacion.id_pds = pds.id_pds','left')
+                        ->join('displays_pds','facturacion.id_displays_pds = displays_pds.id_displays_pds','left')
+                        ->join('display','displays_pds.id_display = display.id_display','left')
                         ->join('incidencias','facturacion.id_incidencia = incidencias.id_incidencia','left')
-                        ->join('client','display.client_display= client.id_client')
+                        ->join('client','display.client_display= client.id_client','left')
                         ->join('solucion_incidencia','solucion_incidencia.id_solucion_incidencia = incidencias.id_solucion_incidencia','left')
                         //->join('contact','intervenciones.id_operador = contact.id_contact', 'left')
                         ->join('intervenciones','facturacion.id_intervencion = intervenciones.id_intervencion', 'left')
                        // ->join('material_incidencias','material_incidencias.id_incidencia = incidencias.id_incidencia')
-                        ->where('facturacion.fecha >=',$fecha_inicio)
-                        ->where('facturacion.fecha <=',$fecha_fin)
+                        ->where('facturacion.fecha >=',urldecode($fecha_inicio))
+                        ->where('facturacion.fecha <=',urldecode($fecha_fin))
                         ->where('client.facturable','1') //Que sea facturable
                         ->where('client.type_profile_client','2'); //Tipo de cliente fabricante
 
@@ -1296,8 +1310,9 @@ class Tienda_model extends CI_Model {
             ->get('facturacion');
 
         $resultado = $query->result();
-
-        $titulos=array('Intervención','Incidencia','Fecha','SFID','Nombre','Direccion','Ciudad','Mueble','Fabricante','Nº terminales','Descripcion de tienda del error','Solucion','Cierre');
+        echo $this->db->last_query(); exit;
+        $titulos=array('Intervención','Incidencia','Fecha','SFID','Nombre','Direccion','Ciudad','Mueble','Fabricante',
+            'Nº terminales','Descripcion de tienda del error','Solucion','Cierre');
       //  $excluir=array('status_pds','visita');
         $excluir=array();
 
@@ -1317,6 +1332,7 @@ class Tienda_model extends CI_Model {
         $campos=array('intervencion','incidencia','fecha','SFID','nombre','direccion','ciudad','mueble','fabricante','dispositivos','descripcion','solucion','cierre');
         $aux=array();
         $indice=0;
+
         foreach ($resultado as $item) {
             $item->fecha= date("d/m/Y",strtotime(($item->fecha)));  // Formato ES para la fecha
             $item->cierre= date("d/m/Y",strtotime(($item->cierre)));  // Formato ES para la fecha de cierre
