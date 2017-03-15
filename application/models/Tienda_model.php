@@ -899,7 +899,7 @@ class Tienda_model extends CI_Model {
 		$this->load->dbutil();
 		$this->load->helper('file');
         $this->load->helper('csv');
-        $this->load->helper('MY_string');
+        $this->load->helper('my_string');
 
 		$this->load->helper('download');
         $this->load->model(array("contact_model","client_model"));
@@ -1068,7 +1068,7 @@ class Tienda_model extends CI_Model {
         $this->load->dbutil();
         $this->load->helper(array('file','csv'));
         $this->load->helper('download');
-        $this->load->helper('MY_string');
+        $this->load->helper('my_string');
 
         $this->load->model(array("contact_model","client_model"));
 
@@ -1245,7 +1245,7 @@ class Tienda_model extends CI_Model {
         $this->load->dbutil();
         $this->load->helper(array('file','csv'));
         $this->load->helper('download');
-        $this->load->helper('MY_string');
+        $this->load->helper('my_string');
 
         $this->load->model(array("contact_model","client_model"));
 
