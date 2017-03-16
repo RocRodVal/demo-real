@@ -107,7 +107,49 @@ class Intervencion_model extends MY_Model
             return 0;
     }
 
+    /*Devuelve el listado de intervenciones de un PDV en el cual las incidencias no estan Finzalizadas*/
     public function get_intervenciones_pds_nuevas($id_pds)
+    {
+        /*
+         * SELECT distinct(intervenciones.id_intervencion), contact.id_contact, contact.id_parte
+FROM intervenciones_incidencias
+JOIN intervenciones ON intervenciones_incidencias.id_intervencion=intervenciones.id_intervencion
+JOIN contact ON intervenciones.id_operador=contact.id_contact
+JOIN incidencias ON incidencias.id_incidencia=intervenciones_incidencias.id_incidencia
+WHERE incidencias.id_pds=2822 and (incidencias.status_pds='En proceso' OR incidencias.status_pds='En visita' )
+         */
+        $wbere="(`incidencias`.`status_pds` = 'En proceso' OR `incidencias`.`status_pds` = 'En visita') ";
+        $this->load->model('VO/ContactVO');
+        $this->db->select('distinct(intervenciones.id_intervencion),intervenciones.fecha,contact.id_parte,contact.id_contact');
+        $this->db->from('intervenciones_incidencias');
+        $this->db->join('intervenciones', 'intervenciones_incidencias.id_intervencion=intervenciones.id_intervencion');
+        $this->db->join('contact', 'contact.id_contact=intervenciones.id_operador');
+        $this->db->join('incidencias', 'incidencias.id_incidencia=intervenciones_incidencias.id_incidencia');
+        $this->db->where($wbere);
+        $this->db->where('intervenciones.id_pds', $id_pds);
+        //$this->db->where('intervenciones.status', 1);
+        $query = $this->db->get();
+        //echo $this->db->last_query(); exit;
+        $intervenciones = array();
+        foreach ($query->result_array() as $row) {
+            $intervencion = new IntervencionVO();
+            $intervencion->__set('id_intervencion', $row['id_intervencion']);
+            $intervencion->__set('fecha', $row['fecha']);
+            //$intervencion->__set('status', $row['status']);
+            $c = new ContactVO();
+            $c->__set('id_contact', $row['id_contact']);
+            //$c->__set('email', $row['email']);
+            //$c->__set('contact', $row['contact']);
+            $c->__set('contact', $row['id_parte']);
+            //$c->__set('phone', $row['phone']);
+            $intervencion->__set('operador', $c);
+
+            $intervenciones[] = $intervencion;
+        }
+        return $intervenciones;
+    }
+
+    public function get_intervenciones_pds_nuevas_old($id_pds)
     {
         $this->load->model('VO/ContactVO');
         $this->db->select('*');

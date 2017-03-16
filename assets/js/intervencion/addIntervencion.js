@@ -22,12 +22,16 @@ function showModalNewIntervencion(id_pds, id_incidencia) {
     }).done(function (msg) {
         json = JSON.parse(msg);
         console.log(json);
-        $.each(json, function (key, intervencion) {
-            $("#nueva_intervencion_select_intervencion").append(
-                '<option value="' + intervencion.id_intervencion + '">#' +
-                intervencion.id_intervencion + ' - ' + intervencion.operador.contact +
-                ' - ' + intervencion.fecha + '</option>');
-        });
+        if (json.length>0) {
+            $.each(json, function (key, intervencion) {
+                $("#nueva_intervencion_select_intervencion").append(
+                    '<option value="' + intervencion.id_intervencion + '">#' +
+                    intervencion.id_intervencion + ' - ' + intervencion.operador.contact +
+                    ' - ' + intervencion.fecha + '</option>');
+            });
+        }else {
+            $("#nueva_intervencion_select_intervencion").attr('disabled',1);
+        }
         $("#nueva_intervencion_select_intervencion").change(disableNewIntervencion);
         $.ajax({
             type: "POST",
