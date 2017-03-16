@@ -1171,6 +1171,12 @@ class Admin extends MY_Controller
         {
             $this->tienda_model->incidencia_update_cierre($id_inc, $fecha_cierre);
 
+            /*
+             * Cuando se resuelve la incidencia la intervencion pasa a estar Cerrada
+             */
+            $intervencion = $this->intervencion_model->get_intervencion_incidencia($id_inc);
+            $this->intervencion_model->change_status_intervencion($intervencion,"Cerrada");
+
            // if ($incidencia['tipo_averia'] == "Averia") {
                 $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'], $status,$id_inc);
             //}

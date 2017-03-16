@@ -108,7 +108,7 @@ class Intervencion_model extends MY_Model
     }
 
     /*Devuelve el listado de intervenciones de un PDV en el cual las incidencias no estan Finzalizadas*/
-    public function get_intervenciones_pds_nuevas($id_pds)
+ /*   public function get_intervenciones_pds_nuevas($id_pds)
     {
         /*
          * SELECT distinct(intervenciones.id_intervencion), contact.id_contact, contact.id_parte
@@ -117,8 +117,9 @@ JOIN intervenciones ON intervenciones_incidencias.id_intervencion=intervenciones
 JOIN contact ON intervenciones.id_operador=contact.id_contact
 JOIN incidencias ON incidencias.id_incidencia=intervenciones_incidencias.id_incidencia
 WHERE incidencias.id_pds=2822 and (incidencias.status_pds='En proceso' OR incidencias.status_pds='En visita' )
-         */
-        $wbere="(`incidencias`.`status_pds` = 'En proceso' OR `incidencias`.`status_pds` = 'En visita') ";
+
+       // $wbere="(`incidencias`.`status_pds` = 'En proceso' OR `incidencias`.`status_pds` = 'En visita') ";
+        $wbere="(`incidencias`.`status_pds` != 'Finalizada') ";
         $this->load->model('VO/ContactVO');
         $this->db->select('distinct(intervenciones.id_intervencion),intervenciones.fecha,contact.id_parte,contact.id_contact');
         $this->db->from('intervenciones_incidencias');
@@ -147,9 +148,9 @@ WHERE incidencias.id_pds=2822 and (incidencias.status_pds='En proceso' OR incide
             $intervenciones[] = $intervencion;
         }
         return $intervenciones;
-    }
+    }*/
 
-    public function get_intervenciones_pds_nuevas_old($id_pds)
+    public function get_intervenciones_pds_nuevas($id_pds)
     {
         $this->load->model('VO/ContactVO');
         $this->db->select('*');
@@ -157,6 +158,7 @@ WHERE incidencias.id_pds=2822 and (incidencias.status_pds='En proceso' OR incide
         $this->db->join('contact', 'contact.id_contact=intervenciones.id_operador');
         $this->db->where('intervenciones.id_pds', $id_pds);
         $this->db->where('intervenciones.status', 1);
+        $this->db->order_by('intervenciones.fecha', 'desc');
         $query = $this->db->get();
         $intervenciones = array();
         foreach ($query->result_array() as $row) {
@@ -216,7 +218,10 @@ WHERE incidencias.id_pds=2822 and (incidencias.status_pds='En proceso' OR incide
     public function get_operadores()
     {
         $this->load->model('VO/ContactVO');
-        $query = $this->db->get_where('contact', array('type_profile_contact' => 1, 'status' => 1));
+        $query = $this->db->from('contact')
+        ->where('type_profile_contact' , 1)->where('status' , 'Alta')
+        ->order_by('id_parte','asc')->get();
+
         $operadores = array();
         foreach ($query->result_array() as $row) {
             $c = new ContactVO();
