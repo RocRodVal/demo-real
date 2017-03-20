@@ -82,7 +82,7 @@ class Tienda_model extends CI_Model {
 
         $join="";
         $agregarIMEI=false;
-
+        $array_imeis=array();
         if(!empty($imeis)) {
 
             $array_imeis=explode("\n",$imeis);
@@ -204,41 +204,47 @@ class Tienda_model extends CI_Model {
                 $dispositivos_a_borrar = $this->db->query($sql)->result();
                 //$total_baja =  $this->db->affected_rows();
                 $cont = 0;
+                //print_r($dispositivos_a_borrar); echo $units;
+                if($units==count($array_imeis) || (count($array_imeis)==0)) {
 
-                // Recorremos los dispositivos a borrar.
-                foreach ($dispositivos_a_borrar as $dispositivo_baja) {
-                    //print_r($dispositivos_a_borrar);
-                    $id_device = $dispositivo_baja->id_device;
-                    $id_devices_almacen = $dispositivo_baja->id_devices_almacen;
+                    // Recorremos los dispositivos a borrar.
+                    foreach ($dispositivos_a_borrar as $dispositivo_baja) {
 
-                    if ($agregarIMEI) {
-                        $this->db->set('IMEI', trim($array_imeis[$cont], "'"));
-                    } /*else {
+                        $id_device = $dispositivo_baja->id_device;
+                        $id_devices_almacen = $dispositivo_baja->id_devices_almacen;
+
+                        if ($agregarIMEI) {
+                            $this->db->set('IMEI', trim($array_imeis[$cont], "'"));
+                        } /*else {
                     if (!empty($array_imeis)) {
                         $this->db->where('IMEI', trim($array_imeis[$cont], "'"));
                     }
                 }*/
-                    // actualizado el estado del dispositivo.
-                    $this->db->set('status', $statusD);
-                    $this->db->where('id_devices_almacen', $id_devices_almacen);
-                    $this->db->update('devices_almacen');
+                        // actualizado el estado del dispositivo.
+                        $this->db->set('status', $statusD);
+                        $this->db->where('id_devices_almacen', $id_devices_almacen);
+                        $this->db->update('devices_almacen');
 
-                    //   echo $this->db->last_query()."<br>";
-                    // Insertar operación de baja en el histórico
-                    $data = array(
-                        'id_devices_almacen' => $id_devices_almacen,
-                        'id_device' => $id_device,
-                        'fecha' => date('Y-m-d H:i:s'),
-                        'unidades' => $cantidad, // En positivo porque luego la función lo pasará a negativo
-                        'procesado' => 1,
-                        'status' => $statusD
-                    );
-                    $this->db->insert("historico_io", $data);
-                    //echo $this->db->last_query()."<br>";
-                    $cont++;
+                        //   echo $this->db->last_query()."<br>";
+                        // Insertar operación de baja en el histórico
+                        $data = array(
+                            'id_devices_almacen' => $id_devices_almacen,
+                            'id_device' => $id_device,
+                            'fecha' => date('Y-m-d H:i:s'),
+                            'unidades' => $cantidad, // En positivo porque luego la función lo pasará a negativo
+                            'procesado' => 1,
+                            'status' => $statusD
+                        );
+                        $this->db->insert("historico_io", $data);
+                        //echo $this->db->last_query()."<br>";
+                        $cont++;
+                    }
+
+                    return $cont;
+                }else {
+
+                    return -2;
                 }
-
-                return $cont;
 
             } else {
                 return -1;

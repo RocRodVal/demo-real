@@ -3114,7 +3114,7 @@ class Admin extends MY_Controller
             $this->session->set_flashdata("id_device", $this->input->post('dipositivo_almacen'));
             $this->session->set_flashdata("mensaje1","");
             $this->session->set_flashdata("num", $num);
-            if($num != -1) {
+            if($num >0) {
 
                 switch ($this->input->post('destino_dipositivo_almacen')){
                     case 1:{
@@ -3138,41 +3138,52 @@ class Admin extends MY_Controller
                         break;
                     }
                 };
+                $this->session->set_flashdata("mensaje3", " terminales del modelo ");
 
                 redirect('admin/baja_dispositivos_ok', 'refresh');
             }else{
-                $this->session->set_flashdata("num", $this->input->post('units_dipositivo_almacen'));
+                if ($num==-1) {
+                    $this->session->set_flashdata("num", $this->input->post('units_dipositivo_almacen'));
 
-                switch ($this->input->post('destino_dipositivo_almacen')){
-                    case 1:{
-                        $this->session->set_flashdata("mensaje1", " poner en stock ");
-                        break;
-                    }
-                    case 2:{
-                        $this->session->set_flashdata("mensaje1", " poner en reservado ");
-                        break;
-                    }
-                    case 3:{
-                        $this->session->set_flashdata("mensaje1", " poner en televenta ");
-                        break;
-                    }
-                    case 4:{
-                        $this->session->set_flashdata("mensaje1", " poner en transito ");
-                        break;
-                    }
-                    case 5:{
-                        $this->session->set_flashdata("mensaje1", " dar de baja ");
-                        break;
-                    }
-                };
+                    switch ($this->input->post('destino_dipositivo_almacen')) {
+                        case 1: {
+                            $this->session->set_flashdata("mensaje1", "No se han podido poner en stock ");
+                            break;
+                        }
+                        case 2: {
+                            $this->session->set_flashdata("mensaje1", "No se han podido poner en reservado ");
+                            break;
+                        }
+                        case 3: {
+                            $this->session->set_flashdata("mensaje1", "No se han podido poner en televenta ");
+                            break;
+                        }
+                        case 4: {
+                            $this->session->set_flashdata("mensaje1", "No se han podido poner en transito ");
+                            break;
+                        }
+                        case 5: {
+                            $this->session->set_flashdata("mensaje1", "No se han podido dar de baja ");
+                            break;
+                        }
+                    };
+                    $this->session->set_flashdata("mensaje3", " terminales del modelo ");
+                    /*  if ($this->input->post('destino_dipositivo_almacen')==4) {
 
-                /*  if ($this->input->post('destino_dipositivo_almacen')==4) {
+                      }
+                      else {
 
-                  }
-                  else {
+                      }*/
 
-                  }*/
-                $this->session->set_flashdata("mensaje2", " ya que el stock en el almacen es 0");
+                    $this->session->set_flashdata("mensaje2", " ya que el stock en el almacen es 0");
+                }else {
+                    $this->session->set_flashdata("mensaje1", " Faltan IMEIs ");
+                    $this->session->set_flashdata("mensaje2", " ");
+                    $this->session->set_flashdata("num", " ");
+                    $this->session->set_flashdata("mensaje3", " ");
+                    $this->session->set_flashdata("modelo", " ");
+
+                }
                 redirect('admin/baja_dispositivos_ko', 'refresh');
             }
         }
@@ -3234,6 +3245,7 @@ class Admin extends MY_Controller
             $num = $this->session->flashdata("num");
             $mensaje1 = $this->session->flashdata("mensaje1");
             $mensaje2 = $this->session->flashdata("mensaje2");
+            $mensaje3 = $this->session->flashdata("mensaje3");
 
             if(!empty($id_device) && !empty($num)) {
                 $device = $this->tienda_model->get_device($id_device);
@@ -3243,6 +3255,7 @@ class Admin extends MY_Controller
                 $data["num"] = $num;
                 $data["mensaje1"] = $mensaje1;
                 $data["mensaje2"] = $mensaje2;
+                $data["mensaje3"] = $mensaje3;
                 $data["modelo"] = $device["device"];
 
                 /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
