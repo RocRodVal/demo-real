@@ -19,6 +19,14 @@
         </div>
     </div>
     <div class="row">
+        <div class="col-lg-12">
+            <h1 class="page-header"><?php echo $title ?>
+                <!--<a onclick="history.go(-1);return false;" class="btn btn-danger right">Volver</a>-->
+                <a href="<?=site_url('admin/operar_incidencia/'. $id_pds_url.'/'.$id_inc_url) ?>" class="btn btn-danger right">Volver</a>
+            </h1>
+        </div>
+    </div>
+    <div class="row">
         <div class="col-lg-12 col-md-12">
             <div class="panel panel-default">
                 <div class="panel-heading">
@@ -71,13 +79,20 @@
                 <div class="panel-heading">
                     Asignación de material para la incidencia
                 </div>
-                <form action="<?= site_url('admin/update_materiales_incidencia/' . $id_pds_url . '/' . $id_inc_url . '/2/3') ?>" method="post">
+                <form action="<?= site_url('admin/update_materiales_incidencia/' . $id_pds_url . '/' . $id_inc_url . '/2/3/'.$error) ?>" method="post">
                 <div class="panel-body incidenciaEstado">
                     <div class="row">
                         <div class="col-lg-7 labelText white">Asignar materiales</div>
                     </div>
                     <div class="row">
 		            <?php
+                    if (!empty($error)) {
+                        echo '<div class="col-lg-7 labelText red">'.$error.'</div>';
+                    }
+                    ?>
+                    </div>
+                    <div class="row">
+                        <?php
 		            if (empty($devices_almacen)) {
 		                echo '<p>No hay dispositivos.</p>';
 		            } else {

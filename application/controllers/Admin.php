@@ -1449,22 +1449,38 @@ class Admin extends MY_Controller
         $xcrud = xcrud_get_instance();
         $this->load->model('tienda_model');
 
+        $imei=$this->input->post('imei_1');
+        if (empty($imei)) {
+            $resultado=$this->tienda_model->search_dispositivo_id($this->input->post('dipositivo_almacen_1'));
+        }
+        if(!empty($resultado)){
+            foreach($resultado as $r) {
+                $imei = $r->IMEI;
+            }
+        }
+        if (empty($imei)){
+            $error="El IMEI no puede estar vacio";
+            //$data['error']=$error;
 
-        if ($this->input->post('units_dipositivo_almacen_1') <> '')
-        {
-            $dipositivo_almacen_1 = array(
-                'fecha' => date('Y-m-d H:i:s'),
-                'id_incidencia' => $id_inc,
-                'id_pds' => $id_pds,
-                'id_alarm' => NULL,
-                'id_devices_almacen' => $this->input->post('dipositivo_almacen_1'),
-                'cantidad'  => $this->input->post('units_dipositivo_almacen_1')
-            );
-            $this->tienda_model->reservar_dispositivos($this->input->post('dipositivo_almacen_1'),2);
-            $this->tienda_model->incidencia_update_material($dipositivo_almacen_1);
+            redirect('admin/update_incidencia_materiales/'.$id_pds.'/'.$id_inc.'/2/3/'.$error);
+        }else {
+            $this->tienda_model->update_dispositivos($this->input->post('dipositivo_almacen_1'), $imei, $this->input->post('mac_1'),
+                $this->input->post('serial_1'), $this->input->post('barcode_1'));
 
+            if ($this->input->post('units_dipositivo_almacen_1') <> '') {
+                $dipositivo_almacen_1 = array(
+                    'fecha' => date('Y-m-d H:i:s'),
+                    'id_incidencia' => $id_inc,
+                    'id_pds' => $id_pds,
+                    'id_alarm' => NULL,
+                    'id_devices_almacen' => $this->input->post('dipositivo_almacen_1'),
+                    'cantidad' => $this->input->post('units_dipositivo_almacen_1')
+                );
+                $this->tienda_model->reservar_dispositivos($this->input->post('dipositivo_almacen_1'), 2);
+                $this->tienda_model->incidencia_update_material($dipositivo_almacen_1);
+            }
             /*Si el dispositivo seleccionado ya tiene un IMEI y no metemos otro nos quedamos con el que ya tenia*/
-            $imei=$this->input->post('imei_1');
+         /*   $imei=$this->input->post('imei_1');
             if (empty($imei)) {
                 $resultado=$this->tienda_model->search_dispositivo_id($this->input->post('dipositivo_almacen_1'));
             }
@@ -1473,7 +1489,16 @@ class Admin extends MY_Controller
                     $imei = $r->IMEI;
                 }
             }
-            $this->tienda_model->update_dispositivos($this->input->post('dipositivo_almacen_1'),$imei,$this->input->post('mac_1'),$this->input->post('serial_1'),$this->input->post('barcode_1'));
+            if (empty($imei)){
+                $error="El IMEI no puede estar vacio";
+                //$data['error']=$error;
+
+                redirect('admin/update_incidencia_materiales/'.$id_pds.'/'.$id_inc.'/2/3/'.$error);
+            }else {
+                $this->tienda_model->update_dispositivos($this->input->post('dipositivo_almacen_1'), $imei, $this->input->post('mac_1'),
+                    $this->input->post('serial_1'), $this->input->post('barcode_1'));
+            }*/
+
         }
 
 
@@ -1682,6 +1707,7 @@ class Admin extends MY_Controller
             $id_inc = $this->uri->segment(4);
             $status_pds = $this->uri->segment(5);
             $status = $this->uri->segment(6);
+            $error=urldecode($this->uri->segment(7));
 
             $xcrud = xcrud_get_instance();
             $this->load->model(array('intervencion_model', 'tienda_model', 'sfid_model'));
@@ -1725,6 +1751,8 @@ class Admin extends MY_Controller
 
             $data['duenos_alarm'] = $duenos_alarm;
             $data['devices_almacen'] = $this->tienda_model->get_devices_almacen_reserva();
+            $data['error']=$error;
+            $data['status_pds']=$status_pds;
 
             $data['title'] = 'Operativa incidencia Ref. '.$data['id_inc_url'];
 
