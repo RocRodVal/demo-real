@@ -6028,6 +6028,7 @@ class Admin extends MY_Controller
 
             $historico_fecha_finzalizado = $this->tienda_model->historico_fecha($id_pedido,'Finalizado',$tabla);
             $data['historico_fecha_finalizado'] =  isset($historico_fecha_finzalizado['fecha']) ? date("d/m/Y",strtotime($historico_fecha_finzalizado['fecha'])) : '';
+            $data['fecha_finalizado'] = isset($pedido->fecha_cierre) ? date("d/m/Y",strtotime($pedido->fecha_cierre)) : '';
 
             $data['pedido'] = $pedido;
             $data['detalle'] = $detalle;
@@ -6190,7 +6191,6 @@ class Admin extends MY_Controller
             $data['id_pedido_url'] = $id_pedido;
 
 
-
             $pedido = $this->pedido_model->get_pedido($id_pedido,$id_pds);
 
 
@@ -6231,75 +6231,7 @@ class Admin extends MY_Controller
             $created_pdf = pdf_create($html, $filename_pdf,FALSE);
 
             file_put_contents("uploads/pedidos/".$filename_pdf.".pdf",$created_pdf);
-            $attach =  "uploads/pedidos/".$filename_pdf.".pdf";
 
-
-
-            /** ENVIO DEL EMAIL al operador*/
-            /*if($envio_mail === "notificacion")
-            {
-                $mail_operador = $info_intervencion->operador->email;
-                $mail_cc = $info_intervencion->operador->email_cc;
-
-
-                if (!empty($mail_cc)) {
-                    $a_mail_cc = explode(",", $mail_cc);
-                    foreach ($a_mail_cc as $key => $mail) {
-                        $a_mail_cc[$key] = trim($mail);
-                    }
-                    $mail_cc = implode(",", $a_mail_cc);
-                }
-
-
-                if (empty($mail_operador)) {
-                    $data['email_sent'] = FALSE;
-                } else {
-                        //  El asunto al ir en los headers del email, no puede pasar de 62 caracteres. Ahora hay margen pero si en el futuro el email
-                        //  se ve raramente, revisad que el asunto no haya crecido más de 62 chars, en primer lugar.
-                       $subject = "DEMOREAL / SFID " . $sfid['reference'] . " / INC " . $incidencia['id_incidencia'] . " / INT " . $incidencia['intervencion'];
-
-                      $message_operador = "Asunto: " . $subject . "\r\n\r\n";
-                      $message_operador .= "En referencia a los datos indicados en Asunto, adjunto remitimos parte para la intervención." . "\r\n";
-                      $message_operador .= "Recordamos los pasos principales del procedimiento:" . "\r\n\r\n";
-                      $message_operador .= "1) Realizar intervención dentro de las 48h siguientes a la recepción del email." . "\r\n";
-                      $message_operador .= "2) Enviar el presente parte rellenado y con la firma de la persona encargada de la tienda al email demoreal@focusonemotions.com." . "\r\n";
-                      $message_operador .= "3) Preparar en bolsa independiente todo el material sobrante y defectuoso separado por incidencia." . "\r\n";
-                      $message_operador .= "4) Enviar email con el material preparado a demoreal@focusonemotions.com." . "\r\n";
-                      $message_operador .= "Demo Real" . "\r\n";
-                      $message_operador .= "http://demoreal.focusonemotions.com/" . "\r\n\n";
-
-                      $this->email->from('demoreal@focusonemotions.com', 'Demo Real');
-
-                      if($mail_operador=="no-reply@altabox.net"){
-                          // No enviamos mail, si el instalador es por defecto, y tiene la cuenta no-reply
-                      }else {
-                          $this->email->to($mail_operador);
-                      }
-
-                      if (!empty($mail_cc)) {
-                          $this->email->cc($mail_cc);
-                      }
-                      //COMENTADO AVISO COPIA
-                      //       $this->email->bcc('demoreal@focusonemotions.com');
-
-                           $this->email->subject($subject);
-                           $this->email->message($message_operador);
-
-                           $this->email->attach($attach);
-
-                           if ($this->email->send()) {
-                               $data['email_sent'] = TRUE;
-                           } else {
-                               $data['email_sent'] = FALSE;
-                           }
-                           $this->email->clear();
-                       }
-                       //FIN ENVIO DEL EMAIL al operador
-
-
-            }else{
-                $data['email_sent'] = NULL; // Descarga sin notificacion
-            }*/
             // Paso a vista
             $data['title'] = 'Generación del albaran para el pedido ['.$pedido->id .']';
             $data['filename_pdf'] = $filename_pdf;
@@ -6411,48 +6343,52 @@ class Admin extends MY_Controller
 
     public function inventario_dispositivos()
     {
-        $this->load->model('tienda_model');
+        if ($this->auth->is_auth()) {
+            $this->load->model('tienda_model');
 
-       // $data['devices'] = $this->tienda_model->get_devices_almacen();
-       // $data['alarmas'] = $this->tienda_model->get_alarms_almacen_reserva();
+            // $data['devices'] = $this->tienda_model->get_devices_almacen();
+            // $data['alarmas'] = $this->tienda_model->get_alarms_almacen_reserva();
 
-        $xcrud = xcrud_get_instance();
-        $xcrud->table('devices_almacen');
-        $xcrud->table_name('Inventario dispositivos');
-        $xcrud->relation('id_device', 'device', 'id_device', 'device');
-        $xcrud->relation('id_color_device', 'color_device', 'id_color_device', 'color_device');
-        $xcrud->relation('id_complement_device', 'complement_device', 'id_complement_device', 'complement_device');
-        $xcrud->relation('id_status_device', 'status_device', 'id_status_device', 'status_device');
-        $xcrud->relation('id_status_packaging_device', 'status_packaging_device', 'id_status_packaging_device', 'status_packaging_device');
-        $xcrud->change_type('picture_url_1', 'image');
-        $xcrud->change_type('picture_url_2', 'image');
-        $xcrud->change_type('picture_url_3', 'image');
-        $xcrud->modal('picture_url_1');
-        $xcrud->modal('picture_url_2');
-        $xcrud->modal('picture_url_3');
-        $xcrud->label('id_devices_almacen', 'Ref.')->label('alta', 'Fecha de alta')->label('id_device', 'Dispositivo')->label('serial', 'Nº de serie')->label('IMEI', 'IMEI')->label('mac', 'MAC')->label('barcode', 'Código de barras')->label('id_color_device', 'Color')->label('id_complement_device', 'Complementos')->label('id_status_device', 'Estado dispositivo')->label('id_status_packaging_device', 'Estado packaging')->label('picture_url_1', 'Foto #1')->label('picture_url_2', 'Foto #2')->label('picture_url_3', 'Foto #3')->label('description', 'Comentarios')->label('owner', 'Dueño')->label('status', 'Estado');
-        $xcrud->columns('id_devices_almacen,id_device,IMEI,serial,barcode,status');
-        $xcrud->fields('id_devices_almacen,alta,id_device,serial,IMEI,serial,barcode,id_color_device,id_complement_device,id_status_device,id_status_packaging_device,picture_url_1,picture_url_2,picture_url_3,description,owner,status');
-        $xcrud->order_by('id_device', 'asc');
-        $xcrud->order_by('status', 'asc');
-        $xcrud->order_by('id_devices_almacen', 'asc');
-        $xcrud->show_primary_ai_column(true);
-        $xcrud->before_update("inventario_dispositivos_historicoIO","../libraries/Functions.php");
-        $xcrud->unset_numbers();
-      //  $xcrud->start_minimized(true);
+            $xcrud = xcrud_get_instance();
+            $xcrud->table('devices_almacen');
+            $xcrud->table_name('Inventario dispositivos');
+            $xcrud->relation('id_device', 'device', 'id_device', 'device');
+            $xcrud->relation('id_color_device', 'color_device', 'id_color_device', 'color_device');
+            $xcrud->relation('id_complement_device', 'complement_device', 'id_complement_device', 'complement_device');
+            $xcrud->relation('id_status_device', 'status_device', 'id_status_device', 'status_device');
+            $xcrud->relation('id_status_packaging_device', 'status_packaging_device', 'id_status_packaging_device', 'status_packaging_device');
+            $xcrud->change_type('picture_url_1', 'image');
+            $xcrud->change_type('picture_url_2', 'image');
+            $xcrud->change_type('picture_url_3', 'image');
+            $xcrud->modal('picture_url_1');
+            $xcrud->modal('picture_url_2');
+            $xcrud->modal('picture_url_3');
+            $xcrud->label('id_devices_almacen', 'Ref.')->label('alta', 'Fecha de alta')->label('id_device', 'Dispositivo')->label('serial', 'Nº de serie')->label('IMEI', 'IMEI')->label('mac', 'MAC')->label('barcode', 'Código de barras')->label('id_color_device', 'Color')->label('id_complement_device', 'Complementos')->label('id_status_device', 'Estado dispositivo')->label('id_status_packaging_device', 'Estado packaging')->label('picture_url_1', 'Foto #1')->label('picture_url_2', 'Foto #2')->label('picture_url_3', 'Foto #3')->label('description', 'Comentarios')->label('owner', 'Dueño')->label('status', 'Estado');
+            $xcrud->columns('id_devices_almacen,id_device,IMEI,serial,barcode,status');
+            $xcrud->fields('id_devices_almacen,alta,id_device,serial,IMEI,serial,barcode,id_color_device,id_complement_device,id_status_device,id_status_packaging_device,picture_url_1,picture_url_2,picture_url_3,description,owner,status');
+            $xcrud->order_by('id_device', 'asc');
+            $xcrud->order_by('status', 'asc');
+            $xcrud->order_by('id_devices_almacen', 'asc');
+            $xcrud->show_primary_ai_column(true);
+            $xcrud->before_update("inventario_dispositivos_historicoIO", "../libraries/Functions.php");
+            $xcrud->unset_numbers();
+            //  $xcrud->start_minimized(true);
 
-        $data['title'] = 'Dispositivos';
-        $data['content'] = $xcrud->render();
-    //    $data['content'] = $data['content'] . $xcrud_2->render();
+            $data['title'] = 'Dispositivos';
+            $data['content'] = $xcrud->render();
+            //    $data['content'] = $data['content'] . $xcrud_2->render();
 
-        /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
-        $this->data->add($data);
-        $data = $this->data->getData();
-        /////
-        $this->load->view('backend/header', $data);
-        $this->load->view('backend/navbar', $data);
-        $this->load->view('backend/almacen', $data);
-        $this->load->view('backend/footer');
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            /////
+            $this->load->view('backend/header', $data);
+            $this->load->view('backend/navbar', $data);
+            $this->load->view('backend/almacen', $data);
+            $this->load->view('backend/footer');
+        } else {
+            redirect('admin', 'refresh');
+        }
     }
 
     /*Recepcion de terminales en RMA procedentes de incidencia*/

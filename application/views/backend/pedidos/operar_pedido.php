@@ -109,7 +109,16 @@
                         <div class="col-lg-7 labelText grey">Finalizar pedido<br/><br /></div>
 		                <form action="<?= site_url('admin/update_pedido/' . $id_pedido_url . '/' . $id_pds_url . '/6') ?>" method="post">
 		                <div class="col-lg-5 labelBtn grey">
-		                    <input type="date" name="fecha_cierre" id="fecha_cierre" value="Fecha"   <?php if ($pedido->status == 'Finalizado') { echo 'disabled'; } ?> ><br />
+                            <?php
+                            if (!empty($fecha_finalizado)) {
+                                $fecha = explode("/", $fecha_finalizado);
+                                $fecha_finalizado = $fecha[2] . "-" . $fecha[1] . "-" . $fecha[0];
+                            } else $fecha_finalizado='';
+                            ?>
+                            <input type="date" name="fecha_cierre" id="fecha_cierre" value="<?=$fecha_finalizado?>"
+                                <?php if ($pedido->status == 'Finalizado') { echo 'disabled'; }; ?> />
+		                    <!--<input type="date" name="fecha_cierre" id="fecha_cierre" value="Fecha"   <?php if ($pedido->status == 'Finalizado') { echo 'disabled'; } ?> >-->
+                            <br/>
 		                    <input type="submit" value="Finalizar" name="submit" class="btn btn-success" classBtn="status" class="btn btn-success" <?php if ($pedido->status != 'Recibido') {
                                 echo 'disabled';
                             } ?> />
