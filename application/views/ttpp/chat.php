@@ -71,7 +71,7 @@
                                             <?php
                                             if ($chat->foto <> '') {
                                                 ?>
-                                                <p><img src="<?= site_url('uploads/chats/' . $chat->foto) ?>" width="100%"/></p>
+                                                <p><img src="<?= site_url('uploads/chats/' . $chat->foto) ?>" /></p>
                                             <?php
                                             }
                                             ?>

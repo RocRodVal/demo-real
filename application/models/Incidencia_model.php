@@ -915,6 +915,16 @@ class Incidencia_model extends CI_Model {
         return $query->result();
     }
 
+    /**
+     * Devuelve los estados por los que ha pasado una incidencia
+     * @return mixed
+     */
+    public function get_estados($id_incidencia)
+    {
+        $query = $this->db->query("SELECT DISTINCT (status) FROM historico where id_incidencia=$id_incidencia 
+                                    ORDER BY fecha");
+        return $query->result_array();
+    }
 
     public function get_titulos_estado()
     {

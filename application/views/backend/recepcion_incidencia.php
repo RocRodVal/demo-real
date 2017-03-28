@@ -15,7 +15,7 @@
 					} else {
 					?>
 				</div>
-				<form action="<?= site_url('admin/insert_rma_almacen') ?>" method="post" class="content_auto form_login" enctype="multipart/form-data">
+				<form action="<?= site_url('admin/insert_almacen') ?>" method="post" class="content_auto form_login" enctype="multipart/form-data">
 					<div class="row">
 						<div class="col-lg-1"></div>
 						<div class="col-lg-5">
@@ -34,6 +34,17 @@
 															echo '<option value="'.$device->id_device.'"
 														'.(($id_device == $device->id_device) ?  ' selected="selected" ' : '' ).'>'.$device->device.'</option>';
 														}?>
+													</select>
+												</div>
+												<br>
+												<div class="input-group">
+													<div class="input-group-addon">
+														<label>Estado</label><code>*</code></div>
+													<select name="status" id="status" class="form-control">
+														<option value="En stock">En stock</option>
+														<option value="Baja">Baja</option>
+														<option value="RMA">RMA</option>
+
 													</select>
 												</div>
 												<br>

@@ -89,6 +89,7 @@ class Intervencion_model extends MY_Model
 
             $intervencion->__set('pds', $pds);
         }
+
         return $intervencion;
 
     }
@@ -184,16 +185,17 @@ WHERE incidencias.id_pds=2822 and (incidencias.status_pds='En proceso' OR incide
         $this->load->model('VO/IncidenciaVO');
         $this->load->model('VO/PdsVO');
         $this->db->select('incidencias.*,pds.id_pds, pds.reference, pds.commercial, display.display, device.device');
-        //$this->db->select('incidencias.*,pds.id_pds, pds.reference, pds.address');
+        //$this->db->select('incidencias.*,pds.id_pds, pds.reference, pds.address,device.device');
         $this->db->from('intervenciones_incidencias');
         $this->db->join('incidencias', 'incidencias.id_incidencia=intervenciones_incidencias.id_incidencia');
         $this->db->join('pds', 'incidencias.id_pds = pds.id_pds');
-        $this->db->join('devices_pds', 'incidencias.id_devices_pds=devices_pds.id_devices_pds');
-        $this->db->join('device', 'devices_pds.id_device=device.id_device');
+        $this->db->join('devices_pds', 'incidencias.id_devices_pds=devices_pds.id_devices_pds','left');
+        $this->db->join('device', 'devices_pds.id_device=device.id_device','left');
         $this->db->join('displays_pds', 'displays_pds.id_displays_pds=incidencias.id_displays_pds');
         $this->db->join('display', 'displays_pds.id_display=display.id_display');
         $this->db->where('id_intervencion', $intervencion->id_intervencion);
         $query = $this->db->get();
+        //echo $this->db->last_query(); exit;
         $incidencias = array();
         foreach ($query->result_array() as $row) {
             $i = new IncidenciaVO();

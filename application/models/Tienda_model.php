@@ -394,12 +394,17 @@ class Tienda_model extends CI_Model {
 
         $this->db->query(" DROP VIEW IF EXISTS robados;");
         /*Creación de una vista que guarda los datos de los terminales robados y que no han llegado al almacen*/
-        $this->db->query("CREATE VIEW robados AS SELECT devices_pds.id_device,COUNT(*) as suma FROM devices_pds 
-                      INNER JOIN incidencias ON incidencias.id_devices_pds=devices_pds.id_devices_pds 
-                      WHERE devices_pds.status = \"Baja\" AND incidencias.tipo_averia=\"Robo\" and 
-                      incidencias.status_pds=\"Finalizada\" and devices_pds.id_devices_pds NOT IN 
-                      (select id_devices_pds from devices_almacen where id_devices_pds IS NOT NULL)
-                      GROUP BY devices_pds.id_device");
+        $this->db->query("CREATE VIEW robados AS 
+                        SELECT devices_pds.id_device,COUNT(*) as suma 
+                        FROM devices_pds 
+                        INNER JOIN incidencias ON incidencias.id_devices_pds=devices_pds.id_devices_pds 
+                        WHERE (devices_pds.status = \"Baja\" AND incidencias.tipo_averia=\"Robo\" and 
+                        incidencias.status_pds=\"Finalizada\" and incidencias.id_incidencia NOT IN 
+                        (select id_incidencia from devices_almacen where id_incidencia IS NOT NULL)) OR 
+                        (devices_pds.status = \"RMA\" AND incidencias.tipo_averia=\"Robo\" and 
+                        incidencias.status_pds=\"Finalizada\" and incidencias.id_incidencia NOT IN 
+                        (select id_incidencia from devices_almacen where id_incidencia IS NOT NULL))
+                        GROUP BY devices_pds.id_device");
 
         $query = $this->db->query('
 		SELECT temporal.id_device, brand_device.brand, temporal.device, unidades_pds,unidades_transito, unidades_reservado,
@@ -1557,7 +1562,7 @@ class Tienda_model extends CI_Model {
               UNION
               SELECT i.id_incidencia,i.id_pds,d.*,'genero la incidencia' as descripcion
               FROM devices_almacen a
-              INNER JOIN incidencias i ON i.id_devices_pds = a.id_devices_pds AND a.status='Transito' AND i.status='Pendiente recogida'
+              INNER JOIN incidencias i ON i.id_incidencia = a.id_incidencia AND a.status='Transito' AND i.status='Pendiente recogida'
               INNER JOIN device d ON d.id_device=a.id_device";
 
         return $this->db->query($sql)->result();
@@ -2134,7 +2139,7 @@ class Tienda_model extends CI_Model {
                             'barcode' => $device_pds->barcode,
                             'status' => 4,
                             'owner' => "ET",
-                            'id_devices_pds' => $device_pds->id_devices_pds
+                            'id_incidencia' => $id_incidencia
                         );
                        // print_r($data); exit;
                         $this->db->insert('devices_almacen', $data);
@@ -2200,15 +2205,12 @@ class Tienda_model extends CI_Model {
                 $id_device=NULL;
                 $id_material_incidencia=NULL;
 
-                $sql = "SELECT * FROM material_incidencias m
-                        INNER JOIN devices_almacen d ON d.id_devices_almacen=m.id_devices_almacen
-                        WHERE id_incidencia=$id_incidencia";
-                $material = $this->db->query($sql)->row();
+
 
                 //$result = null;
                 if (!empty($device_pds)) {
 
-                    $sql = "SELECT * FROM devices_almacen WHERE status='Transito' AND id_device=$device_pds->id_device AND id_devices_pds=$device_pds->id_devices_pds";
+                    $sql = "SELECT * FROM devices_almacen WHERE status='Transito' AND id_device=$device_pds->id_device AND id_incidencia=$id_incidencia";
                     $result = $this->db->query($sql)->row();
 
                //     echo "RESULT "; echo print_r($result);
@@ -2236,6 +2238,11 @@ class Tienda_model extends CI_Model {
                         $sql = "UPDATE devices_pds SET status='Baja' WHERE id_devices_pds =" . $device_pds->id_devices_pds;
                         $this->db->query($sql);
                     } else {
+                        $sql = "SELECT * FROM material_incidencias m
+                        INNER JOIN devices_almacen d ON d.id_devices_almacen=m.id_devices_almacen
+                        WHERE m.id_incidencia=$id_incidencia";
+                        $material = $this->db->query($sql)->row();
+
                         if (!empty($material)) {
                             $id_devices_almacen=$material->id_devices_almacen;
                             $id_device=$material->id_device;

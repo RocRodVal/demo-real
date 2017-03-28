@@ -601,7 +601,7 @@ class Inventario extends CI_Controller {
 	}
 
 	
-	public function inventario_tienda()
+	/*public function inventario_tienda()
 	{
 		$id_pds   = $this->uri->segment(3);
 	
@@ -632,7 +632,7 @@ class Inventario extends CI_Controller {
 		$this->load->view('backend/devices_pds', $data);
 		$this->load->view('backend/footer');
 	}	
-	
+	*/
 	public function planograma()
 	{
 		$id_pds   = $this->uri->segment(3);
