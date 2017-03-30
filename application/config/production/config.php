@@ -23,8 +23,21 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | a PHP script and you can easily do that on your own.
 |
 */
-$config['base_url'] = '';
+$config['base_url'] = 'http://demoreal.focusonemotions.com/orange/';
 
+
+/**
+ * REALDOOH API, TEMPORARY ACTIVATION
+ */
+$config['allowed_origins'] = array ('localhost', 'demoreal.focusonemotions.com', 'realdooh.focusonemotions.com');
+
+$config['realdooh.api.url'] = 'http://realdooh.pre.altabox.net:8080/rdorangeapi/api/v1/demoreal';
+
+$config['realdooh.api'] = array(
+    'active' => TRUE,
+    'changeStatusUrl' => $config['realdooh.api.url']. '/incident/{drId}',
+    'createIncidenceUrl' => $config['realdooh.api.url'].'/incident/{drId}/asset/{assetDrId}/user/{userSFID}'
+);
 /*
 |--------------------------------------------------------------------------
 | Index File
@@ -76,7 +89,7 @@ $config['url_suffix'] = '';
 | than english.
 |
 */
-$config['language']	= 'english';
+$config['language']	= 'spanish';
 
 /*
 |--------------------------------------------------------------------------
@@ -382,7 +395,7 @@ $config['sess_cookie_name'] = 'ci_session';
 $config['sess_expiration'] = 7200;
 $config['sess_save_path'] = NULL;
 $config['sess_match_ip'] = FALSE;
-$config['sess_time_to_update'] = 300;
+$config['sess_time_to_update'] = 30000;
 $config['sess_regenerate_destroy'] = FALSE;
 
 /*
@@ -400,8 +413,8 @@ $config['sess_regenerate_destroy'] = FALSE;
 |       'cookie_httponly') will also affect sessions.
 |
 */
-$config['cookie_prefix']	= '';
-$config['cookie_domain']	= '.realdooh.com';
+$config['cookie_prefix']	= 'demoreal_focusonemotions_';
+$config['cookie_domain']	= '.focusonemotions.com';
 $config['cookie_path']		= '/';
 $config['cookie_secure']	= FALSE;
 $config['cookie_httponly'] 	= FALSE;

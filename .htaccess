@@ -3,8 +3,10 @@
 <IfModule mod_setenvif.c>
     ### LOCAL ###
     SetEnvIf Server_Addr 192.168.106.17$ CI_ENV=localesther
-
+    ##dev##
     SetEnvIf Server_Addr 85.10.197.10$ CI_ENV=development
+    ##produccion##
+    SetEnvIf Server_Addr 85.10.199.43 CI_ENV=production
 </IfModule>
 
 RewriteEngine on

@@ -1939,7 +1939,7 @@ class Tienda_model extends CI_Model {
     public function get_condition_tipo_incidencia($tipo = "abiertas"){
 
         /*  ESTADOS ABIERTOS SAT: Nueva, Revisada, Instalador asignado, Material asignado, Comunicada
-           ESTADOS CERRADOS SAT: Resuelta, Pendiente recogida, Cerrada, Cancelada */
+           ESTADOS CERRADOS SAT: Resuelta, Sustituido, SustituidoRMA, Pendiente recogida, Cerrada, Cancelada */
 
         /*  ESTADOS ABIERTOS PDS: Alta realizada, En proceso, En visita
             ESTADOS CERRADOS PDS: Finalizada, Cancelada */
@@ -2129,7 +2129,7 @@ class Tienda_model extends CI_Model {
                     $incidencia=$query->row();
 
 
-                    if ((($device_pds->status == 'Baja') && ($incidencia->tipo_averia!='Robo')) || (($device_pds->status == 'RMA') && ($incidencia->tipo_averia=='Robo'))) {
+                    if ((($device_pds->status == 'RMA') && ($incidencia->tipo_averia!='Robo')) || (($device_pds->status == 'RMA') && ($incidencia->tipo_averia=='Robo'))) {
                         $data = array(
                             'id_device' => $device_pds->id_device,
                             'alta' => $ahora,
@@ -2209,6 +2209,10 @@ class Tienda_model extends CI_Model {
 
                 //$result = null;
                 if (!empty($device_pds)) {
+                    $query= $this->db->select('*')
+                        ->where('id_incidencia', $id_incidencia)
+                        ->get('incidencias');
+                    $incidencia=$query->row();
 
                     $sql = "SELECT * FROM devices_almacen WHERE status='Transito' AND id_device=$device_pds->id_device AND id_incidencia=$id_incidencia";
                     $result = $this->db->query($sql)->row();
@@ -2217,7 +2221,7 @@ class Tienda_model extends CI_Model {
                 }
                 //echo "RESULT ".print_r($result); echo "<br>"; exit;
                 //exit;
-                if (!empty($device_pds) && $device_pds->status == 'Baja') {
+                if (!empty($device_pds) && $incidencia->tipo_averia == 'Averia' && $device_pds->status == 'RMA') {
 
                     if (!empty($result)) {
                         $id_devices_almacen=$result->id_devices_almacen;
@@ -2226,7 +2230,7 @@ class Tienda_model extends CI_Model {
                         $this->db->query($sql);
                     }
                 } else {
-                    if (!empty($device_pds) && $device_pds->status == 'RMA') {
+                    if (!empty($device_pds)  && $incidencia->tipo_averia == 'Robo'&& $device_pds->status == 'RMA') {
                         $status='RMA';
 
                         if (!empty($result)) {
@@ -2310,7 +2314,7 @@ class Tienda_model extends CI_Model {
 
 
                     /* poner de baja la posicion que origino la incidencia*/
-                    $sql = "UPDATE devices_pds SET status='Baja' WHERE id_devices_pds =" . $device_pds->id_devices_pds;
+                    $sql = "UPDATE devices_pds SET status='RMA' WHERE id_devices_pds =" . $device_pds->id_devices_pds;
                     $this->db->query($sql);
 
 
