@@ -400,11 +400,14 @@ class Tienda_model extends CI_Model {
                         INNER JOIN incidencias ON incidencias.id_devices_pds=devices_pds.id_devices_pds 
                         WHERE (devices_pds.status = \"Baja\" AND incidencias.tipo_averia=\"Robo\" and 
                         incidencias.status_pds=\"Finalizada\" and incidencias.id_incidencia NOT IN 
-                        (select id_incidencia from devices_almacen where id_incidencia IS NOT NULL)) OR 
-                        (devices_pds.status = \"RMA\" AND incidencias.tipo_averia=\"Robo\" and 
-                        incidencias.status_pds=\"Finalizada\" and incidencias.id_incidencia NOT IN 
                         (select id_incidencia from devices_almacen where id_incidencia IS NOT NULL))
                         GROUP BY devices_pds.id_device");
+        /*
+         *  OR
+                        (devices_pds.status = "RMA" AND incidencias.tipo_averia="Robo" and
+                        incidencias.status_pds="Finalizada" and incidencias.id_incidencia NOT IN
+                        (select id_incidencia from devices_almacen where id_incidencia IS NOT NULL))
+         */
 
         $query = $this->db->query('
 		SELECT temporal.id_device, brand_device.brand, temporal.device, unidades_pds,unidades_transito, unidades_reservado,
@@ -2113,12 +2116,12 @@ class Tienda_model extends CI_Model {
                         $this->db->query($sql);
                     } else {
                         if ($resultado['tipo_averia']=='Robo') {
-                           /* $sql = "SELECT status FROM historico WHERE id_incidencia=" . $id_incidencia . " AND status='Sustituido'";
+                            $sql = "SELECT status FROM historico WHERE id_incidencia=" . $id_incidencia . " AND status='Sustituido'";
                             $historico = $this->db->query($sql)->row();
-                            if (!empty($historico))  {*/
+                            if (!empty($historico))  {
                                 $sql = "UPDATE devices_pds SET status='Baja' WHERE id_devices_pds =" . $id_devices_pds;
                                 $this->db->query($sql);
-                            //}
+                            }
                         }
                     }
                 }
@@ -2146,49 +2149,52 @@ class Tienda_model extends CI_Model {
                     $sql ="SELECT status FROM historico WHERE id_incidencia=".$id_incidencia." AND (status='Sustituido' OR status='SustituidoRMA')";
                     $historico=$this->db->query($sql)->row();
 
-                    if ((($device_pds->status == 'RMA') && ($incidencia->tipo_averia!='Robo')) ||
-                        ($incidencia->tipo_averia=='Robo') && ($historico->status=='SustituidoRMA')) {
-                        $data = array(
-                            'id_device' => $device_pds->id_device,
-                            'alta' => $ahora,
-                            'IMEI' => $device_pds->IMEI,
-                            'mac' => $device_pds->mac,
-                            'serial' => $device_pds->serial,
-                            'barcode' => $device_pds->barcode,
-                            'status' => 4, //Se inserta en almacen en transito
-                            'owner' => "ET",
-                            'id_incidencia' => $id_incidencia
-                        );
-                       // print_r($data); exit;
-                        $this->db->insert('devices_almacen', $data);
+                    if (!empty($historico)) {
+                        if ((($device_pds->status == 'Baja') && ($incidencia->tipo_averia != 'Robo')) ||
+                            ($incidencia->tipo_averia == 'Robo') && ($historico->status == 'SustituidoRMA')
+                        ) {
+                            $data = array(
+                                'id_device' => $device_pds->id_device,
+                                'alta' => $ahora,
+                                'IMEI' => $device_pds->IMEI,
+                                'mac' => $device_pds->mac,
+                                'serial' => $device_pds->serial,
+                                'barcode' => $device_pds->barcode,
+                                'status' => 4, //Se inserta en almacen en transito
+                                'owner' => "ET",
+                                'id_incidencia' => $id_incidencia
+                            );
+                            // print_r($data); exit;
+                            $this->db->insert('devices_almacen', $data);
 
-                        /*Insertar en el historico del almacen el estado del dispositivo*/
-                        $elemento = array(
-                            'id_material_incidencia' => NULL,
-                            'id_devices_almacen'    => $this->db->insert_id(),
-                            'id_alarm' => NULL,
-                            'id_device'=>$device_pds->id_device,
-                            'id_incidencia' => $id_incidencia,
-                            'id_client' => NULL,
-                            'fecha' => date('Y-m-d H:i:s'),
-                            'unidades' => 1,
-                            'procesado' => 1,
-                            'status'    => 'Transito'
-                        );
-                        $this->db->insert('historico_io',$elemento);
+                            /*Insertar en el historico del almacen el estado del dispositivo*/
+                            $elemento = array(
+                                'id_material_incidencia' => NULL,
+                                'id_devices_almacen' => $this->db->insert_id(),
+                                'id_alarm' => NULL,
+                                'id_device' => $device_pds->id_device,
+                                'id_incidencia' => $id_incidencia,
+                                'id_client' => NULL,
+                                'fecha' => date('Y-m-d H:i:s'),
+                                'unidades' => 1,
+                                'procesado' => 1,
+                                'status' => 'Transito'
+                            );
+                            $this->db->insert('historico_io', $elemento);
 
 
-
-                        //echo $this->db->last_query();
-                        //print_r($historico); exit;
-                        /*En el caso de que la incidencia no sea un robo se debe poner la posicion*/
-                      //  if(($incidencia->tipo_averia!='Robo') || (($incidencia->tipo_averia=='Robo') && (!empty($historico) ) && ($historico->status=='Sustituido'))){
+                            //echo $this->db->last_query();
+                            //print_r($historico); exit;
+                            /*En el caso de que la incidencia no sea un robo se debe poner la posicion*/
+                            //  if(($incidencia->tipo_averia!='Robo') || (($incidencia->tipo_averia=='Robo') && (!empty($historico) ) && ($historico->status=='Sustituido'))){
                             /*La posicion que general la incidencia pasa a estar en Alta*/
                             $sql = "UPDATE devices_pds SET status='Baja' WHERE id_devices_pds =" . $id_devices_pds;
                             $this->db->query($sql);
-                       // }
+                            // }
+                        }
                     }
                 }
+
                 break;
 
             case ($status == 8): /*Cuando de hace el cierre forzoso de la incidencia*/
@@ -2252,30 +2258,29 @@ class Tienda_model extends CI_Model {
                   //  echo $sql."<br>";
                   //  print_r($incidencia);
 //print_r($result);
+                    if (!empty($result)) {
+                        if (!empty($device_pds) && $incidencia->tipo_averia != 'Robo') {
 
-                    if (!empty($device_pds) && $incidencia->tipo_averia != 'Robo') {
-
-                        if (!empty($result)) {
 
                             $id_devices_almacen = $result->id_devices_almacen;
                             $id_device = $result->id_device;
                             $sql = "UPDATE devices_almacen SET status='En stock' WHERE  id_devices_almacen=$result->id_devices_almacen";
                             $this->db->query($sql);
 
-                        }
-                    } else {
-                        if (!empty($device_pds) && $incidencia->tipo_averia == 'Robo') {
-                            $status = 'RMA';
 
-                            if (!empty($result)) {
+                        } else {
+                            if (!empty($device_pds) && $incidencia->tipo_averia == 'Robo') {
+                                $status = 'RMA';
                                 $id_devices_almacen = $result->id_devices_almacen;
                                 $id_device = $result->id_device;
                                 $sql = "UPDATE devices_almacen SET status='RMA' WHERE  id_devices_almacen=$result->id_devices_almacen";
                                 $this->db->query($sql);
+
+                                //  $sql = "UPDATE devices_pds SET status='Baja' WHERE id_devices_pds =" . $device_pds->id_devices_pds;
+                                // $this->db->query($sql);
                             }
-                            //  $sql = "UPDATE devices_pds SET status='Baja' WHERE id_devices_pds =" . $device_pds->id_devices_pds;
-                            // $this->db->query($sql);
-                        } else {
+                        }
+                    }else {
                             $sql = "SELECT * FROM material_incidencias m
                                     INNER JOIN devices_almacen d ON d.id_devices_almacen=m.id_devices_almacen
                                     WHERE m.id_incidencia=$id_incidencia";
@@ -2291,7 +2296,7 @@ class Tienda_model extends CI_Model {
                             }
                         }
                     }
-                }
+
 //echo $status."<br>"; echo $this->db->last_query(); echo "<br>"; print_r($result); exit;
                 /*Insertar en el historico del almacen el estado del dispositivo*/
                 $elemento = array(
