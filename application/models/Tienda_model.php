@@ -2150,7 +2150,7 @@ class Tienda_model extends CI_Model {
                     $historico=$this->db->query($sql)->row();
 
                     if (!empty($historico)) {
-                        if ((($device_pds->status == 'Baja') && ($incidencia->tipo_averia != 'Robo')) ||
+                        if ((($device_pds->status == 'RMA') && ($incidencia->tipo_averia != 'Robo')) ||
                             ($incidencia->tipo_averia == 'Robo') && ($historico->status == 'SustituidoRMA')
                         ) {
                             $data = array(
