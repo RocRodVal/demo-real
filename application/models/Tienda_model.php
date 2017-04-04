@@ -154,7 +154,7 @@ class Tienda_model extends CI_Model {
                 }else {
                     $condicionImei=" AND IMEI IS NULL";
                 }
-                $condicion=" AND material_incidencias.id_devices_almacen IS NULL AND status='Transito' AND id_devices_pds IS NULL ".$condicionImei;
+                $condicion=" AND material_incidencias.id_devices_almacen IS NULL AND status='Transito' AND devices_almacen.id_incidencia IS NULL ".$condicionImei;
                 $join="LEFT JOIN material_incidencias ON material_incidencias.id_devices_almacen=devices_almacen.id_devices_almacen ";
                 $statusI="Transito";
                 break;
