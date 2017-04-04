@@ -205,11 +205,6 @@
 		            if (empty($incidencias)) {
                         echo '<p class="message warning"><i class="glyphicon glyphicon-warning-sign"></i> No hay incidencias abiertas.</p>'; ?>
 
-
-                        <?php  /*if(! empty($buscar_sfid) || ! empty($buscar_incidencia)) { ?>
-                            <a href="<?=base_url()?>admin/dashboard/borrar_busqueda/#incidencias_abiertas" class="reiniciar_busqueda"> <i class="glyphicon glyphicon-remove"></i> Reiniciar</a>
-                        <?php }*/  ?>
-
 		            <?php } else {
 		                ?>
                         <?php if($show_paginator) { ?>

@@ -22,12 +22,16 @@ function showModalNewIntervencion(id_pds, id_incidencia) {
     }).done(function (msg) {
         json = JSON.parse(msg);
         console.log(json);
-        $.each(json, function (key, intervencion) {
-            $("#nueva_intervencion_select_intervencion").append(
-                '<option value="' + intervencion.id_intervencion + '">#' +
-                intervencion.id_intervencion + ' - ' + intervencion.operador.contact +
-                ' - ' + intervencion.fecha + '</option>');
-        });
+        if (json.length>0) {
+            $.each(json, function (key, intervencion) {
+                $("#nueva_intervencion_select_intervencion").append(
+                    '<option value="' + intervencion.id_intervencion + '">#' +
+                    intervencion.id_intervencion + ' - ' + intervencion.operador.contact +
+                    ' - ' + intervencion.fecha + '</option>');
+            });
+        }else {
+            $("#nueva_intervencion_select_intervencion").attr('disabled',1);
+        }
         $("#nueva_intervencion_select_intervencion").change(disableNewIntervencion);
         $.ajax({
             type: "POST",
@@ -79,7 +83,7 @@ function saveIntervencion() {
             }
             setInterval(function(){
                 location.reload();
-            },500);
+            },800);
 
         }).error(function (msg) {
         });
@@ -112,7 +116,7 @@ function saveIntervencion() {
             }
             setInterval(function(){
                 location.reload();
-            },500);
+            },800);
         }).error(function (msg) {
         });
 
@@ -149,11 +153,15 @@ function showModalViewIntervencion(id_intervencion){
             "bDestroy": true
         });
         //añadimos los datos de la intervencion
+        var contacto = intervencion.operador.contact;
+        if (contacto.length>25) {
+            contacto = contacto.substr(0,20)+"....";
+        }
         $("#fecha_ver_intervencion").html(intervencion.fecha);
         $("#status_ver_intervencion").html(intervencion.status);
         $("#description_ver_intervencion").html(intervencion.description);
         //añadimos los datos del contacto-
-        $("#nombre_contacto_ver_intervencion").html(intervencion.operador.contact);
+        $("#nombre_contacto_ver_intervencion").html(contacto);
         $("#telefono_contacto_ver_intervencion").html(intervencion.operador.phone);
         $("#email_contacto_ver_intervencion").html(intervencion.operador.email);
         //si el estado no es nueva, le deshabilitamos el botón de añadir incidencias

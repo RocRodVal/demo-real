@@ -12,82 +12,24 @@
                     <div class="filtro">
                         <form action="<?=base_url()?>master/pedidos/<?=$tipo?>" method="post" class="filtros form-mini autosubmit col-lg-12">
 
-                            <div class="col-lg-3">
-                              <!--  <label for="status">Estado: </label>
-                                <select name="status" id="status" class="form-control input-sm">
-                                    <option value="" <?php echo ($status==="") ? 'selected="selected"' : ''?>>Cualquier estado</option>
-
-                                    <option value="Nuevo" <?php echo ($status==="Alta realizada") ? 'selected="selected"' : ''?>>Nuevo</option>
-                                    <option value="En proceso" <?php echo ($status==="En proceso") ? 'selected="selected"' : ''?>>En proceso</option>
-                                    <option value="Pendiente material" <?php echo ($status==="En visita") ? 'selected="selected"' : ''?>>Pendiente material</option>
-                                    <option value="Enviado" <?php echo ($status==="Enviado") ? 'selected="selected"' : ''?>>Enviado</option>
-                                    <option value="Recibido" <?php echo ($status==="Recibido") ? 'selected="selected"' : ''?>>Recibido</option>
-                                    <option value="Cancelado" <?php echo ($status==="Cancelado") ? 'selected="selected"' : ''?>>Cancelado</option>
-                                    <option value="Finalizado" <?php echo ($status==="Finalizado") ? 'selected="selected"' : ''?>>Finalizado</option>
-                                </select>
-                            </div>
-                            <div class="col-lg-3">
-                                <label for="territory">Territorio: </label>
-                                <select name="territory" id="territory" class="form-control input-sm">
-                                    <option value="" <?php echo ($territory==="") ? 'selected="selected"' : ''?>>Cualquiera</option>
-                                    <?php
-                                    foreach($territorios as $territorio)
-                                    {
-                                        $attr = ($territorio->id_territory === $territory) ? ' selected="selected" ' :'';
-                                        echo '<option value="'.$territorio->id_territory.'" '.$attr.'>'.$territorio->territory.'</option>';
-                                    }
-                                    ?>
-                                </select>
-                            </div>
 
 
-                            <div class="col-lg-3">
-                                <label for="id_device">Terminal: </label>
-                                <select name="id_device" id="id_device" class="form-control input-sm">
-                                    <option value="" <?php echo ($id_device==="") ? 'selected="selected"' : ''?>>Cualquiera</option>
-                                    <?php
-                                    foreach($terminales as $terminal)
-                                    {
-                                        $attr = ($terminal->id_device === $id_device) ? ' selected="selected" ' :'';
-                                        echo '<option value="'.$terminal->id_device.'" '.$attr.'>'.$terminal->device.'</option>';
-                                    }
-                                    ?>
-                                </select>
-                            </div>
-
-
-                            <div class="col-lg-3">
-                                <label for="id_provincia">Provincia: </label>
-                                <select name="id_provincia" id="id_provincia" class="form-control input-sm">
-                                    <option value="" <?php echo ($id_provincia ==="") ? 'selected="selected"' : ''?>>Cualquiera</option>
-                                    <?php
-                                    foreach($provincias as $provincia)
-                                    {
-                                        $attr = ($provincia->id === $id_provincia) ? ' selected="selected" ' :'';
-                                        echo '<option value="'.$provincia->id.'" '.$attr.'>'.$provincia->titulo.'</option>';
-                                    }
-                                    ?>
-                                </select>
-                            </div>
-                            <div class="clearfix"></div>
--->
-
-                            <div class="col-lg-4">
+                            <div class="col-lg-2">
                                 <label for="id_pedido">Pedido: </label>
                                 <input type="text" name="id_pedido" id="id_pedido" class="form-control input-sm" placeholder="Id. pedido" <?php echo (!empty($id_pedido)) ? ' value="'.$id_pedido.'" ' : ''?> />
                             </div>
-                            <div class="col-lg-4">
+                            <div class="col-lg-2">
                                 <label for="reference">SFID: </label>
                                 <input type="text" name="reference" id="reference" class="form-control input-sm" placeholder="SFID" <?php echo (!empty($reference)) ? ' value="'.$reference.'" ' : ''?> />
                             </div>
-                            <div class="col-lg-2">
+                            <div class="col-lg-1">
                                 <div class="form-group">
                                     <input type="hidden" name="do_busqueda" value="si">
                                     <input type="submit" value="Buscar" id="submit_button" class="form-control input-sm">
 
                                 </div>
                             </div>
-                                <div class="col-lg-2">
+                                <div class="col-lg-1">
                                     <div class="form-group">
                                         <a href="<?=base_url()?>master/pedidos/<?=$tipo?>/borrar_busqueda" class="reiniciar_busquedaP form-control input-sm">Reiniciar</a>
                                     </div>
@@ -104,11 +46,6 @@
                         <?php
                         if (empty($pedidos)) {
                             echo '<p class="message warning"><i class="glyphicon glyphicon-warning-sign"></i> No hay '.$title2.'.</p>'; ?>
-
-
-                            <?php  /*if(! empty($buscar_sfid) || ! empty($buscar_incidencia)) { ?>
-                            <a href="<?=base_url()?>admin/dashboard/borrar_busqueda/#incidencias_abiertas" class="reiniciar_busqueda"> <i class="glyphicon glyphicon-remove"></i> Reiniciar</a>
-                        <?php }*/  ?>
 
                         <?php }
                         else {
@@ -128,7 +65,7 @@
                                     <p>Encontrados <?=$num_resultados?> resultados. </p>
                                 </div>
                             <?php }
-                            $url=base_url().'admin/exportar_pedidos/'.$tipo.'/xls';
+                            $url=base_url().'master/exportar_pedidos/'.$tipo.'/xls';
                             ?>
                         <p><a href="<?=$url?>" class="btn exportar"><i class="glyphicon glyphicon-file"></i> Exportar Excel</a></p>
 		                <div class="table-responsive">

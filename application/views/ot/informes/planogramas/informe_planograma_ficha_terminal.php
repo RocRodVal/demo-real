@@ -2,7 +2,7 @@
     <div class="row">
         <div class="col-lg-12">
 		    <h1 class="page-header"><?php echo $subtitle ?>
-		    	<a onclick="history.go(-1);return false;" class="btn btn-danger right">Volver</a>
+		    	<a onclick="window.history.back(-1);return false;" class="btn btn-danger right">Volver</a>
 		    </h1>
         </div>
     </div>

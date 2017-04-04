@@ -98,12 +98,16 @@ function viewIntervencion(intervencion_id) {
         $('[data-toggle="tooltip"]').tooltip();
 
         //añadimos los datos de la intervencion
+        var contacto = intervencion.operador.contact;
+        if (contacto.length>25) {
+            contacto = contacto.substr(0,25)+"....";
+        }
         $("#ver_intervencion_id").html("#"+intervencion_id);
         $("#fecha_ver_intervencion").html(intervencion.fecha);
         $("#status_ver_intervencion").html(intervencion.status);
         $("#description_ver_intervencion").html(intervencion.description);
         //añadimos los datos del contacto-
-        $("#nombre_contacto_ver_intervencion").html(intervencion.operador.contact);
+        $("#nombre_contacto_ver_intervencion").html(contacto);
         $("#telefono_contacto_ver_intervencion").html(intervencion.operador.phone);
         $("#email_contacto_ver_intervencion").html(intervencion.operador.email);
         //si el estado no es nueva, le deshabilitamos el botón de añadir incidencias

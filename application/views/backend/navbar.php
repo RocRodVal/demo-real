@@ -16,7 +16,7 @@
             <div class="navbar-default sidebar" role="navigation">
                 <div class="sidebar-nav navbar-collapse">
                     <ul class="nav" id="side-menu" style="margin-top:20px;">
-                        <?php $estado_incidencias = array("estado_incidencias","incidencias_exp","cdm_incidencias","operar_incidencia",'incidencias');
+                        <?php $estado_incidencias = array("estado_incidencias","incidencias_exp","cdm_incidencias","operar_incidencia",'incidencias','update_incidencia_materiales');
                            // $cdm = array('cdm_incidencias');
                             $estado_incidencias_inner = array();
                             $arr_anios = array();
@@ -30,7 +30,9 @@
                             <a href="#"><i class="fa fa-dashboard fa-fw"></i> Estado incidencias <span class="fa arrow"></span></a>
 
                             <ul class="nav nav-second-level">
-                                <li><a <?=(($this->uri->segment(2)==='estado_incidencias') && ($this->uri->segment(3)==='abiertas')) ?'class="active"':''?> href="<?=site_url($acceso.'/estado_incidencias/abiertas')?>"> Incidencias abiertas &raquo;</a></li>
+                                <li><a <?=((($this->uri->segment(2)==='estado_incidencias') && ($this->uri->segment(3)==='abiertas'))
+                                        || ($this->uri->segment(2)=='update_incidencia_materiales')) ?'class="active"':''?>
+                                        href="<?=site_url($acceso.'/estado_incidencias/abiertas')?>"> Incidencias abiertas &raquo;</a></li>
                                 <li><a <?=(($this->uri->segment(2)==='estado_incidencias') && ($this->uri->segment(3)==='cerradas'))?'class="active"':''?> href="<?=site_url($acceso.'/estado_incidencias/cerradas')?>"> Incidencias cerradas &raquo;</a></li>
                               <?php /*  <li><a <?=($this->uri->segment(3)==='incidencias')?'class="active"':''?> href="<?=site_url($acceso.'/incidencias')?>"> Exportar todas &raquo;</a></li> */ ?>
                                 <li><a <?=($this->uri->segment(2)==='incidencias_exp')?'class="active"':''?> href="<?=site_url($acceso.'/incidencias_exp')?>"> Exportar todas &raquo;</a></li>
@@ -78,7 +80,7 @@
 
                         <?php               
                         $almacenes = array('almacen','inventario_dispositivos','dispositivos_almacen','alta_dispositivos_almacen','alta_dispositivos_ok','baja_dispositivos_almacen','baja_dispositivos_ok','baja_dispositivos_ko','alarmas_en_almacen','diario_almacen',
-                            'informe_sistemas_seguridad','balance','alarmas_almacen','dispositivos_tiendas','muebles_tiendas','dispositivos_recogida','recepcion_rma','insert_rma_almacen');
+                            'informe_sistemas_seguridad','balance','alarmas_almacen','dispositivos_tiendas','muebles_tiendas','dispositivos_recogida','recepcion_incidencia','insert_almacen');
                         ?>                      
                         <li <?=(in_array($this->uri->segment(2), $almacenes))?'class="active"':''?>>
                             <a href="#"><i class="fa fa-cubes fa-fw"></i> Almacén<span class="fa arrow"></span></a>
@@ -94,10 +96,10 @@
                                 <li><a <?=(($this->uri->segment(1)==='inventario') && ($this->uri->segment(2)==='balance')) ?'class="active"':''?> href="<?=site_url('inventario/balance')?>">Balance &raquo;</a></li>
                                 <li <?=(($this->uri->segment(2)==='inventario_dispositivos') || ($this->uri->segment(2)==='dispositivos_almacen') || ($this->uri->segment(2)==='dispositivos_recogida') || ($this->uri->segment(2)==='dispositivos_tiendas')
                                     || ($this->uri->segment(2)==='alta_dispositivos_almacen')|| ($this->uri->segment(2)==='alta_dispositivos_ok') || ($this->uri->segment(2)==='baja_dispositivos_almacen') || ($this->uri->segment(2)==='baja_dispositivos_ko')
-                                    || ($this->uri->segment(2)==='baja_dispositivos_ok') || ($this->uri->segment(2)==='recepcion_rma') || $this->uri->segment(2)==='insert_rma_almacen')?'class="active"':''?>>
+                                    || ($this->uri->segment(2)==='baja_dispositivos_ok') || ($this->uri->segment(2)==='recepcion_incidencia') || $this->uri->segment(2)==='insert_almacen')?'class="active"':''?>>
                                     <a href="#">Dispositivos  <span class="fa arrow"></span></a>
                                     <ul class="nav nav-second-level">
-                                        <li><a <?=($this->uri->segment(2)==='recepcion_rma' || $this->uri->segment(2)==='insert_rma_almacen')?'class="active"':''?> href="<?=site_url($acceso.'/recepcion_rma')?>"><i class="fa fa-tasks"></i> Recepcion RMA Inc &raquo;</a></li>
+                                        <li><a <?=($this->uri->segment(2)==='recepcion_incidencia' || $this->uri->segment(2)==='insert_almacen')?'class="active"':''?> href="<?=site_url($acceso.'/recepcion_incidencia')?>"><i class="fa fa-tasks"></i> Recepcion Inc &raquo;</a></li>
                                         <li><a <?=($this->uri->segment(2)==='inventario_dispositivos')?'class="active"':''?> href="<?=site_url($acceso.'/inventario_dispositivos')?>"><i class="fa fa-tasks"></i> Inventario &raquo;</a></li>
                                         <li><a <?=($this->uri->segment(2)==='dispositivos_almacen')?'class="active"':''?> href="<?=site_url('inventario/dispositivos_almacen')?>"><i class="fa fa-mobile-phone"></i> En almacen &raquo;</a></li>
                                         <li><a <?=($this->uri->segment(2)==='dispositivos_recogida')?'class="active"':''?> href="<?=site_url('inventario/dispositivos_recogida')?>"><i class="fa fa-download"></i> Pendientes recogida &raquo;</a></li>
@@ -113,12 +115,13 @@
                         </li>
 
                         <?php               
-                        $exposicion = array('descripcion','exp_alta_incidencia','exp_alta_incidencia_mueble','exp_alta_incidencia_device','inventarios_panelados','inventarios_planogramas','inventarios','listado_panelados');
+                        $exposicion = array('inventario_tienda','inventario_muebles');
                         ?>
                         <li <?=(in_array($this->uri->segment(2), $exposicion))?'class="active"':''?>>
                             <a href="#"><i class="fa fa-building-o fa-fw"></i> Exposición<span class="fa arrow"></span></a>
                             <ul class="nav nav-second-level">
-                             	<li><a <?=($this->uri->segment(2)==='inventarios')?'class="active"':''?> href="<?=site_url($acceso.'/inventarios')?>"> Inventarios tiendas &raquo;</a></li>
+                             	<li><a <?=($this->uri->segment(2)==='inventario_muebles')?'class="active"':''?> href="<?=site_url($acceso.'/inventario_muebles')?>"> Inventario muebles &raquo;</a></li>
+                                <li><a <?=($this->uri->segment(2)==='inventario_tienda')?'class="active"':''?> href="<?=site_url($acceso.'/inventario_tienda')?>"> Inventario dispositivos &raquo;</a></li>
                             </ul>
                         </li>
                         <?php $facturaciones = array('facturacion','facturacion_intervencion','facturacion_fabricanteM'); ?>

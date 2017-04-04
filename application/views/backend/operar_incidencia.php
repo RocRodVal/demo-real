@@ -244,7 +244,9 @@
                         <div class="col-lg-5 labelBtn grey">
                             <a href="<?= site_url('admin/update_incidencia/' . $id_pds_url . '/' . $id_inc_url . '/4/8/ext') ?>"
 
-                               classBtn="status" class="btn btn-danger" <?php if ($incidencia['status_pds'] == 'Finalizada') { echo 'disabled'; } ?>>Cierre forzoso</a>
+                               classBtn="status" class="btn btn-danger" <?php if ($incidencia['status_pds'] == 'Finalizada'
+                                || $incidencia['status_pds'] == 'Cancelada' || $incidencia['status_pds'] == 'En visita')
+                               { echo 'disabled'; } ?>>Cierre forzoso</a>
 
                         </div>                             
                     </div>
@@ -258,13 +260,14 @@
                     Información de la incidencia
                 </div>
                 <div class="panel-body">
-                    <table width="100%" cellpadding="0" cellspacing="0" id="info_incidencia">
+
+                    <table cellpadding="0" cellspacing="0" id="info_incidencia">
 
                         <tr>
                             <td colspan="2"><h3>Información general</h3></td>
                         </tr>
                         <tr>
-                            <th width="50%">Tipo tienda:</th> <td><?php echo $pds["tipo"] . "-" . $pds["subtipo"] ."-" . $pds["segmento"] . "-" . $pds["tipologia"] ?></td>
+                            <th width="30%">Tipo tienda:</th> <td><?php echo $pds["tipo"] . "-" . $pds["subtipo"] ."-" . $pds["segmento"] . "-" . $pds["tipologia"] ?></td>
                         </tr>
                         <tr>
                             <th>Fecha alta:</th> <td><?php echo date_format(date_create($incidencia['fecha']), 'd/m/Y'); ?></td>
@@ -281,6 +284,10 @@
                         </tr>
                         <tr>
                             <th>Estado:</th> <td><?php echo $incidencia['status'] ?></td>
+                        </tr>
+                        <!--Todos los estados por los que pasa la incidenica-->
+                        <tr>
+                            <th>Histórico:</th> <td><?php echo $estados ?></td>
                         </tr>
                         <tr>
                             <th>Fecha asignación material:</th>
@@ -511,18 +518,11 @@
                                 <?php
                                 }
 
-
                                 ?>
 
                             </td>
                         </tr>
                     </table>
-
-
-                    
-
-
-
 
                 </div>
             </div>

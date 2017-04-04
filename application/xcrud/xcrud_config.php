@@ -1,11 +1,23 @@
 <?php /** Configuration file; f0ska xCRUD v.1.6.25; 10/2014 */
+
+
+$ci =& get_instance();
+if(!isset($ci->db)) $ci->load->database();
+
+define('DBHOST', $ci->db->hostname);
+define('DBNAME', $ci->db->database);
+define('DBUSER', $ci->db->username);
+define('DBPASS', $ci->db->password);
+
+//var_dump(CONFIG_DB);
+
 class Xcrud_config
 {
     // default connection
-    public static $dbname = 'demoreal'; // Your database name
-    public static $dbuser = 'demoreal'; // Your database username
-    public static $dbpass = 'arf2t24t23r13$12';
-    public static $dbhost = 'localhost'; // Your database host, 'localhost' is default.
+    public static $dbname = DBNAME; // Your database name
+    public static $dbuser = DBUSER; // Your database username
+    public static $dbpass = DBPASS;
+    public static $dbhost = DBHOST; // Your database host, 'localhost' is default.
     
     
     // theme and language
@@ -23,7 +35,7 @@ class Xcrud_config
     
     // session
     public static $sess_name = 'PHPSESSID'; // If your script is already using the session, specify the session name for it. By default, the name of the session in PHP equal 'PHPSESSID'.
-    public static $sess_expire = 30; // Specifies the lifetime of the session, as well as the existence of a key safety (for example, the maximum edit-saving timeout).
+    public static $sess_expire = 0; // Specifies the lifetime of the session, as well as the existence of a key safety (for example, the maximum edit-saving timeout).
     public static $dynamic_session = false; // this option is used for compatibility with with frameworks and cms that using dynamic session name.
     
     

@@ -10,6 +10,9 @@
 	                        <center><img src="<?=site_url('assets/images/logo-orange_big.png')?>" title="<?=lang('comun.titulo')?>" width="50%" /></center>
 	                    </div>
 	                    <div class="panel-body">
+
+                            <?php $this->view('common/login') ?>
+                            <?php /*echo validation_errors(); ?>
 	                        <form action="<?=site_url('tienda');?>" method="post" class="content_auto form_login">
 	                        	<?php 
 	                        	if (isset($message)) 
@@ -28,7 +31,7 @@
 	                                </div>
 	                                <input type="submit" class="btn btn-lg btn-success btn-block" value="Entrar" />
 	                            </fieldset>
-	                        </form>
+	                        </form><?php */ ?>
 	                    </div>
 	                </div>
 	            </div>

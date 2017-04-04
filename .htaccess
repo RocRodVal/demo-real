@@ -1,3 +1,12 @@
+#php_value session.cookie_domain .pre.altabox.net
+
+<IfModule mod_setenvif.c>
+    ### LOCAL ###
+    SetEnvIf Server_Addr 192.168.106.17$ CI_ENV=localesther
+    ##dev##
+    SetEnvIf Server_Addr 85.10.197.10$ CI_ENV=development
+</IfModule>
+
 RewriteEngine on
 RewriteBase /orange
 RewriteCond $1 !^(index\.php|images|css|js|robots\.txt|favicon\.ico)

@@ -63,9 +63,9 @@
                         </div>
                     </div>
                 </div>
-                <div class="row">
+              <!--  <div class="row">
                     <button type="button" id="bnt_add_incidencia_to_intervencion" class="btn btn-default" onClick='showModaladdIncidenciasIntervencion();'>Añadir incidencia</button>
-                </div>
+                </div>-->
                 <div class="row">
                     <div class="col-lg-12">
                         <table id="table_incidencias" class="table table-striped table-bordered table-hover"
@@ -77,7 +77,7 @@
                                 <th>SFID</th>
                                 <th>DIRECCION</th>
                                 <th>STATUS</th>
-                                <th>ACCIONES</th>
+                                <!--<th>ACCIONES</th>-->
                             </tr>
                             </thead>
                         </table>
