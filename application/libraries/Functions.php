@@ -84,22 +84,20 @@
     function inventario_dispositivos_codigoMueble($postdata,  $xcrud){
 
         $CI =& get_instance();
-      //  print_r($postdata);
+     ;
         /*consultamos el estado anterior del dispositivo*/
         $result = $CI->db->select('id_displays_pds')
-        //    ->join("pds","id_pds=".$postdata->get('id_pds'))
             ->where("id_display",$postdata->get('id_display'))
             ->where("id_pds",$postdata->get('id_pds'))
             ->get('displays_pds')->row_array();
-        //echo $CI->db->last_query();
-//print_r($result);
+
         if (!empty($result)) {
             $elemento = array(
                 'id_displays_pds' => ($result['id_displays_pds'])
             );
             $CI->db->where('id_devices_pds',$xcrud)
                     ->update('devices_pds', $elemento);
-            //return true;
+
         }
         else {
             $CI->db->where('id_devices_pds',$xcrud)
@@ -146,16 +144,22 @@
         else {
             $postdata->set('id_displays_pds',$datosAntes['id_displays_pds']);
             $postdata->set('id_display',$datosAntes['id_display']);
-            //$postdata->set("message","El mueble seleccionado no pertenece a la tienda");
-          //  print_r($postdata);
-            //$X=$xcrud->get_instance();
 
-           // $CI->("El mueble seleccionado no pertenece a la tienda");
             echo "<text style='color: red; font-size: 18px '>ERROR - no se ha podido actualizar el dispositivo porque 
             el mueble seleccionado no pertenece a la tienda</text>";
-            //$CI->set_echo_and_die();
 
         }
+    }
+
+    function enlace_idincidencia($value, $row){
+        $CI =& get_instance();
+        /*Obtenemos la tienda de la incidencia*/
+        $result = $CI->db->select('id_pds')
+            ->where("id_incidencia",$value)
+            ->get('incidencias')->row_array();
+
+        return '<a href="'.site_url("admin/operar_incidencia/".$result['id_pds']."/".$value).'" targe="_blank">'.$value.'</a>';
+
     }
 
     /*

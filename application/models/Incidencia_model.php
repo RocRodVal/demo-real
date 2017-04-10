@@ -346,7 +346,7 @@ class Incidencia_model extends CI_Model {
         $this->load->helper('csv');
         $this->load->helper('download');
 
-        ini_set('memory_limit', '256M');
+        //ini_set('memory_limit', '256M');
 
         $acceso = $this->uri->segment(1);
 

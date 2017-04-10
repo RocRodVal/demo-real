@@ -5,6 +5,10 @@
     SetEnvIf Server_Addr 192.168.106.17$ CI_ENV=localesther
     ##dev##
     SetEnvIf Server_Addr 85.10.197.10$ CI_ENV=development
+
+    ## PRE ##
+    SetEnvIf Host demoreal.pre.altabox.net$ CI_ENV=pre
+    SetEnvIf Server_Addr 5.9.102.175$ CI_ENV=pre
 </IfModule>
 
 RewriteEngine on

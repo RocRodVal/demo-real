@@ -1471,7 +1471,7 @@ class Admin extends MY_Controller
                 $imei = $r->IMEI;
             }
         }
-        if (empty($imei)){
+        if (empty($imei) && ($this->input->post('units_dipositivo_almacen_1')<>'')){
             $error="El IMEI no puede estar vacio";
             //$data['error']=$error;
 
@@ -1487,7 +1487,7 @@ class Admin extends MY_Controller
                     'id_pds' => $id_pds,
                     'id_alarm' => NULL,
                     'id_devices_almacen' => $this->input->post('dipositivo_almacen_1'),
-                    'cantidad' => $this->input->post('units_dipositivo_almacen_1')
+                    'cantidad' => 1
                 );
                 $this->tienda_model->reservar_dispositivos($this->input->post('dipositivo_almacen_1'), 2);
                 $this->tienda_model->incidencia_update_material($dipositivo_almacen_1);
@@ -2703,9 +2703,11 @@ class Admin extends MY_Controller
                    'data-action'   => 'incidencias',
                    'data-primary'  => '{id_devices_pds}'));*/
 
-            $lista_incidencias=$xcrud_3->nested_table('incidencias_list','id_devices_pds','incidencias','id_incidencia');
+            $lista_incidencias=$xcrud_3->nested_table('incidencias_list','id_devices_pds','incidencias','id_devices_pds');
+            $lista_incidencias->column_callback('id_incidencia','enlace_idincidencia','../libraries/Functions.php');
             $lista_incidencias->columns('id_incidencia,fecha,status,status_pds');
             $lista_incidencias->fields('id_incidencia,fecha,status,status_pds');
+            $lista_incidencias->label('status','Estado SAT')->label('status_pds','Estado PDS');
             $lista_incidencias->unset_add();
             $lista_incidencias->unset_remove();
             $lista_incidencias->unset_edit();

@@ -35,8 +35,8 @@ $config['realdooh.api.url'] = 'http://78.46.139.41:8080/rdorangeapi/api/v1';
 
 $config['realdooh.api'] = array(
     'active' => TRUE,
-    'changeStatusUrl' => $config['realdooh.api.url']. '/incident/{drId}',
-    'createIncidenceUrl' => $config['realdooh.api.url'].'/incident/{drId}/asset/{assetDrId}/user/{userSFID}'
+    'changeStatusUrl' => $config['realdooh.api.url']. '/demoreal/incident/{drId}',
+    'createIncidenceUrl' => $config['realdooh.api.url'].'/demoreal/incident/{drId}/asset/{assetDrId}/user/{userSFID}'
 );
 /*
 |--------------------------------------------------------------------------
@@ -48,7 +48,7 @@ $config['realdooh.api'] = array(
 | variable so that it is blank.
 |
 */
-$config['index_page'] = 'index.php';
+$config['index_page'] = '';
 
 /*
 |--------------------------------------------------------------------------
@@ -65,7 +65,7 @@ $config['index_page'] = 'index.php';
 |
 | WARNING: If you set this to 'PATH_INFO', URIs will always be URL-decoded!
 */
-$config['uri_protocol']	= 'REQUEST_URI';
+$config['uri_protocol']	= 'PATH_INFO'; //Para que funcione en produccion
 
 /*
 |--------------------------------------------------------------------------
@@ -488,7 +488,7 @@ $config['csrf_exclude_uris'] = array();
 | by the output class.  Do not 'echo' any values with compression enabled.
 |
 */
-$config['compress_output'] = TRUE;
+$config['compress_output'] = FALSE;
 
 /*
 |--------------------------------------------------------------------------
