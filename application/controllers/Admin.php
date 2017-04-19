@@ -5529,7 +5529,12 @@ class Admin extends MY_Controller
     public function logout()
     {
         if ($this->auth->is_auth()) {
+
             $this->session->unset_userdata('logged_in');
+            $this->session->unset_userdata('sfid');
+            $this->session->unset_userdata('entorno');
+            $this->session->unset_userdata('type');
+            $this->session->unset_userdata('id_pds');
             $this->session->sess_destroy();
         }
         redirect('admin', 'refresh');
