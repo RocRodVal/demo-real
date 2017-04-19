@@ -338,7 +338,6 @@ class Incidencia_model extends CI_Model {
     /**
      *  Devuelve conjunto de registros de incidencias abiertas, para generar CSV
      *  filtradas si procede
-     *
      * */
     public function exportar_incidencias($array_orden = NULL,$filtros=NULL,$tipo="abiertas",$formato="csv",$porrazon=NULL) {
         $this->load->dbutil();
@@ -346,10 +345,7 @@ class Incidencia_model extends CI_Model {
         $this->load->helper('csv');
         $this->load->helper('download');
 
-        //ini_set('memory_limit', '256M');
-
         $acceso = $this->uri->segment(1);
-
 
         // Array de títulos de campo para la exportación XLS/CSV
         $arr_titulos = array('Id incidencia','SFID','Fecha','Elemento','Territorio','Fabricante','Mueble','Terminal','Supervisor','Provincia','Tipo avería',
@@ -369,7 +365,6 @@ class Incidencia_model extends CI_Model {
             array_push($excluir,'last_updated');
             array_push($excluir,'status_pds');
         }
-
 
         $sql = 'SELECT incidencias.id_incidencia,
                             pds.reference as `SFID`,
@@ -391,9 +386,7 @@ class Incidencia_model extends CI_Model {
                 pds_supervisor.titulo as supervisor,
                 province.province as provincia,
                 ';
-
         $sql .= 'incidencias.tipo_averia,';
-
 
         /*                    (CASE incidencias.fail_device WHEN 1 THEN ("Sí") ELSE ("No") END) AS `Fallo dispositivo`,
                             (CASE incidencias.alarm_display WHEN 1 THEN ("Sí") ELSE ("No") END) AS `Alarma mueble`,
@@ -421,40 +414,28 @@ class Incidencia_model extends CI_Model {
             $sql .= 'incidencias.last_updated, ';
             $sql .= 'incidencias.status_pds as `Estado PDS`,
                      type_incidencia.title as `razon_Parada`';
-
         }else{
             $sql .= 'incidencias.status_pds as `Estado PDS`,
                     type_incidencia.title as `razon_Parada`';
         }
         $sql = rtrim($sql,",");
 
-
-
         $sql .='
                 FROM incidencias
-
-
                 LEFT OUTER JOIN displays_pds ON incidencias.id_displays_pds = displays_pds.id_displays_pds
                 LEFT OUTER JOIN display ON displays_pds.id_display = display.id_display
                 LEFT OUTER JOIN devices_pds ON incidencias.id_devices_pds = devices_pds.id_devices_pds
                 LEFT OUTER JOIN device ON devices_pds.id_device = device.id_device
                 LEFT OUTER JOIN type_device ON device.type_device = type_device.id_type_device
-
-
                 LEFT OUTER JOIN pds ON incidencias.id_pds = pds.id_pds
                 LEFT OUTER JOIN territory ON territory.id_territory=pds.territory
                 LEFT OUTER JOIN brand_device ON device.brand_device = brand_device.id_brand_device
-
                 LEFT JOIN pds_supervisor ON pds.id_supervisor= pds_supervisor.id
                 LEFT JOIN type_incidencia ON incidencias.id_type_incidencia = type_incidencia.id_type_incidencia
                 LEFT JOIN province ON pds.province= province.id_province
                 LEFT JOIN intervenciones_incidencias ON intervenciones_incidencias.id_incidencia = incidencias.id_incidencia
-
                 WHERE 1 = 1
-
                 ';
-
-
 
         if($tipo==="abiertas")  $sTitleFilename = "Incidencias_abiertas";
         else  $sTitleFilename = "Incidencias_cerradas";
@@ -476,22 +457,18 @@ class Incidencia_model extends CI_Model {
             $sql .= (' AND device.brand_device='.$filtros['brand_device']);
         }
         if(isset($filtros["id_display"]) && !empty($filtros["id_display"])) {
-            //$this->db->where('incidencias.fail_device','1');
             $sql .= (' AND display.id_display ="'.$filtros['id_display'].'" ');
         }
         if(isset($filtros["id_device"]) && !empty($filtros["id_device"])) {
-           // $sql .= (' AND incidencias.fail_device=1');
             $sql .= (' AND device.id_device ="'.$filtros['id_device'].'" ');
         }
         if(isset($filtros["id_supervisor"]) && !empty($filtros["id_supervisor"])) {
-            //$this->db->where('incidencias.fail_device','1');
             $sql .= (' AND pds.id_supervisor ="'.$filtros['id_supervisor'].'" ');
         }
         if(isset($filtros["id_tipo_incidencia"]) && !empty($filtros["id_tipo_incidencia"])) {
             $sql .= (' AND type_incidencia.id_type_incidencia ='.$filtros['id_tipo_incidencia']);
         }
         if(isset($filtros["id_provincia"]) && !empty($filtros["id_provincia"])) {
-            //$this->db->where('incidencias.fail_device','1');
             $sql .= (' AND  province.id_province ="'.$filtros['id_provincia'].'" ');
         }
 
@@ -528,22 +505,11 @@ class Incidencia_model extends CI_Model {
         /*if(!is_null($campo_orden) && !empty($campo_orden) && !is_null($orden) && !empty($orden)) {
           $s_orden = $campo_orden. " ".$orden;
           $sql .= " ORDER BY ".($s_orden);
-      }else{*/
-
-        //}
-
-//        echo $sql;
-  //      exit;
-
+      }*/
         $query = $this->db->query($sql);
-
-
-        //echo $this->db->last_query();
-        //exit;
 
         /* */
         $resultado=$query->result();
-
 
         if (is_null($porrazon)) {
             $datos = preparar_array_exportar($resultado, $arr_titulos, $excluir);
@@ -551,11 +517,7 @@ class Incidencia_model extends CI_Model {
         }
         else {
             $linea = 0;
-            //$aux[$linea] = $arr_titulos;
-            //$linea++;
             $anterior = 0;
-            //$dos=false;
-            //$columnas = count($arr_titulos);
             foreach ($resultado as $key => $campos) {
                 if (is_null($campos->razon_Parada)) {
                     $titulo = "Incidencias sin razon de parada";
