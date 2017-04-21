@@ -697,7 +697,7 @@ class Tienda extends MY_Controller {
                             'password' => 'demoreal'                                           //
                         ));
 
-			            //print_r($response);
+			            //print_r($response); exit;
 			    //
                                                                                                //
                 //                                                                             //
@@ -779,8 +779,30 @@ class Tienda extends MY_Controller {
                     $this->email->message($message_admin);
                     $this->email->send();
                 }
-	
-				redirect('tienda/alta_incidencia_gracias/'.$incidencia['id']);
+
+                /////////////////////////////////////////////////////////////////////////////////
+                //                                                                             //
+                //                   Comunicación  con Realdooh VU.                            //
+                //                                                                             //
+                /////////////////////////////////////////////////////////////////////////////////
+                //
+                $response = alta_incidencia_realdooh(array(                                             //
+                    'drId'=>  $incidencia['id'],                                       //
+                    'assetDrId' => $this->uri->segment(3),                             //
+                    'userSFID' => $this->session->userdata('sfid')                     //
+                ),array(                                                                    //
+                    'user'=>$this->session->userdata('sfid'),                          //
+                    'password' => 'demoreal'                                           //
+                ));
+
+               // print_r($response); exit;
+                //
+                //
+                //                                                                             //
+                // </ Fin Comunicación con Realdooh VU > ////////////////////////////////////////
+
+
+                redirect('tienda/alta_incidencia_gracias/'.$incidencia['id']);
 			}
 			else
 			{
