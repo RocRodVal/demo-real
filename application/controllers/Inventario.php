@@ -918,7 +918,39 @@ class Inventario extends CI_Controller {
             $xcrud = xcrud_get_instance();
             $this->load->model('tienda_model');
 
-            $data['devices_recogida'] = $this->tienda_model->get_devices_recogida();
+            $this->load->library('app/paginationlib');
+
+            // Comprobar si existe el segmento PAGE en la URI, si no inicializar a 1..
+            $get_page = $this->uri->segment(4);
+            if( $this->uri->segment(3) == "page") {
+                $page = ( ! empty($get_page) ) ? $get_page : 1 ;
+                $segment = 4;
+            }else{
+                $page = 1;
+                $segment = null;
+            }
+
+            /* PAGINACION */
+            $per_page = 15;
+            $total_devices = $this->tienda_model->get_recogidas_quantity();   // Sacar el total de dispositivos a recoger
+            $cfg_pagination = $this->paginationlib->init_pagination("inventario/dispositivos_recogida/page/",$total_devices,$per_page,$segment);
+
+
+            $this->load->library('pagination',$cfg_pagination);
+            $this->pagination->initialize($cfg_pagination);
+
+            $bounds = $this->paginationlib->get_bounds($total_devices,$page,$per_page);
+
+            // Indicamos si habrá que mostrar el paginador en la vista
+            $data['show_paginator'] = $bounds["show_paginator"];
+            $data['num_resultados'] = $bounds["num_resultados"];
+            $data['n_inicial'] = $bounds["n_inicial"];
+            $data['n_final'] = $bounds["n_final"];
+            $data["pagination_helper"]   = $this->pagination;
+
+            //$data['stocks'] = $this->tienda_model->get_stock_cruzado($page, $cfg_pagination);
+
+            $data['devices_recogida'] = $this->tienda_model->get_devices_recogida($page, $cfg_pagination);
 
             $data['title']   = 'Dispositivos';
             $data['opcion'] =7;

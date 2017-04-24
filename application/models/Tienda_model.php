@@ -1555,7 +1555,36 @@ class Tienda_model extends CI_Model {
 
     /* dispositivos que no han llegado al almacen tras la resolucion de la incidencia bien sea porque se asignaron y no se usaron
     o porque genero la incidencia y no se ha enviado a almacen*/
-    public function get_devices_recogida() {
+    public function get_devices_recogida($page = 1, $cfg_pagination = NULL) {
+
+        $limit='';
+        if(!empty($cfg_pagination)) {
+            if ($page==1) {
+                $limit=" LIMIT ".$page  *$cfg_pagination['per_page'];
+            } else {
+                if($page>1){
+                    $limit=" LIMIT ".($page-1) *$cfg_pagination['per_page'].",".  $cfg_pagination['per_page'];
+                }
+            }
+        }
+        /* Terminales que asignaron a la incidencia pero no se usaron*/
+        $sql="SELECT m.id_incidencia,i.id_pds, d.* ,'Se asigno pero no se uso' as descripcion
+              FROM material_incidencias m
+              INNER JOIN devices_almacen a ON a.id_devices_almacen=m.id_devices_almacen AND a.status='Transito'
+              INNER JOIN incidencias i ON i.id_incidencia=m.id_incidencia AND i.status='Pendiente recogida'
+              INNER JOIN device d ON d.id_device=a.id_device
+              UNION
+              SELECT i.id_incidencia,i.id_pds,d.*,'genero la incidencia' as descripcion
+              FROM devices_almacen a
+              INNER JOIN incidencias i ON i.id_incidencia = a.id_incidencia AND a.status='Transito' AND i.status='Pendiente recogida'
+              INNER JOIN device d ON d.id_device=a.id_device ".$limit;
+
+        return $this->db->query($sql)->result();
+    }
+
+    /* total dispositivos que no han llegado al almacen tras la resolucion de la incidencia bien sea porque se asignaron y no se usaron
+    o porque genero la incidencia y no se ha enviado a almacen*/
+    public function get_recogidas_quantity($array_filtros=NULL) {
         /* Terminales que asignaron a la incidencia pero no se usaron*/
         $sql="SELECT m.id_incidencia,i.id_pds, d.* ,'Se asigno pero no se uso' as descripcion
               FROM material_incidencias m
@@ -1568,7 +1597,7 @@ class Tienda_model extends CI_Model {
               INNER JOIN incidencias i ON i.id_incidencia = a.id_incidencia AND a.status='Transito' AND i.status='Pendiente recogida'
               INNER JOIN device d ON d.id_device=a.id_device";
 
-        return $this->db->query($sql)->result();
+        return $this->db->query($sql)->num_rows();
     }
 
     public function get_devices_almacen_exportar() {
