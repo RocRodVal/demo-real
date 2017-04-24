@@ -6638,6 +6638,8 @@ class Admin extends MY_Controller
                 );
                // $deposito = new Deposito_model();
                 $id_devices_almacen = $this->tienda_model->alta_device_almacen($elemento);
+                $unidades=-1;
+                if ($status=='En stock') $unidades = 1;
 
                 $elemento = array(
                     'id_material_incidencia' => NULL,
@@ -6646,7 +6648,7 @@ class Admin extends MY_Controller
                     'id_alarm' => NULL,
                     'id_client' => NULL,
                     'fecha' => $fecha,
-                    'unidades' => -1,
+                    'unidades' => $unidades,
                     'id_incidencia' =>  $id_incidencia,
                     'procesado' => 1,
                     'status' => $status

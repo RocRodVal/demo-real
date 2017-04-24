@@ -485,7 +485,7 @@ class Tienda_model extends CI_Model {
         $resultados = $this->get_stock_cruzado($array_filtros);
         //if($controler=="admin") {
             $arr_titulos = array('Id dispositivo', 'Fabricante', 'Dispositivo', 'Uds. tienda', 'Uds. Transito',
-                'Uds. Reservadas','Uds. Almacén RMA','Uds. Almacén','Uds. Robadas','Total', 'Stock necesario', 'Balance');
+                'Uds. Reservadas','Uds. Almacén RMA','Uds. Almacén','Uds. Robadas','Televenta','Total', 'Stock necesario', 'Balance');
             $excluir = array('status');
         /*}
         else {
