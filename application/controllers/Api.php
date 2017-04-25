@@ -82,7 +82,7 @@ class Api extends CI_Controller
             13 => $this->auth->is_auth(13)
         ];*/
         $origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '*';
-        echo json_encode(['origin'=> $origin, 'response'=> $response]);
+        echo json_encode(array('origin'=> $origin, 'response'=> $response));
         //echo json_encode(['response'=> $response,'request'=>$data['sfid'], 'session_name'=> session_id()]);
 
         exit;

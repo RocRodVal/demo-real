@@ -31,12 +31,12 @@ $config['base_url'] = 'http://demoreal.focusonemotions.com/orange/';
  */
 $config['allowed_origins'] = array ('localhost', 'demoreal.focusonemotions.com');
 
-$config['realdooh.api.url'] = 'http://realdooh.pre.altabox.net:8080/api/v1/demoreal';
+$config['realdooh.api.url'] = 'http://realdooh.pre.altabox.net:8080/rdorangeapi/api/v1';
 
 $config['realdooh.api'] = array (
-    'active' => FALSE,
-    'changeStatusUrl' => $config['realdooh.api.url']. '/incident/{drId}',
-    'createIncidenceUrl' => $config['realdooh.api.url'].'/incident/{drId}/asset/{assetDrId}/user/{userSFID}'
+    'active' => true,
+    'changeStatusUrl' => $config['realdooh.api.url']. '/demoreal/incident/{drId}',
+    'createIncidenceUrl' => $config['realdooh.api.url'].'/demoreal/incident/{drId}/asset/{assetDrId}/user/{userSFID}'
 );
 
 /*
@@ -66,7 +66,7 @@ $config['index_page'] = '';
 |
 | WARNING: If you set this to 'PATH_INFO', URIs will always be URL-decoded!
 */
-$config['uri_protocol']	= 'REQUEST_URI';
+$config['uri_protocol']	= 'PATH_INFO';
 
 /*
 |--------------------------------------------------------------------------

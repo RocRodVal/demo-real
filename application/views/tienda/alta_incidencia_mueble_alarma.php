@@ -75,7 +75,7 @@
                         <div class="row">
                             <div class="col-lg-offset-8 col-lg-4">
                                 <input type="button" value="Cancelar" class="btn btn-danger"
-                                       onclick="window.location='<?= site_url('tienda/dashboard') ?>'"/>
+                                       onclick="window.location='<?= site_url('tienda/alta_incidencia_mueble/'.$id_displays_pds) ?>'"/>
                                 <input type="submit" value="Envíar" name="submit" class="btn btn-success" />
                             </div>
                         </div>

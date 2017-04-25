@@ -339,7 +339,17 @@
                 }
             } else {
                 ?>
+
                 <h1 class="page-header">Disposivos pendientes de recoger</h1>
+                <?php
+                if($show_paginator) { ?>
+                <div class="pagination">
+                    <ul class="pagination">
+                        <?php echo "".$pagination_helper->create_links(); ?>
+                    </ul>
+                    <p>Encontrados <?=$num_resultados?> resultados. Mostrando del <?=$n_inicial?> al <?=$n_final?>.</p>
+                </div>
+                <?php } ?>
                 <div class="table-responsive">
                     <table class="table table-striped table-bordered table-hover" id="dataTables-example">
                         <thead>
