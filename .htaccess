@@ -8,8 +8,8 @@
     ##PRE##
     SetEnvIf Server_Addr 85.10.199.43$ CI_ENV=pre
     ## PRE nuestro##
-    SetEnvIf Host demoreal.pre.altabox.net$ CI_ENV=pre
-    SetEnvIf Server_Addr 5.9.102.175$ CI_ENV=pre
+    SetEnvIf Host demoreal.pre.altabox.net$ CI_ENV=preR
+    SetEnvIf Server_Addr 5.9.102.175$ CI_ENV=preR
 </IfModule>
 
 RewriteEngine on
