@@ -34,7 +34,7 @@ $config['allowed_origins'] = array ('localhost', 'postman.pre.altabox.net', 'dem
 $config['realdooh.api.url'] = 'http://realdooh.pre.altabox.net:8080/rdorangeapi/api/v1';
 
 $config['realdooh.api'] = array(
-    'active' => false,
+    'active' => true,
     'changeStatusUrl' => $config['realdooh.api.url']. '/demoreal/incident/{drId}',
     'createIncidenceUrl' => $config['realdooh.api.url'].'/demoreal/incident/{drId}/asset/{assetDrId}/user/{userSFID}'
 );
