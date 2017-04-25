@@ -23,21 +23,22 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | a PHP script and you can easily do that on your own.
 |
 */
-$config['base_url'] = 'http://demoreal.focusonemotions.com/orange/';
+$config['base_url'] = 'http://demoreal.pre.altabox.net/orange/';
 
 
 /**
  * REALDOOH API, TEMPORARY ACTIVATION
  */
-$config['allowed_origins'] = array ('localhost', 'demoreal.focusonemotions.com');
+$config['allowed_origins'] = array ('localhost', 'postman.pre.altabox.net', 'demoreal.pre.altabox.net', 'realdooh.pre.altabox.net');
 
 $config['realdooh.api.url'] = 'http://realdooh.pre.altabox.net:8080/rdorangeapi/api/v1';
 
 $config['realdooh.api'] = array(
-    'active' => FALSE,
+    'active' => false,
     'changeStatusUrl' => $config['realdooh.api.url']. '/demoreal/incident/{drId}',
     'createIncidenceUrl' => $config['realdooh.api.url'].'/demoreal/incident/{drId}/asset/{assetDrId}/user/{userSFID}'
 );
+
 
 /*
 |--------------------------------------------------------------------------
@@ -400,7 +401,6 @@ $config['sess_time_to_update'] = 30000;
 $config['sess_regenerate_destroy'] = FALSE;
 
 
-
 /*
 |--------------------------------------------------------------------------
 | Cookie Related Variables
@@ -416,8 +416,8 @@ $config['sess_regenerate_destroy'] = FALSE;
 |       'cookie_httponly') will also affect sessions.
 |
 */
-$config['cookie_prefix']	= 'demoreal_focusonemotions_';
-$config['cookie_domain']	= '.focusonemotions.com';
+$config['cookie_prefix']	= 'altabox_';
+$config['cookie_domain']	= '.pre.altabox.net';
 $config['cookie_path']		= '/';
 $config['cookie_secure']	= FALSE;
 $config['cookie_httponly'] 	= FALSE;
