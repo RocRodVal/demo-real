@@ -513,13 +513,35 @@ class Admin extends MY_Controller
             $muebles_pds = $this->tienda_model->get_displays_pds($PDS->id_pds);
             $ya_abierto = (!empty($muebles_pds)) ? TRUE : FALSE;
 
+            $assets=array("assets"=> array());
             if($existe_panelado && !$ya_abierto){
 
                 $muebles = $this->categoria_model->get_displays_categoria($PDS->id_tipo,$PDS->id_subtipo,$PDS->id_segmento,$PDS->id_tipologia);
+
                 foreach($muebles as $mueble)
                 {
-                    $this->tienda_model->anadir_mueble_sfid($mueble,$PDS,$mueble->position);
+
+                    $id_mueble=$this->tienda_model->anadir_mueble_sfid($mueble,$PDS,$mueble->position);
+                    if ($id_mueble!=-1) {
+                        $asset = array("drId" => $id_mueble, "assetType" => array("name" => $mueble->display), "location" => array("code" => $sfid));
+                        array_push($assets['assets'], $asset);
+                    }
                 }
+
+                //var_dump($assets); exit;
+                //////////////////////////////////////////////////////////////////////////////////
+                //                                                                              //
+                //             Comunicación  con Realdooh VU: agregar muebles a una tienda      //
+                //                                                                              //
+                //////////////////////////////////////////////////////////////////////////////////
+                //
+                //print_r(json_encode($assets));
+                set_assets_pds_realdooh(array(                                                  //
+                    'user'=> 'altabox',                                                         //
+                    'password' => 'realboxdemo'                                                 //
+                ), array(),json_encode($assets));                                             //
+                //                                                                              //
+                //////////////////////////////////////////////////////////////////////////////////
 
                 redirect('admin/apertura_pdv/alta/'.$sfid, 'refresh');
             }
@@ -1152,7 +1174,7 @@ class Admin extends MY_Controller
             //////////////////////////////////////////////////////////////////////////////////
             //                                                                              //
                 set_estado_incidencia_realdooh(array(                                          //
-                    'drId'=>  $this->uri->segment(4)                                        //
+                    'drId'=>  $id_inc                                        //
                 ),array(                                                                         //
                     'user'=> $sfid['reference'],                                            //
                     'password' => 'demoreal'                                                //
@@ -1201,7 +1223,7 @@ class Admin extends MY_Controller
             //////////////////////////////////////////////////////////////////////////////////
             //                                                                              //
                             set_estado_incidencia_realdooh(array(
-                                'drId'=>  $this->uri->segment(4)
+                                'drId'=>  $id_inc
                             ),array(
                                 'user'=> $sfid['reference'],
                                 'password' => 'demoreal'
@@ -1228,6 +1250,21 @@ class Admin extends MY_Controller
                 $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'], 8,$id_inc);
             }
             $this->tienda_model->incidencia_update_cierre($id_inc, $fecha_cierre);
+            //////////////////////////////////////////////////////////////////////////////////
+            //                                                                              //
+            //             Comunicación  con Realdooh VU: Cambio estado RESUELTA            //
+            //                                                                              //
+            //////////////////////////////////////////////////////////////////////////////////
+            //                                                                              //
+            set_estado_incidencia_realdooh(array(
+                'drId'=> $id_inc
+            ),array(
+                'user'=> $sfid['reference'],
+                'password' => 'demoreal'
+
+            ), 'resolved=1' );                                              //
+            //                                                                              //
+            //////////////////////////////////////////////////////////////////////////////////
         }else { //CIERRE de la incidencia normal
             if ($status == 8) {
                     $disp=$this->tienda_model->get_devices_incidencia($incidencia['id_incidencia']);
@@ -1311,7 +1348,7 @@ class Admin extends MY_Controller
             //////////////////////////////////////////////////////////////////////////////////
             //                                                                              //
                                 set_estado_incidencia_realdooh(array(
-                                    'drId'=>  $this->uri->segment(4)
+                                    'drId'=> $id_inc
                                 ),array(
                                     'user'=> $sfid['reference'],
                                     'password' => 'demoreal'
@@ -2321,21 +2358,14 @@ class Admin extends MY_Controller
         $xcrud_2->relation('contact_contact_person', 'contact', 'id_contact', 'contact');
         $xcrud_2->relation('contact_in_charge', 'contact', 'id_contact', 'contact');
         $xcrud_2->relation('contact_supervisor', 'contact', 'id_contact', 'contact');
-//
         $xcrud_2->relation('id_tipo', 'pds_tipo','id','titulo');
         $xcrud_2->relation('id_subtipo', 'pds_subtipo', 'id', 'titulo','','titulo ASC',false, '', false,'id_tipo','id_tipo');
-        //$xcrud_2->fk_relation('Tipología','id_tipologia', 'pds_subtipo_tipologia', 'id_subtipo', 'id_tipologia', 'pds_tipologia', 'id', 'titulo');
         $xcrud_2->relation('id_segmento', 'pds_segmento','id', 'titulo');
         $xcrud_2->relation('id_tipologia', 'pds_tipologia','id', 'titulo');
-
-
-        //id_tipo,id_subtipo,id_segmento,id_tipologia,
         $xcrud_2->relation('id_supervisor', 'pds_supervisor','id', 'titulo');
-
         $xcrud_2->change_type('picture_url', 'image');
         $xcrud_2->modal('picture_url');
-        //$xcrud_2->readonly('reference');
-        $xcrud_2->disabled('reference','edit');
+        $xcrud_2->readonly('reference','edit');
         //$xcrud_2->disabled('codigoSAT','edit');
         $xcrud_2->sum('m2_total', 'm2_fo', 'm2_bo');
         $xcrud_2->label('id_pds', 'Identificador')->label('client_pds', 'Cliente')->label('reference', 'SFID')->label('codigoSAT', 'Codigo SAT')->label('id_tipo', 'Tipo PDS')
@@ -2349,10 +2379,13 @@ class Admin extends MY_Controller
         $xcrud_2->fields('client_pds,reference,codigoSAT,id_tipo,id_subtipo,id_segmento,id_tipologia,commercial,cif,territory,picture_url,m2_fo,m2_bo,m2_total,type_via,address,zip,city,province,county,territory,schedule,phone,mobile,email,contact_contact_person,contact_in_charge,id_supervisor,status');
 
         $xcrud_2->validation_required('reference');
-        //$xcrud_2->validation_required('codigoSAT');
         $xcrud_2->validation_required('province');
         $xcrud_2->validation_required('territory');
+        $xcrud_2->after_insert("create_pds_realdooh","../libraries/Functions.php");
+        $xcrud_2->after_update("update_pds_realdooh","../libraries/Functions.php");
 
+//        print_r($result);
+//  $xcrud_3->after_insert("inventario_dispositivos_codigoMueble", "../libraries/Functions.php");
         // Ocultar el botón de borrar para evitar borrados accidentales mientras no existan constraints en BD:
         $xcrud_2->unset_remove();
         $xcrud_2->order_by(array("id_tipo"=>"desc","id_subtipo"=>"asc","id_segmento"=>"asc","id_tipologia"=>"asc"));

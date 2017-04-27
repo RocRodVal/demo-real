@@ -151,6 +151,174 @@
         }
     }
 
+    /*
+     * crear la tienda en realdooh
+     */
+    function create_pds_realdooh($postdata,  $xcrud){
+
+        $CI =& get_instance();
+        if (!empty($postdata)){
+
+            $result = $CI->db->select('titulo')
+                ->where("id",$postdata->get('id_tipo'))
+                ->get('pds_tipo')->row_array();
+            $tipo=$result['titulo'];
+
+            $result = $CI->db->select('titulo')
+                ->where("id",$postdata->get('id_subtipo'))
+                ->get('pds_subtipo')->row_array();
+            $subtipo=$result['titulo'];
+
+            $result = $CI->db->select('titulo')
+                ->where("id",$postdata->get('id_tipologia'))
+                ->get('pds_tipologia')->row_array();
+            $tipologia=$result['titulo'];
+
+            $result = $CI->db->select('titulo')
+                ->where("id",$postdata->get('id_segmento'))
+                ->get('pds_segmento')->row_array();
+            $segmento=$result['titulo'];
+
+            $result = $CI->db->select('province')
+                ->where("id_province",$postdata->get('province'))
+                ->get('province')->row_array();
+            $province=$result['province'];
+
+            $telefono=$postdata->get('phone');
+            $mobile=$postdata->get('mobile');
+            if(!empty($telefono)){
+                if(!empty($mobile)){ $telefono=$telefono." / ".$mobile;
+                }
+            }else{
+                if(!empty($mobile)){ $telefono=$mobile;
+                }
+            }
+
+
+            $pds_realdooh=array(
+                        "satCode"           =>  $postdata->get('codigoSAT'),
+                        "name"              =>  $postdata->get('commercial'),
+                        "locationSubtype"   =>array("name"=>$subtipo),
+                        "locationSegment"   =>array("name"=>$segmento),
+                        "locationTypology"  =>array("name"=>$tipologia),
+                        "locationType"      =>array("name"=>$tipo),
+                        "company"           =>array("id"=>2),
+                        "code"              =>  $postdata->get("referencee"),
+                        "province"          =>  $province,
+                        "city"          =>  $postdata->get('city'),
+                        "address"       =>  $postdata->get('address'),
+                        "zipCode"       =>  $postdata->get('zip'),
+                        "email"         =>  $postdata->get('email'),
+                        "phoneNumber"   =>  $telefono,
+                        "description"   =>  ""
+                    );
+        }
+        $json = json_encode($pds_realdooh);
+        //////////////////////////////////////////////////////////////////////////////////
+        //                                                                              //
+        //             Comunicación  con Realdooh VU: CREAR tienda                      //
+        //                                                                              //
+        //////////////////////////////////////////////////////////////////////////////////
+        //                                                                              //
+        //idOUParent es 2 en PRE pero en produccion será 1
+        $resultado=alta_pds_realdooh(array(                                             //
+            'user'=> 'altabox',
+            'password' => 'realboxdemo'
+        ), array(),$json);                                                //
+        //
+        //                                                                              //
+        //////////////////////////////////////////////////////////////////////////////////
+
+        //print_r($resultado);
+
+    }
+
+    /*
+     * actualizar la tienda en realdooh
+     */
+    function update_pds_realdooh($postdata, $xcrud){
+
+        $CI =& get_instance();
+
+        if (!empty($postdata)){
+
+            $result = $CI->db->select('titulo')
+                ->where("id",$postdata->get('id_tipo'))
+                ->get('pds_tipo')->row_array();
+            $tipo=$result['titulo'];
+
+            $result = $CI->db->select('titulo')
+                ->where("id",$postdata->get('id_subtipo'))
+                ->get('pds_subtipo')->row_array();
+            $subtipo=$result['titulo'];
+
+            $result = $CI->db->select('titulo')
+                ->where("id",$postdata->get('id_tipologia'))
+                ->get('pds_tipologia')->row_array();
+            $tipologia=$result['titulo'];
+
+            $result = $CI->db->select('titulo')
+                ->where("id",$postdata->get('id_segmento'))
+                ->get('pds_segmento')->row_array();
+            $segmento=$result['titulo'];
+
+            $result = $CI->db->select('province')
+                ->where("id_province",$postdata->get('province'))
+                ->get('province')->row_array();
+            $province=$result['province'];
+
+            $telefono=$postdata->get('phone');
+            $mobile=$postdata->get('mobile');
+            if(!empty($telefono)){
+                if(!empty($mobile)){ $telefono=$telefono." / ".$mobile;
+                }
+            }else{
+                if(!empty($mobile)){ $telefono=$mobile;
+                }
+            }
+
+            $pds_realdooh=array(
+                "satCode"           =>  $postdata->get('codigoSAT'),
+                "name"              =>  $postdata->get('commercial'),
+                "locationSubtype"   =>array("name"=>$subtipo),
+                "locationSegment"   =>array("name"=>$segmento),
+                "locationTypology"  =>array("name"=>$tipologia),
+                "locationType"      =>array("name"=>$tipo),
+                "company"           =>array("id"=>2),
+                "code"              =>  $postdata->get('reference'),
+                "province"          =>  $province,
+                "city"          =>  $postdata->get('city'),
+                "address"       =>  $postdata->get('address'),
+                "zipCode"       =>  $postdata->get('zip'),
+                "email"         =>  $postdata->get('email'),
+                "phoneNumber"   =>  $telefono,
+                "description"   =>  ""
+            );
+        }
+        $json = json_encode($pds_realdooh);
+
+        //////////////////////////////////////////////////////////////////////////////////
+        //                                                                              //
+        //             Comunicación  con Realdooh VU: ACTUALIZAR tienda                 //
+        //                                                                              //
+        //////////////////////////////////////////////////////////////////////////////////
+        //                                                                              //
+        //idOUParent es 2 en PRE pero en produccion será 1
+        $resultado=set_pds_realdooh(array(                                             //
+            'user'=> 'altabox',
+            'password' => 'realboxdemo'
+        ), array("sfid"=>$postdata->get('reference')),$json);                                                //
+        //
+        //                                                                              //
+        //////////////////////////////////////////////////////////////////////////////////
+
+        //print_r($resultado);exit;
+
+    }
+
+    /*
+     * Devuelve un enlace al detalle de una incidencia
+     */
     function enlace_idincidencia($value, $row){
         $CI =& get_instance();
         /*Obtenemos la tienda de la incidencia*/

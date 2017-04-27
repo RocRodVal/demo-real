@@ -31,12 +31,15 @@ $config['base_url'] = 'http://demoreal.focusonemotions.com/orange/';
  */
 $config['allowed_origins'] = array ('localhost', 'demoreal.focusonemotions.com');
 
-$config['realdooh.api.url'] = 'http://realdooh.pre.altabox.net:8080/api/v1/demoreal';
+$config['realdooh.api.url'] = 'http://realdooh.pre.altabox.net:8080/api/v1';
 
 $config['realdooh.api'] = array(
     'active' => FALSE,
-    'changeStatusUrl' => $config['realdooh.api.url']. '/incident/{drId}',
-    'createIncidenceUrl' => $config['realdooh.api.url'].'/incident/{drId}/asset/{assetDrId}/user/{userSFID}'
+    'changeStatusUrl'       => $config['realdooh.api.url']. '/demoreal/incident/{drId}',
+    'createIncidenceUrl'    => $config['realdooh.api.url'].'/demoreal/incident/{drId}/asset/{assetDrId}/user/{userSFID}',
+    'createPdsUrl'          => $config['realdooh.api.url'].'/location/demoreal?idOUParent=2',
+    'updatePdsUrl'          => $config['realdooh.api.url'].'/location/demoreal/{sfid}',
+    'addAssetsPdsUrl'       => $config['realdooh.api.url'].'/massive/asset'
 );
 
 /*
