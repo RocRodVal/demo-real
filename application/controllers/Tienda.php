@@ -697,7 +697,7 @@ class Tienda extends MY_Controller {
                             'password' => 'demoreal'                                           //
                         ));
 
-			            //print_r($response); exit;
+			            //print_r($response);
 			    //
                                                                                                //
                 //                                                                             //
@@ -795,7 +795,7 @@ class Tienda extends MY_Controller {
                     'password' => 'demoreal'                                           //
                 ));
 
-               // print_r($response); exit;
+                //print_r($response); exit;
                 //
                 //
                 //                                                                             //

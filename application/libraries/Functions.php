@@ -203,7 +203,7 @@
                         "locationTypology"  =>array("name"=>$tipologia),
                         "locationType"      =>array("name"=>$tipo),
                         "company"           =>array("id"=>2),
-                        "code"              =>  $postdata->get("referencee"),
+                        "code"              =>  $postdata->get("reference"),
                         "province"          =>  $province,
                         "city"          =>  $postdata->get('city'),
                         "address"       =>  $postdata->get('address'),
@@ -213,6 +213,7 @@
                         "description"   =>  ""
                     );
         }
+        //print_r($postdata);
         $json = json_encode($pds_realdooh);
         //////////////////////////////////////////////////////////////////////////////////
         //                                                                              //
@@ -229,7 +230,7 @@
         //                                                                              //
         //////////////////////////////////////////////////////////////////////////////////
 
-        //print_r($resultado);
+        print_r($resultado);
 
     }
 
@@ -312,7 +313,7 @@
         //                                                                              //
         //////////////////////////////////////////////////////////////////////////////////
 
-        //print_r($resultado);exit;
+        print_r($resultado);
 
     }
 

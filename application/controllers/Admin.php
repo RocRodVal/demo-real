@@ -421,6 +421,22 @@ class Admin extends MY_Controller
                     $this->tienda_model->cerrar_pds($sfid,$id_pds);
                     //$this->tienda_model->borrar_pds($this->input->post('reference'));
 
+                    //////////////////////////////////////////////////////////////////////////////////
+                    //                                                                              //
+                    //             Comunicación  con Realdooh VU: agregar muebles a una tienda      //
+                    //                                                                              //
+                    //////////////////////////////////////////////////////////////////////////////////
+                    //
+                    //print_r(json_encode($assets));
+                    $resultado = delete_pds_realdooh(array(                                                  //
+                        'user'=> 'altabox',                                                         //
+                        'password' => 'realboxdemo'                                                 //
+                    ), array("sfid"=>$sfid));                                             //
+                    //                                                                              //
+                    //////////////////////////////////////////////////////////////////////////////////
+                    //print_r($resultado); exit;
+
+
                     redirect('admin/cierre_pdv/' . $sfid . '/1', 'refresh');
                 }
 
@@ -536,13 +552,13 @@ class Admin extends MY_Controller
                 //////////////////////////////////////////////////////////////////////////////////
                 //
                 //print_r(json_encode($assets));
-                set_assets_pds_realdooh(array(                                                  //
+                $resultado = set_assets_pds_realdooh(array(                                                  //
                     'user'=> 'altabox',                                                         //
                     'password' => 'realboxdemo'                                                 //
                 ), array(),json_encode($assets));                                             //
                 //                                                                              //
                 //////////////////////////////////////////////////////////////////////////////////
-
+                //print_r($resultado); exit;
                 redirect('admin/apertura_pdv/alta/'.$sfid, 'refresh');
             }
             else {
@@ -1347,7 +1363,7 @@ class Admin extends MY_Controller
             //                                                                              //
             //////////////////////////////////////////////////////////////////////////////////
             //                                                                              //
-                                set_estado_incidencia_realdooh(array(
+                                $response=set_estado_incidencia_realdooh(array(
                                     'drId'=> $id_inc
                                 ),array(
                                     'user'=> $sfid['reference'],
@@ -1356,7 +1372,7 @@ class Admin extends MY_Controller
                                 ), 'visited=1' );                                           //
             //                                                                              //
             //////////////////////////////////////////////////////////////////////////////////
-
+            //echo $id_inc;print_r($response); exit;
 
             redirect('admin/imprimir_incidencia/'.$id_pds.'/'.$id_inc.'/'.$envio_mail, 'refresh');
         }
@@ -2674,6 +2690,7 @@ class Admin extends MY_Controller
         if ($this->auth->is_auth()) {
 
             $xcrud_1 = xcrud_get_instance();
+            print_r($xcrud_1);
             $xcrud_1->table('displays_pds');
             $xcrud_1->table_name('Inventario muebles');
             $xcrud_1->relation('client_type_pds', 'client', 'id_client', 'client');
@@ -2722,6 +2739,7 @@ class Admin extends MY_Controller
         if ($this->auth->is_auth()) {
 
             $xcrud_3 = xcrud_get_instance();
+            print_r($xcrud_3);
             $xcrud_3->table('devices_pds');
             $xcrud_3->table_name('Inventario dispositivos');
             $xcrud_3->relation('client_type_pds', 'client', 'id_client', 'client');

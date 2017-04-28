@@ -222,6 +222,23 @@ function set_assets_pds_realdooh($auth, $params='',$postParams = '') {
 }
 
 /**
+ * Llamada a la API para borrar de manera logica una tienda en realdooh
+ * SOLO SI ACTIVE=TRUE en la configuracion...
+ * @param $params
+ * @param $auth
+ * @param string $postParams
+ */
+function delete_pds_realdooh($auth, $params='',$postParams = '') {
+    $cfg = get_realdooh_config();
+
+    if($cfg['active']) {
+        $service = $cfg['updatePdsUrl'];
+        $response = rest_delete($service, $params, $auth,$postParams);
+        return $response;
+
+    }
+}
+/**
  * Post básico a servicio REST mediante URL
  * @param $url
  * @param array $urlParams
@@ -298,6 +315,40 @@ function rest_put_json ($url, $urlParams, $auth, $queryParams = '') {
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
     $server_output = curl_exec ($ch);
+    curl_close ($ch);
+
+    return $server_output;
+}
+
+/**
+ * DELETE básico a servicio REST mediante URL
+ * @param $url
+ * @param array $urlParams
+ * @param array $auth
+ * @return mixed
+ */
+function rest_delete ($url, $urlParams = array(), $auth = array(), $queryParams= '') {
+    // http://realdooh.pre.altabox.net:8080/rdorangeapi/api/v1/location/demoreal
+    // Authorization: Basic aHR0cHdhdGNoOmY=    base64(User:Password)
+    //$url = 'http://server.com/path';
+
+    $url = replaceUrlParams($url, $urlParams);
+
+    $headers = array("Content-type: application/json", );
+
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "DELETE");
+    curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+    curl_setopt($ch, CURLOPT_USERPWD, $auth['user'] . ":" . $auth['password']);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $queryParams);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+    $server_output = curl_exec ($ch);
+
+    //$api_response_info = curl_getinfo($ch);
+    //print_r($api_response_info); exit;
     curl_close ($ch);
 
     return $server_output;
