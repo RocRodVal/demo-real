@@ -1247,7 +1247,7 @@ class Admin extends MY_Controller
                                 'user'=> $sfid['reference'],
                                 'password' => 'demoreal'
 
-                            ), 'resolutionDate='.$fecha_cierre.'&resolved=1');                  //
+                            ), 'resolved=1&resolutionDate='.$fecha_cierre);                  //
             //                                                                              //
             //////////////////////////////////////////////////////////////////////////////////
         }
