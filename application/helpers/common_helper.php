@@ -294,11 +294,12 @@ echo $url;
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
     $server_output = curl_exec ($ch);
+    $api_response_info = curl_getinfo($ch);
+    print_r($api_response_info); exit;
     curl_close ($ch);
 
     print_r($server_output);
-    $api_response_info = curl_getinfo($ch);
-    print_r($api_response_info); exit;
+
 
     return $server_output;
 }
