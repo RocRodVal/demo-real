@@ -289,7 +289,7 @@ echo $url;
     curl_setopt($ch, CURLOPT_PUT, 1);
     curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
     curl_setopt($ch, CURLOPT_USERPWD, $auth['user'] . ":" . $auth['password']);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($queryParams));
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $queryParams);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
     $server_output = curl_exec ($ch);
