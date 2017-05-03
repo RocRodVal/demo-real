@@ -1211,7 +1211,7 @@ class Admin extends MY_Controller
          */
         $fecha_cierre = $this->input->post('fecha_cierre');
 
-        if(empty($fecha_cierre)) { $fecha_cierre = date('Y-m-d H:i:s'); }
+        if(empty($fecha_cierre)) { $fecha_cierre = date('Y-m-d H:i:s'); } 
 
         /**
          * Botón resolver Incidencia : Recoge fecha de resolución y hace la operación
@@ -1232,6 +1232,7 @@ class Admin extends MY_Controller
                 $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'], $status,$id_inc);
             //}
 
+
             //////////////////////////////////////////////////////////////////////////////////
             //                                                                              //
             //             Comunicación  con Realdooh VU: Cambio estado RESUELTA            //
@@ -1244,7 +1245,7 @@ class Admin extends MY_Controller
                                 'user'=> $sfid['reference'],
                                 'password' => 'demoreal'
 
-                            ), 'resolved=1' );                                              //
+                            ), array('resolved'=>1,'resolutionDate'=>$fecha_cierre));                                              //
             //                                                                              //
             //////////////////////////////////////////////////////////////////////////////////
         }
