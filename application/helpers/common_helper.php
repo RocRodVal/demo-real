@@ -279,7 +279,7 @@ function rest_post ($url, $urlParams = array(), $auth = array(), $queryParams= '
 function rest_put ($url, $urlParams, $auth, $queryParams = '') {
     // http://realdooh.pre.altabox.net:8080/rdorangeapi/api/v1/demoreal/incident/{drId}
     $url = replaceUrlParams($url, $urlParams);
-    $headers = array ("Content-type: application/json\r\n", );
+    $headers = array ("Content-type: application/json", );
     $url .= '?'.$queryParams;
   //  echo $queryParams;
 //echo $url;
