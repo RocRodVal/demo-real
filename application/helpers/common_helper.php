@@ -287,8 +287,8 @@ function rest_put ($url, $urlParams, $auth, $queryParams = '') {
     curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_0);
-    curl_setopt($ch, CURLOPT_PUT, 1);
-    //curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
+    //curl_setopt($ch, CURLOPT_PUT, 1);
+    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
     curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
     curl_setopt($ch, CURLOPT_USERPWD, $auth['user'] . ":" . $auth['password']);
     curl_setopt($ch, CURLOPT_POSTFIELDS, '');
