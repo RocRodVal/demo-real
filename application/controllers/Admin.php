@@ -1209,8 +1209,9 @@ class Admin extends MY_Controller
         /**
          * Botón Imprimir documentacion
          */
-        if (!empty($this->input->post('fecha_cierre'))) {
-            $fecha_cierre = $this->input->post('fecha_cierre') . " 00:00:00";
+        $fecha_cierre=$this->input->post('fecha_cierre');
+        if (!empty($fecha_cierre)) {
+            $fecha_cierre = $fecha_cierre . " 00:00:00";
         }else {
              $fecha_cierre = date('Y-m-d H:i:s'); }
 
