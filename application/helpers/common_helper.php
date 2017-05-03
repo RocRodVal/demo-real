@@ -281,7 +281,7 @@ function rest_put ($url, $urlParams, $auth, $queryParams = '') {
     $url = replaceUrlParams($url, $urlParams);
     $headers = array ("Content-type: application/json\r\n", );
     $url .= ('?'.$queryParams);
-
+echo $url;
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
     curl_setopt($ch, CURLOPT_URL, $url);

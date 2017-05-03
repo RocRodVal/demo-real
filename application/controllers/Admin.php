@@ -1211,7 +1211,7 @@ class Admin extends MY_Controller
          */
         $fecha_cierre = $this->input->post('fecha_cierre');
 
-        if(empty($fecha_cierre)) { $fecha_cierre = date('Y-m-d H:i:s'); } 
+        if(empty($fecha_cierre)) { $fecha_cierre = date('Y-m-d H:i:s'); }
 
         /**
          * Botón resolver Incidencia : Recoge fecha de resolución y hace la operación
@@ -1245,7 +1245,7 @@ class Admin extends MY_Controller
                                 'user'=> $sfid['reference'],
                                 'password' => 'demoreal'
 
-                            ), array('resolved'=>1,'resolutionDate'=>$fecha_cierre));                                              //
+                            ), 'resolved=1&esolutionDate='.$fecha_cierre);                                              //
             //                                                                              //
             //////////////////////////////////////////////////////////////////////////////////
         }
