@@ -285,7 +285,7 @@ function rest_put ($url, $urlParams, $auth, $queryParams = '') {
 //echo $url;
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-    curl_setopt($ch, CURLOPT_URL, "http://realdooh.pre.altabox.net:8080/rdorangeapi/api/v1/demoreal/incident/14364?resolved=1&esolutionDate=\"2017-05-02 00:00:00\"");
+    curl_setopt($ch, CURLOPT_URL, "http://realdooh.pre.altabox.net:8080/rdorangeapi/api/v1/demoreal/incident/14364?resolved=1&esolutionDate=2017-05-02 00:00:00");
     curl_setopt($ch, CURLOPT_PUT, 1);
     //curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
     curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
