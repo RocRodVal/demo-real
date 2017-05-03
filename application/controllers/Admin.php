@@ -1211,7 +1211,7 @@ class Admin extends MY_Controller
          */
         $fecha_cierre=$this->input->post('fecha_cierre');
         if (!empty($fecha_cierre)) {
-            $fecha_cierre .= date("H:i:s");
+            $fecha_cierre = $this->input->post('fecha_cierre') . " 00:00:00";
         }else {
              $fecha_cierre = date('Y-m-d H:i:s'); }
 
@@ -1247,7 +1247,7 @@ class Admin extends MY_Controller
                                 'user'=> $sfid['reference'],
                                 'password' => 'demoreal'
 
-                            ), 'resolved=1&esolutionDate='.$fecha_cierre);                  //
+                            ), 'resolutionDate='.$fecha_cierre.'&resolved=1');                  //
             //                                                                              //
             //////////////////////////////////////////////////////////////////////////////////
         }

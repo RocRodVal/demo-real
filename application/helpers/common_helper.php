@@ -281,6 +281,7 @@ function rest_put ($url, $urlParams, $auth, $queryParams = '') {
     $url = replaceUrlParams($url, $urlParams);
     $headers = array ("Content-type: application/json\r\n", );
     if (!empty($queryParams)) {
+        $queryParams = str_replace(' ', '+', $queryParams);
         $url .= ('?' . $queryParams);
     }
 
