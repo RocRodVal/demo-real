@@ -280,13 +280,14 @@ function rest_put ($url, $urlParams, $auth, $queryParams = '') {
     // http://realdooh.pre.altabox.net:8080/rdorangeapi/api/v1/demoreal/incident/{drId}
     $url = replaceUrlParams($url, $urlParams);
     $headers = array ("Content-type: application/json\r\n", );
-    $url .= ('?'.$queryParams);
+    if (!empty($queryParams)) {
+        $url .= ('?' . $queryParams);
+    }
 
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
     curl_setopt($ch, CURLOPT_URL, $url);
-    //curl_setopt($ch, CURLOPT_PUT, 1);
-    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
+    curl_setopt($ch, CURLOPT_PUT, 1);
     curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
     curl_setopt($ch, CURLOPT_USERPWD, $auth['user'] . ":" . $auth['password']);
     curl_setopt($ch, CURLOPT_POSTFIELDS, '');
