@@ -2281,29 +2281,21 @@ class Admin extends MY_Controller
 
     public function muebles()
     {
-
         // Ocultar el botón de borrar para evitar borrados accidentales mientras no existan constraints en BD:
         $xcrud_2 = xcrud_get_instance();
         $xcrud_2->table('displays_categoria');
         $xcrud_2->table_name('Muebles categoría');
         $xcrud_2->relation('client', 'client', 'id_client', 'client');
-
         $xcrud_2->relation('id_tipo', 'pds_tipo','id','titulo');
         $xcrud_2->relation('id_subtipo', 'pds_subtipo', 'id', 'titulo','','titulo ASC',false, '', false,'id_tipo','id_tipo');
-        //$xcrud_2->fk_relation('Tipología','id_tipologia', 'pds_subtipo_tipologia', 'id_subtipo', 'id_tipologia', 'pds_tipologia', 'id', 'titulo');
         $xcrud_2->relation('id_segmento', 'pds_segmento','id', 'titulo');
         $xcrud_2->relation('id_tipologia', 'pds_tipologia','id', 'titulo');
-        //id_tipo,id_subtipo,id_segmento,id_tipologia,
-
         $xcrud_2->relation('id_display', 'display', 'id_display', 'display','');
-
         $xcrud_2->label('id', 'Identificador')->label('client', 'Cliente')->label('id_display', 'Modelo')->label('id_tipo', 'Tipo PDS')
             ->label('id_subtipo', 'Subtipo PDS')->label('id_segmento', 'Segmento PDS')->label('id_tipologia', 'Tipología PDS')->label('position', 'Posición')->label('description', 'Comentarios')->label('status', 'Estado');
         $xcrud_2->columns('id,client,id_tipo,id_subtipo,id_segmento,id_tipologia,id_display,position,status');
         $xcrud_2->fields('client,id_tipo,id_subtipo,id_segmento,id_tipologia,id_display,position,status');
-// Ocultar el botón de borrar para evitar borrados accidentales mientras no existan constraints en BD:
         $xcrud_2->unset_remove();
-
 
         $xcrud_4 = xcrud_get_instance();
         $xcrud_4->table('devices_display');
@@ -2314,11 +2306,7 @@ class Admin extends MY_Controller
         $xcrud_4->label('id_devices_display', 'Identificador')->label('client_panelado', 'Cliente')->label('id_panelado', 'REF.')->label('id_display', 'Mueble')->label('id_device', 'Dispositivo')->label('position', 'Posición')->label('description', 'Comentarios')->label('status', 'Estado');
         $xcrud_4->columns('id_devices_display,client_panelado,id_display,id_device,position,status');
         $xcrud_4->fields('client_panelado,id_display,id_device,position,description,status');
-        // $xcrud_4->where('status',array('Incidencia','Alta'));
-        // Ocultar el botón de borrar para evitar borrados accidentales mientras no existan constraints en BD:
         $xcrud_4->unset_remove();
-
-
 
         $xcrud_3 = xcrud_get_instance();
         $xcrud_3->table('display');
@@ -2330,9 +2318,9 @@ class Admin extends MY_Controller
         $xcrud_3->label('id_display', 'Identificador')->label('client_display', 'Cliente')->label('display', 'Modelo')->label('picture_url', 'Foto')->label('canvas_url', 'SVG')->label('description', 'Comentarios')->label('positions', 'Posiciones')->label('status', 'Estado');
         $xcrud_3->columns('id_display,client_display,display,picture_url,positions,status');
         $xcrud_3->fields('client_display,display,picture_url,canvas_url,description,positions,status');
-
-        // Ocultar el botón de borrar para evitar borrados accidentales mientras no existan constraints en BD:
         $xcrud_3->unset_remove();
+        $xcrud_3->after_insert("create_modeloMueble_realdooh","../libraries/Functions.php");
+        $xcrud_3->before_update("update_modeloMueble_realdooh","../libraries/Functions.php");
 
 
         $data['title'] = 'Muebles';
@@ -2407,7 +2395,7 @@ class Admin extends MY_Controller
 //  $xcrud_3->after_insert("inventario_dispositivos_codigoMueble", "../libraries/Functions.php");
         // Ocultar el botón de borrar para evitar borrados accidentales mientras no existan constraints en BD:
         $xcrud_2->unset_remove();
-        $xcrud_2->order_by(array("id_tipo"=>"desc","id_subtipo"=>"asc","id_segmento"=>"asc","id_tipologia"=>"asc"));
+        $xcrud_2->order_by(array("status"=>'asc',"id_tipo"=>"desc","id_subtipo"=>"asc","id_segmento"=>"asc","id_tipologia"=>"asc"));
         $data['title'] = 'Puntos de venta';
 
         $data['content'] = $xcrud_1->render();
@@ -2693,7 +2681,7 @@ class Admin extends MY_Controller
         if ($this->auth->is_auth()) {
 
             $xcrud_1 = xcrud_get_instance();
-            print_r($xcrud_1);
+
             $xcrud_1->table('displays_pds');
             $xcrud_1->table_name('Inventario muebles');
             $xcrud_1->relation('client_type_pds', 'client', 'id_client', 'client');
@@ -2714,6 +2702,7 @@ class Admin extends MY_Controller
             $xcrud_1->order_by('position', 'asc');
             $xcrud_1->show_primary_ai_column(true);
             $xcrud_1->unset_numbers();
+            $xcrud_1->unset_add();
             $xcrud_1->start_minimized(false);
 
 
@@ -5670,9 +5659,9 @@ class Admin extends MY_Controller
 
                 $sfids = $this->input->post("sfids");
                 $arr_sfids = explode("\n", $sfids);
+                $arr_sfids = explode("\r", implode($arr_sfids));
                 $data["arr_sfids"] = $arr_sfids;
                 $id_display = $this->input->post("id_display");
-
 
                 $position = $this->input->post("position"); $position = (empty($position)) ? NULL : $position;
 
@@ -5693,22 +5682,45 @@ class Admin extends MY_Controller
                 // Validamos el array de SFIDs, y creamos un nuevo array que guarde NULL si el SFID no se encuentra
                 // y en caso contrario guarde el objeto PDS asociado.
                 $checked_sfids = array();
+                $assets=array("assets"=> array());
+
                 foreach($arr_sfids as $sfid)
                 {
                     if(!empty($sfid))
                     {
                         $check_sfid = $this->tienda_model->get_sfid($sfid,"object");
                         if (!empty($check_sfid)){// SFID ENCONTRADO
+
                             $checked_sfids[$sfid] = $check_sfid;
 
-                            $this->tienda_model->anadir_mueble_sfid($display,$check_sfid,$position);
+                            $id_display_pds=$this->tienda_model->anadir_mueble_sfid($display,$check_sfid,$position);
 
+                            if ($id_display_pds!=-1) {
+                                $asset = array("drId" => $id_display_pds, "assetType" => array("name" => $display->display), "location" => array("code" => $sfid));
+                                array_push($assets['assets'], $asset);
+                            }
 
                         }
                         else $checked_sfids[$sfid] = NULL;
                     }
                 }
                 $data["checked_sfids"] = $checked_sfids;
+
+                //print_r($assets);
+                //////////////////////////////////////////////////////////////////////////////////
+                //                                                                              //
+                //             Comunicación  con Realdooh VU: agregar muebles a una tienda      //
+                //                                                                              //
+                //////////////////////////////////////////////////////////////////////////////////
+                //
+                //print_r(json_encode($assets));
+                $resultado = set_assets_pds_realdooh(array(                                                  //
+                    'user'=> 'altabox',                                                         //
+                    'password' => 'realboxdemo'                                                 //
+                ), array(),json_encode($assets));                                             //
+                //                                                                              //
+                //////////////////////////////////////////////////////////////////////////////////
+                //print_r($resultado); exit;
 
 
             }

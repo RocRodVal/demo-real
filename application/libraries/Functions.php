@@ -215,6 +215,7 @@
         }
         //print_r($postdata);
         $json = json_encode($pds_realdooh);
+        //print_r($pds_realdooh);
         //////////////////////////////////////////////////////////////////////////////////
         //                                                                              //
         //             Comunicación  con Realdooh VU: CREAR tienda                      //
@@ -230,7 +231,7 @@
         //                                                                              //
         //////////////////////////////////////////////////////////////////////////////////
 
-        print_r($resultado);
+        //print_r($resultado);
 
     }
 
@@ -297,7 +298,7 @@
             );
         }
         $json = json_encode($pds_realdooh);
-
+//print_r($pds_realdooh);
         //////////////////////////////////////////////////////////////////////////////////
         //                                                                              //
         //             Comunicación  con Realdooh VU: ACTUALIZAR tienda                 //
@@ -313,7 +314,95 @@
         //                                                                              //
         //////////////////////////////////////////////////////////////////////////////////
 
-        print_r($resultado);
+        //print_r($resultado);
+
+    }
+
+    /*
+    * crear modelo de mueble en realdooh
+    */
+    function create_modeloMueble_realdooh($postdata,  $xcrud){
+
+        $CI =& get_instance();
+
+        if (!empty($postdata)){
+
+          // echo site_url('application/uploads/').$postdata->get('picture_url'); echo "<br>";
+            $imagen=$postdata->get('picture_url');
+            $code="DR".$xcrud;
+            $asset_realdooh=array(
+                "code"           =>  $code,
+                "internalCode"   =>  $code,
+                "imageUrl"       =>  (!empty($imagen)) ? site_url('application/uploads/').$postdata->get('picture_url'):null,
+                "layoutVisible"  =>  true,
+                "demoReal"       =>  $postdata->get('positions')>0 ? true : false,
+                "name"           =>  $postdata->get("display")
+            );
+        }
+        //print_r($asset_realdooh);exit;
+        $json = json_encode($asset_realdooh);
+        //////////////////////////////////////////////////////////////////////////////////
+        //                                                                              //
+        //             Comunicación  con Realdooh VU: CREAR tienda                      //
+        //                                                                              //
+        //////////////////////////////////////////////////////////////////////////////////
+        //                                                                              //
+        //idOUParent es 2 en PRE pero en produccion será 1
+        $resultado=alta_modeloMueble_realdooh(array(                                             //
+            'user'=> 'altabox',
+            'password' => 'realboxdemo'
+        ), array(),$json);                                                //
+        //
+        //                                                                              //
+        //////////////////////////////////////////////////////////////////////////////////
+
+        //print_r($resultado);exit;
+
+    }
+
+    /*
+     * actualizar modelo de mueble en realdooh
+     */
+    function update_modeloMueble_realdooh($postdata, $xcrud){
+
+        $CI =& get_instance();
+
+        if (!empty($postdata)){
+            /*guardamos los datos anteriores del dispositivo en relacion al mueble y posicion del mismo*/
+            $result = $CI->db->select('display')
+                ->where("id_display",$xcrud)
+                ->get('display')->row_array();
+            $datosAntes=$result;
+
+            $imagen=$postdata->get('picture_url');
+            $code="DR".$xcrud;
+            $asset_realdooh=array(
+                "code"           =>  $code,
+                "internalCode"   =>  $code,
+                "imageUrl"       =>  (!empty($imagen)) ? site_url('application/uploads/').$postdata->get('picture_url'):null,
+                "layoutVisible"  =>  true,
+                "demoReal"       =>  $postdata->get('positions')>0 ? true : false,
+                "name"           =>  $postdata->get("display")
+            );
+        }
+        $json = json_encode($asset_realdooh);
+//print_r($asset_realdooh);
+        //////////////////////////////////////////////////////////////////////////////////
+        //                                                                              //
+        //             Comunicación  con Realdooh VU: ACTUALIZAR tienda                 //
+        //                                                                              //
+        //////////////////////////////////////////////////////////////////////////////////
+        //                                                                              //
+        //idOUParent es 2 en PRE pero en produccion será 1
+        $resultado=set_modeloMueble_realdooh(array(                                             //
+            'user'=> 'altabox',
+            'password' => 'realboxdemo'
+        ), "oldName=".$datosAntes['display'],$json);                                                //
+        //
+        //                                                                              //
+        //////////////////////////////////////////////////////////////////////////////////
+
+        //print_r($resultado);exit;
 
     }
 

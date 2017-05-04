@@ -168,7 +168,7 @@ function set_estado_incidencia_realdooh($params, $auth, $postParams = '') {
 }
 
 /**
- * Llamada a la API para cambiar en realdooh el estado ed una ¡incidencia de Demoreal
+ * Llamada a la API para crear en realdooh una tienda de Demoreal
  * SOLO SI ACTIVE=TRUE en la configuracion...
  * @param $params
  * @param $auth
@@ -186,7 +186,7 @@ function alta_pds_realdooh($auth, $params='',$postParams = '') {
 }
 
 /**
- * Llamada a la API para cambiar en realdooh los datos de la tienda en Realdooh
+ * Llamada a la API para cambiar en realdooh los datos de la tienda de Demoreal
  * SOLO SI ACTIVE=TRUE en la configuracion...
  * @param $params
  * @param $auth
@@ -197,6 +197,43 @@ function set_pds_realdooh($auth, $params='',$postParams = '') {
 
     if($cfg['active']) {
         $service = $cfg['updatePdsUrl'];
+        $response = rest_put_json($service, $params, $auth,$postParams);
+        return $response;
+
+    }
+}
+
+/**
+ * Llamada a la API para crear en realdooh un modelo de mueble de Demoreal
+ * SOLO SI ACTIVE=TRUE en la configuracion...
+ * @param $params
+ * @param $auth
+ * @param string $postParams
+ */
+function alta_modeloMueble_realdooh($auth, $params='',$postParams = '') {
+    $cfg = get_realdooh_config();
+
+    if($cfg['active']) {
+        $service = $cfg['updateAssetTypeUrl'];
+        $response = rest_post($service, $params, $auth,$postParams);
+        return $response;
+
+    }
+}
+
+/**
+ * Llamada a la API para cambiar en realdooh los datos del modelo de un mueble de Demoreal
+ * SOLO SI ACTIVE=TRUE en la configuracion...
+ * @param $params
+ * @param $auth
+ * @param string $postParams
+ */
+function set_modeloMueble_realdooh($auth, $params='',$postParams = '') {
+    $cfg = get_realdooh_config();
+
+    if($cfg['active']) {
+        $service = $cfg['updateAssetTypeUrl'];
+
         $response = rest_put_json($service, $params, $auth,$postParams);
         return $response;
 
@@ -305,7 +342,13 @@ function rest_put ($url, $urlParams, $auth, $queryParams = '') {
  */
 function rest_put_json ($url, $urlParams, $auth, $queryParams = '') {
     // http://realdooh.pre.altabox.net:8080/rdorangeapi/api/v1/location/demoreal/{sfid}
-    $url = replaceUrlParams($url, $urlParams);
+    if (searchUrlParams($url)) {
+        $url = replaceUrlParams($url, $urlParams);
+    }else {
+        $urlParams = str_replace(' ', '+', $urlParams);
+        $url.=('?'.$urlParams);
+    }
+    //echo $url;
     $headers = array ("Content-type: application/json",'Content-Length: ' . strlen($queryParams), );
 
     $ch = curl_init();
@@ -381,6 +424,14 @@ function replaceUrlParams($url, $urlParams = array()){
     }
     return $url;
 }
+
+function searchUrlParams($url){
+    if (strpos($url,"{") && strpos($url,"}")){
+        return true;
+    }
+    return false;
+}
+
 function basicAuth ($auth = array()){
     $strAuth = $auth['user'] . ':' . $auth['password'];
     return 'Basic '. base64_encode($strAuth);
