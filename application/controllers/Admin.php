@@ -613,10 +613,7 @@ class Admin extends MY_Controller
             if ( $sfid_new  <> '')
             {
                 // Comprobamos que el SFID nuevo no esté en uso
-
                 $checkSfid = $this->tienda_model->search_pds($sfid_new,'Alta');
-
-
 
                 if(empty($checkSfid))
                 {
@@ -629,6 +626,56 @@ class Admin extends MY_Controller
 
                     $this->tienda_model->incidencia_update_sfid($this->input->post('sfid_old'), $this->input->post('sfid_new'));
                     $this->tienda_model->incidencia_update_historico_sfid($historico_sfid);
+
+                    /*preparamos los datos necesarios para actualizar el SFID en realdooh*/
+                    $pds = $this->tienda_model->get_pds($this->input->post('id_pds'));
+
+                    $telefono=$pds['phone'];
+                    $mobile=$pds['mobile'];
+                    if(!empty($telefono)){
+                        if(!empty($mobile)){ $telefono=$telefono." / ".$mobile;
+                        }
+                    }else{
+                        if(!empty($mobile)){ $telefono=$mobile;
+                        }
+                    }
+                    $pds_realdooh=array(
+                        "satCode"           =>  $pds['codigoSAT'],
+                        "name"              =>  $pds['commercial'],
+                        "locationSubtype"   =>array("name"=>$pds['subtipo']),
+                        "locationSegment"   =>array("name"=>$pds['segmento']),
+                        "locationTypology"  =>array("name"=>$pds['tipologia']),
+                        "locationType"      =>array("name"=>$pds['tipo']),
+                        "company"           =>array("id"=>2),
+                        "code"              =>  $sfid_new,
+                        "province"          =>  $pds['province'],
+                        "city"          =>  $pds['city'],
+                        "address1"       =>  $pds['address'],
+                        "zipCode"       =>  $pds['zip'],
+                        "email"         =>  $pds['email'],
+                        "phoneNumber"   =>  $telefono,
+                        "description"   =>  ""
+                    );
+
+                    $json = json_encode($pds_realdooh);
+                    //////////////////////////////////////////////////////////////////////////////////
+                    //                                                                              //
+                    //             Comunicación  con Realdooh VU: ACTUALIZAR tienda                 //
+                    //                                                                              //
+                    //////////////////////////////////////////////////////////////////////////////////
+                    //                                                                              //
+                    //idOUParent es 2 en PRE pero en produccion será 1
+                    $resultado=set_pds_realdooh(array(                                             //
+                        'user'=> 'altabox',
+                        'password' => 'realboxdemo'
+                    ), array("sfid"=>$this->input->post('sfid_old')),$json);                                                //
+                    //
+                    //                                                                              //
+                    //////////////////////////////////////////////////////////////////////////////////
+
+                    print_r($resultado);
+
+
                     redirect('admin/cambio_sfid/FALSE', 'refresh');
                 }else
                 {
@@ -2731,7 +2778,7 @@ class Admin extends MY_Controller
         if ($this->auth->is_auth()) {
 
             $xcrud_3 = xcrud_get_instance();
-            print_r($xcrud_3);
+
             $xcrud_3->table('devices_pds');
             $xcrud_3->table_name('Inventario dispositivos');
             $xcrud_3->relation('client_type_pds', 'client', 'id_client', 'client');

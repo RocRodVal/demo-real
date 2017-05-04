@@ -298,7 +298,7 @@
             );
         }
         $json = json_encode($pds_realdooh);
-print_r($pds_realdooh);
+//print_r($pds_realdooh);
         //////////////////////////////////////////////////////////////////////////////////
         //                                                                              //
         //             Comunicación  con Realdooh VU: ACTUALIZAR tienda                 //
