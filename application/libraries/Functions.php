@@ -206,7 +206,7 @@
                         "code"              =>  $postdata->get("reference"),
                         "province"          =>  $province,
                         "city"          =>  $postdata->get('city'),
-                        "address"       =>  $postdata->get('address'),
+                        "address1"       =>  $postdata->get('address'),
                         "zipCode"       =>  $postdata->get('zip'),
                         "email"         =>  $postdata->get('email'),
                         "phoneNumber"   =>  $telefono,
@@ -231,7 +231,7 @@
         //                                                                              //
         //////////////////////////////////////////////////////////////////////////////////
 
-        //print_r($resultado);
+        print_r($resultado);
 
     }
 
@@ -298,7 +298,7 @@
             );
         }
         $json = json_encode($pds_realdooh);
-//print_r($pds_realdooh);
+print_r($pds_realdooh);
         //////////////////////////////////////////////////////////////////////////////////
         //                                                                              //
         //             Comunicación  con Realdooh VU: ACTUALIZAR tienda                 //
@@ -314,7 +314,7 @@
         //                                                                              //
         //////////////////////////////////////////////////////////////////////////////////
 
-        //print_r($resultado);
+        print_r($resultado);
 
     }
 
@@ -333,7 +333,7 @@
             $asset_realdooh=array(
                 "code"           =>  $code,
                 "internalCode"   =>  $code,
-                "imageUrl"       =>  (!empty($imagen)) ? site_url('application/uploads/').$postdata->get('picture_url'):null,
+                "imageUrl"       =>  (!empty($imagen)) ? site_url('application/uploads/').$postdata->get('picture_url'):"",
                 "layoutVisible"  =>  true,
                 "demoReal"       =>  $postdata->get('positions')>0 ? true : false,
                 "name"           =>  $postdata->get("display")
@@ -356,7 +356,7 @@
         //                                                                              //
         //////////////////////////////////////////////////////////////////////////////////
 
-        //print_r($resultado);exit;
+        print_r($resultado);
 
     }
 
@@ -379,14 +379,14 @@
             $asset_realdooh=array(
                 "code"           =>  $code,
                 "internalCode"   =>  $code,
-                "imageUrl"       =>  (!empty($imagen)) ? site_url('application/uploads/').$postdata->get('picture_url'):null,
+                "imageUrl"       =>  (!empty($imagen)) ? site_url('application/uploads/').$postdata->get('picture_url'):"",
                 "layoutVisible"  =>  true,
                 "demoReal"       =>  $postdata->get('positions')>0 ? true : false,
                 "name"           =>  $postdata->get("display")
             );
         }
         $json = json_encode($asset_realdooh);
-//print_r($asset_realdooh);
+print_r($asset_realdooh);
         //////////////////////////////////////////////////////////////////////////////////
         //                                                                              //
         //             Comunicación  con Realdooh VU: ACTUALIZAR tienda                 //
