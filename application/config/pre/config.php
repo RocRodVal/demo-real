@@ -34,7 +34,7 @@ $config['allowed_origins'] = array ('localhost', 'demoreal.focusonemotions.com')
 $config['realdooh.api.url'] = 'http://realdooh.pre.altabox.net:8080/rdorangeapi/api/v1';
 
 $config['realdooh.api'] = array(
-    'active' => FALSE,
+    'active' => true,
     'changeStatusUrl' => $config['realdooh.api.url']. '/demoreal/incident/{drId}',
     'createIncidenceUrl' => $config['realdooh.api.url'].'/demoreal/incident/{drId}/asset/{assetDrId}/user/{userSFID}',
     'createPdsUrl'          => $config['realdooh.api.url'].'/location/demoreal?idOUParent=2',
