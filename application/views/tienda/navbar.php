@@ -28,10 +28,7 @@
                             </ul>
 
                         </li>
-
-
                         <li><a <?=($this->uri->segment(2)==='alta_incidencia')?'class="active"':''?> href="<?=site_url('tienda/alta_incidencia')?>"><i class="fa fa-ticket fa-fw"></i> Alta incidencia</a> </li>
-
                         <?php
                         /*
                          * En el caso de que acceda una tienda de tipo SMARTSOTRE se le mostrara el menu para poder hacer pedidos y comprobar su estado

@@ -43,7 +43,6 @@
 
                             </li>
 
-
                         <?php $inf = array('informes',
                                                 'informe_pdv',
                                                 'informe_planogramas',
@@ -62,30 +61,9 @@
                                         array( 'informe_planogramas',
                                         'informe_planograma_mueble_pds',
                                         'informe_planograma_terminal')))?'class="active"':''?> href="<?=site_url($controlador.'/informe_planogramas')?>"> Planogramas &raquo;</a></li>
-                               <?php /* <li><a <?=(
-                                        in_array($this->uri->segment(2),
-                                            array('informe_visual',
-                                                'informe_visual_mueble_sfid',
-                                                'informe_visual_terminal',
-                                                'informe_visual_ficha_terminal')))?'class="active"':''?> href="<?=site_url($controlador.'/informe_visual')?>"> Visual &raquo;</a></li>*/?>
                             </ul>
                         </li>
-
-
-                        <?php               
-                        /*$exposicion = array('descripcion','exp_alta_incidencia','exp_alta_incidencia_mueble','exp_alta_incidencia_device','inventarios_panelados','inventarios_planogramas','inventarios');
-                        ?>
-                        <li <?=(in_array($this->uri->segment(2), $exposicion))?'class="active"':''?>>
-                            <a href="#"><i class="fa fa-sitemap fa-fw"></i> Exposición<span class="fa arrow"></span></a>
-                            <ul class="nav nav-second-level">
-                            	<?php
-                            	$descripcion = array('descripcion','exp_alta_incidencia','exp_alta_incidencia_mueble','exp_alta_incidencia_device');
-                            	?>
-                            	<li><a <?=(in_array($this->uri->segment(2), $descripcion))?'class="active"':''?> href="<?=site_url($controlador.'/descripcion')?>"> Planograma tienda &raquo;</a></li>                            
-                            	<li><a <?=($this->uri->segment(2)==='inventarios_planogramas')?'class="active"':''?> href="<?=site_url($controlador.'/inventarios_planogramas')?>"> Planograma mueble &raquo;</a></li>
-                            </ul>
-                        </li>                        
-                        <?php */
+                        <?php
                         }
                         $ayuda = array('ayuda','manuales','muebles_fabricantes');
                         ?>

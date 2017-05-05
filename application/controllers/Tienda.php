@@ -683,11 +683,8 @@ class Tienda extends MY_Controller {
                 }
 
                 /////////////////////////////////////////////////////////////////////////////////
-                //                                                                             //
                 //                   Comunicación  con Realdooh VU.                            //
-                //                                                                             //
                 /////////////////////////////////////////////////////////////////////////////////
-                                                                                               //
                         $response = alta_incidencia_realdooh(array(                                             //
                             'drId'=>  $incidencia['id'],                                       //
                             'assetDrId' => $this->uri->segment(3),                             //
@@ -697,10 +694,7 @@ class Tienda extends MY_Controller {
                             'password' => 'demoreal'                                           //
                         ));
 
-			            //print_r($response);
-			    //
-                                                                                               //
-                //                                                                             //
+			            //print_r($response); exit;
                 // </ Fin Comunicación con Realdooh VU > ////////////////////////////////////////
 
 	

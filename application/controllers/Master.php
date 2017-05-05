@@ -1715,7 +1715,8 @@ class Master extends MY_Controller {
 		}		
 	}	
 
-	public function inventarios_planogramas()
+/*Funcion que ya no se usa
+public function inventarios_planogramas()
 	{
         if($this->auth->is_auth()){ // Control de acceso según el tipo de agente. Permiso definido en constructor
 
@@ -1750,7 +1751,7 @@ class Master extends MY_Controller {
 		{
 			redirect('master','refresh');
 		}
-	}
+	}*/
 
     public function informe_pdv()
     {

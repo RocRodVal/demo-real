@@ -434,7 +434,7 @@ class Admin extends MY_Controller
                     ), array("sfid"=>$sfid));                                             //
                     //                                                                              //
                     //////////////////////////////////////////////////////////////////////////////////
-                    //print_r($resultado); exit;
+                    //print_r($resultado);
 
 
                     redirect('admin/cierre_pdv/' . $sfid . '/1', 'refresh');
@@ -658,23 +658,18 @@ class Admin extends MY_Controller
                     );
 
                     $json = json_encode($pds_realdooh);
+                    //print_r($pds_realdooh);
+                    //echo "<br>".$this->input->post('sfid_old')."<br>";
                     //////////////////////////////////////////////////////////////////////////////////
-                    //                                                                              //
                     //             Comunicación  con Realdooh VU: ACTUALIZAR tienda                 //
-                    //                                                                              //
                     //////////////////////////////////////////////////////////////////////////////////
-                    //                                                                              //
-                    //idOUParent es 2 en PRE pero en produccion será 1
                     $resultado=set_pds_realdooh(array(                                             //
                         'user'=> 'altabox',
                         'password' => 'realboxdemo'
-                    ), array("sfid"=>$this->input->post('sfid_old')),$json);                                                //
-                    //
-                    //                                                                              //
+                    ), array("sfid"=>$this->input->post('sfid_old')),$json);                        //
                     //////////////////////////////////////////////////////////////////////////////////
 
-                    print_r($resultado);
-
+                    //print_r($resultado);
 
                     redirect('admin/cambio_sfid/FALSE', 'refresh');
                 }else
@@ -682,8 +677,6 @@ class Admin extends MY_Controller
                     redirect('admin/cambio_sfid/'.$sfid_new, 'refresh');
                 }
             }
-
-
         }
         else
         {
@@ -694,13 +687,9 @@ class Admin extends MY_Controller
     public function operar_incidencia()
     {
         if ($this->auth->is_auth()) {
-            /*$id_pds = $this->uri->segment(3);
-            $id_inc = $this->uri->segment(4);*/
-
             $id_pds = $this->uri->segment(3);
             $id_inc = $this->uri->segment(4);
             $recogida = $this->uri->segment(5)? $this->uri->segment(5):'';
-
 
             $xcrud = xcrud_get_instance();
             $this->load->model(array('chat_model', 'intervencion_model', 'tienda_model', 'sfid_model'));
@@ -708,9 +697,7 @@ class Admin extends MY_Controller
             $sfid = $this->tienda_model->get_pds($id_pds);
 
             $data["pds"] = $sfid;
-
             $data['id_pds'] = 'ABX/PDS-' . $sfid['id_pds'];
-            ////$data['type_pds'] = $sfid['pds'];
             $data['commercial'] = $sfid['commercial'];
             $data['territory'] = $sfid['territory'];
             $data['reference'] = $sfid['reference'];
@@ -759,10 +746,8 @@ class Admin extends MY_Controller
 
 
             $incidencia['intervencion'] = $this->intervencion_model->get_intervencion_incidencia($id_inc);
-            //print_r($incidencia);echo "<br>";
             $incidencia['device'] = $this->sfid_model->get_device($incidencia['id_devices_pds']);
             $incidencia['display'] = $this->sfid_model->get_display($incidencia['id_displays_pds']);
-            //echo print_r($incidencia['display']);;
 
             $data['incidencia'] = $incidencia;
             $data['historico_fecha_sustituido'] ='';
@@ -773,7 +758,6 @@ class Admin extends MY_Controller
                     $data['status_device_incidencia'] = $resultado['status'];
 
                     $historico_fecha_sust = $this->tienda_model->historico_fecha($id_inc,'Sustituido');
-                   // print_r($historico_fecha_sust);
                     if (isset($historico_fecha_sust['fecha'])) {
                         $data['historico_fecha_sustituido'] =date("d/m/Y", strtotime($historico_fecha_sust['fecha']));
                     }else {
@@ -784,7 +768,6 @@ class Admin extends MY_Controller
                     }
                  }
             } else {$data['status_device_incidencia']='NoSustituir';}
-//echo $data['status_device_incidencia']; exit;
             $data['fail_device'] = $incidencia['fail_device'];
             $data['alarm_display'] = $incidencia['alarm_display'];
             $data['alarm_device'] = $incidencia['alarm_device'];
@@ -924,15 +907,9 @@ class Admin extends MY_Controller
             $leido = $this->chat_model->marcar_leido($incidencia['id_incidencia'],$sfid['reference']);
             $data['chats'] = $chats;
 
-
-
             $info_intervencion = $this->intervencion_model->get_info_intervencion($incidencia['intervencion']);
 
-
-
             $data['id_parte'] = $info_intervencion->operador->id_parte;
-
-
 
             $data['title'] = 'DOCUMENTACIÓN DE RESOLUCIÓN DE INCIDENCIA';
 
@@ -943,7 +920,6 @@ class Admin extends MY_Controller
 
             file_put_contents("uploads/intervenciones/".$filename_pdf.".pdf",$created_pdf);
             $attach =  "uploads/intervenciones/".$filename_pdf.".pdf";
-
 
             $data['email_sent'] = FALSE;
 
@@ -1029,8 +1005,6 @@ class Admin extends MY_Controller
             $this->load->view('backend/navbar', $data);
             $this->load->view('backend/descargar_parte', $data);
             $this->load->view('backend/footer');
-
-
 
         } else {
             redirect('admin', 'refresh');
@@ -1198,12 +1172,12 @@ class Admin extends MY_Controller
 
     public function update_incidencia()
     {
+
         $id_pds = $this->uri->segment(3);
         $id_inc = $this->uri->segment(4);
         $status_pds = $this->uri->segment(5);
         $status = $this->uri->segment(6);
         $status_ext = $this->uri->segment(7);
-//echo $id_pds ." / ".$id_inc." / ".$status_pds." / ".$status." / ".$status_ext; exit;
 
         $xcrud = xcrud_get_instance();
         $this->load->model(array('tienda_model'));
@@ -1228,14 +1202,9 @@ class Admin extends MY_Controller
         $incidencia = $this->tienda_model->get_incidencia($id_inc);
 
         if ($status == 2) {
-
-
             //////////////////////////////////////////////////////////////////////////////////
-            //                                                                              //
             //             Comunicación  con Realdooh VU: Cambio estado REVISADA            //
-            //                                                                              //
             //////////////////////////////////////////////////////////////////////////////////
-            //                                                                              //
                 set_estado_incidencia_realdooh(array(                                          //
                     'drId'=>  $id_inc                                        //
                 ),array(                                                                         //
@@ -1243,10 +1212,7 @@ class Admin extends MY_Controller
                     'password' => 'demoreal'                                                //
                                                                                             //
                 ), 'revised=1' );                                                           //
-                                                                                            //
-            //                                                                              //
             //////////////////////////////////////////////////////////////////////////////////
-
 
             if ($incidencia['fail_device'] == 1) {
                 $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'], 2);
@@ -1258,10 +1224,32 @@ class Admin extends MY_Controller
          */
         $fecha_cierre=$this->input->post('fecha_cierre');
         if (!empty($fecha_cierre)) {
-            $fecha_cierre = $this->input->post('fecha_cierre') . " 00:00:00";
+            $fecha_cierre = date('Y-m-d H:i:s',strtotime($this->input->post('fecha_cierre') . " 00:00:00"));
         }else {
-             $fecha_cierre = date('Y-m-d H:i:s'); }
+             $fecha_cierre = date('Y-m-d H:i:s');
+        }
 
+
+        /* Cancelamos la incidencia*/
+        if ($status==9){
+            //////////////////////////////////////////////////////////////////////////////////
+            //                                                                              //
+            //             Comunicación  con Realdooh VU: Cambio estado CERRADA             //
+            //                                                                              //
+            //////////////////////////////////////////////////////////////////////////////////
+            //                                                                              //
+            $resultado=set_estado_incidencia_realdooh(array(
+                'drId'=>  $id_inc
+            ),array(
+                'user'=> $sfid['reference'],
+                'password' => 'demoreal'
+            ), 'close=1');                  //
+            //////////////////////////////////////////////////////////////////////////////////
+            //echo $sfid['reference']."<br>";
+
+            //print_r($resultado);
+
+        }
         /**
          * Botón resolver Incidencia : Recoge fecha de resolución y hace la operación
          * Si no se ha sustituido terminal => ponemos la fecha del cierre y la posicion que generó la incidencia pasa a estar
@@ -1281,22 +1269,19 @@ class Admin extends MY_Controller
                 $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'], $status,$id_inc);
             //}
 
-
             //////////////////////////////////////////////////////////////////////////////////
-            //                                                                              //
             //             Comunicación  con Realdooh VU: Cambio estado RESUELTA            //
-            //                                                                              //
             //////////////////////////////////////////////////////////////////////////////////
-            //                                                                              //
-                            set_estado_incidencia_realdooh(array(
+                            $resultado=set_estado_incidencia_realdooh(array(
                                 'drId'=>  $id_inc
                             ),array(
                                 'user'=> $sfid['reference'],
                                 'password' => 'demoreal'
 
                             ), 'resolved=1&resolutionDate='.$fecha_cierre);                  //
-            //                                                                              //
             //////////////////////////////////////////////////////////////////////////////////
+
+            //print_r($resultado); exit;
         }
 
         /**
@@ -1316,20 +1301,17 @@ class Admin extends MY_Controller
                 $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'], 8,$id_inc);
             }
             $this->tienda_model->incidencia_update_cierre($id_inc, $fecha_cierre);
+
             //////////////////////////////////////////////////////////////////////////////////
-            //                                                                              //
             //             Comunicación  con Realdooh VU: Cambio estado RESUELTA            //
-            //                                                                              //
             //////////////////////////////////////////////////////////////////////////////////
-            //                                                                              //
-            set_estado_incidencia_realdooh(array(
+            $resultado=set_estado_incidencia_realdooh(array(
                 'drId'=> $id_inc
             ),array(
                 'user'=> $sfid['reference'],
                 'password' => 'demoreal'
 
             ), 'resolved=1' );                                              //
-            //                                                                              //
             //////////////////////////////////////////////////////////////////////////////////
         }else { //CIERRE de la incidencia normal
             if ($status == 8) {
@@ -1408,11 +1390,8 @@ class Admin extends MY_Controller
 
 
             //////////////////////////////////////////////////////////////////////////////////
-            //                                                                              //
             //             Comunicación  con Realdooh VU: Cambio estado EN VISITA           //
-            //                                                                              //
             //////////////////////////////////////////////////////////////////////////////////
-            //                                                                              //
                                 $response=set_estado_incidencia_realdooh(array(
                                     'drId'=> $id_inc
                                 ),array(
@@ -1420,9 +1399,8 @@ class Admin extends MY_Controller
                                     'password' => 'demoreal'
 
                                 ), 'visited=1' );                                           //
-            //                                                                              //
             //////////////////////////////////////////////////////////////////////////////////
-            //echo $id_inc;print_r($response); exit;
+            //print_r($response); exit;
 
             redirect('admin/imprimir_incidencia/'.$id_pds.'/'.$id_inc.'/'.$envio_mail, 'refresh');
         }
@@ -1441,15 +1419,11 @@ class Admin extends MY_Controller
             $xcrud = xcrud_get_instance();
             $this->load->model(array('tienda_model', 'intervencion_model','incidencia_model'));
 
-
             $data["title"] = "Resetear estado de una incidencia";
             $data["mensaje_alerta"] = '¿Seguro que deseas resetear la incidencia Nº ##NUM_INC##? El proceso es irreversible.';
 
             if (empty($id_inc)) {
                 // Aún no ha indicado el ID de incidencia a actualizar.
-
-
-
                 $resetear_incidencia = $this->input->post('resetear_incidencia');
 
                 $data["mensaje_error"] = ($resetear_incidencia === 'si') ? 'Debes introducir el Identificador de la incidencia a resetear' : '';
@@ -1463,8 +1437,6 @@ class Admin extends MY_Controller
                 $this->load->view('backend/reset_incidencia', $data);
                 $this->load->view('backend/footer', $data);
             } else {
-
-
 
                 $o_pds = $this->db->query("SELECT id_pds FROM incidencias WHERE id_incidencia = '$id_inc' ")->row_array();
 
@@ -1495,6 +1467,7 @@ class Admin extends MY_Controller
                 }
                 else
                 {
+                    $sfid=$this->tienda_model->get_pds($id_pds);
                     // La incidencia exsite, seguimos con el proceso de reseteo...
                     // Reseteamos estado de la incidencia
                     $sql_status = 'UPDATE incidencias SET fecha_cierre = NULL, status="Nueva", status_pds = "Alta realizada" WHERE id_incidencia="'.$id_inc.'"';
@@ -1520,21 +1493,30 @@ class Admin extends MY_Controller
                         {
                             $this->db->query('DELETE FROM intervenciones WHERE id_intervencion ="'.$id_intervencion.'"');
                         }
-
-
                         // Eliminamos de la facturación la intervención...
                         $this->db->query('DELETE FROM facturacion WHERE id_intervencion = "'.$id_intervencion.'"');
-
                     }
-
 
                     // Borramos el histórico de estados
                     $this->db->query('DELETE FROM historico WHERE id_incidencia = "'.$id_inc.'"');
 
-
                     // Borramos el material asignado
                     $this->incidencia_model->desasignar_material($id_inc);
 
+                    //////////////////////////////////////////////////////////////////////////////////
+                    //                                                                              //
+                    //             Comunicación  con Realdooh VU: Cambio estado REABIERTA            //
+                    //                                                                              //
+                    //////////////////////////////////////////////////////////////////////////////////
+                    //                                                                              //
+                    $resultado=set_estado_incidencia_realdooh(array(                                          //
+                        'drId'=>  $id_inc                                        //
+                    ),array(                                                                         //
+                        'user'=> $sfid['reference'],                                            //
+                        'password' => 'demoreal'                                                //
+                        //
+                    ), 'reopen=1' );                                                           //
+                    //////////////////////////////////////////////////////////////////////////////////
                     // Proceso finalizado
                     $mensaje_exito = "La incidencia Nº $id_inc se ha reseteado correctamente.";
                 }
@@ -2420,7 +2402,6 @@ class Admin extends MY_Controller
         $xcrud_2->change_type('picture_url', 'image');
         $xcrud_2->modal('picture_url');
         $xcrud_2->readonly('reference','edit');
-        //$xcrud_2->disabled('codigoSAT','edit');
         $xcrud_2->sum('m2_total', 'm2_fo', 'm2_bo');
         $xcrud_2->label('id_pds', 'Identificador')->label('client_pds', 'Cliente')->label('reference', 'SFID')->label('codigoSAT', 'Codigo SAT')->label('id_tipo', 'Tipo PDS')
             ->label('id_subtipo', 'Subtipo PDS')->label('id_segmento', 'Segmento PDS')->label('id_tipologia', 'Tipología PDS')
@@ -2437,9 +2418,6 @@ class Admin extends MY_Controller
         $xcrud_2->validation_required('territory');
         $xcrud_2->after_insert("create_pds_realdooh","../libraries/Functions.php");
         $xcrud_2->after_update("update_pds_realdooh","../libraries/Functions.php");
-
-//        print_r($result);
-//  $xcrud_3->after_insert("inventario_dispositivos_codigoMueble", "../libraries/Functions.php");
         // Ocultar el botón de borrar para evitar borrados accidentales mientras no existan constraints en BD:
         $xcrud_2->unset_remove();
         $xcrud_2->order_by(array("status"=>'asc',"id_tipo"=>"desc","id_subtipo"=>"asc","id_segmento"=>"asc","id_tipologia"=>"asc"));
@@ -2464,36 +2442,29 @@ class Admin extends MY_Controller
         $xcrud_1 = xcrud_get_instance();
         $xcrud_1->table('pds_tipo');
         $xcrud_1->table_name('Definir Tipos de PDS');
-        // $xcrud_1->relation('client_type_pds', 'client', 'id_client', 'client');
         $xcrud_1->label('id', 'Id.')->label('titulo', 'Título');
         $xcrud_1->columns('id,titulo');
         $xcrud_1->fields('titulo');
-
 
       /* Agregando el campo orden*/
         $xcrud_2 = xcrud_get_instance();
         $xcrud_2->table('pds_tipologia');
         $xcrud_2->table_name('Definir Tipologías de PDS');
         $xcrud_2->order_by('orden','asc');
-        // $xcrud_1->relation('client_type_pds', 'client', 'id_client', 'client');
         $xcrud_2->label('id', 'Id.')->label('titulo', 'Título')->label('orden', 'Orden');
         $xcrud_2->columns('id,titulo,orden');
         $xcrud_2->columns('titulo');
         $xcrud_2->columns('orden');
-
 
         $xcrud_3 = xcrud_get_instance();
         $xcrud_3->table('pds_subtipo');
         $xcrud_3->table_name('Definir Subtipos de PDS y sus tipologías relacionadas');
         $xcrud_3->relation('id_tipo', 'pds_tipo', 'id', 'titulo');
         $xcrud_3->fk_relation('Tipologías','id','pds_subtipo_tipologia','id_subtipo','id_tipologia','pds_tipologia','id','titulo');
-        //(label, field, fk_table, in_fk_field, out_fk_field, rel_tbl, rel_field, rel_name, rel_where, rel_orderby, rel_concat_separator, before, add_data
-
         $xcrud_3->label('id', 'Id.')->label('titulo', 'Título')->label('id_tipo','Tipo');
         $xcrud_3->order_by('id_tipo','asc');
         $xcrud_3->columns('id,id_tipo,titulo');
         $xcrud_3->columns('id,id_tipo,titulo,Tipologías');
-
 
         /*Agregando el campo orden */
         $xcrud_4 = xcrud_get_instance();
@@ -2605,7 +2576,9 @@ class Admin extends MY_Controller
     }
 
 
-    public function inventarios()
+   /*
+    * Funcion que ya no se usa porque se ha dividido en dos
+     public function inventarios()
     {
        // $this->load->model('tienda_model');
         if ($this->auth->is_auth()) {
@@ -2654,7 +2627,7 @@ class Admin extends MY_Controller
             $xcrud_3->button('javascript:;', 'Listar Incidencias', ' glyphicon glyphicon-warning-sign', 'xcrud-action', array(
                 'data-task'     => 'action',
                 'data-action'   => 'incidencias',
-                'data-primary'  => '{id_devices_pds}'));*/
+                'data-primary'  => '{id_devices_pds}'));
 
             $lista_incidencias=$xcrud_3->nested_table('incidencias_list','id_devices_pds','incidencias','id_incidencia');
             $lista_incidencias->columns('id_incidencia,fecha,status,status_pds');
@@ -2676,7 +2649,7 @@ class Admin extends MY_Controller
              $xcrud_3->change_type('picture_url_3', 'image');
              $xcrud_3->modal('picture_url_1');
              $xcrud_3->modal('picture_url_2');
-             $xcrud_3->modal('picture_url_3');*/
+             $xcrud_3->modal('picture_url_3');
 
             $xcrud_3->label('client_type_pds', 'Cliente')->label('id_devices_pds', 'REF.')->label('id_pds', 'SFID')->label('id_displays_pds', 'Cod. mueble')->
             label('id_display', 'Mueble')->label('alta', 'Fecha de alta')->label('position', 'Posición')->label('id_device', 'Dispositivo')->
@@ -2688,7 +2661,7 @@ class Admin extends MY_Controller
             $xcrud_3->fields('client_type_pds,id_devices_pds,id_pds,id_display,alta,id_device,position,serial,IMEI,serial,barcode,description,status');
             /*$xcrud_3->fields('client_type_pds,id_devices_pds,id_pds,id_display,alta,id_device,position,serial,IMEI,serial,barcode,
             /id_color_device,id_complement_device,
-            id_status_device,id_status_packaging_device,description,status');*/
+            id_status_device,id_status_packaging_device,description,status');
             $xcrud_3->where('status', array('Alta', 'Incidencia', 'Baja', 'RMA'));
             $xcrud_3->order_by('id_pds', 'asc');
             $xcrud_3->order_by('id_displays_pds', 'asc');
@@ -2717,18 +2690,16 @@ class Admin extends MY_Controller
         else {
             redirect('admin', 'refresh');
         }
-    }
+    }*/
 
     /*
      *Listado de los muebles que estan en tienda
      */
     public function inventario_muebles()
     {
-        // $this->load->model('tienda_model');
         if ($this->auth->is_auth()) {
 
             $xcrud_1 = xcrud_get_instance();
-
             $xcrud_1->table('displays_pds');
             $xcrud_1->table_name('Inventario muebles');
             $xcrud_1->relation('client_type_pds', 'client', 'id_client', 'client');
@@ -2778,7 +2749,6 @@ class Admin extends MY_Controller
         if ($this->auth->is_auth()) {
 
             $xcrud_3 = xcrud_get_instance();
-
             $xcrud_3->table('devices_pds');
             $xcrud_3->table_name('Inventario dispositivos');
             $xcrud_3->relation('client_type_pds', 'client', 'id_client', 'client');
@@ -2786,12 +2756,6 @@ class Admin extends MY_Controller
             $xcrud_3->relation('id_displays_pds', 'displays_pds', 'id_displays_pds', 'id_displays_pds');
             $xcrud_3->relation('id_display', 'display', 'id_display', 'display', "positions>0");
             $xcrud_3->relation('id_device', 'device', 'id_device', 'device');
-
-            /*   $xcrud_3->create_action('incidencias', 'incidencias_list_action','../libraries/Functions.php');
-               $xcrud_3->button('javascript:;', 'Listar Incidencias', ' glyphicon glyphicon-warning-sign', 'xcrud-action', array(
-                   'data-task'     => 'action',
-                   'data-action'   => 'incidencias',
-                   'data-primary'  => '{id_devices_pds}'));*/
 
             $lista_incidencias=$xcrud_3->nested_table('incidencias_list','id_devices_pds','incidencias','id_devices_pds');
             $lista_incidencias->column_callback('id_incidencia','enlace_idincidencia','../libraries/Functions.php');
@@ -2821,7 +2785,6 @@ class Admin extends MY_Controller
             $xcrud_3->before_update("update_inventario_dispositivos_codigoMueble", "../libraries/Functions.php");
 
             $data['title'] = 'Inventarios tiendas';
-            //$data['content'] = $data['content'] . $xcrud_2->render();
             $data['content'] = $xcrud_3->render();
 
             /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
@@ -2849,24 +2812,17 @@ class Admin extends MY_Controller
         if ($this->auth->is_auth()) {
             $this->load->model('tienda_model');
 
-            /*$data['displays'] = $this->tienda_model->get_displays_total();
-            $data['devices'] = $this->tienda_model->get_devices_total();*/
             $data["title"] = "Diario de almacén";
 
             $xcrud_1 = xcrud_get_instance();
             $xcrud_1->table('historico_io');
             $xcrud_1->table_name('Histórico de dispositivos');
-            //$xcrud_1->relation('id_client', 'client', 'id_client', 'client');
             $xcrud_1->relation('id_device', 'device', 'id_device', 'device');
             $xcrud_1->join('id_devices_almacen', 'devices_almacen', 'id_devices_almacen');
-
-
             $xcrud_1->label('id_historico_almacen', 'Ref.')->label('id_device', 'Dispositivo maestro')->label('id_devices_almacen', 'Id. Dispositivo almacén')->label('devices_almacen.IMEI', 'IMEI')->label('fecha', 'Fecha')
                 ->label('unidades', 'Unidades')->label('status', 'Estado');
             $xcrud_1->columns('id_historico_almacen,id_device,id_devices_almacen,devices_almacen.IMEI,fecha,unidades,status');
-            // $xcrud_1->where('procesado',1);
             $xcrud_1->where('id_alarm IS NULL');
-
             $xcrud_1->order_by('fecha', 'desc');
             $xcrud_1->show_primary_ai_column(true);
             $xcrud_1->unset_add();
@@ -2884,13 +2840,11 @@ class Admin extends MY_Controller
             $xcrud_2->table_name('Histórico de alarmas');
             $xcrud_2->relation('id_alarm', 'alarm', 'id_alarm', 'alarm');
             $xcrud_2->relation('id_client', 'client', 'id_client', 'client');
-
             $xcrud_2->label('id_historico_almacen', 'Ref.')->label('id_alarm', 'Alarma')->label('id_client', 'Dueño')->label('fecha', 'Fecha')->label('unidades', 'Unidades');
             $xcrud_2->columns('id_historico_almacen,id_alarm,id_client,fecha,unidades');
             $xcrud_2->where('procesado', 1);
             $xcrud_2->where('id_devices_almacen IS NULL');
             $xcrud_2->where('id_device IS NULL');
-
             $xcrud_2->order_by('fecha', 'desc');
             $xcrud_2->show_primary_ai_column(true);
             $xcrud_2->unset_add();
@@ -2899,7 +2853,6 @@ class Admin extends MY_Controller
             $xcrud_2->unset_remove();
             $xcrud_2->unset_numbers();
             $xcrud_2->start_minimized(false);
-
 
             $data["content_alarmas"] = $xcrud_2->render();
 
@@ -2935,7 +2888,6 @@ class Admin extends MY_Controller
                 $this->get_inventarios_sfid_alta($pds);
             } else {
                 // INFORME BAJA
-
                 if (is_null($id_pds) || empty($id_pds)) {
                     // El  SFID ya ha sido cerrado, buscar el id_pds en el historico de cierres de SFID
                     $pds = $this->sfid_model->get_historico_cierre_sfid($sfid, "object");
@@ -3045,7 +2997,8 @@ class Admin extends MY_Controller
 
     }
 
-  /*  public function inventarios_panelados()
+  /*Funcion que ya no se usa
+   public function inventarios_panelados()
     {
         $this->load->model('tienda_model');
 
@@ -3103,7 +3056,7 @@ class Admin extends MY_Controller
         $this->load->view('backend/footer');
     }*/
 
-    public function inventarios_planogramas()
+   /* public function inventarios_planogramas()
     {
         $this->load->model('tienda_model');
 
@@ -3158,7 +3111,7 @@ class Admin extends MY_Controller
         $this->load->view('backend/navbar', $data);
         $this->load->view('backend/inventario_planogramas', $data);
         $this->load->view('backend/footer');
-    }
+    }*/
 
     public function almacen()
     {

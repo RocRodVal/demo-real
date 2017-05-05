@@ -208,7 +208,7 @@
                                     $fecha_resuelta = $fecha[2] . "-" . $fecha[1] . "-" . $fecha[0];
                                 } else $fecha_resuelta='';
                                 ?>
-                                <input type="date" name="fecha_cierre" id="fecha_cierre" value="<?=$fecha_resuelta?>"
+                                <input type="date" name="fecha_cierre" id="fecha_cierre" placeholder="dd/mm/aaaa" value="<?=$fecha_resuelta?>"
                                     <?php if (($incidencia['status'] != 'Comunicada')
                                         && ($incidencia['status'] != 'Sustituido')  && ($incidencia['status'] != 'SustituidoRMA')) { echo 'disabled'; }; ?> />
                                 <br/>
