@@ -353,7 +353,8 @@ class Inventario extends CI_Controller {
 	}	
 	
 	
-	public function inventarios_planogramas()
+	/*Funcion que ya no se usa
+	 * public function inventarios_planogramas()
 	{
 		$this->load->model('tienda_model');
 
@@ -409,7 +410,7 @@ class Inventario extends CI_Controller {
 		$this->load->view('backend/navbar', $data);
 		$this->load->view('backend/inventario_planogramas', $data);
 		$this->load->view('backend/footer');
-	}	
+	}	*/
 	
 	public function almacen()
 	{

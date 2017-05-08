@@ -2748,7 +2748,7 @@ class Tienda_model extends CI_Model {
      */
     function anadir_mueble_sfid($display,$pds,$position = NULL)
     {
-
+        $id_displays_pds=-1;
         // Si no están vacíos los objetos MUEBLE y PDS
         if(!empty($display) && !empty($pds))
         {
@@ -2785,6 +2785,7 @@ class Tienda_model extends CI_Model {
                         WHERE id_pds = " . $id_pds . " AND position >= " . $position;
 
                     $this->db->query($SQL);
+
                 }
             }
 
@@ -2792,7 +2793,7 @@ class Tienda_model extends CI_Model {
 
             $SQL = " INSERT INTO displays_pds (client_type_pds, id_pds, id_display, position, status)
                                         VALUES(".$client_type_pds.",".$id_pds.",".$id_display.",".$position.",'Alta'); ";
-
+            //$id_mueble= $this->db->insert_id();
             $this->db->query($SQL);
             $id_displays_pds = $this->db->insert_id();
 
@@ -2812,7 +2813,7 @@ class Tienda_model extends CI_Model {
             }
 
         }
-
+        return $id_displays_pds;
 
     }
 
