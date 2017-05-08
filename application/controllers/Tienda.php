@@ -694,7 +694,7 @@ class Tienda extends MY_Controller {
                             'password' => 'demoreal'                                           //
                         ));
 
-			            //print_r($response); exit;
+			            print_r($response);
                 // </ Fin Comunicación con Realdooh VU > ////////////////////////////////////////
 
 	

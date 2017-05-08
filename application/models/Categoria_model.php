@@ -179,8 +179,8 @@ class Categoria_Model extends CI_Model
                 ->where('id_subtipo',$id_subtipo)
                 ->where('id_segmento',$id_segmento)
                 ->where('id_tipologia',$id_tipologia)
+                ->where('displays_categoria.status','Alta')
                 ->get('displays_categoria');
-        
         
         return $query->result();
     }
