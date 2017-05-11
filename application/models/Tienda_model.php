@@ -1700,9 +1700,10 @@ class Tienda_model extends CI_Model {
 	public function reservar_dispositivos($id,$status,$id_incidencia)
 	{
 		$this->db->set('status',$status, FALSE)
-                ->set(id_incidencia,$id_incidencia)
+                ->set('id_incidencia',$id_incidencia)
 		        ->where('id_devices_almacen',$id)
 		        ->update('devices_almacen');
+
 	}
 		
 	
