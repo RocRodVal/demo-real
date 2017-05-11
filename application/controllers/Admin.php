@@ -1574,7 +1574,7 @@ class Admin extends MY_Controller
                     'id_devices_almacen' => $this->input->post('dipositivo_almacen_1'),
                     'cantidad' => 1
                 );
-                $this->tienda_model->reservar_dispositivos($this->input->post('dipositivo_almacen_1'), 2);
+                $this->tienda_model->reservar_dispositivos($this->input->post('dipositivo_almacen_1'), 2,$id_inc);
                 $this->tienda_model->incidencia_update_material($dipositivo_almacen_1);
             }
             /*Si el dispositivo seleccionado ya tiene un IMEI y no metemos otro nos quedamos con el que ya tenia*/

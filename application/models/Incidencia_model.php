@@ -790,7 +790,7 @@ class Incidencia_model extends CI_Model {
                     {
                         // Poner el dispositivo de nuevo "En stock"
                         $id_devices_almacen = $material->id_devices_almacen;
-                        $sql = "UPDATE devices_almacen SET status = 'En stock' WHERE id_devices_almacen = '" . $id_devices_almacen . "'";
+                        $sql = "UPDATE devices_almacen SET status = 'En stock', id_incidencia=NULL WHERE id_devices_almacen = '" . $id_devices_almacen . "'";
                         $this->db->query($sql);
 
                         // Desvincular el dispositivo del material de la incidencia.
@@ -834,11 +834,11 @@ class Incidencia_model extends CI_Model {
      * Devuelve los distintos estados de incidencia, pero que se estén usando en alguna incidencia
      * @return mixed
      */
-    public function get_historico($id_incidencia)
+   /* public function get_historico($id_incidencia)
     {
         $query = $this->db->query("SELECT DISTINCT(status_pds) FROM incidencias ");
         return $query->result();
-    }
+    }*/
 
 
     /**

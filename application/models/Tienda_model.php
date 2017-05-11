@@ -1697,22 +1697,24 @@ class Tienda_model extends CI_Model {
         return $query->result();
     }
 	
-	public function reservar_dispositivos($id,$status)
+	public function reservar_dispositivos($id,$status,$id_incidencia)
 	{
-		$this->db->set('status',$status, FALSE);
-		$this->db->where('id_devices_almacen',$id);
-		$this->db->update('devices_almacen');
+		$this->db->set('status',$status, FALSE)
+                ->set(id_incidencia,$id_incidencia)
+		        ->where('id_devices_almacen',$id)
+		        ->update('devices_almacen');
 	}
 		
 	
 	public function update_dispositivos($id,$imei,$mac,$serial,$barcode)
 	{
-		$this->db->set('IMEI',$imei);
-		$this->db->set('mac',$mac);
-		$this->db->set('serial',$serial);
-		$this->db->set('barcode',$barcode);
-		$this->db->where('id_devices_almacen',$id);
-		$this->db->update('devices_almacen');
+		$this->db->set('IMEI',$imei)
+		        ->set('mac',$mac)
+		        ->set('serial',$serial)
+		        ->set('barcode',$barcode)
+                ->set('id_incidencia',null)
+		        ->where('id_devices_almacen',$id)
+		        ->update('devices_almacen');
 	}	
 
 	public function get_devices_almacen_reserva() {
