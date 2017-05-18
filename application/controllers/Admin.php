@@ -539,12 +539,12 @@ class Admin extends MY_Controller
 
                     $id_mueble=$this->tienda_model->anadir_mueble_sfid($mueble,$PDS,$mueble->position);
                     if ($id_mueble!=-1) {
-                        $asset = array("drId" => $id_mueble, "assetType" => array("name" => $mueble->display), "location" => array("code" => $sfid));
+                        $asset = array("drId" => $id_mueble, "assetType" => array("drId" => $mueble->id_display), "location" => array("code" => $sfid));
                         array_push($assets['assets'], $asset);
                     }
                 }
 
-                //var_dump($assets); exit;
+                //print_r($assets);
                 //////////////////////////////////////////////////////////////////////////////////
                 //                                                                              //
                 //             Comunicación  con Realdooh VU: agregar muebles a una tienda      //
@@ -5696,7 +5696,7 @@ class Admin extends MY_Controller
                             $id_display_pds=$this->tienda_model->anadir_mueble_sfid($display,$check_sfid,$position);
 
                             if ($id_display_pds!=-1) {
-                                $asset = array("drId" => $id_display_pds, "assetType" => array("name" => $display->display), "location" => array("code" => $sfid));
+                                $asset = array("drId" => $id_display_pds, "assetType" => array("drId" => $display->id_display), "location" => array("code" => $sfid));
                                 array_push($assets['assets'], $asset);
                             }
 
