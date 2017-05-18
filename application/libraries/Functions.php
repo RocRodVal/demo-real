@@ -331,6 +331,7 @@
             $imagen=$postdata->get('picture_url');
             $code="DR".$xcrud;
             $asset_realdooh=array(
+                "drId"           =>  $xcrud,
                 "code"           =>  $code,
                 "internalCode"   =>  $code,
                 "imageUrl"       =>  (!empty($imagen)) ? site_url('application/uploads/').$postdata->get('picture_url'):"",
@@ -369,7 +370,7 @@
 
         if (!empty($postdata)){
             /*guardamos los datos anteriores del dispositivo en relacion al mueble y posicion del mismo*/
-            $result = $CI->db->select('display')
+            $result = $CI->db->select('id_display')
                 ->where("id_display",$xcrud)
                 ->get('display')->row_array();
             $datosAntes=$result;
@@ -377,6 +378,7 @@
             $imagen=$postdata->get('picture_url');
             $code="DR".$xcrud;
             $asset_realdooh=array(
+                "drId"           =>  $xcrud,
                 "code"           =>  $code,
                 "internalCode"   =>  $code,
                 "imageUrl"       =>  (!empty($imagen)) ? site_url('application/uploads/').$postdata->get('picture_url'):"",
@@ -386,7 +388,7 @@
             );
         }
         $json = json_encode($asset_realdooh);
-//print_r($asset_realdooh);
+		//print_r($json);
         //////////////////////////////////////////////////////////////////////////////////
         //                                                                              //
         //             Comunicación  con Realdooh VU: ACTUALIZAR tienda                 //
@@ -397,12 +399,12 @@
         $resultado=set_modeloMueble_realdooh(array(                                             //
             'user'=> 'altabox',
             'password' => 'realboxdemo'
-        ), "oldName=".$datosAntes['display'],$json);                                                //
+        ), "drId=".$datosAntes['id_display'],$json);                                                //
         //
         //                                                                              //
         //////////////////////////////////////////////////////////////////////////////////
-
-        //print_r($resultado);
+//echo "RESPUESTA";
+       // print_r($resultado);
 
     }
 
