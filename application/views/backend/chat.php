@@ -16,6 +16,8 @@
 
     }
     .zoom:hover{
+        position: relative;
+        z-index: 1;
         /* tranformamos el elemento al pasar el mouse por encima al doble de
         su tamaño con scale(2). */
         transform : scale(3,2);
