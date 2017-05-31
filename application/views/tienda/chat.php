@@ -15,7 +15,7 @@
         -o-transition: width 2s, height 2s,-o-transform 2s;
 
     }
-    .zoom:hover{
+    .zoom:active{
         position: relative;
         z-index: 1;
 
@@ -92,7 +92,7 @@
                                             <?php
                                             if ($chat->foto <> '') {
                                                 ?>
-                                                <p><img  class="zoom" width="60%" src="<?= site_url('uploads/chats/' . $chat->foto) ?>"/></p>
+                                                <p><img class="zoom" width="60%" src="<?= site_url('uploads/chats/' . $chat->foto) ?>"/></p>
                                             <?php
                                             }
                                             ?>
