@@ -19,7 +19,7 @@ class Intervencion extends CI_Controller
         $this->load->model('intervencion_model');
     }
 
-    function index()
+   /* function index()
     {
         $session_data = $this->session->userdata('logged_in');
         $data['sfid'] = $this->session->userdata('sfid');
@@ -33,7 +33,7 @@ class Intervencion extends CI_Controller
         $this->load->view('backend/navbar', $data);
         $this->load->view('backend/intervenciones/listar', $data);
         $this->load->view('backend/footer');
-    }
+    }*/
 
     function listar_intervenciones()
     {

@@ -15,7 +15,7 @@
         -o-transition: width 2s, height 2s,-o-transform 2s;
 
     }
-    .zoom:hover{
+    .zoom:active{
         position: relative;
         z-index: 1;
         /* tranformamos el elemento al pasar el mouse por encima al doble de

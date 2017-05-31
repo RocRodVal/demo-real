@@ -2578,7 +2578,7 @@ class Admin extends MY_Controller
         $this->load->view('backend/footer');
     }
 
-    public function descripcion()
+  /*  public function descripcion()
     {
         if ($this->auth->is_auth())
         {
@@ -2605,7 +2605,7 @@ class Admin extends MY_Controller
         } else {
             redirect('admin', 'refresh');
         }
-    }
+    }*/
 
 
    /*
