@@ -532,6 +532,22 @@ class Tienda extends MY_Controller {
             $foto = NULL;
             if ($this->upload->do_upload()) {
                 $dataF=$this->upload->data();
+                if ($dataF["image_width"]>400 || $dataF["image_height"]>400){
+
+                    /*redimensionar imagen*/
+                    $config['source_image'] = $this->upload->upload_path.$this->upload->file_name;
+                    $config['maintain_ratio'] = true;
+                    $config['width'] = ($dataF["image_width"]/2.5);
+                    $config['height'] = ($dataF["image_height"]/2.5);
+
+                    $this->load->library('image_lib', $config);
+
+                    if ( ! $this->image_lib->resize()){
+                        echo $this->image_lib->display_errors('', '');
+                        //$this->session->set_flashdata('message', $this->image_lib->display_errors('', ''));
+                    }
+                }
+
                 $foto = $new_name.$dataF["file_ext"];
             } else {
                 echo 'Ha fallado la carga de la foto.';

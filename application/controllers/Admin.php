@@ -1043,13 +1043,30 @@ class Admin extends MY_Controller
             $config['max_size'] = '10000KB';
 
             $this->load->library('upload', $config);
-
             $foto = NULL;
 
             if ($this->upload->do_upload()) {
                 $dataF=$this->upload->data();
-                $foto = $new_name.$dataF["file_ext"];
+
+                if ($dataF["image_width"]>400 || $dataF["image_height"]>400){
+
+                    /*redimensionar imagen*/
+                    $config['source_image'] = $this->upload->upload_path.$this->upload->file_name;
+                    $config['maintain_ratio'] = true;
+                    $config['width'] = ($dataF["image_width"]/2.5);
+                    $config['height'] = ($dataF["image_height"]/2.5);
+
+                    $this->load->library('image_lib', $config);
+
+                    if ( ! $this->image_lib->resize()){
+                        echo $this->image_lib->display_errors('', '');
+                        //$this->session->set_flashdata('message', $this->image_lib->display_errors('', ''));
+                    }
+                }
+                $foto = $new_name . $dataF["file_ext"];
+
             } else {
+                echo $this->upload->display_errors();
                 echo 'Ha fallado la carga de la foto.';
             }
 
@@ -1108,9 +1125,24 @@ class Admin extends MY_Controller
             if ($this->upload->do_upload()) {
                 //$foto = $new_name;
                 $dataF=$this->upload->data();
+                if ($dataF["image_width"]>400 || $dataF["image_height"]>400){
+
+                    /*redimensionar imagen*/
+                    $config['source_image'] = $this->upload->upload_path.$this->upload->file_name;
+                    $config['maintain_ratio'] = true;
+                    $config['width'] = ($dataF["image_width"]/2.5);
+                    $config['height'] = ($dataF["image_height"]/2.5);
+
+                    $this->load->library('image_lib', $config);
+
+                    if ( ! $this->image_lib->resize()){
+                        echo $this->image_lib->display_errors();
+                        //$this->session->set_flashdata('message', $this->image_lib->display_errors('', ''));
+                    }
+                }
                 $foto = $new_name.$dataF["file_ext"];
             } else {
-                //$error = 'Ha fallado la carga de la foto.';
+                echo $this->upload->display_errors();
                 echo 'Ha fallado la carga de la foto.';
             }
 
@@ -2546,7 +2578,7 @@ class Admin extends MY_Controller
         $this->load->view('backend/footer');
     }
 
-    public function descripcion()
+  /*  public function descripcion()
     {
         if ($this->auth->is_auth())
         {
@@ -2573,7 +2605,7 @@ class Admin extends MY_Controller
         } else {
             redirect('admin', 'refresh');
         }
-    }
+    }*/
 
 
    /*

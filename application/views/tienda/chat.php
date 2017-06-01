@@ -6,6 +6,27 @@
  * Time: 15:58
  */
 ?>
+<style type="text/css">
+    .zoom{
+        /* Aumentamos la anchura y altura durante 2 segundos */
+        transition: width 2s, height 2s, transform 2s;
+        -moz-transition: width 2s, height 2s, -moz-transform 2s;
+        -webkit-transition: width 2s, height 2s, -webkit-transform 2s;
+        -o-transition: width 2s, height 2s,-o-transform 2s;
+
+    }
+    .zoom:active{
+        position: relative;
+        z-index: 1;
+
+        /* tranformamos el elemento al pasar el mouse por encima al doble de
+        su tamaño con scale(2). */
+        transform : scale(3,2);
+        -moz-transform : scale(3,2); /* Firefox */
+        -webkit-transform : scale(3,2); /* Chrome - Safari */
+        -o-transform : scale(3,2); /* Opera */
+    }
+</style>
 <div class="row">
     <div class="col-lg-12">
         <div class="form-group">
@@ -40,7 +61,7 @@
                                             <?php
                                             if ($chat->foto <> '') {
                                                 ?>
-                                                <p><img src="<?= site_url('uploads/chats/' . $chat->foto) ?>"  /></p>
+                                                <p><img class="zoom" src="<?= site_url('uploads/chats/' . $chat->foto) ?>"  width="60%" /></p>
                                             <?php
                                             }
                                             ?>
@@ -71,7 +92,7 @@
                                             <?php
                                             if ($chat->foto <> '') {
                                                 ?>
-                                                <p><img src="<?= site_url('uploads/chats/' . $chat->foto) ?>"/></p>
+                                                <p><img class="zoom" width="60%" src="<?= site_url('uploads/chats/' . $chat->foto) ?>"/></p>
                                             <?php
                                             }
                                             ?>

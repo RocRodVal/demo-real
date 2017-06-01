@@ -316,7 +316,7 @@ class Deposito_model extends CI_Model {
 	}	
 	
 	
-	public function login($data)
+	/*public function login($data)
 	{
 		$sfid     = $data['sfid'];
 		$password = $data['password'];
@@ -344,7 +344,7 @@ class Deposito_model extends CI_Model {
 		{
 			return FALSE;
 		}
-	}
+	}*/
 
 
 	

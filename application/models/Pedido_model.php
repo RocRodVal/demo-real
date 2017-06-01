@@ -161,11 +161,9 @@ class Pedido_model extends CI_Model {
                            territory.territory as territory,
                             (SELECT COUNT(*)
                                 FROM pedidos_chat
-                                JOIN pedidos p ON pedidos_chat.id_pedido = p.id
-                                JOIN pds  ON pds.id_pds = p.id_pds
                                 JOIN agent ON pedidos_chat.agent = agent.sfid
                                 WHERE pedidos_chat.status = 'Nuevo'
-                                AND p.id = pedidos_chat.id_pedido
+                                AND pedidos.id = pedidos_chat.id_pedido
                                 AND agent.type NOT IN ($agentes_excluidos)) as nuevos",FALSE)
 
             ->join('pds','pedidos.id_pds = pds.id_pds','left outer')
@@ -193,7 +191,7 @@ class Pedido_model extends CI_Model {
         }
 
         $query =   $this->db->get('pedidos',$cfg_pagination['per_page'], ($page-1) * $cfg_pagination['per_page']);
-
+//echo $this->db->last_query();exit;
         return $query->result();
     }
 

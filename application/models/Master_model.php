@@ -412,7 +412,7 @@ class Tienda_model extends CI_Model {
 
 	
 	
-	public function login($data)
+	/*public function login($data)
 	{
 		$sfid     = $data['sfid'];
 		$password = $data['password'];
@@ -440,7 +440,7 @@ class Tienda_model extends CI_Model {
 		{
 			return FALSE;
 		}
-	}	
+	}	*/
 	
 }
 
