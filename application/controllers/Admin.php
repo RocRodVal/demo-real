@@ -6770,6 +6770,96 @@ class Admin extends MY_Controller
         $this->load->view('backend/footer');
     }
 
+    /*Para un conjunto de SFID y un mueble realizremos los cambios en las posiciones*/
+    public function actualizacion_masiva()
+    {
+        if ($this->auth->is_auth()) {
+            $xcrud = xcrud_get_instance();
+            $id_mueble = NULL;
+            //$this->load->model(array('tienda_model', 'pedido_model'));
+            $this->load->model(array('backup_model', 'tienda_model'));
+
+            $data['title'] = 'Realizar actualización masiva';
+
+            $generar = $this->input->post("generar_actualizacion");
+
+            if ($generar == "si") {
+                $id_mueble = $this->input->post("mueble");
+                $sfids = $this->input->post("sfids");
+                $array_sfids = explode("\n", $sfids);
+            }
+
+
+            if (is_null($id_mueble)) {
+
+                $muebles = $this->tienda_model->get_muebles();
+                $data['muebles']=$muebles;
+                $this->data->add($data);
+                $data = $this->data->getData();
+                $this->load->view('backend/header', $data);
+                $this->load->view('backend/navbar', $data);
+                $this->load->view('backend/masivas/actualizacion/form', $data);
+                $this->load->view('backend/footer');
+
+            } else {
+
+                $this->backup_model->set_sfids($array_sfids);
+                $mueble=$this->tienda_model->get_display($id_mueble);
+
+                $resultado = $this->backup_model->generar_tabla_masiva($id_mueble);
+//print_r($resultado);
+                $data["resultado"] = $resultado;
+                $data['nombre_mueble']=$mueble["display"];
+                $data['sfids']=$array_sfids;
+                $data['id_mueble']=$id_mueble;
+
+                $this->data->add($data);
+                $data = $this->data->getData();
+                $this->load->view('backend/header', $data);
+                $this->load->view('backend/navbar', $data);
+                $this->load->view('backend/masivas/actualizacion/resultado', $data);
+                $this->load->view('backend/footer');
+
+            }
+        }
+    }
+
+    public function update_actualizacion_masiva()
+    {
+        if ($this->auth->is_auth()) {
+            $xcrud = xcrud_get_instance();
+            // $sfids = $this->uri->segment(5);
+            $id_mueble = $this->uri->segment(3);
+            $imeis = $this->input->post('imei');
+            $sfids = $this->input->post('sfid');
+            $posiciones = $this->input->post('posicion');
+            $devices = $this->input->post('device');
+            //$this->load->model(array('tienda_model', 'pedido_model'));
+            $this->load->model(array('backup_model', 'tienda_model'));
+
+            $data['title'] = 'Realizar actualización masiva';
+
+            //$generar = $this->input->post("generar_actualizacion");
+//print_r($sfids);exit;
+            print_r($sfids);
+            print_r($imeis);
+            print_r($posiciones);
+            print_r($devices);
+
+            exit;
+
+
+            $this->data->add($data);
+            $data = $this->data->getData();
+            $this->load->view('backend/header', $data);
+            $this->load->view('backend/navbar', $data);
+            $this->load->view('backend/masivas/actualizacion/resultado', $data);
+            $this->load->view('backend/footer');
+
+
+        }
+    }
+
 }
 /* End of file admin.php */
 /* Location: ./application/controllers/admin.php */

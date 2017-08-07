@@ -100,4 +100,76 @@ class Backup_Model extends CI_Model {
 
 
 
+    function generar_tabla_masiva($mueble)
+    {
+        $sfids = implode(",",$this->sfids);
+        $sfids = trim($sfids,",");
+
+        $result = NULL;
+
+        if(!empty($sfids)){
+            $query = $this->db->query(" SELECT pds.reference, dp.*, display.* , device.device 
+                                        FROM devices_pds dp
+                                        JOIN display ON display.id_display = dp.id_display
+                                        JOIN device ON device.id_device=dp.id_device 
+                                        JOIN pds ON pds.id_pds = dp.id_pds
+                                        WHERE pds.reference IN( ".$sfids." ) AND dp.id_display=$mueble
+                                        AND dp.status='Alta'
+                                        ORDER BY dp.id_pds  ASC, dp.position  ASC ");
+
+            $result = $query->result();
+           //echo $this->db->last_query()."<br>";
+
+            //var_dump($result);exit;
+            $sfid="";
+            $anterior="";
+            $resultado=[];
+            $elementos=[];
+
+            $indice=0;
+            foreach($result as $position)
+            {
+                //$elemento=null;
+            /*    print_r($position);
+                echo "<br>";*/
+                $sfid=$position->reference;
+                //echo "ACTUAL ".$sfid." ANTERIOR ".$anterior."<br>";
+                if ($indice==0){
+                    $resultado[$sfid]=[];
+                    $elementos=[];
+
+                    $elemento=array("posicion"=>$position->position, "imei"=>$position->IMEI,"device"=>$position->device);
+                    array_push($elementos,$elemento);
+                   // $anterior = $sfid;
+                } else {
+                    if ($sfid == $anterior) {
+                        $elemento=array("posicion"=>$position->position, "imei"=>$position->IMEI,"device"=>$position->device);
+                        //  echo "ELEMENTO ";print_r($elemento);
+                        array_push($elementos, $elemento);
+                    } else {
+
+                        array_push($resultado[$anterior], $elementos);
+
+                        $resultado[$sfid] = [];
+                        $elementos = [];
+
+                        $elemento =array("posicion"=>$position->position, "imei"=>$position->IMEI,"device"=>$position->device);
+                        array_push($elementos, $elemento);
+
+                    }
+                }
+                $anterior = $sfid;
+                $indice++;
+                if ($indice==count($result)){
+                    array_push($resultado[$anterior], $elementos);
+                }
+            }
+
+        }
+//var_dump($resultado);
+
+        return $resultado;
+
+    }
+
 }
