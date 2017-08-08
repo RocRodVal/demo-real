@@ -1806,6 +1806,7 @@ class Tienda_model extends CI_Model {
 			$query = $this->db->select('devices_display.*,device.*')
 			->join('device','devices_display.id_device = device.id_device')
 			->where('devices_display.id_display',$id)
+                ->where('devices_display.status','Alta')
 			->order_by('position')
 			->get('devices_display');
 				
