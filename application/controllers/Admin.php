@@ -6776,6 +6776,7 @@ class Admin extends MY_Controller
         if ($this->auth->is_auth()) {
             $xcrud = xcrud_get_instance();
             $id_mueble = NULL;
+            $sfids=null;
             //$this->load->model(array('tienda_model', 'pedido_model'));
             $this->load->model(array('backup_model', 'tienda_model'));
 
@@ -6789,11 +6790,13 @@ class Admin extends MY_Controller
                 $array_sfids = explode("\n", $sfids);
             }
 
-
-            if (is_null($id_mueble)) {
-
+//echo $id_mueble; print_r($sfids);
+            if ((empty($id_mueble)) || empty($sfids)) {
+//echo "VACIO";
                 $muebles = $this->tienda_model->get_muebles();
                 $data['muebles']=$muebles;
+                $data["sfids"]=$this->input->post("sfids");
+                $data["id_mueble"]= $this->input->post("mueble");
                 $this->data->add($data);
                 $data = $this->data->getData();
                 $this->load->view('backend/header', $data);
@@ -6816,7 +6819,7 @@ class Admin extends MY_Controller
                 $this->data->add($data);
                 $data = $this->data->getData();
                 $this->load->view('backend/header', $data);
-                $this->load->view('backend/navbar', $data);
+               // $this->load->view('backend/navbar', $data);
                 $this->load->view('backend/masivas/actualizacion/resultado', $data);
                 $this->load->view('backend/footer');
 
@@ -6828,7 +6831,7 @@ class Admin extends MY_Controller
     {
         if ($this->auth->is_auth()) {
             $xcrud = xcrud_get_instance();
-            // $sfids = $this->uri->segment(5);
+
             $id_mueble = $this->uri->segment(3);
             $imeis = $this->input->post('imei');
             $sfids = $this->input->post('sfid');
@@ -6841,18 +6844,24 @@ class Admin extends MY_Controller
 
             //$generar = $this->input->post("generar_actualizacion");
 //print_r($sfids);exit;
-            print_r($sfids);
-            print_r($imeis);
-            print_r($posiciones);
-            print_r($devices);
+          //  print_r($sfids);
+//            print_r($imeis);
+      //      print_r($posiciones);
+    //        print_r($devices);
 
-            exit;
+  //          exit;
 
+            $resultado=$this->backup_model->update_actualizacion_masiva($id_mueble,$sfids,$imeis,$devices,$posiciones);
+            if($resultado) {
+                $data["mensaje"] = "Actualizacion realizada correctamente ";
+            }else {
+                $data["mensaje"] = "Ha habido algun problema al realizar la actualización y los datos no se han actualizado";
+            }
 
             $this->data->add($data);
             $data = $this->data->getData();
             $this->load->view('backend/header', $data);
-            $this->load->view('backend/navbar', $data);
+            //$this->load->view('backend/navbar', $data);
             $this->load->view('backend/masivas/actualizacion/resultado', $data);
             $this->load->view('backend/footer');
 

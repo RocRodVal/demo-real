@@ -28,7 +28,7 @@
                                             </label>
                                             <div id="denuncia" hidden>
                                                 <p>Suba una copia de la denuncia por robo:</p>
-                                                <input id="denuncia" class="file" type="file" multiple=false name="userfile">
+                                                <input id="denuncia" class="file" type="file" multiple=false name="userfilee">
                                             </div>
                                         </div>
                                     </div>

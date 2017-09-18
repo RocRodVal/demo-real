@@ -24,7 +24,7 @@
                         <div class="col-sm-12">
                             <div class="form-group">
                                 <label for="sfids">SFIDs</label>
-                                  <textarea name="sfids" id="sfids" cols="60" rows="10"></textarea>
+                                  <textarea name="sfids" id="sfids" cols="60" rows="10" ><?=(!empty($sfids)) ? $sfids : "" ?></textarea>
 
                               </div>
 
@@ -34,8 +34,8 @@
                                     <option value="">Escoge el mueble...</option>
                                     <?php foreach($muebles as $display)
                                     {
-                                        //$selected = ($display->id_display== $mueble_plano) ? ' selected = "selected" ' : '';
-                                        echo '<option value="'.$display->id_display.'" >'.$display->display.'</option>';
+                                        $selected = ($display->id_display== $id_mueble) ? ' selected = "selected" ' : '';
+                                        echo '<option value="'.$display->id_display.'" '.$selected.'>'.$display->display.'</option>';
                                     }
                                     ?>
                                 </select>

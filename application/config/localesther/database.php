@@ -79,6 +79,13 @@ $db['default'] = array(
 	'username' => 'demoreal',
 	'password' => 'arf2t24t23r13$12',
 	'database' => 'demoreal',
+
+   /* 'hostname' => '78.46.139.41',
+    'username' => 'drtemp',
+    'password' => 'asd1r3r2ef3f13dd3',
+    'database' => 'drtemp',*/
+
+
 	'dbdriver' => 'mysqli',
 	'dbprefix' => '',
 	'pconnect' => FALSE,

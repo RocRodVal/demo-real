@@ -100,6 +100,9 @@ class Backup_Model extends CI_Model {
 
 
 
+    /*
+     * Segun el mueble obtiene los datos de las tiendas indicadas para todas las posiciones siempre que el estado sea Alta
+     */
     function generar_tabla_masiva($mueble)
     {
         $sfids = implode(",",$this->sfids);
@@ -118,7 +121,7 @@ class Backup_Model extends CI_Model {
                                         ORDER BY dp.id_pds  ASC, dp.position  ASC ");
 
             $result = $query->result();
-           //echo $this->db->last_query()."<br>";
+           //echo $this->db->last_query()."<br>";exit;
 
             //var_dump($result);exit;
             $sfid="";
@@ -127,8 +130,10 @@ class Backup_Model extends CI_Model {
             $elementos=[];
 
             $indice=0;
+            $posiciones=1;
             foreach($result as $position)
             {
+                $posiciones = $position->positions;
                 //$elemento=null;
             /*    print_r($position);
                 echo "<br>";*/
@@ -163,7 +168,9 @@ class Backup_Model extends CI_Model {
                 if ($indice==count($result)){
                     array_push($resultado[$anterior], $elementos);
                 }
+
             }
+            $resultado["posiciones"]=$posiciones;
 
         }
 //var_dump($resultado);
@@ -172,4 +179,11 @@ class Backup_Model extends CI_Model {
 
     }
 
+    /*
+     * Funcion que guarda los datos indicados para la actualización masiva
+     */
+    function update_actualizacion_masiva($id_mueble,$sfids,$imeis,$devices,$posiciones){
+        $resultado=true;
+        return $resultado;
+    }
 }
