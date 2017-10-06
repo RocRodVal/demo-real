@@ -913,6 +913,13 @@ class Incidencia_model extends CI_Model {
             return $query->row_array();
     }
 
+    public function set_parteTecnico($id,$parte)
+    {
+        $this->db->set('parte_pdf',$parte)
+            ->where('id_incidencia',$id)
+            ->update('incidencias');
+    }
+
 }
 
 ?>

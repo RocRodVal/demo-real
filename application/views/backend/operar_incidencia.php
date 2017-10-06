@@ -252,7 +252,56 @@
                     </div>
                 </div>
             </div>
-            <?php $this->load->view('backend/chat.php'); ?>
+            <!--Agregar el parte del tecnico una vez resuelta la incidencia-->
+            <div class="row" id="parte" <?php if ($incidencia['status']!=='Resuelta') {
+                echo ' style="display: none;"';
+            }
+            ?>>
+                <div class="col-lg-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            Panel para el parte del técnico
+                        </div>
+                        <div class="panel-body">
+                            <?php if($incidencia['parte_pdf']=="") { ?>
+                                <!--<input id="parte_cierre" class="file" type="file" multiple=false name="parte_cierre">-->
+                                <form
+                                    action="<?= site_url('admin/insert_parteTecnico_incidencia/' . $id_pds_url . '/' . $id_inc_url) ?>"
+                                    method="post"
+                                    class="content_auto form_login" enctype="multipart/form-data">
+                                    <table border="0" width="100%">
+                                        <tbody>
+                                        <tr>
+                                            <th><label for="tipo_averia">Parte de cierre del técnico: </label></th>
+                                            <td>
+                                                <input id="parte_cierre" class="file" type="file" multiple=false
+                                                       name="userfile" accept=".pdf,.jpg,.jpeg" >
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td align="left" colspan="4">
+                                                <input type="submit" value="Subir" name="submit"
+                                                       class="btn btn-success">
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+
+                                </form>
+                                <?php
+                            }else {?>
+                                [<a href="<?= site_url('uploads/partes/' . $incidencia['parte_pdf']) ?>" target="_blank">ver parte</a>]
+                            <?php
+                            } ?>
+                        </div>
+                    </div>
+                </div>
+
+
+
+            </div>
+        <?php $this->load->view('backend/chat.php'); ?>
         </div>
         <div class="col-lg-6 col-md-6">
             <div class="panel panel-default">

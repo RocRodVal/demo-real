@@ -1830,6 +1830,40 @@ class Admin extends MY_Controller
         redirect('admin/operar_incidencia/'.$id_pds.'/'.$id_inc, 'refresh');
     }
 
+    public function insert_parteTecnico_incidencia()
+    {
+        if ($this->auth->is_auth()) {
+            $id_pds = $this->uri->segment(3);
+            $id_inc = $this->uri->segment(4);
+
+            $xcrud = xcrud_get_instance();
+            $this->load->model('incidencia_model');
+
+            $config['upload_path'] = dirname($_SERVER["SCRIPT_FILENAME"]) . '/uploads/partes/';
+            $config['upload_url'] = base_url() . '/uploads/partes/';
+            $config['allowed_types'] = 'doc|docx|pdf|jpg|png';
+            $new_name = $id_inc . '-' . time();
+            $config['file_name'] = $new_name;
+            $config['overwrite'] = TRUE;
+            $config['max_size'] = '10000KB';
+
+            $this->load->library('upload', $config);
+
+
+            $parte_cierre = '';
+
+            if ($this->upload->do_upload('userfile')) {
+                $parte_cierre = $new_name;
+            } else {
+                echo $this->upload->display_errors();
+                echo 'Ha fallado la carga del parte del técnico.';
+            }
+            $this->incidencia_model->set_parteTecnico($id_inc, $parte_cierre);
+
+            redirect('admin/operar_incidencia/' . $id_pds . '/' . $id_inc, 'refresh');
+        }
+    }
+
     public function update_incidencia_materiales()
     {
         if ($this->auth->is_auth()) {
