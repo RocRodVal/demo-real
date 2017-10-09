@@ -57,12 +57,8 @@
 
     <script src="<?php echo base_url(); ?>assets/js/informes/informes.js"></script>
 
-    <link href="http://select2.github.io/dist/css/select2.min.css" rel="stylesheet" type="text/css" />
-    <script type="text/javascript" src="http://select2.github.io/dist/js/select2.full.js"></script>
-    <script type="text/javascript">
-
-    </script>
-
+    <!--<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.4/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.4/js/select2.min.js"></script>-->
 
 </head>
 

@@ -200,7 +200,7 @@
                       ?>
 
                         <div class="col-lg-7 labelText white">Resolver incidencia<br /><br /></div>
-		                <form action="<?= site_url('admin/update_incidencia/' . $id_pds_url . '/' . $id_inc_url . '/4/6') ?>" method="post">
+		                <form action="<?= site_url('admin/update_incidencia/' . $id_pds_url . '/' . $id_inc_url . '/4/6') ?>" id="formResolver" method="post">
                             <div class="col-lg-5 labelBtn white">
                                 <?php
                                 if (!empty($fecha_resuelta)) {
@@ -212,10 +212,12 @@
                                     <?php if (($incidencia['status'] != 'Comunicada')
                                         && ($incidencia['status'] != 'Sustituido')  && ($incidencia['status'] != 'SustituidoRMA')) { echo 'disabled'; }; ?> />
                                 <br/>
-                                <input type="submit" value="Resolver" name="submit" class="btn btn-success" classBtn="status" class="btn btn-success"
+                                <input type="button" value="Resolver" name="submit" class="btn btn-success" classBtn="status"
+                                       class="btn btn-success" data-toggle="modal" data-target="#modal_alert"
                                     <?php if (($incidencia['status'] != 'Comunicada') && ($incidencia['status'] != 'Sustituido')  && ($incidencia['status'] != 'SustituidoRMA')){
                                         echo 'disabled'; } ?> />
                                 <span class="fecha_status"><?=$historico_fecha_resuelta?></span>
+                                <input type="submit" id="btnResolverHidden" style="display: none;" >
                             </div>
 		                </form>
                         <div class="col-lg-7 labelText grey">Emisión de recogida de material</div>
@@ -260,7 +262,7 @@
                 <div class="col-lg-12">
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                            Panel para el parte del técnico
+                            Parte de cierre del técnico
                         </div>
                         <div class="panel-body">
                             <?php if($incidencia['parte_pdf']=="") { ?>
@@ -647,3 +649,5 @@
         </div>
     </div>
 </div>
+
+<?php $this->load->view('common/modal_alert');?>
