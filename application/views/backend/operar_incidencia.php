@@ -94,42 +94,53 @@
 
                                     <span class="fecha_status"><?=$historico_fecha_comunicada?></span>
                                 </div>
-                            <?php }else{ ?>
+                            <?php }else {
+                                if (($incidencia['status'] === 'Resuelta')  ||($incidencia['status_pds'] === 'Finalizada')) { ?>
+                                    <div class="col-lg-5 labelBtn white">
+                                        <a href="<?= site_url('admin/update_incidencia/' . $id_pds_url . '/' . $id_inc_url . '/3/5/ver') ?>"
+                                           classBtn="status" class="btn btn-success"
+                                           <?php if ($historico_fecha_comunicada===""){
+                                               echo 'disabled';
+                                           } ?>
+                                        >Ver notificacion</a><span class="fecha_status"><?= $historico_fecha_comunicada ?></span>
+                                    </div>
+                                    <?php
+                                } else { ?>
 
-                            <div class="col-lg-5 labelBtn white">
-                            <a href="<?= site_url('admin/update_incidencia/' . $id_pds_url . '/' . $id_inc_url . '/3/5/notificacion') ?>"
-                               classBtn="status" class="btn btn-success"
-                                <?php
+                                    <div class="col-lg-5 labelBtn white">
+                                        <a href="<?= site_url('admin/update_incidencia/' . $id_pds_url . '/' . $id_inc_url . '/3/5/notificacion') ?>"
+                                           classBtn="status" class="btn btn-success"
+                                            <?php
 
-                                if (($incidencia['status_pds'] === 'Finalizada') ||
-                                    ($incidencia['status'] === 'Instalador asignado') ||
+                                            if (($incidencia['status_pds'] === 'Finalizada') ||
+                                                ($incidencia['status'] === 'Instalador asignado') ||
 
-                                    ($incidencia['status'] === 'Material asignado' ||
+                                                ($incidencia['status'] === 'Material asignado' ||
 
-                                        $incidencia['status'] === 'Comunicada') && (isset($incidencia['intervencion']) && !empty($incidencia['intervencion'])))
-                                {
-                                    echo '';
-                                }
-                                else
-                                {
-                                    echo 'disabled';
-                                }
-                                ?>
-                                >
-                                <?php if ($incidencia['status'] === 'Comunicada' || $incidencia['status_pds'] === 'Finalizada')
-                                {
-                                    echo 'Volver a imprimir';
-                                }
-                                else
-                                {
-                                    echo 'Imprimir y notificar';
-                                }
-                                ?>
-                            	</a>
-                                <span class="fecha_status"><?=$historico_fecha_comunicada?></span>
-                            </div>
+                                                    $incidencia['status'] === 'Comunicada') && (isset($incidencia['intervencion']) && !empty($incidencia['intervencion']))
+                                            ) {
+                                                echo '';
+                                            } else {
+                                                echo 'disabled';
+                                            }
+                                            ?>
+                                            >
+                                            <?php if ($incidencia['status'] === 'Comunicada' || $incidencia['status_pds'] === 'Finalizada') {
+                                                echo 'Volver a imprimir';
+                                            } else {
+                                                echo 'Imprimir y notificar';
+                                            }
+                                            ?>
+                                        </a>
 
-                                <?php } ?>
+                                        <span class="fecha_status"><?= $historico_fecha_comunicada ?></span>
+                                    </div>
+
+                                <?php }
+
+                            }?>
+
+
                         <?php if (!empty($material_dispositivos)) { ?>
                             <div class="col-lg-7 labelText grey">Sustitución de terminales <br/></div>
                             <?php
@@ -293,7 +304,8 @@
                                 </form>
                                 <?php
                             }else {?>
-                                [<a href="<?= site_url('uploads/partes/' . $incidencia['parte_pdf']) ?>" target="_blank">ver parte</a>]
+                                [<a href="<?= site_url('uploads/partes/' .pathinfo($incidencia['parte_pdf'],PATHINFO_FILENAME)) ?>" target="_blank">ver parte</a>]
+                                <a href="<?=site_url("admin/borrar_parteTecnico/".$id_pds_url."/".$id_inc_url) ?>" classbtn="status" class="btn btn-danger" >Eliminar parte</a>
                             <?php
                             } ?>
                         </div>

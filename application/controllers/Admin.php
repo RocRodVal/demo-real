@@ -866,6 +866,7 @@ class Admin extends MY_Controller
 
             $incidencia = $this->tienda_model->get_incidencia($id_inc);
 
+
             $historico_material_asignado = $this->tienda_model->historico_fecha($id_inc,'Material asignado');
 
             if (isset($historico_material_asignado['fecha']))
@@ -1227,8 +1228,11 @@ class Admin extends MY_Controller
             $data['id_pds_ulr'] = $id_pds;
             $data['id_inc_ulr'] = $id_inc;
 
-            if (($status != 10) || ($status != 11)) {
-                $this->tienda_model->incidencia_update($id_inc, $status_pds, $status);
+
+            if (($status != 10) || ($status != 11 )) {
+                if ($status_ext!=="ver") {
+                    $this->tienda_model->incidencia_update($id_inc, $status_pds, $status);
+                }
             }
 
             $incidencia = $this->tienda_model->get_incidencia($id_inc);
@@ -1391,45 +1395,48 @@ class Admin extends MY_Controller
              */
             if ($status == 5) {
                 $envio_mail = $this->uri->segment(7);
+                if ($envio_mail==='ver'){
+                    redirect('admin/imprimir_incidencia/' . $id_pds . '/' . $id_inc . '/' . $envio_mail, 'refresh');
+                }else {
+                    $intervencion = $this->intervencion_model->get_intervencion_incidencia($id_inc);
 
-                $intervencion = $this->intervencion_model->get_intervencion_incidencia($id_inc);
+                    $dispositivos = $this->tienda_model->get_devices_incidencia($id_inc);
+                    $alarmas = $this->tienda_model->get_alarms_incidencia($id_inc);
 
-                $dispositivos = $this->tienda_model->get_devices_incidencia($id_inc);
-                $alarmas = $this->tienda_model->get_alarms_incidencia($id_inc);
+                    $facturacion_data = array(
+                        'fecha' => date('Y-m-d H:i:s'),
+                        'id_pds' => $id_pds,
+                        'id_intervencion' => $intervencion,
+                        'id_incidencia' => $id_inc,
+                        'id_displays_pds' => $incidencia['id_displays_pds'],
+                        'units_device' => $dispositivos['dispositivos'],
+                        'units_alarma' => $alarmas['alarmas'],
+                        'description' => NULL
+                    );
 
-                $facturacion_data = array(
-                    'fecha' => date('Y-m-d H:i:s'),
-                    'id_pds' => $id_pds,
-                    'id_intervencion' => $intervencion,
-                    'id_incidencia' => $id_inc,
-                    'id_displays_pds' => $incidencia['id_displays_pds'],
-                    'units_device' => $dispositivos['dispositivos'],
-                    'units_alarma' => $alarmas['alarmas'],
-                    'description' => NULL
-                );
+                    $this->tienda_model->facturacion($facturacion_data);
 
-                $this->tienda_model->facturacion($facturacion_data);
-
-                // Se va a proceder a la notificación de la incidencia por lo que el material asignado ya será inamovible
-                // Y por tanto deberá procesarse (procesado=1) y así verse en el histórico Diario de almacén.
-                $this->tienda_model->procesar_historico_incidencia($id_inc);
-                $this->tienda_model->actualizar_devices_almacen($id_inc);
+                    // Se va a proceder a la notificación de la incidencia por lo que el material asignado ya será inamovible
+                    // Y por tanto deberá procesarse (procesado=1) y así verse en el histórico Diario de almacén.
+                    $this->tienda_model->procesar_historico_incidencia($id_inc);
+                    $this->tienda_model->actualizar_devices_almacen($id_inc);
 
 
-                //////////////////////////////////////////////////////////////////////////////////
-                //             Comunicación  con Realdooh VU: Cambio estado EN VISITA           //
-                //////////////////////////////////////////////////////////////////////////////////
-                $response = set_estado_incidencia_realdooh(array(
-                    'drId' => $id_inc
-                ), array(
-                    'user' => $sfid['reference'],
-                    'password' => 'demoreal'
+                    //////////////////////////////////////////////////////////////////////////////////
+                    //             Comunicación  con Realdooh VU: Cambio estado EN VISITA           //
+                    //////////////////////////////////////////////////////////////////////////////////
+                    $response = set_estado_incidencia_realdooh(array(
+                        'drId' => $id_inc
+                    ), array(
+                        'user' => $sfid['reference'],
+                        'password' => 'demoreal'
 
-                ), 'visited=1');                                           //
-                //////////////////////////////////////////////////////////////////////////////////
-                //print_r($response); exit;
+                    ), 'visited=1');                                           //
+                    //////////////////////////////////////////////////////////////////////////////////
+                    //print_r($response); exit;
 
-                redirect('admin/imprimir_incidencia/' . $id_pds . '/' . $id_inc . '/' . $envio_mail, 'refresh');
+                    redirect('admin/imprimir_incidencia/' . $id_pds . '/' . $id_inc . '/' . $envio_mail, 'refresh');
+                }
             } else {
                 redirect('admin/operar_incidencia/' . $id_pds . '/' . $id_inc, 'refresh');
             }
@@ -1835,7 +1842,7 @@ class Admin extends MY_Controller
 
             $config['upload_path'] = dirname($_SERVER["SCRIPT_FILENAME"]) . '/uploads/partes/';
             $config['upload_url'] = base_url() . '/uploads/partes/';
-            $config['allowed_types'] = 'doc|docx|pdf|jpg|png';
+            $config['allowed_types'] = 'pdf|jpg|jpeg';
             $new_name = $id_inc . '-' . time();
             $config['file_name'] = $new_name;
             $config['overwrite'] = TRUE;
@@ -1847,12 +1854,32 @@ class Admin extends MY_Controller
             $parte_cierre = '';
 
             if ($this->upload->do_upload('userfile')) {
-                $parte_cierre = $new_name;
+                $data = $this->upload->data();
+                $parte_cierre = $data['file_name'];
             } else {
                 echo $this->upload->display_errors();
                 echo 'Ha fallado la carga del parte del técnico.';
             }
             $this->incidencia_model->set_parteTecnico($id_inc, $parte_cierre);
+
+            redirect('admin/operar_incidencia/' . $id_pds . '/' . $id_inc, 'refresh');
+        }
+    }
+
+    public function borrar_parteTecnico()
+    {
+        if ($this->auth->is_auth()) {
+            $id_pds = $this->uri->segment(3);
+            $id_inc = $this->uri->segment(4);
+
+            $xcrud = xcrud_get_instance();
+            $this->load->model('incidencia_model');
+
+            $parte=$this->incidencia_model->delete_parteTecnico($id_inc);
+
+            if(!empty($parte['parte_pdf'])){
+                unlink("uploads/partes/".$parte['parte_pdf']);
+            }
 
             redirect('admin/operar_incidencia/' . $id_pds . '/' . $id_inc, 'refresh');
         }
