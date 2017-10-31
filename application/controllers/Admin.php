@@ -866,6 +866,7 @@ class Admin extends MY_Controller
 
             $incidencia = $this->tienda_model->get_incidencia($id_inc);
 
+
             $historico_material_asignado = $this->tienda_model->historico_fecha($id_inc,'Material asignado');
 
             if (isset($historico_material_asignado['fecha']))
@@ -1204,241 +1205,241 @@ class Admin extends MY_Controller
 
     public function update_incidencia()
     {
+        if ($this->auth->is_auth()) {
+            $id_pds = $this->uri->segment(3);
+            $id_inc = $this->uri->segment(4);
+            $status_pds = $this->uri->segment(5);
+            $status = $this->uri->segment(6);
+            $status_ext = $this->uri->segment(7);
 
-        $id_pds = $this->uri->segment(3);
-        $id_inc = $this->uri->segment(4);
-        $status_pds = $this->uri->segment(5);
-        $status = $this->uri->segment(6);
-        $status_ext = $this->uri->segment(7);
+            $xcrud = xcrud_get_instance();
+            $this->load->model(array('tienda_model'));
 
-        $xcrud = xcrud_get_instance();
-        $this->load->model(array('tienda_model'));
+            $sfid = $this->tienda_model->get_pds($id_pds);
 
-        $sfid = $this->tienda_model->get_pds($id_pds);
+            $data['id_pds'] = 'ABX/PDS-' . $sfid['id_pds'];
+            $data['commercial'] = $sfid['commercial'];
+            $data['territory'] = $sfid['territory'];
+            $data['reference'] = $sfid['reference'];
+            $data['address'] = $sfid['address'];
+            $data['zip'] = $sfid['zip'];
+            $data['city'] = $sfid['city'];
 
-        $data['id_pds'] = 'ABX/PDS-' . $sfid['id_pds'];
-        $data['commercial'] = $sfid['commercial'];
-        $data['territory'] = $sfid['territory'];
-        $data['reference'] = $sfid['reference'];
-        $data['address'] = $sfid['address'];
-        $data['zip'] = $sfid['zip'];
-        $data['city'] = $sfid['city'];
+            $data['id_pds_ulr'] = $id_pds;
+            $data['id_inc_ulr'] = $id_inc;
 
-        $data['id_pds_ulr'] = $id_pds;
-        $data['id_inc_ulr'] = $id_inc;
 
-        if (($status!=10) || ($status!=11)) {
-            $this->tienda_model->incidencia_update($id_inc, $status_pds, $status);
-        }
+            if (($status != 10) || ($status != 11 )) {
+                if ($status_ext!=="ver") {
+                    $this->tienda_model->incidencia_update($id_inc, $status_pds, $status);
+                }
+            }
 
-        $incidencia = $this->tienda_model->get_incidencia($id_inc);
+            $incidencia = $this->tienda_model->get_incidencia($id_inc);
 
-        if ($status == 2) {
-            //////////////////////////////////////////////////////////////////////////////////
-            //             Comunicación  con Realdooh VU: Cambio estado REVISADA            //
-            //////////////////////////////////////////////////////////////////////////////////
+            if ($status == 2) {
+                //////////////////////////////////////////////////////////////////////////////////
+                //             Comunicación  con Realdooh VU: Cambio estado REVISADA            //
+                //////////////////////////////////////////////////////////////////////////////////
                 set_estado_incidencia_realdooh(array(                                          //
-                    'drId'=>  $id_inc                                        //
-                ),array(                                                                         //
-                    'user'=> $sfid['reference'],                                            //
+                    'drId' => $id_inc                                        //
+                ), array(                                                                         //
+                    'user' => $sfid['reference'],                                            //
                     'password' => 'demoreal'                                                //
-                                                                                            //
-                ), 'revised=1' );                                                           //
-            //////////////////////////////////////////////////////////////////////////////////
+                    //
+                ), 'revised=1');                                                           //
+                //////////////////////////////////////////////////////////////////////////////////
 
-            if ($incidencia['fail_device'] == 1) {
-                $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'], 2);
+                if ($incidencia['fail_device'] == 1) {
+                    $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'], 2);
+                }
             }
-        }
 
-        /**
-         * Botón Imprimir documentacion
-         */
-        $fecha_cierre=$this->input->post('fecha_cierre');
-        if (!empty($fecha_cierre)) {
-            $fecha_cierre = date('Y-m-d H:i:s',strtotime($this->input->post('fecha_cierre') . " 00:00:00"));
-        }else {
-             $fecha_cierre = date('Y-m-d H:i:s');
-        }
-
-
-        /* Cancelamos la incidencia*/
-        if ($status==9){
-            //////////////////////////////////////////////////////////////////////////////////
-            //                                                                              //
-            //             Comunicación  con Realdooh VU: Cambio estado CERRADA             //
-            //                                                                              //
-            //////////////////////////////////////////////////////////////////////////////////
-            //                                                                              //
-            $resultado=set_estado_incidencia_realdooh(array(
-                'drId'=>  $id_inc
-            ),array(
-                'user'=> $sfid['reference'],
-                'password' => 'demoreal'
-            ), 'close=1');                  //
-            //////////////////////////////////////////////////////////////////////////////////
-            //echo $sfid['reference']."<br>";
-
-            //print_r($resultado);
-
-        }
-        /**
-         * Botón resolver Incidencia : Recoge fecha de resolución y hace la operación
-         * Si no se ha sustituido terminal => ponemos la fecha del cierre y la posicion que generó la incidencia pasa a estar
-         * en Alta
-         */
-        if ($status == 6)
-        {
-            $this->tienda_model->incidencia_update_cierre($id_inc, $fecha_cierre);
-
-            /*
-             * Cuando se resuelve la incidencia la intervencion pasa a estar Cerrada
+            /**
+             * Botón Imprimir documentacion
              */
-            $intervencion = $this->intervencion_model->get_intervencion_incidencia($id_inc);
-            $this->intervencion_model->change_status_intervencion($intervencion,"Cerrada");
-
-           // if ($incidencia['tipo_averia'] == "Averia") {
-                $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'], $status,$id_inc);
-            //}
-
-            //////////////////////////////////////////////////////////////////////////////////
-            //             Comunicación  con Realdooh VU: Cambio estado RESUELTA            //
-            //////////////////////////////////////////////////////////////////////////////////
-                            $resultado=set_estado_incidencia_realdooh(array(
-                                'drId'=>  $id_inc
-                            ),array(
-                                'user'=> $sfid['reference'],
-                                'password' => 'demoreal'
-
-                            ), 'resolved=1&resolutionDate='.$fecha_cierre);                  //
-            //////////////////////////////////////////////////////////////////////////////////
-
-            //print_r($resultado); exit;
-        }
-
-        /**
-         * Botón Recogida de material : pone en transito a almacen el dispositivo que ha generado la incidencia
-         */
-        if ($status == 7)
-        {
-            $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'],$status,$id_inc);
-        }
-        /**
-         * CIERRE FORZOSO
-         */
-        if (($status == 8) AND ($status_ext == 'ext'))
-        {
-            //echo "If stado=8 y ext";exit;
-            if (!is_null($incidencia['id_devices_pds'])) {
-                $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'], 8,$id_inc);
+            $fecha_cierre = $this->input->post('fecha_cierre');
+            if (!empty($fecha_cierre)) {
+                $fecha_cierre = date('Y-m-d H:i:s', strtotime($this->input->post('fecha_cierre') . " 00:00:00"));
+            } else {
+                $fecha_cierre = date('Y-m-d H:i:s');
             }
-            $this->tienda_model->incidencia_update_cierre($id_inc, $fecha_cierre);
 
-            //////////////////////////////////////////////////////////////////////////////////
-            //             Comunicación  con Realdooh VU: Cambio estado RESUELTA            //
-            //////////////////////////////////////////////////////////////////////////////////
-            $resultado=set_estado_incidencia_realdooh(array(
-                'drId'=> $id_inc
-            ),array(
-                'user'=> $sfid['reference'],
-                'password' => 'demoreal'
 
-            ), 'resolved=1' );                                              //
-            //////////////////////////////////////////////////////////////////////////////////
-        }else { //CIERRE de la incidencia normal
-            if ($status == 8) {
-                    $disp=$this->tienda_model->get_devices_incidencia($incidencia['id_incidencia']);
-                    if ($disp['dispositivos']>0) {
+            /* Cancelamos la incidencia*/
+            if ($status == 9) {
+                //////////////////////////////////////////////////////////////////////////////////
+                //                                                                              //
+                //             Comunicación  con Realdooh VU: Cambio estado CERRADA             //
+                //                                                                              //
+                //////////////////////////////////////////////////////////////////////////////////
+                //                                                                              //
+                $resultado = set_estado_incidencia_realdooh(array(
+                    'drId' => $id_inc
+                ), array(
+                    'user' => $sfid['reference'],
+                    'password' => 'demoreal'
+                ), 'close=1');                  //
+                //////////////////////////////////////////////////////////////////////////////////
+                //echo $sfid['reference']."<br>";
+
+                //print_r($resultado);
+
+            }
+            /**
+             * Botón resolver Incidencia : Recoge fecha de resolución y hace la operación
+             * Si no se ha sustituido terminal => ponemos la fecha del cierre y la posicion que generó la incidencia pasa a estar
+             * en Alta
+             */
+            if ($status == 6) {
+
+                $this->tienda_model->incidencia_update_cierre($id_inc, $fecha_cierre);
+
+                /*
+                 * Cuando se resuelve la incidencia la intervencion pasa a estar Cerrada
+                 */
+                $intervencion = $this->intervencion_model->get_intervencion_incidencia($id_inc);
+                $this->intervencion_model->change_status_intervencion($intervencion, "Cerrada");
+
+                // if ($incidencia['tipo_averia'] == "Averia") {
+                $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'], $status, $id_inc);
+                //}
+
+                //////////////////////////////////////////////////////////////////////////////////
+                //             Comunicación  con Realdooh VU: Cambio estado RESUELTA            //
+                //////////////////////////////////////////////////////////////////////////////////
+                $resultado = set_estado_incidencia_realdooh(array(
+                    'drId' => $id_inc
+                ), array(
+                    'user' => $sfid['reference'],
+                    'password' => 'demoreal'
+
+                ), 'resolved=1&resolutionDate=' . $fecha_cierre);                  //
+                //////////////////////////////////////////////////////////////////////////////////
+
+                //print_r($resultado); exit;
+            }
+
+            /**
+             * Botón Recogida de material : pone en transito a almacen el dispositivo que ha generado la incidencia
+             */
+            if ($status == 7) {
+                $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'], $status, $id_inc);
+            }
+            /**
+             * CIERRE FORZOSO
+             */
+            if (($status == 8) AND ($status_ext == 'ext')) {
+                //echo "If stado=8 y ext";exit;
+                if (!is_null($incidencia['id_devices_pds'])) {
+                    $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'], 8, $id_inc);
+                }
+                $this->tienda_model->incidencia_update_cierre($id_inc, $fecha_cierre);
+
+                //////////////////////////////////////////////////////////////////////////////////
+                //             Comunicación  con Realdooh VU: Cambio estado RESUELTA            //
+                //////////////////////////////////////////////////////////////////////////////////
+                $resultado = set_estado_incidencia_realdooh(array(
+                    'drId' => $id_inc
+                ), array(
+                    'user' => $sfid['reference'],
+                    'password' => 'demoreal'
+
+                ), 'resolved=1');                                              //
+                //////////////////////////////////////////////////////////////////////////////////
+            } else { //CIERRE de la incidencia normal
+                if ($status == 8) {
+                    $disp = $this->tienda_model->get_devices_incidencia($incidencia['id_incidencia']);
+                    if ($disp['dispositivos'] > 0) {
                         $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'], 9, $id_inc);
                     }
-                //}
-                //$this->tienda_model->incidencia_update_cierre($id_inc, $fecha_cierre);
+                    //}
+                    //$this->tienda_model->incidencia_update_cierre($id_inc, $fecha_cierre);
+                }
             }
-        }
-        /**
-         * Botón Sustituir terminales : Pone el terminal enviado en la posicioin del mueble
-         */
-        if ($status == 10)
-        {
-            if (!is_null($incidencia['id_devices_pds'])) {
-                $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'], $status,$id_inc);
+            /**
+             * Botón Sustituir terminales : Pone el terminal enviado en la posicioin del mueble
+             */
+            if ($status == 10) {
+                if (!is_null($incidencia['id_devices_pds'])) {
+                    $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'], $status, $id_inc);
+                }
             }
-        }
-        /*
-         * Cuando la incidencia es un Robo y el dispositivo que lo genero vuelve a almacen como RMA
-         */
-        if ($status == 11)
-        {
-            if (!is_null($incidencia['id_devices_pds'])) {
-                $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'], $status,$id_inc);
+            /*
+             * Cuando la incidencia es un Robo y el dispositivo que lo genero vuelve a almacen como RMA
+             */
+            if ($status == 11) {
+                if (!is_null($incidencia['id_devices_pds'])) {
+                    $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'], $status, $id_inc);
+                }
+
             }
-
-        }
-        /**
-         * Guardar incidcencia en el histórico
-         */
-        $data = array(
-            'fecha' => date('Y-m-d H:i:s'),
-            'id_incidencia' => $id_inc,
-            'id_pds' => $id_pds,
-            'description' => NULL,
-            'agent' => $this->session->userdata('sfid'),
-            'status_pds' => $status_pds,
-            'status' => $status
-        );
-
-        $this->tienda_model->historico($data);
-
-
-        /**
-         * Notificación a instalador
-         */
-        if ($status == 5)
-        {
-            $envio_mail = $this->uri->segment(7);
-
-            $intervencion = $this->intervencion_model->get_intervencion_incidencia($id_inc);
-
-            $dispositivos = $this->tienda_model->get_devices_incidencia($id_inc);
-            $alarmas = $this->tienda_model->get_alarms_incidencia($id_inc);
-
-            $facturacion_data= array(
+            /**
+             * Guardar incidcencia en el histórico
+             */
+            $data = array(
                 'fecha' => date('Y-m-d H:i:s'),
-                'id_pds' => $id_pds,
-                'id_intervencion' => $intervencion,
                 'id_incidencia' => $id_inc,
-                'id_displays_pds' => $incidencia['id_displays_pds'],
-                'units_device' => $dispositivos['dispositivos'],
-                'units_alarma' => $alarmas['alarmas'],
-                'description' => NULL
+                'id_pds' => $id_pds,
+                'description' => NULL,
+                'agent' => $this->session->userdata('sfid'),
+                'status_pds' => $status_pds,
+                'status' => $status
             );
 
-            $this->tienda_model->facturacion($facturacion_data);
-
-            // Se va a proceder a la notificación de la incidencia por lo que el material asignado ya será inamovible
-            // Y por tanto deberá procesarse (procesado=1) y así verse en el histórico Diario de almacén.
-            $this->tienda_model->procesar_historico_incidencia($id_inc);
-            $this->tienda_model->actualizar_devices_almacen($id_inc);
+            $this->tienda_model->historico($data);
 
 
-            //////////////////////////////////////////////////////////////////////////////////
-            //             Comunicación  con Realdooh VU: Cambio estado EN VISITA           //
-            //////////////////////////////////////////////////////////////////////////////////
-                                $response=set_estado_incidencia_realdooh(array(
-                                    'drId'=> $id_inc
-                                ),array(
-                                    'user'=> $sfid['reference'],
-                                    'password' => 'demoreal'
+            /**
+             * Notificación a instalador
+             */
+            if ($status == 5) {
+                $envio_mail = $this->uri->segment(7);
+                if ($envio_mail==='ver'){
+                    redirect('admin/imprimir_incidencia/' . $id_pds . '/' . $id_inc . '/' . $envio_mail, 'refresh');
+                }else {
+                    $intervencion = $this->intervencion_model->get_intervencion_incidencia($id_inc);
 
-                                ), 'visited=1' );                                           //
-            //////////////////////////////////////////////////////////////////////////////////
-            //print_r($response); exit;
+                    $dispositivos = $this->tienda_model->get_devices_incidencia($id_inc);
+                    $alarmas = $this->tienda_model->get_alarms_incidencia($id_inc);
 
-            redirect('admin/imprimir_incidencia/'.$id_pds.'/'.$id_inc.'/'.$envio_mail, 'refresh');
-        }
-        else
-        {
-            redirect('admin/operar_incidencia/'.$id_pds.'/'.$id_inc, 'refresh');
+                    $facturacion_data = array(
+                        'fecha' => date('Y-m-d H:i:s'),
+                        'id_pds' => $id_pds,
+                        'id_intervencion' => $intervencion,
+                        'id_incidencia' => $id_inc,
+                        'id_displays_pds' => $incidencia['id_displays_pds'],
+                        'units_device' => $dispositivos['dispositivos'],
+                        'units_alarma' => $alarmas['alarmas'],
+                        'description' => NULL
+                    );
+
+                    $this->tienda_model->facturacion($facturacion_data);
+
+                    // Se va a proceder a la notificación de la incidencia por lo que el material asignado ya será inamovible
+                    // Y por tanto deberá procesarse (procesado=1) y así verse en el histórico Diario de almacén.
+                    $this->tienda_model->procesar_historico_incidencia($id_inc);
+                    $this->tienda_model->actualizar_devices_almacen($id_inc);
+
+
+                    //////////////////////////////////////////////////////////////////////////////////
+                    //             Comunicación  con Realdooh VU: Cambio estado EN VISITA           //
+                    //////////////////////////////////////////////////////////////////////////////////
+                    $response = set_estado_incidencia_realdooh(array(
+                        'drId' => $id_inc
+                    ), array(
+                        'user' => $sfid['reference'],
+                        'password' => 'demoreal'
+
+                    ), 'visited=1');                                           //
+                    //////////////////////////////////////////////////////////////////////////////////
+                    //print_r($response); exit;
+
+                    redirect('admin/imprimir_incidencia/' . $id_pds . '/' . $id_inc . '/' . $envio_mail, 'refresh');
+                }
+            } else {
+                redirect('admin/operar_incidencia/' . $id_pds . '/' . $id_inc, 'refresh');
+            }
         }
     }
 
@@ -1828,6 +1829,60 @@ class Admin extends MY_Controller
         $this->tienda_model->comentario_incidencia_instalador_update($id_inc, $description_3);
 
         redirect('admin/operar_incidencia/'.$id_pds.'/'.$id_inc, 'refresh');
+    }
+
+    public function insert_parteTecnico_incidencia()
+    {
+        if ($this->auth->is_auth()) {
+            $id_pds = $this->uri->segment(3);
+            $id_inc = $this->uri->segment(4);
+
+            $xcrud = xcrud_get_instance();
+            $this->load->model('incidencia_model');
+
+            $config['upload_path'] = dirname($_SERVER["SCRIPT_FILENAME"]) . '/uploads/partes/';
+            $config['upload_url'] = base_url() . '/uploads/partes/';
+            $config['allowed_types'] = 'pdf|jpg|jpeg';
+            $new_name = $id_inc . '-' . time();
+            $config['file_name'] = $new_name;
+            $config['overwrite'] = TRUE;
+            $config['max_size'] = '10000KB';
+
+            $this->load->library('upload', $config);
+
+
+            $parte_cierre = '';
+
+            if ($this->upload->do_upload('userfile')) {
+                $data = $this->upload->data();
+                $parte_cierre = $data['file_name'];
+            } else {
+                echo $this->upload->display_errors();
+                echo 'Ha fallado la carga del parte del técnico.';
+            }
+            $this->incidencia_model->set_parteTecnico($id_inc, $parte_cierre);
+
+            redirect('admin/operar_incidencia/' . $id_pds . '/' . $id_inc, 'refresh');
+        }
+    }
+
+    public function borrar_parteTecnico()
+    {
+        if ($this->auth->is_auth()) {
+            $id_pds = $this->uri->segment(3);
+            $id_inc = $this->uri->segment(4);
+
+            $xcrud = xcrud_get_instance();
+            $this->load->model('incidencia_model');
+
+            $parte=$this->incidencia_model->delete_parteTecnico($id_inc);
+
+            if(!empty($parte['parte_pdf'])){
+                unlink("uploads/partes/".$parte['parte_pdf']);
+            }
+
+            redirect('admin/operar_incidencia/' . $id_pds . '/' . $id_inc, 'refresh');
+        }
     }
 
     public function update_incidencia_materiales()

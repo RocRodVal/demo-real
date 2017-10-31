@@ -94,42 +94,53 @@
 
                                     <span class="fecha_status"><?=$historico_fecha_comunicada?></span>
                                 </div>
-                            <?php }else{ ?>
+                            <?php }else {
+                                if (($incidencia['status'] === 'Resuelta')  ||($incidencia['status_pds'] === 'Finalizada')) { ?>
+                                    <div class="col-lg-5 labelBtn white">
+                                        <a href="<?= site_url('admin/update_incidencia/' . $id_pds_url . '/' . $id_inc_url . '/3/5/ver') ?>"
+                                           classBtn="status" class="btn btn-success"
+                                           <?php if ($historico_fecha_comunicada===""){
+                                               echo 'disabled';
+                                           } ?>
+                                        >Ver notificacion</a><span class="fecha_status"><?= $historico_fecha_comunicada ?></span>
+                                    </div>
+                                    <?php
+                                } else { ?>
 
-                            <div class="col-lg-5 labelBtn white">
-                            <a href="<?= site_url('admin/update_incidencia/' . $id_pds_url . '/' . $id_inc_url . '/3/5/notificacion') ?>"
-                               classBtn="status" class="btn btn-success"
-                                <?php
+                                    <div class="col-lg-5 labelBtn white">
+                                        <a href="<?= site_url('admin/update_incidencia/' . $id_pds_url . '/' . $id_inc_url . '/3/5/notificacion') ?>"
+                                           classBtn="status" class="btn btn-success"
+                                            <?php
 
-                                if (($incidencia['status_pds'] === 'Finalizada') ||
-                                    ($incidencia['status'] === 'Instalador asignado') ||
+                                            if (($incidencia['status_pds'] === 'Finalizada') ||
+                                                ($incidencia['status'] === 'Instalador asignado') ||
 
-                                    ($incidencia['status'] === 'Material asignado' ||
+                                                ($incidencia['status'] === 'Material asignado' ||
 
-                                        $incidencia['status'] === 'Comunicada') && (isset($incidencia['intervencion']) && !empty($incidencia['intervencion'])))
-                                {
-                                    echo '';
-                                }
-                                else
-                                {
-                                    echo 'disabled';
-                                }
-                                ?>
-                                >
-                                <?php if ($incidencia['status'] === 'Comunicada' || $incidencia['status_pds'] === 'Finalizada')
-                                {
-                                    echo 'Volver a imprimir';
-                                }
-                                else
-                                {
-                                    echo 'Imprimir y notificar';
-                                }
-                                ?>
-                            	</a>
-                                <span class="fecha_status"><?=$historico_fecha_comunicada?></span>
-                            </div>
+                                                    $incidencia['status'] === 'Comunicada') && (isset($incidencia['intervencion']) && !empty($incidencia['intervencion']))
+                                            ) {
+                                                echo '';
+                                            } else {
+                                                echo 'disabled';
+                                            }
+                                            ?>
+                                            >
+                                            <?php if ($incidencia['status'] === 'Comunicada' || $incidencia['status_pds'] === 'Finalizada') {
+                                                echo 'Volver a imprimir';
+                                            } else {
+                                                echo 'Imprimir y notificar';
+                                            }
+                                            ?>
+                                        </a>
 
-                                <?php } ?>
+                                        <span class="fecha_status"><?= $historico_fecha_comunicada ?></span>
+                                    </div>
+
+                                <?php }
+
+                            }?>
+
+
                         <?php if (!empty($material_dispositivos)) { ?>
                             <div class="col-lg-7 labelText grey">Sustitución de terminales <br/></div>
                             <?php
@@ -200,7 +211,7 @@
                       ?>
 
                         <div class="col-lg-7 labelText white">Resolver incidencia<br /><br /></div>
-		                <form action="<?= site_url('admin/update_incidencia/' . $id_pds_url . '/' . $id_inc_url . '/4/6') ?>" method="post">
+		                <form action="<?= site_url('admin/update_incidencia/' . $id_pds_url . '/' . $id_inc_url . '/4/6') ?>" id="formResolver" method="post">
                             <div class="col-lg-5 labelBtn white">
                                 <?php
                                 if (!empty($fecha_resuelta)) {
@@ -212,10 +223,12 @@
                                     <?php if (($incidencia['status'] != 'Comunicada')
                                         && ($incidencia['status'] != 'Sustituido')  && ($incidencia['status'] != 'SustituidoRMA')) { echo 'disabled'; }; ?> />
                                 <br/>
-                                <input type="submit" value="Resolver" name="submit" class="btn btn-success" classBtn="status" class="btn btn-success"
+                                <input type="button" value="Resolver" name="submit" class="btn btn-success" classBtn="status"
+                                       class="btn btn-success" data-toggle="modal" data-target="#modal_alert"
                                     <?php if (($incidencia['status'] != 'Comunicada') && ($incidencia['status'] != 'Sustituido')  && ($incidencia['status'] != 'SustituidoRMA')){
                                         echo 'disabled'; } ?> />
                                 <span class="fecha_status"><?=$historico_fecha_resuelta?></span>
+                                <input type="submit" id="btnResolverHidden" style="display: none;" >
                             </div>
 		                </form>
                         <div class="col-lg-7 labelText grey">Emisión de recogida de material</div>
@@ -252,7 +265,57 @@
                     </div>
                 </div>
             </div>
-            <?php $this->load->view('backend/chat.php'); ?>
+            <!--Agregar el parte del tecnico una vez resuelta la incidencia-->
+            <div class="row" id="parte" <?php if ($incidencia['status']!=='Resuelta') {
+                echo ' style="display: none;"';
+            }
+            ?>>
+                <div class="col-lg-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            Parte de cierre del técnico
+                        </div>
+                        <div class="panel-body">
+                            <?php if($incidencia['parte_pdf']=="") { ?>
+                                <!--<input id="parte_cierre" class="file" type="file" multiple=false name="parte_cierre">-->
+                                <form
+                                    action="<?= site_url('admin/insert_parteTecnico_incidencia/' . $id_pds_url . '/' . $id_inc_url) ?>"
+                                    method="post"
+                                    class="content_auto form_login" enctype="multipart/form-data">
+                                    <table border="0" width="100%">
+                                        <tbody>
+                                        <tr>
+                                            <th><label for="tipo_averia">Parte de cierre del técnico: </label></th>
+                                            <td>
+                                                <input id="parte_cierre" class="file" type="file" multiple=false
+                                                       name="userfile" accept=".pdf,.jpg,.jpeg" >
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td align="left" colspan="4">
+                                                <input type="submit" value="Subir" name="submit"
+                                                       class="btn btn-success">
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+
+                                </form>
+                                <?php
+                            }else {?>
+                                [<a href="<?= site_url('uploads/partes/' .pathinfo($incidencia['parte_pdf'],PATHINFO_FILENAME)) ?>" target="_blank">ver parte</a>]
+                                <a href="<?=site_url("admin/borrar_parteTecnico/".$id_pds_url."/".$id_inc_url) ?>" classbtn="status" class="btn btn-danger" >Eliminar parte</a>
+                            <?php
+                            } ?>
+                        </div>
+                    </div>
+                </div>
+
+
+
+            </div>
+        <?php $this->load->view('backend/chat.php'); ?>
         </div>
         <div class="col-lg-6 col-md-6">
             <div class="panel panel-default">
@@ -598,3 +661,5 @@
         </div>
     </div>
 </div>
+
+<?php $this->load->view('common/modal_alert');?>

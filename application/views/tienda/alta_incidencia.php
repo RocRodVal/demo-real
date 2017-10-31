@@ -67,4 +67,4 @@
             </div>     	            
         </div>
         <!-- /#page-wrapper -->
-		<?php $this->load->view('tienda/modal_alert');?>
+		<?php $this->load->view('common/modal_alert');?>

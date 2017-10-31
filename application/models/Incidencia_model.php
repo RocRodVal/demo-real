@@ -913,6 +913,28 @@ class Incidencia_model extends CI_Model {
             return $query->row_array();
     }
 
+    public function set_parteTecnico($id,$parte)
+    {
+        $this->db->set('parte_pdf',$parte)
+            ->where('id_incidencia',$id)
+            ->update('incidencias');
+    }
+
+    public function delete_parteTecnico($id)
+    {
+        $query=$this->db->select('parte_pdf')
+            ->where('id_incidencia',$id)
+            ->get('incidencias');
+
+        $parte= $query->row_array();
+
+        $this->db->set('parte_pdf',"")
+            ->where('id_incidencia',$id)
+            ->update('incidencias');
+
+        return $parte;
+    }
+
 }
 
 ?>
