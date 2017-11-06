@@ -288,7 +288,7 @@
                                             <th><label for="tipo_averia">Parte de cierre del técnico: </label></th>
                                             <td>
                                                 <input id="parte_cierre" class="file" type="file" multiple=false
-                                                       name="userfile" accept=".pdf,.jpg,.jpeg" >
+                                                       name="userfile" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" >
 
                                             </td>
                                         </tr>
