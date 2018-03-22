@@ -1,7 +1,6 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 
 
-
 class Admin extends MY_Controller
 {
 
@@ -214,7 +213,7 @@ class Admin extends MY_Controller
         }
     }
 
-    public function exportar_incidencias($tipo="abiertas",$formato=NULL,$porrazon=NULL)
+    public function exportar_incidencias($tipo="abiertas",$formato=NULL,$porrazon=NULL,$conMaterial=NULL)
     {
         if ($this->auth->is_auth()) {
             $xcrud = xcrud_get_instance();
@@ -253,7 +252,7 @@ class Admin extends MY_Controller
 
 
 
-            $this->incidencia_model->exportar_incidencias($array_orden, $array_sesion, $tipo, $ext,$porrazon);
+            $this->incidencia_model->exportar_incidencias($array_orden, $array_sesion, $tipo, $ext,$porrazon,$conMaterial);
 
 
 
@@ -776,7 +775,14 @@ class Admin extends MY_Controller
             $material_editable = $this->material_editable($incidencia['status']);
             $data['material_editable'] = $material_editable;
 
-            $material_dispositivos = $this->tienda_model->get_material_dispositivos($incidencia['id_incidencia']);
+            $type_incidencia=$this->tienda_model->get_type_incidencia($id_inc);
+            //print_r($type_incidencia);
+            $almacen=true;
+            if($type_incidencia['title']=="Falta Material") {
+                $almacen = false;
+                //echo "incidencia por galta de material";//ESTHER
+            }
+            $material_dispositivos = $this->tienda_model->get_material_dispositivos($incidencia['id_incidencia'],$almacen);
             $data['material_dispositivos'] = $material_dispositivos;
 
             $material_alarmas = $this->tienda_model->get_material_alarmas($incidencia['id_incidencia']);
@@ -1503,7 +1509,8 @@ class Admin extends MY_Controller
                     $sfid=$this->tienda_model->get_pds($id_pds);
                     // La incidencia exsite, seguimos con el proceso de reseteo...
                     // Reseteamos estado de la incidencia
-                    $sql_status = 'UPDATE incidencias SET fecha_cierre = NULL, status="Nueva", status_pds = "Alta realizada" WHERE id_incidencia="'.$id_inc.'"';
+                    $sql_status = 'UPDATE incidencias SET fecha_cierre = NULL, status="Nueva", status_pds = "Alta realizada",
+                                  id_type_incidencia=NULL WHERE id_incidencia="'.$id_inc.'"';
                     $query = $this->db->query($sql_status);
 
                     // Sacar el ID de intervención asignada a la incidencia...
@@ -1532,9 +1539,12 @@ class Admin extends MY_Controller
 
                     // Borramos el histórico de estados
                     $this->db->query('DELETE FROM historico WHERE id_incidencia = "'.$id_inc.'"');
-
+                    $almacen=true;
+                    $type_incidencia=$this->tienda_model->get_type_incidencia($id_inc);
+                    if($type_incidencia['title']=="Falta Material")
+                        $almacen=false;
                     // Borramos el material asignado
-                    $this->incidencia_model->desasignar_material($id_inc);
+                    $this->incidencia_model->desasignar_material($id_inc,"todo",$almacen);
 
                     //////////////////////////////////////////////////////////////////////////////////
                     //                                                                              //
@@ -1580,23 +1590,10 @@ class Admin extends MY_Controller
         $xcrud = xcrud_get_instance();
         $this->load->model('tienda_model');
 
-        $imei=$this->input->post('imei_1');
-        if (empty($imei)) {
-            $resultado=$this->tienda_model->search_dispositivo_id($this->input->post('dipositivo_almacen_1'));
-        }
-        if(!empty($resultado)){
-            foreach($resultado as $r) {
-                $imei = $r->IMEI;
-            }
-        }
-        if (empty($imei) && ($this->input->post('units_dipositivo_almacen_1')<>'')){
-            $error="El IMEI no puede estar vacio";
-            //$data['error']=$error;
-
-            redirect('admin/update_incidencia_materiales/'.$id_pds.'/'.$id_inc.'/2/3/'.$error);
-        }else {
-            $this->tienda_model->update_dispositivos($this->input->post('dipositivo_almacen_1'), $imei, $this->input->post('mac_1'),
-                $this->input->post('serial_1'), $this->input->post('barcode_1'));
+        //$incidencia = $this->tienda_model->get_incidencia($id_inc);
+        $type_incidencia=$this->tienda_model->get_type_incidencia($id_inc);
+        /*Si la incidencia esta parada por "Falta de Material"*/
+        if($type_incidencia['title']=="Falta Material"){
 
             if ($this->input->post('units_dipositivo_almacen_1') <> '') {
                 $dipositivo_almacen_1 = array(
@@ -1605,32 +1602,66 @@ class Admin extends MY_Controller
                     'id_pds' => $id_pds,
                     'id_alarm' => NULL,
                     'id_devices_almacen' => $this->input->post('dipositivo_almacen_1'),
-                    'cantidad' => 1
+                    'cantidad' => $this->input->post('units_dipositivo_almacen_1')
                 );
-                $this->tienda_model->reservar_dispositivos($this->input->post('dipositivo_almacen_1'), 2,$id_inc);
-                $this->tienda_model->incidencia_update_material($dipositivo_almacen_1);
+
+                //$this->tienda_model->reservar_dispositivos($this->input->post('dipositivo_almacen_1'), 2, $id_inc);
+                $this->tienda_model->incidencia_update_material($dipositivo_almacen_1,false);
             }
-            /*Si el dispositivo seleccionado ya tiene un IMEI y no metemos otro nos quedamos con el que ya tenia*/
-         /*   $imei=$this->input->post('imei_1');
+        }else {
+            $imei = $this->input->post('imei_1');
             if (empty($imei)) {
-                $resultado=$this->tienda_model->search_dispositivo_id($this->input->post('dipositivo_almacen_1'));
+                $resultado = $this->tienda_model->search_dispositivo_id($this->input->post('dipositivo_almacen_1'));
             }
-            if(!empty($resultado)){
-                foreach($resultado as $r) {
+            if (!empty($resultado)) {
+                foreach ($resultado as $r) {
                     $imei = $r->IMEI;
                 }
             }
-            if (empty($imei)){
-                $error="El IMEI no puede estar vacio";
+            if (empty($imei) && ($this->input->post('units_dipositivo_almacen_1') <> '')) {
+                $error = "El IMEI no puede estar vacio";
                 //$data['error']=$error;
 
-                redirect('admin/update_incidencia_materiales/'.$id_pds.'/'.$id_inc.'/2/3/'.$error);
-            }else {
+                redirect('admin/update_incidencia_materiales/' . $id_pds . '/' . $id_inc . '/2/3/' . $error);
+            } else {
                 $this->tienda_model->update_dispositivos($this->input->post('dipositivo_almacen_1'), $imei, $this->input->post('mac_1'),
                     $this->input->post('serial_1'), $this->input->post('barcode_1'));
-            }*/
 
+                if ($this->input->post('units_dipositivo_almacen_1') <> '') {
+                    $dipositivo_almacen_1 = array(
+                        'fecha' => date('Y-m-d H:i:s'),
+                        'id_incidencia' => $id_inc,
+                        'id_pds' => $id_pds,
+                        'id_alarm' => NULL,
+                        'id_devices_almacen' => $this->input->post('dipositivo_almacen_1'),
+                        'cantidad' => 1
+                    );
+                    $this->tienda_model->reservar_dispositivos($this->input->post('dipositivo_almacen_1'), 2, $id_inc);
+                    $this->tienda_model->incidencia_update_material($dipositivo_almacen_1,true);
+                }
+                /*Si el dispositivo seleccionado ya tiene un IMEI y no metemos otro nos quedamos con el que ya tenia*/
+                /*   $imei=$this->input->post('imei_1');
+                   if (empty($imei)) {
+                       $resultado=$this->tienda_model->search_dispositivo_id($this->input->post('dipositivo_almacen_1'));
+                   }
+                   if(!empty($resultado)){
+                       foreach($resultado as $r) {
+                           $imei = $r->IMEI;
+                       }
+                   }
+                   if (empty($imei)){
+                       $error="El IMEI no puede estar vacio";
+                       //$data['error']=$error;
+
+                       redirect('admin/update_incidencia_materiales/'.$id_pds.'/'.$id_inc.'/2/3/'.$error);
+                   }else {
+                       $this->tienda_model->update_dispositivos($this->input->post('dipositivo_almacen_1'), $imei, $this->input->post('mac_1'),
+                           $this->input->post('serial_1'), $this->input->post('barcode_1'));
+                   }*/
+
+            }
         }
+
 
 
         if ($this->input->post('units_alarma_almacen_1') <> '' && $this->input->post('units_alarma_almacen_1') <> '0')
@@ -1644,8 +1675,13 @@ class Admin extends MY_Controller
                 'cantidad' => $this->input->post('units_alarma_almacen_1')
             );
 
-            $this->tienda_model->incidencia_update_material($alarma_almacen_1);
-            $this->tienda_model->borrar_alarmas($this->input->post('alarma_almacen_1'),$this->input->post('units_alarma_almacen_1'));
+
+            if($type_incidencia['title']!=="Falta Material") {
+                $this->tienda_model->borrar_alarmas($this->input->post('alarma_almacen_1'), $this->input->post('units_alarma_almacen_1'));
+                $this->tienda_model->incidencia_update_material($alarma_almacen_1,true);
+            }else {
+                $this->tienda_model->incidencia_update_material($alarma_almacen_1, false);
+            }
         }
 
         if ($this->input->post('units_alarma_almacen_2') <> '' && $this->input->post('units_alarma_almacen_2') <> '0')
@@ -1659,8 +1695,13 @@ class Admin extends MY_Controller
                 'cantidad' => $this->input->post('units_alarma_almacen_2'),
             );
 
-            $this->tienda_model->incidencia_update_material($alarma_almacen_2);
-            $this->tienda_model->borrar_alarmas($this->input->post('alarma_almacen_2'),$this->input->post('units_alarma_almacen_2'));
+
+            if($type_incidencia['title']!=="Falta Material") {
+                $this->tienda_model->incidencia_update_material($alarma_almacen_2, true);
+                $this->tienda_model->borrar_alarmas($this->input->post('alarma_almacen_2'), $this->input->post('units_alarma_almacen_2'));
+            }else {
+                $this->tienda_model->incidencia_update_material($alarma_almacen_2,false);}
+
         }
 
         if ($this->input->post('units_alarma_almacen_3') <> '' && $this->input->post('units_alarma_almacen_3') <> '0')
@@ -1674,8 +1715,13 @@ class Admin extends MY_Controller
                 'cantidad' => $this->input->post('units_alarma_almacen_3'),
             );
 
-            $this->tienda_model->incidencia_update_material($alarma_almacen_3);
-            $this->tienda_model->borrar_alarmas($this->input->post('alarma_almacen_3'),$this->input->post('units_alarma_almacen_3'));
+
+            if($type_incidencia['title']!=="Falta Material") {
+                $this->tienda_model->borrar_alarmas($this->input->post('alarma_almacen_3'), $this->input->post('units_alarma_almacen_3'));
+                $this->tienda_model->incidencia_update_material($alarma_almacen_3,true);
+            }else {
+                $this->tienda_model->incidencia_update_material($alarma_almacen_3,false);
+            }
         }
 
         if ($this->input->post('units_alarma_almacen_4') <> '' && $this->input->post('units_alarma_almacen_4') <> '0')
@@ -1689,8 +1735,12 @@ class Admin extends MY_Controller
                 'cantidad' => $this->input->post('units_alarma_almacen_4'),
             );
 
-            $this->tienda_model->incidencia_update_material($alarma_almacen_4);
-            $this->tienda_model->borrar_alarmas($this->input->post('alarma_almacen_4'),$this->input->post('units_alarma_almacen_4'));
+            if($type_incidencia['title']!=="Falta Material") {
+                $this->tienda_model->borrar_alarmas($this->input->post('alarma_almacen_4'), $this->input->post('units_alarma_almacen_4'));
+                $this->tienda_model->incidencia_update_material($alarma_almacen_4,true);
+            }else {
+                $this->tienda_model->incidencia_update_material($alarma_almacen_4,false);
+            }
         }
 
         if ($this->input->post('units_alarma_almacen_5') <> '' && $this->input->post('units_alarma_almacen_5') <> '0')
@@ -1704,8 +1754,14 @@ class Admin extends MY_Controller
                 'cantidad' => $this->input->post('units_alarma_almacen_5'),
             );
 
-            $this->tienda_model->incidencia_update_material($alarma_almacen_5);
-            $this->tienda_model->borrar_alarmas($this->input->post('alarma_almacen_5'),$this->input->post('units_alarma_almacen_5'));
+
+            if($type_incidencia['title']!=="Falta Material") {
+                $this->tienda_model->incidencia_update_material($alarma_almacen_5,true);
+                $this->tienda_model->borrar_alarmas($this->input->post('alarma_almacen_5'), $this->input->post('units_alarma_almacen_5'));
+            }else{
+                $this->tienda_model->incidencia_update_material($alarma_almacen_5,false);
+            }
+
         }
 
         if ($this->input->post('units_alarma_almacen_6') <> '' && $this->input->post('units_alarma_almacen_6') <> '0')
@@ -1718,9 +1774,12 @@ class Admin extends MY_Controller
                 'id_devices_almacen' => NULL,
                 'cantidad' => $this->input->post('units_alarma_almacen_6'),
             );
-
-            $this->tienda_model->incidencia_update_material($alarma_almacen_6);
-            $this->tienda_model->borrar_alarmas($this->input->post('alarma_almacen_6'),$this->input->post('units_alarma_almacen_6'));
+            if($type_incidencia['title']!=="Falta Material") {
+                $this->tienda_model->incidencia_update_material($alarma_almacen_6, true);
+                $this->tienda_model->borrar_alarmas($this->input->post('alarma_almacen_6'), $this->input->post('units_alarma_almacen_6'));
+            }else {
+                $this->tienda_model->incidencia_update_material($alarma_almacen_6, false);
+            }
         }
 
         if ($this->input->post('units_alarma_almacen_7') <> '' && $this->input->post('units_alarma_almacen_7') <> '0')
@@ -1733,9 +1792,12 @@ class Admin extends MY_Controller
                 'id_devices_almacen' => NULL,
                 'cantidad' => $this->input->post('units_alarma_almacen_7'),
             );
-
-            $this->tienda_model->incidencia_update_material($alarma_almacen_7);
-            $this->tienda_model->borrar_alarmas($this->input->post('alarma_almacen_7'),$this->input->post('units_alarma_almacen_7'));
+            if($type_incidencia['title']!=="Falta Material") {
+                $this->tienda_model->incidencia_update_material($alarma_almacen_7, true);
+                $this->tienda_model->borrar_alarmas($this->input->post('alarma_almacen_7'), $this->input->post('units_alarma_almacen_7'));
+            }else {
+                $this->tienda_model->incidencia_update_material($alarma_almacen_7, false);
+            }
         }
 
         if ($this->input->post('units_alarma_almacen_8') <> '' && $this->input->post('units_alarma_almacen_8') <> '0')
@@ -1748,9 +1810,12 @@ class Admin extends MY_Controller
                 'id_devices_almacen' => NULL,
                 'cantidad' => $this->input->post('units_alarma_almacen_8'),
             );
-
-            $this->tienda_model->incidencia_update_material($alarma_almacen_8);
-            $this->tienda_model->borrar_alarmas($this->input->post('alarma_almacen_8'),$this->input->post('units_alarma_almacen_8'));
+            if($type_incidencia['title']!=="Falta Material") {
+                $this->tienda_model->incidencia_update_material($alarma_almacen_8, true);
+                $this->tienda_model->borrar_alarmas($this->input->post('alarma_almacen_8'), $this->input->post('units_alarma_almacen_8'));
+            }else {
+                $this->tienda_model->incidencia_update_material($alarma_almacen_8, false);
+            }
         }
 
         if ($this->input->post('units_alarma_almacen_9') <> '' && $this->input->post('units_alarma_almacen_9') <> '0')
@@ -1763,9 +1828,12 @@ class Admin extends MY_Controller
                 'id_devices_almacen' => NULL,
                 'cantidad' => $this->input->post('units_alarma_almacen_9'),
             );
-
-            $this->tienda_model->incidencia_update_material($alarma_almacen_9);
-            $this->tienda_model->borrar_alarmas($this->input->post('alarma_almacen_9'),$this->input->post('units_alarma_almacen_9'));
+            if($type_incidencia['title']!=="Falta Material") {
+                $this->tienda_model->incidencia_update_material($alarma_almacen_9, true);
+                $this->tienda_model->borrar_alarmas($this->input->post('alarma_almacen_9'), $this->input->post('units_alarma_almacen_9'));
+            }else {
+                $this->tienda_model->incidencia_update_material($alarma_almacen_9, false);
+            }
         }
 
         if ($this->input->post('units_alarma_almacen_10') <> '' && $this->input->post('units_alarma_almacen_10') <> '0')
@@ -1778,9 +1846,12 @@ class Admin extends MY_Controller
                 'id_devices_almacen' => NULL,
                 'cantidad' => $this->input->post('units_alarma_almacen_10'),
             );
-
-            $this->tienda_model->incidencia_update_material($alarma_almacen_10);
-            $this->tienda_model->borrar_alarmas($this->input->post('alarma_almacen_10'),$this->input->post('units_alarma_almacen_10'));
+            if($type_incidencia['title']!=="Falta Material") {
+                $this->tienda_model->incidencia_update_material($alarma_almacen_10, true);
+                $this->tienda_model->borrar_alarmas($this->input->post('alarma_almacen_10'), $this->input->post('units_alarma_almacen_10'));
+            }else{
+                $this->tienda_model->incidencia_update_material($alarma_almacen_10, false);
+            }
         }
 
         $this->tienda_model->incidencia_update($id_inc, $status_pds, $status);
@@ -1935,7 +2006,14 @@ class Admin extends MY_Controller
             }
 
             $data['duenos_alarm'] = $duenos_alarm;
-            $data['devices_almacen'] = $this->tienda_model->get_devices_almacen_reserva();
+            $type_incidencia=$this->tienda_model->get_type_incidencia($id_inc);
+            if($type_incidencia['title']=="Falta Material"){
+
+                $data['devices_almacen'] = $this->tienda_model->get_devices();
+
+            }else {
+                $data['devices_almacen'] = $this->tienda_model->get_devices_almacen_reserva();
+            }
             $data['error']=$error;
             $data['status_pds']=$status_pds;
 
@@ -1965,7 +2043,13 @@ class Admin extends MY_Controller
             $xcrud = xcrud_get_instance();
             $this->load->model(array('intervencion_model', 'tienda_model', 'sfid_model','incidencia_model'));
             $sfid = $this->tienda_model->get_pds($id_pds);
-            $this->incidencia_model->desasignar_material($id_inc,$tipo_dispositivo,$id_pds,$id_material_incidencia);
+
+            $type_incidencia = $this->tienda_model->get_type_incidencia($id_inc);
+            $almacen=true;
+            if($type_incidencia['title']=="Falta Material"){
+                $almacen=false;
+            }
+            $this->incidencia_model->desasignar_material($id_inc,$tipo_dispositivo,$almacen,$id_pds,$id_material_incidencia);
 
 
 
@@ -2581,6 +2665,7 @@ class Admin extends MY_Controller
 
     }
 
+    /*Se agrega el campo status  =Alta / Baja*/
     public function razones_parada()
     {
         $xcrud = xcrud_get_instance();
@@ -2592,7 +2677,7 @@ class Admin extends MY_Controller
         $xcrud->order_by('id_type_incidencia');
 
         // Ocultar el botón de borrar para evitar borrados accidentales mientras no existan constraints en BD:
-        $xcrud->unset_remove();
+        //$xcrud->unset_remove();
 
         $data['title'] = 'Razones de parada';
         $data['content'] = $xcrud->render();

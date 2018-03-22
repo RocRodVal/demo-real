@@ -197,7 +197,14 @@ class Tienda_model extends CI_Model {
             $contar = $this->db->query($sql)->row();
 //echo $sql; exit;
             if ($contar->contador > 0) {
-                $units = (($units > $contar->contador) ? $contar->contador : $units);
+                //$units = (($units > $contar->contador) ? $contar->contador : $units);
+                if(empty($units)) {
+                    $units = $contar->contador;
+                }
+                else {
+                    $units = (($units > $contar->contador) ? $contar->contador : $units);
+                }
+
                 $sql = "SELECT devices_almacen.id_devices_almacen,devices_almacen.id_device FROM devices_almacen " . $join . " 
                 WHERE id_device=$id_device " . $condicion . " LIMIT " . $units;
 
@@ -1619,9 +1626,10 @@ class Tienda_model extends CI_Model {
 		->where('device.status','Alta')
 		->order_by('device')
 		->get('device');
-	
+        //echo $this->db->last_query(); exit;
 		return $query->result();
 	}
+
 
 	/*
 	 * Cantidad de terminales que están dados de alta
@@ -1648,16 +1656,26 @@ class Tienda_model extends CI_Model {
         return $query->row()->cantidad;
     }
 	
-	public function get_material_dispositivos($id) {
-	
-		$query = $this->db->select('material_incidencias.id_material_incidencias AS id_material_incidencias,
+	public function get_material_dispositivos($id,$almacen=true) {
+
+	    if(!$almacen) {
+            $query = $this->db->select('material_incidencias.id_material_incidencias AS id_material_incidencias,
+		        device.id_device AS id_devices_almacen, device.device AS device, "" AS imei, material_incidencias.cantidad AS cantidad')
+                ->join('device', 'device.id_device = material_incidencias.id_devices_almacen')
+                ->where('material_incidencias.id_incidencia', $id)
+                ->where('material_incidencias.id_devices_almacen <>', '')
+                ->order_by('device.device')
+                ->get('material_incidencias');
+        }else{
+            $query = $this->db->select('material_incidencias.id_material_incidencias AS id_material_incidencias,
 		        devices_almacen.id_devices_almacen AS id_devices_almacen, device.device AS device, devices_almacen.imei AS imei, material_incidencias.cantidad AS cantidad')
-		->join('devices_almacen','devices_almacen.id_devices_almacen = material_incidencias.id_devices_almacen')
-		->join('device','devices_almacen.id_device = device.id_device')
-		->where('material_incidencias.id_incidencia',$id)
-		->where('material_incidencias.id_devices_almacen <>','')
-		->order_by('device.device')
-		->get('material_incidencias');
+                ->join('devices_almacen', 'devices_almacen.id_devices_almacen = material_incidencias.id_devices_almacen')
+                ->join('device', 'devices_almacen.id_device = device.id_device')
+                ->where('material_incidencias.id_incidencia', $id)
+                ->where('material_incidencias.id_devices_almacen <>', '')
+                ->order_by('device.device')
+                ->get('material_incidencias');
+        }
 	//echo $this->db->last_query(); exit;
 		return $query->result();
 	}
@@ -1682,10 +1700,21 @@ class Tienda_model extends CI_Model {
     public function get_tipos_incidencia()
     {
         $query = $this->db->select("id_type_incidencia,title")
-                ->order_by('title ASC')
-                ->get('type_incidencia');
+            //->where('status','Alta')
+            ->order_by('title ASC')
+            ->get('type_incidencia');
 
         return $query->result();
+    }
+
+    public function get_type_incidencia($id_inc)
+    {
+        $query = $this->db->select("type_incidencia.id_type_incidencia,type_incidencia.title as title")
+            ->join('incidencias','incidencias.id_type_incidencia = type_incidencia.id_type_incidencia')
+            ->where('incidencias.id_incidencia',$id_inc)
+            ->get('type_incidencia');
+
+        return $query->row_array();
     }
 
     public function get_soluciones_incidencia()
@@ -1730,6 +1759,19 @@ class Tienda_model extends CI_Model {
 		return $query->result();
 	}
 
+	/*Funcion que nos devuelve todos los dispositivos de almacen aunque no hay stock*/
+    public function get_devices_almacen_all() {
+
+        $query = $this->db->select('devices_almacen.*, device.*')
+            ->join('device','devices_almacen.id_device = device.id_device')
+            ->or_where('devices_almacen.status','En stock')
+            ->or_where('devices_almacen.status','En stock')
+            ->order_by('device.device')
+            ->order_by('devices_almacen.imei desc')
+            ->get('devices_almacen');
+
+        return $query->result();
+    }
 
     /**
      * Método que devuelve una lista con los Dueños, con estado Alta
@@ -1761,7 +1803,7 @@ class Tienda_model extends CI_Model {
             }
 		$query = $this->db->get('alarm');
 
-	
+        //echo $this->db->last_query(); exit;
 		return $query->result();
 	}
 
@@ -2550,12 +2592,12 @@ class Tienda_model extends CI_Model {
 		$id=$this->db->insert_id();
 	}	
 	
-	public function incidencia_update_material($data)
+	public function incidencia_update_material($data,$almacen)
 	{
 		$this->db->insert('material_incidencias',$data);
 		$id=$this->db->insert_id();
-
-        $this->alta_historico_io($data,$id);
+        if($almacen)
+            $this->alta_historico_io($data,$id);
 
 	}
 

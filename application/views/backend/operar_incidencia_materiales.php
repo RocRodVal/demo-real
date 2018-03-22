@@ -113,11 +113,26 @@
 		                            <tr>
 		                                <td>
                                             <select id="dipositivo_almacen_1" name="dipositivo_almacen_1" width="375" style="width:375px">
+
                                             <?php
-                                            foreach ($devices_almacen as $device_almacen) {
-                                            ?>
-                                                <option value="<?php echo $device_almacen->id_devices_almacen ?>"><?php echo $device_almacen->device ?> [<?php echo $device_almacen->IMEI ?>] (<?php echo $device_almacen->owner ?>)</option>
-                                            <?php
+                                            if($incidencia['id_type_incidencia']==26){
+                                                foreach ($devices_almacen as $device_almacen) {
+                                                    ?>
+                                                    <option
+                                                        value="<?php echo $device_almacen->id_device ?>"><?php echo $device_almacen->device ?>
+                                                    </option>
+                                                    <?php
+                                                }
+                                            }else {
+                                                foreach ($devices_almacen as $device_almacen) {
+                                                    ?>
+                                                    <option
+                                                        value="<?php echo $device_almacen->id_devices_almacen ?>"><?php echo $device_almacen->device ?>
+                                                        [<?php echo $device_almacen->IMEI ?>]
+                                                        (<?php echo $device_almacen->owner ?>)
+                                                    </option>
+                                                    <?php
+                                                }
                                             }
                                             ?>
                                             </select>
@@ -194,6 +209,10 @@
                                         <tr>
                                             <td>
                                                 <?php  // var_dump($alarms_almacen["Sony"]); ?>
+                                                <?php
+                                                if($incidencia['id_type_incidencia']!=26){
+
+                                                ?>
                                                 <select id="alarma_almacen_<?=$i?>" name="alarma_almacen_<?=$i?>" width="500" style="width:500px" onchange="comprobar_stock(this,'units_alarma_almacen_<?=$i?>');">
                                                     <?php // Optgroups de dueños
 
@@ -209,6 +228,24 @@
                                                         <?php }
                                                     ?>
                                                 </select>
+                                                <?php }
+                                                else { ?>
+                                                <select id="alarma_almacen_<?=$i?>" name="alarma_almacen_<?=$i?>" width="500" style="width:500px");">
+                                                    <?php // Optgroups de dueños
+
+
+                                                    foreach($duenos_alarm as $dueno_alarm){?>
+                                                        <optgroup label="<?=$dueno_alarm->client?>">
+                                                            <?php // Listado de alarmas del dueño actual...
+                                                            foreach($alarms_almacen[$dueno_alarm->client] as $alarm_almacen){ ?>
+                                                                <option value="<?php echo $alarm_almacen->id_alarm ?>" data-stock="<?=$alarm_almacen->units?>"><?php echo $alarm_almacen->client_alarm.' '.$alarm_almacen->brand.' '.$alarm_almacen->code.' '.$alarm_almacen->alarm?></option>
+                                                            <?php }
+                                                            ?>
+                                                        </optgroup>
+                                                    <?php }
+                                                    ?>
+                                                </select>
+                                                <?php } ?>
                                             </td>
                                             <td><input type="text" id="units_alarma_almacen_<?=$i?>" name="units_alarma_almacen_<?=$i?>" onkeypress='return event.charCode >= 48 && event.charCode <= 57' /></td>
                                         </tr>

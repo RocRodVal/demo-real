@@ -339,7 +339,7 @@ class Incidencia_model extends CI_Model {
      *  Devuelve conjunto de registros de incidencias abiertas, para generar CSV
      *  filtradas si procede
      * */
-    public function exportar_incidencias($array_orden = NULL,$filtros=NULL,$tipo="abiertas",$formato="csv",$porrazon=NULL) {
+    public function exportar_incidencias($array_orden = NULL,$filtros=NULL,$tipo="abiertas",$formato="csv",$porrazon=NULL,$conMaterial=NULL) {
         $this->load->dbutil();
         $this->load->helper('file');
         $this->load->helper('csv');
@@ -348,26 +348,44 @@ class Incidencia_model extends CI_Model {
         $acceso = $this->uri->segment(1);
 
         // Array de títulos de campo para la exportación XLS/CSV
-        $arr_titulos = array('Id incidencia','SFID','Fecha','Elemento','Territorio','Fabricante','Mueble','Terminal','Supervisor','Provincia','Tipo avería',
+        $arr_titulos = array('Id incidencia','SFID','Tipología','Dirección','Provincia','Fecha','Elemento','Territorio','Fabricante','Mueble','Terminal','Supervisor','Tipo avería',
             'Texto 1','Texto 2','Texto 3','Parte PDF','Denuncia','Foto 1','Foto 2','Foto 3','Contacto','Teléfono','Email',
             'Id. Operador','Intervención','Estado','Última modificación','Estado Sat','Razon parada');
         $excluir = array('fecha_cierre','fabr','id_type_incidencia');
 
+        if($conMaterial=="conMaterial") {
+            $material=true;
+        }else {
+            $material=false;
+        }
+        if($material) {
 
-        // ARRAY CON LOS DISTINTOS ACCESOS QUE NO COMPARTEN CAMPOS CON ELL INFORME DE ACCESO GLOBAL ADMIN
+            array_push($arr_titulos, 'Material Dispositivos');
+            array_push($arr_titulos, 'Material Alarmas');
+        }
+
+
+        // ARRAY CON LOS DISTINTOS ACCESOS QUE NO COMPARTEN CAMPOS CON EL INFORME DE ACCESO GLOBAL ADMIN
         $array_accesos_excluidos = array("master","territorio","tienda");
         if(in_array($acceso,$array_accesos_excluidos)){ // En master, excluimos de la exportación los campos...
             // Array de títulos de campo para la exportación XLS/CSV
-            $arr_titulos = array('Id incidencia','SFID','Fecha','Elemento','Territorio','Fabricante','Mueble','Terminal','Supervisor','Provincia','Tipo avería',
+            $arr_titulos = array('Id incidencia','SFID','Tipologia','Dirección','Provincia','Fecha','Elemento','Territorio','Fabricante','Mueble','Terminal','Supervisor','Tipo avería',
                 'Texto 1','Texto 2','Texto 3','Parte PDF','Denuncia','Foto 1','Foto 2','Foto 3','Contacto','Teléfono','Email',
                 'Id. Operador','Intervención','Estado','Razon parada');
 
             array_push($excluir,'last_updated');
             array_push($excluir,'status_pds');
+            if($conMaterial) {
+                array_push($excluir, 'Material Dispositivos');
+                array_push($excluir, 'Material Alarmas');
+            }
         }
 
         $sql = 'SELECT incidencias.id_incidencia,
                             pds.reference as `SFID`,
+                            concat(pds_tipo.titulo,"-",pds_subtipo.titulo,"-",pds_segmento.titulo,"-",pds_tipologia.titulo) as tipologia,
+                            concat(address," - ",zip," ",city) as direccion,
+                            province.province as provincia,
                             incidencias.fecha,
                             incidencias.fecha_cierre,
                             (CASE incidencias.alarm_display WHEN 1 THEN ( CONCAT("Mueble: ",
@@ -384,7 +402,6 @@ class Incidencia_model extends CI_Model {
         $sql .= 'display.display as mueble,
                 device.device as terminal,
                 pds_supervisor.titulo as supervisor,
-                province.province as provincia,
                 ';
         $sql .= 'incidencias.tipo_averia,';
 
@@ -433,6 +450,11 @@ class Incidencia_model extends CI_Model {
                 LEFT JOIN pds_supervisor ON pds.id_supervisor= pds_supervisor.id
                 LEFT JOIN type_incidencia ON incidencias.id_type_incidencia = type_incidencia.id_type_incidencia
                 LEFT JOIN province ON pds.province= province.id_province
+                LEFT JOIN pds_segmento ON pds.id_segmento=pds_segmento.id
+                LEFT JOIN pds_tipo ON pds.id_tipo=pds_tipo.id
+                LEFT JOIN pds_subtipo ON pds.id_subtipo = pds_subtipo.id
+                LEFT JOIN pds_tipologia ON pds.id_tipologia= pds_tipologia.id
+                
                 LEFT JOIN intervenciones_incidencias ON intervenciones_incidencias.id_incidencia = incidencias.id_incidencia
                 WHERE 1 = 1
                 ';
@@ -507,7 +529,7 @@ class Incidencia_model extends CI_Model {
           $sql .= " ORDER BY ".($s_orden);
       }*/
         $query = $this->db->query($sql);
-
+       // echo "<br><br>".$this->db->last_query();exit;
         /* */
         $resultado=$query->result();
 
@@ -519,10 +541,21 @@ class Incidencia_model extends CI_Model {
             $linea = 0;
             $anterior = 0;
             foreach ($resultado as $key => $campos) {
+
                 if (is_null($campos->razon_Parada)) {
+                    $materialD = $this->tienda_model->get_material_dispositivos($campos->id_incidencia,true);
+                    $materialA = $this->tienda_model->get_material_alarmas($campos->id_incidencia);
                     $titulo = "Incidencias sin razon de parada";
                 }
-                else $titulo = $campos->razon_Parada;
+                else {
+                    $titulo = $campos->razon_Parada;
+                    $materialA = $this->tienda_model->get_material_alarmas($campos->id_incidencia);
+                    if($titulo =="Falta Material"){
+                        $materialD = $this->tienda_model->get_material_dispositivos($campos->id_incidencia, false);
+                    }else {
+                        $materialD = $this->tienda_model->get_material_dispositivos($campos->id_incidencia, true);
+                    }
+                }
 
                 if ($key==0) { $anterior = $campos->id_type_incidencia; }
 
@@ -541,7 +574,8 @@ class Incidencia_model extends CI_Model {
 
                         } else {
 
-                            if (!in_array($campo, $excluir)) $aux[$linea][$campo] = $valor;
+                            if (!in_array($campo, $excluir))
+                                $aux[$linea][$campo] = $valor;
                             $lineas =1;
                         }
                         $contador++;
@@ -563,6 +597,17 @@ class Incidencia_model extends CI_Model {
                         }
 
                         $contador++;
+                    }
+                }
+                if($material) {
+                    $aux[$linea + ($lineas-1)]['Material Dispositivos']='';
+                    foreach ($materialD as $k => $m) {
+                        $aux[$linea +($lineas-1)]['Material Dispositivos'] .= $m->device . "-" . $m->cantidad . ",";
+                    }
+                    $aux[$linea + ($lineas-1)]['Material Alarmas']='';
+                    foreach ($materialA as $k => $m) {
+
+                        $aux[$linea + ($lineas-1)]['Material Alarmas'] .= $m->code." ".$m->alarm . "-" .$m->cantidad . ",";
                     }
                 }
                 $linea = $linea + $lineas;
@@ -777,29 +822,33 @@ class Incidencia_model extends CI_Model {
 
 
 
-    function desasignar_material($id_inc,$tipo_dispositivo = "todo",$id_pds = NULL,$id_material_incidencia = NULL)
+    function desasignar_material($id_inc,$tipo_dispositivo = "todo",$almacen=true,$id_pds = NULL,$id_material_incidencia = NULL)
     {
         // TERMINAL
         if($tipo_dispositivo==="device" || $tipo_dispositivo==="todo")
         {
-            $material_dispositivos = $this->tienda_model->get_material_dispositivos($id_inc);
+
+            $material_dispositivos = $this->tienda_model->get_material_dispositivos($id_inc,$almacen);
             if (!empty($material_dispositivos)) {
+
                 foreach ($material_dispositivos as $material) {
 
                     if($material->id_material_incidencias == $id_material_incidencia || $tipo_dispositivo==="todo")
                     {
-                        // Poner el dispositivo de nuevo "En stock"
-                        $id_devices_almacen = $material->id_devices_almacen;
-                        $sql = "UPDATE devices_almacen SET status = 'En stock', id_incidencia=NULL WHERE id_devices_almacen = '" . $id_devices_almacen . "'";
-                        $this->db->query($sql);
-
+                        if($almacen) {
+                            // Poner el dispositivo de nuevo "En stock"
+                            $id_devices_almacen = $material->id_devices_almacen;
+                            $sql = "UPDATE devices_almacen SET status = 'En stock', id_incidencia=NULL WHERE id_devices_almacen = '" . $id_devices_almacen . "'";
+                            $this->db->query($sql);
+                        }
                         // Desvincular el dispositivo del material de la incidencia.
                         $id_material_incidencias = $material->id_material_incidencias;
                         $sql = "DELETE FROM material_incidencias WHERE id_material_incidencias = '$id_material_incidencias' ";
                         $this->db->query($sql);
 
-                        // Borrar del histórico de dispositivo (diario almacen)
-                        $this->tienda_model->baja_historico_io($id_material_incidencias);
+                        if($almacen)
+                            // Borrar del histórico de dispositivo (diario almacen)
+                            $this->tienda_model->baja_historico_io($id_material_incidencias);
                     }
                 }
             }
@@ -812,17 +861,20 @@ class Incidencia_model extends CI_Model {
                 foreach ($material_alarmas as $alarma) {
                     if($alarma->id_material_incidencias == $id_material_incidencia || $tipo_dispositivo==="todo")
                     {
-                        // Incrementar la cantidad (stock a devolver), en la tabla ALARM, campo units.
-                        $sql = "UPDATE alarm SET units = units +" . $alarma->cantidad . " WHERE id_alarm='" . $alarma->id_alarm . "'";
-                        $this->db->query($sql);
+                        if($almacen) {
+                            // Incrementar la cantidad (stock a devolver), en la tabla ALARM, campo units.
+                            $sql = "UPDATE alarm SET units = units +" . $alarma->cantidad . " WHERE id_alarm='" . $alarma->id_alarm . "'";
+                            $this->db->query($sql);
+                        }
 
                         // Borrar la alarma vinculada a material_incidencias
                         $id_material_incidencias = $alarma->id_material_incidencias;
                         $sql = "DELETE FROM material_incidencias WHERE id_material_incidencias = '$id_material_incidencias' ";
                         $this->db->query($sql);
 
-                        // Borrar del histórico de alarmas (diario almacen)
-                        $this->tienda_model->baja_historico_io($id_material_incidencias);
+                        if($almacen)
+                            // Borrar del histórico de alarmas (diario almacen)
+                            $this->tienda_model->baja_historico_io($id_material_incidencias);
                     }
                 }
             }
