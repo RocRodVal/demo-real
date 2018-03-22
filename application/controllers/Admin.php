@@ -2014,6 +2014,7 @@ class Admin extends MY_Controller
             }else {
                 $data['devices_almacen'] = $this->tienda_model->get_devices_almacen_reserva();
             }
+            $data['type_incidencia']=$type_incidencia['title'];
             $data['error']=$error;
             $data['status_pds']=$status_pds;
 

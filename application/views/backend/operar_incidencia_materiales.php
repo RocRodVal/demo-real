@@ -115,7 +115,7 @@
                                             <select id="dipositivo_almacen_1" name="dipositivo_almacen_1" width="375" style="width:375px">
 
                                             <?php
-                                            if($incidencia['id_type_incidencia']==26){
+                                            if($type_incidencia=="Falta Material"){
                                                 foreach ($devices_almacen as $device_almacen) {
                                                     ?>
                                                     <option
@@ -210,7 +210,7 @@
                                             <td>
                                                 <?php  // var_dump($alarms_almacen["Sony"]); ?>
                                                 <?php
-                                                if($incidencia['id_type_incidencia']!=26){
+                                                if($type_incidencia!="Falta Material"){
 
                                                 ?>
                                                 <select id="alarma_almacen_<?=$i?>" name="alarma_almacen_<?=$i?>" width="500" style="width:500px" onchange="comprobar_stock(this,'units_alarma_almacen_<?=$i?>');">
