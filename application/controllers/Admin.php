@@ -712,6 +712,9 @@ class Admin extends MY_Controller
 
             $incidencia = $this->tienda_model->get_incidencia($id_inc);
 
+            $type_incidencia = $this->tienda_model->get_type_incidencia($id_inc);
+            $data['type_incidencia']=$type_incidencia;
+
             $estados = $this->incidencia_model->get_estados($id_inc);
             $data['estados']="";
             $primero=true;
@@ -775,7 +778,7 @@ class Admin extends MY_Controller
             $material_editable = $this->material_editable($incidencia['status']);
             $data['material_editable'] = $material_editable;
 
-            $type_incidencia=$this->tienda_model->get_type_incidencia($id_inc);
+            //$type_incidencia=$this->tienda_model->get_type_incidencia($id_inc);
             //print_r($type_incidencia);
             $almacen=true;
             if($type_incidencia['title']=="Falta Material") {
@@ -1234,9 +1237,8 @@ class Admin extends MY_Controller
             $data['id_pds_ulr'] = $id_pds;
             $data['id_inc_ulr'] = $id_inc;
 
-
-            if (($status != 10) || ($status != 11 )) {
-                if ($status_ext!=="ver") {
+            if (($status != 10) || ($status != 11)) {
+                if ($status_ext !== "ver") {
                     $this->tienda_model->incidencia_update($id_inc, $status_pds, $status);
                 }
             }
@@ -1401,9 +1403,9 @@ class Admin extends MY_Controller
              */
             if ($status == 5) {
                 $envio_mail = $this->uri->segment(7);
-                if ($envio_mail==='ver'){
+                if ($envio_mail === 'ver') {
                     redirect('admin/imprimir_incidencia/' . $id_pds . '/' . $id_inc . '/' . $envio_mail, 'refresh');
-                }else {
+                } else {
                     $intervencion = $this->intervencion_model->get_intervencion_incidencia($id_inc);
 
                     $dispositivos = $this->tienda_model->get_devices_incidencia($id_inc);
