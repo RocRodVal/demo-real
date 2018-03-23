@@ -82,7 +82,7 @@
                             <span class="fecha_status"><?=$historico_material_asignado?></span>
 
 
-                        </div>                       
+                        </div>
                         <div class="col-lg-7 labelText white">Imprimir documentación</div>
                             <?php if($incidencia['status']==='Comunicada'){ ?>
                                 <div class="col-lg-5 labelBtn white">
@@ -106,10 +106,12 @@
                                     </div>
                                     <?php
                                 } else { ?>
-
+                                    <form action="<?= site_url('admin/update_incidencia/' . $id_pds_url . '/' . $id_inc_url . '/3/5/notificacion') ?>"
+                                          method="post">
                                     <div class="col-lg-5 labelBtn white">
-                                        <a href="<?= site_url('admin/update_incidencia/' . $id_pds_url . '/' . $id_inc_url . '/3/5/notificacion') ?>"
-                                           classBtn="status" class="btn btn-success"
+                                    <?php
+                                    if($type_incidencia['title']=="Falta Material"){?>
+                                        <input type="button" classBtn="status" class="btn btn-success" data-toggle="modal" data-target="#modal_alertMaterial"
                                             <?php
 
                                             if (($incidencia['status_pds'] === 'Finalizada') ||
@@ -123,18 +125,41 @@
                                             } else {
                                                 echo 'disabled';
                                             }
-                                            ?>
-                                            >
-                                            <?php if ($incidencia['status'] === 'Comunicada' || $incidencia['status_pds'] === 'Finalizada') {
-                                                echo 'Volver a imprimir';
+
+                                            if ($incidencia['status'] === 'Comunicada' || $incidencia['status_pds'] === 'Finalizada') {
+                                                echo " value='Volver a imprimir'>";
                                             } else {
-                                                echo 'Imprimir y notificar';
+                                                echo " value='Imprimir y notificar'>";
                                             }
                                             ?>
-                                        </a>
+                                        </input>
+                                    <?php } ?>
+                                    <?php
+                                     if($type_incidencia['title']!=="Falta Material" || empty($type_incidencia)){
+                                         ?>
+                                            <input type="submit" classBtn="status" class="btn btn-success"
+                                         <?php
 
+                                         if (($incidencia['status_pds'] === 'Finalizada') ||
+                                         ($incidencia['status'] === 'Instalador asignado') ||
+                                         ($incidencia['status'] === 'Material asignado' ||
+                                         $incidencia['status'] === 'Comunicada') && (isset($incidencia['intervencion']) && !empty($incidencia['intervencion']))
+                                         ) {
+                                            echo '';
+
+                                         } else {
+                                            echo 'disabled';
+                                         }
+
+                                         if ($incidencia['status'] === 'Comunicada' || $incidencia['status_pds'] === 'Finalizada') {
+                                            echo " value='Volver a imprimir'/>";
+                                         } else {
+                                             echo " value='Imprimir y notificar'/>";
+                                         }
+                                     } ?>
                                         <span class="fecha_status"><?= $historico_fecha_comunicada ?></span>
                                     </div>
+                                    </form>
 
                                 <?php }
 
@@ -652,6 +677,25 @@
                                 <strong>Comentario:</strong> <span id="comentario_incidencia"></span><br/>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Alerta Falta material-->
+<div class="modal fade" id="modal_alertMaterial" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true" role="document">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <span><h3 id="msg_modal">La incidencia está parada por Falta de material</h3></span>
                     </div>
                 </div>
             </div>

@@ -460,13 +460,14 @@ function update_incidencia_afecta()
             // Mostramos un mensaje con la respuesta de PHP
             success: function (data) {
                 var mensaje = $(id_form).find("span.result");
-                var delay = 2000;
+                var delay = 1000;
 
                 $(mensaje).html(data);
                 $(mensaje).fadeIn(500);
 
                 setTimeout(function(){
                     $(mensaje).fadeOut(300);
+                    location.reload();
                 },delay);
             },
             error: function (error) {

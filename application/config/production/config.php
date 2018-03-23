@@ -29,7 +29,7 @@ $config['base_url'] = 'http://demoreal.focusonemotions.com/orange/';
 /**
  * REALDOOH API, TEMPORARY ACTIVATION
  */
-$config['allowed_origins'] = array ('localhost', 'demoreal.focusonemotions.com', 'realdooh.focusonemotions.com');
+$config['allowed_origins'] = array ('localhost', 'demoreal.focusonemotions.com', 'realdooh.focusonemotions.com', 'clementine.focusonemotions.com');
 
 $config['realdooh.api.url'] = 'http://78.46.139.41:8080/rdorangeapi/api/v1';
 
