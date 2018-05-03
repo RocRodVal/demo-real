@@ -31,6 +31,26 @@
 
 
     }
+
+// Cargar por ajax los devices de almacen de un tipo determinado
+function cargar_subselectAlmacen(id_select_origen,id_select_destino,site_url,callback) {
+
+    var id_principal = $("#"+id_select_origen).val();
+
+    if (id_principal != "") {
+        $.post(site_url + id_principal,
+            {},
+            function (data) {
+                //alert(id_select_destino);
+                $("#"+id_select_destino).html(data).promise().done(function(){
+                    //if(enfocar) $(this).addClass("focused");
+                    callback(); // Cargamos el callback, cuando ya ha cargado el html
+                });
+            });
+    }
+
+
+}
     
     
     

@@ -3179,6 +3179,7 @@ class Xcrud
                 {
                     call_user_func_array($this->before_insert['callable'], array($pd, $this));
                     $postdata = $pd->to_array();
+                    //print_r($postdata);exit;
                     if ($this->exception)
                     {
                         return $this->call_exception($postdata);
@@ -3204,7 +3205,9 @@ class Xcrud
             }
             else
             {
-                $this->primary_val = $this->_insert($postdata);
+                //print_r($postdata); exit;
+                if(empty($postdata["devices_almacen.error"]))
+                    $this->primary_val = $this->_insert($postdata);
             }
             if ($this->after_insert)
             {

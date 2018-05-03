@@ -241,8 +241,32 @@ class Informe extends CI_Controller {
         echo $resp;
     }
 
+    /*
+     * Funcion que nos devuelve los devices que tenemos en el almacen de un tipo determinado
+     */
+    public function devices_almacen($id_device)
+    {
+        /* Incluir los modelos */
+        $xcrud = xcrud_get_instance();
+        //$this->load->model('sfid_model');
+        $this->load->model('tienda_model');
+        //$this->load->model('categoria_model');
 
 
+        $devices_almacen = $this->tienda_model->get_devicesAlmacen_Tipo($id_device);
+//print_r($devices_almacen); exit;
+        $resp = '<option value="" selected="selected">Escoge uno...</option>';
+        foreach($devices_almacen as $device){
+            $titulo = $device->device;
+            if(!is_null($device->IMEI))
+                $titulo.='['.$device->IMEI.']';
+            else
+                $titulo.='[]';
+            //$s_selected = (!is_null($id_subtipo) && $id_subtipo == $device["id"]) ? ' selected="selected" ' : '';
+            $resp .= '<option value="'.$device->id_devices_almacen.'">'.$titulo.'</option>';
+        }
+        echo $resp;
+    }
 
 
 
