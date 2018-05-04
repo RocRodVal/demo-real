@@ -272,7 +272,9 @@ class Tienda_model extends CI_Model {
 
         if (!$error) {
 
-            $sql = "SELECT COUNT(id_device) as contador FROM devices_almacen " . $join . " WHERE id_device=$id_device AND status='".$statusI."'".$condicionImei;
+            //$sql = "SELECT COUNT(id_device) as contador FROM devices_almacen " . $join . " WHERE id_device=$id_device AND status='".$statusI."'".$condicionImei;
+            $sql = "SELECT count(distinct devices_almacen.id_devices_almacen) as contador FROM devices_almacen " . $join .
+                " WHERE id_device=$id_device AND status='".$statusI."'".$condicionImei;
             $contar = $this->db->query($sql)->row();
 
             if ($contar->contador > 0) {

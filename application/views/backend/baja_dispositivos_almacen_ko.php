@@ -7,7 +7,11 @@
     </div>
     <div class="row">
         <p>&nbsp;</p>
-        <p class="message warning"><i class="glyphicon glyphicon-warning-sign"></i> <?=$mensaje1?> <?=$num?> <?=$mensaje3?> <strong><?=$modelo?></strong>, <?=$mensaje2?>.</p>
+        <p class="message warning"><i class="glyphicon glyphicon-warning-sign"></i> <?=$mensaje1?> <?=$num?> <?=$mensaje3?> <strong><?=$modelo?></strong>
+            <?php if (!empty($mensaje2))
+                echo ", ".$mensaje2;
+             echo "</p>";
+            ?>
     </div>
 </div>
 <!-- /#page-wrapper -->
