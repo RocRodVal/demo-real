@@ -3601,6 +3601,10 @@ class Admin extends MY_Controller
                             $this->session->set_flashdata("mensaje1", "No se han podido dar de baja ");
                             break;
                         }
+                        case 6: {
+                            $this->session->set_flashdata("mensaje1", "No se han podido poner en RMA ");
+                            break;
+                        }
                     };
                     $this->session->set_flashdata("mensaje3", " terminales del modelo ");
                     /*  if ($this->input->post('destino_dipositivo_almacen')==4) {
@@ -3610,9 +3614,13 @@ class Admin extends MY_Controller
 
                       }*/
 
-                    $this->session->set_flashdata("mensaje2", " ya que el stock en el almacen es 0 o estan relacionadoa con alguna incidencia que no está cerrada");
+
+                    $this->session->set_flashdata("mensaje2", " ya que el stock en el almacen es 0 o estan relacionados con alguna incidencia que no está cerrada");
+                    $this->session->set_flashdata("modelo", " ");
+                    $this->session->set_flashdata("num", " ");
+
                 }else {
-                    $this->session->set_flashdata("mensaje1", " Faltan IMEIs ");
+                    $this->session->set_flashdata("mensaje1", " Faltan IMEIs o la cantidad indicada no se corresponde con el número de IMEIs");
                     $this->session->set_flashdata("mensaje2", " ");
                     $this->session->set_flashdata("num", " ");
                     $this->session->set_flashdata("mensaje3", " ");
@@ -3682,7 +3690,8 @@ class Admin extends MY_Controller
             $mensaje2 = $this->session->flashdata("mensaje2");
             $mensaje3 = $this->session->flashdata("mensaje3");
 
-            if(!empty($id_device) && !empty($num)) {
+           // if(!empty($id_device) && !empty($num)) {
+
                 $device = $this->tienda_model->get_device($id_device);
 
                 $data["title"] = "Baja masiva dispositivos";
@@ -3701,9 +3710,9 @@ class Admin extends MY_Controller
                 $this->load->view('backend/navbar', $data);
                 $this->load->view('backend/baja_dispositivos_almacen_ko', $data);
                 $this->load->view('backend/footer');
-            }else{
+           /* }else{
                 redirect('admin/baja_dispositivos_almacen', 'refresh');
-            }
+            }*/
         }
         else
         {
