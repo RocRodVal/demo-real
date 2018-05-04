@@ -3572,6 +3572,10 @@ class Admin extends MY_Controller
                         $this->session->set_flashdata("mensaje1", " dado de baja ");
                         break;
                     }
+                    case 6:{
+                        $this->session->set_flashdata("mensaje1", " puesto en RMA ");
+                        break;
+                    }
                 };
                 $this->session->set_flashdata("mensaje3", " terminales del modelo ");
 
