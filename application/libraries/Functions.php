@@ -84,7 +84,6 @@
     function inventario_dispositivos_codigoMueble($postdata,  $xcrud){
 
         $CI =& get_instance();
-     ;
         /*consultamos el estado anterior del dispositivo*/
         $result = $CI->db->select('id_displays_pds')
             ->where("id_display",$postdata->get('id_display'))
@@ -130,8 +129,7 @@
             ->where("id_pds",$postdata->get('id_pds'))
             ->get('displays_pds')->row_array();
 
-        /*Si el mueble seleccionado esta en la tienda, entonces modificamos
-        Sino se queda como estaba*/
+        /*Si el mueble seleccionado esta en la tienda, entonces modificamos Sino se queda como estaba*/
         if (!empty($result)) {
             $elemento = array(
                 'id_displays_pds' => $result['id_displays_pds'],
@@ -149,6 +147,63 @@
             el mueble seleccionado no pertenece a la tienda</text>";
 
         }
+
+    }
+
+    /*
+  * funcion para que cuando se vaya a insertar el dispositivo en el almacen compruebe si ya existe un terminal con el mismo IMEI
+     * en estado distinto a baja o RMA
+  * $xcrud guarda el ID del elemento a actualziar
+  $postdata tenemos los datos para actualizar el dispositivo
+  */
+    function comprobarIMEI($postdata,  $xcrud){
+
+        $CI =& get_instance();
+        /*guardamos los datos anteriores del dispositivo en relacion al mueble y posicion del mismo*/
+        $result = $CI->db->select('*')
+            ->where("IMEI",$postdata->get('IMEI'))
+            ->where("status!=",'Baja')
+            //->where("status!=",'RMA')
+            ->get('devices_almacen')->result();
+//        $datosAntes=$result;
+        //echo $CI->db->last_query();
+
+        if(!empty($result) && count($result)>0){
+
+            /*$CI->db->where('id_devices_almacen',$xcrud)
+                ->delete('devices_almacen');*/
+            $postdata->set("error","ERROR - ya existe un dispositivo con ese IMEI");
+            echo "<text style='color: red; font-size: 18px '>ERROR - ya existe un dispositivo con ese IMEI</text>";
+            //throw new Exception("Value must be 1 or below");
+            return false;
+        }
+        //return true;
+
+        /*Comprobamos si el mueble seleccionado existe en la tienda*/
+      /*  $result = $CI->db->select('id_displays_pds')
+            ->where("id_display",$postdata->get('id_display'))
+            ->where("id_pds",$postdata->get('id_pds'))
+            ->get('displays_pds')->row_array();*/
+
+        /*Si el mueble seleccionado esta en la tienda, entonces modificamos
+        Sino se queda como estaba*/
+    /*    if (!empty($result)) {
+            $elemento = array(
+                'id_displays_pds' => $result['id_displays_pds'],
+                'id_display'      => $postdata->get('id_display')
+            );
+            $CI->db->where('id_devices_pds',$xcrud)
+                ->update('devices_pds', $elemento);
+
+        }
+        else {
+            $postdata->set('id_displays_pds',$datosAntes['id_displays_pds']);
+            $postdata->set('id_display',$datosAntes['id_display']);
+
+            echo "<text style='color: red; font-size: 18px '>ERROR - no se ha podido actualizar el dispositivo porque 
+            el mueble seleccionado no pertenece a la tienda</text>";
+
+        }*/
     }
 
     /*

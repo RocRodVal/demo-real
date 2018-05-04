@@ -91,19 +91,18 @@ class Tienda_model extends CI_Model {
             }
 
         }
-
         $error=false;
         switch ($status_inc){
             case 1: {
                 $statusI="En stock";
                 if (!empty($array_imeis)) {
                     $encontrados=$this->search_dispositivos($statusI,$array_imeis);
-                    //echo $encontrados; exit;
+
                     if ($encontrados==count($array_imeis)) {
-                        $agregarIMEI=false;
+                        $agregarIMEI=true;
                     } else{
                         if($encontrados==0){
-                            $agregarIMEI=true;
+                            $agregarIMEI=false;
                         }else {
                             $error=true;
                         }
@@ -112,20 +111,36 @@ class Tienda_model extends CI_Model {
                     $agregarIMEI=false;
                 }
                 if($agregarIMEI && (!empty($array_imeis))) {
-                    $condicionImei = " AND IMEI IS NULL";
+                    $condicionImei = " AND IMEI IN (" . implode(",", $array_imeis) . ")";;
                 }else {
-                    if (empty($array_imeis)) {
+                   // if (empty($array_imeis)) {
                         $condicionImei = " AND IMEI IS NULL";
-                    }else {
+                    /*}else {
                         $condicionImei = " AND IMEI IN (" . implode(",", $array_imeis) . ")";
-                    }
+                    }*/
                 }
                 $condicion=" AND status='En stock' ".$condicionImei;
 
                 break;
             }
             case 2:{
+                $statusI="Reservado";
                 if (!empty($array_imeis)) {
+                    $encontrados=$this->search_dispositivos($statusI,$array_imeis);
+
+                    if ($encontrados==count($array_imeis)) {
+                        $agregarIMEI=true;
+                    } else{
+                        if($encontrados==0){
+                            $agregarIMEI=false;
+                        }else {
+                            $error=true;
+                        }
+                    }
+                }else {
+                    $agregarIMEI=false;
+                }
+                if ($agregarIMEI && !empty($array_imeis)) {
                     $condicionImei=" AND IMEI IN (".implode(",",$array_imeis).")";
                 }else {
                     $condicionImei=" AND IMEI IS NULL";
@@ -133,11 +148,27 @@ class Tienda_model extends CI_Model {
 
                 $condicion=" AND material_incidencias.id_devices_almacen IS NULL AND status='Reservado' ".$condicionImei;
                 $join="LEFT JOIN material_incidencias ON material_incidencias.id_devices_almacen=devices_almacen.id_devices_almacen ";
-                $statusI="Reservado";
+
                 break;
             }
             case 3:{
+                $statusI="Televenta";
                 if (!empty($array_imeis)) {
+                    $encontrados=$this->search_dispositivos($statusI,$array_imeis);
+
+                    if ($encontrados==count($array_imeis)) {
+                        $agregarIMEI=true;
+                    } else{
+                        if($encontrados==0){
+                            $agregarIMEI=false;
+                        }else {
+                            $error=true;
+                        }
+                    }
+                }else {
+                    $agregarIMEI=false;
+                }
+                if ($agregarIMEI && !empty($array_imeis)) {
                     $condicionImei=" AND IMEI IN (".implode(",",$array_imeis).")";
                 }else {
                     $condicionImei=" AND IMEI IS NULL";
@@ -145,18 +176,61 @@ class Tienda_model extends CI_Model {
 
                 $condicion=" AND status='Televenta' ".$condicionImei;
                 //$join="LEFT JOIN material_incidencias ON material_incidencias.id_devices_almacen=devices_almacen.id_devices_almacen ";
-                $statusI="Televenta";
+
                 break;
             }
             case 4: {
+                $statusI="Transito";
                 if (!empty($array_imeis)) {
+                    $encontrados=$this->search_dispositivos($statusI,$array_imeis);
+
+                    if ($encontrados==count($array_imeis)) {
+                        $agregarIMEI=true;
+                    } else{
+                        if($encontrados==0){
+                            $agregarIMEI=false;
+                        }else {
+                            $error=true;
+                        }
+                    }
+                }else {
+                    $agregarIMEI=false;
+                }
+                if ($agregarIMEI && !empty($array_imeis)) {
                     $condicionImei=" AND IMEI IN (".implode(",",$array_imeis).")";
                 }else {
                     $condicionImei=" AND IMEI IS NULL";
                 }
                 $condicion=" AND material_incidencias.id_devices_almacen IS NULL AND status='Transito' AND devices_almacen.id_incidencia IS NULL ".$condicionImei;
                 $join="LEFT JOIN material_incidencias ON material_incidencias.id_devices_almacen=devices_almacen.id_devices_almacen ";
-                $statusI="Transito";
+
+                break;
+            }
+            case 5: {
+                $statusI="RMA";
+                if (!empty($array_imeis)) {
+                    $encontrados=$this->search_dispositivos($statusI,$array_imeis);
+
+                    if ($encontrados==count($array_imeis)) {
+                        $agregarIMEI=true;
+                    } else{
+                        if($encontrados==0){
+                            $agregarIMEI=false;
+                        }else {
+                            $error=true;
+                        }
+                    }
+                }else {
+                    $agregarIMEI=false;
+                }
+                if ($agregarIMEI && !empty($array_imeis)) {
+                    $condicionImei=" AND IMEI IN (".implode(",",$array_imeis).")";
+                }else {
+                    $condicionImei=" AND IMEI IS NULL";
+                }
+                $condicion=" AND material_incidencias.id_devices_almacen IS NULL AND status='RMA' ".$condicionImei;
+                $join="LEFT JOIN material_incidencias ON material_incidencias.id_devices_almacen=devices_almacen.id_devices_almacen ";
+
                 break;
             }
             /* case 5: {
@@ -189,15 +263,21 @@ class Tienda_model extends CI_Model {
                 $statusD="Baja";
                 break;
             }
+            case 6: {
+                $statusD="RMA";
+                break;
+            }
 
         }
 
         if (!$error) {
-            $sql = "SELECT COUNT(id_device) as contador FROM devices_almacen " . $join . " WHERE id_device=$id_device " . $condicion;
+
+            //$sql = "SELECT COUNT(id_device) as contador FROM devices_almacen " . $join . " WHERE id_device=$id_device AND status='".$statusI."'".$condicionImei;
+            $sql = "SELECT count(distinct devices_almacen.id_devices_almacen) as contador FROM devices_almacen " . $join .
+                " WHERE id_device=$id_device AND status='".$statusI."'".$condicionImei;
             $contar = $this->db->query($sql)->row();
-//echo $sql; exit;
+
             if ($contar->contador > 0) {
-                //$units = (($units > $contar->contador) ? $contar->contador : $units);
                 if(empty($units)) {
                     $units = $contar->contador;
                 }
@@ -209,50 +289,48 @@ class Tienda_model extends CI_Model {
                 WHERE id_device=$id_device " . $condicion . " LIMIT " . $units;
 
                 $dispositivos_a_borrar = $this->db->query($sql)->result();
-                //$total_baja =  $this->db->affected_rows();
+
                 $cont = 0;
-                //print_r($dispositivos_a_borrar); echo $units;
+
                 if($units==count($array_imeis) || (count($array_imeis)==0)) {
+                    if(!empty($dispositivos_a_borrar)) {
+                        // Recorremos los dispositivos a borrar.
+                        foreach ($dispositivos_a_borrar as $dispositivo_baja) {
 
-                    // Recorremos los dispositivos a borrar.
-                    foreach ($dispositivos_a_borrar as $dispositivo_baja) {
+                            $id_device = $dispositivo_baja->id_device;
+                            $id_devices_almacen = $dispositivo_baja->id_devices_almacen;
 
-                        $id_device = $dispositivo_baja->id_device;
-                        $id_devices_almacen = $dispositivo_baja->id_devices_almacen;
+                            if ($agregarIMEI) {
+                                $this->db->set('IMEI', trim($array_imeis[$cont], "'"));
+                            }
 
-                        if ($agregarIMEI) {
-                            $this->db->set('IMEI', trim($array_imeis[$cont], "'"));
-                        } /*else {
-                    if (!empty($array_imeis)) {
-                        $this->db->where('IMEI', trim($array_imeis[$cont], "'"));
+                            // actualizado el estado del dispositivo.
+                            $this->db->set('status', $statusD);
+                            $this->db->where('id_devices_almacen', $id_devices_almacen);
+                            $this->db->update('devices_almacen');
+
+                            //   echo $this->db->last_query()."<br>";
+                            // Insertar operación de baja en el histórico
+                            $data = array(
+                                'id_devices_almacen' => $id_devices_almacen,
+                                'id_device' => $id_device,
+                                'fecha' => date('Y-m-d H:i:s'),
+                                'unidades' => $cantidad, // En positivo porque luego la función lo pasará a negativo
+                                'procesado' => 1,
+                                'status' => $statusD
+                            );
+                            $this->db->insert("historico_io", $data);
+                            //echo $this->db->last_query()."<br>";
+                            $cont++;
+                        }
+
+                        return $cont;
+                    }else {
+                        return -1;
                     }
-                }*/
-                        // actualizado el estado del dispositivo.
-                        $this->db->set('status', $statusD);
-                        $this->db->where('id_devices_almacen', $id_devices_almacen);
-                        $this->db->update('devices_almacen');
-
-                        //   echo $this->db->last_query()."<br>";
-                        // Insertar operación de baja en el histórico
-                        $data = array(
-                            'id_devices_almacen' => $id_devices_almacen,
-                            'id_device' => $id_device,
-                            'fecha' => date('Y-m-d H:i:s'),
-                            'unidades' => $cantidad, // En positivo porque luego la función lo pasará a negativo
-                            'procesado' => 1,
-                            'status' => $statusD
-                        );
-                        $this->db->insert("historico_io", $data);
-                        //echo $this->db->last_query()."<br>";
-                        $cont++;
-                    }
-
-                    return $cont;
                 }else {
-
                     return -2;
                 }
-
             } else {
                 return -1;
             }
@@ -778,7 +856,7 @@ class Tienda_model extends CI_Model {
                      OR devices_almacen.serial LIKE '$imei' OR devices_almacen.barcode LIKE '$imei')")
                     ->where("devices_almacen.status",$statusI)
                     ->get('devices_almacen');
-                //echo $this->db->last_query();
+                //echo $this->db->last_query();exit;
                 $row=$query->row();
                 if (!empty($row)) {
                     $continuar=true;
@@ -787,6 +865,7 @@ class Tienda_model extends CI_Model {
                     $continuar=false;
                 }
             }
+
             return $i;
         }
         else {
@@ -1560,6 +1639,22 @@ class Tienda_model extends CI_Model {
 		return $query->result();
 	}
 
+	/*
+	 *Nos devuelve los dispositivos del almacen que hay de un determinado tipo
+	 */
+    public function get_devicesAlmacen_Tipo($id_device) {
+
+        $query = $this->db->select('devices_almacen.id_devices_almacen,devices_almacen.IMEI,device.device')
+            ->join('device','devices_almacen.id_device = device.id_device')
+            ->where('devices_almacen.status','En stock')
+            ->where('device.status','Alta')
+            ->where('device.id_device',$id_device)
+            ->order_by('device')
+            ->get('devices_almacen');
+//echo $this->db->last_query(); exit;
+        return $query->result();
+    }
+
     /* dispositivos que no han llegado al almacen tras la resolucion de la incidencia bien sea porque se asignaron y no se usaron
     o porque genero la incidencia y no se ha enviado a almacen*/
     public function get_devices_recogida($page = 1, $cfg_pagination = NULL) {
@@ -1697,13 +1792,22 @@ class Tienda_model extends CI_Model {
 	}
 
 
-    public function get_tipos_incidencia()
+    public function get_tipos_incidencia($status=null)
     {
-        $query = $this->db->select("id_type_incidencia,title")
-            //->where('status','Alta')
-            ->order_by('title ASC')
-            ->get('type_incidencia');
+        if ($status != null){
+            if ($status == 'Alta') {
+                $query = $this->db->select("id_type_incidencia,title")
+                    ->where('status', $status)
+                    ->order_by('title ASC')
+                    ->get('type_incidencia');
 
+            }
+        }else {
+            $query = $this->db->select("id_type_incidencia,title")
+                //->where('status',$status)
+                ->order_by('title ASC')
+                ->get('type_incidencia');
+        }
         return $query->result();
     }
 
@@ -1713,7 +1817,7 @@ class Tienda_model extends CI_Model {
             ->join('incidencias','incidencias.id_type_incidencia = type_incidencia.id_type_incidencia')
             ->where('incidencias.id_incidencia',$id_inc)
             ->get('type_incidencia');
-
+//echo $this->db->last_query();exit;
         return $query->row_array();
     }
 
@@ -1758,6 +1862,21 @@ class Tienda_model extends CI_Model {
 
 		return $query->result();
 	}
+
+    public function get_typedevices_almacen_reserva(){
+        $sql = "SELECT distinct device.id_device, device.device FROM devices_almacen INNER JOIN device ON 
+                devices_almacen.id_device=device.id_device WHERE devices_almacen.status='En stock'
+                ORDER BY device.device";
+
+        /*$query = $this->db->select('distinct device.id_device, device.device')
+            ->join('device','devices_almacen.id_device = device.id_device')
+            ->where('devices_almacen.status','En stock')
+            ->order_by('device.device')
+            ->get('devices_almacen');*/
+//echo $sql; exit;
+        //return $query->result();
+        return $this->db->query($sql)->result();
+    }
 
 	/*Funcion que nos devuelve todos los dispositivos de almacen aunque no hay stock*/
     public function get_devices_almacen_all() {
@@ -2089,12 +2208,16 @@ class Tienda_model extends CI_Model {
      */
 	public function get_incidencia($id) {
 		if($id != FALSE) {
-			$query = $this->db->select('incidencias.*')
+		/*	$query = $this->db->select('*,`status_pds`+0 as status_pdsNum, `status`+0 as statusNum')
 			->where('incidencias.id_incidencia',$id)
 			->get('incidencias');
 
 
-			return $query->row_array();
+			return $query->row_array();*/
+
+            $sql = "SELECT *, status_pds+0 as status_pdsNum, status+0 as statusNum FROM incidencias 
+                        WHERE id_incidencia=$id";
+            return $this->db->query($sql)->row_array();
 		}
 		else {
 			return FALSE;
@@ -2225,6 +2348,12 @@ class Tienda_model extends CI_Model {
                     $historico=$this->db->query($sql)->row();
 
                     if (!empty($historico)) {
+                        /*Comprobar si ya existe el dispositivo con ese IMEI en el almacen*/
+                        /*$sql="SELECT * FROM devices_almacen WHERE IMEI ='".$device_pds->IMEI."'";
+                        $device_almacen=$this->db->query($sql)->row();
+
+
+                        if(empty($device_almacen)) {*/
                         if ((($device_pds->status == 'RMA') && ($incidencia->tipo_averia != 'Robo')) ||
                             ($incidencia->tipo_averia == 'Robo') && ($historico->status == 'SustituidoRMA')
                         ) {
@@ -2267,6 +2396,9 @@ class Tienda_model extends CI_Model {
                             $this->db->query($sql);
                             // }
                         }
+              /*      }else {
+
+                        }*/
                     }
                 }
 
@@ -2316,7 +2448,6 @@ class Tienda_model extends CI_Model {
                 $id_material_incidencia=NULL;
 
 
-
                 //$result = null;
                 if (!empty($device_pds)) {
                     $query = $this->db->select('*')
@@ -2326,7 +2457,7 @@ class Tienda_model extends CI_Model {
 
                     $sql = "SELECT * FROM devices_almacen WHERE status='Transito' AND id_device=$device_pds->id_device AND id_incidencia=$id_incidencia";
                     $result = $this->db->query($sql)->row();
-
+//print_r($result); exit;
                     // echo "RESULT "; echo print_r($result);
 
                     //echo "RESULT 2".print_r($result); echo "<br>";
@@ -2370,7 +2501,40 @@ class Tienda_model extends CI_Model {
                                 $this->db->query($sql);
                             }
                         }
+                }else {//Si la incidencia no es de un dispositivo pero si tiene terminales asignados
+                    $query = $this->db->select('*')
+                        ->where('id_incidencia', $id_incidencia)
+                        ->get('incidencias');
+                    $incidencia = $query->row();
+
+                    $sql = "SELECT * FROM devices_almacen WHERE status='Transito' AND id_incidencia=$id_incidencia";
+                    $result = $this->db->query($sql)->row();
+
+                    if (!empty($result)) {
+                        if ($incidencia->tipo_averia != 'Robo') {
+
+
+                            $id_devices_almacen = $result->id_devices_almacen;
+                            $id_device = $result->id_device;
+                            $sql = "UPDATE devices_almacen SET status='En stock' WHERE  id_devices_almacen=$result->id_devices_almacen";
+                            //echo $sql; exit;
+                            $this->db->query($sql);
+
+
+                        } else {
+                            if ($incidencia->tipo_averia == 'Robo') {
+                                $status = 'RMA';
+                                $id_devices_almacen = $result->id_devices_almacen;
+                                $id_device = $result->id_device;
+                                $sql = "UPDATE devices_almacen SET status='RMA' WHERE  id_devices_almacen=$result->id_devices_almacen";
+                                $this->db->query($sql);
+
+                                //  $sql = "UPDATE devices_pds SET status='Baja' WHERE id_devices_pds =" . $device_pds->id_devices_pds;
+                                // $this->db->query($sql);
+                            }
+                        }
                     }
+                }
 
 //echo $status."<br>"; echo $this->db->last_query(); echo "<br>"; print_r($result); exit;
                 /*Insertar en el historico del almacen el estado del dispositivo*/

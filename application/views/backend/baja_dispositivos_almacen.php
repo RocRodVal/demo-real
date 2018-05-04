@@ -37,18 +37,20 @@
 								<td>
 									<select id="inicio_dipositivo_almacen" name="inicio_dipositivo_almacen" style="width:150px">
 										<option value="1">En stock</option>
-										<option value="2">Reservado</option>
-										<option value="3">Televenta</option>
 										<option value="4">En transito</option>
+										<option value="2">Reservado</option>
+										<option value="5">RMA</option>
+										<option value="3">Televenta</option>
 									</select>
 								</td>
 								<td>
 									<select id="destino_dipositivo_almacen" name="destino_dipositivo_almacen" style="width:150px">
-										<option value="1">En stock</option>
-										<option value="2">Reservado</option>
-										<option value="3">Televenta</option>
-										<option value="4">En transito</option>
 										<option value="5">Baja</option>
+										<option value="1">En stock</option>
+										<option value="4">En transito</option>
+										<option value="2">Reservado</option>
+										<option value="6">RMA</option>
+										<option value="3">Televenta</option>
 									</select>
 								</td>
 								<td>

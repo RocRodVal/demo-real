@@ -110,7 +110,7 @@
                                           method="post">
                                     <div class="col-lg-5 labelBtn white">
                                     <?php
-                                    if($type_incidencia['title']=="Falta Material"){?>
+                                    if(strtolower($type_incidencia['title'])==strtolower(RAZON_PARADA)){?>
                                         <input type="button" classBtn="status" class="btn btn-success" data-toggle="modal" data-target="#modal_alertMaterial"
                                             <?php
 
@@ -135,7 +135,7 @@
                                         </input>
                                     <?php } ?>
                                     <?php
-                                     if($type_incidencia['title']!=="Falta Material" || empty($type_incidencia)){
+                                     if(strtolower($type_incidencia['title'])!==strtolower(RAZON_PARADA) || empty($type_incidencia)){
                                          ?>
                                             <input type="submit" classBtn="status" class="btn btn-success"
                                          <?php
@@ -436,6 +436,7 @@
                                             <th><input type="checkbox" name="alarm_garra" id="alarm_garra"  <?=($alarm_garra == 1) ? ' checked="checked" ' : '' ?>> <label for="alarm_garra">Alarma garra</label></th>
                                         </tr>
 
+
                                         <tr>
                                             <th colspan="1"><label for="tipo_averia">Razón de parada de incidencia: </label></th>
                                             <td colspan="4"><select id="tipo_averia" name="tipo_averia">
@@ -450,8 +451,18 @@
                                                     }
 
                                                     ?>
-                                                </select></td>
+                                                </select>
+                                            </td>
+
+
                                         </tr>
+                                        <tr>
+                                            <td><label>Comentarios:</label></td>
+                                            <td style="width: 300px;" colspan="4">
+                                                <textarea class="form-control" rows="3" name="descripcion_parada" id="descripcion_parada"><?php echo $incidencia['descripcion_parada'] ?></textarea>
+                                            </td>
+                                        </tr>
+
 
                                         <tr>
                                             <td colspan="5"><h3>Solucion ejecutada</h3></td>
@@ -687,7 +698,7 @@
     </div>
 </div>
 
-<!-- Modal Alerta Falta material-->
+<!-- Modal Alerta Falta Terminal-->
 <div class="modal fade" id="modal_alertMaterial" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
      aria-hidden="true" role="document">
     <div class="modal-dialog">
@@ -695,7 +706,7 @@
             <div class="modal-body">
                 <div class="row">
                     <div class="col-lg-12">
-                        <span><h3 id="msg_modal">La incidencia está parada por Falta de material</h3></span>
+                        <span><h3 id="msg_modal">La incidencia está parada por Falta de terminal</h3></span>
                     </div>
                 </div>
             </div>

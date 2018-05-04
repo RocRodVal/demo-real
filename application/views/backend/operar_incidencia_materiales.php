@@ -91,7 +91,105 @@
                     }
                     ?>
                     </div>
+
                     <div class="row">
+                        <?php /*
+                        if (empty($devices_almacen)) {
+                            echo '<p>No hay dispositivos.</p>';
+                        } else {*/
+                            ?>
+                            <div class="table-responsive">
+                                <table class="table table-striped table-bordered table-hover" id="dataTables-example">
+                                    <thead>
+                                    <tr>
+                                        <?php
+                                        if(strtolower($type_incidencia)!==strtolower(RAZON_PARADA)){
+                                        ?>
+                                        <th>Tipo</th>
+                                        <?php } ?>
+
+                                        <th>Dispositivo</th>
+                                        <th>Unidades</th>
+                                        <th>IMEI</th>
+                                        <th>MAC</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <?php
+                                        if(strtolower($type_incidencia)!==strtolower(RAZON_PARADA)){
+                                            $url_ajax_devicesalmacen = site_url().'informe/devices_almacen/';
+                                        ?>
+                                        <td>
+                                            <select id="typedipositivo_almacen_1" name="typedipositivo_almacen_1" style="width: 250px;"
+                                                    onchange="cargar_subselectAlmacen('typedipositivo_almacen_1','dipositivo_almacen_1','<?=$url_ajax_devicesalmacen?>',function(){});">
+                                                <option value="">Escoge uno...</option>
+                                                <?php
+
+                                                    foreach ($typedevices_almacen as $typedevice_almacen) {
+
+                                                        ?>
+                                                        <option
+                                                            value="<?php echo $typedevice_almacen->id_device ?>"><?php echo $typedevice_almacen->device ?>
+                                                        </option>
+                                                        <?php
+                                                    }
+                                                ?>
+                                            </select>
+                                        </td>
+                                        <?php }
+                                        ?>
+                                        <td>
+                                            <?php
+                                            if(strtolower($type_incidencia)==strtolower(RAZON_PARADA)){ ?>
+                                            <select id="dipositivo_almacen_1" name="dipositivo_almacen_1" style="width: 350px;">
+                                                <option value="">Escoge uno...</option>
+                                                <?php
+                                                foreach ($devices_almacen as $device_almacen) {
+                                                    ?>
+                                                    <option
+                                                        value="<?php echo $device_almacen->id_device ?>"><?php echo $device_almacen->device ?>
+                                                    </option>
+
+                                            <?php
+                                            } ?>
+                                            </select>
+                                            <?php }
+                                            else {?>
+                                                <!--<input type="hidden" name="dipositivo_almacen_1" id="dipositivo_almacen_1" value="<?php ?>">-->
+                                                <select id="dipositivo_almacen_1" name="dipositivo_almacen_1" style="width: 250px;">
+                                                    <option value="">Escoge un tipo...</option>
+                                                </select>
+                                                <?php /*foreach ($devices_almacen as $device_almacen) {
+                                                    ?>
+                                                    <option
+                                                        value="<?php echo $device_almacen->id_devices_almacen ?>"><?php echo $device_almacen->device ?>
+                                                        [<?php echo $device_almacen->IMEI ?>]
+                                                        (<?php echo $device_almacen->owner ?>)
+                                                    </option>
+                                                    <?php
+                                                } */?>
+                                           <?php }
+                                            ?>
+
+                                        </td>
+                                        <td><input type="text" size="2" maxlength="1" id="units_dipositivo_almacen_1" name="units_dipositivo_almacen_1" value=""/></td>
+                                        <td><input type="text" size="20" maxlength="20" id="imei_1" name="imei_1" /></td>
+                                        <td><input type="text" size="20" id="mac_1" name="mac_1" /></td>
+                                        <!--<td><input type="text" size="20" id="serial_1" name="serial_1" /></td>
+                                        <td><input type="text" size="20" id="barcode_1" name="barcode_1" /></td>-->
+                                    </tr>
+
+
+                                    </tbody>
+                                </table>
+                            </div>
+                            <?php
+                       // }
+                        ?>
+                    </div>
+
+                  <?php /*  <div class="row">
                         <?php
 		            if (empty($devices_almacen)) {
 		                echo '<p>No hay dispositivos.</p>';
@@ -115,7 +213,7 @@
                                             <select id="dipositivo_almacen_1" name="dipositivo_almacen_1" width="375" style="width:375px">
 
                                             <?php
-                                            if($type_incidencia=="Falta Material"){
+                                            if($type_incidencia==strtolower(RAZON_PARADA)){
                                                 foreach ($devices_almacen as $device_almacen) {
                                                     ?>
                                                     <option
@@ -186,7 +284,7 @@
 		            <?php
 		            }
 		            ?>
-		       		</div>
+		       		</div> */?>
                     <div class="row">
 		            <?php
 		            if (empty($alarms_almacen)) {
@@ -210,7 +308,7 @@
                                             <td>
                                                 <?php  // var_dump($alarms_almacen["Sony"]); ?>
                                                 <?php
-                                                if($type_incidencia!="Falta Material"){
+                                                if(strtolower($type_incidencia)!=strtolower(RAZON_PARADA)){
 
                                                 ?>
                                                 <select id="alarma_almacen_<?=$i?>" name="alarma_almacen_<?=$i?>" width="500" style="width:500px" onchange="comprobar_stock(this,'units_alarma_almacen_<?=$i?>');">

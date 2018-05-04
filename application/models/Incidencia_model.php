@@ -350,7 +350,7 @@ class Incidencia_model extends CI_Model {
         // Array de títulos de campo para la exportación XLS/CSV
         $arr_titulos = array('Id incidencia','SFID','Tipología','Dirección','Provincia','Fecha','Elemento','Territorio','Fabricante','Mueble','Terminal','Supervisor','Tipo avería',
             'Texto 1','Texto 2','Texto 3','Parte PDF','Denuncia','Foto 1','Foto 2','Foto 3','Contacto','Teléfono','Email',
-            'Id. Operador','Intervención','Estado','Última modificación','Estado Sat','Razon parada');
+            'Id. Operador','Intervención','Estado','Última modificación','Estado Sat','Razon parada','Descripcion parada');
         $excluir = array('fecha_cierre','fabr','id_type_incidencia');
 
         if($conMaterial=="conMaterial") {
@@ -371,7 +371,7 @@ class Incidencia_model extends CI_Model {
             // Array de títulos de campo para la exportación XLS/CSV
             $arr_titulos = array('Id incidencia','SFID','Tipologia','Dirección','Provincia','Fecha','Elemento','Territorio','Fabricante','Mueble','Terminal','Supervisor','Tipo avería',
                 'Texto 1','Texto 2','Texto 3','Parte PDF','Denuncia','Foto 1','Foto 2','Foto 3','Contacto','Teléfono','Email',
-                'Id. Operador','Intervención','Estado','Razon parada');
+                'Id. Operador','Intervención','Estado','Razon parada','Descripcion parada');
 
             array_push($excluir,'last_updated');
             array_push($excluir,'status_pds');
@@ -430,7 +430,8 @@ class Incidencia_model extends CI_Model {
             $sql .= 'incidencias.status  AS `Estado SAT`,';
             $sql .= 'incidencias.last_updated, ';
             $sql .= 'incidencias.status_pds as `Estado PDS`,
-                     type_incidencia.title as `razon_Parada`';
+                     type_incidencia.title as `razon_Parada`,
+                     REPLACE(REPLACE(incidencias.descripcion_parada,CHAR(10),CHAR(32)),CHAR(13),CHAR(32)) as descripcion_parada';
         }else{
             $sql .= 'incidencias.status_pds as `Estado PDS`,
                     type_incidencia.title as `razon_Parada`';
@@ -550,7 +551,7 @@ class Incidencia_model extends CI_Model {
                 else {
                     $titulo = $campos->razon_Parada;
                     $materialA = $this->tienda_model->get_material_alarmas($campos->id_incidencia);
-                    if($titulo =="Falta Material"){
+                    if(strtolower($titulo) ==strtolower(RAZON_PARADA)){
                         $materialD = $this->tienda_model->get_material_dispositivos($campos->id_incidencia, false);
                     }else {
                         $materialD = $this->tienda_model->get_material_dispositivos($campos->id_incidencia, true);
@@ -906,9 +907,15 @@ class Incidencia_model extends CI_Model {
                 $update_fields = array();
                 foreach($averia as $campo=>$valor)
                 {
-                    $update_fields[]= ($campo.' = '.$valor);
+                    if($campo=="descripcion_parada" && !is_null($valor)){
+                        $update_fields[]= ($campo.' = \''.$valor.'\'');
+                    }else {
+                        $update_fields[]= ($campo.' = '.$valor);
+                    }
+
                 }
                 $fields = implode(",",$update_fields);
+
 
                 $sql = "UPDATE incidencias SET $fields WHERE id_incidencia = $id_incidencia";
                 $this->db->query($sql);
