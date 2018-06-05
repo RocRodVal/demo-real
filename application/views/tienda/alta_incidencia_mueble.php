@@ -37,12 +37,14 @@
 											<?php
 											}
 											else
-											{	
-											?>
-											<a class="list-group-item" href="<?=site_url('tienda/alta_incidencia_dispositivo/'.$device->id_displays_pds.'/'.$device->id_devices_pds)?>">
-												<?php echo $device->position.'. '.$device->device ?>
-											</a>											
-										<?php
+											{
+
+												?>
+												<a class="list-group-item"
+												   href="<?= site_url('tienda/alta_incidencia_dispositivo/' . $device->id_displays_pds . '/' . $device->id_devices_pds) ?>">
+													<?php echo $device->position . '. ' . $device->device ?>
+												</a>
+												<?php
 											}
 										}
 										?>

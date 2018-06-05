@@ -12,6 +12,8 @@ $(document).ready(function(){
         $('textarea[name="description_1"]').keypress(checkUserData);
         $('#denuncia').change(checkDenuncia);
         $('#denuncia').change(checkUserData);
+        $('#denunciaI').change(checkDenuncia);
+        $('#denunciaI').change(checkUserData);
         /*
         if(controller == "alta_incidencia_dispositivo")
             $('textarea').attr('disabled',true);
@@ -34,23 +36,20 @@ $(document).ready(function(){
 function showDenuncia(){
     if($("#"+this.id).attr('value')==1){
         $("#denuncia").show('slow');
+        $("#denunciaI").show('slow');
     }
     else{
         $("#denuncia").hide('slow');
-        //$('textarea').attr('disabled',false);
-        //$('input[type="checkbox"]').attr('disabled',false);
+        $("#denunciaI").hide('slow');
     }
 }
 
 function checkDenuncia(){
-    disable=$('.file-caption-name')[0].innerHTML=='';
+    disable=($('.file-caption-name')[0].innerHTML!='' && $('.file-caption-name')[2].innerHTML!='');
     //$('input[name="submit"]').attr('disabled',disable);
-    if(disable==false)
+    if(disable==true)
     	$('input[name="device"]').attr('checked',true);
     return disable;
-    //$('textarea').attr('disabled',disable);
-    //$('input[type="checkbox"]').attr('disabled',disable);
-
 }
 
 function checkUserData(){
@@ -73,7 +72,7 @@ function checkUserData(){
                     value = false;
                 else {
                     if ($('input[name="tipo_averia"]:checked')[0].value == 1) {
-                        value = !checkDenuncia();
+                        value = checkDenuncia();
                     }
                 }
             }

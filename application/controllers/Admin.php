@@ -778,19 +778,17 @@ class Admin extends MY_Controller
             $material_editable = $this->material_editable($incidencia['status']);
             $data['material_editable'] = $material_editable;
 
-            //$type_incidencia=$this->tienda_model->get_type_incidencia($id_inc);
-            //print_r($type_incidencia);
             $almacen=true;
             if(strtolower($type_incidencia['title'])==strtolower(RAZON_PARADA)) {
                 $almacen = false;
-                //echo "incidencia por galta de material";//ESTHER
+                //echo "incidencia por falta de material";
             }
             $material_dispositivos = $this->tienda_model->get_material_dispositivos($incidencia['id_incidencia'],$almacen);
             $data['material_dispositivos'] = $material_dispositivos;
 
             $material_alarmas = $this->tienda_model->get_material_alarmas($incidencia['id_incidencia']);
             $data['material_alarmas'] = $material_alarmas;
-//echo $incidencia['status_pds'];exit;
+
             if($incidencia['status_pds']!='Finalizada' && $incidencia['status_pds']!='Cancelada' )
                 $data['tipos_incidencia'] = $this->tienda_model->get_tipos_incidencia('Alta');
             else
@@ -1267,9 +1265,9 @@ class Admin extends MY_Controller
                 ), 'revised=1');                                                           //
                 //////////////////////////////////////////////////////////////////////////////////
 
-                if ($incidencia['fail_device'] == 1) {
+                //if ($incidencia['fail_device'] == 1) {
                     $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'], 2);
-                }
+                //}
             }
 
             /**
@@ -1285,6 +1283,10 @@ class Admin extends MY_Controller
 
             /* Cancelamos la incidencia*/
             if ($status == 9) {
+
+                if (!is_null($incidencia['id_devices_pds'])) {
+                    $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'], 3, $id_inc);
+                }
                 //////////////////////////////////////////////////////////////////////////////////
                 //                                                                              //
                 //             Comunicación  con Realdooh VU: Cambio estado CERRADA             //
@@ -1461,6 +1463,8 @@ class Admin extends MY_Controller
         }
     }
 
+
+   
     public function reset_incidencia_status()
     {
         if($this->auth->is_auth()) {
@@ -3926,7 +3930,7 @@ class Admin extends MY_Controller
         $this->load->view('backend/exp_alta_incidencia_device', $data);
         $this->load->view('backend/footer');
     }*/
-    public function alta_incidencia_robo()
+    /*public function alta_incidencia_robo()
     {
         $id_pds = $this->uri->segment(3);
 
@@ -3957,9 +3961,9 @@ class Admin extends MY_Controller
         $this->load->view('backend/navbar', $data);
         $this->load->view('backend/alta_incidencia_robo', $data);
         $this->load->view('backend/footer');
-    }
+    }*/
 
-    public function subir_denuncia()
+   /* public function subir_denuncia()
     {
         $id_pds = $this->uri->segment(3);
 
@@ -3991,7 +3995,7 @@ class Admin extends MY_Controller
         } else {
             echo "File upload failed";
         }
-    }
+    }*/
 
     public function alta_incidencia_mueble()
     {

@@ -242,10 +242,6 @@ class Master extends MY_Controller {
 			$this->load->model('sfid_model');
 			$this->load->model(array('chat_model','sfid_model'));
 
-
-
-
-
 			$sfid = $this->sfid_model->get_pds($id_pds);
 	
 			$data['id_pds']     = $sfid['id_pds'];
@@ -256,11 +252,7 @@ class Master extends MY_Controller {
 			$data['zip']        = $sfid['zip'];
 			$data['city']       = $sfid['city'];
 
-
-
-
 			$incidencia = $this->sfid_model->get_incidencia($id_incidencia,$id_pds);
-
 
 			if($incidencia == FALSE)
 			{
@@ -283,6 +275,7 @@ class Master extends MY_Controller {
 				$data['description_2']   = $incidencia['description_2'];
 				$data['description_3']   = $incidencia['description_3'];
 				$data['denuncia']        = $incidencia['denuncia'];
+                $data['foto_url']        = $incidencia['foto_url'];
 				$data['contacto']        = $incidencia['contacto'];
 				$data['phone']           = $incidencia['phone'];
 				$data['status_pds']      = $incidencia['status_pds'];

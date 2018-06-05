@@ -102,8 +102,6 @@ class Incidencia_model extends CI_Model {
 	
 		return $query->result();
 	}	
-	
-
 
 	
 	public function get_devices_display($id) {
@@ -122,8 +120,6 @@ class Incidencia_model extends CI_Model {
 	}
 	
 
-	
-	
 	public function get_pds($id) {
 		if($id != FALSE) {
 			$query = $this->db->select('pds.*,territory.territory')
@@ -167,17 +163,17 @@ class Incidencia_model extends CI_Model {
 	}
 	
 	
-	public function get_incidencias() {
+	/*public function get_incidencias() {
 			$query = $this->db->select('incidencias.*,pds.reference as reference')
 			        ->join('pds','incidencias.id_pds = pds.id_pds')
 				    ->order_by('fecha ASC')
 			        ->get('incidencias');
 	
 			return $query->result();
-	}	
+	}	*/
 	
 	
-	public function get_incidencias_pds($id) {
+	/*public function get_incidencias_pds($id) {
 		$query = $this->db->select('incidencias.*,pds.reference as reference')
 		->join('pds','incidencias.id_pds = pds.id_pds')
 	
@@ -186,7 +182,7 @@ class Incidencia_model extends CI_Model {
 		->get('incidencias');
 	
 		return $query->result();
-	}	
+	}	*/
 	
 	
 	public function get_incidencia($id) {
@@ -204,30 +200,30 @@ class Incidencia_model extends CI_Model {
 	
 
 	
-	public function get_all_displays($id) {
+	/*public function get_all_displays($id) {
 			$query = $this->db->select('*')
 				   ->where('id_pds',$id)
 				   ->get('displays_pds');
 			
 			return $query->num_rows();
-	}	
+	}	*/
 
 	
-	public function get_all_devices($id) {
+	/*public function get_all_devices($id) {
 			$query = $this->db->select('*')
 				   ->where('id_pds',$id)
 				   ->get('devices_pds');
 				
 			return $query->num_rows();
-	}
+	}*/
 
 	
-	public function insert_incidencia($data)
+	/*public function insert_incidencia($data)
 	{
 		$this->db->insert('incidencias',$data);
 		$id=$this->db->insert_id();
 		return array('add' => (isset($id)) ? $id : FALSE, 'id' => $id);
-	}
+	}*/
 
 
 
@@ -746,9 +742,7 @@ class Incidencia_model extends CI_Model {
     }
 
 
-
-
-    function resetear_incidencia($id_inc)
+  /*  function resetear_incidencia($id_inc)
     {
 
         $o_pds = $this->db->query("SELECT id_pds FROM incidencias WHERE id_incidencia = '$id_inc' ")->row_array();
@@ -819,10 +813,9 @@ class Incidencia_model extends CI_Model {
         }
 
 
-    }
+    }*/
 
-
-
+    /*Se desaigna el material de una incidena*/
     function desasignar_material($id_inc,$tipo_dispositivo = "todo",$almacen=true,$id_pds = NULL,$id_material_incidencia = NULL)
     {
         // TERMINAL
@@ -830,6 +823,7 @@ class Incidencia_model extends CI_Model {
         {
 
             $material_dispositivos = $this->tienda_model->get_material_dispositivos($id_inc,$almacen);
+
             if (!empty($material_dispositivos)) {
 
                 foreach ($material_dispositivos as $material) {

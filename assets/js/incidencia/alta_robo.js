@@ -4,7 +4,7 @@
 $(document).ready(function() {
     pathname = window.location.href;
     controller = pathname.split("/")[5];
-    if(controller=="alta_incidencia_robo") {
+    if(controller=="alta_incidencia_incidencia") {
         $("#test-upload").fileinput({
             'showPreview': false,
             'allowedFileExtensions': ['jpg', 'png', 'gif', 'pdf'],

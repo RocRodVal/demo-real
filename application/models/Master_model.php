@@ -309,14 +309,14 @@ class Tienda_model extends CI_Model {
 	}	
 	
 	
-	public function get_incidencias() {
+/*	public function get_incidencias() {
 			$query = $this->db->select('incidencias.*,pds.reference as reference')
 			        ->join('pds','incidencias.id_pds = pds.id_pds')
 				    ->order_by('fecha ASC')
 			        ->get('incidencias');
 	
 			return $query->result();
-	}	
+	}	*/
 	
 	
 	public function get_incidencias_pds($id) {
@@ -383,7 +383,7 @@ class Tienda_model extends CI_Model {
 	}	
 	
 	
-	public function get_all_displays($id) {
+	/*public function get_all_displays($id) {
 			$query = $this->db->select('*')
 				   ->where('id_pds',$id)
 				   ->get('displays_pds');
@@ -406,7 +406,7 @@ class Tienda_model extends CI_Model {
 		$this->db->insert('incidencias',$data);
 		$id=$this->db->insert_id();
 		return array('add' => (isset($id)) ? $id : FALSE, 'id' => $id);
-	}
+	}*/
 
 
 

@@ -173,7 +173,7 @@ class Sfid_model extends CI_Model {
                 ->where('devices_pds.status != "RMA"')
 				->order_by('devices_pds.position')
 				->get('devices_pds');
-
+            //echo $this->db->last_query(); exit;
 			return $query->result();
 		}
 		else 
