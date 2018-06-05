@@ -366,9 +366,13 @@ class Incidencia_model extends CI_Model {
         if(in_array($acceso,$array_accesos_excluidos)){ // En master, excluimos de la exportación los campos...
             // Array de títulos de campo para la exportación XLS/CSV
             $arr_titulos = array('Id incidencia','SFID','Tipologia','Dirección','Provincia','Fecha','Elemento','Territorio','Fabricante','Mueble','Terminal','Supervisor','Tipo avería',
-                'Texto 1','Texto 2','Texto 3','Parte PDF','Denuncia','Foto 1','Foto 2','Foto 3','Contacto','Teléfono','Email',
+                'Texto 1','Denuncia','Foto 1','Foto 2','Foto 3','Contacto','Teléfono','Email',
                 'Id. Operador','Intervención','Estado','Razon parada','Descripcion parada');
 
+
+            array_push($excluir,'description_2');
+            array_push($excluir,'description_3');
+            array_push($excluir,'parte_pdf');
             array_push($excluir,'last_updated');
             array_push($excluir,'status_pds');
             if($conMaterial) {
@@ -526,9 +530,9 @@ class Incidencia_model extends CI_Model {
           $sql .= " ORDER BY ".($s_orden);
       }*/
         $query = $this->db->query($sql);
-       // echo "<br><br>".$this->db->last_query();exit;
-        /* */
+
         $resultado=$query->result();
+
 
         if (is_null($porrazon)) {
             $datos = preparar_array_exportar($resultado, $arr_titulos, $excluir);
