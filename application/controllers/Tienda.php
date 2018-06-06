@@ -275,7 +275,16 @@ class Tienda extends MY_Controller {
 		
 			$xcrud = xcrud_get_instance();
 			$this->load->model(array('sfid_model','tienda_model'));
-		
+
+            $origin = $this->uri->segment(4);
+            /*Si en la url nos llega el texto clementine despues del codigo del mueble entonces anotamos que la incidencia
+            se crea desde clementine*/
+            if(!empty($origin) && $origin=='clementine'){
+                $this->session->set_flashdata("origin",1);
+            }
+            else {
+                $this->session->set_flashdata("origin",0);
+            }
 			$sfid = $this->sfid_model->get_pds($data['id_pds']);
 			
 			$data['id_pds']     = $sfid['id_pds'];
@@ -610,9 +619,11 @@ class Tienda extends MY_Controller {
 
             $form_tipo_averia = $this->input->post('tipo_averia');
             $denuncia = NULL;
+            $imagen=NULL;
+
+            $origin = $this->session->userdata('origin');;
 
             if($form_tipo_averia==1) {
-
 
                 $config['upload_path'] = dirname($_SERVER["SCRIPT_FILENAME"]) . '/uploads/';
                 $config['upload_url'] = base_url() . '/uploads/';
@@ -636,8 +647,7 @@ class Tienda extends MY_Controller {
                     echo 'Ha fallado la carga de la denuncia.';
                 }
 
-
-
+                $imagen='';
                 $new_nameImagen = $data['sfid'] . '-imagen-' . time();
                 $config2['upload_path'] =  $config['upload_path'];
                 $config2['upload_url'] = $config['upload_url'];
@@ -733,15 +743,16 @@ class Tienda extends MY_Controller {
                 //                   Comunicación  con Realdooh VU.                            //
                 /////////////////////////////////////////////////////////////////////////////////
                         $response = alta_incidencia_realdooh(array(                            //
-                            'drId'=>  $incidencia['id'],                                       //
+                            'drId'      => $incidencia['id'],                                  //
                             'assetDrId' => $this->uri->segment(3),                             //
-                            'userSFID' => $this->session->userdata('sfid')                     //
+                            'userSFID'  => $this->session->userdata('sfid'),                   //
+                            'origin'    => $origin
                         ),array(                                                               //
                             'user'=>$this->session->userdata('sfid'),                          //
                             'password' => 'demoreal'                                           //
                         ));
 
-			           // print_r($response);
+			          // print_r($response); exit;
                 // </ Fin Comunicación con Realdooh VU > ////////////////////////////////////////
 
 	
@@ -768,6 +779,7 @@ class Tienda extends MY_Controller {
 			$xcrud = xcrud_get_instance();
 			$this->load->model('sfid_model');
 
+            $origin = $this->session->userdata('origin');;
             $ahora = date("Y-m-d H:i:s");
 
 			$data = array(
@@ -798,7 +810,7 @@ class Tienda extends MY_Controller {
 					'status'	        => 1,
                     'last_updated'      => $ahora
 			);
-				
+
 			$incidencia = $this->sfid_model->insert_incidencia($data);
 				
 			if ($incidencia['add'])
@@ -827,13 +839,14 @@ class Tienda extends MY_Controller {
                 //                                                                             //
                 /////////////////////////////////////////////////////////////////////////////////
                 //
-                $response = alta_incidencia_realdooh(array(                                             //
-                    'drId'=>  $incidencia['id'],                                       //
-                    'assetDrId' => $this->uri->segment(3),                             //
-                    'userSFID' => $this->session->userdata('sfid')                     //
-                ),array(                                                                    //
-                    'user'=>$this->session->userdata('sfid'),                          //
-                    'password' => 'demoreal'                                           //
+                $response = alta_incidencia_realdooh(array(                                    //
+                    'drId'      => $incidencia['id'],                                          //
+                    'assetDrId' => $this->uri->segment(3),                                     //
+                    'userSFID'  => $this->session->userdata('sfid'),                           //
+                    'origin'    => $origin
+                ),array(                                                                       //
+                    'user'=>$this->session->userdata('sfid'),                                  //
+                    'password' => 'demoreal'                                                   //
                 ));
 
                 //print_r($response); exit;

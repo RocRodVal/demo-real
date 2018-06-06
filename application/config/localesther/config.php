@@ -37,7 +37,7 @@ $config['realdooh.api.url'] = 'http://realdooh.pre.altabox.net:8080/rdorangeapi/
 $config['realdooh.api'] = array (
     'active' => true,
     'changeStatusUrl'       => $config['realdooh.api.url']. '/demoreal/incident/{drId}',
-    'createIncidenceUrl'    => $config['realdooh.api.url'].'/demoreal/incident/{drId}/asset/{assetDrId}/user/{userSFID}',
+    'createIncidenceUrl'    => $config['realdooh.api.url'].'/demoreal/incident/{drId}/asset/{assetDrId}/user/{userSFID}/origin/{origin}',
     'createPdsUrl'          => $config['realdooh.api.url'].'/location/demoreal?idOUParent=1',
     'updatePdsUrl'          => $config['realdooh.api.url'].'/location/demoreal/{sfid}',
     'addAssetsPdsUrl'       => $config['realdooh.api.url'].'/massive/asset',
