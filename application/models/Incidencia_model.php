@@ -905,6 +905,8 @@ class Incidencia_model extends CI_Model {
                 $update_fields = array();
                 foreach($averia as $campo=>$valor)
                 {
+                    //if($campo=='fail_device' && $valor==1)
+
                     if($campo=="descripcion_parada" && !is_null($valor)){
                         $update_fields[]= ($campo.' = \''.$valor.'\'');
                     }else {
@@ -912,11 +914,21 @@ class Incidencia_model extends CI_Model {
                     }
 
                 }
-                $fields = implode(",",$update_fields);
 
+                $fields = implode(",",$update_fields);
 
                 $sql = "UPDATE incidencias SET $fields WHERE id_incidencia = $id_incidencia";
                 $this->db->query($sql);
+
+                $sql ="SELECT dp.id_devices_pds FROM devices_pds dp INNER JOIN incidencias i ON i.id_incidencia=$id_incidencia 
+                       WHERE dp.id_devices_pds = i.id_devices_pds and dp.status!='Incidencia'";
+                $row = $this->db->query($sql)->row();
+
+                if(!empty($row)) {
+                    $sql = "UPDATE devices_pds d SET d.status='Incidencia' WHERE d.id_devices_pds =" . $row->id_devices_pds;
+                    $this->db->query($sql);
+                }
+
                 return true;
             }
         }
