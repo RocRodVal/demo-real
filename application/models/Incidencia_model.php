@@ -102,8 +102,6 @@ class Incidencia_model extends CI_Model {
 	
 		return $query->result();
 	}	
-	
-
 
 	
 	public function get_devices_display($id) {
@@ -122,8 +120,6 @@ class Incidencia_model extends CI_Model {
 	}
 	
 
-	
-	
 	public function get_pds($id) {
 		if($id != FALSE) {
 			$query = $this->db->select('pds.*,territory.territory')
@@ -167,17 +163,17 @@ class Incidencia_model extends CI_Model {
 	}
 	
 	
-	public function get_incidencias() {
+	/*public function get_incidencias() {
 			$query = $this->db->select('incidencias.*,pds.reference as reference')
 			        ->join('pds','incidencias.id_pds = pds.id_pds')
 				    ->order_by('fecha ASC')
 			        ->get('incidencias');
 	
 			return $query->result();
-	}	
+	}	*/
 	
 	
-	public function get_incidencias_pds($id) {
+	/*public function get_incidencias_pds($id) {
 		$query = $this->db->select('incidencias.*,pds.reference as reference')
 		->join('pds','incidencias.id_pds = pds.id_pds')
 	
@@ -186,7 +182,7 @@ class Incidencia_model extends CI_Model {
 		->get('incidencias');
 	
 		return $query->result();
-	}	
+	}	*/
 	
 	
 	public function get_incidencia($id) {
@@ -204,30 +200,30 @@ class Incidencia_model extends CI_Model {
 	
 
 	
-	public function get_all_displays($id) {
+	/*public function get_all_displays($id) {
 			$query = $this->db->select('*')
 				   ->where('id_pds',$id)
 				   ->get('displays_pds');
 			
 			return $query->num_rows();
-	}	
+	}	*/
 
 	
-	public function get_all_devices($id) {
+	/*public function get_all_devices($id) {
 			$query = $this->db->select('*')
 				   ->where('id_pds',$id)
 				   ->get('devices_pds');
 				
 			return $query->num_rows();
-	}
+	}*/
 
 	
-	public function insert_incidencia($data)
+	/*public function insert_incidencia($data)
 	{
 		$this->db->insert('incidencias',$data);
 		$id=$this->db->insert_id();
 		return array('add' => (isset($id)) ? $id : FALSE, 'id' => $id);
-	}
+	}*/
 
 
 
@@ -370,9 +366,13 @@ class Incidencia_model extends CI_Model {
         if(in_array($acceso,$array_accesos_excluidos)){ // En master, excluimos de la exportación los campos...
             // Array de títulos de campo para la exportación XLS/CSV
             $arr_titulos = array('Id incidencia','SFID','Tipologia','Dirección','Provincia','Fecha','Elemento','Territorio','Fabricante','Mueble','Terminal','Supervisor','Tipo avería',
-                'Texto 1','Texto 2','Texto 3','Parte PDF','Denuncia','Foto 1','Foto 2','Foto 3','Contacto','Teléfono','Email',
+                'Texto 1','Denuncia','Foto 1','Foto 2','Foto 3','Contacto','Teléfono','Email',
                 'Id. Operador','Intervención','Estado','Razon parada','Descripcion parada');
 
+
+            array_push($excluir,'description_2');
+            array_push($excluir,'description_3');
+            array_push($excluir,'parte_pdf');
             array_push($excluir,'last_updated');
             array_push($excluir,'status_pds');
             if($conMaterial) {
@@ -530,9 +530,9 @@ class Incidencia_model extends CI_Model {
           $sql .= " ORDER BY ".($s_orden);
       }*/
         $query = $this->db->query($sql);
-       // echo "<br><br>".$this->db->last_query();exit;
-        /* */
+
         $resultado=$query->result();
+
 
         if (is_null($porrazon)) {
             $datos = preparar_array_exportar($resultado, $arr_titulos, $excluir);
@@ -746,9 +746,7 @@ class Incidencia_model extends CI_Model {
     }
 
 
-
-
-    function resetear_incidencia($id_inc)
+  /*  function resetear_incidencia($id_inc)
     {
 
         $o_pds = $this->db->query("SELECT id_pds FROM incidencias WHERE id_incidencia = '$id_inc' ")->row_array();
@@ -819,10 +817,9 @@ class Incidencia_model extends CI_Model {
         }
 
 
-    }
+    }*/
 
-
-
+    /*Se desaigna el material de una incidena*/
     function desasignar_material($id_inc,$tipo_dispositivo = "todo",$almacen=true,$id_pds = NULL,$id_material_incidencia = NULL)
     {
         // TERMINAL
@@ -830,6 +827,7 @@ class Incidencia_model extends CI_Model {
         {
 
             $material_dispositivos = $this->tienda_model->get_material_dispositivos($id_inc,$almacen);
+
             if (!empty($material_dispositivos)) {
 
                 foreach ($material_dispositivos as $material) {
@@ -907,6 +905,8 @@ class Incidencia_model extends CI_Model {
                 $update_fields = array();
                 foreach($averia as $campo=>$valor)
                 {
+                    //if($campo=='fail_device' && $valor==1)
+
                     if($campo=="descripcion_parada" && !is_null($valor)){
                         $update_fields[]= ($campo.' = \''.$valor.'\'');
                     }else {
@@ -914,11 +914,21 @@ class Incidencia_model extends CI_Model {
                     }
 
                 }
-                $fields = implode(",",$update_fields);
 
+                $fields = implode(",",$update_fields);
 
                 $sql = "UPDATE incidencias SET $fields WHERE id_incidencia = $id_incidencia";
                 $this->db->query($sql);
+
+                $sql ="SELECT dp.id_devices_pds FROM devices_pds dp INNER JOIN incidencias i ON i.id_incidencia=$id_incidencia 
+                       WHERE dp.id_devices_pds = i.id_devices_pds and dp.status!='Incidencia'";
+                $row = $this->db->query($sql)->row();
+
+                if(!empty($row)) {
+                    $sql = "UPDATE devices_pds d SET d.status='Incidencia' WHERE d.id_devices_pds =" . $row->id_devices_pds;
+                    $this->db->query($sql);
+                }
+
                 return true;
             }
         }

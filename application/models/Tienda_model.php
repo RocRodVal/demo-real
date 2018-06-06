@@ -2296,6 +2296,12 @@ class Tienda_model extends CI_Model {
                 $this->db->update('devices_pds');
                 break;
 
+            /*Cuando se cancela la incidencia*/
+            case ($status == 3):
+                /*La posicion que genera la incidencia pasa a estar en Alta*/
+                $sql = "UPDATE devices_pds SET status='Alta' WHERE id_devices_pds =" . $id_devices_pds;
+                $this->db->query($sql);
+                break;
             /* se resuelve la incidencia*/
             case ($status == 6):
                 $condicion = "";
@@ -2404,7 +2410,8 @@ class Tienda_model extends CI_Model {
 
                 break;
 
-            case ($status == 8): /*Cuando de hace el cierre forzoso de la incidencia*/
+            /*Cuando se hace el cierre forzoso de la incidencia*/
+            case ($status == 8):
                 /*El material que se haya asignado ya este en transito o reservado pasara a Stock*/
                 $sql = "SELECT * FROM material_incidencias m
                         INNER JOIN devices_almacen d ON d.id_devices_almacen=m.id_devices_almacen
@@ -2428,13 +2435,14 @@ class Tienda_model extends CI_Model {
                     );
                     $this->db->insert('historico_io',$elemento);
                 }
-                /*La posicion que general la incidencia pasa a estar en Alta*/
+                /*La posicion que genera la incidencia pasa a estar en Alta*/
                 $sql = "UPDATE devices_pds SET status='Alta' WHERE id_devices_pds =" . $id_devices_pds;
                 $this->db->query($sql);
 
                 break;
 
-            case ($status == 9): /*Ya se ha recogido el material y se cierra la incidencia*/
+            /*Ya se ha recogido el material y se cierra la incidencia*/
+            case ($status == 9):
                 /*insertar en almacen el dispositivo que origino la incidencia en estado en transito*/
                 /* Guardamos los datos de la incidencia y el devices_pds al que afecta la incidencia se da de baja */
                 $query = $this->db->select('*')
@@ -2555,7 +2563,8 @@ class Tienda_model extends CI_Model {
 
                 break;
 
-            case ($status == 10): /* se sustituyen los terminales implicados en la incidencia*/
+            /* se sustituyen los terminales implicados en la incidencia*/
+            case ($status == 10):
                 /* Guardamos los datos de la posicion que genero la incidencia y el devices_pds al que afecta la incidencia se da de baja */
                 $query = $this->db->select('*')
                     ->where('id_devices_pds', $id_devices_pds)
@@ -2616,8 +2625,10 @@ class Tienda_model extends CI_Model {
                     $this->db->insert('devices_pds', $data);
                 }
                 break;
-            case ($status == 11): /* se sustituyen los terminales implicados en la incidencia siendo necesario enviar a almacen
+
+            /* se sustituyen los terminales implicados en la incidencia siendo necesario enviar a almacen
                                 el terminal que genero la incidencia como RMA*/
+            case ($status == 11):
                 /* Guardamos los datos de la posicion que genero la incidencia y el devices_pds al que afecta la incidencia se da de baja */
                 $query = $this->db->select('*')
                     ->where('id_devices_pds', $id_devices_pds)
@@ -2742,12 +2753,12 @@ class Tienda_model extends CI_Model {
 	}
 
 	
-	public function insert_incidencia($data)
+/*	public function insert_incidencia($data)
 	{
 		$this->db->insert('incidencias',$data);
 		$id=$this->db->insert_id();
 		return array('add' => (isset($id)) ? $id : FALSE, 'id' => $id);
-	}	
+	}	*/
 	
 	
 	public function historico($data)
@@ -3066,5 +3077,19 @@ class Tienda_model extends CI_Model {
             return $id;
         }
     }
+
+    /*buscamos las posiciones que tengan una incidencia y que aun no hayan sido revisadas*/
+    /*public function get_incidencias_display($id_displays_pds){
+
+        if (!empty($id_displays_pds)) {
+            $query = $this->db->select('id_devices_pds')
+                ->where('incidencias.id_displays_pds',$id_displays_pds)
+                ->where('incidencias.status','Nueva')
+                ->get('incidencias');
+
+            return $query->row_array();
+        }
+    }*/
+
 }
 ?>

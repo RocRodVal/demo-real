@@ -289,31 +289,31 @@ class Deposito_model extends CI_Model {
 	}	
 	
 	
-	public function get_all_displays($id) {
+	/*public function get_all_displays($id) {
 			$query = $this->db->select('*')
 				   ->where('id_pds',$id)
 				   ->get('displays_pds');
 			
 			return $query->num_rows();
-	}	
+	}	*/
 
 	
-	public function get_all_devices($id) {
+	/*public function get_all_devices($id) {
 			$query = $this->db->select('*')
 				   ->where('id_pds',$id)
 				   ->get('devices_pds');
 				
 			return $query->num_rows();
-	}
+	}*/
 
 	
-	public function insert_incidencia($data)
+	/*public function insert_incidencia($data)
 	{
 		$this->db->insert('incidencias',$data);
 		$id=$this->db->insert_id();
 		return array('add' => (isset($id)) ? $id : FALSE, 'id' => $id);
 		//return (isset($id)) ? $id : FALSE;
-	}	
+	}	*/
 	
 	
 	/*public function login($data)

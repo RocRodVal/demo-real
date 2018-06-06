@@ -295,6 +295,7 @@ class Ttpp extends MY_Controller {
 				$data['description_2']   = $incidencia['description_2'];
 				$data['description_3']   = $incidencia['description_3'];
 				$data['denuncia']        = $incidencia['denuncia'];
+                $data['foto_url']        = $incidencia['foto_url'];
 				$data['contacto']        = $incidencia['contacto'];
 				$data['phone']           = $incidencia['phone'];
 				$data['status_pds']      = $incidencia['status_pds'];

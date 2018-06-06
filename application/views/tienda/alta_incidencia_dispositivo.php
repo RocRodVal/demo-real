@@ -29,6 +29,8 @@
                                             <div id="denuncia" hidden>
                                                 <p>Suba una copia de la denuncia por robo:</p>
                                                 <input id="denuncia" class="file" type="file" multiple=false name="userfile">
+                                                <p>Suba una imagen del robo:</p>
+                                                <input id="denunciaI" class="file" type="file" multiple=false name="userfileI" accept="image/png, .jpeg, .jpg, image/gif">
                                             </div>
                                         </div>
                                     </div>
@@ -37,9 +39,9 @@
                                     <div class="col-lg-12">
                                         <label>Indica los elementos que están afectados</label>
                                         <ul style="list-style:none">
-                                            <li><input type="checkbox" name="device" value="1"> Dispositivo</li>
                                             <li><input type="checkbox" name="alarm_garra" value="1"> Soporte/Anclaje</li>
                                             <li><input type="checkbox" name="alarm_device" value="1"> Alarma/Cableado</li>
+                                            <li><input type="checkbox" name="device" value="1"> Dispositivo</li>
                                         </ul>
                                     </div>
                                 </div>
