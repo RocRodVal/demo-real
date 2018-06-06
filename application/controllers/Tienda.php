@@ -280,11 +280,12 @@ class Tienda extends MY_Controller {
             /*Si en la url nos llega el texto clementine despues del codigo del mueble entonces anotamos que la incidencia
             se crea desde clementine*/
             if(!empty($origin) && $origin=='clementine'){
-                $this->session->set_flashdata("origin",1);
+                $this->session->set_userdata("origin",1);
             }
             else {
-                $this->session->set_flashdata("origin",0);
+                $this->session->set_userdata("origin",0);
             }
+
 			$sfid = $this->sfid_model->get_pds($data['id_pds']);
 			
 			$data['id_pds']     = $sfid['id_pds'];
@@ -386,7 +387,17 @@ class Tienda extends MY_Controller {
 	
 			$xcrud = xcrud_get_instance();
 			$this->load->model('sfid_model');
-	
+
+            $origin = $this->uri->segment(4);
+            /*Si en la url nos llega el texto clementine despues del codigo del mueble entonces anotamos que la incidencia
+            se crea desde clementine*/
+            if(!empty($origin) && $origin=='clementine'){
+                $this->session->set_userdata("origin",1);
+            }
+            else {
+                $this->session->set_userdata("origin",0);
+            }
+
 			$sfid = $this->sfid_model->get_pds($data['id_pds']);
 	
 			$data['id_pds']     = $sfid['id_pds'];
@@ -620,8 +631,8 @@ class Tienda extends MY_Controller {
             $form_tipo_averia = $this->input->post('tipo_averia');
             $denuncia = NULL;
             $imagen=NULL;
-
-            $origin = $this->session->userdata('origin');;
+            //print_r($this->session->userdata()); exit;
+            $origin = $this->session->userdata('origin');
 
             if($form_tipo_averia==1) {
 
@@ -752,7 +763,7 @@ class Tienda extends MY_Controller {
                             'password' => 'demoreal'                                           //
                         ));
 
-			          // print_r($response); exit;
+                        //print_r($response); exit;
                 // </ Fin Comunicación con Realdooh VU > ////////////////////////////////////////
 
 	
@@ -849,7 +860,7 @@ class Tienda extends MY_Controller {
                     'password' => 'demoreal'                                                   //
                 ));
 
-                //print_r($response); exit;
+               // print_r($response); exit;
                 //
                 //
                 //                                                                             //
