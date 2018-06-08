@@ -31,8 +31,9 @@ class Sfid_model extends CI_Model {
 	{
 		if($id_displays_pds != FALSE)
 		{
-			$query = $this->db->select('displays_pds.*,display.*')
+			$query = $this->db->select('displays_pds.*,display.*,tipo_alarmado.title as alarmado')
 			->join('display','displays_pds.id_display = display.id_display')
+            ->join('tipo_alarmado','displays_pds.id_tipo_alarmado = tipo_alarmado.id','left')
 			->where('displays_pds.id_displays_pds',$id_displays_pds)
 			->where('displays_pds.status = "Alta"')
 			->get('displays_pds');

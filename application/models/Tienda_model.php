@@ -2967,7 +2967,7 @@ class Tienda_model extends CI_Model {
     /**
      * Insertar mueble SFID
      */
-    function anadir_mueble_sfid($display,$pds,$position = NULL)
+    function anadir_mueble_sfid($display,$pds,$position = NULL,$id_tipo_alarmado=NULL)
     {
         $id_displays_pds=-1;
         // Si no están vacíos los objetos MUEBLE y PDS
@@ -3012,8 +3012,8 @@ class Tienda_model extends CI_Model {
 
 
 
-            $SQL = " INSERT INTO displays_pds (client_type_pds, id_pds, id_display, position, status)
-                                        VALUES(".$client_type_pds.",".$id_pds.",".$id_display.",".$position.",'Alta'); ";
+            $SQL = " INSERT INTO displays_pds (client_type_pds, id_pds, id_display, id_tipo_alarmado,position, status)
+                                        VALUES(".$client_type_pds.",".$id_pds.",".$id_display.",".$id_tipo_alarmado.",".$position.",'Alta'); ";
             //$id_mueble= $this->db->insert_id();
             $this->db->query($SQL);
             $id_displays_pds = $this->db->insert_id();
@@ -3078,6 +3078,15 @@ class Tienda_model extends CI_Model {
         }
     }
 
+    /*Nos devuelve el listado de los alarmados que están en Alta*/
+    public function get_alarmados(){
+        $query = $this->db->select('tipo_alarmado.*')
+            ->where('status','Alta')
+            ->order_by('title','asc')
+            ->get('tipo_alarmado');
+        //echo $this->db->last_query(); exit;
+        return $query->result();
+    }
     /*buscamos las posiciones que tengan una incidencia y que aun no hayan sido revisadas*/
     /*public function get_incidencias_display($id_displays_pds){
 
