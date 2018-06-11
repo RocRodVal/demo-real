@@ -2718,6 +2718,7 @@ class Admin extends MY_Controller
         $this->load->view('backend/footer');
     }
 
+    /*Lista las posibles soluciones ejecutadas en una incidencia*/
     public function soluciones_ejecutadas()
     {
         $xcrud = xcrud_get_instance();
@@ -2732,6 +2733,33 @@ class Admin extends MY_Controller
         $xcrud->unset_remove();
 
         $data['title'] = 'Soluciones';
+        $data['content'] = $xcrud->render();
+
+        /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+        $this->data->add($data);
+        $data = $this->data->getData();
+        /////
+        $this->load->view('backend/header', $data);
+        $this->load->view('backend/navbar', $data);
+        $this->load->view('backend/content', $data);
+        $this->load->view('backend/footer');
+    }
+
+    /*Lista los tipos de alarmados que despues se asignaran a los muebles de las tiendas*/
+    public function tipos_alarmado()
+    {
+        $xcrud = xcrud_get_instance();
+        $xcrud->table('tipo_alarmado');
+        $xcrud->table_name('Tipos de alarmados');
+        $xcrud->label('id','Identificador')->label('title', 'Título');
+        $xcrud->columns('id,title,status');
+        $xcrud->fields('title,status');
+        $xcrud->order_by('id');
+
+        // Ocultar el botón de borrar para evitar borrados accidentales mientras no existan constraints en BD:
+        $xcrud->unset_remove();
+
+        $data['title'] = 'Tipos de alarmados';
         $data['content'] = $xcrud->render();
 
         /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
@@ -2903,16 +2931,17 @@ class Admin extends MY_Controller
             $xcrud_1->relation('client_type_pds', 'client', 'id_client', 'client');
             $xcrud_1->relation('id_pds', 'pds', 'id_pds', 'reference');
             $xcrud_1->relation('id_display', 'display', 'id_display', 'display');
-            $xcrud_1->relation('id_tipo', 'pds_tipo', 'id', 'titulo');
-            $xcrud_1->relation('id_subtipo', 'pds_subtipo', 'id', 'titulo', '', 'titulo ASC', false, '', false, 'id_tipo', 'id_tipo');
-            $xcrud_1->relation('id_segmento', 'pds_segmento', 'id', 'titulo');
-            $xcrud_1->relation('id_tipologia', 'pds_tipologia', 'id', 'titulo');
+            $xcrud_1->relation('id_tipo_alarmado', 'tipo_alarmado', 'id', 'title',array('status' => 'Alta'));
+            //$xcrud_1->relation('id_tipo', 'pds_tipo', 'id', 'titulo');
+            //$xcrud_1->relation('id_subtipo', 'pds_subtipo', 'id', 'titulo', '', 'titulo ASC', false, '', false, 'id_tipo', 'id_tipo');
+            //$xcrud_1->relation('id_segmento', 'pds_segmento', 'id', 'titulo');
+          //  $xcrud_1->relation('id_tipologia', 'pds_tipologia', 'id', 'titulo');
 
-            $xcrud_1->label('client_type_pds', 'Cliente')->label('id_displays_pds', 'REF.')->label('id_type_pds', 'Tipo')->label('id_pds', 'SFID')->
-            label('id_panelado', 'Panelado')->label('id_display', 'Mueble')->label('position', 'Posición Orange')->label('description', 'Comentarios')->
-            label('status', 'Estado');
-            $xcrud_1->columns('client_type_pds,id_displays_pds,id_pds,id_display,position,status');
-            $xcrud_1->fields('client_type_pds,id_displays_pds,id_pds,id_tipo,id_subtipo,id_segmento,id_tipologia,id_pds,id_display,position,description,status');
+            $xcrud_1->label('client_type_pds', 'Cliente')->label('id_displays_pds', 'REF.')->label('id_type_pds', 'Tipo')
+                ->label('id_pds', 'SFID')->label('id_panelado', 'Panelado')->label('id_display', 'Mueble')->label('id_tipo_alarmado','Tipo de alarmado')
+                ->label('position', 'Posición Orange')->label('description', 'Comentarios')->label('status', 'Estado');
+            $xcrud_1->columns('client_type_pds,id_displays_pds,id_pds,id_display,id_tipo_alarmado,position,status');
+            $xcrud_1->fields('client_type_pds,id_displays_pds,id_pds,id_pds,id_display,id_tipo_alarmado,position,description,status');
             $xcrud_1->where('status', array('Alta', 'Incidencia'));
             $xcrud_1->order_by('id_pds', 'asc');
             $xcrud_1->order_by('position', 'asc');
@@ -5860,6 +5889,7 @@ class Admin extends MY_Controller
             $data["anadiendo_mueble"] = FALSE;
 
             $id_display = NULL;
+            $id_tipo_alarmado = NULL;
             $sfids = "";
             $arr_sfids = array();
 
@@ -5874,7 +5904,10 @@ class Admin extends MY_Controller
                 $data["arr_sfids"] = $arr_sfids;
                 $id_display = $this->input->post("id_display");
 
-                $position = $this->input->post("position"); $position = (empty($position)) ? NULL : $position;
+                $position = $this->input->post("position");
+                $position = (empty($position)) ? NULL : $position;
+                $id_tipo_alarmado = $this->input->post("id_tipo_alarmado");
+                $id_tipo_alarmado = (empty($id_tipo_alarmado)) ? NULL : $id_tipo_alarmado;
 
             }
 
@@ -5886,6 +5919,7 @@ class Admin extends MY_Controller
                 $display = $this->tienda_model->get_display($id_display,"object");
                 $data["mueble"] = $display->display;
                 $data["position"] = $position;
+                $data["id_tipo_alarmado"] = $id_tipo_alarmado;
 
 
                 $devices_display = $this->tienda_model->get_devices_display($id_display);
@@ -5904,7 +5938,7 @@ class Admin extends MY_Controller
 
                             $checked_sfids[$sfid] = $check_sfid;
 
-                            $id_display_pds=$this->tienda_model->anadir_mueble_sfid($display,$check_sfid,$position);
+                            $id_display_pds=$this->tienda_model->anadir_mueble_sfid($display,$check_sfid,$position,$id_tipo_alarmado);
 
                             if ($id_display_pds!=-1) {
                                 $asset = array("drId" => $id_display_pds, "assetType" => array("drId" => $display->id_display), "location" => array("code" => $sfid));
@@ -5942,9 +5976,13 @@ class Admin extends MY_Controller
             $this->load->view('backend/header', $data);
 
             $muebles = $this->tienda_model->get_muebles();
+            $alarmados = $this->tienda_model->get_alarmados();
+
             $data["muebles"] = $muebles;
+            $data["alarmados"] = $alarmados;
             $data["sfids"] = $sfids;
             $data["id_display"]  = $id_display;
+            $data["id_tipo_alarmado"]  = $id_tipo_alarmado;
 
             $this->load->view('backend/navbar',$data);
             $this->load->view('backend/masivas/anadir_mueble_sfid/formulario', $data);

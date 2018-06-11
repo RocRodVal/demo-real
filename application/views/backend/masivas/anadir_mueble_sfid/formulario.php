@@ -1,20 +1,11 @@
-<?php
-/**
- * Created by PhpStorm.
- * User: dbourgon
- * Date: 24/07/2015
- * Time: 9:50
- */
-
-?>
 <!-- #page-wrapper -->
-		<div id="page-wrapper">
-		    <div class="row">
-		        <div class="col-lg-12">
-		            <h1 class="page-header"><?php echo $title ?></h1>
-                    <p>Introduce los SFIDs a los que quieres añadir el mueble, separados por saltos de línea y selecciona el mueble, y la posición.</p>
-                </div>
-            </div>
+<div id="page-wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h1 class="page-header"><?php echo $title ?></h1>
+            <p>Introduce los SFIDs a los que quieres añadir el mueble, separados por saltos de línea y selecciona el mueble, y la posición.</p>
+        </div>
+    </div>
 
 <div class="row">
     <div class="col-lg-12">
@@ -44,7 +35,20 @@
                         </select>
 
                     </div>
+                    <div class="form-group">
+                        <label for="id_tipo_alarmado">Añadir...</label>
+                        <select id="id_tipo_alarmado" name="id_tipo_alarmado" class="form-control">
+                            <option value>Escoge un alarmado...</option>
+                            <?php
+                            foreach($alarmados as $key=>$value)
+                            { ?>
+                                <option value="<?=$value->id?>"
+                                    <?=($id_tipo_alarmado == $value->id)? ' selected="selected" ' : '' ?> ><?=$value->title?></option>
 
+                            <?php } ?>
+                        </select>
+
+                    </div>
 
                     <div class="form-group">
                         <label for="position">Posición...</label>

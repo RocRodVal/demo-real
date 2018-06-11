@@ -7,35 +7,24 @@
                     <?php echo $address ?><br />
                     <?php echo $zip ?> -  <?php echo $city ?> (<?php echo $province ?>)<br />
                     <?php 
-                    if ($phone_pds <>'')
-                    {	
-                    ?>
+                    if ($phone_pds <>'') {?>
                     Tel. <?php echo $phone_pds ?>
-                    <?php 
-                    }
-                    ?>
+                    <?php  } ?>
                 </div>
+                <?php if (!empty($recogida)) { ?>
+                    <a href="<?=site_url('inventario/dispositivos_recogida') ?>" class="btn btn-danger right">Volver</a>
+                    <?php
+                }else { ?>
+                    <a href="<?=site_url('admin/estado_incidencias/'. ((($status_pds !="Resuelta" ) &&
+                            ($status_pds !="Cerrada" ) && ($status_pds !="Cancelada" ) &&
+                            ($status_pds !="Pendiente recogida" ) && ($status_pds !="SustituidoRMA" ) &&
+                            ($status_pds !="Sustituido" ))? "abiertas": "cerradas")); ?>" class="btn btn-danger right">Volver</a>
+                <?php } ?>
             </h1>
         </div>
     </div>
 
 
-        <div class="row">
-            <div class="col-lg-12">
-                <h1 class="page-header"><?php echo $title ?>
-                    <!--<a onclick="history.go(-1);return false;" class="btn btn-danger right">Volver</a>-->
-                    <?php if (!empty($recogida)) { ?>
-                        <a href="<?=site_url('inventario/dispositivos_recogida') ?>" class="btn btn-danger right">Volver</a>
-                    <?php
-                    }else { ?>
-                    <a href="<?=site_url('admin/estado_incidencias/'. ((($status_pds !="Resuelta" ) &&
-                            ($status_pds !="Cerrada" ) && ($status_pds !="Cancelada" ) &&
-                            ($status_pds !="Pendiente recogida" ) && ($status_pds !="SustituidoRMA" ) &&
-                            ($status_pds !="Sustituido" ))? "abiertas": "cerradas")); ?>" class="btn btn-danger right">Volver</a>
-                    <?php } ?>
-                </h1>
-            </div>
-    </div>
     <div class="row">
         <div class="col-lg-6 col-md-6">
             <div class="panel panel-default">
@@ -419,6 +408,9 @@
                         ?>
                         <tr>
                             <th>Mueble: </th> <td><?php echo $mueble ?></td>
+                        </tr>
+                        <tr>
+                            <th>Alarmado: </th> <td><?=$incidencia['display']['alarmado'] ?></td>
                         </tr>
                         <tr>
                             <th>Dispositivo: </th> <td><?php echo $dispositivo ?></td>
