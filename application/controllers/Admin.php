@@ -2931,7 +2931,7 @@ class Admin extends MY_Controller
             $xcrud_1->relation('client_type_pds', 'client', 'id_client', 'client');
             $xcrud_1->relation('id_pds', 'pds', 'id_pds', 'reference');
             $xcrud_1->relation('id_display', 'display', 'id_display', 'display');
-            $xcrud_1->relation('id_tipo_alarmado', 'tipo_alarmado', 'id', 'title');
+            $xcrud_1->relation('id_tipo_alarmado', 'tipo_alarmado', 'id', 'title',array('status' => 'Alta'));
             //$xcrud_1->relation('id_tipo', 'pds_tipo', 'id', 'titulo');
             //$xcrud_1->relation('id_subtipo', 'pds_subtipo', 'id', 'titulo', '', 'titulo ASC', false, '', false, 'id_tipo', 'id_tipo');
             //$xcrud_1->relation('id_segmento', 'pds_segmento', 'id', 'titulo');

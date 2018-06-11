@@ -344,7 +344,8 @@ class Incidencia_model extends CI_Model {
         $acceso = $this->uri->segment(1);
 
         // Array de títulos de campo para la exportación XLS/CSV
-        $arr_titulos = array('Id incidencia','SFID','Tipología','Dirección','Provincia','Fecha','Elemento','Territorio','Fabricante','Mueble','Terminal','Supervisor','Tipo avería',
+        $arr_titulos = array('Id incidencia','SFID','Tipología','Dirección','Provincia','Fecha','Elemento','Territorio',
+            'Fabricante','Mueble','Tipo alarmado','Terminal','Supervisor','Tipo avería',
             'Texto 1','Texto 2','Texto 3','Parte PDF','Denuncia','Foto 1','Foto 2','Foto 3','Contacto','Teléfono','Email',
             'Id. Operador','Intervención','Estado','Última modificación','Estado Sat','Razon parada','Descripcion parada');
         $excluir = array('fecha_cierre','fabr','id_type_incidencia');
@@ -375,6 +376,7 @@ class Incidencia_model extends CI_Model {
             array_push($excluir,'parte_pdf');
             array_push($excluir,'last_updated');
             array_push($excluir,'status_pds');
+            array_push($excluir,'alarmado');
             if($conMaterial) {
                 array_push($excluir, 'Material Dispositivos');
                 array_push($excluir, 'Material Alarmas');
@@ -400,6 +402,7 @@ class Incidencia_model extends CI_Model {
                             ) as `Fabricante` ,';
 
         $sql .= 'display.display as mueble,
+                tipo_alarmado.title as alarmado,
                 device.device as terminal,
                 pds_supervisor.titulo as supervisor,
                 ';
@@ -441,6 +444,7 @@ class Incidencia_model extends CI_Model {
         $sql .='
                 FROM incidencias
                 LEFT OUTER JOIN displays_pds ON incidencias.id_displays_pds = displays_pds.id_displays_pds
+                LEFT JOIN tipo_alarmado ON tipo_alarmado.id= displays_pds.id_tipo_alarmado
                 LEFT OUTER JOIN display ON displays_pds.id_display = display.id_display
                 LEFT OUTER JOIN devices_pds ON incidencias.id_devices_pds = devices_pds.id_devices_pds
                 LEFT OUTER JOIN device ON devices_pds.id_device = device.id_device
