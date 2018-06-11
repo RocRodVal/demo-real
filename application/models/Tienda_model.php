@@ -3011,9 +3011,9 @@ class Tienda_model extends CI_Model {
             }
 
 
-
             $SQL = " INSERT INTO displays_pds (client_type_pds, id_pds, id_display, id_tipo_alarmado,position, status)
-                                        VALUES(".$client_type_pds.",".$id_pds.",".$id_display.",".$id_tipo_alarmado.",".$position.",'Alta'); ";
+                                        VALUES(".$client_type_pds.",".$id_pds.",".$id_display.",".(empty($id_tipo_alarmado) ? 'NULL' : $id_tipo_alarmado).",".$position.",'Alta'); ";
+            
             //$id_mueble= $this->db->insert_id();
             $this->db->query($SQL);
             $id_displays_pds = $this->db->insert_id();
