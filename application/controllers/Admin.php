@@ -221,8 +221,6 @@ class Admin extends MY_Controller
 
             $ext = (!is_null($formato) ? $formato : $this->ext);    // Formato para exportaciones, especficiado o desde CFG
 
-
-
             // Filtros abiertas
             $array_filtros = array(
                 'status' => '',
@@ -715,6 +713,9 @@ class Admin extends MY_Controller
             $type_incidencia = $this->tienda_model->get_type_incidencia($id_inc);
             $data['type_incidencia']=$type_incidencia;
 
+            $type_robos = $this->incidencia_model->get_tiposRobo();
+            $data['type_robos'] =$type_robos;
+
             $estados = $this->incidencia_model->get_estados($id_inc);
             $data['estados']="";
             $primero=true;
@@ -842,7 +843,7 @@ class Admin extends MY_Controller
                     $averia['alarm_device'] =   ($this->input->post('alarm_device')  == "on") ? 1 : 0;
                     $averia['alarm_garra'] =    ($this->input->post('alarm_garra')   == "on") ? 1 : 0;
                     $averia['id_solucion_incidencia'] =  ($this->input->post('id_solucion_incidencia') != "NULL") ? $this->input->post('id_solucion_incidencia') : 'NULL';
-
+                    $averia['id_tipo_robo'] =  ($this->input->post('id_tipo_robo') != "NULL") ? $this->input->post('id_tipo_robo') : 'NULL';
 
                     $respuesta = $this->incidencia_model->actualizar_averia($id_incidencia,$averia);
 
@@ -1526,7 +1527,7 @@ class Admin extends MY_Controller
                     // La incidencia exsite, seguimos con el proceso de reseteo...
                     // Reseteamos estado de la incidencia
                     $sql_status = 'UPDATE incidencias SET fecha_cierre = NULL, status="Nueva", status_pds = "Alta realizada",
-                                  id_type_incidencia=NULL WHERE id_incidencia="'.$id_inc.'"';
+                                  id_type_incidencia=NULL, id_tipo_robo=NULL WHERE id_incidencia="'.$id_inc.'"';
                     $query = $this->db->query($sql_status);
 
                     // Sacar el ID de intervención asignada a la incidencia...
@@ -2334,9 +2335,13 @@ class Admin extends MY_Controller
         $xcrud_2->relation('type_via', 'type_via', 'id_type_via', 'via');
         $xcrud_2->relation('province', 'province', 'id_province', 'province');
         $xcrud_2->relation('county', 'county', 'id_county', 'county');
-        $xcrud_2->label('id_contact','Identificador')->label('client_contact', 'Empresa')->label('type_profile_contact', 'Tipo')->label('contact', 'Contacto')->label('id_parte', 'Id. destino material')->label('type_via', 'Tipo vía')->label('address', 'Dirección')->label('zip', 'C.P.')->label('city', 'Ciudad')->label('province', 'Provincia')->label('county', 'CC.AA.')->label('schedule', 'Horario')->label('phone', 'Teléfono')->label('mobile', 'Móvil')->label('email', 'Email')->label('email_cc', 'Copia email')->label('status', 'Estado');
+        $xcrud_2->label('id_contact','Identificador')->label('client_contact', 'Empresa')->label('type_profile_contact', 'Tipo')
+            ->label('contact', 'Contacto')->label('id_parte', 'Id. destino material')->label('type_via', 'Tipo vía')
+            ->label('address', 'Dirección')->label('zip', 'C.P.')->label('city', 'Ciudad')->label('province', 'Provincia')
+            ->label('county', 'CC.AA.')->label('schedule', 'Horario')->label('phone', 'Teléfono')->label('mobile', 'Móvil')
+            ->label('email', 'Email')->label('email_cc', 'Copia email')->label('precio', 'Precio')->label('status', 'Estado');
         $xcrud_2->columns('id_contact,client_contact,type_profile_contact,contact, id_parte,email');
-        $xcrud_2->fields('client_contact,type_profile_contact,contact,id_parte,type_via,address,zip,city,province,county,schedule,phone,mobile,email,email_cc,status');
+        $xcrud_2->fields('client_contact,type_profile_contact,contact,id_parte,type_via,address,zip,city,province,county,schedule,phone,mobile,email,email_cc,precio,status');
         $xcrud_2->order_by('contact');
 
         // Ocultar el botón de borrar para evitar borrados accidentales mientras no existan constraints en BD:
@@ -4195,8 +4200,8 @@ class Admin extends MY_Controller
             $instalador = $this->input->post('instalador'); $instalador = (empty($instalador)) ? 0 : $instalador;
             $dueno = $this->input->post('dueno');   $dueno = (empty($dueno)) ? 0 : $dueno;
 
-            $instaladores = $this->db->query("SELECT id_contact, contact FROM contact WHERE type_profile_contact = 1")->result();
-            $duenos = $this->db->query("SELECT id_client, client FROM client WHERE status='Alta' AND facturable = 1")->result();
+            $instaladores = $this->db->query("SELECT id_contact, contact FROM contact WHERE type_profile_contact = 1 ORDER BY contact")->result();
+            $duenos = $this->db->query("SELECT id_client, client FROM client WHERE status='Alta' AND facturable = 1 ORDER BY client")->result();
 
 
             $data['facturacion'] = $this->tienda_model->facturacion_estado($fecha_inicio,$fecha_fin,$instalador,$dueno);
@@ -4260,8 +4265,8 @@ class Admin extends MY_Controller
 
 
 
-            $instaladores = $this->db->query("SELECT id_contact, contact FROM contact WHERE type_profile_contact = 1")->result();
-            $duenos = $this->db->query("SELECT id_client, client FROM client WHERE status='Alta' AND facturable = 1")->result();
+            $instaladores = $this->db->query("SELECT id_contact, contact FROM contact WHERE type_profile_contact = 1 ORDER BY contact")->result();
+            $duenos = $this->db->query("SELECT id_client, client FROM client WHERE status='Alta' AND facturable = 1 ORDER BY client")->result();
 
 
 
@@ -4324,7 +4329,7 @@ class Admin extends MY_Controller
             $fecha_fin    = $this->input->post('fecha_fin')." 23:59:59";
             $fabricante = $this->input->post('fabricante');   $fabricante = (empty($fabricante)) ? 0 : $fabricante;
 
-            $fabricantes = $this->db->query("SELECT id_client, client FROM client WHERE status='Alta' AND facturable = 1 and type_profile_client=2")->result();
+            $fabricantes = $this->db->query("SELECT id_client, client FROM client WHERE status='Alta' AND facturable = 1 and type_profile_client=2 ORDER BY client")->result();
 
             $data['facturacion'] = $this->tienda_model->facturacion_fabricanteM($fecha_inicio,$fecha_fin,$fabricante);
 
@@ -6989,6 +6994,33 @@ class Admin extends MY_Controller
         $this->load->view('backend/footer');
     }
 
+
+    /*Lista los tipos de robos que despues se asignaran a las incidencias de tipo robo*/
+    public function tipos_robo()
+    {
+        $xcrud = xcrud_get_instance();
+        $xcrud->table('tipo_robo');
+        $xcrud->table_name('Tipos de robos');
+        $xcrud->label('id','Identificador')->label('title', 'Título');
+        $xcrud->columns('id,title,status');
+        $xcrud->fields('title,status');
+        $xcrud->order_by('id');
+
+        // Ocultar el botón de borrar para evitar borrados accidentales mientras no existan constraints en BD:
+        $xcrud->unset_remove();
+
+        $data['title'] = 'Tipos de robos';
+        $data['content'] = $xcrud->render();
+
+        /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+        $this->data->add($data);
+        $data = $this->data->getData();
+        /////
+        $this->load->view('backend/header', $data);
+        $this->load->view('backend/navbar', $data);
+        $this->load->view('backend/content', $data);
+        $this->load->view('backend/footer');
+    }
 }
 /* End of file admin.php */
 /* Location: ./application/controllers/admin.php */

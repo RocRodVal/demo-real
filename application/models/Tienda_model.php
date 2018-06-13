@@ -1200,7 +1200,7 @@ class Tienda_model extends CI_Model {
                     contact.contact AS instalador,
                     incidencias.fecha_cierre as cierre,
                     client.client as dueno,
-                            SUM(facturacion.units_device) AS dispositivos, SUM(facturacion.units_alarma) AS otros')
+                            SUM(facturacion.units_device) AS dispositivos, SUM(facturacion.units_alarma) AS otros, precio')
 
             ->join('intervenciones','facturacion.id_intervencion = intervenciones.id_intervencion')
             ->join('intervenciones_incidencias','intervenciones.id_intervencion = intervenciones_incidencias.id_intervencion')
@@ -1230,7 +1230,8 @@ class Tienda_model extends CI_Model {
             ->get('facturacion');
         $resultado = $query->result();
 //echo $this->db->last_query(); exit;
-        $titulos=array('Fecha','Intervencion','Incidencias','SFID','Tipo tienda','Subtipo tienda','Segmento tienda','Tipología tienda','Población','Provincia','Instalador','Dueño','Dispositivos','Alarmas','Cierre');
+        $titulos=array('Fecha','Intervencion','Incidencias','SFID','Tipo tienda','Subtipo tienda','Segmento tienda',
+            'Tipología tienda','Población','Provincia','Instalador','Dueño','Dispositivos','Alarmas','Cierre','Precio');
         $excluir=array('status_pds','id_incidencia');
 
         // DEFINO LAS CABECERAS DEL LISTADO A EXPORTAR
@@ -1287,7 +1288,8 @@ class Tienda_model extends CI_Model {
 
 
         //Preparación del campo incidencias y el orden del contenido a mostrar
-        $campos=array('fecha','visita','incidencias','SFID','tipo','subtipo','segmento','tipologia','poblacion','provincia','instalador','dueno','dispositivos','otros','cierre');
+        $campos=array('fecha','visita','incidencias','SFID','tipo','subtipo','segmento','tipologia','poblacion',
+            'provincia','instalador','dueno','dispositivos','otros','cierre','precio');
         $aux=array();
         $indice=0;
         foreach ($facturacion as $item_facturacion) {

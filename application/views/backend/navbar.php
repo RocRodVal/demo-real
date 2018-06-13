@@ -62,7 +62,7 @@
                         </li>
                         <?php
                         $maestros = array('clientes','contactos','alarmas','dispositivos','muebles','puntos_de_venta','categorias_pdv','razones_parada','soluciones_ejecutadas',
-                            'tipos_alarmado');
+                            'tipos_alarmado','tipos_robo');
                       ?>
                         <li <?=(in_array($this->uri->segment(2), $maestros))?'class="active"':''?>>
                             <a href="#"><i class="fa fa-sitemap fa-fw"></i> Maestros<span class="fa arrow"></span></a>
@@ -77,6 +77,7 @@
                                 <li><a <?=($this->uri->segment(2)==='razones_parada')?'class="active"':''?> href="<?=site_url($acceso.'/razones_parada')?>"> Razones de parada &raquo;</a></li>
                                 <li><a <?=($this->uri->segment(2)==='soluciones_ejecutadas')?'class="active"':''?> href="<?=site_url($acceso.'/soluciones_ejecutadas')?>"> Soluciones ejecutadas &raquo;</a></li>
                                 <li><a <?=($this->uri->segment(2)==='tipos_alarmado')?'class="active"':''?> href="<?=site_url($acceso.'/tipos_alarmado')?>"> Tipos de alarmado &raquo;</a></li>
+                                <li><a <?=($this->uri->segment(2)==='tipos_robo')?'class="active"':''?> href="<?=site_url($acceso.'/tipos_robo')?>"> Tipos de robo &raquo;</a></li>
                             </ul>
                         </li>
 

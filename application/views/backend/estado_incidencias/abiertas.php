@@ -74,8 +74,6 @@
 
                             <div class="col-lg-3">
 
-
-
                                 <label for="status">Estado SAT: </label>
                                 <select name="status" id="status" class="form-control input-sm">
                                     <option value="" <?php echo ($status==="") ? 'selected="selected"' : ''?>>Cualquiera</option>
@@ -231,12 +229,6 @@
 		            <?php
 		            if (empty($incidencias)) {
                         echo '<p class="message warning"><i class="glyphicon glyphicon-warning-sign"></i> No hay incidencias abiertas.</p>'; ?>
-
-
-                        <?php  /*if(! empty($buscar_sfid) || ! empty($buscar_incidencia)) { ?>
-                            <a href="<?=base_url()?>admin/dashboard/borrar_busqueda/#incidencias_abiertas" class="reiniciar_busqueda"> <i class="glyphicon glyphicon-remove"></i> Reiniciar</a>
-                        <?php }*/  ?>
-
 		            <?php } else {
 		                ?>
                         <?php if($show_paginator) { ?>
@@ -249,6 +241,7 @@
                         <?php } ?>
 
                         <p><a href="<?=base_url()?>admin/exportar_incidencias/abiertas" class="btn exportar"><i class="glyphicon glyphicon-file"></i> Exportar Excel</a>
+                        <a href="<?=base_url()?>admin/exportar_incidencias/abiertas/xlsx/robo" class="btn exportar"><i class="glyphicon glyphicon-file"></i> Exportar robos por tipo</a>
                         <a href="<?=base_url()?>admin/exportar_incidencias/abiertas/xlsx/porrazon" class="btn exportar"><i class="glyphicon glyphicon-file"></i> Exportar por razon de parada</a>
                         <a href="<?=base_url()?>admin/exportar_incidencias/abiertas/xlsx/porrazon/conMaterial" class="btn exportar"><i class="glyphicon glyphicon-file"></i> Exportar por razon de parada con material</a></p>
 		                <div class="table-responsive">
