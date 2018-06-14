@@ -236,6 +236,7 @@
                              <?php }?>
 
                             <p><a href="<?=base_url()?>admin/exportar_incidencias/cerradas" class="btn exportar"><i class="glyphicon glyphicon-file"></i> Exportar Excel</a>
+                                <a href="<?=base_url()?>admin/exportar_incidencias/cerradas/xlsx/robo" class="btn exportar"><i class="glyphicon glyphicon-file"></i> Exportar robos por tipo</a>
                                 <a href="<?=base_url()?>admin/exportar_incidencias/cerradas/xlsx/porrazon" class="btn exportar"><i class="glyphicon glyphicon-file"></i> Exportar por razon de parada</a></p>
                             <div class="table-responsive">
                                 <table class="table table-striped table-bordered table-hover table-sorting" id="table_incidencias_cerradas"  data-order-form="form_orden_cerradas">

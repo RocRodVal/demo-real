@@ -162,29 +162,6 @@ class Incidencia_model extends CI_Model {
 		}
 	}
 	
-	
-	/*public function get_incidencias() {
-			$query = $this->db->select('incidencias.*,pds.reference as reference')
-			        ->join('pds','incidencias.id_pds = pds.id_pds')
-				    ->order_by('fecha ASC')
-			        ->get('incidencias');
-	
-			return $query->result();
-	}	*/
-	
-	
-	/*public function get_incidencias_pds($id) {
-		$query = $this->db->select('incidencias.*,pds.reference as reference')
-		->join('pds','incidencias.id_pds = pds.id_pds')
-	
-		->where('incidencias.id_pds',$id)
-		->order_by('fecha ASC')
-		->get('incidencias');
-	
-		return $query->result();
-	}	*/
-	
-	
 	public function get_incidencia($id) {
 		if($id != FALSE) {
 			$query = $this->db->select('incidencias.*')
@@ -198,35 +175,6 @@ class Incidencia_model extends CI_Model {
 		}
 	}	
 	
-
-	
-	/*public function get_all_displays($id) {
-			$query = $this->db->select('*')
-				   ->where('id_pds',$id)
-				   ->get('displays_pds');
-			
-			return $query->num_rows();
-	}	*/
-
-	
-	/*public function get_all_devices($id) {
-			$query = $this->db->select('*')
-				   ->where('id_pds',$id)
-				   ->get('devices_pds');
-				
-			return $query->num_rows();
-	}*/
-
-	
-	/*public function insert_incidencia($data)
-	{
-		$this->db->insert('incidencias',$data);
-		$id=$this->db->insert_id();
-		return array('add' => (isset($id)) ? $id : FALSE, 'id' => $id);
-	}*/
-
-
-
     /*
 	 *  Devuelve conjunto de registros de incidencias abiertas,
 	 *  filtradas si procede, y el subconjunto limitado paginado si procede
@@ -345,7 +293,7 @@ class Incidencia_model extends CI_Model {
 
         // Array de títulos de campo para la exportación XLS/CSV
         $arr_titulos = array('Id incidencia','SFID','Tipología','Dirección','Provincia','Fecha','Elemento','Territorio',
-            'Fabricante','Mueble','Tipo alarmado','Terminal','Supervisor','Tipo avería',
+            'Fabricante','Mueble','Tipo alarmado','Terminal','Supervisor','Tipo avería','Tipo Robo',
             'Texto 1','Texto 2','Texto 3','Parte PDF','Denuncia','Foto 1','Foto 2','Foto 3','Contacto','Teléfono','Email',
             'Id. Operador','Intervención','Estado','Última modificación','Estado Sat','Razon parada','Descripcion parada');
         $excluir = array('fecha_cierre','fabr','id_type_incidencia');
@@ -366,7 +314,8 @@ class Incidencia_model extends CI_Model {
         $array_accesos_excluidos = array("master","territorio","tienda");
         if(in_array($acceso,$array_accesos_excluidos)){ // En master, excluimos de la exportación los campos...
             // Array de títulos de campo para la exportación XLS/CSV
-            $arr_titulos = array('Id incidencia','SFID','Tipologia','Dirección','Provincia','Fecha','Elemento','Territorio','Fabricante','Mueble','Terminal','Supervisor','Tipo avería',
+            $arr_titulos = array('Id incidencia','SFID','Tipologia','Dirección','Provincia','Fecha','Elemento','Territorio',
+                'Fabricante','Mueble','Terminal','Supervisor','Tipo avería',
                 'Texto 1','Denuncia','Foto 1','Foto 2','Foto 3','Contacto','Teléfono','Email',
                 'Id. Operador','Intervención','Estado','Razon parada','Descripcion parada');
 
@@ -377,6 +326,8 @@ class Incidencia_model extends CI_Model {
             array_push($excluir,'last_updated');
             array_push($excluir,'status_pds');
             array_push($excluir,'alarmado');
+            array_push($excluir,'id_tipo_robo');
+            array_push($excluir,'tipo_robo');
             if($conMaterial) {
                 array_push($excluir, 'Material Dispositivos');
                 array_push($excluir, 'Material Alarmas');
@@ -384,20 +335,20 @@ class Incidencia_model extends CI_Model {
         }
 
         $sql = 'SELECT incidencias.id_incidencia,
-                            pds.reference as `SFID`,
-                            concat(pds_tipo.titulo,"-",pds_subtipo.titulo,"-",pds_segmento.titulo,"-",pds_tipologia.titulo) as tipologia,
-                            concat(address," - ",zip," ",city) as direccion,
-                            province.province as provincia,
-                            incidencias.fecha,
-                            incidencias.fecha_cierre,
-                            (CASE incidencias.alarm_display WHEN 1 THEN ( CONCAT("Mueble: ",
-                                (CASE ISNULL(display.display) WHEN TRUE THEN "Retirado" ELSE display.display END)
-                            )) ELSE (CONCAT("Dispositivo: ",
-                                (CASE ISNULL(device.device) WHEN TRUE THEN "Retirado" ELSE device.device END)
-                            )) END) as elemento,
-                            device.brand_device as fabr,
-                            territory.territory as `Territorio`,
-                            ';
+                        pds.reference as `SFID`,
+                        concat(pds_tipo.titulo,"-",pds_subtipo.titulo,"-",pds_segmento.titulo,"-",pds_tipologia.titulo) as tipologia,
+                        concat(address," - ",zip," ",city) as direccion,
+                        province.province as provincia,
+                        incidencias.fecha,
+                        incidencias.fecha_cierre,
+                        (CASE incidencias.alarm_display WHEN 1 THEN ( CONCAT("Mueble: ",
+                            (CASE ISNULL(display.display) WHEN TRUE THEN "Retirado" ELSE display.display END)
+                        )) ELSE (CONCAT("Dispositivo: ",
+                            (CASE ISNULL(device.device) WHEN TRUE THEN "Retirado" ELSE device.device END)
+                        )) END) as elemento,
+                        device.brand_device as fabr,
+                        territory.territory as `Territorio`,
+                        ';
         $sql .= ' (SELECT brand_device.brand from brand_device  WHERE id_brand_device = fabr
                             ) as `Fabricante` ,';
 
@@ -407,6 +358,8 @@ class Incidencia_model extends CI_Model {
                 pds_supervisor.titulo as supervisor,
                 ';
         $sql .= 'incidencias.tipo_averia,';
+       // if($porrazon=="porTipo")
+            $sql .= 'tipo_robo.title as tipo_robo,';
 
         /*                    (CASE incidencias.fail_device WHEN 1 THEN ("Sí") ELSE ("No") END) AS `Fallo dispositivo`,
                             (CASE incidencias.alarm_display WHEN 1 THEN ("Sí") ELSE ("No") END) AS `Alarma mueble`,
@@ -427,7 +380,8 @@ class Incidencia_model extends CI_Model {
                             incidencias.email,
                             incidencias.id_operador,
                             incidencias.intervencion,
-                            type_incidencia.id_type_incidencia,';
+                            type_incidencia.id_type_incidencia,
+                            tipo_robo.id as id_tipo_robo,';
 
         if($acceso=="admin"){
             $sql .= 'incidencias.status  AS `Estado SAT`,';
@@ -461,13 +415,18 @@ class Incidencia_model extends CI_Model {
                 LEFT JOIN pds_tipologia ON pds.id_tipologia= pds_tipologia.id
                 
                 LEFT JOIN intervenciones_incidencias ON intervenciones_incidencias.id_incidencia = incidencias.id_incidencia
-                WHERE 1 = 1
-                ';
+                LEFT JOIN tipo_robo ON tipo_robo.id=incidencias.id_tipo_robo';
+
+        $sql.=' WHERE 1 = 1';
 
         if($tipo==="abiertas")  $sTitleFilename = "Incidencias_abiertas";
-        else  $sTitleFilename = "Incidencias_cerradas";
+        else
+            $sTitleFilename = "Incidencias_cerradas";
 
-        $sql  .= ' && '.$this->get_condition_tipo_incidencia($tipo);
+        if($porrazon=='robo')
+            $sTitleFilename .= "_Robos";
+
+        $sql  .= ' && '.$this->get_condition_tipo_incidencia($tipo,$porrazon);
 
         // Montamos las cláusulas where filtro, según el array pasado como param.
         $sFiltrosFilename = "-";
@@ -524,15 +483,17 @@ class Incidencia_model extends CI_Model {
             }
         }
         if (!is_null($porrazon)) {
-            $sql .= " ORDER BY type_incidencia.title ASC, fecha DESC ";
+            if($porrazon=="robo"){
+                $sql .= " ORDER BY tipo_robo.title ASC, fecha DESC ";
+            }else {
+                $sql .= " ORDER BY type_incidencia.title ASC, fecha DESC ";
+            }
         } else {
+
             $sql .= " ORDER BY fecha DESC";
         }
 
-        /*if(!is_null($campo_orden) && !empty($campo_orden) && !is_null($orden) && !empty($orden)) {
-          $s_orden = $campo_orden. " ".$orden;
-          $sql .= " ORDER BY ".($s_orden);
-      }*/
+        //echo $sql; exit;
         $query = $this->db->query($sql);
 
         $resultado=$query->result();
@@ -543,80 +504,156 @@ class Incidencia_model extends CI_Model {
             exportar_fichero($formato,$datos,$sTitleFilename.$sFiltrosFilename.date("d-m-Y")."T".date("H:i:s")."_".date("d-m-Y"));
         }
         else {
-            $linea = 0;
-            $anterior = 0;
-            foreach ($resultado as $key => $campos) {
+            /*En el caso de querer exportar las incidencias de tipo robo agrupadas por tipo de robo*/
+            if($porrazon=="robo"){
+                $linea = 0;
+                $anterior = 0;
+                foreach ($resultado as $key => $campos) {
 
-                if (is_null($campos->razon_Parada)) {
-                    $materialD = $this->tienda_model->get_material_dispositivos($campos->id_incidencia,true);
-                    $materialA = $this->tienda_model->get_material_alarmas($campos->id_incidencia);
-                    $titulo = "Incidencias sin razon de parada";
-                }
-                else {
-                    $titulo = $campos->razon_Parada;
-                    $materialA = $this->tienda_model->get_material_alarmas($campos->id_incidencia);
-                    if(strtolower($titulo) ==strtolower(RAZON_PARADA)){
-                        $materialD = $this->tienda_model->get_material_dispositivos($campos->id_incidencia, false);
-                    }else {
+                    if (is_null($campos->tipo_robo)) {
+                        $materialD = $this->tienda_model->get_material_dispositivos($campos->id_incidencia, true);
+                        $materialA = $this->tienda_model->get_material_alarmas($campos->id_incidencia);
+                        $titulo = "Robos sin tipo de robo";
+                    } else {
+                        $titulo = $campos->tipo_robo;
+                        $materialA = $this->tienda_model->get_material_alarmas($campos->id_incidencia);
                         $materialD = $this->tienda_model->get_material_dispositivos($campos->id_incidencia, true);
                     }
-                }
 
-                if ($key==0) { $anterior = $campos->id_type_incidencia; }
+                    if ($key == 0) {
+                        $anterior = $campos->id_tipo_robo;
+                    }
 
-                if (($campos->id_type_incidencia == $anterior)) {
-                    $contador=0;
-                    foreach ($campos as $campo => $valor) {
-                        if ($key == 0) {
+                    if (($campos->id_tipo_robo == $anterior)) {
+                        $contador = 0;
+                        foreach ($campos as $campo => $valor) {
+                            if ($key == 0) {
+                                if (!in_array($campo, $excluir)) {
+                                    if ($contador == 0) {
+                                        $aux[$linea][$campo] = $titulo;
+                                    } else $aux[$linea][$campo] = "";
+                                    $aux[$linea + 1] = $arr_titulos;
+                                    $aux[$linea + 2][$campo] = $valor;
+                                    $lineas = 3;
+                                }
+
+                            } else {
+
+                                if (!in_array($campo, $excluir))
+                                    $aux[$linea][$campo] = $valor;
+                                $lineas = 1;
+                            }
+                            $contador++;
+                        }
+                    } else {
+                        $anterior = $campos->id_tipo_robo;
+                        $contador = 0;
+                        foreach ($campos as $campo => $valor) {
+
+                            $aux[$linea][$campo] = "";
                             if (!in_array($campo, $excluir)) {
-                                if ($contador==0) {
-                                    $aux[$linea][$campo] = $titulo;
-                                }else $aux[$linea][$campo] = "";
-                                $aux[$linea + 1] = $arr_titulos;
-                                $aux[$linea + 2][$campo] = $valor;
-                                $lineas=3;
+                                if ($contador == 0) {
+                                    $aux[$linea + 1][$campo] = $titulo;
+                                } else $aux[$linea][$campo] = "";
+                                $aux[$linea + 2] = $arr_titulos;
+                                $aux[$linea + 3][$campo] = $valor;
+                                $lineas = 4;
                             }
 
+                            $contador++;
+                        }
+                    }
+                    if ($material) {
+                        $aux[$linea + ($lineas - 1)]['Material Dispositivos'] = '';
+                        foreach ($materialD as $k => $m) {
+                            $aux[$linea + ($lineas - 1)]['Material Dispositivos'] .= $m->device . "-" . $m->cantidad . ",";
+                        }
+                        $aux[$linea + ($lineas - 1)]['Material Alarmas'] = '';
+                        foreach ($materialA as $k => $m) {
+
+                            $aux[$linea + ($lineas - 1)]['Material Alarmas'] .= $m->code . " " . $m->alarm . "-" . $m->cantidad . ",";
+                        }
+                    }
+                    $linea = $linea + $lineas;
+
+                }
+                /*En el caso de querer exportar las incidencias por razon de parada*/
+            }else {
+                $linea = 0;
+                $anterior = 0;
+                foreach ($resultado as $key => $campos) {
+
+                    if (is_null($campos->razon_Parada)) {
+                        $materialD = $this->tienda_model->get_material_dispositivos($campos->id_incidencia, true);
+                        $materialA = $this->tienda_model->get_material_alarmas($campos->id_incidencia);
+                        $titulo = "Incidencias sin razon de parada";
+                    } else {
+                        $titulo = $campos->razon_Parada;
+                        $materialA = $this->tienda_model->get_material_alarmas($campos->id_incidencia);
+                        if (strtolower($titulo) == strtolower(RAZON_PARADA)) {
+                            $materialD = $this->tienda_model->get_material_dispositivos($campos->id_incidencia, false);
                         } else {
-
-                            if (!in_array($campo, $excluir))
-                                $aux[$linea][$campo] = $valor;
-                            $lineas =1;
+                            $materialD = $this->tienda_model->get_material_dispositivos($campos->id_incidencia, true);
                         }
-                        $contador++;
                     }
-                }
-                else {
-                    $anterior = $campos->id_type_incidencia;
-                    $contador=0;
-                    foreach ($campos as $campo => $valor) {
 
-                        $aux[$linea][$campo]="";
-                        if (!in_array($campo, $excluir)) {
-                            if ($contador==0) {
-                                $aux[$linea+1][$campo] = $titulo;
-                            } else $aux[$linea][$campo]="";
-                            $aux[$linea + 2] = $arr_titulos;
-                            $aux[$linea + 3][$campo] = $valor;
-                            $lineas=4;
+                    if ($key == 0) {
+                        $anterior = $campos->id_type_incidencia;
+                    }
+
+                    if (($campos->id_type_incidencia == $anterior)) {
+                        $contador = 0;
+                        foreach ($campos as $campo => $valor) {
+                            if ($key == 0) {
+                                if (!in_array($campo, $excluir)) {
+                                    if ($contador == 0) {
+                                        $aux[$linea][$campo] = $titulo;
+                                    } else $aux[$linea][$campo] = "";
+                                    $aux[$linea + 1] = $arr_titulos;
+                                    $aux[$linea + 2][$campo] = $valor;
+                                    $lineas = 3;
+                                }
+
+                            } else {
+
+                                if (!in_array($campo, $excluir))
+                                    $aux[$linea][$campo] = $valor;
+                                $lineas = 1;
+                            }
+                            $contador++;
                         }
+                    } else {
+                        $anterior = $campos->id_type_incidencia;
+                        $contador = 0;
+                        foreach ($campos as $campo => $valor) {
 
-                        $contador++;
+                            $aux[$linea][$campo] = "";
+                            if (!in_array($campo, $excluir)) {
+                                if ($contador == 0) {
+                                    $aux[$linea + 1][$campo] = $titulo;
+                                } else $aux[$linea][$campo] = "";
+                                $aux[$linea + 2] = $arr_titulos;
+                                $aux[$linea + 3][$campo] = $valor;
+                                $lineas = 4;
+                            }
+
+                            $contador++;
+                        }
                     }
+                    if ($material) {
+                        $aux[$linea + ($lineas - 1)]['Material Dispositivos'] = '';
+                        foreach ($materialD as $k => $m) {
+                            $aux[$linea + ($lineas - 1)]['Material Dispositivos'] .= $m->device . "-" . $m->cantidad . ",";
+                        }
+                        $aux[$linea + ($lineas - 1)]['Material Alarmas'] = '';
+                        foreach ($materialA as $k => $m) {
+
+                            $aux[$linea + ($lineas - 1)]['Material Alarmas'] .= $m->code . " " . $m->alarm . "-" . $m->cantidad . ",";
+                        }
+                    }
+                    $linea = $linea + $lineas;
+
                 }
-                if($material) {
-                    $aux[$linea + ($lineas-1)]['Material Dispositivos']='';
-                    foreach ($materialD as $k => $m) {
-                        $aux[$linea +($lineas-1)]['Material Dispositivos'] .= $m->device . "-" . $m->cantidad . ",";
-                    }
-                    $aux[$linea + ($lineas-1)]['Material Alarmas']='';
-                    foreach ($materialA as $k => $m) {
-
-                        $aux[$linea + ($lineas-1)]['Material Alarmas'] .= $m->code." ".$m->alarm . "-" .$m->cantidad . ",";
-                    }
-                }
-                $linea = $linea + $lineas;
-
             }
             //$datos = preparar_array_exportar($aux, $arr_titulos, $excluir);
             exportar_fichero($formato,$aux,$sTitleFilename.$sFiltrosFilename.date("d-m-Y")."T".date("H:i:s")."_".date("d-m-Y"));
@@ -632,7 +669,7 @@ class Incidencia_model extends CI_Model {
      * @param string $tipo
      * @return mixed
      */
-    public function get_condition_tipo_incidencia($tipo = "abiertas"){
+    public function get_condition_tipo_incidencia($tipo = "abiertas",$averia='Incidencia'){
 
         /*  ESTADOS ABIERTOS SAT: Nueva, Revisada, Instalador asignado, Material asignado, Comunicada
            ESTADOS CERRADOS SAT: Resuelta, Pendiente recogida, Cerrada, Cancelada */
@@ -643,16 +680,24 @@ class Incidencia_model extends CI_Model {
         if($tipo === "abiertas" )
         {
             $cond = '((incidencias.status != "Resuelta" && incidencias.status != "Pendiente recogida" && incidencias.status != "Cerrada" && incidencias.status != "Cancelada")
-                        &&  (incidencias.status_pds != "Finalizada" && incidencias.status_pds != "Cancelada"))';
+                        &&  (incidencias.status_pds != "Finalizada" && incidencias.status_pds != "Cancelada" ';
+            if($averia=='robo') {
+                $cond .= ' && incidencias.tipo_averia="Robo"';
+            }
+            $cond .='))';
         }
-        else
-        {
+        else {
             $cond = '((incidencias.status = "Resuelta" || incidencias.status = "Pendiente recogida" || incidencias.status = "Cerrada" || incidencias.status = "Cancelada"
                     || incidencias.status = "Sustituido" || incidencias.status = "SustituidoRMA")
-                    && (incidencias.status_pds = "Finalizada" || incidencias.status_pds = "Cancelada")) ';
+                    && (incidencias.status_pds = "Finalizada" || incidencias.status_pds = "Cancelada") ';
+            if($averia=='robo')
+                $cond .= ' && incidencias.tipo_averia="Robo"';
+            $cond .=')';
         }
 
         return $cond;
+
+
     }
 
     public function get_estado_incidencias_quantity($filtros=NULL, $tipo="abiertas") {
@@ -735,7 +780,6 @@ class Incidencia_model extends CI_Model {
         /**
          * Determinado el tipo por parámetro añadir distinción de tipo: abiertas o cerradas.
          */
-
         $this->db->where($this->get_condition_tipo_incidencia($tipo));
 
 
@@ -1008,6 +1052,15 @@ class Incidencia_model extends CI_Model {
         return $parte;
     }
 
+    /*Nos devuelve el listado de los tipo de robso están en Alta*/
+    public function get_tiposRobo(){
+        $query = $this->db->select('tipo_robo.*')
+            ->where('status','Alta')
+            ->order_by('title','asc')
+            ->get('tipo_robo');
+        //echo $this->db->last_query(); exit;
+        return $query->result();
+    }
 }
 
 ?>

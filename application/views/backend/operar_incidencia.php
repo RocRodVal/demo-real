@@ -431,7 +431,25 @@
                                             <th><input type="checkbox" name="alarm_garra" id="alarm_garra"  <?=($alarm_garra == 1) ? ' checked="checked" ' : '' ?>> <label for="alarm_garra">Alarma garra</label></th>
                                         </tr>
 
+                                        <?php if ($incidencia['tipo_averia'] == 'Robo') { ?>
+                                        <tr>
+                                            <th colspan="1"><label for="tipo_robo">Tipo de robo: </label></th>
+                                            <td colspan="4"><select id="id_tipo_robo" name="id_tipo_robo">
+                                                <option value="NULL">-- Sin asignar --</option>
+                                                <?php
+                                                /* razones de parada de incidencias*/
+                                                foreach($type_robos as $tipo)
+                                                {
+                                                    $selected = ($incidencia['id_tipo_robo']==$tipo->id)? ' selected = "selected" ' : '';
 
+                                                    echo '<option value="'.$tipo->id.'" '.$selected.'>'.$tipo->title.'</option>';
+                                                }
+
+                                                ?>
+                                            </select>
+                                            </td>
+                                        </tr>
+                                        <?php } ?>
                                         <tr>
                                             <th colspan="1"><label for="tipo_averia">Razón de parada de incidencia: </label></th>
                                             <td colspan="4"><select id="tipo_averia" name="tipo_averia">
