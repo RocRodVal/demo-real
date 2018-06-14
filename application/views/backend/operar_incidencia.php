@@ -449,6 +449,8 @@
                                             </select>
                                             </td>
                                         </tr>
+                                        <?php } else { ?>
+                                            <input hidden name="id_tipo_robo" value="NULL">
                                         <?php } ?>
                                         <tr>
                                             <th colspan="1"><label for="tipo_averia">Razón de parada de incidencia: </label></th>
