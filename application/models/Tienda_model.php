@@ -3065,6 +3065,7 @@ class Tienda_model extends CI_Model {
      */
     function eliminar_mueble_sfid($display,$pds)
     {
+        $resultado  = array() ;
         // Si no están vacíos los objetos MUEBLE y PDS
         if(!empty($display) && !empty($pds))
         {
@@ -3089,16 +3090,27 @@ class Tienda_model extends CI_Model {
                         $this->db->query($SQL);
                         $SQL = "UPDATE displays_pds SET status='Baja' WHERE id_displays_pds=".$displays_pds->id_displays_pds;
                         $this->db->query($SQL);
-                        return true;
+                        $resultado =array ("resultado"=>1,"sfid"=>$pds->reference,"mueble" => $displays_pds->id_displays_pds,"dispositivos"=>count($devices_pds),
+                            "mensaje" =>" Tiene ".count($devices_pds)." dispositivos");
                     }else {
-                        return false;
+                        $SQL = "SELECT * FROM devices_pds WHERE id_displays_pds = ".$displays_pds->id_displays_pds." AND (status ='RMA' OR status='Incidencia')";
+                        //echo $SQL; exit;
+                        $query = $this->db->query($SQL);
+                        $devices_pds = $query->result();
+                        $resultado =array ("resultado"=>0,"sfid"=>$pds->reference,"mueble" => $displays_pds->id_displays_pds,"dispositivos"=>count($devices_pds),
+                            "mensaje"=>" Tiene ".count($devices_pds)." posiciones con incidencia/RMA");
                     }
+                }else {
+                    $resultado = array("resultado"=>0,"sfid" => $pds->reference, "mueble" => $displays_pds->id_displays_pds, "dispositivos" => count($devices_pds),
+                        "mensaje"=>" Tiene ".count($devices_pds)." dispositivos");
                 }
+            }else {
+                $resultado = array("resultado"=>0,"sfid" => $pds->reference, "mueble" => 0, "dispositivos" => 0,
+                    "mensaje"=>" El mueble ya ha  sido dado de baja");
             }
 
-
         }
-        return false;
+        return $resultado;
 
     }
 

@@ -7037,6 +7037,7 @@ class Admin extends MY_Controller
             $id_tipo_alarmado = NULL;
             $sfids = "";
             $arr_sfids = array();
+            $resultado=null;
 
             // Venimos del form de eliminar mueble. Eliminar
             if($eliminar_mueble == "si")
@@ -7076,18 +7077,21 @@ class Admin extends MY_Controller
 
                             $resultado=$this->tienda_model->eliminar_mueble_sfid($display,$check_sfid);
 
-                            if ($resultado) {
+                            if ($resultado!=null) {
+                                //print_r($resultado);
                                 //echo "ELIMINADO";
-                                $checked_sfids[$sfid] = $check_sfid;
-                                //$asset = array("drId" => $id_display_pds, "assetType" => array("drId" => $display->id_display), "location" => array("code" => $sfid));
-                                //array_push($assets['assets'], $asset);
+                                $checked_sfids[$sfid] = $resultado;
+                                if($resultado["resultado"]) {
+                                    $asset = array("drId" => $resultado["mueble"]);
+                                    array_push($assets['assets'], $asset);
+                                }
                             }else {
                                 $checked_sfids[$sfid] = NULL;}
 
                         }
                         else $checked_sfids[$sfid] = NULL;
                     }
-                }
+                }//exit;
                 //print_r($checked_sfids);exit;
                 $data["checked_sfids"] = $checked_sfids;
 
@@ -7098,11 +7102,11 @@ class Admin extends MY_Controller
                 //                                                                              //
                 //////////////////////////////////////////////////////////////////////////////////
                 //
-                //print_r(json_encode($assets));
-              /*  $resultado = set_assets_pds_realdooh(array(                                                  //
+                //print_r(json_encode($assets));exit;
+                $resultado = delete_assets_pds_realdooh(array(                                     //
                     'user'=> 'altabox',                                                         //
                     'password' => 'realboxdemo'                                                 //
-                ), array(),json_encode($assets));                 */                            //
+                ), array(),json_encode($assets));                                               //
                 //                                                                              //
                 //////////////////////////////////////////////////////////////////////////////////
                 //print_r($resultado); exit;
@@ -7119,6 +7123,12 @@ class Admin extends MY_Controller
             $data["muebles"] = $muebles;
             $data["sfids"] = $sfids;
             $data["id_display"]  = $id_display;
+            if(!empty($resultado)) {
+                $partes = explode(",", $resultado);
+                $data["result"] = $partes[1];
+            }else {
+                $data["result"] = null;
+            }
 
             $this->load->view('backend/navbar',$data);
             $this->load->view('backend/masivas/eliminar_mueble_sfid/formulario', $data);

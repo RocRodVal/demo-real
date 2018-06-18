@@ -10,20 +10,28 @@
             <?php
             }else{ ?>
             <div class="row">
-                <h2>Mueble Eliminado <small><a href="anadir_mueble_sfid">Eliminar otro</a></small></h2>
+                <h2>Mueble Eliminado <small><a href="eliminar_mueble_sfid">Eliminar otro</a></small></h2>
                 <p>Se ha eliminado el mueble <strong><?=$mueble?></strong>, en los siguientes SFIDs:</p>
                 <ul>
-                    <?php foreach($checked_sfids as $sfid=>$pds)
+                    <?php foreach($checked_sfids as $sfid)
                     {
-                        if(is_null($pds)){
-                            echo '<li>' . $sfid . ' <span class="error">(SFID no encontrado)</span></li>';
+                        //print_r($sfid);
+                        if($sfid["resultado"]==0){
+                            echo '<li>' . $sfid["sfid"] . ' <span class="error">(SFID no actualizado)</span>'.$sfid["mensaje"].'</li>';
                         }else {
-                            echo '<li>' . $sfid . ' <span class="exito">(Mueble eliminado)</span></li>';
+                            echo '<li>' . $sfid["sfid"] . ' <span class="exito">(Mueble eliminado)</span>'.$sfid["mensaje"].'</li>';
                         }
                     }
                     ?>
                 </ul>
             </div>
-            <?php }?>
+            <?php if(strpos($result,"ASSETS")) { ?>
+                <p>Se ha eliminado el mueble <strong><?=$mueble?></strong>, en project:
+                    <?php print_r($result); ?>
+                </p>
+
+            <?php }
+            }?>
+
         </div>
         <!-- /#page-wrapper -->
