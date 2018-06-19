@@ -2937,35 +2937,7 @@ class Tienda_model extends CI_Model {
 		}
 	}	
 	
-	/*public function login($data)
-	{
-		$sfid     = $data['sfid'];
-		$password = $data['password'];
-	
-		$this->db->select('agent_id,sfid,password,type');
-		$this->db->from('agent');
-		$this->db->where('sfid',$sfid);
-		$this->db->where('password',$password);
-		$this->db->limit(1);
-		$query=$this->db->get();
-	
-		if($query->num_rows()==1)
-		{
-			$row = $query->row();
-			$data = array(
-					'agent_id'  => $row->agent_id,
-					'sfid'      => $row->sfid,
-					'type'      => $row->type,
-					'logged_in' => TRUE
-			);
-			$this->session->set_userdata($data);
-			return TRUE;
-		}
-		else
-		{
-			return FALSE;
-		}
-	}*/
+
     /**
      * Insertar mueble SFID
      */
@@ -3087,18 +3059,60 @@ class Tienda_model extends CI_Model {
         //echo $this->db->last_query(); exit;
         return $query->result();
     }
-    /*buscamos las posiciones que tengan una incidencia y que aun no hayan sido revisadas*/
-    /*public function get_incidencias_display($id_displays_pds){
 
-        if (!empty($id_displays_pds)) {
-            $query = $this->db->select('id_devices_pds')
-                ->where('incidencias.id_displays_pds',$id_displays_pds)
-                ->where('incidencias.status','Nueva')
-                ->get('incidencias');
+    /**
+     * Eliminar mueble SFID
+     */
+    function eliminar_mueble_sfid($display,$pds)
+    {
+        $resultado  = array() ;
+        // Si no están vacíos los objetos MUEBLE y PDS
+        if(!empty($display) && !empty($pds))
+        {
+            $id_pds = $pds->id_pds;
+            $id_display = $display->id_display;
 
-            return $query->row_array();
+            //Obtenemos los datos del mueble en la tienda
+            $SQL = " SELECT * FROM displays_pds WHERE id_pds = " . $id_pds ." AND id_display = ".$id_display." AND status='Alta'";
+            $query = $this->db->query($SQL);
+            $displays_pds = $query->row();
+
+            if(!empty($displays_pds) ){
+                $SQL = "SELECT * FROM devices_pds WHERE id_displays_pds = ".$displays_pds->id_displays_pds." AND status ='Alta'";
+                $query = $this->db->query($SQL);
+                $devices_pds = $query->result();
+
+                if(!empty($devices_pds)){
+                    /*Si el numero de elementos que están de alta es igual al numero de elementos del mueble entonces lo damos de baja*/
+                    if($display->positions==count($devices_pds)) {
+                        $SQL = "UPDATE devices_pds SET status='Baja' WHERE id_displays_pds=".$displays_pds->id_displays_pds.
+                        " AND status='Alta'";
+                        $this->db->query($SQL);
+                        $SQL = "UPDATE displays_pds SET status='Baja' WHERE id_displays_pds=".$displays_pds->id_displays_pds;
+                        $this->db->query($SQL);
+                        $resultado =array ("resultado"=>1,"sfid"=>$pds->reference,"mueble" => $displays_pds->id_displays_pds,"dispositivos"=>count($devices_pds),
+                            "mensaje" =>" Tiene ".count($devices_pds)." dispositivos");
+                    }else {
+                        $SQL = "SELECT * FROM devices_pds WHERE id_displays_pds = ".$displays_pds->id_displays_pds." AND (status ='RMA' OR status='Incidencia')";
+                        //echo $SQL; exit;
+                        $query = $this->db->query($SQL);
+                        $devices_pds = $query->result();
+                        $resultado =array ("resultado"=>0,"sfid"=>$pds->reference,"mueble" => $displays_pds->id_displays_pds,"dispositivos"=>count($devices_pds),
+                            "mensaje"=>" Tiene ".count($devices_pds)." posiciones con incidencia/RMA");
+                    }
+                }else {
+                    $resultado = array("resultado"=>0,"sfid" => $pds->reference, "mueble" => $displays_pds->id_displays_pds, "dispositivos" => count($devices_pds),
+                        "mensaje"=>" Tiene ".count($devices_pds)." dispositivos");
+                }
+            }else {
+                $resultado = array("resultado"=>0,"sfid" => $pds->reference, "mueble" => 0, "dispositivos" => 0,
+                    "mensaje"=>" El mueble ya ha  sido dado de baja");
+            }
+
         }
-    }*/
+        return $resultado;
+
+    }
 
 }
 ?>

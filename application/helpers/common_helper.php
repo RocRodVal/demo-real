@@ -275,6 +275,25 @@ function delete_pds_realdooh($auth, $params='',$postParams = '') {
 
     }
 }
+
+/**
+ * Llamada a la API para eliminar en realdooh los muebles pasados como parámetro
+ * SOLO SI ACTIVE=TRUE en la configuracion...
+ * @param $params
+ * @param $auth
+ * @param string $postParams
+ */
+function delete_assets_pds_realdooh($auth, $params='',$postParams = '') {
+    $cfg = get_realdooh_config();
+
+    if($cfg['active']) {
+        $service = $cfg['deleteAssetsUrl'];
+
+        $response = rest_post($service, $params, $auth,$postParams);
+        return $response;
+
+    }
+}
 /**
  * Post básico a servicio REST mediante URL
  * @param $url
@@ -286,7 +305,6 @@ function rest_post ($url, $urlParams = array(), $auth = array(), $queryParams= '
     // http://realdooh.pre.altabox.net:8080/rdorangeapi/api/v1/location/demoreal
     // Authorization: Basic aHR0cHdhdGNoOmY=    base64(User:Password)
     //$url = 'http://server.com/path';
-
     $url = replaceUrlParams($url, $urlParams);
 
     $headers = array("Content-type: application/json", );

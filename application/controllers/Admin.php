@@ -7021,6 +7021,116 @@ class Admin extends MY_Controller
         $this->load->view('backend/content', $data);
         $this->load->view('backend/footer');
     }
+
+    /*Dar de baja un mueble y sus posiciones en varias tiendas y se envia la orden para que se haga tambien en project*/
+    public function eliminar_mueble_sfid()
+    {
+        if($this->auth->is_auth()) {
+            $xcrud = xcrud_get_instance();
+            $this->load->model("tienda_model");
+
+            $eliminar_mueble = $this->input->post("eliminar_mueble");
+            $data["title"] = "Eliminar mueble a SFIDs";
+            $data["eliminando_mueble"] = FALSE;
+
+            $id_display = NULL;
+            $id_tipo_alarmado = NULL;
+            $sfids = "";
+            $arr_sfids = array();
+            $resultado=null;
+
+            // Venimos del form de eliminar mueble. Eliminar
+            if($eliminar_mueble == "si")
+            {
+                $sfids = $this->input->post("sfids");
+                $arr_sfids = explode("\n", $sfids);
+                $arr_sfids = explode("\r", implode($arr_sfids));
+                $data["arr_sfids"] = $arr_sfids;
+                $id_display = $this->input->post("id_display");
+
+            }
+
+            // Validamos y eliminamos
+            if(!empty($sfids) && !empty($id_display))
+            {
+                $data["eliminando_mueble"] = TRUE;
+
+                $display = $this->tienda_model->get_display($id_display,"object");
+                $data["mueble"] = $display->display;
+
+                // Validamos el array de SFIDs, y creamos un nuevo array que guarde NULL si el SFID no se encuentra
+                // y en caso contrario guarde el objeto PDS asociado.
+                $checked_sfids = array();
+                $assets=array("assets"=> array());
+
+                foreach($arr_sfids as $sfid)
+                {
+                    if(!empty($sfid))
+                    {
+                        $check_sfid = $this->tienda_model->get_sfid($sfid,"object");
+
+                        if (!empty($check_sfid)){// SFID ENCONTRADO
+
+                            $resultado=$this->tienda_model->eliminar_mueble_sfid($display,$check_sfid);
+
+                            if ($resultado!=null) {
+                                $checked_sfids[$sfid] = $resultado;
+                                if($resultado["resultado"]) {
+                                    $asset = array("drId" => $resultado["mueble"]);
+                                    array_push($assets['assets'], $asset);
+                                }
+                            }else {
+                                $checked_sfids[$sfid] = NULL;}
+
+                        }
+                        else $checked_sfids[$sfid] = NULL;
+                    }
+                }
+                $data["checked_sfids"] = $checked_sfids;
+
+                //print_r($assets);
+                //////////////////////////////////////////////////////////////////////////////////
+                //                                                                              //
+                //             Comunicación  con Realdooh VU: agregar muebles a una tienda      //
+                //                                                                              //
+                //////////////////////////////////////////////////////////////////////////////////
+                //
+                //print_r(json_encode($assets));exit;
+                $resultado = delete_assets_pds_realdooh(array(                                     //
+                    'user'=> 'altabox',                                                         //
+                    'password' => 'realboxdemo'                                                 //
+                ), array(),json_encode($assets));                                               //
+                //                                                                              //
+                //////////////////////////////////////////////////////////////////////////////////
+                //print_r($resultado); exit;
+
+
+            }
+
+            $this->data->add($data);
+            $data = $this->data->getData();
+            $this->load->view('backend/header', $data);
+
+            $muebles = $this->tienda_model->get_muebles();
+
+            $data["muebles"] = $muebles;
+            $data["sfids"] = $sfids;
+            $data["id_display"]  = $id_display;
+            if(!empty($resultado)) {
+                $partes = explode(",", $resultado);
+                $data["result"] = $partes[1];
+            }else {
+                $data["result"] = null;
+            }
+
+            $this->load->view('backend/navbar',$data);
+            $this->load->view('backend/masivas/eliminar_mueble_sfid/formulario', $data);
+            $this->load->view('backend/masivas/eliminar_mueble_sfid/resultado', $data);
+            $this->load->view('backend/footer');
+        }else {
+            redirect('admin', 'refresh');
+        }
+    }
 }
 /* End of file admin.php */
 /* Location: ./application/controllers/admin.php */
