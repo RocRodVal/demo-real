@@ -7022,7 +7022,7 @@ class Admin extends MY_Controller
         $this->load->view('backend/footer');
     }
 
-    /*Dar de baja un mueble en varias tiendas*/
+    /*Dar de baja un mueble y sus posiciones en varias tiendas y se envia la orden para que se haga tambien en project*/
     public function eliminar_mueble_sfid()
     {
         if($this->auth->is_auth()) {
@@ -7058,8 +7058,6 @@ class Admin extends MY_Controller
                 $display = $this->tienda_model->get_display($id_display,"object");
                 $data["mueble"] = $display->display;
 
-              //  $devices_display = $this->tienda_model->get_devices_display($id_display);
-
                 // Validamos el array de SFIDs, y creamos un nuevo array que guarde NULL si el SFID no se encuentra
                 // y en caso contrario guarde el objeto PDS asociado.
                 $checked_sfids = array();
@@ -7073,13 +7071,9 @@ class Admin extends MY_Controller
 
                         if (!empty($check_sfid)){// SFID ENCONTRADO
 
-
-
                             $resultado=$this->tienda_model->eliminar_mueble_sfid($display,$check_sfid);
 
                             if ($resultado!=null) {
-                                //print_r($resultado);
-                                //echo "ELIMINADO";
                                 $checked_sfids[$sfid] = $resultado;
                                 if($resultado["resultado"]) {
                                     $asset = array("drId" => $resultado["mueble"]);
@@ -7091,8 +7085,7 @@ class Admin extends MY_Controller
                         }
                         else $checked_sfids[$sfid] = NULL;
                     }
-                }//exit;
-                //print_r($checked_sfids);exit;
+                }
                 $data["checked_sfids"] = $checked_sfids;
 
                 //print_r($assets);
@@ -7134,6 +7127,8 @@ class Admin extends MY_Controller
             $this->load->view('backend/masivas/eliminar_mueble_sfid/formulario', $data);
             $this->load->view('backend/masivas/eliminar_mueble_sfid/resultado', $data);
             $this->load->view('backend/footer');
+        }else {
+            redirect('admin', 'refresh');
         }
     }
 }
