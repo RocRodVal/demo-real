@@ -3101,8 +3101,16 @@ class Tienda_model extends CI_Model {
                             "mensaje"=>" Tiene ".count($devices_pds)." posiciones con incidencia/RMA");
                     }
                 }else {
-                    $resultado = array("resultado"=>0,"sfid" => $pds->reference, "mueble" => $displays_pds->id_displays_pds, "dispositivos" => count($devices_pds),
-                        "mensaje"=>" Tiene ".count($devices_pds)." dispositivos");
+                    $SQL = "SELECT * FROM devices_pds WHERE id_displays_pds = ".$displays_pds->id_displays_pds." AND (status ='RMA' OR status='Incidencia')";
+                    //echo $SQL; exit;
+                    $query = $this->db->query($SQL);
+                    $devices_pds_inc = $query->result();
+                    if(count($devices_pds_inc)!=0)
+                        $resultado =array ("resultado"=>0,"sfid"=>$pds->reference,"mueble" => $displays_pds->id_displays_pds,"dispositivos"=>count($devices_pds),
+                            "mensaje"=>" Tiene ".count($devices_pds_inc)." posiciones con incidencia/RMA");
+                    else
+                        $resultado = array("resultado"=>0,"sfid" => $pds->reference, "mueble" => $displays_pds->id_displays_pds, "dispositivos" => count($devices_pds),
+                            "mensaje"=>" Tiene ".count($devices_pds)." dispositivos");
                 }
             }else {
                 $resultado = array("resultado"=>0,"sfid" => $pds->reference, "mueble" => 0, "dispositivos" => 0,
