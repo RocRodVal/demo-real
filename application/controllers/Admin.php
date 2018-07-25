@@ -6113,12 +6113,12 @@ class Admin extends MY_Controller
             $resultados_3 = $this->tablona_model->get_totalIntervenciones();
 
             /*Cantidades para ajustar intervenciones*/
-            $intervenciones_mas=array(["anio"=>2017,"cantidad"=>93,"mes"=>7],["anio"=>2017,"cantidad"=>28,"mes"=>8],["anio"=>2017,"cantidad"=>45,"mes"=>9],
+            $intervenciones_mas=[["anio"=>2017,"cantidad"=>93,"mes"=>7],["anio"=>2017,"cantidad"=>28,"mes"=>8],["anio"=>2017,"cantidad"=>45,"mes"=>9],
                 ["anio"=>2017,"cantidad"=>44,"mes"=>10],["anio"=>2017,"cantidad"=>170,"mes"=>11],["anio"=>2017,"cantidad"=>74,"mes"=>12],
                 ["anio"=>2018,"cantidad"=>68,"mes"=>1],["anio"=>2018,"cantidad"=>44,"mes"=>2],["anio"=>2018,"cantidad"=>23,"mes"=>3],
-                ["anio"=>2018,"cantidad"=>58,"mes"=>4],["anio"=>2018,"cantidad"=>70,"mes"=>5],["anio"=>2018,"cantidad"=>173,"mes"=>6]);
+                ["anio"=>2018,"cantidad"=>58,"mes"=>4],["anio"=>2018,"cantidad"=>70,"mes"=>5],["anio"=>2018,"cantidad"=>173,"mes"=>6]];
 
-
+//print_r($intervenciones_mas); exit;
             // CREAMOS UN ARRAY CON TODOS LOS MESES Y LO RELLENAMOS CON LOS RESULTADOS, SI NO                                                                                                                                                                                                                      EXISTE RESULTADO, ESE MES
             // SERA DE CANTIDAD 0
             $intervenciones_anio = array();
