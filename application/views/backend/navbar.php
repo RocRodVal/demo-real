@@ -16,7 +16,7 @@
             <div class="navbar-default sidebar" role="navigation">
                 <div class="sidebar-nav navbar-collapse">
                     <ul class="nav" id="side-menu" style="margin-top:20px;">
-                        <?php $estado_incidencias = array("estado_incidencias","incidencias_exp","cdm_incidencias","operar_incidencia",'incidencias','update_incidencia_materiales');
+                        <?php $estado_incidencias = array("estado_incidencias","incidencias_exp","cdm_incidencias","operar_incidencia",'incidencias','update_incidencia_materiales','ajustes');
                            // $cdm = array('cdm_incidencias');
                             $estado_incidencias_inner = array();
                             $arr_anios = array();
@@ -48,6 +48,9 @@
                                         <?php } ?>
                                         </li>
                                     </ul>
+                                </li>
+                                <li <?=($this->uri->segment(2)==='ajustes')?'class="active"':''?>>
+                                    <a href="<?=site_url($acceso.'/ajustes')?>">Ajustes Interv / Dispos. &raquo;</a>
                                 </li>
                                 <li><a <?=($this->uri->segment(2)==='incidencias') ?'class="active"':''?> href="<?=site_url('inventario/incidencias')?>">Incidencias dispositivo &raquo;</a></li>
                             </ul>

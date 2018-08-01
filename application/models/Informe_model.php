@@ -1078,7 +1078,6 @@ class Informe_model extends CI_Model
             $sql .= $join;
         }
 
-
         $sql .= ' WHERE 1 = 1';
         // Añadimos las condiciones
         $sql .= " AND id_incidencia IN (".implode(",",$array_ids).") ";
@@ -1088,16 +1087,9 @@ class Informe_model extends CI_Model
 
         $datos = preparar_array_exportar($query->result(),$arr_titulos,$excluir);
 
-        //echo count($query->result());
-        //var_dump($query->result()); exit;
         exportar_fichero("xls",$datos,$sTitleFilename.$sFiltrosFilename."__".date("d-m-Y")."T".date("H:i:s"));
 
     }
-
-
-
-
-
 
     public function exportar_cdm_incidencias($anio = NULL, $mes = NULL,$status= NULL,$menos72=NULL)
     {
@@ -1240,21 +1232,13 @@ class Informe_model extends CI_Model
     }
 
 
-
-
-
     public function get_informe_tiendas_tipologia()
     {
-
-
         $tiendas_tipologia = $this->db->select(" COUNT(pds.id_pds) as total, s.titulo as subtipo, s.id as id_subtipo")
                     ->join("pds_subtipo s","s.id = pds.id_subtipo ")
                     ->where("pds.status LIKE 'Alta' ")
                     ->group_by("pds.id_subtipo")
                     ->get("pds")->result();
-
-
-
 
         //echo $this->db->last_query();
 
@@ -1342,14 +1326,8 @@ class Informe_model extends CI_Model
 
         }
 
-        /*echo "<pre>";
-        print_r($tiendas_tipologia);
-        echo "</pre>";*/
-
         return $tiendas_tipologia;
     }
-    
-    
     
     
     /**
@@ -1366,124 +1344,6 @@ class Informe_model extends CI_Model
         
         return $fabricantes_display->result();
     }
-    
-    
-    /**
-     * Obtener resultado del informe de Tiendas por fabricante
-     * @param type $id_fabricante
-     */
-   /* public function get_informe_tiendas_fabricante($id_fabricante = NULL)
-    {
-        
-        $resultado = new StdClass();
-        
-        
-        $cond_fabricante = (is_null($id_fabricante)) ? "" : " AND d.client_display = '$id_fabricante' ";
-        
-        $segmentos_tienda = $this->db->query("  
-            SELECT distinct pds.id_segmento,s.titulo as segmento,
-                (SELECT COUNT(id_pds) FROM pds WHERE status='Alta' AND pds.id_segmento = s.id) AS num_pds
-            FROM pds
-            JOIN pds_segmento s ON s.id = pds.id_segmento            
-            WHERE pds.status = 'Alta'
-            ORDER BY s.orden ASC;
-        ")->result();
-        
-        // Añadimos los segmentos, cuyas tipologias tienen muebles.        
-        $resultado->segmentos = array();
-        foreach($segmentos_tienda as $segmento)
-        {
-            $id_segmento = $segmento->id_segmento; 
-            
-            
-             $tipologias_tienda = $this->db->query("  
-                SELECT distinct  pds.id_tipologia, t.titulo as tipologia, 
-                    (SELECT COUNT(id_pds) FROM pds WHERE status='Alta' AND pds.id_segmento = s.id AND pds.id_tipologia = t.id) AS num_pds
-                FROM pds
-                JOIN pds_segmento s ON s.id = pds.id_segmento
-                JOIN pds_tipologia t ON t.id = pds.id_tipologia              
-                WHERE pds.status = 'Alta' AND s.id = ".$id_segmento."
-                ORDER BY t.orden ASC;
-            ")->result();
-                    
-               // Para cada tipologia-segmento buscamos los muebles de aquellas que tienen y las añadimos al resultado
-             $segmento->tipologias = array();
-              foreach($tipologias_tienda as $tipo)
-              {
-                  
-                  $id_tipologia = $tipo->id_tipologia;
-                  // Sacar todos los muebles que tengan mas de 0 posiciones
-                  $muebles_tipologia = $this->db->query(" 
-                      SELECT d.id_display, d.display, d.picture_url as imagen,
-                          (SELECT COUNT(pds.id_pds) FROM pds 
-                            JOIN displays_pds dp ON dp.id_pds = pds.id_pds
-                           WHERE pds.status = 'Alta' AND pds.id_segmento=dp.id_segmento AND pds.id_tipologia = dp.id_tipologia
-                           AND pds.id_tipologia=$id_tipologia and pds.id_segmento=$id_segmento) as num_pds
-                      FROM display d
-                      WHERE d.positions > 0
-                      $cond_fabricante
-                      GROUP BY d.id_display
-                      ;
-                  ")->result();
-
-                  if(empty($muebles_tipologia))
-                  {
-                      unset($tipo);                
-                  }
-                  else
-                  {
-                      $tipo->muebles = new StdClass();
-                      
-                      // Recorrer los muebles y preguntar cuántos PDS lo tienen asociado
-                      foreach($muebles_tipologia as $mueble)
-                      {
-                          $id_mueble = $mueble->id_display;
-                          $num_pds = $this->db->query(" 
-                                SELECT COUNT(pds.id_pds) as num_pds FROM pds 
-                                JOIN displays_pds dp ON dp.id_pds = pds.id_pds
-                                JOIN display d ON dp.id_display = d.id_display
-                                WHERE pds.status='Alta' 
-                                $cond_fabricante
-                                AND pds.id_segmento = ".$id_segmento."
-                                AND pds.id_tipologia = ".$id_tipologia."
-                                AND dp.id_display = ".$id_mueble.";")->row();
-                          
-                          
-                          $mueble->num_pds = empty($num_pds) ? 0 : $num_pds->num_pds;                      
-                          
-                          // Sacar planograma
-                          
-                          $mueble->planograma = new StdClass();
-                          
-                          $planograma = $this->db->query("
-                              SELECT d.device, d.id_device, d.picture_url as imagen
-                              FROM device d
-                              JOIN devices_display dd ON dd.id_device = d.id_device
-                              WHERE id_display = ".$id_mueble."
-                                  AND dd.status='Alta'
-                                  ORDER BY position ASC                                  
-                              ")->result();
-                         
-                          $mueble->planograma = $planograma;
-                          
-                         
-                      }
-                      
-                      
-                      
-                      $tipo->muebles = $muebles_tipologia;
-                    
-                      
-                      $segmento->tipologias[] = $tipo;
-                  }
-                  
-              }
-             // Si no está vacio el array de tipologias para el segmento... Añadimos al resultado
-             if(empty($segmento->tipologias)) unset($segmento);
-             else $resultado->segmentos[] = $segmento;                                     
-        }       
-        return $resultado;
-    }*/
 
     /**
      * Obtener resultado del informe de Tiendas por fabricante
@@ -1605,30 +1465,92 @@ class Informe_model extends CI_Model
         return $resultado;
     }
 
-    /**
-     * Devuelve objeto de alarmas totales
-     * @return mixed
-     */
-   /* public function get_sistemas_seguridad_totales()
+    /* Ajustes para intervenciones y dispositivos */
+    public function get_ajustes_totales($anio)
     {
-       // $sql = "SELECT * FROM historico_temp";
-       // $query_1 = $this->db->query($sql);
-       // print_r($query_1->result());
+        $query = $this->db->select('*')
+            ->where("anio",$anio)
+            ->order_by('mes ASC')
+            ->get('ajustes');
 
-        $sql = "
-            SELECT sum(m.cantidad) as total,m.id_alarm, t.type as tipo_alarma, month(h.fecha) as mes
-            FROM demoreal.material_incidencias as m
-            INNER JOIN historico_temp h ON h.id_incidencia=m.id_incidencia
-            INNER JOIN alarm a ON a.id_alarm = m.id_alarm
-            INNER JOIN type_alarm t ON t.id_type_alarm = a.type_alarm
-            where m.id_alarm IS NOT NULL
-            GROUP BY month(h.fecha), a.type_alarm";
+        //echo $this->db->last_query(); exit;
+        return $query->result();
+    }
 
-        $query_1 = $this->db->query($sql);
-       // print_r($query_1->result());
-        return $query_1->result();
-    }*/
+    /**
+     * Devuelve en bruto un array simple [mes]=>valor las incidencias, si no hay incidencias rellena con valor 0
+     * @param null $array_ajustes
+     * @return array
+     */
+    public function get_array_ajustes($rango_meses=NULL,$array_ajustes = NULL)
+    {
+        //$mesFinal=1;
+        $data = array();
+
+        if(!is_null($array_ajustes))
+        {
+            for($i=$rango_meses->min;$i<=$rango_meses->max;$i++) {
+                $existe=false;
+                foreach ($array_ajustes as $a) {
+                    if ($i==$a->mes){
+                        $data[$a->mes]['intervenciones'] = $a->intervenciones;
+                        $data[$a->mes]['terminales'] = $a->terminales;
+                        //$mesFinal=$inc->mes;
+                        $existe=true;
+                        break;
+                    }
+                }
+                if (!$existe){
+                    $data[$i]['intervenciones']=0;
+                    $data[$i]['terminales']=0;
+                }
+
+            }
+        }
+        return $data;
+    }
+
+    /**
+     * Devuelve en bruto un array simple [mes]=>valor las incidencias, si no hay incidencias rellena con valor 0
+     * @param null $array_ajustes
+     * @return array
+     */
+    public function update_ajustes_totales($anio,$intervenciones,$terminales)
+    {
+        //$mesFinal=1;
+        $data = $this->get_ajustes_totales($anio);
+//print_r($data); exit;
+        if(!is_null($intervenciones) && !is_null($terminales))
+        {
+            foreach ($intervenciones as $key => $valor) {
+                //$elemento_anterior =$data[$key];
+                //print_r($elemento_anterior);
+                if(isset($data[$key])) {
+                    $this->db->set('intervenciones', $valor)
+                        ->set('terminales', $terminales[$key])
+                        ->where('anio', $anio)
+                        ->where('mes', ($key + 1))
+                        ->update('ajustes');
+                }else {
+                    $data = array(
+                        'intervenciones' => $valor,
+                        'terminales' =>  $terminales[$key],
+                        'anio' => $anio,
+                        'mes' => ($key + 1)
+                    );
+                    // print_r($data); exit;
+                    $this->db->insert('ajustes', $data);
+                }
 
 
+                /*$resultado = $this->db->query("UPDATE ajustes SET intervenciones =".$valor.", terminales = ".
+                    $terminales[$key]." WHERE anio = ".$anio.
+                    " AND mes = ".($key+1))->result();*/
 
+              //  echo $resultado;
+            }
+        }
+
+        //return $data;
+    }
 }
