@@ -6112,6 +6112,18 @@ class Admin extends MY_Controller
             /*Numero total de intervenciones de un determinado año*/
             $resultados_3 = $this->tablona_model->get_totalIntervenciones();
 
+            /*Cantidades para ajustar intervenciones*/
+            /*$intervenciones_mas_=array(array("anio"=>2017,"cantidad"=>8,"mes"=>1),array("anio"=>2017,"cantidad"=>18,"mes"=>2),
+                array("anio"=>2017,"cantidad"=>27,"mes"=>3),array("anio"=>2017,"cantidad"=>40,"mes"=>4),
+                array("anio"=>2017,"cantidad"=>-47,"mes"=>5),array("anio"=>2017,"cantidad"=>64,"mes"=>6),
+                array("anio"=>2017,"cantidad"=>93,"mes"=>7),array("anio"=>2017,"cantidad"=>28,"mes"=>8),array("anio"=>2017,"cantidad"=>45,"mes"=>9),
+                array("anio"=>2017,"cantidad"=>44,"mes"=>10),array("anio"=>2017,"cantidad"=>170,"mes"=>11),array("anio"=>2017,"cantidad"=>74,"mes"=>12),
+                array("anio"=>2018,"cantidad"=>68,"mes"=>1),array("anio"=>2018,"cantidad"=>44,"mes"=>2),array("anio"=>2018,"cantidad"=>23,"mes"=>3),
+                array("anio"=>2018,"cantidad"=>58,"mes"=>4),array("anio"=>2018,"cantidad"=>70,"mes"=>5),array("anio"=>2018,"cantidad"=>173,"mes"=>6));*/
+
+
+            $interv_term_mas = $this->informe_model->get_ajustes_totales($anio);
+
             // CREAMOS UN ARRAY CON TODOS LOS MESES Y LO RELLENAMOS CON LOS RESULTADOS, SI NO                                                                                                                                                                                                                      EXISTE RESULTADO, ESE MES
             // SERA DE CANTIDAD 0
             $intervenciones_anio = array();
@@ -6130,7 +6142,19 @@ class Admin extends MY_Controller
                         break;
                     }
                 }
+               // print_r($intervenciones_anio);echo "<br>";
+                foreach($interv_term_mas as $valor)
+                {
+                 //print_r($valor);
+                    if($valor->mes==$num_mes){
+                        //if (array_key_exists("mes", $valor) && $v["mes"] == $num_mes && $v["anio"] == $este_anio) {
+                            $intervenciones_anio[$num_mes]->cantidad = $intervenciones_anio[$num_mes]->cantidad + $valor->intervenciones;
+                            break;
+                      //  }
+                    }
+                }
             }
+            //print_r($intervenciones_anio);echo "<br><br>";
             $data["intervenciones_anio"] = $intervenciones_anio;
 
             // Línea 2: Alarmas
@@ -6161,6 +6185,14 @@ class Admin extends MY_Controller
             // Línea 3: Terminales
             $resultados_5= $this->tablona_model->get_terminales($este_anio);
 
+            /*Cantidades para ajustar terminales*/
+           /* $terminales_mas=array(array("anio"=>2017,"cantidad"=>-6,"mes"=>1),array("anio"=>2017,"cantidad"=>-8,"mes"=>2),
+                array("anio"=>2017,"cantidad"=>41,"mes"=>3),array("anio"=>2017,"cantidad"=>39,"mes"=>4),
+                array("anio"=>2017,"cantidad"=>-39,"mes"=>5),array("anio"=>2017,"cantidad"=>39,"mes"=>6),
+                array("anio"=>2017,"cantidad"=>45,"mes"=>7),array("anio"=>2017,"cantidad"=>106,"mes"=>8),array("anio"=>2017,"cantidad"=>55,"mes"=>9),
+                array("anio"=>2017,"cantidad"=>35,"mes"=>10),array("anio"=>2017,"cantidad"=>17,"mes"=>11),array("anio"=>2017,"cantidad"=>11,"mes"=>12),
+                array("anio"=>2018,"cantidad"=>7,"mes"=>1),array("anio"=>2018,"cantidad"=>13,"mes"=>2),array("anio"=>2018,"cantidad"=>-73,"mes"=>3),
+                array("anio"=>2018,"cantidad"=>13,"mes"=>4),array("anio"=>2018,"cantidad"=>104,"mes"=>5),array("anio"=>2018,"cantidad"=>82,"mes"=>6));*/
 
             // CREAMOS UN ARRAY CON TODOS LOS MESES Y LO RELLENAMOS CON LOS RESULTADOS, SI NO EXISTE RESULTADO, ESE MES
             // SERA DE CANTIDAD 0
@@ -6178,6 +6210,25 @@ class Admin extends MY_Controller
                     {
                         $terminales_anio[$num_mes] = $valor;
                         break;
+                    }
+                }
+               /* foreach($terminales_mas as $key=>$valor)
+                {
+                    //print_r(array_keys($valor));
+                    if(array_key_exists("mes",$valor) && $valor["mes"] == $num_mes && $valor["anio"]==$este_anio)
+                    {
+                        $terminales_anio[$num_mes]->cantidad = $terminales_anio[$num_mes]->cantidad+$valor["cantidad"];
+                        break;
+                    }
+                }*/
+                foreach($interv_term_mas as $valor)
+                {
+                    //print_r($valor);
+                    if($valor->mes==$num_mes){
+                        //if (array_key_exists("mes", $valor) && $v["mes"] == $num_mes && $v["anio"] == $este_anio) {
+                        $terminales_anio[$num_mes]->cantidad = $terminales_anio[$num_mes]->cantidad + $valor->terminales;
+                        break;
+                        //  }
                     }
                 }
             }
@@ -7128,6 +7179,110 @@ class Admin extends MY_Controller
             $this->load->view('backend/masivas/eliminar_mueble_sfid/resultado', $data);
             $this->load->view('backend/footer');
         }else {
+            redirect('admin', 'refresh');
+        }
+    }
+
+    /*Ajustar las cantidaddes de intervenciones y terminales por mes /año */
+    public function ajustes()
+    {
+        if ($this->auth->is_auth()) { // Control de acceso según el tipo de agente. Permiso definido en constructor
+
+            $xcrud = xcrud_get_instance();
+            $this->load->helper("common");
+            $this->load->model(array("informe_model", "tablona_model"));
+
+            $title = 'Ajustar intervenciones / dispositivos por años';
+            $anio='';
+            if (!empty($_POST) && ($this->input->post("generar_tabla") ==='si')) {
+
+                $anio=$_POST['anio'];
+
+                if (!empty($anio)) {
+                    //$this->tablona_model->crear_historicotemp($anio);
+
+                    $title .= ' ' . $anio;
+                    setlocale(LC_ALL, 'es_ES');
+
+                    $xcrud_1 = xcrud_get_instance();
+                   // $xcrud_1->table_name('ajustes');
+
+                    //$ajustes=$this->informe_model->get_ajustes($anio);
+
+                    // Rango de meses que mostrarán las columnas de la tabla, basándome en el mínimo y máximo mes que hay incidencias, este año.
+                    $rango_meses = $this->informe_model->get_rango_meses($anio);
+                    $meses_columna = $this->informe_model->get_meses_columna($rango_meses->min,$rango_meses->max);
+                    $data["primer_mes"] =  $rango_meses->min;;
+                    $data["ultimo_mes"] = $rango_meses->max;
+                    $data["meses_columna"] = $meses_columna;
+
+                    $resultado = $this->informe_model->get_ajustes_totales($anio);
+                    //print_r($resultado); exit;
+                    $valor_resultado = $this->informe_model->get_array_ajustes($rango_meses,$resultado);
+                    //$incidencias_estado = $this->informe_model->get_cmd_incidencias_estado($titulo_incidencias_estado,$resultados_2,$meses_columna);
+                    //print_r($valor_resultado); exit;
+                    $data['valor_resultado'] = $valor_resultado;
+                }
+            }
+            $data['title']=$title;
+            $data['anio']=$anio;
+            $data['mensaje']='';
+
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+
+            $this->load->view('backend/header', $data);
+            $this->load->view('backend/navbar', $data);
+            $this->load->view('backend/ajustes.php', $data);
+            $this->load->view('backend/footer');
+
+        } else {
+            redirect('admin', 'refresh');
+        }
+    }
+
+    /*guardamos las nuevas cantidaddes de intervenciones y terminales para ajustar por mes /año */
+    public function update_ajustes_totales()
+    {
+        if ($this->auth->is_auth()) { // Control de acceso según el tipo de agente. Permiso definido en constructor
+
+            $xcrud = xcrud_get_instance();
+            $mensaje= "";
+            $this->load->helper("common");
+            $this->load->model(array("informe_model"));
+
+            $title = 'Ajustar intervenciones / dispositivos por años';
+            $anio='';
+            //print_r($_POST); exit;
+            if (!empty($_POST)) {
+
+                //print_r($this->input->post()); exit;
+                $anio=$this->input->post('anio');
+                $intervenciones = $_POST['intervenciones'];
+                $terminales = $_POST['terminales'];
+
+                if (!empty($anio)) {
+                    setlocale(LC_ALL, 'es_ES');
+                    $xcrud = xcrud_get_instance();
+                    $this->informe_model->update_ajustes_totales($anio,$intervenciones,$terminales);
+                    $mensaje="Datos actualizados correctamente para el año ".$anio;
+                }
+            }
+            $data['title']=$title;
+            $data['anio']=$anio;
+            $data['mensaje'] = $mensaje;
+
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+
+            $this->load->view('backend/header', $data);
+            $this->load->view('backend/navbar', $data);
+            $this->load->view('backend/ajustes.php', $data);
+            $this->load->view('backend/footer');
+
+        } else {
             redirect('admin', 'refresh');
         }
     }
