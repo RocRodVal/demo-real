@@ -292,21 +292,34 @@ class Incidencia_model extends CI_Model {
         $acceso = $this->uri->segment(1);
 
         // Array de títulos de campo para la exportación XLS/CSV
-        $arr_titulos = array('Id incidencia','SFID','Tipología','Dirección','Provincia','Fecha','Elemento','Territorio',
+        $arr_titulos = array('Id incidencia','SFID','Tipología','Tipo','Dirección','Provincia','Fecha','Elemento','Territorio',
             'Fabricante','Mueble','Tipo alarmado','Terminal','Supervisor','Tipo avería','Tipo Robo',
             'Texto 1','Texto 2','Texto 3','Parte PDF','Denuncia','Foto 1','Foto 2','Foto 3','Contacto','Teléfono','Email',
             'Id. Operador','Intervención','Estado','Última modificación','Estado Sat','Razon parada','Descripcion parada');
-        $excluir = array('fecha_cierre','fabr','id_type_incidencia');
+        $excluir = array('fecha_cierre','fabr','id_type_incidencia','id_tipo_robo',"tiempo_parada");
 
         if($conMaterial=="conMaterial") {
             $material=true;
         }else {
             $material=false;
-        }
+        }//echo $conMaterial; exit;
         if($material) {
 
-            array_push($arr_titulos, 'Material Dispositivos');
-            array_push($arr_titulos, 'Material Alarmas');
+            $arr_titulos = array('Id incidencia','SFID','Tipología','Tipo','Dirección','Provincia','Fecha','Mueble','Terminal','Tipo avería',
+                'Texto 1','Estado Sat','Descripcion parada','Tiempo parada','Material Dispositivos','Material Alarmas');
+            array_push($excluir,"elemento","Territorio","Fabricante","alarmado","supervisor","tipo_robo","description_2","description_3",
+                "parte_pdf","denuncia","foto_url","foto_url_2","foto_url_3","contacto","phone","email","id_operador",
+                "intervencion","id_tipo_robo","last_updated","Estado PDS","razon_Parada");
+            $excluir = array_diff($excluir, array('tiempo_parada'));
+        }else {//ROBO
+
+            if($porrazon=='robo') {
+                $arr_titulos = array('Id incidencia', 'SFID', 'Tipología', 'Tipo', 'Dirección', 'Provincia', 'Fecha', 'Mueble', 'Terminal', 'Tipo avería',
+                    'Texto 1', 'Estado Sat', 'Unidades', 'Tipología robo');
+                array_push($excluir, "elemento", "Territorio", "Fabricante", "alarmado", "supervisor", "tipo_robo", "description_2", "description_3",
+                    "parte_pdf", "denuncia", "foto_url", "foto_url_2", "foto_url_3", "contacto", "phone", "email", "id_operador",
+                    "intervencion", "id_tipo_robo", "last_updated", "Estado PDS", "descripcion_parada");
+            }
         }
 
 
@@ -314,7 +327,7 @@ class Incidencia_model extends CI_Model {
         $array_accesos_excluidos = array("master","territorio","tienda");
         if(in_array($acceso,$array_accesos_excluidos)){ // En master, excluimos de la exportación los campos...
             // Array de títulos de campo para la exportación XLS/CSV
-            $arr_titulos = array('Id incidencia','SFID','Tipologia','Dirección','Provincia','Fecha','Elemento','Territorio',
+            $arr_titulos = array('Id incidencia','SFID','Tipologia','Tipo','Dirección','Provincia','Fecha','Elemento','Territorio',
                 'Fabricante','Mueble','Terminal','Supervisor','Tipo avería',
                 'Texto 1','Denuncia','Foto 1','Foto 2','Foto 3','Contacto','Teléfono','Email',
                 'Id. Operador','Intervención','Estado','Razon parada','Descripcion parada');
@@ -337,6 +350,7 @@ class Incidencia_model extends CI_Model {
         $sql = 'SELECT incidencias.id_incidencia,
                         pds.reference as `SFID`,
                         concat(pds_tipo.titulo,"-",pds_subtipo.titulo,"-",pds_segmento.titulo,"-",pds_tipologia.titulo) as tipologia,
+                        pds_tipo.abreviatura as tipo,
                         concat(address," - ",zip," ",city) as direccion,
                         province.province as provincia,
                         incidencias.fecha,
@@ -366,22 +380,21 @@ class Incidencia_model extends CI_Model {
                             (CASE incidencias.alarm_device WHEN 1 THEN ("Sí") ELSE ("No") END) AS `Alarma dispositivo`,
                             (CASE incidencias.alarm_garra WHEN 1 THEN ("Sí") ELSE ("No") END) AS `Alarma anclaje`,*/
 
-        $sql .='
-                           REPLACE(REPLACE(incidencias.description_1,CHAR(10),CHAR(32)),CHAR(13),CHAR(32)) as description_1,
-                            REPLACE(REPLACE(incidencias.description_2,CHAR(10),CHAR(32)),CHAR(13),CHAR(32))  as description_2,
-                            REPLACE(REPLACE(incidencias.description_3,CHAR(10),CHAR(32)),CHAR(13),CHAR(32))  as description_3,
-                            incidencias.parte_pdf,
-                            incidencias.denuncia,
-                            incidencias.foto_url,
-                            incidencias.foto_url_2,
-                            incidencias.foto_url_3,
-                            incidencias.contacto,
-                            incidencias.phone,
-                            incidencias.email,
-                            incidencias.id_operador,
-                            incidencias.intervencion,
-                            type_incidencia.id_type_incidencia,
-                            tipo_robo.id as id_tipo_robo,';
+        $sql .='REPLACE(REPLACE(incidencias.description_1,CHAR(10),CHAR(32)),CHAR(13),CHAR(32)) as description_1,
+                REPLACE(REPLACE(incidencias.description_2,CHAR(10),CHAR(32)),CHAR(13),CHAR(32))  as description_2,
+                REPLACE(REPLACE(incidencias.description_3,CHAR(10),CHAR(32)),CHAR(13),CHAR(32))  as description_3,
+                incidencias.parte_pdf,
+                incidencias.denuncia,
+                incidencias.foto_url,
+                incidencias.foto_url_2,
+                incidencias.foto_url_3,
+                incidencias.contacto,
+                incidencias.phone,
+                incidencias.email,
+                incidencias.id_operador,
+                incidencias.intervencion,
+                type_incidencia.id_type_incidencia,
+                tipo_robo.id as id_tipo_robo,';
 
         if($acceso=="admin"){
             $sql .= 'incidencias.status  AS `Estado SAT`,';
@@ -393,6 +406,11 @@ class Incidencia_model extends CI_Model {
             $sql .= 'incidencias.status_pds as `Estado PDS`,
                     type_incidencia.title as `razon_Parada`';
         }
+        if(!is_null($porrazon))
+            $sql .= ', CONCAT(
+                    FLOOR(HOUR(TIMEDIFF(historico.fecha, now())) / 24), \' dias \',
+                    MOD(HOUR(TIMEDIFF(historico.fecha, now())), 24), \' horas \',
+                    MINUTE(TIMEDIFF(historico.fecha, now())), \' minutos \') as tiempo_parada';
         $sql = rtrim($sql,",");
 
         $sql .='
@@ -413,11 +431,15 @@ class Incidencia_model extends CI_Model {
                 LEFT JOIN pds_tipo ON pds.id_tipo=pds_tipo.id
                 LEFT JOIN pds_subtipo ON pds.id_subtipo = pds_subtipo.id
                 LEFT JOIN pds_tipologia ON pds.id_tipologia= pds_tipologia.id
-                
                 LEFT JOIN intervenciones_incidencias ON intervenciones_incidencias.id_incidencia = incidencias.id_incidencia
                 LEFT JOIN tipo_robo ON tipo_robo.id=incidencias.id_tipo_robo';
 
+        if(!is_null($porrazon))
+            $sql .= ' INNER JOIN historico ON incidencias.id_incidencia = historico.id_incidencia';
         $sql.=' WHERE 1 = 1';
+
+        if(!is_null($porrazon))
+            $sql.=  ' AND historico.status="Revisada" ';
 
         if($tipo==="abiertas")  $sTitleFilename = "Incidencias_abiertas";
         else
@@ -492,8 +514,7 @@ class Incidencia_model extends CI_Model {
 
             $sql .= " ORDER BY fecha DESC";
         }
-
-        //echo $sql; exit;
+//        echo $sql; exit;
         $query = $this->db->query($sql);
 
         $resultado=$query->result();
@@ -544,7 +565,12 @@ class Incidencia_model extends CI_Model {
                                 $lineas = 1;
                             }
                             $contador++;
+
                         }
+                        if($key!=0)
+                            $aux[$linea]["Tipologia robo"]=$titulo;
+                        else $aux[$linea + 2]["Tipologia robo"] = $titulo;
+
                     } else {
                         $anterior = $campos->id_tipo_robo;
                         $contador = 0;
@@ -562,6 +588,9 @@ class Incidencia_model extends CI_Model {
 
                             $contador++;
                         }
+                        if($key!=0)
+                            $aux[$linea+3]["Tipologia robo"]=$titulo;
+                        else $aux[$linea]["Tipologia robo"] = $titulo;
                     }
                     if ($material) {
                         $aux[$linea + ($lineas - 1)]['Material Dispositivos'] = '';

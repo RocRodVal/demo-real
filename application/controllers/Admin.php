@@ -2644,9 +2644,9 @@ class Admin extends MY_Controller
         $xcrud_1 = xcrud_get_instance();
         $xcrud_1->table('pds_tipo');
         $xcrud_1->table_name('Definir Tipos de PDS');
-        $xcrud_1->label('id', 'Id.')->label('titulo', 'Título');
-        $xcrud_1->columns('id,titulo');
-        $xcrud_1->fields('titulo');
+        $xcrud_1->label('id', 'Id.')->label('titulo', 'Título')->label('abreviatura','Abreviatura');
+        $xcrud_1->columns('id,titulo,abreviatura');
+        $xcrud_1->fields('titulo,abreviatura');
 
       /* Agregando el campo orden*/
         $xcrud_2 = xcrud_get_instance();
