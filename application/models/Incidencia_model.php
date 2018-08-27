@@ -998,7 +998,8 @@ class Incidencia_model extends CI_Model {
                 $this->db->query($sql);
 
                 $sql ="SELECT dp.id_devices_pds FROM devices_pds dp INNER JOIN incidencias i ON i.id_incidencia=$id_incidencia 
-                       WHERE dp.id_devices_pds = i.id_devices_pds and dp.status!='Incidencia'";
+                       WHERE dp.id_devices_pds = i.id_devices_pds and dp.status!='Incidencia' and i.status_pds!='Finalizada'
+                       and i.status_pds!='Cancelada'";
                 $row = $this->db->query($sql)->row();
 
                 if(!empty($row)) {
