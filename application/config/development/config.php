@@ -1,5 +1,6 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
+define('PASSTIENDA','clementine');
 
 /*
 |--------------------------------------------------------------------------
@@ -27,14 +28,14 @@ $config['base_url'] = 'http://demoreal.focusonemotions.com/orange/';
 
 
 /**
- * REALDOOH API, TEMPORARY ACTIVATION
+ * REALDOOH API, ACTIVATION
  */
 $config['allowed_origins'] = array ('localhost', 'demoreal.focusonemotions.com');
 
 $config['realdooh.api.url'] = 'http://realdooh.pre.altabox.net:8080/rdorangeapi/api/v1';
 
 $config['realdooh.api'] = array(
-    'active' => true,
+    'active' => false,
     'changeStatusUrl'       => $config['realdooh.api.url']. '/demoreal/incident/{drId}',
     'createIncidenceUrl'    => $config['realdooh.api.url'].'/demoreal/incident/{drId}/asset/{assetDrId}/user/{userSFID}/origin/{origin}',
     'createPdsUrl'          => $config['realdooh.api.url'].'/location/demoreal?idOUParent=1',

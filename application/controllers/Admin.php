@@ -1257,15 +1257,15 @@ class Admin extends MY_Controller
                 //////////////////////////////////////////////////////////////////////////////////
                 //             Comunicación  con Realdooh VU: Cambio estado REVISADA            //
                 //////////////////////////////////////////////////////////////////////////////////
-                set_estado_incidencia_realdooh(array(                                          //
+               $response = set_estado_incidencia_realdooh(array(                                          //
                     'drId' => $id_inc                                        //
                 ), array(                                                                         //
                     'user' => $sfid['reference'],                                            //
-                    'password' => 'demoreal'                                                //
+                    'password' => PASSTIENDA                                                //
                     //
                 ), 'revised=1');                                                           //
                 //////////////////////////////////////////////////////////////////////////////////
-
+//print_r($response);exit;
                 //if ($incidencia['fail_device'] == 1) {
                     $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'], 2);
                 //}
@@ -1298,7 +1298,7 @@ class Admin extends MY_Controller
                     'drId' => $id_inc
                 ), array(
                     'user' => $sfid['reference'],
-                    'password' => 'demoreal'
+                    'password' => PASSTIENDA
                 ), 'close=1');                  //
                 //////////////////////////////////////////////////////////////////////////////////
                 //echo $sfid['reference']."<br>";
@@ -1332,7 +1332,7 @@ class Admin extends MY_Controller
                     'drId' => $id_inc
                 ), array(
                     'user' => $sfid['reference'],
-                    'password' => 'demoreal'
+                    'password' => PASSTIENDA
 
                 ), 'resolved=1&resolutionDate=' . $fecha_cierre);                  //
                 //////////////////////////////////////////////////////////////////////////////////
@@ -1363,7 +1363,7 @@ class Admin extends MY_Controller
                     'drId' => $id_inc
                 ), array(
                     'user' => $sfid['reference'],
-                    'password' => 'demoreal'
+                    'password' => PASSTIENDA
 
                 ), 'resolved=1');                                              //
                 //////////////////////////////////////////////////////////////////////////////////
@@ -1450,7 +1450,7 @@ class Admin extends MY_Controller
                         'drId' => $id_inc
                     ), array(
                         'user' => $sfid['reference'],
-                        'password' => 'demoreal'
+                        'password' => PASSTIENDA
 
                     ), 'visited=1');                                           //
                     //////////////////////////////////////////////////////////////////////////////////
@@ -1573,7 +1573,7 @@ class Admin extends MY_Controller
                         'drId'=>  $id_inc                                        //
                     ),array(                                                                         //
                         'user'=> $sfid['reference'],                                            //
-                        'password' => 'demoreal'                                                //
+                        'password' => PASSTIENDA                                                //
                         //
                     ), 'reopen=1' );                                                           //
                     //////////////////////////////////////////////////////////////////////////////////

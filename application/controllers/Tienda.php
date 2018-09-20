@@ -760,7 +760,7 @@ class Tienda extends MY_Controller {
                             'origin'    => $origin
                         ),array(                                                               //
                             'user'=>$this->session->userdata('sfid'),                          //
-                            'password' => 'demoreal'                                           //
+                            'password' => PASSTIENDA                                           //
                         ));
 
                         //print_r($response); exit;
@@ -857,7 +857,7 @@ class Tienda extends MY_Controller {
                     'origin'    => $origin
                 ),array(                                                                       //
                     'user'=>$this->session->userdata('sfid'),                                  //
-                    'password' => 'demoreal'                                                   //
+                    'password' => PASSTIENDA                                                  //
                 ));
 
                // print_r($response); exit;
