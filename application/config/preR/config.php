@@ -1,6 +1,6 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
-
+define('PASSTIENDA','clementine');
 /*
 |--------------------------------------------------------------------------
 | Base Site URL
@@ -27,11 +27,11 @@ $config['base_url'] = 'http://demoreal.pre.altabox.net/orange/';
 
 
 /**
- * REALDOOH API, TEMPORARY ACTIVATION
+ * REALDOOH API, ACTIVATION
  */
 $config['allowed_origins'] = array ('localhost', 'postman.pre.altabox.net', 'demoreal.pre.altabox.net', 'realdooh.pre.altabox.net');
 
-$config['realdooh.api.url'] = 'http://realdooh.pre.altabox.net:8080/rdorangeapi/api/v1';
+$config['realdooh.api.url'] = 'https://realdooh.pre.altabox.net:8080/rdorangeapi/api/v1';
 
 $config['realdooh.api'] = array(
     'active' => true,

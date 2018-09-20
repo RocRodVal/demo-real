@@ -1,5 +1,6 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
+define('PASSTIENDA','clementine');
 
 /*
 |--------------------------------------------------------------------------
@@ -27,7 +28,7 @@ $config['base_url'] = 'http://demoreal.focusonemotions.com/orange/';
 
 
 /**
- * REALDOOH API, TEMPORARY ACTIVATION
+ * REALDOOH API, ACTIVATION
  */
 $config['allowed_origins'] = array ('localhost', 'demoreal.focusonemotions.com');
 
