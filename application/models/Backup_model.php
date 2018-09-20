@@ -86,7 +86,7 @@ class Backup_Model extends CI_Model {
                                         WHERE pds.reference IN( ".$sfids." )
                                         ORDER BY pds.reference ASC, pd.position ASC, dp.position  ASC
 ");
-
+//echo $this->db->last_query();exit;
             $result = $query->result();
 
 
