@@ -412,7 +412,7 @@ class Incidencia_model extends CI_Model {
                     FLOOR(HOUR(TIMEDIFF(historico.fecha, now())) / 24), \' dias \',
                     MOD(HOUR(TIMEDIFF(historico.fecha, now())), 24), \' horas \',
                     MINUTE(TIMEDIFF(historico.fecha, now())), \' minutos \') as tiempo_parada';*/
-            $sql .= ', CONCAT(TIMESTAMPDIFF(DAY, historico.fecha, now()), \'dias \',
+            $sql .= ', CONCAT(TIMESTAMPDIFF(DAY, historico.fecha, now()), \' dias \',
                     MOD(TIMESTAMPDIFF(HOUR, historico.fecha, now()), 24), \' horas \',
                     MOD(TIMESTAMPDIFF(MINUTE, historico.fecha, now()), 60), \' minutos \') as tiempo_parada';
 
