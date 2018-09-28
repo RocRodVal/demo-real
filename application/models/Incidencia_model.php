@@ -296,17 +296,17 @@ class Incidencia_model extends CI_Model {
             'Fabricante','Mueble','Tipo alarmado','Terminal','Supervisor','Tipo avería','Tipo Robo',
             'Texto 1','Texto 2','Texto 3','Parte PDF','Denuncia','Foto 1','Foto 2','Foto 3','Contacto','Teléfono','Email',
             'Id. Operador','Intervención','Estado','Última modificación','Estado Sat','Razon parada','Descripcion parada');
-        $excluir = array('fecha_cierre','fabr','id_type_incidencia','id_tipo_robo',"tiempo_parada");
+        $excluir = array('fecha_cierre','fabr','id_type_incidencia','id_tipo_robo',"tiempo_parada","meses","dias","horas","minutos");
 
         if($conMaterial=="conMaterial") {
             $material=true;
         }else {
             $material=false;
-        }//echo $conMaterial; exit;
+        }
         if($material) {
 
             $arr_titulos = array('Id incidencia','SFID','Tipología','Tipo','Dirección','Provincia','Fecha','Mueble','Terminal','Tipo avería',
-                'Texto 1','Estado Sat','Descripcion parada','Tiempo parada','Material Dispositivos','Material Alarmas');
+                'Texto 1','Estado Sat','Descripcion parada','Tiempo parada','Semanas','Material Dispositivos','Material Alarmas');
             array_push($excluir,"elemento","Territorio","Fabricante","alarmado","supervisor","tipo_robo","description_2","description_3",
                 "parte_pdf","denuncia","foto_url","foto_url_2","foto_url_3","contacto","phone","email","id_operador",
                 "intervencion","id_tipo_robo","last_updated","Estado PDS","razon_Parada");
@@ -341,6 +341,7 @@ class Incidencia_model extends CI_Model {
             array_push($excluir,'alarmado');
             array_push($excluir,'id_tipo_robo');
             array_push($excluir,'tipo_robo');
+
             if($conMaterial) {
                 array_push($excluir, 'Material Dispositivos');
                 array_push($excluir, 'Material Alarmas');
@@ -406,11 +407,20 @@ class Incidencia_model extends CI_Model {
             $sql .= 'incidencias.status_pds as `Estado PDS`,
                     type_incidencia.title as `razon_Parada`';
         }
-        if(!is_null($porrazon))
-            $sql .= ', CONCAT(
+        if(!is_null($porrazon)) {
+            /*$sql .= ', CONCAT(
                     FLOOR(HOUR(TIMEDIFF(historico.fecha, now())) / 24), \' dias \',
                     MOD(HOUR(TIMEDIFF(historico.fecha, now())), 24), \' horas \',
-                    MINUTE(TIMEDIFF(historico.fecha, now())), \' minutos \') as tiempo_parada';
+                    MINUTE(TIMEDIFF(historico.fecha, now())), \' minutos \') as tiempo_parada';*/
+            $sql .= ', CONCAT(TIMESTAMPDIFF(DAY, historico.fecha, now()), \' dias \',
+                    MOD(TIMESTAMPDIFF(HOUR, historico.fecha, now()), 24), \' horas \',
+                    MOD(TIMESTAMPDIFF(MINUTE, historico.fecha, now()), 60), \' minutos \') as tiempo_parada';
+
+            $sql .= ",TIMESTAMPDIFF(MONTH, historico.fecha, now()) as meses ,  
+                    TIMESTAMPDIFF(DAY, historico.fecha, now()) as dias, 
+                    MOD(TIMESTAMPDIFF(HOUR, historico.fecha, now()), 24) as  horas , 
+                    MOD(TIMESTAMPDIFF(MINUTE, historico.fecha, now()), 60) as minutos  ";
+        }
         $sql = rtrim($sql,",");
 
         $sql .='
@@ -514,7 +524,7 @@ class Incidencia_model extends CI_Model {
 
             $sql .= " ORDER BY fecha DESC";
         }
-//        echo $sql; exit;
+        //echo $sql; exit;
         $query = $this->db->query($sql);
 
         $resultado=$query->result();
@@ -625,6 +635,15 @@ class Incidencia_model extends CI_Model {
                             $materialD = $this->tienda_model->get_material_dispositivos($campos->id_incidencia, true);
                         }
                     }
+                    $textoSemanas="";
+                    if($campos->dias<=7)
+                        $textoSemanas = "Menos de una semana";
+                    else
+                        if($campos->dias>7 && $campos->dias <=31)
+                            $textoSemanas ="De una semana a un mes";
+                        else
+                            if($campos->dias>31)
+                                $textoSemanas="Mas de un mes";
 
                     if ($key == 0) {
                         $anterior = $campos->id_type_incidencia;
@@ -669,7 +688,9 @@ class Incidencia_model extends CI_Model {
                             $contador++;
                         }
                     }
+
                     if ($material) {
+                        $aux[$linea + ($lineas - 1)]['Semanas']=$textoSemanas;
                         $aux[$linea + ($lineas - 1)]['Material Dispositivos'] = '';
                         foreach ($materialD as $k => $m) {
                             $aux[$linea + ($lineas - 1)]['Material Dispositivos'] .= $m->device . "-" . $m->cantidad . ",";
