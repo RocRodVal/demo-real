@@ -294,6 +294,27 @@ function delete_assets_pds_realdooh($auth, $params='',$postParams = '') {
 
     }
 }
+
+
+/**
+ * Llamada a la API para cambiar en realdooh el estado ed una ¡incidencia de Demoreal
+ * SOLO SI ACTIVE=TRUE en la configuracion...
+ * @param $params
+ * @param $auth
+ * @param string $postParams
+ */
+function cancel_incidents($auth,$params='',$postParams = '') {
+    $cfg = get_realdooh_config();
+
+    if($cfg['active']) {
+        $service = $cfg['cancelIncidentsUrl'].$params;
+        //echo $service."<br><br>";
+        //print_r($postParams);
+        $response = rest_post($service, array(), $auth,$postParams);
+        return $response;
+
+    }
+}
 /**
  * Post básico a servicio REST mediante URL
  * @param $url

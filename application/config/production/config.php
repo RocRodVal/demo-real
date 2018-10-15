@@ -42,7 +42,8 @@ $config['realdooh.api'] = array(
     'updatePdsUrl'          => $config['realdooh.api.url'].'/location/demoreal/{sfid}',
     'addAssetsPdsUrl'       => $config['realdooh.api.url'].'/massive/asset',
     'updateAssetTypeUrl'    => $config['realdooh.api.url'].'/assettype/demoreal',
-    'deleteAssetsUrl'       => $config['realdooh.api.url'].'/asset/demoreal/massive/delete'
+    'deleteAssetsUrl'       => $config['realdooh.api.url'].'/asset/demoreal/massive/delete',
+    'cancelIncidentsUrl'    => $config['realdooh.api.url'].'/demoreal/incident/massive'
 );
 /*
 |--------------------------------------------------------------------------

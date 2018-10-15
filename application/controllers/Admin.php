@@ -836,7 +836,7 @@ class Admin extends MY_Controller
                         $description_parada = $this->input->post('descripcion_parada');
                         $description_parada = $this->strip_html_tags($description_parada);
                     }
-                    $averia['id_type_incidencia'] =  ($this->input->post('tipo_averia') != "NULL") ? $this->input->post('tipo_averia') : 'NULL';
+                    $averia['id_type_incidencia'] =  ($this->input->post('tipo_averia') != NULL) ? $this->input->post('tipo_averia') : NULL;
                     $averia['descripcion_parada'] =  $description_parada;
                     $averia['fail_device'] =    ($this->input->post('fail_device')   == "on") ? 1 : 0;
                     $averia['alarm_display'] =  ($this->input->post('alarm_display') == "on") ? 1 : 0;
@@ -7284,6 +7284,96 @@ class Admin extends MY_Controller
 
         } else {
             redirect('admin', 'refresh');
+        }
+    }
+
+    /*Cancelación masiva de incidencias*/
+    public function cancelar_incidencias()
+    {
+        if($this->auth->is_auth()) {
+            $xcrud = xcrud_get_instance();
+            $this->load->model("incidencia_model");
+
+            $cancelar_incidencias = $this->input->post("cancelar_incidencias");
+            $data["title"] = "Cancelar incidencias";
+            $data["cancelando_incidencias"] = FALSE;
+
+            $incidencias = "";
+            $arr_incidencias = array();
+
+            // Venimos del form de cancelar incidencias
+            if($cancelar_incidencias == "si")
+            {
+                $incidencias = $this->input->post("incidencias");
+                $arr_incidencias = explode("\n", $incidencias);
+                $arr_incidencias = explode("\r", implode($arr_incidencias));
+                $data["arr_incidencias"] = $arr_incidencias;
+
+            }
+
+            // Validamos y añadimos
+            if(!empty($incidencias) )
+            {
+                $data["cancelando_incidencias"] = TRUE;
+
+                // Validamos el array de incidencias, y creamos un nuevo array que guarde NULL si la incidencia no se encuentra
+                // y en caso contrario guarde el objeto Incidencia asociado.
+                $checked_incidencias = array();
+                $incidents=array("incidents"=> array());
+
+                foreach($arr_incidencias as $inc)
+                {
+                    if(!empty($inc))
+                    {
+                        $check_inc = $this->incidencia_model->get_incidencia($inc,"object");
+
+                        if (!empty($check_inc)){// Incidencia ENCONTRADA
+                            //print_r($check_inc);echo "<br><br>";
+
+                            //$checked_incidencias[$inc] = $check_inc;
+
+                            $checked_incidencias[$inc] = $this->incidencia_model->cancelar_incidencia($check_inc);
+
+                            if(!is_null($checked_incidencias[$inc])) {
+                                if(is_object($checked_incidencias[$inc])) {
+                                    $incident = array("drId" => $check_inc->id_incidencia);
+                                    array_push($incidents['incidents'], $incident);
+                                }
+                            }
+                        }
+                        else $checked_incidencias[$inc] = NULL;
+                    }
+                }
+                $data["checked_incidencias"] = $checked_incidencias;
+
+               // print_r($incidents);
+                //////////////////////////////////////////////////////////////////////////////////
+                //                                                                              //
+                //             Comunicación  con Realdooh VU: cancelar incidencias masivamente  //
+                //                                                                              //
+                //////////////////////////////////////////////////////////////////////////////////
+                //
+               // print_r(json_encode($incidents));exit;
+                $resultado = cancel_incidents(array('user'=> 'altabox', 'password' => 'realboxdemo')
+                    ,'?close=1',json_encode($incidents));                                            //
+                //                                                                              //
+                //////////////////////////////////////////////////////////////////////////////////
+                //print_r($resultado);
+
+
+            }
+
+
+            $this->data->add($data);
+            $data = $this->data->getData();
+            $this->load->view('backend/header', $data);
+
+            $data["incidencias"] = $incidencias;
+
+            $this->load->view('backend/navbar',$data);
+            $this->load->view('backend/masivas/cancelar_incidencias/formulario', $data);
+            $this->load->view('backend/masivas/cancelar_incidencias/resultado', $data);
+            $this->load->view('backend/footer');
         }
     }
 }

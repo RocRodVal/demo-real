@@ -6,6 +6,7 @@ class Incidencia_model extends CI_Model {
 	public function __construct()	{
 		$this->load->database();
         $this->load->model('chat_model');
+        $this->load->model('tienda_model');
 	}
 
 	public function get_displays_panelado($id) {
@@ -162,13 +163,14 @@ class Incidencia_model extends CI_Model {
 		}
 	}
 	
-	public function get_incidencia($id) {
+	public function get_incidencia($id,$tipo_objeto="array") {
 		if($id != FALSE) {
 			$query = $this->db->select('incidencias.*')
 			->where('incidencias.id_incidencia',$id)
 			->get('incidencias');
 	
-			return $query->row_array();
+			//return $query->row_array();
+            return ($tipo_objeto == "array") ? $query->row_array() : $query->row();
 		}
 		else {
 			return FALSE;
@@ -925,7 +927,7 @@ class Incidencia_model extends CI_Model {
         {
 
             $material_dispositivos = $this->tienda_model->get_material_dispositivos($id_inc,$almacen);
-
+//print_r($material_dispositivos);echo "<br><br>";
             if (!empty($material_dispositivos)) {
 
                 foreach ($material_dispositivos as $material) {
@@ -941,6 +943,7 @@ class Incidencia_model extends CI_Model {
                         // Desvincular el dispositivo del material de la incidencia.
                         $id_material_incidencias = $material->id_material_incidencias;
                         $sql = "DELETE FROM material_incidencias WHERE id_material_incidencias = '$id_material_incidencias' ";
+                      //  echo $sql;echo "<br><br>";
                         $this->db->query($sql);
 
                         if($almacen)
@@ -948,12 +951,14 @@ class Incidencia_model extends CI_Model {
                             $this->tienda_model->baja_historico_io($id_material_incidencias);
                     }
                 }
+
             }
         }
 
         if($tipo_dispositivo==="alarm" || $tipo_dispositivo==="todo")
         {
             $material_alarmas = $this->tienda_model->get_material_alarmas($id_inc);
+            //print_r($material_alarmas); echo "<br><br>";
             if (!empty($material_alarmas)) {
                 foreach ($material_alarmas as $alarma) {
                     if($alarma->id_material_incidencias == $id_material_incidencia || $tipo_dispositivo==="todo")
@@ -967,6 +972,7 @@ class Incidencia_model extends CI_Model {
                         // Borrar la alarma vinculada a material_incidencias
                         $id_material_incidencias = $alarma->id_material_incidencias;
                         $sql = "DELETE FROM material_incidencias WHERE id_material_incidencias = '$id_material_incidencias' ";
+                        //echo $sql;echo "<br><br>";
                         $this->db->query($sql);
 
                         if($almacen)
@@ -976,7 +982,7 @@ class Incidencia_model extends CI_Model {
                 }
             }
         }
-
+    // exit;
     }
 
     /**
@@ -998,16 +1004,22 @@ class Incidencia_model extends CI_Model {
     {
         if(!is_null($id_incidencia))
         {
+            $incidencia = $this->tienda_model->get_incidencia($id_incidencia);
+
             if(is_array($averia))
             {
                 $update_fields = array();
                 foreach($averia as $campo=>$valor)
                 {
                     //if($campo=='fail_device' && $valor==1)
-
+                   //echo $averia['id_type_incidencia'];
                     if($campo=="descripcion_parada" && !is_null($valor)){
                         $update_fields[]= ($campo.' = \''.$valor.'\'');
                     }else {
+                        if(($campo=="id_type_incidencia") && (!is_null($averia['id_type_incidencia'])) && !is_null($incidencia[$campo])){
+                            //echo "entra en el if ".$campo." - ".$valor;
+                            $this->desasignar_material($id_incidencia,"todo",false);
+                        }
                         $update_fields[]= ($campo.' = '.$valor);
                     }
 
@@ -1016,6 +1028,7 @@ class Incidencia_model extends CI_Model {
                 $fields = implode(",",$update_fields);
 
                 $sql = "UPDATE incidencias SET $fields WHERE id_incidencia = $id_incidencia";
+                //echo $sql; exit;
                 $this->db->query($sql);
 
                 $sql ="SELECT dp.id_devices_pds FROM devices_pds dp INNER JOIN incidencias i ON i.id_incidencia=$id_incidencia 
@@ -1027,7 +1040,7 @@ class Incidencia_model extends CI_Model {
                     $sql = "UPDATE devices_pds d SET d.status='Incidencia' WHERE d.id_devices_pds =" . $row->id_devices_pds;
                     $this->db->query($sql);
                 }
-
+//exit;
                 return true;
             }
         }
@@ -1111,6 +1124,60 @@ class Incidencia_model extends CI_Model {
             ->get('tipo_robo');
         //echo $this->db->last_query(); exit;
         return $query->result();
+    }
+
+
+    /*Si puede cancelar la incidencia la devuelve y sino devuelve null*/
+    public function cancelar_incidencia($incidencia){
+        //$aux = $this->db->query();
+
+        $sql = "SELECT * FROM incidencias WHERE id_incidencia = ".$incidencia->id_incidencia ." and (status_pds = 'En proceso' or status_pds='Alta realizada')";
+        $query = $this->db->query($sql);
+        //echo $sql; exit;
+        $aux = $query->row();
+        if(!empty($aux)) {
+            /*Ponemos la posición en Alta*/
+            $sql ="UPDATE devices_pds SET status='Alta' WHERE id_devices_pds = ".$incidencia->id_devices_pds;
+            $query = $this->db->query($sql);
+
+            /*Actualizamos el estado de la incidencia*/
+            $sql = "UPDATE incidencias set status_pds='Cancelada' , status='Cancelada' where id_incidencia=" . $incidencia->id_incidencia;
+            $query = $this->db->query($sql);
+
+            /*Desasignar el material de la incidencia para que pase a almacen de nuevo*/
+            $almacen=true;
+            $type_incidencia=$this->tienda_model->get_type_incidencia($incidencia->id_incidencia);
+            if(strtolower($type_incidencia['title'])==strtolower(RAZON_PARADA))
+                $almacen=false;
+            // Borramos el material asignado
+            if($almacen)
+                $this->desasignar_material($incidencia->id_incidencia,"todo",$almacen);
+
+            /**
+             * Guardar incidcencia en el histórico
+             */
+            $data = array(
+                'fecha' => date('Y-m-d H:i:s'),
+                'id_incidencia' => $incidencia->id_incidencia,
+                'id_pds' => $incidencia->id_pds,
+                'description' => NULL,
+                'agent' => $this->session->userdata('sfid'),
+                'status_pds' => 'Cancelada',
+                'status' => 'Cancelada'
+            );
+
+            $this->tienda_model->historico($data);
+        }else
+            if($incidencia->status_pds=='En visita'){
+                return -1;
+            }else {
+                if($incidencia->status_pds=='Finalizada'){
+                    return -2;
+                }else
+                    return 0;
+            }
+
+        return $aux;
     }
 }
 
