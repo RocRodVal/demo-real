@@ -90,7 +90,42 @@ class Backup_Model extends CI_Model {
             $result = $query->result();
 
 
+            //echo $this->db->last_query();exit;
+        }
 
+
+        return $result;
+
+    }
+
+    function get_id_incidencia($id_devices_pds,$estado)
+    {
+        $result = NULL;
+
+        if(!empty($id_devices_pds)){
+            switch ($estado){
+                case 'Incidencia':
+                    $sql="SELECT id_incidencia FROM incidencias where id_devices_pds = ".$id_devices_pds." and status_pds in
+                    ('En proceso','En visita','Alta realizada')";
+                    break;
+                case 'RMA':
+                    $sql="SELECT id_incidencia FROM incidencias where id_devices_pds = ".$id_devices_pds." and status in
+                    ('Sustituido','Resuelta','Pendiente recogida')";
+                    break;
+
+            }
+           /* $query = $this->db->query("
+                SELECT id_incidencia FROM incidencias where id_devices_pds = ".$id_devices_pds." and status_pdsdevices_pds dp
+                                        JOIN displays_pds pd ON pd.id_displays_pds = dp.id_displays_pds
+                                        JOIN display ON display.id_display = dp.id_display
+                                        JOIN device ON device.id_device = dp.id_device
+                                        JOIN pds ON pds.id_pds = dp.id_pds
+                                        WHERE pds.reference IN( ".$sfids." )
+                                        ORDER BY pds.reference ASC, pd.position ASC, dp.position  ASC
+");*/
+            $query = $this->db->query($sql);
+            $result = $query->result();
+            //echo $this->db->last_query();exit;
         }
 
 

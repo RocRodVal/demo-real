@@ -45,6 +45,26 @@ class Sfid_model extends CI_Model {
 			return FALSE;
 		}
 	}
+
+    /* Mueble */
+    public function get_display_incidencia($id_displays_pds)
+    {
+        if($id_displays_pds != FALSE)
+        {
+            $query = $this->db->select('displays_pds.*,display.*,tipo_alarmado.title as alarmado,displays_pds.status as estado')
+                ->join('display','displays_pds.id_display = display.id_display')
+                ->join('tipo_alarmado','displays_pds.id_tipo_alarmado = tipo_alarmado.id','left')
+                ->where('displays_pds.id_displays_pds',$id_displays_pds)
+                //->where('displays_pds.status = "Alta"')
+                ->get('displays_pds');
+
+            return $query->row_array();
+        }
+        else
+        {
+            return FALSE;
+        }
+    }
 	
 	/* Dispositivo */
 	public function get_device($id_devices_pds)

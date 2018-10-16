@@ -750,7 +750,7 @@ class Admin extends MY_Controller
 
             $incidencia['intervencion'] = $this->intervencion_model->get_intervencion_incidencia($id_inc);
             $incidencia['device'] = $this->sfid_model->get_device($incidencia['id_devices_pds']);
-            $incidencia['display'] = $this->sfid_model->get_display($incidencia['id_displays_pds']);
+            $incidencia['display'] = $this->sfid_model->get_display_incidencia($incidencia['id_displays_pds']);
 
             $data['incidencia'] = $incidencia;
             $data['historico_fecha_sustituido'] ='';
@@ -5866,6 +5866,33 @@ class Admin extends MY_Controller
                     case "planograma":
                         $this->backup_model->set_sfids($array_sfids);
                         $resultado = $this->backup_model->exportar_planogramas();
+                        foreach ($resultado as $elemento){
+
+                            if($elemento->status=='Incidencia'){
+                                $incidencia = $this->backup_model->get_id_incidencia($elemento->id_devices_pds,$elemento->status);
+                                $elemento->id_incidencia="";
+                                foreach($incidencia as $posicion => $i){
+                                    if($posicion==(count($incidencia)-1))
+                                        $elemento->id_incidencia .= $i->id_incidencia;
+                                    else
+                                        $elemento->id_incidencia .= $i->id_incidencia.", ";
+                                }
+                            }else {
+                                if($elemento->status=='RMA'){
+                                    $elemento->id_incidencia="";
+                                    $incidencia = $this->backup_model->get_id_incidencia($elemento->id_devices_pds,$elemento->status);
+                                    $elemento->id_incidencia="";
+                                    foreach($incidencia as $posicion => $i){
+                                        if($posicion==(count($incidencia)-1))
+                                            $elemento->id_incidencia .= $i->id_incidencia;
+                                        else
+                                            $elemento->id_incidencia .= $i->id_incidencia.", ";
+                                    }
+                                }else {
+                                    $elemento->id_incidencia=0;
+                                }
+                            }
+                        }
 
                         $data["resultado"] = $resultado;
 

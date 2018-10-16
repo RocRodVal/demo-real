@@ -396,14 +396,21 @@
                             <?php } ?></td>
                         </tr>
                         <?php
-                            if (!isset($incidencia['device']['device'])) {$dispositivo = '-';}
+
+                            if ($incidencia['device']['status']=='Baja') {
+                                $dispositivo = 'Retirado => '.$incidencia['device']['device'];
+                                if (!empty($incidencia['device']['IMEI'])) {
+                                    $dispositivo .= " - " . $incidencia['device']['IMEI'];
+                                }
+                            }
                             else {
                                 $dispositivo = $incidencia['device']['device'];
                                 if (!empty($incidencia['device']['IMEI'])) {
                                     $dispositivo .= " - " . $incidencia['device']['IMEI'];
                                 }
                             }
-                            if (!isset($incidencia['display']['display'])) { $mueble = 'Retirado'; }
+
+                            if ($incidencia['display']['estado']=='Baja') { $mueble = 'Retirado => '.$incidencia['display']['display']; }
                             else { $mueble = $incidencia['display']['display']; }
                         ?>
                         <tr>

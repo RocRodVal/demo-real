@@ -1136,13 +1136,6 @@ class Incidencia_model extends CI_Model {
         //echo $sql; exit;
         $aux = $query->row();
         if(!empty($aux)) {
-            /*Ponemos la posición en Alta*/
-            $sql ="UPDATE devices_pds SET status='Alta' WHERE id_devices_pds = ".$incidencia->id_devices_pds;
-            $query = $this->db->query($sql);
-
-            /*Actualizamos el estado de la incidencia*/
-            $sql = "UPDATE incidencias set status_pds='Cancelada' , status='Cancelada' where id_incidencia=" . $incidencia->id_incidencia;
-            $query = $this->db->query($sql);
 
             /*Desasignar el material de la incidencia para que pase a almacen de nuevo*/
             $almacen=true;
@@ -1153,6 +1146,15 @@ class Incidencia_model extends CI_Model {
             if($almacen)
                 $this->desasignar_material($incidencia->id_incidencia,"todo",$almacen);
 
+            /*Ponemos la posición en Alta*/
+        //    if(!empty($incidencia->id_devices_pds)) {
+                $sql = "UPDATE devices_pds SET status='Alta' WHERE id_devices_pds = " . $incidencia->id_devices_pds;
+                $query = $this->db->query($sql);
+          //  }
+
+            /*Actualizamos el estado de la incidencia*/
+            $sql = "UPDATE incidencias set status_pds='Cancelada' , status='Cancelada' where id_incidencia=" . $incidencia->id_incidencia;
+            $query = $this->db->query($sql);
             /**
              * Guardar incidcencia en el histórico
              */
