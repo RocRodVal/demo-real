@@ -1147,10 +1147,10 @@ class Incidencia_model extends CI_Model {
                 $this->desasignar_material($incidencia->id_incidencia,"todo",$almacen);
 
             /*Ponemos la posición en Alta*/
-        //    if(!empty($incidencia->id_devices_pds)) {
+            if(!empty($incidencia->id_devices_pds)) {
                 $sql = "UPDATE devices_pds SET status='Alta' WHERE id_devices_pds = " . $incidencia->id_devices_pds;
                 $query = $this->db->query($sql);
-          //  }
+            }
 
             /*Actualizamos el estado de la incidencia*/
             $sql = "UPDATE incidencias set status_pds='Cancelada' , status='Cancelada' where id_incidencia=" . $incidencia->id_incidencia;
