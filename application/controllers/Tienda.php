@@ -639,8 +639,8 @@ class Tienda extends MY_Controller {
 
             if($form_tipo_averia==1) {
 
-                $config['upload_path'] = dirname($_SERVER["SCRIPT_FILENAME"]) . '/uploads/';
-                $config['upload_url'] = base_url() . '/uploads/';
+                $config['upload_path'] = dirname($_SERVER["SCRIPT_FILENAME"]) . '/uploads/denuncias/';
+                $config['upload_url'] = base_url() . '/uploads/denuncias/';
                 $config['allowed_types'] = 'doc|docx|pdf|jpg|png';
                 $new_name = $data['sfid'] . '-' . time();
                 $config['file_name'] = $new_name;

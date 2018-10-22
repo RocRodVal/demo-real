@@ -3779,7 +3779,7 @@ class Admin extends MY_Controller
         $this->load->view('backend/footer');
     }
 
-    public function alta_incidencia()
+   /* public function alta_incidencia()
     {
         $id_pds = $this->uri->segment(3);
         if ($this->uri->segment(4) != '') {
@@ -3822,7 +3822,7 @@ class Admin extends MY_Controller
         $this->load->view('backend/alta_incidencia', $data);
         $this->load->view('backend/footer');
     }
-
+*/
     public function exp_alta_incidencia()
     {
         $id_pds = $this->uri->segment(3);

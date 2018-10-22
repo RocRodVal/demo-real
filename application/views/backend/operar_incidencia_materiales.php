@@ -40,7 +40,7 @@
                     <?php
                     if ($incidencia['tipo_averia'] == 'Robo') {
                         ?>
-                        [<a href="<?= site_url('uploads/' . $incidencia['denuncia']) ?>" target="_blank">ver denuncia</a>]
+                        [<a href="<?= site_url('uploads/denuncias/' . $incidencia['denuncia']) ?>" target="_blank">ver denuncia</a>]
                     <?php
                     }
                     ?>

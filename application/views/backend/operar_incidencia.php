@@ -388,12 +388,15 @@
                         <tr>
                             <th>Tipo: </th>
                             <td><?php echo $incidencia['tipo_averia'] ?>
-                            <?php if ($incidencia['tipo_averia'] == 'Robo') { ?>
+                            <?php if ($incidencia['tipo_averia'] == 'Robo') {
+                                $ruta="uploads/denuncias/";
+
+                                ?>
                                 <?php if(!empty($incidencia['denuncia'])){ ?>
-                                    [<a href="<?= site_url('uploads/' . $incidencia['denuncia']) ?>" target="_blank">ver denuncia</a>]
+                                    [<a href="<?= site_url($ruta . $incidencia['denuncia']) ?>" target="_blank">ver denuncia</a>]
                                 <?php } ?>
                                  <?php if(!empty($incidencia['foto_url'])){ ?>
-                                    [<a href="<?= site_url('uploads/' . $incidencia['foto_url']) ?>" target="_blank">ver foto</a>]
+                                    [<a href="<?= site_url($ruta . $incidencia['foto_url']) ?>" target="_blank">ver foto</a>]
                                  <?php } ?>
                             <?php } ?></td>
                         </tr>
