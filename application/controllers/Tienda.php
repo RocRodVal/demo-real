@@ -631,6 +631,8 @@ class Tienda extends MY_Controller {
             $form_tipo_averia = $this->input->post('tipo_averia');
             $denuncia = NULL;
             $imagen=NULL;
+            $messageD="";
+            $messageI="";
             $message="";
             //print_r($this->session->userdata()); exit;
             $origin = $this->session->userdata('origin');
@@ -656,8 +658,9 @@ class Tienda extends MY_Controller {
                     $denuncia = $new_name;
                 } else {
                     echo $this->upload->display_errors();
-                    $message= 'Ha fallado la carga de la denuncia.';
+                    $messageD= 'Ha fallado la carga de la denuncia.'.$this->upload->display_errors();;
                 }
+
 
                 $imagen='';
                 $new_nameImagen = $data['sfid'] . '-imagen-' . time();
@@ -675,13 +678,17 @@ class Tienda extends MY_Controller {
 
                 } else {
                     echo $this->upload->display_errors();
-                    $message.= 'Ha fallado la carga de la imagen del robo.';
+                    $messageI= 'Ha fallado la carga de la imagen del robo.'.$this->upload->display_errors();;
                 }
 
             }
-            if( ($denuncia=='' || $denuncia==NULL) && ($imagen =='' || $imagen==NULL) ){
+            if( ($denuncia=='' || $denuncia==NULL) || ($imagen =='' || $imagen==NULL) ){
 
-                $message = ($message !='')? $message : "No se ha podido crear la incidencia porque no se han aportado denuncia y/o foto";
+                $message = ($messageD !='')? $messageD : "";
+                if($message!='')
+                    $message.=($messageI!='') ? $messageI :'';
+                else
+                    $message=($messageI!='' ) ? $messageI : "No se ha podido crear la incidencia porque no se han aportado denuncia y/o foto";
                 $this->session->set_flashdata("message",$message);
 
                 $data['message'] = (validation_errors() ? validation_errors() : ($message));
