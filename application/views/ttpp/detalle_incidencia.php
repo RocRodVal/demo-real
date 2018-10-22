@@ -45,9 +45,9 @@
                                     <?php 
                                     if ($tipo_averia == 'Robo')
 									{
-									?>
+                                     if(!empty($denuncia)){ ?>
 									[<a href="<?= site_url('uploads/'.$denuncia) ?>" target="_blank">ver denuncia</a>]
-									<?php
+									<?php }
                                         if(!empty($foto_url)){
                                             ?>
                                             [<a href="<?= site_url('uploads/'.$foto_url) ?>" target="_blank">ver foto</a>]

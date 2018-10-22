@@ -631,6 +631,7 @@ class Tienda extends MY_Controller {
             $form_tipo_averia = $this->input->post('tipo_averia');
             $denuncia = NULL;
             $imagen=NULL;
+            $message="";
             //print_r($this->session->userdata()); exit;
             $origin = $this->session->userdata('origin');
 
@@ -655,7 +656,7 @@ class Tienda extends MY_Controller {
                     $denuncia = $new_name;
                 } else {
                     echo $this->upload->display_errors();
-                    echo 'Ha fallado la carga de la denuncia.';
+                    $message= 'Ha fallado la carga de la denuncia.';
                 }
 
                 $imagen='';
@@ -674,105 +675,106 @@ class Tienda extends MY_Controller {
 
                 } else {
                     echo $this->upload->display_errors();
-                    echo 'Ha fallado la carga de la imagen del robo.';
+                    $message.= 'Ha fallado la carga de la imagen del robo.';
                 }
 
             }
+            if( ($denuncia=='' || $denuncia==NULL) && ($imagen =='' || $imagen==NULL) ){
 
-			if ($this->input->post('tipo_averia') == 1)
-			{ 
-				$tipo_averia = 'Robo'; 
-			}
-			else
-			{
-				$tipo_averia = 'Avería';
-			}	
-		
-			$description_1 = $this->input->post('description_1');
-			$description_1 = $this->strip_html_tags($description_1);
+                $message = ($message !='')? $message : "No se ha podido crear la incidencia porque no se han aportado denuncia y/o foto";
+                $this->session->set_flashdata("message",$message);
 
-            $ahora = date("Y-m-d H:i:s");
+                $data['message'] = (validation_errors() ? validation_errors() : ($message));
+                redirect('tienda/alta_incidencia_gracias/');
+            }else {
 
-			$data = array(
-					'fecha'    	        => date('Y-m-d H:i:s'),
-					'fecha_cierre'    	=> NULL,
-					'id_pds'            => $data['id_pds'],
-					'id_displays_pds' 	=> $this->uri->segment(3),
-					'id_devices_pds' 	=> $this->uri->segment(4),
-					'tipo_averia' 	    => $tipo_averia,
-					'fail_device'       => $this->input->post('device'),
-					'alarm_display'     => $this->input->post('alarm_display'),
-					'alarm_device'      => $this->input->post('alarm_device'),
-					'alarm_garra'       => $this->input->post('alarm_garra'),
-					'description_1'  	=> $description_1,
-					'description_2'  	=> '',
-					'description_3'  	=> '',
-					'parte_pdf'  	    => '',
-					'denuncia'  	    => $denuncia,
-					'foto_url'  	    => $imagen,
-					'foto_url_2'  	    => '',
-					'foto_url_3'  	    => '',
-					'contacto'  	    => $this->input->post('contacto'),
-					'phone'  	        => $this->input->post('phone'),
-					'email'  	        => NULL,
-					'id_operador'  	    => NULL,
-					'intervencion'  	=> NULL,
-					'status_pds'	    => 1,
-					'status'	        => 1,
-                    'last_updated' => $ahora
-			);
-				
-			$incidencia = $this->sfid_model->insert_incidencia($data);
-
-			if ($incidencia['add'])
-			{
-                //ponemos la posicion afectada como incidencia
-			    $inc = $this->tienda_model->get_incidencia($incidencia['id']);
-                $this->tienda_model->incidencia_update_device_pds($inc['id_devices_pds'], 2);
-                // Envío de mail sólo en produccion
-			    if(ENVIRONMENT === 'production') {
-
-                    $pds = $this->sfid_model->get_pds($data['id_pds']);
-
-                    $message_admin = 'Se ha registrado una nueva incidencia.' . "\r\n\r\n";
-                    $message_admin .= 'La tienda con SFID ' . $pds['reference'] . ' ha creado una incidencia con ref. ' . $incidencia['id'] . '.' . "\r\n\r\n";
-                    $message_admin .= 'En http://demoreal.focusonemotions.com/ podrás revisar la misma.' . "\r\n\r\n";
-                    $message_admin .= 'Atentamente,' . "\r\n\r\n";
-                    $message_admin .= 'Demo Real' . "\r\n";
-                    $message_admin .= 'http://demoreal.focusonemotions.com/' . "\r\n";
-
-                    $this->email->from('no-reply@altabox.net', 'Demo Real');
-                    $this->email->to('demoreal@focusonemotions.com');
-                    $this->email->subject('Demo Real - Registro de incidencia ref. ' . $incidencia['id']);
-                    $this->email->message($message_admin);
-                    $this->email->send();
-                }else{
-
+                if ($this->input->post('tipo_averia') == 1) {
+                    $tipo_averia = 'Robo';
+                } else {
+                    $tipo_averia = 'Avería';
                 }
 
-                /////////////////////////////////////////////////////////////////////////////////
-                //                   Comunicación  con Realdooh VU.                            //
-                /////////////////////////////////////////////////////////////////////////////////
-                        $response = alta_incidencia_realdooh(array(                            //
-                            'drId'      => $incidencia['id'],                                  //
-                            'assetDrId' => $this->uri->segment(3),                             //
-                            'userSFID'  => $this->session->userdata('sfid'),                   //
-                            'origin'    => $origin
-                        ),array(                                                               //
-                            'user'=>$this->session->userdata('sfid'),                          //
-                            'password' => PASSTIENDA                                           //
-                        ));
+                $description_1 = $this->input->post('description_1');
+                $description_1 = $this->strip_html_tags($description_1);
 
-                        //print_r($response); exit;
-                // </ Fin Comunicación con Realdooh VU > ////////////////////////////////////////
+                $ahora = date("Y-m-d H:i:s");
 
-	
-				redirect('tienda/alta_incidencia_gracias/'.$incidencia['id']);
-			}
-			else
-			{
-				$data['message'] = (validation_errors() ? validation_errors() : ($this->session->flashdata('message')));
-			}
+                $data = array(
+                    'fecha' => date('Y-m-d H:i:s'),
+                    'fecha_cierre' => NULL,
+                    'id_pds' => $data['id_pds'],
+                    'id_displays_pds' => $this->uri->segment(3),
+                    'id_devices_pds' => $this->uri->segment(4),
+                    'tipo_averia' => $tipo_averia,
+                    'fail_device' => $this->input->post('device'),
+                    'alarm_display' => $this->input->post('alarm_display'),
+                    'alarm_device' => $this->input->post('alarm_device'),
+                    'alarm_garra' => $this->input->post('alarm_garra'),
+                    'description_1' => $description_1,
+                    'description_2' => '',
+                    'description_3' => '',
+                    'parte_pdf' => '',
+                    'denuncia' => $denuncia,
+                    'foto_url' => $imagen,
+                    'foto_url_2' => '',
+                    'foto_url_3' => '',
+                    'contacto' => $this->input->post('contacto'),
+                    'phone' => $this->input->post('phone'),
+                    'email' => NULL,
+                    'id_operador' => NULL,
+                    'intervencion' => NULL,
+                    'status_pds' => 1,
+                    'status' => 1,
+                    'last_updated' => $ahora
+                );
+
+                $incidencia = $this->sfid_model->insert_incidencia($data);
+
+                if ($incidencia['add']) {
+                    //ponemos la posicion afectada como incidencia
+                    $inc = $this->tienda_model->get_incidencia($incidencia['id']);
+                    $this->tienda_model->incidencia_update_device_pds($inc['id_devices_pds'], 2);
+                    // Envío de mail sólo en produccion
+                    if (ENVIRONMENT === 'production') {
+
+                        $pds = $this->sfid_model->get_pds($data['id_pds']);
+
+                        $message_admin = 'Se ha registrado una nueva incidencia.' . "\r\n\r\n";
+                        $message_admin .= 'La tienda con SFID ' . $pds['reference'] . ' ha creado una incidencia con ref. ' . $incidencia['id'] . '.' . "\r\n\r\n";
+                        $message_admin .= 'En http://demoreal.focusonemotions.com/ podrás revisar la misma.' . "\r\n\r\n";
+                        $message_admin .= 'Atentamente,' . "\r\n\r\n";
+                        $message_admin .= 'Demo Real' . "\r\n";
+                        $message_admin .= 'http://demoreal.focusonemotions.com/' . "\r\n";
+
+                        $this->email->from('no-reply@altabox.net', 'Demo Real');
+                        $this->email->to('demoreal@focusonemotions.com');
+                        $this->email->subject('Demo Real - Registro de incidencia ref. ' . $incidencia['id']);
+                        $this->email->message($message_admin);
+                        $this->email->send();
+                    }
+
+                    /////////////////////////////////////////////////////////////////////////////////
+                    //                   Comunicación  con Realdooh VU.                            //
+                    /////////////////////////////////////////////////////////////////////////////////
+                    $response = alta_incidencia_realdooh(array(                            //
+                        'drId' => $incidencia['id'],                                  //
+                        'assetDrId' => $this->uri->segment(3),                             //
+                        'userSFID' => $this->session->userdata('sfid'),                   //
+                        'origin' => $origin
+                    ), array(                                                               //
+                        'user' => $this->session->userdata('sfid'),                          //
+                        'password' => PASSTIENDA                                           //
+                    ));
+
+                    //print_r($response); exit;
+                    // </ Fin Comunicación con Realdooh VU > ////////////////////////////////////////
+
+
+                    redirect('tienda/alta_incidencia_gracias/' . $incidencia['id']);
+                } else {
+                    $data['message'] = (validation_errors() ? validation_errors() : ($this->session->flashdata('message')));
+                }
+            }
 		}
 		else
 		{
@@ -887,23 +889,28 @@ class Tienda extends MY_Controller {
 
 			$data['id_pds'] = $this->session->userdata('id_pds');
 			$data['sfid']   = $this->session->userdata('sfid');
-			
+			$message=  $this->session->flashdata("message");
+
 			$referencia = $this->uri->segment(3);			
 			
 			$xcrud = xcrud_get_instance();
 			$this->load->model('sfid_model');
-			
-			$sfid               = $this->sfid_model->get_pds($data['id_pds']);			
-			$data['id_pds']     = $sfid['id_pds'];
-			$data['commercial'] = $sfid['commercial'];
-			$data['reference']  = $sfid['reference'];
-			$data['address']    = $sfid['address'];
-			$data['zip']        = $sfid['zip'];
-			$data['city']       = $sfid['city'];
-		 
-			$data['title']   = 'Alta incidencia';
-			$data['content'] = 'Muchas gracias. Su incidencia ha sido dada alta con referencia número '.$referencia.'.';
 
+            $sfid = $this->sfid_model->get_pds($data['id_pds']);
+            $data['id_pds'] = $sfid['id_pds'];
+            $data['commercial'] = $sfid['commercial'];
+            $data['reference'] = $sfid['reference'];
+            $data['address'] = $sfid['address'];
+            $data['zip'] = $sfid['zip'];
+            $data['city'] = $sfid['city'];
+
+            $data['title'] = 'Alta incidencia';
+
+            if($referencia!='') {
+                $data['content'] = 'Muchas gracias. Su incidencia ha sido dada alta con referencia número ' . $referencia . '.';
+            }else {
+                $data['content'] = $message;
+            }
             /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
             $this->data->add($data);
             $data = $this->data->getData();
