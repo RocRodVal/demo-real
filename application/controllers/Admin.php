@@ -750,7 +750,7 @@ class Admin extends MY_Controller
 
             $incidencia['intervencion'] = $this->intervencion_model->get_intervencion_incidencia($id_inc);
             $incidencia['device'] = $this->sfid_model->get_device($incidencia['id_devices_pds']);
-            $incidencia['display'] = $this->sfid_model->get_display($incidencia['id_displays_pds']);
+            $incidencia['display'] = $this->sfid_model->get_display_incidencia($incidencia['id_displays_pds']);
 
             $data['incidencia'] = $incidencia;
             $data['historico_fecha_sustituido'] ='';
@@ -836,7 +836,7 @@ class Admin extends MY_Controller
                         $description_parada = $this->input->post('descripcion_parada');
                         $description_parada = $this->strip_html_tags($description_parada);
                     }
-                    $averia['id_type_incidencia'] =  ($this->input->post('tipo_averia') != "NULL") ? $this->input->post('tipo_averia') : 'NULL';
+                    $averia['id_type_incidencia'] =  ($this->input->post('tipo_averia') != NULL) ? $this->input->post('tipo_averia') : NULL;
                     $averia['descripcion_parada'] =  $description_parada;
                     $averia['fail_device'] =    ($this->input->post('fail_device')   == "on") ? 1 : 0;
                     $averia['alarm_display'] =  ($this->input->post('alarm_display') == "on") ? 1 : 0;
@@ -3779,7 +3779,7 @@ class Admin extends MY_Controller
         $this->load->view('backend/footer');
     }
 
-    public function alta_incidencia()
+   /* public function alta_incidencia()
     {
         $id_pds = $this->uri->segment(3);
         if ($this->uri->segment(4) != '') {
@@ -3822,7 +3822,7 @@ class Admin extends MY_Controller
         $this->load->view('backend/alta_incidencia', $data);
         $this->load->view('backend/footer');
     }
-
+*/
     public function exp_alta_incidencia()
     {
         $id_pds = $this->uri->segment(3);
@@ -5866,6 +5866,33 @@ class Admin extends MY_Controller
                     case "planograma":
                         $this->backup_model->set_sfids($array_sfids);
                         $resultado = $this->backup_model->exportar_planogramas();
+                        foreach ($resultado as $elemento){
+
+                            if($elemento->status=='Incidencia'){
+                                $incidencia = $this->backup_model->get_id_incidencia($elemento->id_devices_pds,$elemento->status);
+                                $elemento->id_incidencia="";
+                                foreach($incidencia as $posicion => $i){
+                                    if($posicion==(count($incidencia)-1))
+                                        $elemento->id_incidencia .= $i->id_incidencia;
+                                    else
+                                        $elemento->id_incidencia .= $i->id_incidencia.", ";
+                                }
+                            }else {
+                                if($elemento->status=='RMA'){
+                                    $elemento->id_incidencia="";
+                                    $incidencia = $this->backup_model->get_id_incidencia($elemento->id_devices_pds,$elemento->status);
+                                    $elemento->id_incidencia="";
+                                    foreach($incidencia as $posicion => $i){
+                                        if($posicion==(count($incidencia)-1))
+                                            $elemento->id_incidencia .= $i->id_incidencia;
+                                        else
+                                            $elemento->id_incidencia .= $i->id_incidencia.", ";
+                                    }
+                                }else {
+                                    $elemento->id_incidencia=0;
+                                }
+                            }
+                        }
 
                         $data["resultado"] = $resultado;
 
@@ -7284,6 +7311,96 @@ class Admin extends MY_Controller
 
         } else {
             redirect('admin', 'refresh');
+        }
+    }
+
+    /*Cancelación masiva de incidencias*/
+    public function cancelar_incidencias()
+    {
+        if($this->auth->is_auth()) {
+            $xcrud = xcrud_get_instance();
+            $this->load->model("incidencia_model");
+
+            $cancelar_incidencias = $this->input->post("cancelar_incidencias");
+            $data["title"] = "Cancelar incidencias";
+            $data["cancelando_incidencias"] = FALSE;
+
+            $incidencias = "";
+            $arr_incidencias = array();
+
+            // Venimos del form de cancelar incidencias
+            if($cancelar_incidencias == "si")
+            {
+                $incidencias = $this->input->post("incidencias");
+                $arr_incidencias = explode("\n", $incidencias);
+                $arr_incidencias = explode("\r", implode($arr_incidencias));
+                $data["arr_incidencias"] = $arr_incidencias;
+
+            }
+
+            // Validamos y añadimos
+            if(!empty($incidencias) )
+            {
+                $data["cancelando_incidencias"] = TRUE;
+
+                // Validamos el array de incidencias, y creamos un nuevo array que guarde NULL si la incidencia no se encuentra
+                // y en caso contrario guarde el objeto Incidencia asociado.
+                $checked_incidencias = array();
+                $incidents=array("incidents"=> array());
+
+                foreach($arr_incidencias as $inc)
+                {
+                    if(!empty($inc))
+                    {
+                        $check_inc = $this->incidencia_model->get_incidencia($inc,"object");
+
+                        if (!empty($check_inc)){// Incidencia ENCONTRADA
+                            //print_r($check_inc);echo "<br><br>";
+
+                            //$checked_incidencias[$inc] = $check_inc;
+
+                            $checked_incidencias[$inc] = $this->incidencia_model->cancelar_incidencia($check_inc);
+
+                            if(!is_null($checked_incidencias[$inc])) {
+                                if(is_object($checked_incidencias[$inc])) {
+                                    $incident = array("drId" => $check_inc->id_incidencia);
+                                    array_push($incidents['incidents'], $incident);
+                                }
+                            }
+                        }
+                        else $checked_incidencias[$inc] = NULL;
+                    }
+                }
+                $data["checked_incidencias"] = $checked_incidencias;
+
+               // print_r($incidents);
+                //////////////////////////////////////////////////////////////////////////////////
+                //                                                                              //
+                //             Comunicación  con Realdooh VU: cancelar incidencias masivamente  //
+                //                                                                              //
+                //////////////////////////////////////////////////////////////////////////////////
+                //
+               // print_r(json_encode($incidents));exit;
+                $resultado = cancel_incidents(array('user'=> 'altabox', 'password' => 'realboxdemo')
+                    ,'?close=1',json_encode($incidents));                                            //
+                //                                                                              //
+                //////////////////////////////////////////////////////////////////////////////////
+                //print_r($resultado);
+
+
+            }
+
+
+            $this->data->add($data);
+            $data = $this->data->getData();
+            $this->load->view('backend/header', $data);
+
+            $data["incidencias"] = $incidencias;
+
+            $this->load->view('backend/navbar',$data);
+            $this->load->view('backend/masivas/cancelar_incidencias/formulario', $data);
+            $this->load->view('backend/masivas/cancelar_incidencias/resultado', $data);
+            $this->load->view('backend/footer');
         }
     }
 }

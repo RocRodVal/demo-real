@@ -1,0 +1,6 @@
+AuthType Basic
+AuthName "Area privada"
+#LOCAL
+#AuthUserFile /www/demoreal.focusonemotions.com/orange/uploads/denuncias/.htpasswd
+#DEV PRE PRO
+AuthUserFile /www/demoreal.focusonemotions.com/htdocs/orange/uploads/denuncias/.htpasswd

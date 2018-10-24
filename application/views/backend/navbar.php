@@ -160,7 +160,7 @@
 
                         <?php
                         //$masivas = array('operaciones','anadir_mueble_sfid','cierre_pdv','cambio_sfid','incidencias','incidencias_exp','reset_incidencia_status','informe_backup','anadir_mueble_sfid');
-                        $masivas = array('informe_backup','anadir_mueble_sfid','eliminar_mueble_sfid');
+                        $masivas = array('informe_backup','anadir_mueble_sfid','eliminar_mueble_sfid','cancelar_incidencias');
                         ?>
                         <li <?=(in_array($this->uri->segment(2), $masivas))?'class="active"':''?>>
                             <a href="#"><i class="fa fa-wrench fa-fw"></i> Operaciones masivas<span class="fa arrow"></span></a>
@@ -168,6 +168,7 @@
                                 <li><a <?=($this->uri->segment(2)==='informe_backup')?'class="active"':''?> href="<?=site_url($acceso.'/informe_backup')?>"> Informes para Backup &raquo;</a></li>
                                 <li><a <?=($this->uri->segment(2)==='anadir_mueble_sfid')?'class="active"':''?> href="<?=site_url($acceso.'/anadir_mueble_sfid')?>"> Añadir mueble a SFID(s) &raquo;</a></li>
                                 <li><a <?=($this->uri->segment(2)==='eliminar_mueble_sfid')?'class="active"':''?> href="<?=site_url($acceso.'/eliminar_mueble_sfid')?>"> Eliminar mueble SFID(s) &raquo;</a></li>
+                                <li><a <?=($this->uri->segment(2)==='cancelar_incidencias')?'class="active"':''?> href="<?=site_url($acceso.'/cancelar_incidencias')?>"> Cancelar incidencias &raquo;</a></li>
                             </ul>
                         </li>
 

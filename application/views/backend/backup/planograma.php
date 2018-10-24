@@ -29,6 +29,7 @@
             <th class="num">SERIAL</th>
             <th class="num">OWNER</th>
             <th class="num">STATUS</th>
+            <th class="num">INCIDENCIA</th>
         </tr>
         <?php
             foreach($resultado as $clave=>$mueble){ ?>
@@ -50,6 +51,7 @@
                     <td class="num"><?= $mueble->serial ?></td>
                     <td class="num"><?= $mueble->owner ?></td>
                     <td class="num"><?= $mueble->status ?></td>
+                    <td class="num"><?= $mueble->id_incidencia==0 ? "" : $mueble->id_incidencia ?></td>
 
                 </tr>
         <?php }?>

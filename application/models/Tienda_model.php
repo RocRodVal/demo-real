@@ -1134,7 +1134,7 @@ class Tienda_model extends CI_Model {
 
 
             $resultado = $query->result();
-
+            //echo $this->db->last_query(); exit;
             // Guardamos en un array, los elementos facturables, que lo son porque todas sus incidencias asignadas han
             // sido cerradas o resueltas.
             //
@@ -1773,7 +1773,7 @@ class Tienda_model extends CI_Model {
                 ->order_by('device.device')
                 ->get('material_incidencias');
         }
-	//echo $this->db->last_query(); exit;
+	//echo $this->db->last_query();
 		return $query->result();
 	}
 	
@@ -1789,7 +1789,9 @@ class Tienda_model extends CI_Model {
 		->where('material_incidencias.id_alarm <>','')
 		->order_by('alarm.alarm')
 		->get('material_incidencias');
-	
+
+       //echo $this->db->last_query();
+
 		return $query->result();
 	}
 

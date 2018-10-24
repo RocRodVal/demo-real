@@ -388,22 +388,34 @@
                         <tr>
                             <th>Tipo: </th>
                             <td><?php echo $incidencia['tipo_averia'] ?>
-                            <?php if ($incidencia['tipo_averia'] == 'Robo') { ?>
-                                [<a href="<?= site_url('uploads/' . $incidencia['denuncia']) ?>" target="_blank">ver denuncia</a>]
+                            <?php if ($incidencia['tipo_averia'] == 'Robo') {
+                                $ruta="uploads/denuncias/";
+
+                                ?>
+                                <?php if(!empty($incidencia['denuncia'])){ ?>
+                                    [<a href="<?= site_url($ruta . $incidencia['denuncia']) ?>" target="_blank">ver denuncia</a>]
+                                <?php } ?>
                                  <?php if(!empty($incidencia['foto_url'])){ ?>
-                                    [<a href="<?= site_url('uploads/' . $incidencia['foto_url']) ?>" target="_blank">ver foto</a>]
+                                    [<a href="<?= site_url($ruta . $incidencia['foto_url']) ?>" target="_blank">ver foto</a>]
                                  <?php } ?>
                             <?php } ?></td>
                         </tr>
                         <?php
-                            if (!isset($incidencia['device']['device'])) {$dispositivo = '-';}
+
+                            if ($incidencia['device']['status']=='Baja') {
+                                $dispositivo = 'Retirado => '.$incidencia['device']['device'];
+                                if (!empty($incidencia['device']['IMEI'])) {
+                                    $dispositivo .= " - " . $incidencia['device']['IMEI'];
+                                }
+                            }
                             else {
                                 $dispositivo = $incidencia['device']['device'];
                                 if (!empty($incidencia['device']['IMEI'])) {
                                     $dispositivo .= " - " . $incidencia['device']['IMEI'];
                                 }
                             }
-                            if (!isset($incidencia['display']['display'])) { $mueble = 'Retirado'; }
+
+                            if ($incidencia['display']['estado']=='Baja') { $mueble = 'Retirado => '.$incidencia['display']['display']; }
                             else { $mueble = $incidencia['display']['display']; }
                         ?>
                         <tr>

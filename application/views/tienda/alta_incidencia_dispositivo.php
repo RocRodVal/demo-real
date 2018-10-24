@@ -27,9 +27,9 @@
                                                 <input type="radio" name="tipo_averia" id="tipo_averia_averia" value="0"> Avería
                                             </label>
                                             <div id="denuncia" hidden>
-                                                <p>Suba una copia de la denuncia por robo:</p>
-                                                <input id="denuncia" class="file" type="file" multiple=false name="userfile">
-                                                <p>Suba una imagen del robo:</p>
+                                                <p>Suba una copia de la denuncia por robo:<label class="red">Puede ser un fichero PDF, Word o una imagen que incluya toda la denuncia</label></p>
+                                                <input id="denuncia" class="file" type="file" multiple=false name="userfile"  accept="image/*, .doc,.docx,.pdf">
+                                                <p>Suba una imagen del robo:<label class="red"> Debe ser una fotografía del estado del mueble</label></p>
                                                 <input id="denunciaI" class="file" type="file" multiple=false name="userfileI" accept="image/png, .jpeg, .jpg, image/gif">
                                             </div>
                                         </div>
