@@ -682,7 +682,7 @@ class Tienda extends MY_Controller {
                 }
 
             }
-            if( ($denuncia=='' || $denuncia==NULL) || ($imagen =='' || $imagen==NULL) ){
+            if((($denuncia=='' || $denuncia==NULL) || ($imagen =='' || $imagen==NULL)) && $form_tipo_averia==1 ){
 
                 $message = ($messageD !='')? $messageD : "";
                 if($message!='')
