@@ -317,10 +317,10 @@ class Incidencia_model extends CI_Model {
 
             if($porrazon=='robo') {
                 $arr_titulos = array('Id incidencia', 'SFID', 'Tipología', 'Tipo', 'Dirección', 'Provincia', 'Fecha', 'Mueble', 'Terminal', 'Tipo avería',
-                    'Texto 1', 'Estado Sat', 'Unidades', 'Tipología robo');
+                    'Texto 1', 'Estado Sat', 'Unidades', 'Descripcion parada','Tipología robo');
                 array_push($excluir, "elemento", "Territorio", "Fabricante", "alarmado", "supervisor", "tipo_robo", "description_2", "description_3",
                     "parte_pdf", "denuncia", "foto_url", "foto_url_2", "foto_url_3", "contacto", "phone", "email", "id_operador",
-                    "intervencion", "id_tipo_robo", "last_updated", "Estado PDS", "descripcion_parada");
+                    "intervencion", "id_tipo_robo", "last_updated", "Estado PDS");
             }
         }
 
@@ -708,7 +708,7 @@ class Incidencia_model extends CI_Model {
                 }
             }
             //$datos = preparar_array_exportar($aux, $arr_titulos, $excluir);
-            exportar_fichero($formato,$aux,$sTitleFilename.$sFiltrosFilename.date("d-m-Y")."T".date("H:i:s")."_".date("d-m-Y"));
+            exportar_fichero($formato,$aux,$sTitleFilename.$sFiltrosFilename."_".date("d-m-Y")."T".date("H:i:s"));
         }
 
     }
