@@ -2307,7 +2307,7 @@ class Tienda_model extends CI_Model {
                     ->where('id_devices_pds', $id_devices_pds)
                     ->get('devices_pds');
                 $device_pds = $query->row();
-                if($id_devices_pds->status =='Incidencia') {
+                if($device_pds->status =='Incidencia') {
                     /*La posicion que genera la incidencia pasa a estar en Alta*/
                     $sql = "UPDATE devices_pds SET status='Alta' WHERE id_devices_pds =" . $id_devices_pds;
                     $this->db->query($sql);
