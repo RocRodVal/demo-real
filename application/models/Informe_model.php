@@ -1517,14 +1517,10 @@ class Informe_model extends CI_Model
      */
     public function update_ajustes_totales($anio,$intervenciones,$terminales)
     {
-        //$mesFinal=1;
         $data = $this->get_ajustes_totales($anio);
-//print_r($data); exit;
         if(!is_null($intervenciones) && !is_null($terminales))
         {
             foreach ($intervenciones as $key => $valor) {
-                //$elemento_anterior =$data[$key];
-                //print_r($elemento_anterior);
                 if(isset($data[$key])) {
                     $this->db->set('intervenciones', $valor)
                         ->set('terminales', $terminales[$key])
@@ -1538,19 +1534,27 @@ class Informe_model extends CI_Model
                         'anio' => $anio,
                         'mes' => ($key + 1)
                     );
-                    // print_r($data); exit;
                     $this->db->insert('ajustes', $data);
                 }
 
-
-                /*$resultado = $this->db->query("UPDATE ajustes SET intervenciones =".$valor.", terminales = ".
-                    $terminales[$key]." WHERE anio = ".$anio.
-                    " AND mes = ".($key+1))->result();*/
-
-              //  echo $resultado;
             }
         }
+    }
 
-        //return $data;
+    /* Robos entre dos años */
+    public function get_robos_totales($anioI,$anioF,$no_cancelada)
+    {
+        $query= $this->db->query("SELECT d.display, count(i.id_incidencia) as robos,
+              (SELECT count(id_pds) from displays_pds where displays_pds.id_display=d.id_display) as tiendasMueble,
+              (SELECT (count(id_pds) * d.positions) from displays_pds where displays_pds.id_display=d.id_display) as totalDemos
+               FROM incidencias as i 
+              INNER JOIN displays_pds as dp ON i.id_displays_pds=dp.id_displays_pds
+              INNER JOIN display d ON  d.id_display = dp.id_display
+              WHERE i.tipo_averia='Robo' and (year(fecha) >=$anioI) and (year(fecha) <=$anioF) $no_cancelada
+              group by d.id_display
+              order by d.display");
+
+        //echo $this->db->last_query(); exit;
+        return $query->result();
     }
 }

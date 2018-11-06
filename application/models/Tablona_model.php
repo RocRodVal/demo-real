@@ -77,39 +77,18 @@ class Tablona_model extends CI_Model {
     }
 
     public function get_IncidenciasTipo($anio,$no_cancelada,$tipo){
-        /*
-         *
 
-/*$this->db->query('SELECT COUNT(id_incidencia) as cantidad, YEAR(f.fecha) as anio, MONTH(f.fecha) as mes,
-            ('.$sql_aux.') as total
-                                                FROM incidencias f
-                                                WHERE YEAR(f.fecha) = "'.$este_anio.'" AND f.tipo_averia = "Aver�a"
-                                                '.$ctrl_no_cancelada.'
-                                                GROUP BY mes');
-
-            $this->db->query('SELECT COUNT(id_incidencia) as cantidad,
-
-                                            YEAR(f.fecha) as anio, MONTH(f.fecha) as mes,
-                                            ('.$sql_aux.') as total
-
-                                                FROM incidencias f
-                                                WHERE YEAR(f.fecha) = "'.$este_anio.'" AND f.tipo_averia = "Robo"
-                                                '.$ctrl_no_cancelada.'
-                                                GROUP BY mes');
-         */
         $sql_aux = 'SELECT COUNT(id_incidencia) FROM incidencias
-                        WHERE month(fecha) = mes AND YEAR(fecha) = "'.$anio.'" '.$no_cancelada.' ';
-
+                    WHERE month(fecha) = mes AND YEAR(fecha) = "'.$anio.'" '.$no_cancelada.' ';
 
         $query= $this->db->query('SELECT COUNT(id_incidencia) as cantidad,
-
-                                            YEAR(f.fecha) as anio, MONTH(f.fecha) as mes,
-                                            ('.$sql_aux.') as total
-
-                                                FROM incidencias f
-                                                WHERE YEAR(f.fecha) = "'.$anio.'" AND f.tipo_averia = "'.$tipo.'"
-                                                '.$no_cancelada.'
-                                                GROUP BY mes');
+                                  YEAR(f.fecha) as anio, MONTH(f.fecha) as mes,count(distinct(id_pds)) as tiendas,
+                                  ('.$sql_aux.') as total
+                                  FROM incidencias f
+                                  WHERE YEAR(f.fecha) = "'.$anio.'" AND f.tipo_averia = "'.$tipo.'"
+                                  '.$no_cancelada.'
+                                  GROUP BY mes');
+        //echo $this->db->last_query();exit;
         return $query->result();
     }
 
@@ -118,10 +97,7 @@ class Tablona_model extends CI_Model {
      * en el momento que pasaron a estado "En visita"
      */
     public function crear_historicotemp($anio,$status,$tipo="incidencias") {
-        /**
-         * SELECT id_incidencia,status_pds,min(fecha) FROM demoreal.historico where status_pds="En visita" AND YEAR(fecha)="2016"
-        group by id_incidencia
-         */
+
         $this->db->query(" DROP TABLE IF EXISTS historico_temp; ");
         if($tipo=='incidencias') {
             $this->db->query('

@@ -1351,9 +1351,9 @@ class Admin extends MY_Controller
              */
             if (($status == 8) AND ($status_ext == 'ext')) {
                 //echo "If stado=8 y ext";exit;
-                if (!is_null($incidencia['id_devices_pds'])) {
+                //if (!is_null($incidencia['id_devices_pds'])) {
                     $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'], 8, $id_inc);
-                }
+                //}
                 $this->tienda_model->incidencia_update_cierre($id_inc, $fecha_cierre);
 
                 //////////////////////////////////////////////////////////////////////////////////
@@ -6332,6 +6332,7 @@ class Admin extends MY_Controller
             $incidencias_robo = array();
             $total_inc_robo = 0;
             $total_inc_tipo = 0;
+            $total_tiendas = 0;
             foreach($meses_columna as $num_mes=>$mes)
             {
                 $incidencias_robo[$num_mes] = new StdClass();
@@ -6347,6 +6348,7 @@ class Admin extends MY_Controller
                         $incidencias_robo[$num_mes] = $valor;
                         $total_inc_robo += $valor->cantidad;
                         $total_inc_tipo += $valor->total;
+                        $total_tiendas += $valor->tiendas;
                         break;
                     }
                 }
@@ -6354,6 +6356,7 @@ class Admin extends MY_Controller
             $data["incidencias_robo"] = $incidencias_robo;
             $data["total_inc_robo"] = ($total_inc_robo > 0) ? $total_inc_robo : 1; // Evitar división por 0;
             $data["total_inc_tipo"] = ($total_inc_tipo > 0) ? $total_inc_tipo : 1; // Evitar división por 0
+            $data["total_tiendas"] = $total_tiendas;
 
 
             /* LINEAS NUM INC POR AVERIA */
@@ -6919,9 +6922,6 @@ class Admin extends MY_Controller
         if ($this->auth->is_auth()) {
             $this->load->model('tienda_model');
 
-            // $data['devices'] = $this->tienda_model->get_devices_almacen();
-            // $data['alarmas'] = $this->tienda_model->get_alarms_almacen_reserva();
-            //ini_set('xdebug.max_nesting_level', 1000);
             $xcrud = xcrud_get_instance();
             $xcrud->table('devices_almacen');
             $xcrud->table_name('Inventario dispositivos');
@@ -6930,12 +6930,6 @@ class Admin extends MY_Controller
             $xcrud->relation('id_complement_device', 'complement_device', 'id_complement_device', 'complement_device');
             $xcrud->relation('id_status_device', 'status_device', 'id_status_device', 'status_device');
             $xcrud->relation('id_status_packaging_device', 'status_packaging_device', 'id_status_packaging_device', 'status_packaging_device');
-            /*$xcrud->change_type('picture_url_1', 'image');
-            $xcrud->change_type('picture_url_2', 'image');
-            $xcrud->change_type('picture_url_3', 'image');
-            $xcrud->modal('picture_url_1');
-            $xcrud->modal('picture_url_2');
-            $xcrud->modal('picture_url_3');*/
             $xcrud->label('id_devices_almacen', 'Ref.')->label('alta', 'Fecha de alta')->label('id_device', 'Dispositivo')
                 ->label('serial', 'Nº de serie')->label('IMEI', 'IMEI')->label('mac', 'MAC')->label('barcode', 'Código de barras')
                 ->label('id_color_device', 'Color')->label('id_complement_device', 'Complementos')->label('id_status_device', 'Estado dispositivo')
@@ -6949,13 +6943,10 @@ class Admin extends MY_Controller
             $xcrud->show_primary_ai_column(true);
             $xcrud->before_update("inventario_dispositivos_historicoIO", "../libraries/Functions.php");
             $xcrud->before_insert("comprobarIMEI", "../libraries/Functions.php");
-            //$xcrud->set_lang_string('insert_error_message', 'This data cannot be deleted, because there are still a constrain data, please delete that constrain data first.');
             $xcrud->unset_numbers();
-            //  $xcrud->start_minimized(true);
 
             $data['title'] = 'Dispositivos';
             $data['content'] = $xcrud->render();
-            //    $data['content'] = $data['content'] . $xcrud_2->render();
 
             /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
             $this->data->add($data);
@@ -7269,6 +7260,7 @@ class Admin extends MY_Controller
         }
     }
 
+
     /*guardamos las nuevas cantidaddes de intervenciones y terminales para ajustar por mes /año */
     public function update_ajustes_totales()
     {
@@ -7387,9 +7379,7 @@ class Admin extends MY_Controller
                 //////////////////////////////////////////////////////////////////////////////////
                 //print_r($resultado);
 
-
             }
-
 
             $this->data->add($data);
             $data = $this->data->getData();
@@ -7401,6 +7391,70 @@ class Admin extends MY_Controller
             $this->load->view('backend/masivas/cancelar_incidencias/formulario', $data);
             $this->load->view('backend/masivas/cancelar_incidencias/resultado', $data);
             $this->load->view('backend/footer');
+        }
+    }
+
+    /*Obtener el informe de los robos entre dos años */
+    public function robos()
+    {
+        if ($this->auth->is_auth()) { // Control de acceso según el tipo de agente. Permiso definido en constructor
+
+            $xcrud = xcrud_get_instance();
+            //$this->load->helper("common");
+            $this->load->model(array("informe_model"));
+
+            $title = 'Informe de robos ';
+            $anioI='';
+            $anioF='';
+            if (!empty($_POST) && ($this->input->post("generar_tabla") ==='si')) {
+                $ctrl_no_cancelada = " AND (i.status_pds != 'Cancelada' && i.status != 'Cancelada') "; // Condición where de contrl de incidencias NO CANCELADAS
+
+                $anioI=$_POST['anioI'];
+                $anioF=$_POST['anioF'];
+
+                if (!empty($anioI) && !empty($anioF)) {
+
+                    $title .= ' entre ' . $anioI .' y '.$anioF;
+                    setlocale(LC_ALL, 'es_ES');
+
+                    $resultado = $this->informe_model->get_robos_totales($anioI,$anioF,$ctrl_no_cancelada);
+                    $data['valor_resultado'] = $resultado;
+                }
+            }
+            $data['title']=$title;
+            $data['anioI']=$anioI;
+            $data['anioF']=$anioF;
+            $data['mensaje']='';
+
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+
+            $this->load->view('backend/header', $data);
+            $this->load->view('backend/navbar', $data);
+            $this->load->view('backend/robos.php', $data);
+            $this->load->view('backend/footer');
+
+        } else {
+            redirect('admin', 'refresh');
+        }
+    }
+
+    /*Exportar los robos entre dos años*/
+    public function exportar_robos()
+    {
+        if ($this->auth->is_auth()) {
+            $xcrud = xcrud_get_instance();
+            $this->load->model(array('incidencia_model'));
+
+            $ext = $this->ext;    // Formato para exportaciones, especficiado o desde CFG
+            $anioI=$this->uri->segment(3);
+            $anioF=$this->uri->segment(4);
+
+            $this->incidencia_model->exportar_robos($ext,$anioI,$anioF);
+
+        } else {
+            redirect('admin', 'refresh');
         }
     }
 }

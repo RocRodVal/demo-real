@@ -2302,9 +2302,16 @@ class Tienda_model extends CI_Model {
 
             /*Cuando se cancela la incidencia*/
             case ($status == 3):
-                /*La posicion que genera la incidencia pasa a estar en Alta*/
-                $sql = "UPDATE devices_pds SET status='Alta' WHERE id_devices_pds =" . $id_devices_pds;
-                $this->db->query($sql);
+                /* obtengo los datos de la posicion que ha generado la incidencia */
+                $query = $this->db->select('*')
+                    ->where('id_devices_pds', $id_devices_pds)
+                    ->get('devices_pds');
+                $device_pds = $query->row();
+                if($id_devices_pds->status =='Incidencia') {
+                    /*La posicion que genera la incidencia pasa a estar en Alta*/
+                    $sql = "UPDATE devices_pds SET status='Alta' WHERE id_devices_pds =" . $id_devices_pds;
+                    $this->db->query($sql);
+                }
                 break;
             /* se resuelve la incidencia*/
             case ($status == 6):
@@ -2416,6 +2423,13 @@ class Tienda_model extends CI_Model {
 
             /*Cuando se hace el cierre forzoso de la incidencia*/
             case ($status == 8):
+
+                /* obtengo los datos de la posicion que ha generado la incidencia */
+                $query = $this->db->select('*')
+                    ->where('id_devices_pds', $id_devices_pds)
+                    ->get('devices_pds');
+                $device_pds = $query->row();
+
                 /*El material que se haya asignado ya este en transito o reservado pasara a Stock*/
                 $sql = "SELECT * FROM material_incidencias m
                         INNER JOIN devices_almacen d ON d.id_devices_almacen=m.id_devices_almacen
@@ -2439,9 +2453,11 @@ class Tienda_model extends CI_Model {
                     );
                     $this->db->insert('historico_io',$elemento);
                 }
-                /*La posicion que genera la incidencia pasa a estar en Alta*/
-                $sql = "UPDATE devices_pds SET status='Alta' WHERE id_devices_pds =" . $id_devices_pds;
-                $this->db->query($sql);
+                if($device_pds->status == 'Incidencia') {
+                    /*La posicion que genera la incidencia pasa a estar en Alta*/
+                    $sql = "UPDATE devices_pds SET status='Alta' WHERE id_devices_pds =" . $id_devices_pds;
+                    $this->db->query($sql);
+                }
 
                 break;
 

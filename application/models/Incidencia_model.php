@@ -1181,6 +1181,27 @@ class Incidencia_model extends CI_Model {
 
         return $aux;
     }
+
+    /*Exportar a fichero csv el informe de los robos entre dos añños*/
+    public function exportar_robos($ext,$anioI,$anioF){
+
+        $this->load->dbutil();
+        $this->load->helper(array('file', 'csv','download'));
+        $this->load->model(array("informe_model"));
+        $no_cancelada = " AND (i.status_pds != 'Cancelada' && i.status != 'Cancelada') "; // Condición where de contrl de incidencias NO CANCELADAS
+
+        $acceso = $this->uri->segment(1);
+        // Array de títulos de campo para la exportación XLS/CSV
+        $arr_titulos = array('Mueble','Robos','Tiendas Mueble','Total demos');
+        $excluir = array();
+        $sTitleFilename = "Incidencias_robos_".$anioI."_".$anioF."_";
+
+        $resultado = $this->informe_model->get_robos_totales($anioI,$anioF,$no_cancelada);
+        $datos = preparar_array_exportar($resultado, $arr_titulos, $excluir);
+        exportar_fichero($ext,$datos,$sTitleFilename.date("d-m-Y")."T".date("H:i:s"));
+        //print_r($resultado); exit;
+
+    }
 }
 
 ?>
