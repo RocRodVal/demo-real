@@ -385,7 +385,12 @@
                     <?php /* TIENDAS implicadas en los robos */
                     foreach($incidencias_robo as $key=>$valor)
                     {
-                        echo '<td>'.$valor->tiendas.'</td>';
+                        if(empty($valor->tiendas) )
+                            $valor=0;
+                        else
+                             $valor=$valor->tiendas;
+
+                        echo '<td>'.$valor.'</td>';
                     }
                     echo '<td class="total">'.$total_tiendas.'</td>';
                     ?>
