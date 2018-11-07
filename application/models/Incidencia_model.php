@@ -286,6 +286,7 @@ class Incidencia_model extends CI_Model {
      *  filtradas si procede
      * */
     public function exportar_incidencias($array_orden = NULL,$filtros=NULL,$tipo="abiertas",$formato="csv",$porrazon=NULL,$conMaterial=NULL) {
+        //$start = microtime(true);
         $this->load->dbutil();
         $this->load->helper('file');
         $this->load->helper('csv');
@@ -707,8 +708,14 @@ class Incidencia_model extends CI_Model {
 
                 }
             }
+
             //$datos = preparar_array_exportar($aux, $arr_titulos, $excluir);
-            exportar_fichero($formato,$aux,$sTitleFilename.$sFiltrosFilename."_".date("d-m-Y")."T".date("H:i:s"));
+            if(!empty($aux)) {
+                exportar_fichero($formato, $aux, $sTitleFilename . $sFiltrosFilename . "_" . date("d-m-Y") . "T" . date("H:i:s"));
+               // $time_elapsed = microtime(true) - $start;
+                //echo $time_elapsed; exit;
+            }
+
         }
 
     }
