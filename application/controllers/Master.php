@@ -831,6 +831,7 @@ class Master extends MY_Controller {
             $incidencias_robo = array();
             $total_inc_robo = 0;
             $total_inc_tipo = 0;
+            $total_tiendas = 0;
             foreach($meses_columna as $num_mes=>$mes)
             {
                 $incidencias_robo[$num_mes] = new StdClass();
@@ -846,6 +847,7 @@ class Master extends MY_Controller {
                         $incidencias_robo[$num_mes] = $valor;
                         $total_inc_robo += $valor->cantidad;
                         $total_inc_tipo += $valor->total;
+                        $total_tiendas += $valor->tiendas;
                         break;
                     }
                 }
@@ -853,6 +855,7 @@ class Master extends MY_Controller {
             $data["incidencias_robo"] = $incidencias_robo;
             $data["total_inc_robo"] = ($total_inc_robo > 0) ? $total_inc_robo : 1; // Evitar división por 0;
             $data["total_inc_tipo"] = ($total_inc_tipo > 0) ? $total_inc_tipo : 1; // Evitar división por 0
+            $data["total_tiendas"] = $total_tiendas;
 
 
             /* LINEAS NUM INC POR AVERIA */

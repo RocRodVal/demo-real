@@ -444,6 +444,21 @@
                             echo '<td class="total">'.$total_inc_robo.'</td>';
                             ?>
                         </tr>
+                        <tr>
+                            <th>Tiendas robadas </th>
+                            <?php /* TIENDAS implicadas en los robos */
+                            foreach($incidencias_robo as $key=>$valor)
+                            {
+                                if(empty($valor->tiendas) )
+                                    $valor=0;
+                                else
+                                    $valor=$valor->tiendas;
+
+                                echo '<td>'.$valor.'</td>';
+                            }
+                            echo '<td class="total">'.$total_tiendas.'</td>';
+                            ?>
+                        </tr>
 
                         <tr>
                             <th>Ratio  de incidencias por robo</th>

@@ -286,6 +286,7 @@ class Incidencia_model extends CI_Model {
      *  filtradas si procede
      * */
     public function exportar_incidencias($array_orden = NULL,$filtros=NULL,$tipo="abiertas",$formato="csv",$porrazon=NULL,$conMaterial=NULL) {
+        //$start = microtime(true);
         $this->load->dbutil();
         $this->load->helper('file');
         $this->load->helper('csv');
@@ -317,10 +318,10 @@ class Incidencia_model extends CI_Model {
 
             if($porrazon=='robo') {
                 $arr_titulos = array('Id incidencia', 'SFID', 'Tipología', 'Tipo', 'Dirección', 'Provincia', 'Fecha', 'Mueble', 'Terminal', 'Tipo avería',
-                    'Texto 1', 'Estado Sat', 'Unidades', 'Tipología robo');
+                    'Texto 1', 'Estado Sat', 'Unidades', 'Descripcion parada','Tipología robo');
                 array_push($excluir, "elemento", "Territorio", "Fabricante", "alarmado", "supervisor", "tipo_robo", "description_2", "description_3",
                     "parte_pdf", "denuncia", "foto_url", "foto_url_2", "foto_url_3", "contacto", "phone", "email", "id_operador",
-                    "intervencion", "id_tipo_robo", "last_updated", "Estado PDS", "descripcion_parada");
+                    "intervencion", "id_tipo_robo", "last_updated", "Estado PDS");
             }
         }
 
@@ -707,8 +708,14 @@ class Incidencia_model extends CI_Model {
 
                 }
             }
+
             //$datos = preparar_array_exportar($aux, $arr_titulos, $excluir);
-            exportar_fichero($formato,$aux,$sTitleFilename.$sFiltrosFilename.date("d-m-Y")."T".date("H:i:s")."_".date("d-m-Y"));
+            if(!empty($aux)) {
+                exportar_fichero($formato, $aux, $sTitleFilename . $sFiltrosFilename . "_" . date("d-m-Y") . "T" . date("H:i:s"));
+               // $time_elapsed = microtime(true) - $start;
+                //echo $time_elapsed; exit;
+            }
+
         }
 
     }
@@ -1180,6 +1187,27 @@ class Incidencia_model extends CI_Model {
             }
 
         return $aux;
+    }
+
+    /*Exportar a fichero csv el informe de los robos entre dos añños*/
+    public function exportar_robos($ext,$anioI,$anioF){
+
+        $this->load->dbutil();
+        $this->load->helper(array('file', 'csv','download'));
+        $this->load->model(array("informe_model"));
+        $no_cancelada = " AND (i.status_pds != 'Cancelada' && i.status != 'Cancelada') "; // Condición where de contrl de incidencias NO CANCELADAS
+
+        $acceso = $this->uri->segment(1);
+        // Array de títulos de campo para la exportación XLS/CSV
+        $arr_titulos = array('Mueble','Robos','Tiendas Mueble','Total demos');
+        $excluir = array();
+        $sTitleFilename = "Incidencias_robos_".$anioI."_".$anioF."_";
+
+        $resultado = $this->informe_model->get_robos_totales($anioI,$anioF,$no_cancelada);
+        $datos = preparar_array_exportar($resultado, $arr_titulos, $excluir);
+        exportar_fichero($ext,$datos,$sTitleFilename.date("d-m-Y")."T".date("H:i:s"));
+        //print_r($resultado); exit;
+
     }
 }
 

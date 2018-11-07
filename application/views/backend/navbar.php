@@ -17,7 +17,7 @@
                 <div class="sidebar-nav navbar-collapse">
                     <ul class="nav" id="side-menu" style="margin-top:20px;">
                         <?php $estado_incidencias = array("estado_incidencias","incidencias_exp","cdm_incidencias",
-                            "operar_incidencia","incidencias","update_incidencia_materiales","ajustes","update_ajustes_totales");
+                            "operar_incidencia","incidencias","update_incidencia_materiales","ajustes","update_ajustes_totales","robos","exportar_robos");
                            // $cdm = array('cdm_incidencias');
                             $estado_incidencias_inner = array();
                             $arr_anios = array();
@@ -44,11 +44,14 @@
 
                                             <?php
                                             for($i = $este_anio; $i >= $anio_inicial; $i--){ ?>
-                                                <li><a <?=($this->uri->segment(2)==='cdm_incidencias'  && $this->uri->segment(3)==$i)?'class="active"':''?> href="<?=site_url($acceso.'/cdm_incidencias/'.$i)?>">
+                                        <li><a <?=($this->uri->segment(2)==='cdm_incidencias'  && $this->uri->segment(3)==$i)?'class="active"':''?> href="<?=site_url($acceso.'/cdm_incidencias/'.$i)?>">
                                                 <i class="fa fa-calendar fa-fw"></i> <?=$i?></a></li>
                                         <?php } ?>
                                         </li>
                                     </ul>
+                                </li>
+                                <li ><a <?=($this->uri->segment(2)==='robos')?'class="active"':''?> href="<?=site_url($acceso.'/robos')?>">
+                                    Robos &raquo;</a>
                                 </li>
                                 <li>
                                     <a <?=($this->uri->segment(2)==='ajustes' || $this->uri->segment(2)==='update_ajustes_totales')?'class="active"':''?>
