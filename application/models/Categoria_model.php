@@ -17,17 +17,6 @@ class Categoria_Model extends CI_Model
         $this->load->database();
     }
 
-
-    /**
-     * Devuelve un array de TIPOS de PDS
-     * @return mixed
-     */
-    /*public function get_tipos_pds()
-    {
-        $query = $this->db->select('*')->get('pds_tipo');
-        return $query->result_array();
-    }*/
-
     /**
      * @param $id_tipo
      * @return null

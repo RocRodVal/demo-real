@@ -259,7 +259,7 @@ class Deposito_model extends CI_Model {
 		$this->db->update('incidencias');
 	}	
 	
-	public function get_alarms_display($id) {
+	/*public function get_alarms_display($id) {
 		if($id != FALSE) {
 			$query = $this->db->select('alarms_display_pds.*,alarm.*')
 			->join('alarm','alarms_display_pds.id_alarm = alarm.id_alarm')
@@ -271,10 +271,10 @@ class Deposito_model extends CI_Model {
 		else {
 			return FALSE;
 		}
-	}
+	}*/
 		
 	
-	public function get_alarms_device($id) {
+/*	public function get_alarms_device($id) {
 		if($id != FALSE) {
 			$query = $this->db->select('alarms_device_pds.*,alarm.*')
 			->join('alarm', 'alarms_device_pds.id_alarm = alarm.id_alarm')
@@ -287,7 +287,7 @@ class Deposito_model extends CI_Model {
 			return FALSE;
 		}
 	}	
-	
+	*/
 	
 	/*public function get_all_displays($id) {
 			$query = $this->db->select('*')

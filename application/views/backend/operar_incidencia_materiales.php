@@ -345,7 +345,9 @@
                                                 </select>
                                                 <?php } ?>
                                             </td>
-                                            <td><input type="text" id="units_alarma_almacen_<?=$i?>" name="units_alarma_almacen_<?=$i?>" onkeypress='return event.charCode >= 48 && event.charCode <= 57' /></td>
+                                            <td><input type="text" id="units_alarma_almacen_<?=$i?>" name="units_alarma_almacen_<?=$i?>"
+                                                       oninput="comprobar_stock_final('alarma_almacen_<?=$i?>','units_alarma_almacen_<?=$i?>');"
+                                                       onkeypress='return event.charCode >= 48 && event.charCode <= 57' /></td>
                                         </tr>
 
 

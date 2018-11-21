@@ -430,6 +430,17 @@
                     echo '<td class="total">'.number_format ($total_inc_averia/ $total_inc_tipo*100,2,",",".").' %</td>';
                     ?>
                 </tr>
+
+                <tr class="separador"><?=$separador_td?></tr>
+
+                <tr>
+                    <th>Terminales en almacén</th>
+                    <?php /* TERMINALES EN ALMACEN */
+                    foreach($terminalesAlmacen as $key=>$valor)
+                        echo '<td>'.$valor->cantidad.'</td>';
+                   // echo '<td class="total">'.$total_inc_robo.'</td>';
+                    ?>
+                </tr>
                 </tbody>
 
             </table>

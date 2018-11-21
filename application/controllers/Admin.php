@@ -1315,9 +1315,7 @@ class Admin extends MY_Controller
 
                 $this->tienda_model->incidencia_update_cierre($id_inc, $fecha_cierre);
 
-                /*
-                 * Cuando se resuelve la incidencia la intervencion pasa a estar Cerrada
-                 */
+                /** Cuando se resuelve la incidencia la intervencion pasa a estar Cerrada **/
                 $intervencion = $this->intervencion_model->get_intervencion_incidencia($id_inc);
                 $this->intervencion_model->change_status_intervencion($intervencion, "Cerrada");
 
@@ -1350,10 +1348,7 @@ class Admin extends MY_Controller
              * CIERRE FORZOSO
              */
             if (($status == 8) AND ($status_ext == 'ext')) {
-                //echo "If stado=8 y ext";exit;
-                //if (!is_null($incidencia['id_devices_pds'])) {
-                    $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'], 8, $id_inc);
-                //}
+                $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'], 8, $id_inc);
                 $this->tienda_model->incidencia_update_cierre($id_inc, $fecha_cierre);
 
                 //////////////////////////////////////////////////////////////////////////////////
@@ -2776,156 +2771,7 @@ class Admin extends MY_Controller
         $this->load->view('backend/content', $data);
         $this->load->view('backend/footer');
     }
-
-  /*  public function descripcion()
-    {
-        if ($this->auth->is_auth())
-        {
-            $session_data = $this->session->userdata('logged_in');
-            $data['sfid'] = $this->session->userdata('sfid');
-            $data['agent_id'] = $this->session->userdata('agent_id');
-            $data['type'] = $this->session->userdata('type');
-
-            $xcrud = xcrud_get_instance();
-            $this->load->model('tienda_model');
-
-            $data['tiendas'] = $this->tienda_model->search_pds($this->input->post('sfid'));
-
-            $data['title'] = 'Planograma tiendas';
-
-            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
-            $this->data->add($data);
-            $data = $this->data->getData();
-            /////
-            $this->load->view('backend/header', $data);
-            $this->load->view('backend/navbar', $data);
-            $this->load->view('backend/descripcion', $data);
-            $this->load->view('backend/footer');
-        } else {
-            redirect('admin', 'refresh');
-        }
-    }*/
-
-
-   /*
-    * Funcion que ya no se usa porque se ha dividido en dos
-     public function inventarios()
-    {
-       // $this->load->model('tienda_model');
-        if ($this->auth->is_auth()) {
-
-            //ini_set('xdebug.max_nesting_level', 1000);
-
-            $xcrud_1 = xcrud_get_instance();
-            $xcrud_1->table('displays_pds');
-            $xcrud_1->table_name('Inventario muebles');
-            $xcrud_1->relation('client_type_pds', 'client', 'id_client', 'client');
-            $xcrud_1->relation('id_pds', 'pds', 'id_pds', 'reference');
-            $xcrud_1->relation('id_display', 'display', 'id_display', 'display');
-            $xcrud_1->relation('id_tipo', 'pds_tipo', 'id', 'titulo');
-            $xcrud_1->relation('id_subtipo', 'pds_subtipo', 'id', 'titulo', '', 'titulo ASC', false, '', false, 'id_tipo', 'id_tipo');
-            $xcrud_1->relation('id_segmento', 'pds_segmento', 'id', 'titulo');
-            $xcrud_1->relation('id_tipologia', 'pds_tipologia', 'id', 'titulo');
-
-            $xcrud_1->label('client_type_pds', 'Cliente')->label('id_displays_pds', 'REF.')->label('id_type_pds', 'Tipo')->label('id_pds', 'SFID')->
-            label('id_panelado', 'Panelado')->label('id_display', 'Mueble')->label('position', 'Posición Orange')->label('description', 'Comentarios')->
-            label('status', 'Estado');
-            $xcrud_1->columns('client_type_pds,id_displays_pds,id_pds,id_display,position,status');
-            $xcrud_1->fields('client_type_pds,id_displays_pds,id_pds,id_tipo,id_subtipo,id_segmento,id_tipologia,id_pds,id_display,position,description,status');
-            $xcrud_1->where('status', array('Alta', 'Incidencia'));
-            $xcrud_1->order_by('id_pds', 'asc');
-            $xcrud_1->order_by('position', 'asc');
-            $xcrud_1->show_primary_ai_column(true);
-            $xcrud_1->unset_numbers();
-            $xcrud_1->start_minimized(false);
-
-            $xcrud_3 = xcrud_get_instance();
-            $xcrud_3->table('devices_pds');
-            $xcrud_3->table_name('Inventario dispositivos');
-            $xcrud_3->relation('client_type_pds', 'client', 'id_client', 'client');
-            $xcrud_3->relation('id_pds', 'pds', 'id_pds', 'reference', array('status' => 'Alta'));
-            $xcrud_3->relation('id_displays_pds', 'displays_pds', 'id_displays_pds', 'id_displays_pds');
-            $xcrud_3->relation('id_display', 'display', 'id_display', 'display', "positions>0");
-            $xcrud_3->relation('id_device', 'device', 'id_device', 'device');
-
-            //$xcrud_3->relation('id_color_device', 'color_device', 'id_color_device', 'color_device');
-            //$xcrud_3->relation('id_complement_device', 'complement_device', 'id_complement_device', 'complement_device');
-            //$xcrud_3->relation('id_status_device', 'status_device', 'id_status_device', 'status_device');
-            //$xcrud_3->relation('id_status_packaging_device', 'status_packaging_device', 'id_status_packaging_device', 'status_packaging_device');
-            //$xcrud_3->field_callback('incidencias', 'incidencias_list_action','../libraries/Functions.php');
-
-         /*   $xcrud_3->create_action('incidencias', 'incidencias_list_action','../libraries/Functions.php');
-            $xcrud_3->button('javascript:;', 'Listar Incidencias', ' glyphicon glyphicon-warning-sign', 'xcrud-action', array(
-                'data-task'     => 'action',
-                'data-action'   => 'incidencias',
-                'data-primary'  => '{id_devices_pds}'));
-
-            $lista_incidencias=$xcrud_3->nested_table('incidencias_list','id_devices_pds','incidencias','id_incidencia');
-            $lista_incidencias->columns('id_incidencia,fecha,status,status_pds');
-            $lista_incidencias->fields('id_incidencia,fecha,status,status_pds');
-            $lista_incidencias->unset_add();
-            $lista_incidencias->unset_remove();
-            $lista_incidencias->unset_edit();
-            $lista_incidencias->unset_print();
-
-/*
- * $xcrud = Xcrud::get_instance();
-    $xcrud->table('customers');
-    $xcrud->columns('customerNumber,Customer orders,city');
-    $xcrud->fk_relation('Customer orders','customerNumber','customers_orders_fk','customer_id','order_id','orders','orderNumber',array('orderNumber','orderDate'));
-    echo $xcrud->render();
- */
-            /* $xcrud_3->change_type('picture_url_1', 'image');
-             $xcrud_3->change_type('picture_url_2', 'image');
-             $xcrud_3->change_type('picture_url_3', 'image');
-             $xcrud_3->modal('picture_url_1');
-             $xcrud_3->modal('picture_url_2');
-             $xcrud_3->modal('picture_url_3');
-
-            $xcrud_3->label('client_type_pds', 'Cliente')->label('id_devices_pds', 'REF.')->label('id_pds', 'SFID')->label('id_displays_pds', 'Cod. mueble')->
-            label('id_display', 'Mueble')->label('alta', 'Fecha de alta')->label('position', 'Posición')->label('id_device', 'Dispositivo')->
-            label('IMEI', 'IMEI')->label('serial', 'S/N')->label('serial', 'Nº de serie')->label('barcode', 'Código de barras')->label('id_incidencia', 'Incidencias')
-                //->label('id_color_device', 'Color')
-                //->label('id_complement_device', 'Complementos')->label('id_status_device', 'Estado dispositivo')->label('id_status_packaging_device', 'Estado packaging')
-                ->label('description', 'Comentarios')->label('status', 'Estado');
-            $xcrud_3->columns('client_type_pds,id_devices_pds,id_pds,id_displays_pds,id_display,id_device,position,IMEI,serial,status');
-            $xcrud_3->fields('client_type_pds,id_devices_pds,id_pds,id_display,alta,id_device,position,serial,IMEI,serial,barcode,description,status');
-            /*$xcrud_3->fields('client_type_pds,id_devices_pds,id_pds,id_display,alta,id_device,position,serial,IMEI,serial,barcode,
-            /id_color_device,id_complement_device,
-            id_status_device,id_status_packaging_device,description,status');
-            $xcrud_3->where('status', array('Alta', 'Incidencia', 'Baja', 'RMA'));
-            $xcrud_3->order_by('id_pds', 'asc');
-            $xcrud_3->order_by('id_displays_pds', 'asc');
-            $xcrud_3->order_by('position', 'asc');
-            $xcrud_3->show_primary_ai_column(true);
-            $xcrud_3->unset_numbers();
-            $xcrud_3->start_minimized(false);
-            $xcrud_3->after_insert("inventario_dispositivos_codigoMueble", "../libraries/Functions.php");
-            $xcrud_3->before_update("update_inventario_dispositivos_codigoMueble", "../libraries/Functions.php");
-            //$xcrud_3->set_exception("update_inventario_dispositivos_codigoMueble","El mueble no pertenece a la tienda",'error');
-//print_r($xcrud_3); exit;
-            $data['title'] = 'Inventarios tiendas';
-            $data['content'] = $xcrud_1->render();
-            //$data['content'] = $data['content'] . $xcrud_2->render();
-            $data['content'] = $data['content'] . $xcrud_3->render();
-
-            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
-            $this->data->add($data);
-            $data = $this->data->getData();
-            /////
-            $this->load->view('backend/header', $data);
-            $this->load->view('backend/navbar', $data);
-            $this->load->view('backend/inventario', $data);
-            $this->load->view('backend/footer');
-        }
-        else {
-            redirect('admin', 'refresh');
-        }
-    }*/
-
-    /*
-     *Listado de los muebles que estan en tienda
-     */
+    /**Listado de los muebles que estan en tienda **/
     public function inventario_muebles()
     {
         if ($this->auth->is_auth()) {
@@ -2953,6 +2799,7 @@ class Admin extends MY_Controller
             $xcrud_1->show_primary_ai_column(true);
             $xcrud_1->unset_numbers();
             $xcrud_1->unset_add();
+            $xcrud_1->unset_remove();
             $xcrud_1->start_minimized(false);
 
 
@@ -2973,9 +2820,7 @@ class Admin extends MY_Controller
         }
     }
 
-    /*
-     * Inventario de los dispositivos que estan o han estado en tienda
-     */
+    /** Inventario de los dispositivos que estan o han estado en tienda **/
     public function inventario_tienda()
     {
         if ($this->auth->is_auth()) {
@@ -3007,14 +2852,16 @@ class Admin extends MY_Controller
             $xcrud_3->fields('client_type_pds,id_devices_pds,id_pds,id_display,alta,id_device,position,serial,IMEI,serial,barcode,description,status');
 
             $xcrud_3->where('status', array('Alta', 'Incidencia', 'Baja', 'RMA'));
+            $xcrud_3->pass_default('alta',date("Y-m-d H:i:s"));
             $xcrud_3->order_by('id_pds', 'asc');
             $xcrud_3->order_by('id_displays_pds', 'asc');
             $xcrud_3->order_by('position', 'asc');
             $xcrud_3->show_primary_ai_column(true);
             $xcrud_3->unset_numbers();
+            $xcrud_3->unset_remove();
             $xcrud_3->start_minimized(false);
             $xcrud_3->after_insert("inventario_dispositivos_codigoMueble", "../libraries/Functions.php");
-            $xcrud_3->before_update("update_inventario_dispositivos_codigoMueble", "../libraries/Functions.php");
+            $xcrud_3->before_update("update_inventario_dispositivos", "../libraries/Functions.php");
 
             $data['title'] = 'Inventarios tiendas';
             $data['content'] = $xcrud_3->render();
@@ -3107,7 +2954,6 @@ class Admin extends MY_Controller
      * pasado como parámetro como el tercer segmento de la URL.
      *
      * @return bool
-     *
      */
     public function get_inventarios_sfid($sfid=NULL,$accion=NULL,$id_pds=NULL)
     {
@@ -4073,38 +3919,6 @@ class Admin extends MY_Controller
         $this->load->view('backend/alta_incidencia_display', $data);
         $this->load->view('backend/footer');
     }
-
-  /*  public function inventario_tienda()
-    {
-        $id_pds = $this->uri->segment(3);
-
-        $xcrud = xcrud_get_instance();
-        $this->load->model('tienda_model');
-
-        $sfid = $this->tienda_model->get_pds($id_pds);
-
-        $data['id_pds'] = 'ABX/PDS-' . $sfid['id_pds'];
-        $data['commercial'] = $sfid['commercial'];
-        $data['territory'] = $sfid['territory'];
-        $data['reference'] = $sfid['reference'];
-        $data['address'] = $sfid['address'];
-        $data['zip'] = $sfid['zip'];
-        $data['city'] = $sfid['city'];
-        $data['id_pds_url'] = $id_pds;
-
-        $data['devices'] = $this->tienda_model->get_devices_pds($id_pds);
-
-        $data['title'] = 'Dispositivos';
-
-        /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
-        $this->data->add($data);
-        $data = $this->data->getData();
-        /////
-        $this->load->view('backend/header', $data);
-        $this->load->view('backend/navbar', $data);
-        $this->load->view('backend/devices_pds', $data);
-        $this->load->view('backend/footer');
-    }*/
 
     public function planograma()
     {
@@ -5598,7 +5412,6 @@ class Admin extends MY_Controller
             /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
             $this->data->add($data);
             $data = $this->data->getData();
-            /////
             $this->load->view('/backend/header', $data);
             $this->load->view('/backend/navbar', $data);
             $this->load->view('/backend/informes/tiendas_fabricante/list', $data);
@@ -5617,7 +5430,6 @@ class Admin extends MY_Controller
     public function informe_sistemas_seguridad()
     {
         if($this->auth->is_auth()){ // Control de acceso según el tipo de agente. Permiso definido en constructor
-            //$controlador = $this->data->get("controlador");
             $data['id_pds'] = $this->session->userdata('id_pds');
             $data['sfid'] = $this->session->userdata('sfid');
 
@@ -5674,9 +5486,7 @@ class Admin extends MY_Controller
                     $data["meses_columna"] = $meses_columna;
 
                     $resultado = $this->alarma_model->get_sistemas_seguridad_totales($tipo);
-//print_r($resultado); exit;
                     $valor_resultado = $this->alarma_model->get_array_sistemas_seguridad($resultado,$rango_meses->min,$rango_meses->max,$alarmas);
-                    //print_r($valor_resultado);exit;
                     $data['valor_resultado'] = $valor_resultado;
                 }
             }
@@ -5701,14 +5511,12 @@ class Admin extends MY_Controller
      * Funcion que exporta los datos de las alarmas utilizadas en un año
      */
     public function exportar_sistemas_seguridad($anio,$tipo="incidencias",$formato=NULL) {
-        if ($this->auth->is_auth())
-        {
+        if ($this->auth->is_auth()){
             $ext = (!is_null($formato) ? $formato : $this->ext);    // Formato para exportaciones, especficiado o desde CFG
             $this->load->model('alarma_model');
             $data['alarmas'] = $this->alarma_model->exportar_sistemas_seguridad($anio,$tipo,$ext);
         }
-        else
-        {
+        else{
             redirect('admin','refresh');
         }
     }
@@ -5926,10 +5734,7 @@ class Admin extends MY_Controller
             $arr_sfids = array();
 
             // Venimos del form de añadir mueble. Añadir
-            if($anadir_mueble == "si")
-            {
-
-
+            if($anadir_mueble == "si"){
                 $sfids = $this->input->post("sfids");
                 $arr_sfids = explode("\n", $sfids);
                 $arr_sfids = explode("\r", implode($arr_sfids));
@@ -5940,7 +5745,6 @@ class Admin extends MY_Controller
                 $position = (empty($position)) ? NULL : $position;
                 $id_tipo_alarmado = $this->input->post("id_tipo_alarmado");
                 $id_tipo_alarmado = (empty($id_tipo_alarmado)) ? NULL : $id_tipo_alarmado;
-
             }
 
             // Validamos y añadimos
@@ -5983,7 +5787,6 @@ class Admin extends MY_Controller
                 }
                 $data["checked_sfids"] = $checked_sfids;
 
-                //print_r($assets);
                 //////////////////////////////////////////////////////////////////////////////////
                 //                                                                              //
                 //             Comunicación  con Realdooh VU: agregar muebles a una tienda      //
@@ -5991,15 +5794,12 @@ class Admin extends MY_Controller
                 //////////////////////////////////////////////////////////////////////////////////
                 //
                 //print_r(json_encode($assets));
-                $resultado = set_assets_pds_realdooh(array(                                                  //
+                $resultado = set_assets_pds_realdooh(array(                                     //
                     'user'=> 'altabox',                                                         //
                     'password' => 'realboxdemo'                                                 //
-                ), array(),json_encode($assets));                                             //
+                ), array(),json_encode($assets));                                               //
                 //                                                                              //
                 //////////////////////////////////////////////////////////////////////////////////
-                //print_r($resultado); exit;
-
-
             }
 
 
@@ -6044,8 +5844,6 @@ class Admin extends MY_Controller
 
             $this->load->helper("common");
             $this->load->model(array("incidencia_model","informe_model","tablona_model"));
-            //$this->load->model(array('intervencion_model', 'tienda_model', 'sfid_model','chat_model','incidencia_model'));
-
 
             $b_filtrar_tipo = $this->input->post("filtrar_tipo");
             $tipo_tienda = '';
@@ -6092,8 +5890,6 @@ class Admin extends MY_Controller
             $data["primer_mes"] = $primer_mes;
             $data["meses_columna"] = $meses_columna;
 
-
-
             // Sacamos la primera línea. Total incidencias
             $resultados_1 = $this->informe_model->get_cmd_incidencias_totales($este_anio,$ctrl_no_cancelada);
             $total_incidencias_total = $this->informe_model->get_total_cdm_incidencias($resultados_1);
@@ -6102,52 +5898,30 @@ class Admin extends MY_Controller
             $dias_operativos = $this->informe_model->get_dias_operativos_mes($rango_meses,$este_anio);
             $total_dias_operativos = $this->informe_model->get_total_array($dias_operativos);
 
-
             $incidencias_dia = $this->informe_model->get_medias($valor_resultados_1,$dias_operativos,$rango_meses);
             $total_media = round($this->informe_model->get_total_array($incidencias_dia) / count($dias_operativos));
-
 
             $nombre_mes = array();
 
             $data["tabla_1"] = $valor_resultados_1;
 
-
-            /**
-             * Segundo bloque de la tabla, Incidencias mensuales por estado PdS
-             */
+            /** Segundo bloque de la tabla, Incidencias mensuales por estado PdS*/
             $titulo_incidencias_estado = $this->incidencia_model->get_titulos_estado();
             $resultados_2 = $this->informe_model->get_cmd_incidencias_totales_estado($este_anio, $ctrl_no_cancelada);
             $incidencias_estado = $this->informe_model->get_cmd_incidencias_estado($titulo_incidencias_estado,$resultados_2,$meses_columna);
 
-            /**
-             * TErcer bloque de la tabla, -72h y +72h
-             */
-            // Limpieza de tabla temporal, poner una fecha de cierre en las finalizadas que no tengan.
-
+            /** Trcer bloque de la tabla, -72h y +72h */
             $menos_72 = $this->informe_model->finalizadas_menos_72($este_anio,$meses_columna);
             $mas_72 = $this->informe_model->finalizadas_mas_72($este_anio,$meses_columna);
-
 
             $proceso_menos_72 = $this->informe_model->proceso_menos_72($este_anio,$meses_columna);
             $proceso_mas_72 = $this->informe_model->proceso_mas_72($este_anio,$meses_columna);
 
-            /*
-             * Tabla temporal con datos sobre la facturacion
-             */
+            /** Tabla temporal con datos sobre la facturacion*/
             $this->tablona_model->crear_facturaciontemp($este_anio);
 
             /*Numero total de intervenciones de un determinado año*/
             $resultados_3 = $this->tablona_model->get_totalIntervenciones();
-
-            /*Cantidades para ajustar intervenciones*/
-            /*$intervenciones_mas_=array(array("anio"=>2017,"cantidad"=>8,"mes"=>1),array("anio"=>2017,"cantidad"=>18,"mes"=>2),
-                array("anio"=>2017,"cantidad"=>27,"mes"=>3),array("anio"=>2017,"cantidad"=>40,"mes"=>4),
-                array("anio"=>2017,"cantidad"=>-47,"mes"=>5),array("anio"=>2017,"cantidad"=>64,"mes"=>6),
-                array("anio"=>2017,"cantidad"=>93,"mes"=>7),array("anio"=>2017,"cantidad"=>28,"mes"=>8),array("anio"=>2017,"cantidad"=>45,"mes"=>9),
-                array("anio"=>2017,"cantidad"=>44,"mes"=>10),array("anio"=>2017,"cantidad"=>170,"mes"=>11),array("anio"=>2017,"cantidad"=>74,"mes"=>12),
-                array("anio"=>2018,"cantidad"=>68,"mes"=>1),array("anio"=>2018,"cantidad"=>44,"mes"=>2),array("anio"=>2018,"cantidad"=>23,"mes"=>3),
-                array("anio"=>2018,"cantidad"=>58,"mes"=>4),array("anio"=>2018,"cantidad"=>70,"mes"=>5),array("anio"=>2018,"cantidad"=>173,"mes"=>6));*/
-
 
             $interv_term_mas = $this->informe_model->get_ajustes_totales($anio);
 
@@ -6161,18 +5935,13 @@ class Admin extends MY_Controller
                 $intervenciones_anio[$num_mes]->mes = $num_mes;
                 $intervenciones_anio[$num_mes]->anio = $este_anio;
 
-                foreach($resultados_3 as $key=>$valor)
-                {
-                    if(array_key_exists("mes",$valor) && $valor->mes == $num_mes)
-                    {
+                foreach($resultados_3 as $key=>$valor){
+                    if(array_key_exists("mes",$valor) && $valor->mes == $num_mes){
                         $intervenciones_anio[$num_mes] = $valor;
                         break;
                     }
                 }
-               // print_r($intervenciones_anio);echo "<br>";
-                foreach($interv_term_mas as $valor)
-                {
-                 //print_r($valor);
+                foreach($interv_term_mas as $valor){
                     if($valor->mes==$num_mes){
                         //if (array_key_exists("mes", $valor) && $v["mes"] == $num_mes && $v["anio"] == $este_anio) {
                             $intervenciones_anio[$num_mes]->cantidad = $intervenciones_anio[$num_mes]->cantidad + $valor->intervenciones;
@@ -6181,7 +5950,6 @@ class Admin extends MY_Controller
                     }
                 }
             }
-            //print_r($intervenciones_anio);echo "<br><br>";
             $data["intervenciones_anio"] = $intervenciones_anio;
 
             // Línea 2: Alarmas
@@ -6190,8 +5958,7 @@ class Admin extends MY_Controller
             // CREAMOS UN ARRAY CON TODOS LOS MESES Y LO RELLENAMOS CON LOS RESULTADOS, SI NO EXISTE RESULTADO, ESE MES
             // SERA DE CANTIDAD 0
             $alarmas_anio = array();
-            foreach($meses_columna as $num_mes=>$mes)
-            {
+            foreach($meses_columna as $num_mes=>$mes){
                 $alarmas_anio[$num_mes] = new StdClass();
                 $alarmas_anio[$num_mes]->cantidad = 0;
                 $alarmas_anio[$num_mes]->mes = $num_mes;
@@ -6208,77 +5975,46 @@ class Admin extends MY_Controller
             }
             $data["alarmas_anio"] = $alarmas_anio;
 
-
             // Línea 3: Terminales
             $resultados_5= $this->tablona_model->get_terminales($este_anio);
-
-            /*Cantidades para ajustar terminales*/
-           /* $terminales_mas=array(array("anio"=>2017,"cantidad"=>-6,"mes"=>1),array("anio"=>2017,"cantidad"=>-8,"mes"=>2),
-                array("anio"=>2017,"cantidad"=>41,"mes"=>3),array("anio"=>2017,"cantidad"=>39,"mes"=>4),
-                array("anio"=>2017,"cantidad"=>-39,"mes"=>5),array("anio"=>2017,"cantidad"=>39,"mes"=>6),
-                array("anio"=>2017,"cantidad"=>45,"mes"=>7),array("anio"=>2017,"cantidad"=>106,"mes"=>8),array("anio"=>2017,"cantidad"=>55,"mes"=>9),
-                array("anio"=>2017,"cantidad"=>35,"mes"=>10),array("anio"=>2017,"cantidad"=>17,"mes"=>11),array("anio"=>2017,"cantidad"=>11,"mes"=>12),
-                array("anio"=>2018,"cantidad"=>7,"mes"=>1),array("anio"=>2018,"cantidad"=>13,"mes"=>2),array("anio"=>2018,"cantidad"=>-73,"mes"=>3),
-                array("anio"=>2018,"cantidad"=>13,"mes"=>4),array("anio"=>2018,"cantidad"=>104,"mes"=>5),array("anio"=>2018,"cantidad"=>82,"mes"=>6));*/
 
             // CREAMOS UN ARRAY CON TODOS LOS MESES Y LO RELLENAMOS CON LOS RESULTADOS, SI NO EXISTE RESULTADO, ESE MES
             // SERA DE CANTIDAD 0
             $terminales_anio = array();
-            foreach($meses_columna as $num_mes=>$mes)
-            {
+            foreach($meses_columna as $num_mes=>$mes){
                 $terminales_anio[$num_mes] = new StdClass();
                 $terminales_anio[$num_mes]->cantidad = 0;
                 $terminales_anio[$num_mes]->mes = $num_mes;
                 $terminales_anio[$num_mes]->anio = $este_anio;
 
-                foreach($resultados_5 as $key=>$valor)
-                {
-                    if(array_key_exists("mes",$valor) && $valor->mes == $num_mes)
-                    {
+                foreach($resultados_5 as $key=>$valor){
+                    if(array_key_exists("mes",$valor) && $valor->mes == $num_mes){
                         $terminales_anio[$num_mes] = $valor;
                         break;
                     }
                 }
-               /* foreach($terminales_mas as $key=>$valor)
-                {
-                    //print_r(array_keys($valor));
-                    if(array_key_exists("mes",$valor) && $valor["mes"] == $num_mes && $valor["anio"]==$este_anio)
-                    {
-                        $terminales_anio[$num_mes]->cantidad = $terminales_anio[$num_mes]->cantidad+$valor["cantidad"];
-                        break;
-                    }
-                }*/
-                foreach($interv_term_mas as $valor)
-                {
-                    //print_r($valor);
+                foreach($interv_term_mas as $valor){
                     if($valor->mes==$num_mes){
-                        //if (array_key_exists("mes", $valor) && $v["mes"] == $num_mes && $v["anio"] == $este_anio) {
                         $terminales_anio[$num_mes]->cantidad = $terminales_anio[$num_mes]->cantidad + $valor->terminales;
                         break;
-                        //  }
                     }
                 }
             }
             $data["terminales_anio"] = $terminales_anio;
 
-
             $resultados_6 = $this->tablona_model->get_IncidenciasResueltas();
-
 
             // CREAMOS UN ARRAY CON TODOS LOS MESES Y LO RELLENAMOS CON LOS RESULTADOS, SI NO EXISTE RESULTADO, ESE MES
             // SERA DE CANTIDAD 0
             $incidencias_resueltas = array();
-            foreach($meses_columna as $num_mes=>$mes)
-            {
+            foreach($meses_columna as $num_mes=>$mes){
                 $incidencias_resueltas[$num_mes] = new StdClass();
                 $incidencias_resueltas[$num_mes]->cantidad = 0;
                 $incidencias_resueltas[$num_mes]->mes = $num_mes;
                 $incidencias_resueltas[$num_mes]->anio = $este_anio;
 
-                foreach($resultados_6 as $key=>$valor)
-                {
-                    if(array_key_exists("mes",$valor) && $valor->mes == $num_mes)
-                    {
+                foreach($resultados_6 as $key=>$valor){
+                    if(array_key_exists("mes",$valor) && $valor->mes == $num_mes){
                         $incidencias_resueltas[$num_mes] = $valor;
                         break;
                     }
@@ -6286,28 +6022,20 @@ class Admin extends MY_Controller
             }
             $data["incidencias_resueltas"] = $incidencias_resueltas;
 
-
-
             // Línea 5: Media incidencias / intervenciones.
             $resultados_7 = array();
 
             $total_num = $total_denom = 0;
-            foreach($incidencias_resueltas as $key=>$valor)
-            {
+            foreach($incidencias_resueltas as $key=>$valor){
                 $resultados_7[$key] = new StdClass();
 
                 $num =  $valor->cantidad;
                 $denom = $intervenciones_anio[$key]->cantidad;
 
                 if($denom == 0)
-                {
                     $resultados_7[$key]->cantidad = 0;
-                }
                 else
-                {
                     $resultados_7[$key]->cantidad = number_format(round($num / $denom, 2), 2, ",", ".");
-
-                }
 
                 $total_num +=  $valor->cantidad;
                 $total_denom += $intervenciones_anio[$key]->cantidad;
@@ -6316,13 +6044,10 @@ class Admin extends MY_Controller
 
             $data["media_inc_int"] = $resultados_7;
 
-            if($total_denom > 0) {
-                $data["total_media_inc_int"] = number_format(round($total_num / $total_denom, 2), 2, ",", ".");;
-            }else{
+            if($total_denom > 0)
+                $data["total_media_inc_int"] = number_format(round($total_num / $total_denom, 2), 2, ",", ".");
+            else
                 $data["total_media_inc_int"] = 0;
-            }
-
-            /* LINEAS NUM INC POR ROBO */
 
             /*LINEAS NUMERO INCIDENCIAS POR ROBO*/
             $resultados_8 = $this->tablona_model->get_IncidenciasTipo($este_anio,$ctrl_no_cancelada,'Robo');
@@ -6333,18 +6058,15 @@ class Admin extends MY_Controller
             $total_inc_robo = 0;
             $total_inc_tipo = 0;
             $total_tiendas = 0;
-            foreach($meses_columna as $num_mes=>$mes)
-            {
+            foreach($meses_columna as $num_mes=>$mes){
                 $incidencias_robo[$num_mes] = new StdClass();
                 $incidencias_robo[$num_mes]->cantidad = 0;
                 $incidencias_robo[$num_mes]->total = 0;
                 $incidencias_robo[$num_mes]->mes = $num_mes;
                 $incidencias_robo[$num_mes]->anio = $este_anio;
 
-                foreach($resultados_8 as $key=>$valor)
-                {
-                    if(array_key_exists("mes",$valor) && $valor->mes == $num_mes)
-                    {
+                foreach($resultados_8 as $key=>$valor){
+                    if(array_key_exists("mes",$valor) && $valor->mes == $num_mes){
                         $incidencias_robo[$num_mes] = $valor;
                         $total_inc_robo += $valor->cantidad;
                         $total_inc_tipo += $valor->total;
@@ -6366,18 +6088,15 @@ class Admin extends MY_Controller
             // SERA DE CANTIDAD 0
             $incidencias_averia = array();
             $total_inc_averia = 0;
-            foreach($meses_columna as $num_mes=>$mes)
-            {
+            foreach($meses_columna as $num_mes=>$mes){
                 $incidencias_averia[$num_mes] = new StdClass();
                 $incidencias_averia[$num_mes]->cantidad = 0;
                 $incidencias_averia[$num_mes]->total = 0;
                 $incidencias_averia[$num_mes]->mes = $num_mes;
                 $incidencias_averia[$num_mes]->anio = $este_anio;
 
-                foreach($resultados_9 as $key=>$valor)
-                {
-                    if(array_key_exists("mes",$valor) && $valor->mes == $num_mes)
-                    {
+                foreach($resultados_9 as $key=>$valor){
+                    if(array_key_exists("mes",$valor) && $valor->mes == $num_mes){
                         $incidencias_averia[$num_mes] = $valor;
                         $total_inc_averia += $valor->cantidad;
                         break;
@@ -6387,8 +6106,26 @@ class Admin extends MY_Controller
             $data["incidencias_averia"] = $incidencias_averia;
             $data["total_inc_averia"] = ($total_inc_averia > 0) ? $total_inc_averia : 1; // Evitar división por 0;;
 
+            /*Linea para la meda de terminales en almacen*/
+            $resultados_10 = $this->tablona_model->getTerminalesAlmacen($este_anio);
 
+            // CREAMOS UN ARRAY CON TODOS LOS MESES Y LO RELLENAMOS CON LOS RESULTADOS, SI NO EXISTE RESULTADO, ESE MES
+            // SERA DE CANTIDAD 0
+            $terminalesAlmacen = array();
+            foreach($meses_columna as $num_mes=>$mes){
+                $terminalesAlmacen[$num_mes] = new StdClass();
+                $terminalesAlmacen[$num_mes]->cantidad = 0;
+                $terminalesAlmacen[$num_mes]->mes = $num_mes;
+                $terminalesAlmacen[$num_mes]->anio = $este_anio;
 
+                foreach($resultados_10 as $key=>$valor){
+                    if(array_key_exists("mes",$valor) && $valor->mes == $num_mes){
+                        $terminalesAlmacen[$num_mes] = $valor;
+                        break;
+                    }
+                }
+            }
+            $data['terminalesAlmacen']=$terminalesAlmacen;
 
 
             $data["menos_72"] = $menos_72;
@@ -6401,8 +6138,6 @@ class Admin extends MY_Controller
             $data['incidencias_estado'] = $incidencias_estado;
             $data['titulo_incidencias_estado'] = $titulo_incidencias_estado;
 
-
-
             $data['nombre_mes'] = $nombre_mes;
             $data['dias_operativos'] = $dias_operativos;
             $data['incidencias_dia'] = $incidencias_dia;
@@ -6412,7 +6147,6 @@ class Admin extends MY_Controller
             $data['total_media'] = $total_media;
 
             $data['title'] = 'Estado incidencias '.$anio;
-
 
             /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
             $this->data->add($data);
@@ -6427,19 +6161,15 @@ class Admin extends MY_Controller
         }
     }
 
-    /**
-     * Tabla de pedidos segun el tipo
-     */
+    /*** Tabla de pedidos segun el tipo  */
     public function pedidos($tipo="abiertos")
     {
         if ($this->auth->is_auth()) {
-            //$data['sfid'] = $this->session->userdata('sfid');
 
             $xcrud = xcrud_get_instance();
 
             $this->load->model(array('pedido_model', 'tienda_model', 'sfid_model'));
             $this->load->library('app/paginationlib');
-
 
             // Comprobar si existe el segmento PAGE en la URI, si no inicializar a 1..
             $get_page = $this->uri->segment(5); echo ($this->uri->segment(6));
@@ -6451,9 +6181,7 @@ class Admin extends MY_Controller
                 $segment = null;
             }
 
-            /**
-             * Crear los filtros
-             */
+            /** Crear los filtros */
             $array_filtros = array(
                 'status'=>'',
                 'brand_device'=>'',
@@ -6464,7 +6192,6 @@ class Admin extends MY_Controller
             );
 
             /* BORRAR BUSQUEDA */
-
             $borrar_busqueda = $this->uri->segment(4);
             if($borrar_busqueda === "borrar_busqueda")
             {
@@ -6474,7 +6201,6 @@ class Admin extends MY_Controller
             // Consultar a la session si ya se ha buscado algo y guardado allí.
             $array_sesion = $this->get_filtros($array_filtros);
             // Buscar en el POST si hay busqueda, y si la hay usarla y guardarla además en sesion
-
             if($this->input->post('do_busqueda')==="si") $array_sesion = $this->set_filtros($array_filtros);
 
             /* Creamos al vuelo las variables que vienen de los filtros */
@@ -6482,7 +6208,6 @@ class Admin extends MY_Controller
                 $$filtro = $array_sesion[$filtro];
                 $data[$filtro] = $array_sesion[$filtro]; // Pasamos los valores a la vista.
             }
-
 
             // viene del form de ordenacion
             $do_orden = $this->input->post('ordenar');
@@ -6512,13 +6237,9 @@ class Admin extends MY_Controller
                 $data['title2'] = 'pedidos finalizados';
             }
 
-
             $per_page = 20;
-
             $total_pedidos = $this->pedido_model->get_pedidos_quantity(0,$tipo,$array_sesion);   // Sacar el total de pedidos, para el paginador
-
             $cfg_pagination = $this->paginationlib->init_pagination("admin/pedidos/".$tipo."/page/",$total_pedidos,$per_page,$segment);
-
 
             $this->load->library('pagination',$cfg_pagination);
             $this->pagination->initialize($cfg_pagination);
@@ -6534,9 +6255,8 @@ class Admin extends MY_Controller
 
             $pedidos = $this->pedido_model->get_pedidos($page,$cfg_pagination,$array_orden,$tipo,0,$array_sesion);
 
-            foreach ($pedidos as $pedido) {
+            foreach ($pedidos as $pedido)
                 $pedido->nuevos  = $this->chat_model->contar_nuevos($pedido->id,$pedido->reference,"pedidos");
-            }
 
             $data['pedidos'] = $pedidos;
             $data['tipo'] = $tipo;
@@ -6545,7 +6265,6 @@ class Admin extends MY_Controller
             /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
             $this->data->add($data);
             $data = $this->data->getData();
-            /////
             $this->load->view('backend/header', $data);
             $this->load->view('backend/navbar', $data);
             $this->load->view('backend/pedidos/pedidos', $data);
@@ -6924,28 +6643,29 @@ class Admin extends MY_Controller
 
             $xcrud = xcrud_get_instance();
             $xcrud->table('devices_almacen');
-            $xcrud->table_name('Inventario dispositivos');
+            $xcrud->table_name('Inventario');
             $xcrud->relation('id_device', 'device', 'id_device', 'device');
-            $xcrud->relation('id_color_device', 'color_device', 'id_color_device', 'color_device');
-            $xcrud->relation('id_complement_device', 'complement_device', 'id_complement_device', 'complement_device');
-            $xcrud->relation('id_status_device', 'status_device', 'id_status_device', 'status_device');
-            $xcrud->relation('id_status_packaging_device', 'status_packaging_device', 'id_status_packaging_device', 'status_packaging_device');
+           // $xcrud->relation('id_color_device', 'color_device', 'id_color_device', 'color_device');
+        //   $xcrud->relation('id_complement_device', 'complement_device', 'id_complement_device', 'complement_device');
+           // $xcrud->relation('id_status_device', 'status_device', 'id_status_device', 'status_device');
+          //  $xcrud->relation('id_status_packaging_device', 'status_packaging_device', 'id_status_packaging_device', 'status_packaging_device');
             $xcrud->label('id_devices_almacen', 'Ref.')->label('alta', 'Fecha de alta')->label('id_device', 'Dispositivo')
-                ->label('serial', 'Nº de serie')->label('IMEI', 'IMEI')->label('mac', 'MAC')->label('barcode', 'Código de barras')
-                ->label('id_color_device', 'Color')->label('id_complement_device', 'Complementos')->label('id_status_device', 'Estado dispositivo')
-                ->label('id_status_packaging_device', 'Estado packaging')->label('description', 'Comentarios')->label('owner', 'Dueño')
-                ->label('id_incidencia', 'Incidencia')->label('status', 'Estado');
+                ->label('IMEI', 'IMEI')->label('serial', 'Nº de serie')->label('mac', 'MAC')->label('barcode', 'Código de barras')
+                ->label('description', 'Comentarios')->label('owner', 'Dueño')->label('id_incidencia', 'Incidencia')->label('status', 'Estado');
             $xcrud->columns('id_devices_almacen,id_device,IMEI,serial,barcode,status');
-            $xcrud->fields('id_devices_almacen,alta,id_device,serial,IMEI,serial,barcode,description,owner,id_incidencia,status');
+            $xcrud->fields('id_devices_almacen,alta,id_device,IMEI,serial,barcode,description,owner,id_incidencia,status');
+            $xcrud->pass_default('alta',date("Y-m-d H:i:s"));
             $xcrud->order_by('id_device', 'asc');
             $xcrud->order_by('status', 'asc');
             $xcrud->order_by('id_devices_almacen', 'asc');
             $xcrud->show_primary_ai_column(true);
             $xcrud->before_update("inventario_dispositivos_historicoIO", "../libraries/Functions.php");
             $xcrud->before_insert("comprobarIMEI", "../libraries/Functions.php");
+            $xcrud->after_insert("insert_historicoIO", "../libraries/Functions.php");
             $xcrud->unset_numbers();
+            $xcrud->unset_remove();
 
-            $data['title'] = 'Dispositivos';
+            $data['title'] = 'Dispositivos en almacen';
             $data['content'] = $xcrud->render();
 
             /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..

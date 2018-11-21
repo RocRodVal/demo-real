@@ -64,11 +64,6 @@ class Tablona_model extends CI_Model {
     }
 
     public function get_IncidenciasResueltas(){
-        /*
-         * $this->db->query('SELECT SUM(incidencias) as cantidad, YEAR(f.fecha) as anio, MONTH(f.fecha) as mes
-                                                FROM facturacion_temp f
-                                                GROUP BY mes');
-         */
         $query=$this->db->select('SUM(incidencias) as cantidad, YEAR(f.fecha) as anio, MONTH(f.fecha) as mes')
             ->group_by('mes')
             ->get('facturacion_temp f');
@@ -90,6 +85,22 @@ class Tablona_model extends CI_Model {
                                   GROUP BY mes');
         //echo $this->db->last_query();exit;
         return $query->result();
+    }
+
+    /*
+     * Función para obtener el total de terminales que hay en almacen de un año concreto
+     */
+    public function getTerminalesAlmacen($anio){
+        $sql = "SELECT count(DISTINCT(da.id_devices_almacen)) as cantidad,YEAR(da.alta) as anio, MONTH(da.alta) as mes 
+                from devices_almacen da 
+                inner join historico_io h on h.id_devices_almacen = da.id_devices_almacen where year(h.fecha)=$anio 
+                and h.status!='Baja' and YEAR(da.alta)=$anio
+                group by mes";
+        $query= $this->db->query($sql);
+        echo $this->db->last_query();exit;
+        //print_r($query->result()); exit;
+        return $query->result();
+
     }
 
     /*

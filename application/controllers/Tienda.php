@@ -617,9 +617,10 @@ class Tienda extends MY_Controller {
         }
     }
 
+    /*Insertar la incidencia
+    Si se trata de un robo es obligatorio que haya denuncia e imagen*/
 	public function insert_incidencia()
 	{
-		//if($this->session->userdata('logged_in'))
         if ($this->auth->is_auth()) {
 
 			$data['id_pds'] = $this->session->userdata('id_pds');
@@ -634,11 +635,9 @@ class Tienda extends MY_Controller {
             $messageD="";
             $messageI="";
             $message="";
-            //print_r($this->session->userdata()); exit;
             $origin = $this->session->userdata('origin');
 
             if($form_tipo_averia==1) {
-
                 $config['upload_path'] = dirname($_SERVER["SCRIPT_FILENAME"]) . '/uploads/denuncias/';
                 $config['upload_url'] = base_url() . '/uploads/denuncias/';
                 $config['allowed_types'] = 'doc|docx|pdf|jpg|png';
@@ -647,7 +646,6 @@ class Tienda extends MY_Controller {
                 $config['overwrite'] = TRUE;
                 $config['max_size'] = '10000KB';
 
-              //  print_r($config);
                 $this->load->library('upload', $config);
                 $this->upload->initialize($config);
 
@@ -682,8 +680,8 @@ class Tienda extends MY_Controller {
                 }
 
             }
+            /*Si no se ha podido subir la denucia y la imagen se indica un mensaje de que es obligatorio*/
             if((($denuncia=='' || $denuncia==NULL) || ($imagen =='' || $imagen==NULL)) && $form_tipo_averia==1 ){
-
                 $message = ($messageD !='')? $messageD : "";
                 if($message!='')
                     $message.=($messageI!='') ? $messageI :'';
@@ -783,15 +781,12 @@ class Tienda extends MY_Controller {
                 }
             }
 		}
-		else
-		{
+		else{
 			redirect('tienda','refresh');
 		}	
 	}
 
-	public function insert_incidencia_mueble_alarma()
-	{
-		//if($this->session->userdata('logged_in'))
+	public function insert_incidencia_mueble_alarma(){
         if ($this->auth->is_auth()) {
 			$data['id_pds'] = $this->session->userdata('id_pds');
 			$data['sfid']   = $this->session->userdata('sfid');
