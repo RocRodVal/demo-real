@@ -9,7 +9,7 @@ class Pedido_model extends CI_Model {
 	}
 
 
-	public function get_pds($id) {
+	/*public function get_pds($id) {
 		if($id != FALSE) {
 			$query = $this->db->select('pds.*,territory.territory')
 			->join('territory','pds.territory = territory.id_territory')
@@ -21,7 +21,7 @@ class Pedido_model extends CI_Model {
 		else {
 			return FALSE;
 		}
-	}
+	}*/
 
 
     /**

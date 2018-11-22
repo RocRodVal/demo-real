@@ -479,39 +479,9 @@
 
     }
 
-    /*
-    * funcion que nos devolvera el listado de incidencias de la posicion
-    * $xcrud guarda el ID del elemento a actualziar
-    $postdata tenemos los datos para actualizar el dispositivo
+    /*Si se ha dado de baja el mueble habrá que dar de baja los dispositivos de ese mueble
+    E informar a realdooh de la baja
     */
-    /*function incidencias_list_action($xcrud) {
+    function inventario_dispositivosMueble($postada,$xcrud){
 
-        $CI =& get_instance();
-
-        /*consultamos las incidencias
-        $result = $CI->db->select('id_incidencia')
-            //    ->join("pds","id_pds=".$postdata->get('id_pds'))
-            ->where("id_devices_pds",$xcrud->get('primary'))
-            ->get('incidencias')->result();
-        //echo $CI->db->last_query();
-
-        $lista="";
-        if (!empty($result)) {
-            $lista.= "<div class='form-group'>";
-            $lista .= "<label class='control-label col-sm-3'>Incidencias</label>";
-            $lista .= "<div class='col-sm-9'><input class='xcrud-input form-control' type='text' value=";
-            foreach ($result as $r) {
-                $lista .= $r->id_incidencia;
-                if ($r !== end($result)) {
-                    $lista .= ",";
-                }
-            }
-            $lista .= " disabled ></div></div>";
-        } else {
-            echo "<text style='color: red; font-size: 18px '>El dispositivo no tiene incidencias</text>";
-        }
-        $xcrud->set('lista_incidencias',$lista);
-        //echo $lista;
-        return $xcrud;
-
-    }*/
+    }

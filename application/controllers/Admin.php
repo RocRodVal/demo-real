@@ -158,14 +158,8 @@ class Admin extends MY_Controller
             $incidencias = $this->incidencia_model->get_estado_incidencias($page,$cfg_pagination,$array_orden,$array_sesion,$tipo);
 
             foreach ($incidencias as $incidencia) {
-               // $incidencia->device = $this->sfid_model->get_device($incidencia->id_devices_pds);
-               // $incidencia->display = $this->sfid_model->get_display($incidencia->id_displays_pds);
-                //$incidencia->nuevos  = $this->chat_model->contar_nuevos($incidencia->id_incidencia,$incidencia->reference);
                 $incidencia->intervencion = $this->intervencion_model->get_intervencion_incidencia($incidencia->id_incidencia);
             }
-
-
-
 
             $data['incidencias'] = $incidencias;
             $data['tipo'] = $tipo;
@@ -202,8 +196,6 @@ class Admin extends MY_Controller
             /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
             $this->data->add($data);
             $data = $this->data->getData();
-            /////
-
             $this->load->view('backend/header', $data);
             $this->load->view('backend/navbar', $data);
             $this->load->view('backend/estado_incidencias/'.$tipo, $data);
@@ -244,16 +236,10 @@ class Admin extends MY_Controller
             );
             $array_sesion = $this->get_filtros($array_filtros);
 
-
             // Obtener el campo a ordenar, primero de Session y despues del post, si procede..
             $array_orden = $this->get_orden();
 
-
-
             $this->incidencia_model->exportar_incidencias($array_orden, $array_sesion, $tipo, $ext,$porrazon,$conMaterial);
-
-
-
         } else {
             redirect('admin', 'refresh');
         }
@@ -514,8 +500,6 @@ class Admin extends MY_Controller
             );
 
             $id_agent = $this->tienda_model->alta_agente($data);
-
-            //if(is_null($id_agent)) redirect('admin/apertura_pdv/alta/'.$sfid, 'refresh');
 
             // Validar "panelado" BLOOM
             $PDS = $this->tienda_model->get_sfid($sfid,"object");
@@ -1617,7 +1601,6 @@ class Admin extends MY_Controller
                     'cantidad' => $this->input->post('units_dipositivo_almacen_1')
                 );
 
-                //$this->tienda_model->reservar_dispositivos($this->input->post('dipositivo_almacen_1'), 2, $id_inc);
                 $this->tienda_model->incidencia_update_material($dipositivo_almacen_1,false);
             }
         }else {
@@ -1632,7 +1615,6 @@ class Admin extends MY_Controller
             }
             if (empty($imei) && ($this->input->post('units_dipositivo_almacen_1') <> '')) {
                 $error = "El IMEI no puede estar vacio";
-                //$data['error']=$error;
 
                 redirect('admin/update_incidencia_materiales/' . $id_pds . '/' . $id_inc . '/2/3/' . $error);
             } else {
@@ -1651,26 +1633,6 @@ class Admin extends MY_Controller
                     $this->tienda_model->reservar_dispositivos($this->input->post('dipositivo_almacen_1'), 2, $id_inc);
                     $this->tienda_model->incidencia_update_material($dipositivo_almacen_1,true);
                 }
-                /*Si el dispositivo seleccionado ya tiene un IMEI y no metemos otro nos quedamos con el que ya tenia*/
-                /*   $imei=$this->input->post('imei_1');
-                   if (empty($imei)) {
-                       $resultado=$this->tienda_model->search_dispositivo_id($this->input->post('dipositivo_almacen_1'));
-                   }
-                   if(!empty($resultado)){
-                       foreach($resultado as $r) {
-                           $imei = $r->IMEI;
-                       }
-                   }
-                   if (empty($imei)){
-                       $error="El IMEI no puede estar vacio";
-                       //$data['error']=$error;
-
-                       redirect('admin/update_incidencia_materiales/'.$id_pds.'/'.$id_inc.'/2/3/'.$error);
-                   }else {
-                       $this->tienda_model->update_dispositivos($this->input->post('dipositivo_almacen_1'), $imei, $this->input->post('mac_1'),
-                           $this->input->post('serial_1'), $this->input->post('barcode_1'));
-                   }*/
-
             }
         }
 
@@ -1955,6 +1917,9 @@ class Admin extends MY_Controller
         }
     }
 
+    /*Se actualiza el registro de la incidencia para indicar que no hay parte y se elimina el fichero dl directorio
+    uploads/partes
+    */
     public function borrar_parteTecnico()
     {
         if ($this->auth->is_auth()) {
@@ -2008,8 +1973,6 @@ class Admin extends MY_Controller
             $incidencia['display'] = $this->sfid_model->get_display($incidencia['id_displays_pds']);
             $data['incidencia'] = $incidencia;
 
-            //$data['alarms_almacen'] = $this->tienda_model->get_alarms_almacen_reserva();
-
             // Sacamos los dueños, y para cada uno de ellos sus alarmas, si existen y lo pasamos a la vista
             $duenos_alarm = $this->tienda_model->get_duenos();
 
@@ -2025,15 +1988,11 @@ class Admin extends MY_Controller
 
             $data['duenos_alarm'] = $duenos_alarm;
             $type_incidencia=$this->tienda_model->get_type_incidencia($id_inc);
-////            echo strtolower($type_incidencia['title'])."\n".strtolower(RAZON_PARADA);exit;
             if(strtolower($type_incidencia['title'])==strtolower(RAZON_PARADA)){
                 $data['typedevices_almacen']=array();
                 $data['devices_almacen'] = $this->tienda_model->get_devices();
-
             }else {
-
                 $data['typedevices_almacen']=$this->tienda_model->get_typedevices_almacen_reserva();
-                //$data['devices_almacen'] = $this->tienda_model->get_devices_almacen_reserva();
             }
             $data['type_incidencia']=$type_incidencia['title'];
             $data['error']=$error;
@@ -2072,8 +2031,6 @@ class Admin extends MY_Controller
                 $almacen=false;
             }
             $this->incidencia_model->desasignar_material($id_inc,$tipo_dispositivo,$almacen,$id_pds,$id_material_incidencia);
-
-
 
             $this->operar_incidencia();
 
@@ -2801,6 +2758,7 @@ class Admin extends MY_Controller
             $xcrud_1->unset_add();
             $xcrud_1->unset_remove();
             $xcrud_1->start_minimized(false);
+            $xcrud_1->after_update("inventario_dispositivosMueble", "../libraries/Functions.php");
 
 
             $data['title'] = 'Inventarios tiendas';

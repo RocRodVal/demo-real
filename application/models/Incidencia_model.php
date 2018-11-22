@@ -26,7 +26,7 @@ class Incidencia_model extends CI_Model {
 	}	
 	
 	
-	public function get_inventario_panelado($id) {
+	/*public function get_inventario_panelado($id) {
 		if($id != FALSE) {		
 			$query = $this->db->select('displays_panelado.*,display.*')
 			->join('display','displays_panelado.id_display = display.id_display')
@@ -39,28 +39,28 @@ class Incidencia_model extends CI_Model {
 		else {
 			return FALSE;
 		}
-	}
+	}*/
 
 	
-	public function get_panelados() {
+/*	public function get_panelados() {
 		$query = $this->db->select('*')
 		->order_by('panelado_abx')
 		->get('panelado');
 	
 		return $query->result();
-	}	
+	}	*/
 
 	
-	public function get_displays() {
+	/*public function get_displays() {
 		$query = $this->db->select('*')
 		->order_by('display')
 		->get('display');
 	
 		return $query->result();
-	}	
+	}	*/
 	
 	
-	public function get_devices_pds($id) {
+	/*public function get_devices_pds($id) {
 
 		if($id != FALSE) {
 			$query = $this->db->select('devices_pds.*,device.*, COUNT(devices_pds.id_device) AS unidades')
@@ -76,10 +76,10 @@ class Incidencia_model extends CI_Model {
 		else {
 			return FALSE;
 		}
-	}	
+	}	*/
 	
 	
-	public function get_devices_total() {
+/*	public function get_devices_total() {
 
 			$query = $this->db->select('devices_pds.*,device.*, COUNT(devices_pds.id_device) AS unidades')
 			->join('device','devices_pds.id_device = device.id_device')
@@ -89,10 +89,10 @@ class Incidencia_model extends CI_Model {
 			->get('devices_pds');
 	
 			return $query->result();
-	}	
+	}	*/
 	
 	
-	public function get_displays_total() {
+	/*public function get_displays_total() {
 	
 		$query = $this->db->select('displays_pds.*,display.*, COUNT(displays_pds.id_display) AS unidades')
 		->join('display','displays_pds.id_display = display.id_display')
@@ -102,10 +102,10 @@ class Incidencia_model extends CI_Model {
 		->get('displays_pds');
 	
 		return $query->result();
-	}	
+	}	*/
 
 	
-	public function get_devices_display($id) {
+	/*public function get_devices_display($id) {
 		if($id != FALSE) {
 			$query = $this->db->select('devices_display.*,device.*')
 			->join('device','devices_display.id_device = device.id_device')
@@ -118,10 +118,10 @@ class Incidencia_model extends CI_Model {
 		else {
 			return FALSE;
 		}
-	}
+	}*/
 	
 
-	public function get_pds($id) {
+	/*public function get_pds($id) {
 		if($id != FALSE) {
 			$query = $this->db->select('pds.*,territory.territory')
 			->join('territory','pds.territory = territory.id_territory')
@@ -133,10 +133,10 @@ class Incidencia_model extends CI_Model {
 		else {
 			return FALSE;
 		}
-	}	
+	}	*/
 	
 	
-	public function get_display($id) {
+	/*public function get_display($id) {
 		if($id != FALSE) {
 			$query = $this->db->select('*')
 			->where('id_display',$id)
@@ -147,10 +147,10 @@ class Incidencia_model extends CI_Model {
 		else {
 			return FALSE;
 		}
-	}
+	}*/
 
 			
-	public function get_device($id) {
+/*	public function get_device($id) {
 		if($id != FALSE) {
 			$query = $this->db->select('*')
 			->where('id_device',$id)
@@ -161,9 +161,9 @@ class Incidencia_model extends CI_Model {
 		else {
 			return FALSE;
 		}
-	}
+	}*/
 	
-	public function get_incidencia($id,$tipo_objeto="array") {
+	/*public function get_incidencia($id,$tipo_objeto="array") {
 		if($id != FALSE) {
 			$query = $this->db->select('incidencias.*')
 			->where('incidencias.id_incidencia',$id)
@@ -175,7 +175,7 @@ class Incidencia_model extends CI_Model {
 		else {
 			return FALSE;
 		}
-	}	
+	}	*/
 	
     /*
 	 *  Devuelve conjunto de registros de incidencias abiertas,

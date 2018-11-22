@@ -101,7 +101,7 @@ class Sfid_model extends CI_Model {
 
 	
 	/* Incidencias */
-	public function get_incidencias($id_pds) 
+	/*public function get_incidencias($id_pds)
 	{
 		if($id_pds != FALSE)
 		{		
@@ -118,7 +118,7 @@ class Sfid_model extends CI_Model {
 		{
 			return FALSE;
 		}
-	}	
+	}	*/
 	
 	
 	public function get_incidencia($id_incidencia)

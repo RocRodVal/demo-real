@@ -412,6 +412,7 @@ class Tienda_model extends CI_Model {
                 'status' => 'Baja',
                 'motivo' => CIERRE_TIENDA
             );
+           // print_r($elemento); echo "<br>";
             $this->insert_historico_devicesPDS($elemento);
         }
 
@@ -424,6 +425,7 @@ class Tienda_model extends CI_Model {
         $this->db->insert('historico_devicesPDS', $elemento);
     }
 
+    /*Realiza el borrado logico de los muebles de una tienda*/
 	public function borrar_muebles($id_pds)
 	{
 		$sql = "UPDATE displays_pds SET status ='Baja'
@@ -433,35 +435,7 @@ class Tienda_model extends CI_Model {
 	}
 
 
-	/*public function alta_masiva_dispositivos($sfid)
-	{
-		$sql = "INSERT INTO devices_pds (client_type_pds,id_pds,id_displays_pds,id_display,position,id_device,IMEI,mac,serial,barcode,id_color_device,id_complement_device,id_status_device,id_status_packaging_device,picture_url_1,picture_url_2,picture_url_3,description,status)
-				SELECT pds.client_pds,pds.id_pds,displays_pds.id_displays_pds,displays_pds.id_display,devices_display.position,devices_display.id_device,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'Alta'
-				FROM pds,displays_pds,devices_display
-				WHERE pds.id_pds=displays_pds.id_pds
-				AND displays_pds.id_display=devices_display.id_display
-				AND pds.reference = '$sfid'";
-	
-		$this->db->query($sql);
-	}*/
-	
-	/*public function alta_masiva_muebles($sfid)
-	{
-		$sql = "INSERT INTO displays_pds (client_type_pds,id_type_pds,id_pds,id_panelado,id_display,position,description,status)
-				SELECT pds.client_pds, pds.type_pds, pds.id_pds, pds.panelado_pds, displays_panelado.id_display, displays_panelado.position, '', 'Alta'
-				FROM pds, displays_panelado
-				WHERE pds.panelado_pds=displays_panelado.id_panelado
-				AND pds.reference = '$sfid'";
-	
-		$this->db->query($sql);
-	}*/
-	
-	/*public function borrar_pds($sfid)
-	{
-		$this->db->where('reference', $sfid);
-		$this->db->delete('pds');
-	}*/
-
+	/*Da de baja la tienda indicada*/
     public function cerrar_pds($sfid, $id_pds)
     {
         $this->db->set('status','Baja');
@@ -518,9 +492,10 @@ class Tienda_model extends CI_Model {
 		SELECT temporal.id_device, brand_device.brand, temporal.device, unidades_pds,unidades_tienda_transito,unidades_transito, unidades_reservado,
 		unidades_rma,unidades_almacen, (case when unidades_robadas is NULL then 0 else unidades_robadas end) as unidades_robadas,
 		unidades_televenta,
-		(case when unidades_robadas is NULL then (unidades_pds + unidades_transito + unidades_reservado + unidades_rma 
-		+ unidades_almacen+unidades_televenta) 
-		else (unidades_pds + unidades_transito + unidades_reservado + unidades_rma + unidades_almacen+unidades_robadas+unidades_televenta) end) as total,
+		(case when unidades_robadas is NULL then (unidades_pds + unidades_tienda_transito+ unidades_transito + unidades_reservado + unidades_rma 
+            + unidades_almacen+unidades_televenta) 
+            else (unidades_pds + unidades_transito + unidades_reservado + unidades_tienda_transito+ unidades_rma + 
+            unidades_almacen+unidades_robadas+unidades_televenta) end) as total,
 		(CASE WHEN unidades_pds = 0 THEN 0 ELSE CEIL(unidades_pds * 0.05 + 2) END) as stock_necesario,
 		(unidades_almacen - (CASE WHEN unidades_pds = 0 THEN 0 ELSE CEIL(unidades_pds * 0.05 + 2) END)) as balance,
 		temporal.status
@@ -815,13 +790,13 @@ class Tienda_model extends CI_Model {
 
     }
 
-
-
-    public function search_dispositivo($id) {
-		if($id != FALSE) {
+    /*Busca un dispositivo por IMEI/SN/MAC/BARCODE en el almacen*/
+    public function search_dispositivo($codigo) {
+		if($codigo != FALSE) {
 			$query = $this->db->select('devices_almacen.*')
 			//->where('devices_almacen.status','En stock')
-			->where("(devices_almacen.IMEI LIKE '%{$id}%' OR devices_almacen.mac LIKE '%{$id}%' OR devices_almacen.serial LIKE '%{$id}%' OR devices_almacen.barcode LIKE '%{$id}%')")
+			->where("(devices_almacen.IMEI LIKE '%{$codigo}%' OR devices_almacen.mac LIKE '%{$codigo}%' 
+			OR devices_almacen.serial LIKE '%{$codigo}%' OR devices_almacen.barcode LIKE '%{$codigo}%')")
 			->get('devices_almacen');
 	
 			return $query->result();
@@ -829,9 +804,9 @@ class Tienda_model extends CI_Model {
 		else {
 			return FALSE;
 		}
-	}	
-	
-	
+	}
+
+    /*Busca un dispositivo por id en el almacen*/
 	public function search_dispositivo_id($id) {
 
 		if($id != FALSE) {
@@ -1587,7 +1562,7 @@ class Tienda_model extends CI_Model {
         return $query->result();
     }
 
-    public function get_devices_pds($id) {
+   /* public function get_devices_pds($id) {
 
 		if($id != FALSE) {
 			$query = $this->db->select('devices_pds.*,device.*, COUNT(devices_pds.id_device) AS unidades')
@@ -1603,7 +1578,7 @@ class Tienda_model extends CI_Model {
 		else {
 			return FALSE;
 		}
-	}	
+	}	*/
 	
 	
 	public function get_devices_total() {
@@ -2089,7 +2064,7 @@ class Tienda_model extends CI_Model {
 	 *  filtradas si procede, y el subconjunto limitado paginado si procede
 	 *
 	 * */
-	public function get_incidencias($page = 1, $cfg_pagination = NULL,$array_orden= NULL,$filtros=NULL, $tipo="abiertas") {
+	/*public function get_incidencias($page = 1, $cfg_pagination = NULL,$array_orden= NULL,$filtros=NULL, $tipo="abiertas") {
 
         $this->db->select('incidencias.*,pds.reference as reference, device.brand_device as fabricante,
                             territory.territory as territory,
@@ -2102,7 +2077,7 @@ class Tienda_model extends CI_Model {
        ;
 
         /** Aplicar filtros desde el array, de manera manual **/
-        if(isset($filtros["status"]) && !empty($filtros["status"])) $this->db->where('incidencias.status',$filtros['status']);
+      /*  if(isset($filtros["status"]) && !empty($filtros["status"])) $this->db->where('incidencias.status',$filtros['status']);
         if(isset($filtros["status_pds"]) && !empty($filtros["status_pds"])) $this->db->where('incidencias.status_pds',$filtros['status_pds']);
         if(isset($filtros["id_incidencia"]) && !empty($filtros["id_incidencia"])) $this->db->where('id_incidencia',$filtros['id_incidencia']);
         if(isset($filtros["territory"]) && !empty($filtros["territory"])) $this->db->where('pds.territory',$filtros['territory']);
@@ -2114,7 +2089,7 @@ class Tienda_model extends CI_Model {
 
 
         /* Obtenemos la condición por tipo de incidencia */
-        $this->db->where($this->get_condition_tipo_incidencia($tipo));
+      /*  $this->db->where($this->get_condition_tipo_incidencia($tipo));
 
         $campo_orden = $orden = NULL;
         if(count($array_orden) > 0) {
@@ -2134,7 +2109,7 @@ class Tienda_model extends CI_Model {
        // echo $this->db->last_query();
 
 		return $query->result();
-	}
+	}*/
 
     /**
      * Función que devuelve la condición a usar en un where para determinar si la incidencia/s son abiertas o cerradas
@@ -2199,7 +2174,7 @@ class Tienda_model extends CI_Model {
 
 
     }
-	public function get_incidencias_pds($id) {
+	/*public function get_incidencias_pds($id) {
 		$query = $this->db->select('incidencias.*,pds.reference as reference')
 		->join('pds','incidencias.id_pds = pds.id_pds')
 		->where('incidencias.id_pds',$id)
@@ -2208,7 +2183,7 @@ class Tienda_model extends CI_Model {
 		->get('incidencias');
 
 		return $query->result();
-	}
+	}*/
 
     /**
      * Devuelve un array fila correspondiente a una incidencia de id pasado como param.
@@ -2360,6 +2335,7 @@ class Tienda_model extends CI_Model {
                             'status' => 'Alta',
                             'motivo' => INCIDENCIA_RESUELTA
                         );
+                        $this->insert_historico_devicesPDS($elemento);
                     } else {
                         if ($resultado['tipo_averia']=='Robo') {
                             $sql = "SELECT status FROM historico WHERE id_incidencia=" . $id_incidencia . " AND status='Sustituido'";
@@ -2376,9 +2352,10 @@ class Tienda_model extends CI_Model {
                                 'status' => 'Baja',
                                 'motivo' => INCIDENCIA_RESUELTA
                             );
+                            $this->insert_historico_devicesPDS($elemento);
                         }
                     }
-                    $this->insert_historico_devicesPDS($elemento);
+
 
                     /*insertar en almacen el dispositivo que origino la incidencia en estado en transito*/
                     /* Guardamos los datos de la posicion que genero la incidencia y el devices_pds al que afecta la incidencia se da de baja */

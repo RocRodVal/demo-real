@@ -97,7 +97,7 @@ class Tablona_model extends CI_Model {
                 and h.status!='Baja' and YEAR(da.alta)=$anio
                 group by mes";
         $query= $this->db->query($sql);
-        echo $this->db->last_query();exit;
+       // echo $this->db->last_query();exit;
         //print_r($query->result()); exit;
         return $query->result();
 
