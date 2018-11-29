@@ -28,12 +28,11 @@ class Informe extends CI_Controller {
 	
 		$this->form_validation->set_rules('sfid','SFID','required');
 		$this->form_validation->set_rules('password','password','required');
-	
-		if ($this->form_validation->run() == true)
-		{
+
+		if ($this->form_validation->run() == true){
 			$data = array(
-					'sfid' 	   => strtolower($this->input->post('sfid')),
-					'password' => $this->input->post('password'),
+                'sfid' 	   => strtolower($this->input->post('sfid')),
+                'password' => $this->input->post('password'),
 			);
 		}
 	
@@ -46,16 +45,15 @@ class Informe extends CI_Controller {
             }else{
                 $data['message'] = (validation_errors() ? validation_errors() : ($this->session->flashdata('message')));
             }
-
 		}
 
-			$data['message'] = (validation_errors() ? validation_errors() : ($this->session->flashdata('message')));
-	
-			$data['title'] = 'Login';
-				
-			$this->load->view('master/header',$data);
-			$this->load->view('master/login',$data);
-			$this->load->view('master/footer');
+        $data['message'] = (validation_errors() ? validation_errors() : ($this->session->flashdata('message')));
+
+        $data['title'] = 'Login';
+
+        $this->load->view('master/header',$data);
+        $this->load->view('master/login',$data);
+        $this->load->view('master/footer');
 
 	}
 
@@ -75,8 +73,6 @@ class Informe extends CI_Controller {
         }
     }
 
-
-
     /**
      * Función que guarda en sesión el valor de los filtros del POST, al venir de un form de filtrado
      * @param $array_filtros
@@ -92,7 +88,6 @@ class Informe extends CI_Controller {
                 $this->session->set_userdata($filter, $valor_filter);
                 $array_valores[$filter] = $valor_filter;
             }
-
         }
         return $array_valores;
     }
@@ -134,7 +129,6 @@ class Informe extends CI_Controller {
 
     public function set_orden($formulario)
     {
-
         $array_orden = array();
         $campo_orden = $this->input->post($formulario . '_campo_orden');
         $orden_campo = $this->input->post($formulario . '_orden_campo');
@@ -145,12 +139,10 @@ class Informe extends CI_Controller {
         $array_orden[$campo_orden]= $orden_campo;
 
         return $array_orden;
-
     }
 
 
-    public function get_orden()
-    {
+    public function get_orden() {
         $sess_campo_orden = $this->session->userdata('campo_orden');
         $sess_orden_campo = $this->session->userdata('orden_campo');
         $array_orden = NULL;
@@ -164,9 +156,6 @@ class Informe extends CI_Controller {
         }
         return $array_orden;
     }
-
-
-
 
 
     public function get_multifiltro_post($nombre_campo){
@@ -229,9 +218,6 @@ class Informe extends CI_Controller {
 
 
         $tipologias = $this->categoria_model->get_tipologias_pds($id_tipologia,$id_subtipo);
-            
-       
-        
         
         $resp = '<option value="" selected="selected">Escoge la tipología...</option>';
         foreach($tipologias as $tipologia){
@@ -248,13 +234,9 @@ class Informe extends CI_Controller {
     {
         /* Incluir los modelos */
         $xcrud = xcrud_get_instance();
-        //$this->load->model('sfid_model');
         $this->load->model('tienda_model');
-        //$this->load->model('categoria_model');
-
 
         $devices_almacen = $this->tienda_model->get_devicesAlmacen_Tipo($id_device);
-//print_r($devices_almacen); exit;
         $resp = '<option value="" selected="selected">Escoge uno...</option>';
         foreach($devices_almacen as $device){
             $titulo = $device->device;
@@ -262,13 +244,10 @@ class Informe extends CI_Controller {
                 $titulo.='['.$device->IMEI.']';
             else
                 $titulo.='[]';
-            //$s_selected = (!is_null($id_subtipo) && $id_subtipo == $device["id"]) ? ' selected="selected" ' : '';
             $resp .= '<option value="'.$device->id_devices_almacen.'">'.$titulo.'</option>';
         }
         echo $resp;
     }
-
-
 
     /**
      * Método que genera XLS en Cuadros de Mando > Estado incidencias.
@@ -285,27 +264,17 @@ class Informe extends CI_Controller {
         if(is_null($i_anio)) $i_anio = date("Y");
 
         $this->informe_model->exportar_cdm_incidencias($i_anio,$i_mes,$idx_status,$menos_72h);
-
-
-
     }
 
 
-    public function exportar_cdm_incidencias_finalizadas($i_anio= NULL,$i_mes=NULL,$menos_72h = NULL)
-    {
+    public function exportar_cdm_incidencias_finalizadas($i_anio= NULL,$i_mes=NULL,$menos_72h = NULL) {
         $this->load->model("informe_model");
 
         if(is_null($i_mes)) $i_mes = 1;
         if(is_null($i_anio)) $i_anio = date("Y");
 
         $this->informe_model->exportar_cdm_incidencias_finalizadas($i_anio,$i_mes,$menos_72h);
-
-
     }
-
-
-
-
 }
 /* End of file admin.php */
 /* Location: ./application/controllers/admin.php */

@@ -139,9 +139,7 @@ class Ot extends MY_Controller {
             $this->load->view('ot/navbar',$data);
             $this->load->view('ot/cdm_dispositivos_incidencias',$data);
             $this->load->view('ot/footer');
-        }
-        else
-        {
+        }else{
             redirect('ot','refresh');
         }
     }
@@ -161,7 +159,6 @@ class Ot extends MY_Controller {
                 'id_modelo' =>  '',
                 'id_marca'  =>  ''
             );
-
 
             // Consultar a la session si ya se ha buscado algo y guardado allí.
             $array_sesion = $this->get_filtros($array_filtros);
@@ -185,9 +182,7 @@ class Ot extends MY_Controller {
             }
 
             $data['stocks'] = $this->tienda_model->exportar_stock_cruzado($ext,$this->session->userdata('sfid'),$array_sesion);
-        }
-        else
-        {
+        }else{
             redirect('ot','refresh');
         }
     }

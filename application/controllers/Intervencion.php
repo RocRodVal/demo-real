@@ -133,7 +133,6 @@ class Intervencion extends CI_Controller
     }
 
     function addIncidenciaToIntervencion(){
-
         if (isset($_POST['incidencia_id']) && isset($_POST['intervencion_id'])) {
             $incidencia_id = $_POST['incidencia_id'];
             $intervencion_id = $_POST['intervencion_id'];
@@ -163,17 +162,12 @@ class Intervencion extends CI_Controller
 
                     $this->data['data']=$result;
 
-                }
-                else{
+                } else{
                    $this->data['data']=$result;
                 }
-        }
-        else{
-
+        }else{
             $this->data['data']=false;
         }
-
-
         $this->load->view('backend/dataJSON', $this->data);
     }
 

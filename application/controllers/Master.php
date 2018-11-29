@@ -332,7 +332,7 @@ class Master extends MY_Controller {
 		}
 	}
 
-	public function alarmas()
+/*	public function alarmas()
 	{
         if($this->auth->is_auth()){ // Control de acceso según el tipo de agente. Permiso definido en constructor
 			$xcrud = xcrud_get_instance();
@@ -368,9 +368,9 @@ class Master extends MY_Controller {
 		{
 			redirect('master','refresh');
 		}		
-	}
+	}*/
 
-	public function dispositivos()
+	/*public function dispositivos()
 	{
         if($this->auth->is_auth()){ // Control de acceso según el tipo de agente. Permiso definido en constructor
 			$xcrud = xcrud_get_instance();
@@ -406,9 +406,9 @@ class Master extends MY_Controller {
 		{
 			redirect('master','refresh');
 		}		
-	}
+	}*/
 
-	public function muebles()
+	/*public function muebles()
 	{
         if($this->auth->is_auth()){ // Control de acceso según el tipo de agente. Permiso definido en constructor
 			$xcrud = xcrud_get_instance();
@@ -444,9 +444,9 @@ class Master extends MY_Controller {
 		{
 			redirect('master','refresh');
 		}		
-	}
+	}*/
 
-	public function puntos_de_venta()
+	/*public function puntos_de_venta()
 	{
         if($this->auth->is_auth()){ // Control de acceso según el tipo de agente. Permiso definido en constructor
 			$xcrud = xcrud_get_instance();
@@ -497,9 +497,9 @@ class Master extends MY_Controller {
 		{
 			redirect('master','refresh');
 		}		
-	}
+	}*/
 
-	public function incidencias()
+	/*public function incidencias()
 	{
         if($this->auth->is_auth()){ // Control de acceso según el tipo de agente. Permiso definido en constructor
 
@@ -552,7 +552,7 @@ class Master extends MY_Controller {
 		} else {
 			redirect('master', 'refresh');
 		}
-	}
+	}*/
 
     public function cdm_incidencias($anio = NULL)
     {
@@ -712,19 +712,7 @@ class Master extends MY_Controller {
 
 
             // Línea 3: Terminales
-            /*$resultados_5 = $this->db->query("
-                SELECT  SUM(material_incidencias.cantidad) as cantidad,
-                        MONTH(material_incidencias.fecha) as mes,
-                        YEAR(material_incidencias.fecha) as anio
-                FROM material_incidencias
-                JOIN incidencias ON material_incidencias.id_incidencia = incidencias.id_incidencia
-                WHERE incidencias.status_pds = 'Finalizada' AND YEAR(material_incidencias.fecha) = '".$este_anio."'
-                AND id_alarm IS NULL
-                GROUP BY mes
-            ");*/
             $resultados_5= $this->tablona_model->get_terminales($este_anio);
-
-
             // CREAMOS UN ARRAY CON TODOS LOS MESES Y LO RELLENAMOS CON LOS RESULTADOS, SI NO EXISTE RESULTADO, ESE MES
             // SERA DE CANTIDAD 0
             $terminales_anio = array();
@@ -747,14 +735,7 @@ class Master extends MY_Controller {
             $data["terminales_anio"] = $terminales_anio;
 
 
-
             $resultados_6 = $this->tablona_model->get_IncidenciasResueltas();
-
-            /*$resultados_6 = $this->db->query("SELECT COUNT('id_incidencia') as cantidad,
-                                                MONTH(fecha) as mes, YEAR(fecha) as anio
-                                                FROM facturacion WHERE YEAR(fecha) = '".$este_anio."'
-                                                GROUP BY  anio, mes");*/
-
             // CREAMOS UN ARRAY CON TODOS LOS MESES Y LO RELLENAMOS CON LOS RESULTADOS, SI NO EXISTE RESULTADO, ESE MES
             // SERA DE CANTIDAD 0
             $incidencias_resueltas = array();
@@ -780,7 +761,6 @@ class Master extends MY_Controller {
 
             // Línea 5: Media incidencias / intervenciones.
             $resultados_7 = array();
-
             $total_num = $total_denom = 0;
             foreach($incidencias_resueltas as $key=>$valor)
             {
@@ -789,21 +769,14 @@ class Master extends MY_Controller {
                 $num =  $valor->cantidad;
                 $denom = $intervenciones_anio[$key]->cantidad;
 
-                if($denom == 0)
-                {
+                if($denom == 0){
                     $resultados_7[$key]->cantidad = 0;
-                }
-                else
-                {
+                }else{
                     $resultados_7[$key]->cantidad = number_format(round($num / $denom, 2), 2, ",", ".");
-
                 }
-
                 $total_num +=  $valor->cantidad;
                 $total_denom += $intervenciones_anio[$key]->cantidad;
             }
-
-
             $data["media_inc_int"] = $resultados_7;
 
             if($total_denom > 0) {
@@ -812,25 +785,8 @@ class Master extends MY_Controller {
                 $data["total_media_inc_int"] = 0;
             }
 
-
-            /* LINEAS NUM INC POR ROBO */
-            /* $sql_aux = 'SELECT COUNT(id_incidencia) FROM incidencias
-                         WHERE month(fecha) = mes AND YEAR(fecha) = "'.$este_anio.'" '.$ctrl_no_cancelada.' ';
-
-
-             $resultados_8 = $this->db->query('SELECT COUNT(id_incidencia) as cantidad,
-
-                                             YEAR(f.fecha) as anio, MONTH(f.fecha) as mes,
-                                             ('.$sql_aux.') as total
-
-                                                 FROM incidencias f
-                                                 WHERE YEAR(f.fecha) = "'.$este_anio.'" AND f.tipo_averia = "Robo"
-                                                 '.$ctrl_no_cancelada.'
-                                                 GROUP BY mes');*/
-
             /*LINEAS NUMERO INCIDENCIAS POR ROBO*/
             $resultados_8 = $this->tablona_model->get_IncidenciasTipo($este_anio,$ctrl_no_cancelada,'Robo');
-
             // CREAMOS UN ARRAY CON TODOS LOS MESES Y LO RELLENAMOS CON LOS RESULTADOS, SI NO EXISTE RESULTADO, ESE MES
             // SERA DE CANTIDAD 0
             $incidencias_robo = array();
@@ -865,13 +821,6 @@ class Master extends MY_Controller {
 
             /* LINEAS NUM INC POR AVERIA */
             $resultados_9 = $this->tablona_model->get_IncidenciasTipo($este_anio,$ctrl_no_cancelada,'Averia');
-            /*$this->db->query('SELECT COUNT(id_incidencia) as cantidad, YEAR(f.fecha) as anio, MONTH(f.fecha) as mes,
-        ('.$sql_aux.') as total
-                                            FROM incidencias f
-                                            WHERE YEAR(f.fecha) = "'.$este_anio.'" AND f.tipo_averia = "Avería"
-                                            '.$ctrl_no_cancelada.'
-                                            GROUP BY mes');
-*/
             // CREAMOS UN ARRAY CON TODOS LOS MESES Y LO RELLENAMOS CON LOS RESULTADOS, SI NO EXISTE RESULTADO, ESE MES
             // SERA DE CANTIDAD 0
             $incidencias_averia = array();
@@ -898,7 +847,42 @@ class Master extends MY_Controller {
             $data["total_inc_averia"] = ($total_inc_averia > 0) ? $total_inc_averia : 1; // Evitar división por 0;;
 
 
+            /*Linea para la media de terminales en tienda*/
+            // CREAMOS UN ARRAY CON TODOS LOS MESES Y LO RELLENAMOS CON LOS RESULTADOS, SI NO EXISTE RESULTADO, ESE MES
+            // SERA DE CANTIDAD 0
+            $terminalesTienda = array();
+            foreach($meses_columna as $num_mes=>$mes){
+                $terminalesTienda[$num_mes] = new StdClass();
+                $terminalesTienda[$num_mes]->cantidad = 0;
+                $terminalesTienda[$num_mes]->mes = $num_mes;
+                $terminalesTienda[$num_mes]->anio = $este_anio;
+                //echo $mes."<br>";
+                $this->tablona_model->crear_historicoDevicesPDStemp($anio,$num_mes);
 
+                $aux1 = $this->tablona_model->getTerminalesAltaHistoricoTienda($este_anio, $num_mes);
+                //$aux2 = $this->tablona_model->getTerminalesTienda($aux1);
+                // $aux3 = $this->tablona_model->getTerminalesBajaHistoricoTienda($este_anio,$num_mes);
+                $terminalesTienda[$num_mes]->cantidad = count($aux1); //+ count($aux2) ;
+
+            }
+            $data['terminalesTienda']=$terminalesTienda;
+
+            /*Linea para la meda de terminales en almacen*/
+            // CREAMOS UN ARRAY CON TODOS LOS MESES Y LO RELLENAMOS CON LOS RESULTADOS, SI NO EXISTE RESULTADO, ESE MES
+            // SERA DE CANTIDAD 0
+            $terminalesAlmacen = array();
+            foreach($meses_columna as $num_mes=>$mes){
+                $terminalesAlmacen[$num_mes] = new StdClass();
+                $terminalesAlmacen[$num_mes]->cantidad = 0;
+                $terminalesAlmacen[$num_mes]->mes = $num_mes;
+                $terminalesAlmacen[$num_mes]->anio = $este_anio;
+                $this->tablona_model->crear_historicoDevicesAlmacenTemp($anio,$num_mes);
+
+                $aux1 = $this->tablona_model->getTerminalesAltaHistoricoAlmacen($este_anio, $num_mes);
+                //$aux2 = $this->tablona_model->getTerminalesAlmacen($aux1);
+                $terminalesAlmacen[$num_mes]->cantidad = count($aux1);//+count($aux2);
+            }
+            $data['terminalesAlmacen']=$terminalesAlmacen;
 
 
             $data["menos_72"] = $menos_72;
@@ -937,7 +921,7 @@ class Master extends MY_Controller {
         }
     }
 
-	public function cdm_tipo_incidencia()
+/*	public function cdm_tipo_incidencia()
 	{
         if($this->auth->is_auth()){ // Control de acceso según el tipo de agente. Permiso definido en constructor
 
@@ -1022,9 +1006,9 @@ class Master extends MY_Controller {
 		} else {
 			redirect('master', 'refresh');
 		}
-	}	
+	}	*/
 	
-	public function cdm_alarmas()
+/*	public function cdm_alarmas()
 	{
         if($this->auth->is_auth()){ // Control de acceso según el tipo de agente. Permiso definido en constructor
 
@@ -1053,7 +1037,7 @@ class Master extends MY_Controller {
 		{
 			redirect('master','refresh');
 		}
-	}
+	}*/
 
     public function cdm_alarmas_balance()
     {
@@ -1197,7 +1181,7 @@ class Master extends MY_Controller {
         }
     }
 
-    public function cdm_dispositivos()
+   /* public function cdm_dispositivos()
 	{
         if($this->auth->is_auth()){ // Control de acceso según el tipo de agente. Permiso definido en constructor
 
@@ -1222,63 +1206,55 @@ class Master extends MY_Controller {
 		{
 			redirect('master','refresh');
 		}
-	}
+	}*/
 
-    public function cdm_dispositivos_balance()
-    {
-    if($this->auth->is_auth()){ // Control de acceso según el tipo de agente. Permiso definido en constructor
+    public function cdm_dispositivos_balance(){
+        if($this->auth->is_auth()){ // Control de acceso según el tipo de agente. Permiso definido en constructor
+            $xcrud = xcrud_get_instance();
+            $this->load->model('tienda_model');
 
-        $xcrud = xcrud_get_instance();
-        $this->load->model('tienda_model');
+            /** Crear los filtros*/
+            $array_filtros = array(
+                'id_modelo' =>  '',
+                'id_marca'  =>  ''
+            );
 
-        /** Crear los filtros*/
-        $array_filtros = array(
-            'id_modelo' =>  '',
-            'id_marca'  =>  ''
-        );
+            // Consultar a la session si ya se ha buscado algo y guardado allí.
+            $array_sesion = $this->get_filtros($array_filtros);
 
+            /* BORRAR BUSQUEDA */
+            //echo  $this->uri->segment(4);exit;
+            $borrar_busqueda = $this->uri->segment(3);
+            if($borrar_busqueda === "borrar_busqueda")
+            {
+                $this->delete_filtros($array_filtros);
+                redirect(site_url("/master/cdm_dispositivos_balance"),'refresh');
+            }
 
-        // Consultar a la session si ya se ha buscado algo y guardado allí.
-        $array_sesion = $this->get_filtros($array_filtros);
+            if($this->input->post('do_busqueda')==="si") $array_sesion = $this->set_filtros($array_filtros);
 
-        /* BORRAR BUSQUEDA */
-        //echo  $this->uri->segment(4);exit;
-        $borrar_busqueda = $this->uri->segment(3);
-        if($borrar_busqueda === "borrar_busqueda")
-        {
-            $this->delete_filtros($array_filtros);
-            //print_r($array_filtros);
-            redirect(site_url("/master/cdm_dispositivos_balance"),'refresh');
+            /* Creamos al vuelo las variables que vienen de los filtros */
+            foreach($array_filtros as $filtro=>$value){
+                $$filtro = $array_sesion[$filtro];
+                $data[$filtro] = $array_sesion[$filtro]; // Pasamos los valores a la vista.
+            }
+
+            $data['modelos']=$this->tienda_model->get_terminales();
+            $data['marcas'] =$this->tienda_model->get_fabricantes();
+            $data['stocks'] = $this->tienda_model->get_stock_cruzado($array_sesion);
+
+            $data['title']   = 'Dispositivos';
+
+            /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+            $this->data->add($data);
+            $data = $this->data->getData();
+            $this->load->view('master/header',$data);
+            $this->load->view('master/navbar',$data);
+            $this->load->view('master/cdm_dispositivos_balance',$data);
+            $this->load->view('master/footer');
+        }else{
+            redirect('master','refresh');
         }
-
-        if($this->input->post('do_busqueda')==="si") $array_sesion = $this->set_filtros($array_filtros);
-
-        /* Creamos al vuelo las variables que vienen de los filtros */
-        foreach($array_filtros as $filtro=>$value){
-            $$filtro = $array_sesion[$filtro];
-            $data[$filtro] = $array_sesion[$filtro]; // Pasamos los valores a la vista.
-        }
-
-        $data['modelos']=$this->tienda_model->get_terminales();
-        $data['marcas'] =$this->tienda_model->get_fabricantes();
-        $data['stocks'] = $this->tienda_model->get_stock_cruzado($array_sesion);
-        // $data['stocks_dispositivos']  = $this->tienda_model->get_cdm_dispositivos();
-
-        $data['title']   = 'Dispositivos';
-
-        /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
-        $this->data->add($data);
-        $data = $this->data->getData();
-        /////
-        $this->load->view('master/header',$data);
-        $this->load->view('master/navbar',$data);
-        $this->load->view('master/cdm_dispositivos_balance',$data);
-        $this->load->view('master/footer');
-    }
-    else
-    {
-        redirect('master','refresh');
-    }
     }
 
     public function cdm_dispositivos_incidencias()
@@ -1308,7 +1284,7 @@ class Master extends MY_Controller {
         }
     }
 	
-	public function cdm_inventario()
+	/*public function cdm_inventario()
 	{
         if($this->auth->is_auth()){ // Control de acceso según el tipo de agente. Permiso definido en constructor
 
@@ -1383,7 +1359,7 @@ class Master extends MY_Controller {
 		{
 			redirect('master','refresh');
 		}
-	}
+	}*/
 
     /**
      * Método del controlador, que invoca al modelo para generar un CSV con el balance de activos.
@@ -1482,7 +1458,7 @@ class Master extends MY_Controller {
         }
     }
 
-    public function inventario()
+    /*public function inventario()
 	{
         if($this->auth->is_auth()){ // Control de acceso según el tipo de agente. Permiso definido en constructor
 
@@ -1529,9 +1505,9 @@ class Master extends MY_Controller {
 		{
 			redirect('master','refresh');
 		}
-	}	
+	}	*/
 
-	public function descripcion()
+	/*public function descripcion()
 	{
         if($this->auth->is_auth()){ // Control de acceso según el tipo de agente. Permiso definido en constructor
 
@@ -1555,7 +1531,7 @@ class Master extends MY_Controller {
 		{
 			redirect('master','refresh');
 		}
-	}
+	}*/
 
 	public function exp_alta_incidencia()
 	{
@@ -1754,6 +1730,7 @@ public function inventarios_planogramas()
 		}
 	}*/
 
+    /*Opcion del menu Informes / Puntos de venta*/
     public function informe_pdv()
     {
 
@@ -1976,7 +1953,7 @@ public function inventarios_planogramas()
         }
     }
 
-    public function informe_pdv_exportar_OLD()
+    /*public function informe_pdv_exportar_OLD()
     {
         if($this->auth->is_auth()){ // Control de acceso según el tipo de agente. Permiso definido en constructor
 
@@ -2063,7 +2040,7 @@ public function inventarios_planogramas()
         {
             redirect('master','refresh');
         }
-    }
+    }*/
 
     /**
      * Punto de entrada del Informe sobre planogramas.
@@ -2073,8 +2050,6 @@ public function inventarios_planogramas()
     public function informe_planogramas()
     {
         if($this->auth->is_auth()){ // Control de acceso según el tipo de agente. Permiso definido en constructor
-
-
             /* Incluir los modelos */
             $xcrud = xcrud_get_instance();
             $this->load->model('sfid_model');
@@ -2119,11 +2094,8 @@ public function inventarios_planogramas()
                     $data["mueble_plano"] = $mueble_plano;
                     $data["sfid_plano"] = $sfid_plano;
                     $data["generado_planograma"] = TRUE;
-
                 }
             }
-
-
 
             if(!empty($sfid_plano)){
                 if(!empty($mueble_plano)){
@@ -2143,7 +2115,6 @@ public function inventarios_planogramas()
                             $tienda = $tienda_1;
                         }
 
-
                         $id_pds = $tienda->id_pds;
 
                         $sfid = $this->tienda_model->get_pds($id_pds);
@@ -2162,7 +2133,6 @@ public function inventarios_planogramas()
                         $displays = array();
                         $data['display'] = "";
 
-
                         if(!empty($arr_displays_pds)) {
                             $id_displays_pds = $arr_displays_pds[0]->id_displays_pds;
 
@@ -2177,32 +2147,20 @@ public function inventarios_planogramas()
                             $devices = $this->sfid_model->get_devices_displays_pds($id_displays_pds);
                             $data['devices'] = $devices;
                             $data['displays'] = $displays;
-
-
-
                         }
-
-
                     }
 
                     $data['subtitle'] = 'Planograma tienda: SFID-' . $sfid_plano . ' - '.$display_maestro['display'];
                     $vista = 1;
-
                 }else{
-                    /*
-                     *  Panelado de la tienda
-                     */
+                    /**  Panelado de la tienda */
                     $tiendas = $this->tienda_model->search_pds($sfid_plano,'Alta');
 
-
-
                     if (!empty($tiendas) && count($tiendas) == 1) {
-
                         $tienda = NULL;
                         foreach ($tiendas as $tienda_1) {
                             $tienda = $tienda_1;
                         }
-
 
                         $id_pds = $tienda->id_pds;
 
@@ -2229,98 +2187,69 @@ public function inventarios_planogramas()
                         $data['subtitle'] = 'Panelado tienda: SFID-' . $sfid_plano. '';
                         $vista = 3;
                     }
-
                 }
-
             }else{
                 if(!empty($mueble_plano)){
-                    /*
-                     *      Maestro del mueble
-                     */
+                    /**      Maestro del mueble*/
                     $devices = $this->tienda_model->get_devices_display($mueble_plano);
                     $data['displays'] = $this->tienda_model->get_displays_demoreal();
                     $data['devices'] = $devices;
 
-
-                        $display = $this->tienda_model->get_display($mueble_plano);
-                        $data['display_name'] = $display['display'];
-                        $data['picture_url'] = $display['picture_url'];
-
+                    $display = $this->tienda_model->get_display($mueble_plano);
+                    $data['display_name'] = $display['display'];
+                    $data['picture_url'] = $display['picture_url'];
 
                     $data['subtitle'] = 'Planograma mueble: ' . $display['display'];
                     $vista = 2;
-
                 }else{
                     // Form vacio
                     $vista = 0;
                 }
             }
+            $data["generado_planograma"] = $generado_planograma;
 
+            // Comprobar si existe el segmento PAGE en la URI, si no inicializar a 1..
+            $get_page = $this->uri->segment(3);
 
+            if ($get_page === "reset") {
+                $this->session->unset_userdata("mueble_plano");
+                $this->session->unset_userdata("sfid_plano");
+                $this->session->unset_userdata("generado_planograma");
 
+                redirect("master/informe_planogramas", "refresh");
 
-
-
-
-
-        $data["generado_planograma"] = $generado_planograma;
-
-
-        // Comprobar si existe el segmento PAGE en la URI, si no inicializar a 1..
-        $get_page = $this->uri->segment(3);
-
-        if ($get_page === "reset") {
-            $this->session->unset_userdata("mueble_plano");
-            $this->session->unset_userdata("sfid_plano");
-            $this->session->unset_userdata("generado_planograma");
-
-            redirect("master/informe_planogramas", "refresh");
-
-        }
-
+            }
 
             /** COMENTADO SELECT DEMOREAL $muebles = $this->tienda_model->get_displays_demoreal(); */
             $muebles = $this->tienda_model->get_displays_demoreal();
             $data["muebles"] = $muebles;
 
-        $data["vista"] = $vista;
-
-
-
-
-
+            $data["vista"] = $vista;
 
             /* Pasar a la vista */
             /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
             $this->data->add($data);
             $data = $this->data->getData();
             /////
-        $this->load->view('master/header', $data);
-        $this->load->view('master/navbar', $data);
-        $this->load->view('master/informes/informe_planograma_form', $data);
+            $this->load->view('master/header', $data);
+            $this->load->view('master/navbar', $data);
+            $this->load->view('master/informes/informe_planograma_form', $data);
 
-        switch ($vista) {
-            case 1:
-                $this->load->view('master/informes/informe_planograma_mueble_sfid',$data);
-                break;
-            case 2:
-                $this->load->view('master/informes/informe_planograma_mueble', $data);
-                break;
-            case 3:
-                $this->load->view('master/informes/informe_planograma_sfid', $data);
-                break;
-            default:
-                $this->load->view('master/informes/informe_planograma', $data);
-
-        }
-
-
-        $this->load->view('master/footer',$data);
-
-
-    }
-        else
-        {
+            switch ($vista) {
+                case 1:
+                    $this->load->view('master/informes/informe_planograma_mueble_sfid',$data);
+                    break;
+                case 2:
+                    $this->load->view('master/informes/informe_planograma_mueble', $data);
+                    break;
+                case 3:
+                    $this->load->view('master/informes/informe_planograma_sfid', $data);
+                    break;
+                default:
+                    $this->load->view('master/informes/informe_planograma', $data);
+            }
+            $this->load->view('master/footer',$data);
+        } else {
             redirect('master/informe_planogramas','refresh');
         }
     }
@@ -2694,16 +2623,11 @@ public function inventarios_planogramas()
     public function informe_visual_mueble($id_mueble){
         if($this->auth->is_auth())
         {
-
             $id_dis   = $id_mueble;
-
             $xcrud = xcrud_get_instance();
             $this->load->model(array('tienda_model','sfid_model','categoria_model'));
-            
 
             $display = $this->tienda_model->get_display($id_mueble);
-            
-
 
             $data['id_display']  = $display['id_display'];
             $data['display']     = $display['display'];
@@ -2714,9 +2638,7 @@ public function inventarios_planogramas()
             // Inicialización de campos-categoría
             $id_tipo_visual = $id_subtipo_visual = $id_segmento_visual = 
                     $id_tipologia_visual = $sfid_visual = $generado_visual=  NULL;
-            
-                       
-            
+
             // OBTENER DE LA SESION, SI EXISTE
             if ($this->session->userdata("generado_visual") !== NULL && $this->session->userdata("generado_visual") === TRUE) {
                 $id_tipo_visual = $this->session->userdata("id_tipo_visual");
@@ -2757,12 +2679,9 @@ public function inventarios_planogramas()
             $this->load->view('master/informes/bloom/visual/informe_visual_form',$data);
             $this->load->view('master/informes/bloom/visual/informe_visual_maestro_mueble',$data);
             $this->load->view('master/footer');
-        }
-        else
-        {
+        } else{
             redirect('master','refresh');
         }
-
     }
 
     public function informe_visual_terminal($id_mueble,$id_device)
@@ -3251,9 +3170,7 @@ public function inventarios_planogramas()
         $this->load->view('backend/footer');
     }
 
-    /**
-     * Tabla de pedidos segun el tipo
-     */
+    /**Tabla de pedidos segun el tipo*/
     public function pedidos($tipo="abiertos")
     {
         if ($this->auth->is_auth()) {
@@ -3262,9 +3179,9 @@ public function inventarios_planogramas()
             $this->load->model(array('pedido_model', 'tienda_model', 'sfid_model'));
             $this->load->library('app/paginationlib');
 
-
             // Comprobar si existe el segmento PAGE en la URI, si no inicializar a 1..
             $get_page = $this->uri->segment(5); echo ($this->uri->segment(6));
+            //echo $get_page; exit;
             if( $this->uri->segment(4) == "page") {
                 $page = ( ! empty($get_page) ) ? $get_page : 1 ;
                 $segment = 5;
@@ -3336,7 +3253,7 @@ public function inventarios_planogramas()
 
             $total_pedidos = $this->pedido_model->get_pedidos_quantity(0,$tipo,$array_sesion);   // Sacar el total de pedidos, para el paginador
 
-            $cfg_pagination = $this->paginationlib->init_pagination("admin/pedidos/".$tipo."/page/",$total_pedidos,$per_page,$segment);
+            $cfg_pagination = $this->paginationlib->init_pagination("master/pedidos/".$tipo."/page/",$total_pedidos,$per_page,$segment);
 
 
             $this->load->library('pagination',$cfg_pagination);
@@ -3357,19 +3274,8 @@ public function inventarios_planogramas()
                 $pedido->nuevos  = $this->chat_model->contar_nuevos($pedido->id,$pedido->reference,"pedidos");
             }
 
-
-
             $data['pedidos'] = $pedidos;
             $data['tipo'] = $tipo;
-
-            /* LISTADO DE TERRITORIOS PARA EL SELECT */
-            //$data["territorios"] = $this->tienda_model->get_territorios();
-            /* LISTADO DE FABRICANTES PARA EL SELECT */
-            //$data["fabricantes"] = $this->tienda_model->get_fabricantes();
-            /* LISTADO DE MUEBLES PARA EL SELECT */
-            //$data["muebles"] = $this->tienda_model->get_muebles();
-            /* LISTADO DE TERMINALES PARA EL SELECT */
-            //$data["terminales"] = $this->tienda_model->get_terminales();
 
             /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
             $this->data->add($data);
@@ -3454,12 +3360,10 @@ public function inventarios_planogramas()
     {
         if ($this->auth->is_auth()) {
             $xcrud = xcrud_get_instance();
-            //$data['id_pds'] = $this->session->userdata('id_pds');
             $data['sfid'] = $this->session->userdata('sfid');
             $id_pds=null;
 
             $this->load->model(array('pedido_model'));
-            // $tipo = $this->uri->segment(3); // TIPO DE pedido
 
             // Filtros
             $array_filtros = array(
@@ -3472,13 +3376,9 @@ public function inventarios_planogramas()
             );
             $array_sesion = $this->get_filtros($array_filtros);
 
-
             // Obtener el campo a ordenar, primero de Session y despues del post, si procede..
             $array_orden = $this->get_orden();
-
             $this->pedido_model->exportar_pedidos( $id_pds,$array_orden, $array_sesion, $tipo);
-
-
         } else {
             redirect('master', 'refresh');
         }

@@ -98,8 +98,8 @@ class Tablona_model extends CI_Model {
               and da.status is not null
               where (h.status='En stock' OR h.status='Televenta' OR h.status='Reservado' OR h.status='Transito' OR h.status='RMA')";
         $query= $this->db->query($sql);
-        if($mes==11)
-            echo $this->db->last_query()."<br>";
+
+            //echo $this->db->last_query()."<br>";
         return $query->result();
 
     }
@@ -119,7 +119,6 @@ class Tablona_model extends CI_Model {
                 from devices_almacen
                 where status is not null and (status = 'En stock' OR status ='Transito' OR status='Reservado' 
                 OR status='Televenta' OR status='RMA') ".$aux;
-        //echo $sql."<br>";
         $query = $this->db->query($sql);
         //echo $this->db->last_query()."<br>";
         $devices_almacen = $query->result();
@@ -169,7 +168,6 @@ class Tablona_model extends CI_Model {
               inner join historicoDevicesPDS_temp t on t.maxId=h.id
               where (h.status='Alta' OR h.status='Incidencia')";
         $query = $this->db->query($sql);
-        //echo $sql."<br>";
         return $query->result();
     }
 
@@ -261,13 +259,11 @@ class Tablona_model extends CI_Model {
               (select DISTINCT(id_devices_almacen), max(id_historico_almacen) as maxId from historico_io
                where id_devices_almacen is not NULL  and fecha<'$fecha' 
               group by id_devices_almacen);";
-        //echo $sql."<br>";
+
         $this->db->query(" DROP TABLE IF EXISTS historicoDevicesAlmacen_temp; ");
-        if($mes==12)
-            echo $this->db->last_query()."<br>";
+        //echo $this->db->last_query()."<br>";
         $this->db->query($sql);
-        if($mes==12)
-            echo $this->db->last_query()."<br>";
+
     }
 
 }

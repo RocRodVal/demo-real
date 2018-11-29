@@ -2108,7 +2108,7 @@ class Admin extends MY_Controller
         $this->load->view('backend/footer');
     }
 
-    public function incidencias()
+ /*   public function incidencias()
     {
         if ($this->auth->is_auth()) {
 
@@ -2166,7 +2166,7 @@ class Admin extends MY_Controller
         } else {
             redirect('admin', 'refresh');
         }
-    }
+    }*/
 
     public function incidencias_exp()
     {
@@ -2432,9 +2432,8 @@ class Admin extends MY_Controller
         $xcrud_1->label('id_brand_device', 'Identificador')->label('brand', 'Fabricante');
         $xcrud_1->columns('id_brand_device,brand');
         $xcrud_1->fields('brand');
-
-        // Ocultar el botón de borrar para evitar borrados accidentales mientras no existan constraints en BD:
-        $xcrud_1->unset_remove();
+        $xcrud_1->start_minimized(true);
+        $xcrud_1->unset_remove();// Ocultar el botón de borrar para evitar borrados accidentales mientras no existan constraints en BD:
 
         $xcrud_2 = xcrud_get_instance();
         $xcrud_2->table('type_device');
@@ -2442,9 +2441,8 @@ class Admin extends MY_Controller
         $xcrud_2->label('id_type_device', 'Identificador')->label('type', 'Tipo');
         $xcrud_2->columns('id_type_device,type');
         $xcrud_2->fields('type');
-
-        // Ocultar el botón de borrar para evitar borrados accidentales mientras no existan constraints en BD:
-        $xcrud_2->unset_remove();
+        $xcrud_2->start_minimized(true);
+        $xcrud_2->unset_remove(); // Ocultar el botón de borrar para evitar borrados accidentales mientras no existan constraints en BD:
 
         $xcrud_3 = xcrud_get_instance();
         $xcrud_3->table('device');
@@ -2456,9 +2454,7 @@ class Admin extends MY_Controller
         $xcrud_3->label('id_device', 'Identificador')->label('brand_device', 'Fabricante')->label('type_device', 'Tipo')->label('device', 'Modelo')->label('brand_name', 'Modelo fabricante')->label('picture_url', 'Foto')->label('description', 'Comentarios')->label('status', 'Estado');
         $xcrud_3->columns('id_device,brand_device,type_device,device,picture_url,brand_name,status');
         $xcrud_3->fields('brand_device,type_device,device,brand_name,picture_url,description,status');
-
-        // Ocultar el botón de borrar para evitar borrados accidentales mientras no existan constraints en BD:
-        $xcrud_3->unset_remove();
+        $xcrud_3->unset_remove();// Ocultar el botón de borrar para evitar borrados accidentales mientras no existan constraints en BD:
 
         $data['title'] = 'Dispositivos';
         $data['content'] = $xcrud_1->render();
@@ -6116,12 +6112,9 @@ class Admin extends MY_Controller
 
                 $aux1 = $this->tablona_model->getTerminalesAltaHistoricoAlmacen($este_anio, $num_mes);
                 //$aux2 = $this->tablona_model->getTerminalesAlmacen($aux1);
-//echo "Terminales que tienen alta en el historico ".count($aux1)." terminales en almacen y que no tienen el alta en el historico ".count($aux2)."<br>";
-              //  echo "<br>".$num_mes." -  ".count($aux1)."<br>";
                 $terminalesAlmacen[$num_mes]->cantidad = count($aux1);//+count($aux2);
 
-            }//exit;
-
+            }
             $data['terminalesAlmacen']=$terminalesAlmacen;
 
 

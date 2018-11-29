@@ -36,7 +36,6 @@
         <div class="col-lg-12">
             <?php
             if (!empty($anio) && !empty($valor_resultado)) { ?>
-           <!-- <p><a href="<?=base_url().$controlador?>/exportar_sistemas_seguridad/<?=$anio?>/<?=$tipo?>" class="btn exportar"><i class="glyphicon glyphicon-file"></i> Exportar Excel</a></p>-->
             <div class="table-responsive">
                 <table cellpadding="0" cellspacing="0" class="table table-striped table-bordered table-hover table-borde-lineal table-estado-incidencias">
                     <form action="<?=site_url('admin/update_ajustes_totales');?>" method="post" class="form-inline filtros form-mini">

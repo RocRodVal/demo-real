@@ -54,8 +54,6 @@ class Tienda extends MY_Controller {
             $data['zip']        = $sfid['zip'];
             $data['city']       = $sfid['city'];
 
-
-
             // Comprobar si existe el segmento PAGE en la URI, si no inicializar a 1..
             $get_page = $this->uri->segment(5);
             if( $this->uri->segment(4) == "page") {
@@ -117,12 +115,9 @@ class Tienda extends MY_Controller {
             }
 
 
-            if($tipo==="abiertas")
-            {
+            if($tipo==="abiertas"){
                 $data['title'] = 'Incidencias abiertas';
-            }
-            else
-            {
+            }else{
                 $data['title'] = 'Incidencias cerradas';
             }
 
@@ -147,16 +142,12 @@ class Tienda extends MY_Controller {
             $incidencias = $this->incidencia_model->get_estado_incidencias($page,$cfg_pagination,$array_orden,$array_sesion,$tipo,$arr_agentes_excluidos);
 
             foreach ($incidencias as $incidencia) {
-               // $incidencia->device = $this->sfid_model->get_device($incidencia->id_devices_pds);
-                //$incidencia->display = $this->sfid_model->get_display($incidencia->id_displays_pds);
-               // $incidencia->nuevos  = $this->chat_model->contar_nuevos($incidencia->id_incidencia,$incidencia->reference);
                 $incidencia->intervencion = $this->intervencion_model->get_intervencion_incidencia($incidencia->id_incidencia);
             }
 
             $data['incidencias'] = $incidencias;
-
             /* LISTADO DE TERRITORIOS PARA EL SELECT */
-            $data["territorios"] = $this->tienda_model->get_territorios();
+            //$data["territorios"] = $this->tienda_model->get_territorios();
             /* LISTADO DE FABRICANTES PARA EL SELECT */
             $data["fabricantes"] = $this->tienda_model->get_fabricantes();
             /* LISTADO DE MUEBLES PARA EL SELECT */
@@ -177,18 +168,14 @@ class Tienda extends MY_Controller {
         }
     }
 
-    public function exportar_incidencias($tipo="abiertas",$formato=NULL)
-    {
-        //if ($this->session->userdata('logged_in') && ($this->session->userdata('type') == 1)) {
+    public function exportar_incidencias($tipo="abiertas",$formato=NULL){
         if($this->auth->is_auth())
         {
             $xcrud = xcrud_get_instance();
             $data['id_pds'] = $this->session->userdata('id_pds');
             $data['sfid'] = $this->session->userdata('sfid');
 
-
-
-            $this->load->model(array('intervencion_model', 'tienda_model', 'sfid_model','chat_model'));
+            $this->load->model(array('incidencia_model'));
             $tipo = $this->uri->segment(3); // TIPO DE INCIDENCIA
 
             // Filtros
@@ -201,14 +188,10 @@ class Tienda extends MY_Controller {
                 'reference'=> $data['sfid']
             );
             $array_sesion = $this->get_filtros($array_filtros);
-
-
             // Obtener el campo a ordenar, primero de Session y despues del post, si procede..
             $array_orden = $this->get_orden();
 
             $this->incidencia_model->exportar_incidencias($array_orden, $array_sesion, $tipo,$formato);
-
-
         } else {
             redirect('tienda', 'refresh');
         }
@@ -235,13 +218,8 @@ class Tienda extends MY_Controller {
 			$data['zip']        = $sfid['zip'];
 			$data['city']       = $sfid['city'];
 
-
-			//print_r($this->session->userdata('id_pds')); exit;
-
 			$displays = $this->sfid_model->get_displays_pds($data['id_pds']);
-
-			foreach($displays as $key=>$display) 
-			{
+			foreach($displays as $key=>$display) {
 				$num_devices = $this->sfid_model->count_devices_displays_pds($display->id_displays_pds);
 				$display->devices_count = $num_devices;
 			}
@@ -274,7 +252,7 @@ class Tienda extends MY_Controller {
 			$data['sfid']   = $this->session->userdata('sfid');
 		
 			$xcrud = xcrud_get_instance();
-			$this->load->model(array('sfid_model','tienda_model'));
+			$this->load->model('sfid_model');
 
             $origin = $this->uri->segment(4);
             /*Si en la url nos llega el texto clementine despues del codigo del mueble entonces anotamos que la incidencia
@@ -313,18 +291,14 @@ class Tienda extends MY_Controller {
 			$this->load->view('tienda/navbar',$data);
 			$this->load->view('tienda/alta_incidencia_mueble',$data);
 			$this->load->view('tienda/footer');
-		}
-		else
-		{
+		}else {
 			redirect('tienda','refresh');
 		}		
 	}
 	
 	public function alta_incidencia_dispositivo()
 	{
-		//if($this->session->userdata('logged_in'))
         if ($this->auth->is_auth()) {
-
 			$data['id_pds'] = $this->session->userdata('id_pds');
 			$data['sfid']   = $this->session->userdata('sfid');
 		
@@ -379,7 +353,6 @@ class Tienda extends MY_Controller {
 	
 	public function alta_incidencia_mueble_alarma()
 	{
-		//if($this->session->userdata('logged_in'))
         if ($this->auth->is_auth()) {
 
 			$data['id_pds'] = $this->session->userdata('id_pds');
@@ -424,18 +397,14 @@ class Tienda extends MY_Controller {
 			$this->load->view('tienda/navbar',$data);
 			$this->load->view('tienda/alta_incidencia_mueble_alarma',$data);
 			$this->load->view('tienda/footer');
-		}
-		else
-		{
+		}else{
 			redirect('tienda','refresh');
 		}
 	}
 	
 	public function detalle_incidencia($id_incidencia)
 	{
-		//if($this->session->userdata('logged_in'))
         if ($this->auth->is_auth()) {
-
 			$data['id_pds'] = $this->session->userdata('id_pds');
 			$data['sfid']   = $this->session->userdata('sfid');
 	
@@ -451,8 +420,6 @@ class Tienda extends MY_Controller {
 			$data['address']    = $sfid['address'];
 			$data['zip']        = $sfid['zip'];
 			$data['city']       = $sfid['city'];
-
-
 
 			$incidencia = $this->sfid_model->get_incidencia($id_incidencia,$data['id_pds']);
 			
@@ -522,16 +489,13 @@ class Tienda extends MY_Controller {
 				$this->load->view('tienda/detalle_incidencia',$data);
 				$this->load->view('tienda/footer');
 			}				
-		}
-		else
-		{
+		}else{
 			redirect('tienda','refresh');
 		}
 	}
 
     public function insert_chat($id,$tabla='incidencia')
     {
-       //if($this->session->userdata('logged_in'))
         if ($this->auth->is_auth()) {
 
             $data['id_pds'] = $this->session->userdata('id_pds');
@@ -565,10 +529,8 @@ class Tienda extends MY_Controller {
 
                     if ( ! $this->image_lib->resize()){
                         echo $this->image_lib->display_errors('', '');
-                        //$this->session->set_flashdata('message', $this->image_lib->display_errors('', ''));
                     }
                 }
-
                 $foto = $new_name.$dataF["file_ext"];
             } else {
                 echo 'Ha fallado la carga de la foto.';
@@ -600,19 +562,14 @@ class Tienda extends MY_Controller {
                     );
                 }
             }
-            //print_r($data); exit;
             $chat = $this->chat_model->insert_chat($data,$tabla);
 
             if ($chat['add']) {
                 redirect('tienda/detalle_'.$tabla.'/' . $id.'/'.$data['id_pds']);
-            }
-
-            else{
+            }else{
                 redirect('tienda/detalle_'.$tabla.'/' . $id.'/'.$data['id_pds']);
             }
-        }
-        else
-        {
+        }else{
             redirect('tienda','refresh');
         }
     }
@@ -658,7 +615,6 @@ class Tienda extends MY_Controller {
                     echo $this->upload->display_errors();
                     $messageD= 'Ha fallado la carga de la denuncia.'.$this->upload->display_errors();;
                 }
-
 
                 $imagen='';
                 $new_nameImagen = $data['sfid'] . '-imagen-' . time();
@@ -774,14 +730,12 @@ class Tienda extends MY_Controller {
                     //print_r($response); exit;
                     // </ Fin Comunicación con Realdooh VU > ////////////////////////////////////////
 
-
                     redirect('tienda/alta_incidencia_gracias/' . $incidencia['id']);
                 } else {
                     $data['message'] = (validation_errors() ? validation_errors() : ($this->session->flashdata('message')));
                 }
             }
-		}
-		else{
+		}else{
 			redirect('tienda','refresh');
 		}	
 	}
@@ -872,21 +826,16 @@ class Tienda extends MY_Controller {
 
 
                 redirect('tienda/alta_incidencia_gracias/'.$incidencia['id']);
-			}
-			else
-			{
+			}else{
 				$this->data['message'] = (validation_errors() ? validation_errors() : ($this->session->flashdata('message')));
 			}
-		}
-		else
-		{
+		}else{
 			redirect('tienda','refresh');
 		}	
 	}	
 
 	public function alta_incidencia_gracias()
 	{
-		//if($this->session->userdata('logged_in'))
         if ($this->auth->is_auth()) {
 
 			$data['id_pds'] = $this->session->userdata('id_pds');
@@ -921,16 +870,13 @@ class Tienda extends MY_Controller {
 			$this->load->view('tienda/navbar',$data);
 			$this->load->view('tienda/content',$data);
 			$this->load->view('tienda/footer');
-		}
-		else
-		{
+		}else{
 			redirect('tienda','refresh');
 		}		
 	}
 
 	public function ayuda($tipo)
 	{
-		//if($this->session->userdata('logged_in'))
         if ($this->auth->is_auth()) {
 			$data['id_pds'] = $this->session->userdata('id_pds');
 			$data['sfid']   = $this->session->userdata('sfid');
@@ -982,16 +928,13 @@ class Tienda extends MY_Controller {
 			$this->load->view('tienda/navbar',$data);
 			$this->load->view('tienda/ayuda',$data);
 			$this->load->view('tienda/footer');
-		}
-		else
-		{
+		}else{
 			redirect('tienda','refresh');
 		}
 	}
 	
 	public function manuales()
 	{
-		//if($this->session->userdata('logged_in'))
         if ($this->auth->is_auth()) {
 
 			$data['id_pds'] = $this->session->userdata('id_pds');
@@ -1020,9 +963,7 @@ class Tienda extends MY_Controller {
 			$this->load->view('tienda/navbar',$data);
 			$this->load->view('tienda/manuales',$data);
 			$this->load->view('tienda/footer');
-		}
-		else
-		{
+		}else{
 			redirect('tienda','refresh');
 		}
 	}	
@@ -1038,7 +979,6 @@ class Tienda extends MY_Controller {
 
     public function mantenimiento()
     {
-
         $data['bg_image'] = "bg-tienda.jpg";
         $data['title'] = 'Parada por mantenimiento';
 
@@ -1056,14 +996,12 @@ class Tienda extends MY_Controller {
      */
     public function alta_pedido()
     {
-        //if($this->session->userdata('logged_in') && $this->session->userdata('hacePedidos'))
         if ($this->auth->is_auth()  && $this->session->userdata('hacePedidos')) {
             $data['id_pds'] = $this->session->userdata('id_pds');
             $data['sfid']   = $this->session->userdata('sfid');
 
             $xcrud = xcrud_get_instance();
-            $this->load->model('sfid_model');
-            $this->load->model('alarma_model');
+            $this->load->model(array('sfid_model','alarma_model'));
 
             $sfid = $this->sfid_model->get_pds($data['id_pds']);
 
@@ -1088,9 +1026,7 @@ class Tienda extends MY_Controller {
             $this->load->view('tienda/navbar',$data);
             $this->load->view('tienda/alta_pedido',$data);
             $this->load->view('tienda/footer');
-        }
-        else
-        {
+        }else{
             redirect('tienda','refresh');
         }
     }
@@ -1100,11 +1036,9 @@ class Tienda extends MY_Controller {
      */
     public function insert_pedido()
     {
-      //  if($this->session->userdata('logged_in') && $this->session->userdata('hacePedidos'))
         if ($this->auth->is_auth() && $this->session->userdata('hacePedidos'))
         {
             $data['id_pds'] = $this->session->userdata('id_pds');
-            //$data['sfid']   = $this->session->userdata('sfid');
 
             $xcrud = xcrud_get_instance();
             $this->load->model('alarma_model');
@@ -1112,20 +1046,16 @@ class Tienda extends MY_Controller {
             //$form_tipo_averia = $this->input->post('tipo_averia');
             $cantidades = $this->input->post('cantidades');
 
-
             $ahora = date("Y-m-d H:i:s");
 
             $data = array(
                 'fecha'    	        => $ahora,
-                //'fecha_cierre'    	=> NULL,
                 'id_pds'            => $data['id_pds'],
                 'contacto'  	    => $this->input->post('contacto'),
                 'phone'  	        => $this->input->post('phone'),
                 'email'  	        => $this->input->post('email'),
-                //'status'	        => 1,
                 'last_update' => $ahora
             );
-
             $pedido = $this->alarma_model->insert_pedido($data);
 
             if ($pedido['add'])
@@ -1144,8 +1074,7 @@ class Tienda extends MY_Controller {
                         $detalle=$this->alarma_model->insert_detalle_pedido($data_detalle);
                         if ($detalle['add']) {
                             $seguir=true;
-                        }
-                        else {$seguir=false;}
+                        }else {$seguir=false;}
                     }
                     else {$cantidadesCero++;}
                 }
@@ -1154,17 +1083,12 @@ class Tienda extends MY_Controller {
                     redirect('tienda/alta_pedido',$this->data);
 
                 }else {
-
                     redirect('tienda/alta_pedido_gracias/' . $pedido['id']);
                 }
-            }
-            else
-            {
+            }else{
                 $this->data['message'] = (validation_errors() ? validation_errors() : ($this->session->flashdata('message')));
             }
-        }
-        else
-        {
+        }else{
             redirect('tienda','refresh');
         }
     }
@@ -1203,9 +1127,7 @@ class Tienda extends MY_Controller {
             $this->load->view('tienda/navbar',$data);
             $this->load->view('tienda/content',$data);
             $this->load->view('tienda/footer');
-        }
-        else
-        {
+        } else{
             redirect('tienda','refresh');
         }
     }
@@ -1220,9 +1142,7 @@ class Tienda extends MY_Controller {
             $data['sfid'] = $this->session->userdata('sfid');
 
             $xcrud = xcrud_get_instance();
-
-
-            $this->load->model(array('pedido_model', 'tienda_model', 'sfid_model','chat_model'));
+            $this->load->model(array('pedido_model', 'sfid_model','chat_model'));
             $this->load->library('app/paginationlib');
 
             $sfid = $this->sfid_model->get_pds($data['id_pds']);
@@ -1235,8 +1155,6 @@ class Tienda extends MY_Controller {
             $data['zip']        = $sfid['zip'];
             $data['city']       = $sfid['city'];
 
-
-
             // Comprobar si existe el segmento PAGE en la URI, si no inicializar a 1..
             $get_page = $this->uri->segment(5);
             if( $this->uri->segment(4) == "page") {
@@ -1246,38 +1164,6 @@ class Tienda extends MY_Controller {
                 $page = 1;
                 $segment = null;
             }
-
-            /**
-             * Crear los filtros
-             */
-            /*   $array_filtros = array(
-                   'status_pds'=>'',
-                   'brand_device'=>'',
-                   'id_display'=>'',
-                   'id_device'=>'',
-                   'id_incidencia'=>'',
-                   'reference'=> $data['sfid']
-               );*/
-
-            /* BORRAR BUSQUEDA */
-            /* $borrar_busqueda = $this->uri->segment(4);
-             if($borrar_busqueda === "borrar_busqueda")
-             {
-                 $this->delete_filtros($array_filtros);
-                 redirect(site_url("/tienda/estado_incidencias/".$tipo),'refresh');
-             }
-             // Consultar a la session si ya se ha buscado algo y guardado allí.
-             $array_sesion = $this->get_filtros($array_filtros);
-             // Buscar en el POST si hay busqueda, y si la hay usarla y guardarla además en sesion
-
-             if($this->input->post('do_busqueda')==="si") $array_sesion = $this->set_filtros($array_filtros);
-
-             /* Creamos al vuelo las variables que vienen de los filtros */
-            /*   foreach($array_filtros as $filtro=>$value){
-                   $$filtro = $array_sesion[$filtro];
-                   $data[$filtro] = $array_sesion[$filtro]; // Pasamos los valores a la vista.
-               }*/
-
 
             // viene del form de ordenacion
             $do_orden = $this->input->post('ordenar');
@@ -1305,13 +1191,9 @@ class Tienda extends MY_Controller {
                 $data['title2'] = 'pedidos finalizados';
             }
 
-
             $per_page = 20;
             $total_pedidos = $this->pedido_model->get_pedidos_quantity($data['id_pds'],$tipo);   // Sacar el total de pedidos, para el paginador
-
-
             $cfg_pagination = $this->paginationlib->init_pagination("tienda/pedidos/".$tipo."/page/",$total_pedidos,$per_page,$segment);
-
 
             $this->load->library('pagination',$cfg_pagination);
             $this->pagination->initialize($cfg_pagination);
@@ -1326,28 +1208,12 @@ class Tienda extends MY_Controller {
             $data["pagination_helper"]   = $this->pagination;
 
             $pedidos = $this->pedido_model->get_pedidos($page,$cfg_pagination,$array_orden,$tipo,$data['id_pds']);
-            // print_r($pedidos);
             foreach ($pedidos as $pedido) {
-                // $pedido->detalle = $this->pedido_model->get_detalle($pedido->id,$data['id_pds']);
-                // $incidencia->display = $this->sfid_model->get_display($incidencia->id_displays_pds);
                 $pedido->nuevos  = $this->chat_model->contar_nuevos($pedido->id,'altabox',"pedidos");
-                //$incidencia->intervencion = $this->intervencion_model->get_intervencion_incidencia($incidencia->id_incidencia);
             }
-
-            //print_r($pedidos);exit;
 
             $data['pedidos'] = $pedidos;
             $data['tipo'] = $tipo;
-            //$data['chats'] = $chats;
-
-            /* LISTADO DE TERRITORIOS PARA EL SELECT */
-            //$data["territorios"] = $this->tienda_model->get_territorios();
-            /* LISTADO DE FABRICANTES PARA EL SELECT */
-            //$data["fabricantes"] = $this->tienda_model->get_fabricantes();
-            /* LISTADO DE MUEBLES PARA EL SELECT */
-            //$data["muebles"] = $this->tienda_model->get_muebles();
-            /* LISTADO DE TERMINALES PARA EL SELECT */
-            //$data["terminales"] = $this->tienda_model->get_terminales();
 
             /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
             $this->data->add($data);
@@ -1385,16 +1251,11 @@ class Tienda extends MY_Controller {
             $data['zip']        = $sfid['zip'];
             $data['city']       = $sfid['city'];
 
-
-
             $pedido = $this->pedido_model->get_pedido($id_pedido,$data['id_pds']);
 
-            if($pedido == FALSE)
-            {
+            if($pedido == FALSE){
                 redirect('tienda','refresh');
-            }
-            else
-            {
+            }else {
                 $data['id_pedido']   = $pedido->id;
                 $data['fecha']           = $pedido->fecha;
                 $data['id_pds']          = $pedido->id_pds;
@@ -1405,8 +1266,6 @@ class Tienda extends MY_Controller {
 
                 $data['detalle'] = $this->pedido_model->get_detalle($id_pedido,$data['id_pds']);
 
-                //echo "id_pedido ".$data['id_pedido'];
-                //print_r($data['detalle']); exit;
                 $chats = $this->chat_model->get_chat_pds($pedido->id,'pedidos');
                 $leido = $this->chat_model->marcar_leido($pedido->id,'altabox','pedidos');
                 $data['chats'] = $chats;
@@ -1422,9 +1281,7 @@ class Tienda extends MY_Controller {
                 $this->load->view('tienda/detalle_pedido',$data);
                 $this->load->view('tienda/footer');
             }
-        }
-        else
-        {
+        }else{
             redirect('tienda','refresh');
         }
     }
@@ -1440,7 +1297,6 @@ class Tienda extends MY_Controller {
             $data['sfid'] = $this->session->userdata('sfid');
 
             $this->load->model(array('pedido_model'));
-            // $tipo = $this->uri->segment(3); // TIPO DE pedido
 
             // Filtros
             $array_filtros = array(
@@ -1452,13 +1308,10 @@ class Tienda extends MY_Controller {
                 'reference'=> $data['sfid']
             );
             $array_sesion = $this->get_filtros($array_filtros);
-
-
             // Obtener el campo a ordenar, primero de Session y despues del post, si procede..
             $array_orden = $this->get_orden();
 
             $this->pedido_model->exportar_pedidos( $data['id_pds'],$array_orden, $array_sesion, $tipo);
-
 
         } else {
             redirect('tienda', 'refresh');
