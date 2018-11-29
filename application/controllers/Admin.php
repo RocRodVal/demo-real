@@ -513,6 +513,9 @@ class Admin extends MY_Controller
             $assets=array("assets"=> array());
             if($existe_panelado && !$ya_abierto){
 
+                $PDS->openingDate = date('Y-m-d H:i:s');
+                $this->tienda_model->update_pdv($PDS);
+
                 $muebles = $this->categoria_model->get_displays_categoria($PDS->id_tipo,$PDS->id_subtipo,$PDS->id_segmento,$PDS->id_tipologia);
 
                 foreach($muebles as $mueble)
@@ -786,6 +789,8 @@ class Admin extends MY_Controller
             $data['chats'] = $chats;
 
             $data['title'] = 'Operativa incidencia Ref. '.$data['id_inc_url'];
+
+            $data['messageParte'] = $this->session->flashdata("messageParte");
 
             /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
             $this->data->add($data);
@@ -1528,6 +1533,8 @@ class Admin extends MY_Controller
                         if(empty($resultados))
                         {
                             $this->db->query('DELETE FROM intervenciones WHERE id_intervencion ="'.$id_intervencion.'"');
+                            $fichero="intervencion-".$id_intervencion."_incidencia-".$id_inc.".pdf";
+                            unlink("/uploads/intervenciones/".$fichero);
                         }
                         // Eliminamos de la facturación la intervención...
                         $this->db->query('DELETE FROM facturacion WHERE id_intervencion = "'.$id_intervencion.'"');
@@ -1632,6 +1639,10 @@ class Admin extends MY_Controller
                     );
                     $this->tienda_model->reservar_dispositivos($this->input->post('dipositivo_almacen_1'), 2, $id_inc);
                     $this->tienda_model->incidencia_update_material($dipositivo_almacen_1,true);
+                }else{
+                    $error = "La cantidad no puede estar vacio";
+
+                    redirect('admin/update_incidencia_materiales/' . $id_pds . '/' . $id_inc . '/2/3/' . $error);
                 }
             }
         }
@@ -1903,14 +1914,17 @@ class Admin extends MY_Controller
 
 
             $parte_cierre = '';
-
+            $message="";
             if ($this->upload->do_upload('userfile')) {
                 $data = $this->upload->data();
                 $parte_cierre = $data['file_name'];
             } else {
-                echo $this->upload->display_errors();
-                echo 'Ha fallado la carga del parte del técnico.';
+                //echo $this->upload->display_errors();
+                $message= 'Ha fallado la carga del parte de cierre del técnico.'.$this->upload->display_errors();
             }
+            $this->session->set_flashdata("messageParte",$message);
+            $data['messageParte'] = (validation_errors() ? validation_errors() : ($message));
+
             $this->incidencia_model->set_parteTecnico($id_inc, $parte_cierre);
 
             redirect('admin/operar_incidencia/' . $id_pds . '/' . $id_inc, 'refresh');
@@ -2539,9 +2553,9 @@ class Admin extends MY_Controller
         $xcrud_2->table('pds');
         $xcrud_2->table_name('Tienda');
         $xcrud_2->relation('client_pds', 'client', 'id_client', 'client');
-        $xcrud_2->relation('type_pds', 'type_pds', 'id_type_pds', 'pds');
+        //$xcrud_2->relation('type_pds', 'type_pds', 'id_type_pds', 'pds');
         $xcrud_2->relation('territory', 'territory', 'id_territory', 'territory');
-        $xcrud_2->relation('panelado_pds', 'panelado', 'id_panelado', 'panelado_abx');
+        //$xcrud_2->relation('panelado_pds', 'panelado', 'id_panelado', 'panelado_abx');
         $xcrud_2->relation('type_via', 'type_via', 'id_type_via', 'via');
         $xcrud_2->relation('province', 'province', 'id_province', 'province');
         $xcrud_2->relation('county', 'county', 'id_county', 'county');
@@ -2555,17 +2569,22 @@ class Admin extends MY_Controller
         $xcrud_2->relation('id_supervisor', 'pds_supervisor','id', 'titulo');
         $xcrud_2->change_type('picture_url', 'image');
         $xcrud_2->modal('picture_url');
-        $xcrud_2->readonly('reference','edit');
-        $xcrud_2->sum('m2_total', 'm2_fo', 'm2_bo');
-        $xcrud_2->label('id_pds', 'Identificador')->label('client_pds', 'Cliente')->label('reference', 'SFID')->label('codigoSAT', 'Codigo SAT')->label('id_tipo', 'Tipo PDS')
+        $xcrud_2->readonly('openingDate,createdDate,status,reference','edit');
+        $xcrud_2->disabled('openingDate','create');
+        $xcrud_2->pass_default('createdDate',date("Y-m-d H:i:s"));
+        //$xcrud_2->sum('m2_total', 'm2_fo', 'm2_bo');
+        $xcrud_2->label('id_pds', 'Identificador')->label('client_pds', 'Cliente')->label('reference', 'SFID')
+            ->label('codigoSAT', 'Codigo SAT')->label('id_tipo', 'Tipo PDS')->label('createdDate','Fecha de alta')
+            ->label('openingDate','Fecha de apertura')
             ->label('id_subtipo', 'Subtipo PDS')->label('id_segmento', 'Segmento PDS')->label('id_tipologia', 'Tipología PDS')
-            ->label('territory', 'Territorio')->label('panelado_pds', 'Panelado')->label('dispo', 'Disposición')
-            ->label('commercial', 'Nombre comercial')->label('cif', 'CIF')->label('picture_url', 'Foto')->label('m2_fo', 'M2 front-office')
-            ->label('m2_bo', 'M2 back-office')->label('m2_total', 'M2 total')->label('type_via', 'Tipo vía')
-            ->label('address', 'Dirección')->label('zip', 'C.P.')->label('city', 'Ciudad')->label('province', 'Provincia')->label('county', 'CC.AA.')->label('schedule', 'Horario')->label('phone', 'Teléfono')->label('mobile', 'Móvil')->label('email', 'Email')->label('contact_contact_person', 'Contacto')->label('contact_in_charge', 'Encargado')->label('id_supervisor', 'Supervisor')->label('status', 'Estado');
+            ->label('territory', 'Territorio')->label('commercial', 'Nombre comercial')->label('cif', 'CIF')->label('picture_url', 'Foto')->label('type_via', 'Tipo vía')
+            ->label('address', 'Dirección')->label('zip', 'C.P.')->label('city', 'Ciudad')->label('province', 'Provincia')
+            ->label('county', 'CC.AA.')->label('schedule', 'Horario')->label('phone', 'Teléfono')->label('mobile', 'Móvil')
+            ->label('email', 'Email')->label('contact_contact_person', 'Contacto')->label('contact_in_charge', 'Encargado')
+            ->label('id_supervisor', 'Supervisor')->label('status', 'Estado');
 
         $xcrud_2->columns('id_pds,client_pds,reference,codigoSAT,id_tipo,id_subtipo,id_segmento,id_tipologia,commercial,territory,status');
-        $xcrud_2->fields('client_pds,reference,codigoSAT,id_tipo,id_subtipo,id_segmento,id_tipologia,commercial,cif,territory,picture_url,m2_fo,m2_bo,m2_total,type_via,address,zip,city,province,county,territory,schedule,phone,mobile,email,contact_contact_person,contact_in_charge,id_supervisor,status');
+        $xcrud_2->fields('client_pds,reference,codigoSAT,createdDate,openingDate,id_tipo,id_subtipo,id_segmento,id_tipologia,commercial,cif,territory,picture_url,type_via,address,zip,city,province,county,territory,schedule,phone,mobile,email,contact_contact_person,contact_in_charge,id_supervisor,status');
 
         $xcrud_2->validation_required('reference');
         $xcrud_2->validation_required('province');
@@ -6064,9 +6083,27 @@ class Admin extends MY_Controller
             $data["incidencias_averia"] = $incidencias_averia;
             $data["total_inc_averia"] = ($total_inc_averia > 0) ? $total_inc_averia : 1; // Evitar división por 0;;
 
-            /*Linea para la meda de terminales en almacen*/
-            $resultados_10 = $this->tablona_model->getTerminalesAlmacen($este_anio);
+            /*Linea para la media de terminales en tienda*/
+            // CREAMOS UN ARRAY CON TODOS LOS MESES Y LO RELLENAMOS CON LOS RESULTADOS, SI NO EXISTE RESULTADO, ESE MES
+            // SERA DE CANTIDAD 0
+            $terminalesTienda = array();
+            foreach($meses_columna as $num_mes=>$mes){
+                $terminalesTienda[$num_mes] = new StdClass();
+                $terminalesTienda[$num_mes]->cantidad = 0;
+                $terminalesTienda[$num_mes]->mes = $num_mes;
+                $terminalesTienda[$num_mes]->anio = $este_anio;
+                //echo $mes."<br>";
+                $this->tablona_model->crear_historicoDevicesPDStemp($anio,$num_mes);
 
+                $aux1 = $this->tablona_model->getTerminalesAltaHistoricoTienda($este_anio, $num_mes);
+                //$aux2 = $this->tablona_model->getTerminalesTienda($aux1);
+               // $aux3 = $this->tablona_model->getTerminalesBajaHistoricoTienda($este_anio,$num_mes);
+                $terminalesTienda[$num_mes]->cantidad = count($aux1); //+ count($aux2) ;
+
+            }
+            $data['terminalesTienda']=$terminalesTienda;
+
+            /*Linea para la meda de terminales en almacen*/
             // CREAMOS UN ARRAY CON TODOS LOS MESES Y LO RELLENAMOS CON LOS RESULTADOS, SI NO EXISTE RESULTADO, ESE MES
             // SERA DE CANTIDAD 0
             $terminalesAlmacen = array();
@@ -6075,14 +6112,16 @@ class Admin extends MY_Controller
                 $terminalesAlmacen[$num_mes]->cantidad = 0;
                 $terminalesAlmacen[$num_mes]->mes = $num_mes;
                 $terminalesAlmacen[$num_mes]->anio = $este_anio;
+                $this->tablona_model->crear_historicoDevicesAlmacenTemp($anio,$num_mes);
 
-                foreach($resultados_10 as $key=>$valor){
-                    if(array_key_exists("mes",$valor) && $valor->mes == $num_mes){
-                        $terminalesAlmacen[$num_mes] = $valor;
-                        break;
-                    }
-                }
-            }
+                $aux1 = $this->tablona_model->getTerminalesAltaHistoricoAlmacen($este_anio, $num_mes);
+                //$aux2 = $this->tablona_model->getTerminalesAlmacen($aux1);
+//echo "Terminales que tienen alta en el historico ".count($aux1)." terminales en almacen y que no tienen el alta en el historico ".count($aux2)."<br>";
+              //  echo "<br>".$num_mes." -  ".count($aux1)."<br>";
+                $terminalesAlmacen[$num_mes]->cantidad = count($aux1);//+count($aux2);
+
+            }//exit;
+
             $data['terminalesAlmacen']=$terminalesAlmacen;
 
 
@@ -6620,7 +6659,7 @@ class Admin extends MY_Controller
             $xcrud->before_update("inventario_dispositivos_historicoIO", "../libraries/Functions.php");
             $xcrud->before_insert("comprobarIMEI", "../libraries/Functions.php");
             $xcrud->after_insert("insert_historicoIO", "../libraries/Functions.php");
-            $xcrud->unset_numbers();
+            //$xcrud->unset_numbers();
             $xcrud->unset_remove();
 
             $data['title'] = 'Dispositivos en almacen';

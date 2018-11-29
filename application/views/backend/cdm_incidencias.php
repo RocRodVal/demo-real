@@ -434,12 +434,26 @@
                 <tr class="separador"><?=$separador_td?></tr>
 
                 <tr>
+                    <th>Terminales en tienda</th>
+                    <?php /* TERMINALES EN ALMACEN */
+                    foreach($terminalesTienda as $key=>$valor)
+                         if($valor->cantidad==0)
+                             echo '<td> --</td>';
+                        else echo '<td>'. $valor->cantidad.'</td>';
+
+                    ?>
+                    <td class="total">&nbsp;</td>
+                </tr>
+                <tr>
                     <th>Terminales en almacén</th>
                     <?php /* TERMINALES EN ALMACEN */
                     foreach($terminalesAlmacen as $key=>$valor)
+                        if($valor->cantidad==0)
+                            echo '<td> --</td>';
+                    else
                         echo '<td>'.$valor->cantidad.'</td>';
-                   // echo '<td class="total">'.$total_inc_robo.'</td>';
                     ?>
+                    <td class="total">&nbsp;</td>
                 </tr>
                 </tbody>
 

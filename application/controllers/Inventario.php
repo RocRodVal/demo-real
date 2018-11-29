@@ -971,6 +971,8 @@ class Inventario extends CI_Controller {
         }
     }
 
+
+    /*Opcion del menu Almacen / Dispositivos /En tienda*/
     public function dispositivos_tiendas()
     {
         if($this->auth->is_auth())

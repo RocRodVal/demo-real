@@ -88,19 +88,102 @@ class Tablona_model extends CI_Model {
     }
 
     /*
-     * Función para obtener el total de terminales que hay en almacen de un año concreto
+     * Función para obtener el total de terminales que tienen registrada el alta en almacen de un mes en concreto
      */
-    public function getTerminalesAlmacen($anio){
-        $sql = "SELECT count(DISTINCT(da.id_devices_almacen)) as cantidad,YEAR(da.alta) as anio, MONTH(da.alta) as mes 
-                from devices_almacen da 
-                inner join historico_io h on h.id_devices_almacen = da.id_devices_almacen where year(h.fecha)=$anio 
-                and h.status!='Baja' and YEAR(da.alta)=$anio
-                group by mes";
+    public function getTerminalesAltaHistoricoAlmacen($anio,$mes){
+
+        $sql="select DISTINCT(h.id_devices_almacen) from historico_io h 
+              inner join historicoDevicesAlmacen_temp t on t.maxId=h.id_historico_almacen
+              inner join devices_almacen da on da.id_devices_almacen = h.id_devices_almacen and da.status!='Baja' AND da.status!='Enviado'
+              and da.status is not null
+              where (h.status='En stock' OR h.status='Televenta' OR h.status='Reservado' OR h.status='Transito' OR h.status='RMA')";
         $query= $this->db->query($sql);
-       // echo $this->db->last_query();exit;
-        //print_r($query->result()); exit;
+        if($mes==11)
+            echo $this->db->last_query()."<br>";
         return $query->result();
 
+    }
+
+    /*terminales que tenemos en almacen y que no esten registrados en el historico */
+    function getTerminalesAlmacen($devices_historico=null){
+        $aux="";
+        $devices_array=array();
+        if(!empty($devices_historico)){
+            foreach ($devices_historico as $device){
+                   array_push($devices_array,$device->id_devices_almacen);
+            }
+            $devices = implode(",",$devices_array);
+            $aux = " and id_devices_almacen NOT IN($devices)";
+        }
+        $sql="SELECT distinct(id_devices_almacen)
+                from devices_almacen
+                where status is not null and (status = 'En stock' OR status ='Transito' OR status='Reservado' 
+                OR status='Televenta' OR status='RMA') ".$aux;
+        //echo $sql."<br>";
+        $query = $this->db->query($sql);
+        //echo $this->db->last_query()."<br>";
+        $devices_almacen = $query->result();
+        return $devices_almacen;
+    }
+
+    /*terminales de los que tenemos registrada la baja en el historico*/
+   /* function  getTerminalesBajaHistoricoAlmacen($anio,$mes){
+        $this->crear_historicoDevicesAlmacenTemp($anio,$mes);
+       /* $sql="select distinct(historico_io.id_devices_almacen)
+                  from historicoDevicesAlmacen_temp
+                  inner join historico_io on historicoDevicesAlmacen_temp.maxId = historico_io.id_historico_almacen
+                  WHERE historico_io.status = 'Baja' and
+                   CASE  when year(historicoDevicesAlmacen_temp.maximafecha) = $anio THEN month(historicoDevicesAlmacen_temp.maximafecha)>$mes
+                   ELSE  year(historicoDevicesAlmacen_temp.maximafecha)>$anio END";*/
+      /* $sql="select DISTINCT(h.id_devices_almacen) from historico_io h
+              inner join historicoDevicesAlmacen_temp t on t.maxId=h.id_historico_almacen
+              where h.status='Baja'";
+        //  echo $sql."<br>";
+        $query = $this->db->query($sql);
+        $devices_pds = $query->row_array();
+        return $devices_pds;
+    }*/
+    /*terminales que tenemos en tienda y que no esten registrados en el historico */
+    function getTerminalesTienda($devices_historico=null){
+        $aux="";
+        $devices_array=array();
+        if(!empty($devices_historico)){
+            foreach ($devices_historico as $device){
+                array_push($devices_array,$device->id_devices_pds);
+            }
+            $devices = implode(",",$devices_array);
+            $aux = " and id_devices_pds NOT IN($devices)";
+        }
+        $sql="SELECT distinct(id_devices_pds)
+                from devices_pds
+                where (status = 'Alta' OR status ='Incidencia') ".$aux;
+       // echo $sql."<br>";
+        $query = $this->db->query($sql);
+        $devices_pds = $query->result();
+        return $devices_pds;
+    }
+
+    /*terminales de los que tenemos registrada el alta en el historico*/
+    function  getTerminalesAltaHistoricoTienda($anio,$mes){
+        $sql="select DISTINCT(h.id_devices_pds) from historico_devicesPDS h 
+              inner join historicoDevicesPDS_temp t on t.maxId=h.id
+              where (h.status='Alta' OR h.status='Incidencia')";
+        $query = $this->db->query($sql);
+        //echo $sql."<br>";
+        return $query->result();
+    }
+
+    /*terminales de los que tenemos registrada el alta en el historico*/
+    function  getTerminalesBajaHistoricoTienda($anio,$mes){
+        //$this->crear_historicoDevicesPDStemp($anio,$mes);
+        $sql="select distinct(h.id_devices_pds)
+                  from historicoDevicesPDS_temp t
+                  inner join historico_devicesPDS h on t.maxId = h.id
+                  WHERE (h.status = 'Baja' OR h.status = 'RMA') ";
+        //echo $sql."<br>";
+        $query = $this->db->query($sql);
+        $devices_pds = $query->result();
+        return $devices_pds;
     }
 
     /*
@@ -133,6 +216,58 @@ class Tablona_model extends CI_Model {
         }
 
           //echo $this->db->last_query();
+    }
+
+
+    /*
+     * Tabla temporal en la BBDD que nos guardara los datos del historico de los dispositivos de tienda
+     */
+    public function crear_historicoDevicesPDStemp($anio,$mes) {
+        if($mes==12) {
+            $anio++;
+            $mes="01";
+        }else {
+            $mes++;
+            if($mes<10)
+                $mes="0".$mes;
+        }
+        $fecha =$anio."-".$mes."-01 00:00:00 ";
+        $sql ="CREATE TEMPORARY TABLE historicoDevicesPDS_temp (INDEX(id_devices_pds)) AS
+              (select DISTINCT(id_devices_pds), max(id) as maxId from historico_devicesPDS
+               where fecha<'$fecha' 
+              group by id_devices_pds);";
+
+        $this->db->query(" DROP TABLE IF EXISTS historicoDevicesPDS_temp; ");
+        $this->db->query($sql);
+
+        //echo $sql."<br>";
+    }
+
+    /*
+     * Tabla temporal en la BBDD que nos guardara los datos del historico de los dispositivos de almacen
+     */
+    public function crear_historicoDevicesAlmacenTemp($anio,$mes) {
+        if($mes==12) {
+            $anio++;
+            $mes="01";
+        }else {
+            $mes++;
+            if($mes<10)
+                $mes="0".$mes;
+        }
+        $fecha =$anio."-".$mes."-01 00:00:00 ";
+
+        $sql ="CREATE TEMPORARY TABLE historicoDevicesAlmacen_temp (INDEX(id_devices_almacen)) AS
+              (select DISTINCT(id_devices_almacen), max(id_historico_almacen) as maxId from historico_io
+               where id_devices_almacen is not NULL  and fecha<'$fecha' 
+              group by id_devices_almacen);";
+        //echo $sql."<br>";
+        $this->db->query(" DROP TABLE IF EXISTS historicoDevicesAlmacen_temp; ");
+        if($mes==12)
+            echo $this->db->last_query()."<br>";
+        $this->db->query($sql);
+        if($mes==12)
+            echo $this->db->last_query()."<br>";
     }
 
 }
