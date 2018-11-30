@@ -23,7 +23,6 @@
         $unidades_actuales = $postdata->get('units');
         $unidades_previas = $query->row()->unidades_previas;
 
-
         $incremento = $unidades_actuales - $unidades_previas; // Valor positivo: entrada, Valor negativo: salida.
 
         $fecha = time();
@@ -33,10 +32,10 @@
     }
 
     /*
- * funcion para que inserte en el historico_io si hay un cambio de estado
- * $xcrud guarda el ID del elemento a actualziar
-   $postdata tenemos los datos para actualizar el dispositivo
- */
+    * funcion para que inserte en el historico_io si hay un cambio de estado
+    * $xcrud guarda el ID del elemento a actualziar
+      $postdata tenemos los datos para actualizar el dispositivo
+    */
     function inventario_dispositivos_historicoIO($postdata,  $xcrud){
 
         $CI =& get_instance();
@@ -46,13 +45,8 @@
             ->get('devices_almacen')->row_array();
         $estado_anterior=$result['status'];
         $unidades=-1;
-        switch ($postdata->get('status')){
-            case 'En stock':    $unidades=1; break;
-            /*case "Reservado":   $unidades=-1; break;
-            case "Baja":        $unidades=-1; break;
-            case "Transito":    $unidades=-1; break;
-            case "RMA":         $unidades=-1; break;*/
-        }
+        if($postdata->get('status') =='En stock')
+            $unidades=1;
 
         $elemento = array(
             'id_devices_almacen'        => $xcrud,
@@ -73,6 +67,28 @@
             }
         }
 
+    }
+
+    /*
+    * funcion para que inserte en el historico_io cuando damos de alta un terminal en almacen
+    * $xcrud guarda el ID del elemento
+    $postdata tenemos los datos para actualizar el dispositivo
+    */
+    function insert_historicoIO($postdata,  $xcrud){
+        $CI =& get_instance();
+        $elemento = array(
+            'id_devices_almacen'        => $xcrud,
+            'id_device'                 => ($postdata->get('id_device') ? $postdata->get('id_device') : NULL),
+            'id_alarm'                  => NULL,
+            'id_client'                 => ($postdata->get('id_cliente') ? $postdata->get('id_client') : NULL),
+            'fecha'                     => date("Y-m-d H:i:s"),
+            'unidades'                  => 1, // En negativo porque luego la función lo multiplica por -1
+            'id_incidencia'             => NULL,
+            'procesado'                 => 1,
+            'id_material_incidencia'    => ($postdata->get('id_material_incidencia') ? $postdata->get('id_material_incidencia'): NULL),
+            'status'                    => ($postdata->get('status') ? $postdata->get('status') : NULL)
+        );
+        $CI->db->insert('historico_io', $elemento);
     }
 
     /*
@@ -97,14 +113,21 @@
             $CI->db->where('id_devices_pds',$xcrud)
                     ->update('devices_pds', $elemento);
 
+            /*Guardamos en el historico el alta del dispositivo*/
+            /*Insertar en el historico de tienda el estado del dispositivo*/
+            $elemento = array(
+                'id_devices_pds' => $xcrud,
+                'fecha' => date('Y-m-d H:i:s'),
+                'status' => 'Alta',
+                'motivo' => ALTA_MANUAL
+            );
+            $CI->db->insert('historico_devicesPDS',$elemento);
         }
         else {
             $CI->db->where('id_devices_pds',$xcrud)
                     ->delete('devices_pds');
             echo "<text style='color: red; font-size: 18px '>ERROR - no se ha podido agregar el dispositivo porque el 
             mueble seleccionado no pertenece a la tienda</text>";
-            //return false;
-            //$postdata->set("error","Ese mueble no pertenece a la tienda");
         }
     }
 
@@ -114,7 +137,7 @@
    * $xcrud guarda el ID del elemento a actualziar
    $postdata tenemos los datos para actualizar el dispositivo
    */
-    function update_inventario_dispositivos_codigoMueble($postdata,  $xcrud){
+    function update_inventario_dispositivos($postdata,  $xcrud){
 
         $CI =& get_instance();
         /*guardamos los datos anteriores del dispositivo en relacion al mueble y posicion del mismo*/
@@ -127,6 +150,7 @@
         $result = $CI->db->select('id_displays_pds')
             ->where("id_display",$postdata->get('id_display'))
             ->where("id_pds",$postdata->get('id_pds'))
+            ->where('status','Alta')
             ->get('displays_pds')->row_array();
 
         /*Si el mueble seleccionado esta en la tienda, entonces modificamos Sino se queda como estaba*/
@@ -138,10 +162,25 @@
             $CI->db->where('id_devices_pds',$xcrud)
                 ->update('devices_pds', $elemento);
 
+            if(!empty($datosAntes)) {
+                /*preparamos para insertar en el historico el cambio de estado*/
+                if ($datosAntes['status'] != $postdata->get('status')) {
+                    $elemento = array(
+                        'id_devices_pds'=> $xcrud,
+                        'fecha'         => date("Y-m-d H:i:s"),
+                        'status'        => ($postdata->get('status') ? $postdata->get('status') : NULL),
+                        'motivo'        => CAMBIO_MANUAL
+                    );
+
+                    $CI->db->insert('historico_devicesPDS', $elemento);
+                }
+            }
+
         }
         else {
             $postdata->set('id_displays_pds',$datosAntes['id_displays_pds']);
             $postdata->set('id_display',$datosAntes['id_display']);
+            $postdata->set('status',$datosAntes['status']);
 
             echo "<text style='color: red; font-size: 18px '>ERROR - no se ha podido actualizar el dispositivo porque 
             el mueble seleccionado no pertenece a la tienda</text>";
@@ -150,60 +189,23 @@
 
     }
 
-    /*
-  * funcion para que cuando se vaya a insertar el dispositivo en el almacen compruebe si ya existe un terminal con el mismo IMEI
-     * en estado distinto a baja o RMA
-  * $xcrud guarda el ID del elemento a actualziar
-  $postdata tenemos los datos para actualizar el dispositivo
-  */
+    /** funcion para que cuando se vaya a insertar el dispositivo en el almacen compruebe si ya existe un terminal con el mismo IMEI
+    * en estado distinto a baja o RMA
+    * $xcrud guarda el ID del elemento a actualziar
+    $postdata tenemos los datos para actualizar el dispositivo*/
     function comprobarIMEI($postdata,  $xcrud){
-
         $CI =& get_instance();
         /*guardamos los datos anteriores del dispositivo en relacion al mueble y posicion del mismo*/
         $result = $CI->db->select('*')
             ->where("IMEI",$postdata->get('IMEI'))
             ->where("status!=",'Baja')
-            //->where("status!=",'RMA')
             ->get('devices_almacen')->result();
-//        $datosAntes=$result;
-        //echo $CI->db->last_query();
 
-        if(!empty($result) && count($result)>0){
-
-            /*$CI->db->where('id_devices_almacen',$xcrud)
-                ->delete('devices_almacen');*/
-            $postdata->set("error","ERROR - ya existe un dispositivo con ese IMEI");
+        if(!empty($result) && count($result)>0) {
+            $postdata->set("error", "ERROR - ya existe un dispositivo con ese IMEI");
             echo "<text style='color: red; font-size: 18px '>ERROR - ya existe un dispositivo con ese IMEI</text>";
-            //throw new Exception("Value must be 1 or below");
             return false;
         }
-        //return true;
-
-        /*Comprobamos si el mueble seleccionado existe en la tienda*/
-      /*  $result = $CI->db->select('id_displays_pds')
-            ->where("id_display",$postdata->get('id_display'))
-            ->where("id_pds",$postdata->get('id_pds'))
-            ->get('displays_pds')->row_array();*/
-
-        /*Si el mueble seleccionado esta en la tienda, entonces modificamos
-        Sino se queda como estaba*/
-    /*    if (!empty($result)) {
-            $elemento = array(
-                'id_displays_pds' => $result['id_displays_pds'],
-                'id_display'      => $postdata->get('id_display')
-            );
-            $CI->db->where('id_devices_pds',$xcrud)
-                ->update('devices_pds', $elemento);
-
-        }
-        else {
-            $postdata->set('id_displays_pds',$datosAntes['id_displays_pds']);
-            $postdata->set('id_display',$datosAntes['id_display']);
-
-            echo "<text style='color: red; font-size: 18px '>ERROR - no se ha podido actualizar el dispositivo porque 
-            el mueble seleccionado no pertenece a la tienda</text>";
-
-        }*/
     }
 
     /*
@@ -353,7 +355,7 @@
             );
         }
         $json = json_encode($pds_realdooh);
-//print_r($pds_realdooh);
+
         //////////////////////////////////////////////////////////////////////////////////
         //                                                                              //
         //             Comunicación  con Realdooh VU: ACTUALIZAR tienda                 //
@@ -477,39 +479,9 @@
 
     }
 
-    /*
-    * funcion que nos devolvera el listado de incidencias de la posicion
-    * $xcrud guarda el ID del elemento a actualziar
-    $postdata tenemos los datos para actualizar el dispositivo
+    /*Si se ha dado de baja el mueble habrá que dar de baja los dispositivos de ese mueble
+    E informar a realdooh de la baja
     */
-    /*function incidencias_list_action($xcrud) {
+    function inventario_dispositivosMueble($postada,$xcrud){
 
-        $CI =& get_instance();
-
-        /*consultamos las incidencias
-        $result = $CI->db->select('id_incidencia')
-            //    ->join("pds","id_pds=".$postdata->get('id_pds'))
-            ->where("id_devices_pds",$xcrud->get('primary'))
-            ->get('incidencias')->result();
-        //echo $CI->db->last_query();
-
-        $lista="";
-        if (!empty($result)) {
-            $lista.= "<div class='form-group'>";
-            $lista .= "<label class='control-label col-sm-3'>Incidencias</label>";
-            $lista .= "<div class='col-sm-9'><input class='xcrud-input form-control' type='text' value=";
-            foreach ($result as $r) {
-                $lista .= $r->id_incidencia;
-                if ($r !== end($result)) {
-                    $lista .= ",";
-                }
-            }
-            $lista .= " disabled ></div></div>";
-        } else {
-            echo "<text style='color: red; font-size: 18px '>El dispositivo no tiene incidencias</text>";
-        }
-        $xcrud->set('lista_incidencias',$lista);
-        //echo $lista;
-        return $xcrud;
-
-    }*/
+    }

@@ -97,7 +97,7 @@
                                         <th class="balance"><?php echo $stock->brand ?></th>
                                         <th class="balance"><?php echo $stock->device ?></th>
                                         <td><?php echo $stock->unidades_pds ?></td>
-                                        <td><?php echo $stock->unidades_transito ?></td>
+                                        <td><?php echo $stock->unidades_transito+$stock->unidades_tienda_transito ?></td>
                                         <td><?php echo $stock->unidades_reservado ?></td>
                                         <td><?php echo $stock->unidades_rma ?></td>
                                         <td class="<?=$class_almacen?>"><?php echo $stock->unidades_almacen ?></td>

@@ -36,7 +36,6 @@
         <div class="col-lg-12">
             <?php
             if (!empty($anio) && !empty($valor_resultado)) { ?>
-           <!-- <p><a href="<?=base_url().$controlador?>/exportar_sistemas_seguridad/<?=$anio?>/<?=$tipo?>" class="btn exportar"><i class="glyphicon glyphicon-file"></i> Exportar Excel</a></p>-->
             <div class="table-responsive">
                 <table cellpadding="0" cellspacing="0" class="table table-striped table-bordered table-hover table-borde-lineal table-estado-incidencias">
                     <form action="<?=site_url('admin/update_ajustes_totales');?>" method="post" class="form-inline filtros form-mini">
@@ -74,6 +73,16 @@
                             if (!empty($valor_resultado)) {
                                 foreach ($valor_resultado as $clave => $valor) {
                                     echo "<td><input size='5' type='text' name='terminales[]' value=".$valor['terminales']." ></td>";
+                                }
+                            }
+                            ?>
+                        </tr>
+                        <tr>
+                            <th>Almacén</th>
+                            <?php
+                            if (!empty($valor_resultado)) {
+                                foreach ($valor_resultado as $clave => $valor) {
+                                    echo "<td><input size='5' type='text' name='almacen[]' value=".$valor['almacen']." ></td>";
                                 }
                             }
                             ?>

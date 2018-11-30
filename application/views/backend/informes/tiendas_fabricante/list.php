@@ -62,70 +62,75 @@
                     $elementos=0;
                     $aux=null;
                     foreach($resultado->segmentos as $segmento){
-                    /*agregado para que salgan los segmentos DHO NEXT y DHO NEXT PLUS juntos*/
-                    if ($segmento->segmento=='DHO NEXT PLUS') {
-                        continue;
-                    }
-                    if ($segmento->id_segmento == 2) {
-                       // echo $segmento->id_segmento." ".$elementos;
-                        $elementos++;
-                        $aux = ($resultado->segmentos[$elementos]);
-                            //echo $aux->segmento;
-                    }
+                        /*agregado para que salgan los segmentos DHO NEXT y DHO NEXT PLUS juntos*/
+                        if ($segmento->segmento=='DHO NEXT PLUS') {
+                            continue;
+                        }
+                        if ($segmento->id_segmento == 2) {
+                           // echo $segmento->id_segmento." ".$elementos;
+                            $elementos++;
+                            $aux = ($resultado->segmentos[$elementos]);
+                                //echo $aux->segmento;
+                        }
 
-                    $tipologias = $segmento->tipologias;
-                    $firstSeg = TRUE;
-                    $rowSeg = count($tipologias);
-                    /*agregado para que salgan los segmentos DHO NEXT y DHO NEXT PLUS juntos*/
-                    $t=0;
-                    foreach ($tipologias as $tipo){
-                    $muebles = $tipo->muebles;
-                    $firstTipo = TRUE;
-                    $rowTipo = count($muebles);
-                    /*agregado para que salgan los segmentos DHO NEXT y DHO NEXT PLUS juntos*/
-                    $m=0;
-                        foreach ($muebles as $mueble) { ?>
-                        <tr>
-                            <td class="segmento"><strong><?= ($firstSeg) ? $segmento->segmento : ""; ?></strong></td>
-                            <td class="tipologia"><strong><?= ($firstTipo) ? $tipo->tipologia : ""; ?></strong></td>
-                            <td class="planograma"><a href="#" class="launch_planograma"><?= $mueble->display; ?></a>
-
-                                <div class="planograma">
-
-                                    <table width="100%" height="100%" cellspacing="0" cellpadding="0">
-                                        <tr>
-                                            <td class="img-mueble">
-                                                <?php if (!empty($mueble->imagen)) {
-                                                    echo '<img src="' . site_url('application/uploads/' . $mueble->imagen . '') . '" width="100">';
-                                                } ?>
-                                            </td>
-                                            <td class="devices" height="100%">
-                                                <p><strong><?= $mueble->display ?></strong></p>
-                                                <?php foreach ($mueble->planograma as $dev) {
-                                                    echo '<p>' . $dev->device . '</p>';
-                                                } ?>
-                                            </td>
-                                        </tr>
-                                    </table>
-                                </div>
-                                </div>
-                                </td>
-                                <?php
-                                /*agregado para que salgan los segmentos DHO NEXT y DHO NEXT PLUS juntos*/
-                                if (!empty($aux)) {
-                                    //echo "ENTRA SIEMPRE ".$elementos;
-                                   // print_r($aux->tipologias[$t]->muebles[$m]->num_pds); echo "<br>";
-                                    //$tipos=$aux->tipologias[$tipo];
-                                    $mueble->num_pds+=$aux->tipologias[$t]->muebles[$m]->num_pds;
-                                }
-
+                        $tipologias = $segmento->tipologias;
+                        $firstSeg = TRUE;
+                        $rowSeg = count($tipologias);
+                        /*agregado para que salgan los segmentos DHO NEXT y DHO NEXT PLUS juntos*/
+                        $t=0;
+                        foreach ($tipologias as $tipo){
+                            $muebles = $tipo->muebles;
+                            $firstTipo = TRUE;
+                            $rowTipo = count($muebles);
+                            /*agregado para que salgan los segmentos DHO NEXT y DHO NEXT PLUS juntos*/
+                            $m=0;
+                            foreach ($muebles as $mueble) {
                                 ?>
-                                <td class="pdvs"><?= $mueble->num_pds ?></td>
-                                </tr>
+                            <tr>
+                                <td class="segmento"><strong><?= ($firstSeg) ? $segmento->segmento : ""; ?></strong></td>
+                                <td class="tipologia"><strong><?= ($firstTipo) ? $tipo->tipologia : ""; ?></strong></td>
+                                <td class="planograma"><a href="#" class="launch_planograma"><?= $mueble->display; ?></a>
 
-                                <?php $firstSeg = FALSE;
-                                $firstTipo = FALSE;
-                                $m++;
+                                    <div class="planograma">
+
+                                        <table width="100%" height="100%" cellspacing="0" cellpadding="0">
+                                            <tr>
+                                                <td class="img-mueble">
+                                                    <?php if (!empty($mueble->imagen)) {
+                                                        echo '<img src="' . site_url('application/uploads/' . $mueble->imagen . '') . '" width="100">';
+                                                    } ?>
+                                                </td>
+                                                <td class="devices" height="100%">
+                                                    <p><strong><?= $mueble->display ?></strong></p>
+                                                    <?php foreach ($mueble->planograma as $dev) {
+                                                        echo '<p>' . $dev->device . '</p>';
+                                                    } ?>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+
+                                    </td>
+                                    <?php
+                                    /*agregado para que salgan los segmentos DHO NEXT y DHO NEXT PLUS juntos*/
+                                    if (!empty($aux)) {
+                                        //echo "ENTRA SIEMPRE ".$elementos;
+                                       // print_r($aux->tipologias[$t]->muebles[$m]->num_pds); echo "<br>";
+                                        //$tipos=$aux->tipologias[$tipo];
+                                        if(!empty($aux->tipologias[$t]->muebles[$m]->num_pds))
+                                            $mueble->num_pds+=$aux->tipologias[$t]->muebles[$m]->num_pds;
+                                       /* else
+                                            echo "esta vario ".$mueble->num_pds;*/
+
+                                    }
+
+                                    ?>
+                                    <td class="pdvs"><?= $mueble->num_pds ?></td>
+                                    </tr>
+
+                                    <?php $firstSeg = FALSE;
+                                    $firstTipo = FALSE;
+                                    $m++;
                             }
                             ?>
 
@@ -136,32 +141,30 @@
 
                             <?php
                             $t++;
-                            }
-                            ?>
+                        }
+                        ?>
 
-                            <tr class="separador">
-                                <?php
-                                /*agregado para que salgan los segmentos DHO NEXT y DHO NEXT PLUS juntos*/
-                                if (!empty($aux)) {
-                                    $segmento->num_pds+=$aux->num_pds;
-                                }
-                                ?>
-                                <td class="total" colspan="4"><strong>Total tiendas / tipo: <?= $segmento->num_pds ?></strong></td>
-                            </tr>
-
+                        <tr class="separador">
                             <?php
                             /*agregado para que salgan los segmentos DHO NEXT y DHO NEXT PLUS juntos*/
-                            $elementos++;
-                            if ($elementos>(count($resultado->segmentos)-1)) {
-                                break;
-                            }
-
+                            if (!empty($aux)) {
+                                $segmento->num_pds+=$aux->num_pds;
                             }
                             ?>
-                    
-                    
+                            <td class="total" colspan="4"><strong>Total tiendas / tipo: <?= $segmento->num_pds ?></strong></td>
+                        </tr>
+
+                        <?php
+                        /*agregado para que salgan los segmentos DHO NEXT y DHO NEXT PLUS juntos*/
+                        $elementos++;
+                        if ($elementos>(count($resultado->segmentos)-1)) {
+                            break;
+                        }
+
+                    }
+                    ?>
                 </table>
-                <?php } ?>
+            <?php } ?>
               
             </div>
         </div>

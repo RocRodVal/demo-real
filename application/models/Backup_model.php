@@ -65,8 +65,6 @@ class Backup_Model extends CI_Model {
     }
 
 
-
-
     function exportar_planogramas()
     {
         $sfids = implode(",",$this->sfids);
@@ -77,20 +75,17 @@ class Backup_Model extends CI_Model {
         if(!empty($sfids)){
             $query = $this->db->query("
                 SELECT pds.reference, dp.id_devices_pds, dp.client_type_pds, pd.position, pds.id_pds, dp.id_displays_pds, dp.id_display, display.display,
-                                                    dp.alta, dp.position as position_device, dp.id_device, device.device, dp.IMEI, dp.mac, dp.serial, dp.owner, dp.status
-                                        FROM devices_pds dp
-                                        JOIN displays_pds pd ON pd.id_displays_pds = dp.id_displays_pds
-                                        JOIN display ON display.id_display = dp.id_display
-                                        JOIN device ON device.id_device = dp.id_device
-                                        JOIN pds ON pds.id_pds = dp.id_pds
-                                        WHERE pds.reference IN( ".$sfids." )
-                                        ORDER BY pds.reference ASC, pd.position ASC, dp.position  ASC
-");
+                           dp.alta, dp.position as position_device, dp.id_device, device.device, dp.IMEI, dp.mac, dp.serial, dp.owner, dp.status
+                           FROM devices_pds dp
+                           JOIN displays_pds pd ON pd.id_displays_pds = dp.id_displays_pds
+                           JOIN display ON display.id_display = dp.id_display
+                           JOIN device ON device.id_device = dp.id_device
+                           JOIN pds ON pds.id_pds = dp.id_pds
+                           WHERE pds.reference IN( ".$sfids." )
+                           ORDER BY pds.reference ASC, pd.position ASC, dp.position  ASC
+                ");
 
             $result = $query->result();
-
-
-            //echo $this->db->last_query();exit;
         }
 
 
@@ -114,18 +109,8 @@ class Backup_Model extends CI_Model {
                     break;
 
             }
-           /* $query = $this->db->query("
-                SELECT id_incidencia FROM incidencias where id_devices_pds = ".$id_devices_pds." and status_pdsdevices_pds dp
-                                        JOIN displays_pds pd ON pd.id_displays_pds = dp.id_displays_pds
-                                        JOIN display ON display.id_display = dp.id_display
-                                        JOIN device ON device.id_device = dp.id_device
-                                        JOIN pds ON pds.id_pds = dp.id_pds
-                                        WHERE pds.reference IN( ".$sfids." )
-                                        ORDER BY pds.reference ASC, pd.position ASC, dp.position  ASC
-");*/
             $query = $this->db->query($sql);
             $result = $query->result();
-            //echo $this->db->last_query();exit;
         }
 
 

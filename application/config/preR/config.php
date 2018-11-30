@@ -1,6 +1,16 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 define('PASSTIENDA','clementine');
+define('APERTURA','Apertura tienda');
+define('CAMBIO_MANUAL','Cambio manual');
+define('ALTA_MANUAL','Alta manual');
+define('ACTUALIZACION_MASIVA','Actualizacion masiva');
+define('CIERRE_TIENDA','Cierre tienda');
+define('INCIDENCIA_ALTA','Alta incidencia');
+define('INCIDENCIA_CANCELADA','Incidencia cancelada');
+define('INCIDENCIA_RESUELTA','Incidencia resuelta');
+define('INCIDENCIA_CIERREFORZOSO','Incidencia Cierre forzoso');
+define('INCIDENCIA_TERMINALESSUSTITUIDOS','Incidencia Terminales sustituidos');
 /*
 |--------------------------------------------------------------------------
 | Base Site URL

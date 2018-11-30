@@ -34,7 +34,7 @@
                          *
                          */
                         ?>
-                        <?php $cdm = array('cdm_incidencias','cdm_tipo_incidencia','cdm_inventario','cdm_alarmas','cdm_dispositivos','cdm_dispositivos_balance','cdm_dispositivos_incidencias');
+                        <?php $cdm = array('cdm_incidencias','cdm_alarmas','cdm_dispositivos','cdm_dispositivos_balance','cdm_dispositivos_incidencias');
                             $cdm_dispositivos=array('cdm_dispositivos_balance','cdm_dispositivos_incidencias');
                             ?>
                             <li <?=(in_array($this->uri->segment(2), $cdm))?'class="active"':''?>>

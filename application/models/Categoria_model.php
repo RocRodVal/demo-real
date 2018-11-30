@@ -17,17 +17,6 @@ class Categoria_Model extends CI_Model
         $this->load->database();
     }
 
-
-    /**
-     * Devuelve un array de TIPOS de PDS
-     * @return mixed
-     */
-    /*public function get_tipos_pds()
-    {
-        $query = $this->db->select('*')->get('pds_tipo');
-        return $query->result_array();
-    }*/
-
     /**
      * @param $id_tipo
      * @return null
@@ -107,8 +96,6 @@ class Categoria_Model extends CI_Model
         return $query->result_array();
     }
     
-    
-    
      public function get_tipologias_pds($id_tipologia=NULL, $id_subtipo= NULL)
     {
         if(empty($id_subtipo) && is_null($id_subtipo))
@@ -153,8 +140,6 @@ class Categoria_Model extends CI_Model
     }
 
 
-
-
     public function existe_mobiliario($id_tipo,$id_subtipo,$id_segmento,$id_tipologia)
     {
         $respuesta = FALSE;
@@ -167,8 +152,6 @@ class Categoria_Model extends CI_Model
         }
         return $respuesta;
     }
-
-
 
 
     public function get_displays_categoria($id_tipo,$id_subtipo,$id_segmento,$id_tipologia)
@@ -195,8 +178,5 @@ class Categoria_Model extends CI_Model
         $id=$this->db->insert_id();
         return array('add' => (isset($id)) ? $id : FALSE, 'id' => $id);
     }
-
-
-
 
 }

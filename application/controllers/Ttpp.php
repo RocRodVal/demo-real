@@ -421,12 +421,9 @@ class Ttpp extends MY_Controller {
             $data["mueble_plano"] = $mueble_plano;
             $data["sfid_plano"] = $sfid_plano;
             $data["generado_planograma"] = FALSE;
-
-
             $data["title"] = "Informe de Planogramas";
 
             $vista = 0;
-
             if ($this->input->post("generar_informe") === "si") {
                 $mueble_plano = $this->input->post("mueble_plano");
                 $sfid_plano = $this->input->post("sfid_plano");
@@ -441,7 +438,6 @@ class Ttpp extends MY_Controller {
                     "sfid_plano" => $sfid_plano,
                     "generado_planograma" => $generado_planograma
                 ));
-
             } else {
                 // OBTENER DE LA SESION, SI EXISTE
                 if ($this->session->userdata("generado_planograma") !== NULL && $this->session->userdata("generado_planograma") === TRUE) {
@@ -452,21 +448,15 @@ class Ttpp extends MY_Controller {
                     $data["mueble_plano"] = $mueble_plano;
                     $data["sfid_plano"] = $sfid_plano;
                     $data["generado_planograma"] = TRUE;
-
                 }
             }
 
-
-
             if(!empty($sfid_plano)){
                 if(!empty($mueble_plano)){
-                   /*
-                    *  Planograma del mueble para el sfid indicado
-                    */
+                   /**  Planograma del mueble para el sfid indicado  */
                     $display_maestro = $this->tienda_model->get_display($mueble_plano);
                     $data['display'] = " - " .$display_maestro["display"];
                     $data['picture_url'] = $display_maestro["picture_url"];
-
 
                     $tiendas = $this->tienda_model->search_pds($sfid_plano);
                     if (!empty($tiendas) && count($tiendas) == 1) {
@@ -476,9 +466,7 @@ class Ttpp extends MY_Controller {
                             $tienda = $tienda_1;
                         }
 
-
                         $id_pds = $tienda->id_pds;
-
                         $sfid = $this->tienda_model->get_pds($id_pds);
                         $data['id_pds']     = 'ABX/PDS-'.$sfid['id_pds'];
                         $data['commercial'] = $sfid['commercial'];
@@ -489,12 +477,10 @@ class Ttpp extends MY_Controller {
                         $data['city']       = $sfid['city'];
                         $data['id_pds_url'] = $id_pds;
 
-
                         $arr_displays_pds = $this->sfid_model->get_id_displays_pds($id_pds,$mueble_plano);
 
                         $displays = array();
                         $data['display'] = "";
-
 
                         if(!empty($arr_displays_pds)) {
                             $id_displays_pds = $arr_displays_pds[0]->id_displays_pds;
@@ -510,35 +496,21 @@ class Ttpp extends MY_Controller {
                             $devices = $this->sfid_model->get_devices_displays_pds($id_displays_pds);
                             $data['devices'] = $devices;
                             $data['displays'] = $displays;
-
-
-
                         }
-
-
                     }
-
                     $data['subtitle'] = 'Planograma tienda: SFID-' . $sfid_plano . ' - '.$display_maestro['display'];
                     $vista = 1;
-
                 }else{
-                    /*
-                     *  Panelado de la tienda
-                     */
+                    /**  Panelado de la tienda  */
                     $tiendas = $this->tienda_model->search_pds($sfid_plano);
 
-
-
                     if (!empty($tiendas) && count($tiendas) == 1) {
-
                         $tienda = NULL;
                         foreach ($tiendas as $tienda_1) {
                             $tienda = $tienda_1;
                         }
 
-
                         $id_pds = $tienda->id_pds;
-
                         $sfid = $this->tienda_model->get_pds($id_pds);
 
                         $data['id_pds'] = 'ABX/PDS-' . $sfid['id_pds'];
@@ -558,27 +530,20 @@ class Ttpp extends MY_Controller {
                         }
 
                         $data['displays'] = $displays;
-
                         $data['subtitle'] = 'Panelado tienda: SFID-' . $sfid_plano. '';
                         $vista = 3;
                     }
-
                 }
-
             }else{
                 if(!empty($mueble_plano)){
-                    /*
-                     *      Maestro del mueble
-                     */
+                    /**      Maestro del mueble  */
                     $devices = $this->tienda_model->get_devices_display($mueble_plano);
                     $data['displays'] = $this->tienda_model->get_displays_demoreal();
                     $data['devices'] = $devices;
 
-
-                        $display = $this->tienda_model->get_display($mueble_plano);
-                        $data['display_name'] = $display['display'];
-                        $data['picture_url'] = $display['picture_url'];
-
+                    $display = $this->tienda_model->get_display($mueble_plano);
+                    $data['display_name'] = $display['display'];
+                    $data['picture_url'] = $display['picture_url'];
 
                     $data['subtitle'] = 'Planograma mueble: ' . $display['display'];
                     $vista = 2;
@@ -590,69 +555,55 @@ class Ttpp extends MY_Controller {
             }
 
 
+            $data["generado_planograma"] = $generado_planograma;
 
-        $data["generado_planograma"] = $generado_planograma;
 
+            // Comprobar si existe el segmento PAGE en la URI, si no inicializar a 1..
+            $get_page = $this->uri->segment(3);
 
-        // Comprobar si existe el segmento PAGE en la URI, si no inicializar a 1..
-        $get_page = $this->uri->segment(3);
+            if ($get_page === "reset") {
+                $this->session->unset_userdata("mueble_plano");
+                $this->session->unset_userdata("sfid_plano");
+                $this->session->unset_userdata("generado_planograma");
 
-        if ($get_page === "reset") {
-            $this->session->unset_userdata("mueble_plano");
-            $this->session->unset_userdata("sfid_plano");
-            $this->session->unset_userdata("generado_planograma");
+                redirect("ttpp/informe_planogramas", "refresh");
 
-            redirect("ttpp/informe_planogramas", "refresh");
-
-        }
-
+            }
 
             /** COMENTADO SELECT DEMOREAL $muebles = $this->tienda_model->get_displays_demoreal(); */
             $muebles = $this->tienda_model->get_displays_demoreal();
             $data["muebles"] = $muebles;
 
-        $data["vista"] = $vista;
-
-
-
-
-
+            $data["vista"] = $vista;
 
             /* Pasar a la vista */
             /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
             $this->data->add($data);
             $data = $this->data->getData();
             /////
-        $this->load->view('ttpp/header', $data);
-        $this->load->view($controlador.'/navbar', $data);
-        $this->load->view('ttpp/informes/informe_planograma_form', $data);
+            $this->load->view('ttpp/header', $data);
+            $this->load->view($controlador.'/navbar', $data);
+            $this->load->view('ttpp/informes/informe_planograma_form', $data);
 
-        switch ($vista) {
-            case 1:
-                $this->load->view('ttpp/informes/informe_planograma_mueble_sfid',$data);
-                break;
-            case 2:
-                $this->load->view('ttpp/informes/informe_planograma_mueble', $data);
-                break;
-            case 3:
-                $this->load->view('ttpp/informes/informe_planograma_sfid', $data);
-                break;
-            default:
-                $this->load->view('ttpp/informes/informe_planograma', $data);
+            switch ($vista) {
+                case 1:
+                    $this->load->view('ttpp/informes/informe_planograma_mueble_sfid',$data);
+                    break;
+                case 2:
+                    $this->load->view('ttpp/informes/informe_planograma_mueble', $data);
+                    break;
+                case 3:
+                    $this->load->view('ttpp/informes/informe_planograma_sfid', $data);
+                    break;
+                default:
+                    $this->load->view('ttpp/informes/informe_planograma', $data);
 
-        }
-
-
-        $this->load->view('ttpp/footer',$data);
-
-
-    }
-        else
-        {
+            }
+            $this->load->view('ttpp/footer',$data);
+        }else{
             redirect('ttpp','refresh');
         }
     }
-
 
 
     public function informe_planograma_mueble_pds(){
@@ -812,8 +763,6 @@ class Ttpp extends MY_Controller {
 }
 
 
-
-
 	public function ayuda($tipo)
 	{
         if($this->auth->is_auth()){ // Control de acceso según el tipo de agente. Permiso definido en constructor
@@ -892,7 +841,7 @@ class Ttpp extends MY_Controller {
 		}
 	}
 
-	public function muebles_fabricantes()
+	/*public function muebles_fabricantes()
 	{
         if($this->auth->is_auth()){ // Control de acceso según el tipo de agente. Permiso definido en constructor
 			$xcrud = xcrud_get_instance();
@@ -915,7 +864,7 @@ class Ttpp extends MY_Controller {
 			redirect('ttpp','refresh');
 		}
 	}	
-	
+	*/
 	public function logout()
 	{
 		//if($this->session->userdata('logged_in'))

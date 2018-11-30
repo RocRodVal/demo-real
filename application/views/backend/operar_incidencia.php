@@ -312,6 +312,7 @@
                                                        class="btn btn-success">
                                             </td>
                                         </tr>
+                                        <span class="red"><strong> <?=$messageParte ?></strong></span>
                                         </tbody>
                                     </table>
 

@@ -64,66 +64,48 @@ class Chat_model extends CI_Model {
 
 
     public function existen_mensajes_nuevos($tipo_incidencias) {
-            $this->load->model('incidencia_model');
+        $this->load->model('incidencia_model');
 
+        $query = $this->db->select('COUNT(*) AS nuevos')
+            ->join('agent','agent.sfid=chat.agent')
+            ->join('incidencias','chat.id_incidencia=incidencias.id_incidencia')
+            ->where('chat.status','Nuevo')
+            ->where($this->incidencia_model->get_condition_tipo_incidencia($tipo_incidencias));
 
-            $query = $this->db->select('COUNT(*) AS nuevos')
-                ->join('agent','agent.sfid=chat.agent')
-                ->join('incidencias','chat.id_incidencia=incidencias.id_incidencia')
-                ->where('chat.status','Nuevo')
-                ->where($this->incidencia_model->get_condition_tipo_incidencia($tipo_incidencias));
+        $tipo_agente = $this->get_agentes_excluidos();
+        if(is_array($tipo_agente) && !empty($tipo_agente))
+        {
+            $query->where_not_in('agent.type',$tipo_agente);
+        }
+        $query = $this->db->get('chat');
+        $resultado =$query->row_array();
 
+        if(!is_array($tipo_agente) || empty($tipo_agente)) $res = 0;
+        else $res =  $resultado['nuevos'];
 
-            $tipo_agente = $this->get_agentes_excluidos();
-            if(is_array($tipo_agente) && !empty($tipo_agente))
-            {
-                $query->where_not_in('agent.type',$tipo_agente);
-            }
-            $query = $this->db->get('chat');
-            $resultado =$query->row_array();
-
-
-        /*echo $this->db->last_query();
-        print_r($tipo_agente);*/
-
-            if(!is_array($tipo_agente) || empty($tipo_agente)) $res = 0;
-            else $res =  $resultado['nuevos'];
-
-            return $res;
-
+        return $res;
     }
 
     public function contar_nuevos($id,$agent,$tabla='incidencias') {
-        if($id != FALSE)
-        {
+        if($id != FALSE) {
             if ($tabla=='incidencias') {
                 $query = $this->db->select('COUNT(*) AS nuevos')
                     ->join('agent', 'agent.sfid=chat.agent')
                     ->where('chat.id_incidencia', $id)
                     ->where('chat.agent', $agent)
                     ->where('chat.status', 'Nuevo')
-                    //$tipo_agente = $this->get_agentes_excluidos();
-                    //$query = $this->db->where_not_in('agent.type',$tipo_agente)
                     ->get('chat');
-            }
-            else {
+            }else {
                 $query = $this->db->select('COUNT(*) AS nuevos')
                     ->join('agent', 'agent.sfid=pedidos_chat.agent')
                     ->where('pedidos_chat.id_pedido', $id)
                     ->where('pedidos_chat.agent', $agent)
                     ->where('pedidos_chat.status', 'Nuevo')
-                    //$tipo_agente = $this->get_agentes_excluidos();
-                    //$query = $this->db->where_not_in('agent.type',$tipo_agente)
                     ->get('pedidos_chat');
             }
 
-
-
-            ///echo $this->db->last_query(); exit;
             return $query->row_array();
-        }
-        else
-        {
+        }else{
             return FALSE;
         }
     }
@@ -133,21 +115,17 @@ class Chat_model extends CI_Model {
 		{
 			$query = $this->db->select('COUNT(*) AS nuevos')
                 ->join('agent','agent.sfid=chat.agent')
-			->where('chat.id_incidencia',$id_incidencia)
-			->where('chat.agent',$agent)
-			->where('chat.status','Nuevo');
+                ->where('chat.id_incidencia',$id_incidencia)
+			    ->where('chat.agent',$agent)
+			    ->where('chat.status','Nuevo');
 
             $tipo_agente = $this->get_agentes_excluidos();
 
             $query = $this->db->where_not_in('agent.type',$tipo_agente)
 			        ->get('chat');
 
-
-            /*echo $this->db->last_query();*/
 			return $query->row_array();
-		}
-		else
-		{
+		}else{
 			return FALSE;
 		}
 	}
@@ -191,7 +169,6 @@ class Chat_model extends CI_Model {
 
     public function insert_chat($data,$tabla="incidencia")
     {
-
         if ($tabla == 'incidencia') {
             $this->db->insert('chat', $data);
         }
@@ -222,9 +199,7 @@ class Chat_model extends CI_Model {
                     ->get('chat');
             }
             return $query->result();
-        }
-        else
-        {
+        }else{
             return FALSE;
         }
     }

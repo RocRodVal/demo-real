@@ -5,7 +5,6 @@
                     <h1 class="page-header"><?php echo $title ?></h1>
                 </div>
             </div>
-
             <div class="row" >
                 <div class="col-lg-12">
                     <div class="filtro">
@@ -23,8 +22,6 @@
                                     }?>
                                 </select>
                             </div>
-
-
                             <input type="hidden" name="id_subtipo" value="10">
                             <div class="col-lg-3">
                                 <label for="id_subtipo_r">Subtipo PDS: </label>
@@ -101,9 +98,6 @@
                                     ?>
                                 </select>
                             </div>
-
-
-
                             <div class="col-lg-3">
                                 <label for="id_display">Mueble: </label>
                                 <select name="id_display" id="id_display" class="form-control input-sm">
@@ -117,9 +111,7 @@
                                     ?>
                                 </select>
                             </div>
-
                             <div class="clearfix"></div>
-
                             <div class="col-lg-3">
                                 <label for="id_device">Terminal: </label>
                                 <select name="id_device" id="id_device" class="form-control input-sm">
@@ -161,9 +153,7 @@
                                     ?>
                                 </select>
                             </div>
-
                             <div class="clearfix"></div>
-
                             <div class="col-lg-3">
                                 <label for="id_tipo_incidencia">Tipo incidencia: </label>
                                 <select name="id_tipo_incidencia" id="id_tipo_incidencia" class="form-control input-sm">
@@ -178,7 +168,6 @@
                                     ?>
                                 </select>
                             </div>
-
                             <div class="col-lg-1">
                                 <label for="id_incidencia">Incidencia: </label>
                                 <input type="text" name="id_incidencia" id="id_incidencia" class="form-control input-sm" placeholder="Id. incidencia" <?php echo (!empty($id_incidencia)) ? ' value="'.$id_incidencia.'" ' : ''?> />
@@ -194,7 +183,6 @@
                                 </div>
                             </div>
                             <div class="clearfix"></div>
-
                         </form>
 
                     </div>
@@ -204,15 +192,8 @@
 		            <?php
 		            if (empty($incidencias)) {
                         echo '<p class="message warning"><i class="glyphicon glyphicon-warning-sign"></i> No hay incidencias abiertas.</p>'; ?>
-
-
-                        <?php  /*if(! empty($buscar_sfid) || ! empty($buscar_incidencia)) { ?>
-                            <a href="<?=base_url()?>admin/dashboard/borrar_busqueda/#incidencias_abiertas" class="reiniciar_busqueda"> <i class="glyphicon glyphicon-remove"></i> Reiniciar</a>
-                        <?php }*/  ?>
-
 		            <?php } else {
-		                ?>
-                        <?php if($show_paginator) { ?>
+		              if($show_paginator) { ?>
                             <div class="pagination">
                                 <ul class="pagination">
                                     <?php echo "".$pagination_helper->create_links(); ?>
@@ -229,25 +210,14 @@
 		                            <th class="sorting" data-rel="incidencias.id_incidencia"    data-order="">Ref.</th>
 		                            <th class="sorting" data-rel="pds.reference"                data-order="">SFID</th>
 		                            <th class="sorting" data-rel="incidencias.fecha"            data-order="desc">Fecha alta</th>
-		                            <th class="principal"                                                             >Elemento afectado</th>
-
-
-                                    <?php /*
-                                    <th class="sorting" data-rel="incidencias.alarm_display"    data-order="">Sistema general de seguridad</th>
-                                    <th class="sorting" data-rel="incidencias.fail_device"    data-order="">Dispositivo</th>
-                                    <th class="sorting" data-rel="incidencias.alarm_device"    data-order="">Alarma dispositivo cableado</th>
-                                    <th class="sorting" data-rel="incidencias.alarm_garra"    data-order="">Soporte sujección</th>*/?>
-                                    <th class=""                                                             >Territorio</th>
-                                    <th class=""                                                             >Fabricante</th>
-
-
+		                            <th class="principal">Elemento afectado</th>
+                                    <th class="">Territorio</th>
+                                    <th class="">Fabricante</th>
                                     <th>Última modificación</th>
                                     <th class="sorting" data-rel="incidencias.tipo_averia"    data-order="">Tipo incidencia</th>
                                     <th class="sorting" data-rel="pds_supervisor.titulo"    data-order="">Supervisor</th>
                                     <th class="sorting"  data-rel="province.province"    data-order="">Provincia</th>
-
-		                            <th                                                                     >Interv.</th>
-		                            <?php /*<th class="sorting" data-rel="incidencias.status"    data-order="">Estado SAT</th>*/ ?>
+		                            <!--<th                                                                     >Interv.</th>-->
                                     <th class="sorting" data-rel="incidencias.status_pds"    data-order="">Estado PDS</th>
 		                            <th class="sorting" data-rel="nuevos"    data-order="desc">Chat offline</th>
 		                        </tr>
@@ -264,51 +234,29 @@
 
 		                                <td><?php echo $incidencia->reference ?></td>
 		                                <td><?php echo date_format(date_create($incidencia->fecha), 'd/m/Y'); ?></td>
-		                                <?php 
-		                                //if (!isset($incidencia->device['device']))
-                                        if (!isset($incidencia->device))
-		                                {
+		                                <?php
+                                        if (!isset($incidencia->device)){
 		                                	$dispositivo = 'Retirado';
-		                                }
-		                                else
-		                                {
+		                                }else{
                                             $dispositivo = $incidencia->device;
-		                                	//$dispositivo = $incidencia->device['device'];
 		                                }
-		                                if (!isset($incidencia->display))
-                                            //if (!isset($incidencia->display['display']))
-		                                {
+		                                if (!isset($incidencia->display)){
 		                                	$mueble = 'Retirado';
-		                                }
-		                                else
-		                                {
+		                                }else{
 		                                	$mueble = $incidencia->display;
-                                            //$mueble = $incidencia->display['display'];
-		                                }		                                		
-		                                ?>
-
+		                                }?>
                                         <td class="principal"><?=($incidencia->alarm_display==1)?'Mueble: '.$mueble:'Dispositivo: '.$dispositivo?></td>
                                         <td><?=(!empty($incidencia->territory)? $incidencia->territory : '-')?></td>
                                         <td><?=(!empty($incidencia->brand)? $incidencia->brand : '-')?></td>
-
-
-                                        <?php
-                                        /*<td><?=($incidencia->alarm_display==1)?'&#x25cf;':''?></td>
-		                                <td><?=($incidencia->fail_device==1)?'&#x25cf;':''?></td>
-		                                <td><?=($incidencia->alarm_device==1)?'&#x25cf;':''?></td>
-		                                <td><?=($incidencia->alarm_garra==1)?'&#x25cf;':''?></td>*/?>
-
                                         <td>
                                             <?php $last_updated = $incidencia->last_updated;
                                             echo (is_null($last_updated)) ? "-" : date("d/m/Y", strtotime($last_updated));
                                             ?>
                                         </td>
-
-
 		                                <td><?php echo $incidencia->tipo_averia ?></td>
                                         <td><?php echo $incidencia->supervisor ?></td>
                                         <td><?php echo $incidencia->provincia ?></td>
-
+<?php /*
                                         <td>
 	                                        <?php if($incidencia->intervencion != NULL){?>
 	                                        <i onClick="showModalViewIntervencion(<?php echo $incidencia->intervencion ?>);" class="fa fa-eye"></i>
@@ -317,10 +265,8 @@
 	                                        echo "-";
 	                                        }
 	                                        ?>
-                                        </td>
-                                        <?php /*<td><strong><?php echo $incidencia->status ?></strong></td>*/?>
+                                        </td>*/?>
 		                                <td><strong><?php echo $incidencia->status_pds ?></strong></td>
-
 		                                <td><a href="<?=site_url($controlador.'/detalle_incidencia/'.$incidencia->id_incidencia.'/'.$incidencia->id_pds)?>#chat"><strong><i class="fa fa-whatsapp <?=($incidencia->nuevos<>'0')?'chat_nuevo':'chat_leido'?>"></i></strong></a></td>
 		                            </tr>
 		                        <?php
@@ -358,4 +304,4 @@
         </div>
 
         <!-- /#page-wrapper -->
-        <?php $this->load->view('backend/intervenciones/ver_intervencion_incidencia');?>
+        <?php //$this->load->view('backend/intervenciones/ver_intervencion_incidencia');?>

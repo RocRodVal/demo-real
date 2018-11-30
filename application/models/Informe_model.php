@@ -1484,7 +1484,6 @@ class Informe_model extends CI_Model
      */
     public function get_array_ajustes($rango_meses=NULL,$array_ajustes = NULL)
     {
-        //$mesFinal=1;
         $data = array();
 
         if(!is_null($array_ajustes))
@@ -1495,6 +1494,7 @@ class Informe_model extends CI_Model
                     if ($i==$a->mes){
                         $data[$a->mes]['intervenciones'] = $a->intervenciones;
                         $data[$a->mes]['terminales'] = $a->terminales;
+                        $data[$a->mes]['almacen'] = $a->almacen;
                         //$mesFinal=$inc->mes;
                         $existe=true;
                         break;
@@ -1503,6 +1503,7 @@ class Informe_model extends CI_Model
                 if (!$existe){
                     $data[$i]['intervenciones']=0;
                     $data[$i]['terminales']=0;
+                    $data[$i]['almacen']=0;
                 }
 
             }
@@ -1515,15 +1516,16 @@ class Informe_model extends CI_Model
      * @param null $array_ajustes
      * @return array
      */
-    public function update_ajustes_totales($anio,$intervenciones,$terminales)
+    public function update_ajustes_totales($anio,$intervenciones,$terminales,$almacen)
     {
         $data = $this->get_ajustes_totales($anio);
-        if(!is_null($intervenciones) && !is_null($terminales))
+        if(!is_null($intervenciones) && !is_null($terminales) && !is_null($almacen))
         {
             foreach ($intervenciones as $key => $valor) {
                 if(isset($data[$key])) {
                     $this->db->set('intervenciones', $valor)
                         ->set('terminales', $terminales[$key])
+                        ->set('almacen', $almacen[$key])
                         ->where('anio', $anio)
                         ->where('mes', ($key + 1))
                         ->update('ajustes');
@@ -1531,6 +1533,7 @@ class Informe_model extends CI_Model
                     $data = array(
                         'intervenciones' => $valor,
                         'terminales' =>  $terminales[$key],
+                        'almacen' =>  $almacen[$key],
                         'anio' => $anio,
                         'mes' => ($key + 1)
                     );

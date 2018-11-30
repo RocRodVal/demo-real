@@ -147,12 +147,11 @@
 
                         <?php
                         //$operaciones = array('operaciones','apertura_pdv','cierre_pdv','cambio_sfid','incidencias_exp','reset_incidencia_status','backup','anadir_mueble_sfid');
-                        $operaciones = array('operaciones','apertura_pdv','cierre_pdv','cambio_sfid','reset_incidencia_status');
+                        $operaciones = array('apertura_pdv','cierre_pdv','cambio_sfid','reset_incidencia_status');
                         ?>
                         <li <?=(in_array($this->uri->segment(2), $operaciones))?'class="active"':''?>>
                             <a href="#"><i class="fa fa-wrench fa-fw"></i> Operaciones<span class="fa arrow"></span></a>
                             <ul class="nav nav-second-level">
-                                <!--<li><a <?=($this->uri->segment(2)==='operaciones')?'class="active"':''?> href="<?=site_url($acceso.'/operaciones')?>"> Operaciones &raquo;</a></li>-->
                                 <li><a <?=($this->uri->segment(2)==='apertura_pdv')?'class="active"':''?> href="<?=site_url($acceso.'/apertura_pdv')?>"> Apertura PdV &raquo;</a></li>
                                 <li><a <?=($this->uri->segment(2)==='cierre_pdv')?'class="active"':''?> href="<?=site_url($acceso.'/cierre_pdv')?>"> Cierre PdV &raquo;</a></li>
                                 <li><a <?=($this->uri->segment(2)==='cambio_sfid')?'class="active"':''?> href="<?=site_url($acceso.'/cambio_sfid')?>"> Cambio de SFID &raquo;</a></li>

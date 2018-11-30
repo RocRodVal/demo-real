@@ -502,6 +502,21 @@ function comprobar_stock(selector,id_input)
     }
 }
 
+function comprobar_stock_final(selector,id_input)
+{
+    //var option = $(selector).find("option:selected");
+
+    var stock = $('select[name="'+selector+'"] option:selected').attr('data-stock');
+    var input = $("#"+id_input);
+
+    if(stock - input.val()<0){
+        $(input).addClass('error');
+        $(input).val("Stock insuficiente: "+stock);
+        $(input).attr('disabled',true);
+        $(input).attr('readonly',true);
+    }
+
+}
 
 
 $(document).ready(function(){

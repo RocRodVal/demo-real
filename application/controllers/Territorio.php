@@ -39,9 +39,7 @@ class Territorio extends MY_Controller {
                 $data['sfid'] = $this->session->userdata('sfid');
 
                 $xcrud = xcrud_get_instance();
-
-
-                $this->load->model(array('intervencion_model', 'incidencia_model', 'tienda_model', 'sfid_model','chat_model','categoria_model'));
+                $this->load->model(array('intervencion_model', 'incidencia_model', 'tienda_model', 'sfid_model','categoria_model'));
                 $this->load->library('app/paginationlib');
 
                 // Comprobar si existe el segmento PAGE en la URI, si no inicializar a 1..
@@ -115,13 +113,9 @@ class Territorio extends MY_Controller {
                     $data["orden_campo"] = NULL;
                 }
 
-
-                if($tipo==="abiertas")
-                {
+                if($tipo==="abiertas") {
                     $data['title'] = 'Incidencias abiertas';
-                }
-                else
-                {
+                }else{
                     $data['title'] = 'Incidencias cerradas';
                 }
 
@@ -146,9 +140,6 @@ class Territorio extends MY_Controller {
                 $incidencias = $this->incidencia_model->get_estado_incidencias($page,$cfg_pagination,$array_orden,$array_sesion,$tipo);
 
                 foreach ($incidencias as $incidencia) {
-                    //$incidencia->device = $this->sfid_model->get_device($incidencia->id_devices_pds);
-                    //$incidencia->display = $this->sfid_model->get_display($incidencia->id_displays_pds);
-                    //$incidencia->nuevos  = $this->chat_model->contar_nuevos($incidencia->id_incidencia,$incidencia->reference);
                     $incidencia->intervencion = $this->intervencion_model->get_intervencion_incidencia($incidencia->id_incidencia);
                 }
 
@@ -196,7 +187,7 @@ class Territorio extends MY_Controller {
             $xcrud = xcrud_get_instance();
 
             $ext = (!is_null($formato) ? $formato : $this->ext);    // Formato para exportaciones, especficiado o desde CFG
-            $this->load->model(array('intervencion_model', 'tienda_model', 'sfid_model','chat_model'));
+            $this->load->model('incidencia_model');
             $tipo = $this->uri->segment(3); // TIPO DE INCIDENCIA
 
             // Filtros
@@ -245,12 +236,9 @@ class Territorio extends MY_Controller {
 
 			$incidencia = $this->sfid_model->get_incidencia($id_incidencia,$id_pds);
 
-			if($incidencia == FALSE)
-			{
+			if($incidencia == FALSE){
 				redirect('territorio','refresh');
-			}
-			else
-			{
+			}else{
 				$data['id_incidencia']   = $incidencia['id_incidencia'];
 				$data['fecha']           = $incidencia['fecha'];
 				$data['fecha_cierre']    = $incidencia['fecha_cierre'];
@@ -312,9 +300,7 @@ class Territorio extends MY_Controller {
 				$this->load->view('territorio/detalle_incidencia',$data);
 				$this->load->view('territorio/footer');
 			}				
-		}
-		else
-		{
+		}else{
 			redirect('territorio','refresh');
 		}
 	}
