@@ -242,7 +242,7 @@
                                     <th class="sorting" data-rel="pds_supervisor.titulo"    data-order="">Supervisor</th>
                                     <th class="sorting"  data-rel="province.province"    data-order="">Provincia</th>
 
-		                            <th                                                                     >Interv.</th>
+		                            <!--<th                                                                     >Interv.</th>-->
 		                            <?php /*<th class="sorting" data-rel="incidencias.status"    data-order="">Estado SAT</th>*/ ?>
                                     <th class="sorting" data-rel="incidencias.status_pds"    data-order="">Estado PDS</th>
 		                            <th class="sorting" data-rel="nuevos" data-order="desc">Chat offline</th>
@@ -282,26 +282,16 @@
                                         <td class="principal"><?=($incidencia->alarm_display==1)?'Mueble: '.$mueble:'Dispositivo: '.$dispositivo?></td>
                                         <td><?=(!empty($incidencia->territory)? $incidencia->territory : '-')?></td>
                                         <td><?=(!empty($incidencia->brand)? $incidencia->brand : '-')?></td>
-
-
-                                        <?php
-                                        /*<td><?=($incidencia->alarm_display==1)?'&#x25cf;':''?></td>
-		                                <td><?=($incidencia->fail_device==1)?'&#x25cf;':''?></td>
-		                                <td><?=($incidencia->alarm_device==1)?'&#x25cf;':''?></td>
-		                                <td><?=($incidencia->alarm_garra==1)?'&#x25cf;':''?></td>*/?>
-
                                         <td>
                                             <?php $last_updated = $incidencia->last_updated;
                                             echo (is_null($last_updated)) ? "-" : date("d/m/Y", strtotime($last_updated));
                                             ?>
                                         </td>
-
-
 		                                <td><?php echo $incidencia->tipo_averia ?></td>
                                         <td><?php echo $incidencia->supervisor ?></td>
                                         <td><?php echo $incidencia->provincia ?></td>
 
-                                        <td>
+                                       <?php /* <td>
 	                                        <?php if($incidencia->intervencion != NULL){?>
 	                                        <i onClick="showModalViewIntervencion(<?php echo $incidencia->intervencion ?>);" class="fa fa-eye"></i>
 	                                        <?php }
@@ -309,10 +299,8 @@
 	                                        echo "-";
 	                                        }
 	                                        ?>
-                                        </td>
-                                        <?php /*<td><strong><?php echo $incidencia->status ?></strong></td>*/?>
+                                        </td>*/?>
 		                                <td><strong><?php echo $incidencia->status_pds ?></strong></td>
-
 		                                <td><a href="<?=site_url('master/detalle_incidencia/'.$incidencia->id_incidencia.'/'.$incidencia->id_pds)?>#chat"><strong><i class="fa fa-whatsapp <?=($incidencia->nuevos<>'0')?'chat_nuevo':'chat_leido'?>"></i></strong></a></td>
 		                            </tr>
 		                        <?php
@@ -350,4 +338,4 @@
         </div>
 
         <!-- /#page-wrapper -->
-        <?php $this->load->view('backend/intervenciones/ver_intervencion_incidencia');?>
+        <?php // $this->load->view('backend/intervenciones/ver_intervencion_incidencia');?>

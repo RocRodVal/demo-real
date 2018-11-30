@@ -1,31 +1,15 @@
 <!-- #page-wrapper -->
         <div id="page-wrapper">
-
                 <div  id="incidencias_cerradas">
-
                     <div class="col-lg-12" >
                         <h1 class="page-header"><?php echo $title ?> </h1>
 
                     </div>
                 </div>
-
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="filtro">
                             <form action="<?=base_url()?>territorio/estado_incidencias/cerradas" method="post" class="filtros form-mini autosubmit col-lg-12">
-
-                                <?php /*<div class="col-lg-2">
-                                    <label for="status">Estado SAT: </label>
-                                    <select name="status" id="status" class="form-control input-sm">
-                                        <option value="" <?php echo ($status==="") ? 'selected="selected"' : ''?>>Cualquier estado</option>
-
-                                        <option value="Resuelta" <?php echo ($status==="Resuelta") ? 'selected="selected"' : ''?>>Resuelta</option>
-                                        <option value="Pendiente recogida" <?php echo ($status==="Pendiente recogida") ? 'selected="selected"' : ''?>>Pendiente recogida</option>
-                                        <option value="Cerrada" <?php echo ($status==="Cerrada") ? 'selected="selected"' : ''?>>Cerrada</option>
-                                        <option value="Cancelada" <?php echo ($status==="Cancelada") ? 'selected="selected"' : ''?>>Cancelada</option>
-                                    </select>
-                                </div>*/?>
-
                                 <div class="col-lg-3">
                                     <label for="id_tipo">Tipo PDS: </label>
                                     <select name="id_tipo" id="id_tipo" class="form-control input-sm">
@@ -213,9 +197,7 @@
                         if (empty($incidencias)) {
                             echo '<p class="message warning"><i class="glyphicon glyphicon-warning-sign"></i> No hay incidencias cerradas.</p>';
                         } else {
-                            ?>
-
-                             <?php if($show_paginator) { ?>
+                            if($show_paginator) { ?>
                                 <div class="pagination">
                                     <ul class="pagination">
                                         <?php echo "".$pagination_helper->create_links(); ?>
@@ -232,23 +214,14 @@
                                         <th class="sorting" data-rel="incidencias.id_incidencia"    data-order="">Ref.</th>
                                         <th class="sorting" data-rel="pds.reference"                data-order="">SFID</th>
                                         <th class="sorting" data-rel="incidencias.fecha"            data-order="desc">Fecha alta</th>
-                                        <th class="principal"                                                                   >Elemento afectado</th>
-                                        <?php
-                                        /*<th class="sorting" data-rel="incidencias.alarm_display"    data-order="">Sistema general de seguridad</th>
-                                        <th class="sorting" data-rel="incidencias.fail_device"    data-order="">Dispositivo</th>
-                                        <th class="sorting" data-rel="incidencias.alarm_device"    data-order="">Alarma dispositivo cableado</th>
-                                        <th class="sorting" data-rel="incidencias.alarm_garra"    data-order="">Soporte sujección</th> */ ?>
-                                        <th class=""                                                             >Territorio</th>
-                                        <th class=""                                                             >Fabricante</th>
-
+                                        <th class="principal">Elemento afectado</th>
+                                        <th class="">Territorio</th>
+                                        <th class="">Fabricante</th>
                                         <th>Última modificación</th>
                                         <th class="sorting" data-rel="incidencias.tipo_averia"    data-order="">Tipo incidencia</th>
                                         <th class="sorting" data-rel="pds_supervisor.titulo"    data-order="">Supervisor</th>
                                         <th class="sorting"  data-rel="province.province"    data-order="">Provincia</th>
-
-                                        <th                                                                     >Interv.</th>
-
-                                        <?php /*<th class="sorting" data-rel="incidencias.status"    data-order="">Estado SAT</th>*/?>
+                                        <?php /* <th                                                                     >Interv.</th>*/?>
                                         <th class="sorting" data-rel="incidencias.status_pds"    data-order="">Estado PDS</th>
                                         <th>Chat offline</th>
                                     </tr>
@@ -263,34 +236,19 @@
                                             <td><?php echo $incidencia->reference ?></td>
                                             <td><?php echo date_format(date_create($incidencia->fecha), 'd/m/Y'); ?></td>
                                             <?php
-                                            if (!isset($incidencia->device))
-                                            {
+                                            if (!isset($incidencia->device)){
                                                 $dispositivo = 'Retirado';
-                                            }
-                                            else
-                                            {
+                                            }else{
                                                 $dispositivo = $incidencia->device;
                                             }
-                                            if (!isset($incidencia->display))
-                                            {
+                                            if (!isset($incidencia->display)){
                                                 $mueble = 'Retirado';
-                                            }
-                                            else
-                                            {
+                                            }else{
                                                 $mueble = $incidencia->display;
-                                            }
-                                            ?>
+                                            }?>
                                             <td class="principal"><?=($incidencia->alarm_display==1)?'Mueble: '.$mueble:'Dispositivo: '.$dispositivo?></td>
-                                            <?php /*
-
-		                                <td><?=($incidencia->alarm_display==1)?'&#x25cf;':''?></td>
-		                                <td><?=($incidencia->fail_device==1)?'&#x25cf;':''?></td>
-		                                <td><?=($incidencia->alarm_device==1)?'&#x25cf;':''?></td>
-		                                <td><?=($incidencia->alarm_garra==1)?'&#x25cf;':''?></td> */?>
-
                                             <td><?=(!empty($incidencia->territory)? $incidencia->territory : '-')?></td>
                                             <td><?=(!empty($incidencia->brand)? $incidencia->brand : '-')?></td>
-
                                             <td>
                                                 <?php $last_updated = $incidencia->last_updated;
                                                 echo (is_null($last_updated)) ? "-" : date("d/m/Y", strtotime($last_updated));
@@ -299,20 +257,7 @@
                                             <td><?php echo $incidencia->tipo_averia ?></td>
                                             <td><?php echo $incidencia->supervisor ?></td>
                                             <td><?php echo $incidencia->provincia ?></td>
-
-                                            <td>
-                                                <?php if($incidencia->intervencion != NULL){?>
-                                                    <i onClick="showModalViewIntervencion(<?php echo $incidencia->intervencion ?>);" class="fa fa-eye"></i>
-                                                <?php }
-                                                else{
-                                                    echo "-";
-                                                }
-                                                ?>
-                                            </td>
-                                            <?php /*<td><strong><?php echo $incidencia->status ?></strong></td>*/?>
-
                                             <td><strong><?php echo $incidencia->status_pds ?></strong></td>
-
                                             <td><a href="<?=site_url('territorio/detalle_incidencia/'.$incidencia->id_incidencia.'/'.$incidencia->id_pds)?>#chat"><strong><i class="fa fa-whatsapp <?=($incidencia->nuevos<>'0')?'chat_nuevo':'chat_leido'?>"></i></strong></a></td>
                                         </tr>
                                     <?php
@@ -325,7 +270,6 @@
                                     <input type="hidden" name="form_orden_orden_campo" value="">
                                     <input type="hidden" name="form"  value="">
                                     <input type="hidden" name="ordenar" value="true">
-                                    <?php //<input type="submit"> ?>
                                 </form>
                                 <script>
                                     <?php if(!empty($campo_orden) && !empty($orden_campo)) {?>
@@ -347,4 +291,4 @@
                 </div>
         </div>
         <!-- /#page-wrapper -->
-        <?php $this->load->view('backend/intervenciones/ver_intervencion_incidencia');?>
+        <?php //$this->load->view('backend/intervenciones/ver_intervencion_incidencia');?>
