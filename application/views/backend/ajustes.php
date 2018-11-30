@@ -77,6 +77,16 @@
                             }
                             ?>
                         </tr>
+                        <tr>
+                            <th>Almacén</th>
+                            <?php
+                            if (!empty($valor_resultado)) {
+                                foreach ($valor_resultado as $clave => $valor) {
+                                    echo "<td><input size='5' type='text' name='almacen[]' value=".$valor['almacen']." ></td>";
+                                }
+                            }
+                            ?>
+                        </tr>
                         <tr><td colspan="<?=count($meses_columna)?>"></td>
                            <td><input type="hidden" name="anio" value="<?=$anio?>"/>
                                <input type="submit" value="Guardar" id="submit_button" class="form-control input-sm"/></td></tr>

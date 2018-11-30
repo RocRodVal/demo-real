@@ -5896,7 +5896,7 @@ class Admin extends MY_Controller
             /*Numero total de intervenciones de un determinado año*/
             $resultados_3 = $this->tablona_model->get_totalIntervenciones();
 
-            $interv_term_mas = $this->informe_model->get_ajustes_totales($anio);
+            $interv_term_almacen_mas = $this->informe_model->get_ajustes_totales($anio);
 
             // CREAMOS UN ARRAY CON TODOS LOS MESES Y LO RELLENAMOS CON LOS RESULTADOS, SI NO                                                                                                                                                                                                                      EXISTE RESULTADO, ESE MES
             // SERA DE CANTIDAD 0
@@ -5914,7 +5914,7 @@ class Admin extends MY_Controller
                         break;
                     }
                 }
-                foreach($interv_term_mas as $valor){
+                foreach($interv_term_almacen_mas as $valor){
                     if($valor->mes==$num_mes){
                         //if (array_key_exists("mes", $valor) && $v["mes"] == $num_mes && $v["anio"] == $este_anio) {
                             $intervenciones_anio[$num_mes]->cantidad = $intervenciones_anio[$num_mes]->cantidad + $valor->intervenciones;
@@ -5966,7 +5966,7 @@ class Admin extends MY_Controller
                         break;
                     }
                 }
-                foreach($interv_term_mas as $valor){
+                foreach($interv_term_almacen_mas as $valor){
                     if($valor->mes==$num_mes){
                         $terminales_anio[$num_mes]->cantidad = $terminales_anio[$num_mes]->cantidad + $valor->terminales;
                         break;
@@ -6114,7 +6114,15 @@ class Admin extends MY_Controller
                 //$aux2 = $this->tablona_model->getTerminalesAlmacen($aux1);
                 $terminalesAlmacen[$num_mes]->cantidad = count($aux1);//+count($aux2);
 
+                foreach($interv_term_almacen_mas as $valor){
+                    if($valor->mes==$num_mes){
+                        $terminalesAlmacen[$num_mes]->cantidad = $terminalesAlmacen[$num_mes]->cantidad + $valor->almacen;
+                        break;
+                    }
+                }
+
             }
+
             $data['terminalesAlmacen']=$terminalesAlmacen;
 
 
@@ -6920,7 +6928,7 @@ class Admin extends MY_Controller
             $this->load->helper("common");
             $this->load->model(array("informe_model", "tablona_model"));
 
-            $title = 'Ajustar intervenciones / dispositivos por años';
+            $title = 'Ajustar intervenciones / dispositivos / Almacen por años';
             $anio='';
             if (!empty($_POST) && ($this->input->post("generar_tabla") ==='si')) {
 
@@ -6933,9 +6941,6 @@ class Admin extends MY_Controller
                     setlocale(LC_ALL, 'es_ES');
 
                     $xcrud_1 = xcrud_get_instance();
-                   // $xcrud_1->table_name('ajustes');
-
-                    //$ajustes=$this->informe_model->get_ajustes($anio);
 
                     // Rango de meses que mostrarán las columnas de la tabla, basándome en el mínimo y máximo mes que hay incidencias, este año.
                     $rango_meses = $this->informe_model->get_rango_meses($anio);
@@ -6990,11 +6995,12 @@ class Admin extends MY_Controller
                 $anio=$this->input->post('anio');
                 $intervenciones = $_POST['intervenciones'];
                 $terminales = $_POST['terminales'];
+                $almacen = $_POST['almacen'];
 
                 if (!empty($anio)) {
                     setlocale(LC_ALL, 'es_ES');
                     $xcrud = xcrud_get_instance();
-                    $this->informe_model->update_ajustes_totales($anio,$intervenciones,$terminales);
+                    $this->informe_model->update_ajustes_totales($anio,$intervenciones,$terminales,$almacen);
                     $mensaje="Datos actualizados correctamente para el año ".$anio;
                 }
             }
