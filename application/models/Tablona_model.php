@@ -93,9 +93,7 @@ class Tablona_model extends CI_Model {
     public function getTerminalesAltaHistoricoAlmacen($anio,$mes){
 
         $sql="select DISTINCT(h.id_devices_almacen) from historico_io h 
-              inner join historicoDevicesAlmacen_temp t on t.maxId=h.id_historico_almacen
-              inner join devices_almacen da on da.id_devices_almacen = h.id_devices_almacen and da.status!='Baja' AND da.status!='Enviado'
-              and da.status is not null
+              inner join historicoDevicesAlmacen_temp t on t.maxId=h.id_historico_almacen 
               where (h.status='En stock' OR h.status='Televenta' OR h.status='Reservado' OR h.status='Transito' OR h.status='RMA')";
         $query= $this->db->query($sql);
 
