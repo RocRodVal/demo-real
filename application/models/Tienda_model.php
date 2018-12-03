@@ -2881,7 +2881,7 @@ class Tienda_model extends CI_Model {
     /**
      * Insertar mueble SFID
      */
-    function anadir_mueble_sfid($display,$pds,$position = NULL,$id_tipo_alarmado=NULL)
+    function anadir_mueble_sfid($display,$pds,$tipo="noApertura",$position = NULL,$id_tipo_alarmado=NULL)
     {
         $id_displays_pds=-1;
         // Si no están vacíos los objetos MUEBLE y PDS
@@ -2952,6 +2952,8 @@ class Tienda_model extends CI_Model {
                         'status' => 'Alta',
                         'motivo' => APERTURA
                     );
+                    if($tipo=="noApertura")
+                        $elemento['motivo']=ADDMUEBLE;
 
                     $this->db->insert('historico_devicesPDS', $elemento);
                 }
@@ -3038,10 +3040,22 @@ class Tienda_model extends CI_Model {
                         $SQL = "UPDATE devices_pds SET status='Baja' WHERE id_displays_pds=".$displays_pds->id_displays_pds.
                         " AND status='Alta'";
                         $this->db->query($SQL);
+
                         $SQL = "UPDATE displays_pds SET status='Baja' WHERE id_displays_pds=".$displays_pds->id_displays_pds;
                         $this->db->query($SQL);
                         $resultado =array ("resultado"=>1,"sfid"=>$pds->reference,"mueble" => $displays_pds->id_displays_pds,"dispositivos"=>count($devices_pds),
                             "mensaje" =>" Tiene ".count($devices_pds)." dispositivos");
+
+                        foreach ($devices_pds as $device){
+                            $elemento = array(
+                                'id_devices_pds' => $device->id_devices_pds,
+                                'fecha' => date('Y-m-d H:i:s'),
+                                'status' => 'Baja',
+                                'motivo' => REMOVEMUEBLE
+                            );
+                            // print_r($elemento); echo "<br>";
+                            $this->insert_historico_devicesPDS($elemento);
+                        }
                     }else {
                         $SQL = "SELECT * FROM devices_pds WHERE id_displays_pds = ".$displays_pds->id_displays_pds." AND (status ='RMA' OR status='Incidencia')";
                         //echo $SQL; exit;
