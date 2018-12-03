@@ -521,7 +521,7 @@ class Admin extends MY_Controller
                 foreach($muebles as $mueble)
                 {
 
-                    $id_mueble=$this->tienda_model->anadir_mueble_sfid($mueble,$PDS,$mueble->position);
+                    $id_mueble=$this->tienda_model->anadir_mueble_sfid($mueble,$PDS,"apertura",$mueble->position);
                     if ($id_mueble!=-1) {
                         $asset = array("drId" => $id_mueble, "assetType" => array("drId" => $mueble->id_display), "location" => array("code" => $sfid));
                         array_push($assets['assets'], $asset);
@@ -5751,7 +5751,7 @@ class Admin extends MY_Controller
 
                             $checked_sfids[$sfid] = $check_sfid;
 
-                            $id_display_pds=$this->tienda_model->anadir_mueble_sfid($display,$check_sfid,$position,$id_tipo_alarmado);
+                            $id_display_pds=$this->tienda_model->anadir_mueble_sfid($display,$check_sfid,"noApertura",$position,$id_tipo_alarmado);
 
                             if ($id_display_pds!=-1) {
                                 $asset = array("drId" => $id_display_pds, "assetType" => array("drId" => $display->id_display), "location" => array("code" => $sfid));
