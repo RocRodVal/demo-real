@@ -1639,10 +1639,14 @@ class Admin extends MY_Controller
                     );
                     $this->tienda_model->reservar_dispositivos($this->input->post('dipositivo_almacen_1'), 2, $id_inc);
                     $this->tienda_model->incidencia_update_material($dipositivo_almacen_1,true);
-                }else{
-                    $error = "La cantidad no puede estar vacio";
+                }else {
+                    if(($this->input->post('dipositivo_almacen_1'))<>'') {
+                        if ($this->input->post('units_dipositivo_almacen_1') == '') {
+                            $error = "La cantidad del dispositivo asignado no puede estar vacia";
 
-                    redirect('admin/update_incidencia_materiales/' . $id_pds . '/' . $id_inc . '/2/3/' . $error);
+                            redirect('admin/update_incidencia_materiales/' . $id_pds . '/' . $id_inc . '/2/3/' . $error);
+                        }
+                    }
                 }
             }
         }
