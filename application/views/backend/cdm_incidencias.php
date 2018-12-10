@@ -435,7 +435,7 @@
 
                 <tr>
                     <th>Terminales en tienda</th>
-                    <?php /* TERMINALES EN ALMACEN */
+                    <?php /* TERMINALES EN TIENDA */
                     foreach($terminalesTienda as $key=>$valor)
                          if($valor->cantidad==0)
                              echo '<td> --</td>';
@@ -448,7 +448,7 @@
                     <th>Terminales en almacén</th>
                     <?php /* TERMINALES EN ALMACEN */
                     foreach($terminalesAlmacen as $key=>$valor)
-                        if($valor->cantidad==0)
+                        if($valor->cantidad==0 ||($anio<2018) || ($anio==2018 && $key<11 ))
                             echo '<td> --</td>';
                     else
                         echo '<td>'.$valor->cantidad.'</td>';
