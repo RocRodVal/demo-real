@@ -2195,6 +2195,7 @@ class Admin extends MY_Controller
 					display.display AS Mueble,
 					device.device AS Dispositivo,
 					incidencias.tipo_averia AS Tipo,
+					tipo_robo.title as "Tipo robo",
 					incidencias.fail_device AS "Fallo dispositivo",
 					incidencias.alarm_display "Alarma mueble",
 					incidencias.alarm_device "Alarma dispositivo",
@@ -2213,8 +2214,8 @@ class Admin extends MY_Controller
 				LEFT JOIN displays_pds ON incidencias.id_displays_pds = displays_pds.id_displays_pds
 				LEFT JOIN display ON displays_pds.id_display = display.id_display
 				LEFT JOIN devices_pds ON incidencias.id_devices_pds = devices_pds.id_devices_pds
-				LEFT JOIN device ON devices_pds.id_device = device.id_device');
-
+				LEFT JOIN device ON devices_pds.id_device = device.id_device
+				LEFT JOIN tipo_robo ON incidencias.id_tipo_robo=tipo_robo.id');
             $data['title'] = 'Export incidencias';
             $data['content'] = $xcrud_SQL->render();
 
