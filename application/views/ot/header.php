@@ -5,8 +5,8 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
+    <meta name="description" content="Este sitio es propiedad de Focus On Emotions Desarrollado para Orange SA.">
+    <meta name="author" content="Focus On Emotions">
     <title><?php echo lang('comun.titulo') ?> &gt; OT &gt; <?php if (isset($title)): ?><?= $title ?><?php else: ?>Mis incidencias<?php endif; ?></title>
     <link href="<?= site_url('assets/css/bootstrap.min.css') ?>" rel="stylesheet">
     <link href="<?= site_url('assets/css/plugins/metisMenu/metisMenu.min.css') ?>" rel="stylesheet">
