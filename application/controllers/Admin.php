@@ -791,6 +791,7 @@ class Admin extends MY_Controller
             $data['title'] = 'Operativa incidencia Ref. '.$data['id_inc_url'];
 
             $data['messageParte'] = $this->session->flashdata("messageParte");
+            $data['messageFoto'] = $this->session->flashdata("messageFoto");
 
             /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
             $this->data->add($data);
@@ -7178,6 +7179,116 @@ class Admin extends MY_Controller
             redirect('admin', 'refresh');
         }
     }
+
+    /*Agregar la foto de cierre de la incidencia usada para facturacion*/
+    public function insert_fotoCierre()
+    {
+        if ($this->auth->is_auth()) {
+            $id_pds = $this->uri->segment(3);
+            $id_inc = $this->uri->segment(4);
+
+            $xcrud = xcrud_get_instance();
+            $this->load->model('incidencia_model');
+
+            $config['upload_path'] = dirname($_SERVER["SCRIPT_FILENAME"]) . '/uploads/fotos/';
+            $config['upload_url'] = base_url() . '/uploads/fotos/';
+            $config['allowed_types'] = 'jpg|jpeg|png';
+            $new_name = $id_inc . '-' . time();
+            $config['file_name'] = $new_name;
+            $config['overwrite'] = TRUE;
+            $config['max_size'] = '10000KB';
+
+            $this->load->library('upload', $config);
+
+
+            $foto_cierre = '';
+            $message="";
+            if ($this->upload->do_upload('userfile')) {
+                $data = $this->upload->data();
+                $foto_cierre = $data['file_name'];
+            } else {
+                //echo $this->upload->display_errors();
+                $message= 'Ha fallado la carga de la foto de cierre de la incidencia. '.$this->upload->display_errors();
+            }
+            $this->session->set_flashdata("messageFoto",$message);
+            $data['messageFoto'] = (validation_errors() ? validation_errors() : ($message));
+
+            $this->incidencia_model->set_fotoCierre($id_inc, $foto_cierre);
+
+            redirect('admin/operar_incidencia/' . $id_pds . '/' . $id_inc, 'refresh');
+        }
+    }
+
+    /*Se actualiza el registro de la incidencia para indicar que no hay foto del cierre y se elimina el fichero dl directorio
+    uploads/fotos
+    */
+    public function borrar_fotoCierre()
+    {
+        if ($this->auth->is_auth()) {
+            $id_pds = $this->uri->segment(3);
+            $id_inc = $this->uri->segment(4);
+
+            $xcrud = xcrud_get_instance();
+            $this->load->model('incidencia_model');
+
+            $foto=$this->incidencia_model->delete_fotoCierre($id_inc);
+
+            if(!empty($foto['foto_cierre'])){
+                unlink("uploads/fotos/".$foto['foto_cierre']);
+            }
+
+            redirect('admin/operar_incidencia/' . $id_pds . '/' . $id_inc, 'refresh');
+        }
+    }
+
+    /*Se realiza la exportación de todas las imagenes*/
+    public function exportar_fotosCierre($fecha_inicio,$fecha_fin,$fabricante=NULL){
+        if ($this->auth->is_auth()) {
+            $data['id_pds'] = $this->session->userdata('id_pds');
+            $data['sfid'] = $this->session->userdata('sfid');
+
+            $this->load->helper('my_string');
+
+            $xcrud = xcrud_get_instance();
+            $this->load->model(array('incidencia_model','client_model'));
+            $files = $this->incidencia_model->exportar_fotosCierre(urldecode($fecha_inicio),urldecode($fecha_fin),$fabricante);
+
+            // GENERAR NOMBRE DE FICHERO
+            $filename["fabricante"] = (!is_null($fabricante)) ? $this->client_model->getById($fabricante)->getName() : NULL;
+            foreach($filename as $key=>$f_name)
+            {
+                $filename[$key] = str_sanitize($f_name);
+            }
+            $filename["from"] = date("d-m-Y",strtotime($fecha_inicio));     // Campo no saneable
+            $filename["to"] = date("d-m-Y",strtotime($fecha_fin));          // Campo no saneable
+            $f_nombre = implode("__",$filename);
+
+            $zipname = 'facturacionFotos-'.$f_nombre.".zip";
+            $zip = new ZipArchive;
+            $zip->open($zipname, ZipArchive::CREATE);
+            foreach ($files as $file){
+                if(!empty($file->foto_cierre)) {
+                    $path = "uploads/fotos/" . $file->foto_cierre;
+                    if (file_exists($path)) {
+                        $zip->addFile($path);
+                    }
+                }
+            }
+            $zip->close();
+            if(!empty($zip)) {
+                header("Content-type: application/zip");
+                header("Content-Disposition: attachment; filename=$zipname");
+                header("Pragma: no-cache");
+                header("Expires: 0");
+                readfile("$zipname");
+                exit;
+            }
+        } else {
+            redirect('admin', 'refresh');
+        }
+
+    }
 }
+
 /* End of file admin.php */
 /* Location: ./application/controllers/admin.php */

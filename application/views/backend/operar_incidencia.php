@@ -174,8 +174,6 @@
                                             echo 'disabled';
                                         } ?> />
 
-                                        <?php // echo "ESTHER ".$status_device_incidencia;?>
-
                                     </div>
                                 </form>
 
@@ -193,7 +191,6 @@
                                         ) {
                                             echo 'disabled';
                                         } ?> />
-                                        <?php // echo "ESTHER ".$status_device_incidencia;?>
                                         <span class="fecha_status"><?= $historico_fecha_sustituido ?></span>
                                     </div>
                                 </form>
@@ -260,13 +257,6 @@
                             } ?>>Cerrar</a>
                         </div>
                         <div class="col-lg-12 labelText grey"><i class="fa fa-fire-extinguisher fa-fw"></i> Usar con cuidado</div>
-                        <!--//
-                        <div class="col-lg-7 labelText grey">Puesta a cero (borrado pasos previos)</div>
-                        <div class="col-lg-5 labelBtn grey">
-                            <a href="<?= site_url('admin/update_incidencia_puesta_a_cero/' . $id_pds_url . '/' . $id_inc_url . '/1/1') ?>"
-                               classBtn="status" class="btn btn-danger">Puesta a cero</a></td>
-                        </div>
-                        //-->                         
                         <div class="col-lg-7 labelText grey">Cierre forzoso (act. externas)</div>
                         <div class="col-lg-5 labelBtn grey">
                             <a href="<?= site_url('admin/update_incidencia/' . $id_pds_url . '/' . $id_inc_url . '/4/8/ext') ?>"
@@ -322,6 +312,54 @@
                                 [<a href="<?= site_url('uploads/partes/' .pathinfo($incidencia['parte_pdf'],PATHINFO_FILENAME)) ?>" target="_blank">ver parte</a>]
                                 <a href="<?=site_url("admin/borrar_parteTecnico/".$id_pds_url."/".$id_inc_url) ?>" classbtn="status" class="btn btn-danger" >Eliminar parte</a>
                             <?php
+                            } ?>
+                        </div>
+                    </div>
+                </div>
+
+
+
+            </div>
+            <!--Agregar la imagen de la incidencia-->
+            <div class="row" id="fotoIncidencia" <?php if ($incidencia['status']!=='Resuelta') {
+                echo ' style="display: none;"';
+            }
+            ?>>
+                <div class="col-lg-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            Foto de cierre de la incidencia
+                        </div>
+                        <div class="panel-body">
+                            <?php if($incidencia['foto_cierre']=="") { ?>
+                                <form action="<?= site_url('admin/insert_fotoCierre/' . $id_pds_url . '/' . $id_inc_url) ?>"
+                                    method="post" class="content_auto form_login" enctype="multipart/form-data">
+                                    <table border="0" width="100%">
+                                        <tbody>
+                                        <tr>
+                                            <th><label for="foto_incidencia">Foto de cierre de la incidencia: </label></th>
+                                            <td>
+                                                <input id="foto_cierre" class="file" type="file" multiple=false
+                                                       name="userfile" accept=".jpg,.jpeg,.png" >
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td align="left" colspan="4">
+                                                <input type="submit" value="Subir" name="submit"
+                                                       class="btn btn-success">
+                                            </td>
+                                        </tr>
+                                        <span class="red"><strong> <?=$messageFoto ?></strong></span>
+                                        </tbody>
+                                    </table>
+
+                                </form>
+                                <?php
+                            }else {?>
+                                [<a href="<?= site_url('uploads/fotos/' .pathinfo($incidencia['foto_cierre'],PATHINFO_FILENAME)) ?>" target="_blank">ver foto</a>]
+                                <a href="<?=site_url("admin/borrar_fotoCierre/".$id_pds_url."/".$id_inc_url) ?>" classbtn="status" class="btn btn-danger" >Eliminar foto</a>
+                                <?php
                             } ?>
                         </div>
                     </div>
