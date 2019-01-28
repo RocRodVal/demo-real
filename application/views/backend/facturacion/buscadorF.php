@@ -1,12 +1,3 @@
-<?php
-/**
- * Created by PhpStorm.
- * User: dbourgon
- * Date: 31/08/2015
- * Time: 17:41
- */
-?>
-
 <div class="row">
     <div class="col-lg-12">
         <?php
@@ -43,20 +34,7 @@
                         ?>
                     </select>
                 </div>
-<!--
-                <div class="form-group">
-                    <label>Instalador</label>
 
-                    <select class="form-control" name="instalador" id="instalador">
-                        <option value="">Todos</option>
-                        <?php /*
-                        foreach($select_instaladores as $inst){
-                            $option_selected = ($instalador == $inst->id_contact) ? 'selected ="selected" ' : '';
-                            echo '<option value="'.$inst->id_contact.'" '.$option_selected.'>'.$inst->contact.'</option>';
-                        }*/
-                        ?>
-                    </select>
-                </div> -->
 
                 <div class="form-group">
                     <input type="hidden" name="generar_facturacion" value="si">

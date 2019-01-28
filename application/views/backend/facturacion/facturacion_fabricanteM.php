@@ -22,7 +22,10 @@
 
 
 					?>
-					<h1 class="page-header">Fabricante [descargar <a href="<?=site_url('admin/exportar_facturacion_fabricanteM/'.$fecha_inicio.'/'.$fecha_fin.'/'.$fabricante);?>">Exportar Excel</a>]</h1>
+					<h1 class="title">Fabricante [descargar]
+						<a href="<?=site_url('admin/exportar_facturacion_fabricanteM/'.$fecha_inicio.'/'.$fecha_fin.'/'.$fabricante);?>">Exportar Excel</a>
+						<a href="<?=site_url('admin/exportar_fotosCierre/'.$fecha_inicio.'/'.$fecha_fin.'/'.$fabricante);?>">Exportar Fotos</a></h1>
+
 					<div class="table-responsive">
 						<p><strong>Rango:</strong> <?php echo date("d/m/Y",strtotime($fecha_inicio)); ?> - <?php echo date("d/m/Y",strtotime($fecha_fin)); ?></p>
 
@@ -67,7 +70,7 @@
 									<td><?=(!empty($item_facturacion->dispositivos) ) ? $item_facturacion->dispositivos :"0" ?></td>
 									<td><?php echo $item_facturacion->descripcion ?></td>
 									<td><?php echo $item_facturacion->solucion ?></td>
-									<td><?php echo date("d/m/Y",strtotime($item_facturacion->cierre)); ?></td>
+									<td><?=!empty($item_facturacion->cierre) ? date("d/m/Y",strtotime($item_facturacion->cierre)) : "--"; ?></td>
 
 								</tr>
 								<?php

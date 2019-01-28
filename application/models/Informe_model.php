@@ -1046,7 +1046,7 @@ class Informe_model extends CI_Model
                             REPLACE(REPLACE(incidencias.description_2,CHAR(10),CHAR(32)),CHAR(13),CHAR(32))  as description_2,
                             REPLACE(REPLACE(incidencias.description_3,CHAR(10),CHAR(32)),CHAR(13),CHAR(32))  as description_3,
                             incidencias.parte_pdf, incidencias.denuncia, incidencias.foto_url, incidencias.foto_url_2,
-                            incidencias.foto_url_3, incidencias.contacto, incidencias.phone, incidencias.email,incidencias.id_operador,
+                            incidencias.foto_cierre, incidencias.contacto, incidencias.phone, incidencias.email,incidencias.id_operador,
                             incidencias.intervencion,';
 
         $sql .= 'incidencias.status as `Estado`,
@@ -1180,7 +1180,7 @@ class Informe_model extends CI_Model
                             REPLACE(REPLACE(incidencias.description_2,CHAR(10),CHAR(32)),CHAR(13),CHAR(32))  as description_2,
                             REPLACE(REPLACE(incidencias.description_3,CHAR(10),CHAR(32)),CHAR(13),CHAR(32))  as description_3,
                             incidencias.parte_pdf, incidencias.denuncia, incidencias.foto_url, incidencias.foto_url_2,
-                            incidencias.foto_url_3, incidencias.contacto, incidencias.phone, incidencias.email,incidencias.id_operador,
+                            incidencias.foto_cierre, incidencias.contacto, incidencias.phone, incidencias.email,incidencias.id_operador,
                             incidencias.intervencion,';
 
         $sql .= 'incidencias.status as `Estado`,
