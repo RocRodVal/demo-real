@@ -1343,15 +1343,9 @@ class Tienda_model extends CI_Model {
         $this->load->helper(array('file','csv'));
         $this->load->helper('download');
         $this->load->helper('my_string');
-
         $this->load->model(array("contact_model","client_model"));
 
-/*
- * case when unidades_robadas is NULL then 0 else unidades_robadas end) as unidades_robadas,
-		unidades_televenta,
- */
         // REALIZAMOS LA CONSULTA A LA BD
-
         $query = $this->db->select('facturacion.id_incidencia as incidencia,
                                     facturacion.id_intervencion as intervencion,
                                     facturacion.fecha as fecha,
@@ -1376,9 +1370,7 @@ class Tienda_model extends CI_Model {
                         ->join('incidencias','facturacion.id_incidencia = incidencias.id_incidencia','left')
                         ->join('client','display.client_display= client.id_client','left')
                         ->join('solucion_incidencia','solucion_incidencia.id_solucion_incidencia = incidencias.id_solucion_incidencia','left')
-                        //->join('contact','intervenciones.id_operador = contact.id_contact', 'left')
                         ->join('intervenciones','facturacion.id_intervencion = intervenciones.id_intervencion', 'left')
-                       // ->join('material_incidencias','material_incidencias.id_incidencia = incidencias.id_incidencia')
                         ->where('facturacion.fecha >=',urldecode($fecha_inicio))
                         ->where('facturacion.fecha <=',urldecode($fecha_fin))
                         ->where('client.facturable','1') //Que sea facturable
@@ -1389,22 +1381,20 @@ class Tienda_model extends CI_Model {
             $query = $this->db->where('client.id_client',$fabricante);
 
         }
-        //$query = $this->db->group_by('facturacion.id_intervencion')
         $query = $this->db->order_by('facturacion.fecha')
             ->order_by('client.client')
             ->order_by('facturacion.id_intervencion,facturacion.id_incidencia')
             ->get('facturacion');
 
         $resultado = $query->result();
-        //echo $this->db->last_query(); exit;
+
         $titulos=array('Intervención','Incidencia','Fecha','SFID','Nombre','Direccion','Ciudad','Mueble','Fabricante',
             'Nº terminales','Descripcion de tienda del error','Solucion','Cierre');
-      //  $excluir=array('status_pds','visita');
         $excluir=array();
 
 
         // GENERAR NOMBRE DE FICHERO
-        $filename["fabricante"] = (!is_null($fabricante)) ? $this->client_model->getById($fabricante)->getName() : NULL;
+        $filename["fabricante"] = (!is_null($fabricante) && $fabricante!=0) ? $this->client_model->getById($fabricante)->getName() : "Todos";
         foreach($filename as $key=>$f_name)
         {
             $filename[$key] = str_sanitize($f_name);

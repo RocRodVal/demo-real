@@ -70,7 +70,7 @@
 									<td><?=(!empty($item_facturacion->dispositivos) ) ? $item_facturacion->dispositivos :"0" ?></td>
 									<td><?php echo $item_facturacion->descripcion ?></td>
 									<td><?php echo $item_facturacion->solucion ?></td>
-									<td><?php echo date("d/m/Y",strtotime($item_facturacion->cierre)); ?></td>
+									<td><?=!empty($item_facturacion->cierre) ? date("d/m/Y",strtotime($item_facturacion->cierre)) : "--"; ?></td>
 
 								</tr>
 								<?php

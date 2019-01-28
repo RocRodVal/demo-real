@@ -7254,9 +7254,10 @@ class Admin extends MY_Controller
             $files = $this->incidencia_model->exportar_fotosCierre($fecha_inicio,$fecha_fin,$fabricante);
 
             // GENERAR NOMBRE DE FICHERO
-            $filename["fabricante"] = (!is_null($fabricante)) ? $this->client_model->getById($fabricante)->getName() : NULL;
+            $filename["fabricante"] = (!is_null($fabricante) && ($fabricante!=0)) ? $this->client_model->getById($fabricante)->getName() : "Todos";
             $filename["from"] = date("d-m-Y",strtotime(urldecode($fecha_inicio)));     // Campo no saneable
             $filename["to"] = date("d-m-Y",strtotime(urldecode($fecha_fin)));          // Campo no saneable
+
             $f_nombre = implode("__",$filename);
 
             $zipname = 'facturacionFotos-'.$f_nombre.".zip";
