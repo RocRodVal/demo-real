@@ -7251,16 +7251,12 @@ class Admin extends MY_Controller
 
             $xcrud = xcrud_get_instance();
             $this->load->model(array('incidencia_model','client_model'));
-            $files = $this->incidencia_model->exportar_fotosCierre(urldecode($fecha_inicio),urldecode($fecha_fin),$fabricante);
+            $files = $this->incidencia_model->exportar_fotosCierre($fecha_inicio,$fecha_fin,$fabricante);
 
             // GENERAR NOMBRE DE FICHERO
             $filename["fabricante"] = (!is_null($fabricante)) ? $this->client_model->getById($fabricante)->getName() : NULL;
-            foreach($filename as $key=>$f_name)
-            {
-                $filename[$key] = str_sanitize($f_name);
-            }
-            $filename["from"] = date("d-m-Y",strtotime($fecha_inicio));     // Campo no saneable
-            $filename["to"] = date("d-m-Y",strtotime($fecha_fin));          // Campo no saneable
+            $filename["from"] = date("d-m-Y",strtotime(urldecode($fecha_inicio)));     // Campo no saneable
+            $filename["to"] = date("d-m-Y",strtotime(urldecode($fecha_fin)));          // Campo no saneable
             $f_nombre = implode("__",$filename);
 
             $zipname = 'facturacionFotos-'.$f_nombre.".zip";
@@ -7281,6 +7277,7 @@ class Admin extends MY_Controller
                 header("Pragma: no-cache");
                 header("Expires: 0");
                 readfile("$zipname");
+                unlink($zipname);
                 exit;
             }
         } else {

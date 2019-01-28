@@ -960,7 +960,6 @@ class Incidencia_model extends CI_Model {
             $query = $this->db->where('client.id_client',$fabricante);
         }
         $query = $this->db->get('facturacion');
-
         $resultado = $query->result();
 
         return $resultado;
