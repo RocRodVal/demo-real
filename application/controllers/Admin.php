@@ -7192,7 +7192,7 @@ class Admin extends MY_Controller
 
             $config['upload_path'] = dirname($_SERVER["SCRIPT_FILENAME"]) . '/uploads/fotos/';
             $config['upload_url'] = base_url() . '/uploads/fotos/';
-            $config['allowed_types'] = 'jpg|jpeg|png';
+            $config['allowed_types'] = 'pdf|jpg|jpeg|png';
             $new_name = $id_inc . '-' . time();
             $config['file_name'] = $new_name;
             $config['overwrite'] = TRUE;

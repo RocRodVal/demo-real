@@ -340,7 +340,7 @@
                                             <th><label for="foto_incidencia">Foto de cierre de la incidencia: </label></th>
                                             <td>
                                                 <input id="foto_cierre" class="file" type="file" multiple=false
-                                                       name="userfile" accept=".jpg,.jpeg,.png" >
+                                                       name="userfile" accept=".pdf,.jpg,.jpeg,.png" >
 
                                             </td>
                                         </tr>
