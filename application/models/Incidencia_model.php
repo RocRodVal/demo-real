@@ -953,7 +953,8 @@ class Incidencia_model extends CI_Model {
             ->where('facturacion.fecha >=',urldecode($fecha_inicio))
             ->where('facturacion.fecha <=',urldecode($fecha_fin))
             ->where('client.facturable','1') //Que sea facturable
-            ->where('client.type_profile_client','2'); //Tipo de cliente fabricante
+            ->where('client.type_profile_client','2') //Tipo de cliente fabricante
+            ->where('foto_cierre !=','');
 
 
         if(!is_null($fabricante) && !empty($fabricante)){

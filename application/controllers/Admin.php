@@ -4133,6 +4133,7 @@ class Admin extends MY_Controller
             $data['fabricante'] = $fabricante;
             $data['title'] = 'Facturación de fabricante';
             $data['accion'] = 'admin/facturacion_fabricanteM';
+            //$data['messageFoto']=$this->session->flashdata("messageFoto");
 
             /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
             $this->data->add($data);
@@ -7192,7 +7193,7 @@ class Admin extends MY_Controller
 
             $config['upload_path'] = dirname($_SERVER["SCRIPT_FILENAME"]) . '/uploads/fotos/';
             $config['upload_url'] = base_url() . '/uploads/fotos/';
-            $config['allowed_types'] = 'jpg|jpeg|png';
+            $config['allowed_types'] = 'pdf|jpg|jpeg|png';
             $new_name = $id_inc . '-' . time();
             $config['file_name'] = $new_name;
             $config['overwrite'] = TRUE;
@@ -7271,16 +7272,18 @@ class Admin extends MY_Controller
                     }
                 }
             }
-            $zip->close();
-            if(!empty($zip)) {
-                header("Content-type: application/zip");
-                header("Content-Disposition: attachment; filename=$zipname");
-                header("Pragma: no-cache");
-                header("Expires: 0");
-                readfile("$zipname");
-                unlink($zipname);
-                exit;
-            }
+
+
+           if(!empty($zip)) {
+               $zip->close();
+               header("Content-type: application/zip");
+               header("Content-Disposition: attachment; filename=$zipname");
+               header("Pragma: no-cache");
+               header("Expires: 0");
+               readfile("$zipname");
+               unlink($zipname);
+               exit;
+           }
         } else {
             redirect('admin', 'refresh');
         }
