@@ -489,7 +489,8 @@ class Tienda_model extends CI_Model {
          */
 
         $query = $this->db->query('
-		SELECT temporal.id_device, brand_device.brand, temporal.device, unidades_pds,unidades_tienda_transito,unidades_transito, unidades_reservado,
+		SELECT temporal.id_device, brand_device.brand, temporal.device, unidades_pds,
+		(unidades_transito+unidades_tienda_transito) as unidades_transito, unidades_reservado,
 		unidades_rma,unidades_almacen, (case when unidades_robadas is NULL then 0 else unidades_robadas end) as unidades_robadas,
 		unidades_televenta,
 		(case when unidades_robadas is NULL then (unidades_pds + unidades_tienda_transito+ unidades_transito + unidades_reservado + unidades_rma 
@@ -568,7 +569,7 @@ class Tienda_model extends CI_Model {
         $resultados = $this->get_stock_cruzado($array_filtros);
         $arr_titulos = array('Id dispositivo', 'Fabricante', 'Dispositivo', 'Uds. tienda', 'Uds. Transito',
             'Uds. Reservadas','Uds. Almacén RMA','Uds. Almacén','Uds. Robadas','Televenta','Total', 'Stock necesario', 'Balance');
-        $excluir = array('status');
+        $excluir = array('status','unidades_tienda_transito');
 
         $datos = preparar_array_exportar($resultados,$arr_titulos,$excluir);
         exportar_fichero($formato,$datos,"Balance_Dispositivos__".date("d-m-Y"));
