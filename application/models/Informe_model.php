@@ -1023,7 +1023,7 @@ class Informe_model extends CI_Model
 
         // Array de títulos de campo para la exportación XLS/CSV
         $arr_titulos = array('Id incidencia','SFID','Fecha','Elemento','Territorio','Fabricante','Mueble','Terminal','Supervisor','Provincia','Tipo avería',
-            'Texto 1','Texto 2','Texto 3','Parte PDF','Denuncia','Foto 1','Foto 2','Foto 3','Contacto','Teléfono','Email',
+            'Texto 1','Texto 2','Texto 3','Parte PDF','Denuncia','Foto 1','Foto 2','Foto Cierre','Contacto','Teléfono','Email',
             'Id. Operador','Intervención','Estado','Última modificación','Estado Sat','Estado incidencia');
         $excluir = array('fecha_cierre','fabr');
 
@@ -1115,11 +1115,16 @@ class Informe_model extends CI_Model
         }// Finalizadas
 
 
+
+
         $aConditions = array();
         $aConditions[] = " AND (incidencias.status_pds != 'Cancelada' && incidencias.status != 'Cancelada') ";
         $aConditions[] = " AND YEAR(fecha) = '$anio' ";
         $aConditions[] = " AND MONTH(fecha) = '$mes' ";
-
+        /*Incidencias tipo Robo*/
+        if($status == 12) {
+            $aConditions[] = " AND tipo_averia='Robo' ";
+        }
 
         $aJoins = array();
         $aFields = array();
@@ -1127,7 +1132,7 @@ class Informe_model extends CI_Model
         $sTitleFilename = "CDM_Incidencias_";
         $sFiltrosFilename = ($mes."-".$anio);
 
-        if(!is_null($status)){
+        if(!is_null($status) && $status!=12){
             $aConditions[] = " AND incidencias.status_pds = $status ";
             $sFiltrosFilename .= (!is_null($status)) ? "_status-".$status : "";
         }
@@ -1157,7 +1162,7 @@ class Informe_model extends CI_Model
 
         // Array de títulos de campo para la exportación XLS/CSV
         $arr_titulos = array('Id incidencia','SFID','Fecha','Elemento','Territorio','Fabricante','Mueble','Terminal','Supervisor','Provincia','Tipo avería',
-            'Texto 1','Texto 2','Texto 3','Parte PDF','Denuncia','Foto 1','Foto 2','Foto 3','Contacto','Teléfono','Email',
+            'Texto 1','Texto 2','Texto 3','Parte PDF','Denuncia','Foto 1','Foto 2','Foto Cierre','Contacto','Teléfono','Email',
             'Id. Operador','Intervención','Estado','Última modificación','Estado Sat','Estado incidencia');
         $excluir = array('fecha_cierre','fabr');
 
