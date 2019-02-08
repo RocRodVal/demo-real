@@ -373,9 +373,16 @@
                 <tr>
                     <th>Incidencias por robo</th>
                     <?php /* INCIDENCIAS POR ROBO ABS */
+                    $mes_idx = $primer_mes;
                     foreach($incidencias_robo as $key=>$valor)
                     {
-                        echo '<td>'.$valor->cantidad.'</td>';
+                        echo '<td>';
+
+                        echo ($valor->cantidad > 0)
+                            ? "<a href='".base_url("informe/exportar_cdm_incidencias/$anio/$mes_idx/12")."' >".$valor->cantidad."</a>"
+                            : $valor->cantidad;
+                        echo'</td>';
+                        $mes_idx++;
                     }
                     echo '<td class="total">'.$total_inc_robo.'</td>';
                     ?>
