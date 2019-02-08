@@ -1232,7 +1232,7 @@ class Informe_model extends CI_Model
         //echo count($query->result());
         //var_dump($query->result()); exit;
 
-        exportar_fichero("xls",$datos,$sTitleFilename.$sFiltrosFilename."__".date("d-m-Y")."T".date("H:i:s")."_".date("d-m-Y"));
+        exportar_fichero("xls",$datos,$sTitleFilename.$sFiltrosFilename."__".date("d-m-Y")."T".date("H:i:s"));//."_".date("d-m-Y"));
 
     }
 
