@@ -1101,9 +1101,6 @@ class Informe_model extends CI_Model
         $this->load->helper('csv');
         $this->load->helper('download');
 
-        $tipologia="";
-        $tipo_robo="";
-
         if($status == 2) {$this->crear_incidencias_historico_proceso(); $campo_resta = "'".date("Y-m-d")."'"; }// En proceso
         if($status == 4) {
             $this->crear_incidencias_historico_finalizadas($anio);
@@ -1120,14 +1117,6 @@ class Informe_model extends CI_Model
         /*Incidencias tipo Robo*/
         if($status == 12) {
             $aConditions[] = " AND tipo_averia='Robo' ";
-            $tipologia =" pds_tipo.titulo as tipo, pds_subtipo.titulo as subtipo,pds_segmento.titulo as segmento,pds_tipologia.titulo as tipologia, ";
-            $tipo_robo = " tipo_robo.title as tipo_robo, ";
-
-            $aJoins = array(" LEFT JOIN tipo_robo ON tipo_robo.id=incidencias.id_tipo_robo",
-                " LEFT JOIN pds_tipo ON pds_tipo.id=pds.id_tipo",
-                " LEFT JOIN pds_subtipo ON pds_subtipo.id=pds.id_subtipo",
-                " LEFT JOIN pds_segmento ON pds_segmento.id=pds.id_segmento",
-                " LEFT JOIN pds_tipologia ON pds_tipologia.id=pds.id_tipologia");
         }
 
         $sTitleFilename = "CDM_Incidencias_";
@@ -1172,23 +1161,14 @@ class Informe_model extends CI_Model
         $sFiltrosFilename .= "___";
 
         // Array de títulos de campo para la exportación XLS/CSV y los campos excluidos
-        $arr_titulos = array('Id incidencia','SFID','Nombre','Direccion','Provincia','Territorio','Fecha','Elemento',
-            'Fabricante','Mueble','Terminal','Posicion','IMEI','Tipo avería',
+        $arr_titulos = array('Id incidencia','SFID','Tipo','Subtipo','Segmento','Tipologia','Nombre','Direccion','Provincia','Territorio','Fecha','Elemento',
+            'Fabricante','Mueble','Terminal','Posicion','IMEI','Tipo avería','Tipo Robo',
             'Texto 1','Texto 2','Texto 3','Parte PDF','Denuncia','Foto 1','Foto 2','Foto Cierre','Supervisor','Contacto','Teléfono','Email',
             'Id. Operador','Intervención','Estado','Última modificación','Estado Sat','Estado incidencia');
-        $excluir = array('fecha_cierre', 'fabr', 'tipo_robo', 'tipo','subtipo','segmento','tipologia');
+        $excluir = array('fecha_cierre', 'fabr');
 
-        /*Si lo que exportamos son las incindencias de tipo Robo*/
-        if($status==12) {
-            $arr_titulos = array('Id incidencia', 'SFID', 'Tipo','Subtipo','Segmento','Tipologia','Nombre', 'Direccion', 'Provincia', 'Territorio', 'Fecha', 'Elemento',
-                'Fabricante', 'Mueble', 'Terminal', 'Posicion', 'IMEI', 'Tipo avería','Tipo Robo',
-                'Texto 1', 'Texto 2', 'Texto 3', 'Parte PDF', 'Denuncia', 'Foto 1', 'Foto 2', 'Foto Cierre', 'Supervisor', 'Contacto', 'Teléfono', 'Email',
-                'Id. Operador', 'Intervención', 'Estado', 'Última modificación', 'Estado Sat', 'Estado incidencia');
-
-            $excluir = array('fecha_cierre', 'fabr');
-        }
-
-        $sql = 'SELECT incidencias.id_incidencia, pds.reference as `SFID`,'.$tipologia.' pds.commercial as nombre,
+        $sql = 'SELECT incidencias.id_incidencia, pds.reference as `SFID`,pds_tipo.titulo as tipo, 
+                pds_subtipo.titulo as subtipo,pds_segmento.titulo as segmento,pds_tipologia.titulo as tipologia, pds.commercial as nombre,
                 CONCAT(pds.address," - ",pds.zip) as direccion,province.province as provincia,
                 territory.territory as `Territorio`,incidencias.fecha, incidencias.fecha_cierre,
                 (CASE incidencias.alarm_display WHEN 1 THEN ( CONCAT("Mueble: ",
@@ -1199,7 +1179,7 @@ class Informe_model extends CI_Model
 
         $sql .= ' (SELECT brand_device.brand from brand_device  WHERE id_brand_device = fabr ) as `Fabricante`,';
         $sql .= 'display.display as mueble, device.device as terminal, devices_pds.position as posicion,devices_pds.IMEI as IMEI,
-                incidencias.tipo_averia,'.$tipo_robo;
+                incidencias.tipo_averia,tipo_robo.title as tipo_robo,';
         $sql .=' REPLACE(REPLACE(incidencias.description_1,CHAR(10),CHAR(32)),CHAR(13),CHAR(32)) as description_1,
                 REPLACE(REPLACE(incidencias.description_2,CHAR(10),CHAR(32)),CHAR(13),CHAR(32))  as description_2,
                 REPLACE(REPLACE(incidencias.description_3,CHAR(10),CHAR(32)),CHAR(13),CHAR(32))  as description_3,
@@ -1216,19 +1196,24 @@ class Informe_model extends CI_Model
         $sql = rtrim($sql,",");
 
         $sql .=' FROM incidencias
-                LEFT OUTER JOIN displays_pds ON incidencias.id_displays_pds = displays_pds.id_displays_pds
-                LEFT OUTER JOIN display ON displays_pds.id_display = display.id_display
-                LEFT OUTER JOIN devices_pds ON incidencias.id_devices_pds = devices_pds.id_devices_pds
-                LEFT OUTER JOIN device ON devices_pds.id_device = device.id_device
-                LEFT OUTER JOIN type_device ON device.type_device = type_device.id_type_device
+                LEFT OUTER JOIN displays_pds ON incidencias.id_displays_pds = displays_pds.id_displays_pds 
+                LEFT OUTER JOIN display ON displays_pds.id_display = display.id_display 
+                LEFT OUTER JOIN devices_pds ON incidencias.id_devices_pds = devices_pds.id_devices_pds 
+                LEFT OUTER JOIN device ON devices_pds.id_device = device.id_device 
+                LEFT OUTER JOIN type_device ON device.type_device = type_device.id_type_device 
 
-                LEFT OUTER JOIN pds ON incidencias.id_pds = pds.id_pds
-                LEFT OUTER JOIN territory ON territory.id_territory=pds.territory
-                LEFT OUTER JOIN brand_device ON device.brand_device = brand_device.id_brand_device
+                LEFT OUTER JOIN pds ON incidencias.id_pds = pds.id_pds 
+                LEFT OUTER JOIN territory ON territory.id_territory=pds.territory 
+                LEFT OUTER JOIN brand_device ON device.brand_device = brand_device.id_brand_device 
 
-                LEFT JOIN pds_supervisor ON pds.id_supervisor= pds_supervisor.id
-                LEFT JOIN type_incidencia ON incidencias.id_type_incidencia = type_incidencia.id_type_incidencia
-                LEFT JOIN province ON pds.province= province.id_province ';
+                LEFT JOIN pds_supervisor ON pds.id_supervisor= pds_supervisor.id 
+                LEFT JOIN type_incidencia ON incidencias.id_type_incidencia = type_incidencia.id_type_incidencia 
+                LEFT JOIN province ON pds.province= province.id_province 
+                LEFT JOIN tipo_robo ON tipo_robo.id=incidencias.id_tipo_robo
+                LEFT JOIN pds_tipo ON pds_tipo.id=pds.id_tipo 
+                LEFT JOIN pds_subtipo ON pds_subtipo.id=pds.id_subtipo 
+                LEFT JOIN pds_segmento ON pds_segmento.id=pds.id_segmento 
+                LEFT JOIN pds_tipologia ON pds_tipologia.id=pds.id_tipologia ';
 
         foreach($aJoins as $join){
             $sql .= $join;
