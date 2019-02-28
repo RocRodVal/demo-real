@@ -1535,7 +1535,8 @@ class Admin extends MY_Controller
                         {
                             $this->db->query('DELETE FROM intervenciones WHERE id_intervencion ="'.$id_intervencion.'"');
                             $fichero="intervencion-".$id_intervencion."_incidencia-".$id_inc.".pdf";
-                            unlink("/uploads/intervenciones/".$fichero);
+                            if(file_exists("/uploads/intervenciones/".$fichero) )
+                                unlink("/uploads/intervenciones/".$fichero);
                         }
                         // Eliminamos de la facturación la intervención...
                         $this->db->query('DELETE FROM facturacion WHERE id_intervencion = "'.$id_intervencion.'"');
@@ -1626,28 +1627,34 @@ class Admin extends MY_Controller
 
                 redirect('admin/update_incidencia_materiales/' . $id_pds . '/' . $id_inc . '/2/3/' . $error);
             } else {
-                $this->tienda_model->update_dispositivos($this->input->post('dipositivo_almacen_1'), $imei, $this->input->post('mac_1'),
-                    $this->input->post('serial_1'), $this->input->post('barcode_1'));
+                if ($this->input->post('dipositivo_almacen_1') <> '') {
+                    $this->tienda_model->update_dispositivos($this->input->post('dipositivo_almacen_1'), $imei, $this->input->post('mac_1'),
+                        $this->input->post('serial_1'), $this->input->post('barcode_1'));
 
-                if ($this->input->post('units_dipositivo_almacen_1') <> '') {
-                    $dipositivo_almacen_1 = array(
-                        'fecha' => date('Y-m-d H:i:s'),
-                        'id_incidencia' => $id_inc,
-                        'id_pds' => $id_pds,
-                        'id_alarm' => NULL,
-                        'id_devices_almacen' => $this->input->post('dipositivo_almacen_1'),
-                        'cantidad' => 1
-                    );
-                    $this->tienda_model->reservar_dispositivos($this->input->post('dipositivo_almacen_1'), 2, $id_inc);
-                    $this->tienda_model->incidencia_update_material($dipositivo_almacen_1,true);
-                }else {
-                    if(($this->input->post('dipositivo_almacen_1'))<>'') {
-                        if ($this->input->post('units_dipositivo_almacen_1') == '') {
-                            $error = "La cantidad del dispositivo asignado no puede estar vacia";
+                    if ($this->input->post('units_dipositivo_almacen_1') <> '') {
+                        $dipositivo_almacen_1 = array(
+                            'fecha' => date('Y-m-d H:i:s'),
+                            'id_incidencia' => $id_inc,
+                            'id_pds' => $id_pds,
+                            'id_alarm' => NULL,
+                            'id_devices_almacen' => $this->input->post('dipositivo_almacen_1'),
+                            'cantidad' => 1
+                        );
+                        $this->tienda_model->reservar_dispositivos($this->input->post('dipositivo_almacen_1'), 2, $id_inc);
+                        $this->tienda_model->incidencia_update_material($dipositivo_almacen_1, true);
+                    } else {
+                        if (($this->input->post('dipositivo_almacen_1')) <> '') {
+                            if ($this->input->post('units_dipositivo_almacen_1') == '') {
+                                $error = "La cantidad del dispositivo asignado no puede estar vacia";
 
-                            redirect('admin/update_incidencia_materiales/' . $id_pds . '/' . $id_inc . '/2/3/' . $error);
+                                redirect('admin/update_incidencia_materiales/' . $id_pds . '/' . $id_inc . '/2/3/' . $error);
+                            }
                         }
                     }
+                }else{
+                    $error = "Es necesario seleccionar un dispositivo del almacen";
+
+                    redirect('admin/update_incidencia_materiales/' . $id_pds . '/' . $id_inc . '/2/3/' . $error);
                 }
             }
         }

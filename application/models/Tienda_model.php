@@ -2960,7 +2960,7 @@ class Tienda_model extends CI_Model {
     {
         $sql="SELECT id_devices_almacen FROM material_incidencias WHERE id_incidencia=$id_inc AND id_devices_almacen IS NOT NULL";
         $material_incidencia=$this->db->query($sql)->result();
-        if(!empty($material_incidencia) && count($material_incidencia)==1) {
+        if(!empty($material_incidencia)) {
             foreach ($material_incidencia as $m) {
                 $sql = "UPDATE devices_almacen SET status='Transito' WHERE id_devices_almacen =$m->id_devices_almacen";
                 //echo $sql;

@@ -1101,23 +1101,16 @@ class Informe_model extends CI_Model
         $this->load->helper('csv');
         $this->load->helper('download');
 
-
-
         if($status == 2) {$this->crear_incidencias_historico_proceso(); $campo_resta = "'".date("Y-m-d")."'"; }// En proceso
         if($status == 4) {
-           // if($anio==2015) {
-                $this->crear_incidencias_historico_finalizadas($anio);
-
-            /*}else {
-                $this->crear_temporal_incidencias_finalizadas($anio);
-            }*/
+            $this->crear_incidencias_historico_finalizadas($anio);
             $campo_resta = " historico_temp.fecha_cierre ";
         }// Finalizadas
 
-
-
-
         $aConditions = array();
+        $aJoins = array();
+        $aFields = array();
+
         $aConditions[] = " AND (incidencias.status_pds != 'Cancelada' && incidencias.status != 'Cancelada') ";
         $aConditions[] = " AND YEAR(fecha) = '$anio' ";
         $aConditions[] = " AND MONTH(fecha) = '$mes' ";
@@ -1126,15 +1119,30 @@ class Informe_model extends CI_Model
             $aConditions[] = " AND tipo_averia='Robo' ";
         }
 
-        $aJoins = array();
-        $aFields = array();
-
         $sTitleFilename = "CDM_Incidencias_";
         $sFiltrosFilename = ($mes."-".$anio);
 
         if(!is_null($status) && $status!=12){
+            $textoEstado ="";
             $aConditions[] = " AND incidencias.status_pds = $status ";
-            $sFiltrosFilename .= (!is_null($status)) ? "_status-".$status : "";
+            switch ($status){
+                case 1: $textoEstado="status-Alta";
+                    break;
+                case 2: $textoEstado="status-En_Proceso";
+                    break;
+                case 3: $textoEstado="status-En_Visita";
+                    break;
+                case 4: $textoEstado="status-Finalizada";
+                    break;
+                case 5: $textoEstado="status-Canceladad";
+                    break;
+                case 12: $textoEstado ="Robos";
+                    break;
+            }
+            $sFiltrosFilename .= (!is_null($status)) ? "_".$textoEstado : "";
+        }else{
+            if($status==12)
+                $sFiltrosFilename .= "_Robos";
         }
 
         if(!is_null($menos72)) {
@@ -1145,85 +1153,76 @@ class Informe_model extends CI_Model
             $aFields[] = "";
             $aJoins[] = " LEFT JOIN historico_temp ON historico_temp.id_incidencia = incidencias.id_incidencia ";
 
-
             if($menos72 == 1)
-            {
                 $aConditions[] = " AND  ((workdaydiff($campo_resta,historico_temp.fecha_proceso))) <= 3 ";
-            }
             else
-            {
                 $aConditions[] = " AND  ((workdaydiff($campo_resta, historico_temp.fecha_proceso))) > 3 ";
-            }
-
         }
         $sFiltrosFilename .= "___";
 
-
-
-        // Array de títulos de campo para la exportación XLS/CSV
-        $arr_titulos = array('Id incidencia','SFID','Fecha','Elemento','Territorio','Fabricante','Mueble','Terminal','Supervisor','Provincia','Tipo avería',
-            'Texto 1','Texto 2','Texto 3','Parte PDF','Denuncia','Foto 1','Foto 2','Foto Cierre','Contacto','Teléfono','Email',
+        // Array de títulos de campo para la exportación XLS/CSV y los campos excluidos
+        $arr_titulos = array('Id incidencia','SFID','Tipo','Subtipo','Segmento','Tipologia','Nombre','Direccion','Provincia','Territorio','Fecha','Elemento',
+            'Fabricante','Mueble','Terminal','Posicion','IMEI','Tipo avería','Tipo Robo',
+            'Texto 1','Texto 2','Texto 3','Parte PDF','Denuncia','Foto 1','Foto 2','Foto Cierre','Supervisor','Contacto','Teléfono','Email',
             'Id. Operador','Intervención','Estado','Última modificación','Estado Sat','Estado incidencia');
-        $excluir = array('fecha_cierre','fabr');
+        $excluir = array('fecha_cierre', 'fabr');
 
-        $sql = 'SELECT incidencias.id_incidencia, pds.reference as `SFID`, incidencias.fecha, incidencias.fecha_cierre,
-
-                            (CASE incidencias.alarm_display WHEN 1 THEN ( CONCAT("Mueble: ",
-                                (CASE ISNULL(display.display) WHEN TRUE THEN "Retirado" ELSE display.display END)
-                            )) ELSE (CONCAT("Dispositivo: ",
-                                (CASE ISNULL(device.device) WHEN TRUE THEN "Retirado" ELSE device.device END)
-                            )) END) as elemento,
-
-                            device.brand_device as fabr,
-                            territory.territory as `Territorio`,
-                            ';
+        $sql = 'SELECT incidencias.id_incidencia, pds.reference as `SFID`,pds_tipo.titulo as tipo, 
+                pds_subtipo.titulo as subtipo,pds_segmento.titulo as segmento,pds_tipologia.titulo as tipologia, pds.commercial as nombre,
+                CONCAT(pds.address," - ",pds.zip) as direccion,province.province as provincia,
+                territory.territory as `Territorio`,incidencias.fecha, incidencias.fecha_cierre,
+                (CASE incidencias.alarm_display WHEN 1 THEN ( CONCAT("Mueble: ",
+                    (CASE ISNULL(display.display) WHEN TRUE THEN "Retirado" ELSE display.display END)
+                    )) ELSE (CONCAT("Dispositivo: ",
+                          (CASE ISNULL(device.device) WHEN TRUE THEN "Retirado" ELSE device.device END)
+                          )) END) as elemento,device.brand_device as fabr,';
 
         $sql .= ' (SELECT brand_device.brand from brand_device  WHERE id_brand_device = fabr ) as `Fabricante`,';
-        $sql .= 'display.display as mueble, device.device as terminal, pds_supervisor.titulo as supervisor, province.province as provincia,incidencias.tipo_averia,';
-        $sql .='
-                           REPLACE(REPLACE(incidencias.description_1,CHAR(10),CHAR(32)),CHAR(13),CHAR(32)) as description_1,
-                            REPLACE(REPLACE(incidencias.description_2,CHAR(10),CHAR(32)),CHAR(13),CHAR(32))  as description_2,
-                            REPLACE(REPLACE(incidencias.description_3,CHAR(10),CHAR(32)),CHAR(13),CHAR(32))  as description_3,
-                            incidencias.parte_pdf, incidencias.denuncia, incidencias.foto_url, incidencias.foto_url_2,
-                            incidencias.foto_cierre, incidencias.contacto, incidencias.phone, incidencias.email,incidencias.id_operador,
-                            incidencias.intervencion,';
+        $sql .= 'display.display as mueble, device.device as terminal, devices_pds.position as posicion,devices_pds.IMEI as IMEI,
+                incidencias.tipo_averia,tipo_robo.title as tipo_robo,';
+        $sql .=' REPLACE(REPLACE(incidencias.description_1,CHAR(10),CHAR(32)),CHAR(13),CHAR(32)) as description_1,
+                REPLACE(REPLACE(incidencias.description_2,CHAR(10),CHAR(32)),CHAR(13),CHAR(32))  as description_2,
+                REPLACE(REPLACE(incidencias.description_3,CHAR(10),CHAR(32)),CHAR(13),CHAR(32))  as description_3,
+                incidencias.parte_pdf, incidencias.denuncia, incidencias.foto_url, incidencias.foto_url_2,
+                incidencias.foto_cierre, pds_supervisor.titulo as supervisor, incidencias.contacto, incidencias.phone, incidencias.email,incidencias.id_operador,
+                incidencias.intervencion,';
 
         $sql .= 'incidencias.status as `Estado`,
                  incidencias.last_updated as `Última modificación`,
                  incidencias.status_pds as `Estado PDS`,
                  type_incidencia.title as `Estado Incidencia`,';
 
-        $sql = rtrim($sql,",");
         $sql .= implode(",",$aFields);
+        $sql = rtrim($sql,",");
 
         $sql .=' FROM incidencias
+                LEFT OUTER JOIN displays_pds ON incidencias.id_displays_pds = displays_pds.id_displays_pds 
+                LEFT OUTER JOIN display ON displays_pds.id_display = display.id_display 
+                LEFT OUTER JOIN devices_pds ON incidencias.id_devices_pds = devices_pds.id_devices_pds 
+                LEFT OUTER JOIN device ON devices_pds.id_device = device.id_device 
+                LEFT OUTER JOIN type_device ON device.type_device = type_device.id_type_device 
 
-                LEFT OUTER JOIN displays_pds ON incidencias.id_displays_pds = displays_pds.id_displays_pds
-                LEFT OUTER JOIN display ON displays_pds.id_display = display.id_display
-                LEFT OUTER JOIN devices_pds ON incidencias.id_devices_pds = devices_pds.id_devices_pds
-                LEFT OUTER JOIN device ON devices_pds.id_device = device.id_device
-                LEFT OUTER JOIN type_device ON device.type_device = type_device.id_type_device
+                LEFT OUTER JOIN pds ON incidencias.id_pds = pds.id_pds 
+                LEFT OUTER JOIN territory ON territory.id_territory=pds.territory 
+                LEFT OUTER JOIN brand_device ON device.brand_device = brand_device.id_brand_device 
 
-                LEFT OUTER JOIN pds ON incidencias.id_pds = pds.id_pds
-                LEFT OUTER JOIN territory ON territory.id_territory=pds.territory
-                LEFT OUTER JOIN brand_device ON device.brand_device = brand_device.id_brand_device
+                LEFT JOIN pds_supervisor ON pds.id_supervisor= pds_supervisor.id 
+                LEFT JOIN type_incidencia ON incidencias.id_type_incidencia = type_incidencia.id_type_incidencia 
+                LEFT JOIN province ON pds.province= province.id_province 
+                LEFT JOIN tipo_robo ON tipo_robo.id=incidencias.id_tipo_robo
+                LEFT JOIN pds_tipo ON pds_tipo.id=pds.id_tipo 
+                LEFT JOIN pds_subtipo ON pds_subtipo.id=pds.id_subtipo 
+                LEFT JOIN pds_segmento ON pds_segmento.id=pds.id_segmento 
+                LEFT JOIN pds_tipologia ON pds_tipologia.id=pds.id_tipologia ';
 
-                LEFT JOIN pds_supervisor ON pds.id_supervisor= pds_supervisor.id
-                LEFT JOIN type_incidencia ON incidencias.id_type_incidencia = type_incidencia.id_type_incidencia
-                LEFT JOIN province ON pds.province= province.id_province ';
-
-        foreach($aJoins as $join)
-        {
+        foreach($aJoins as $join){
             $sql .= $join;
         }
-
-
         $sql .= ' WHERE 1 = 1';
-                // Añadimos las condiciones
-                foreach($aConditions as $cond) $sql .= $cond;
+
+        foreach($aConditions as $cond) $sql .= $cond;
 
         $sql .= " ORDER BY fecha DESC";
-
         $query = $this->db->query($sql);
 
         $datos = preparar_array_exportar($query->result(),$arr_titulos,$excluir);
