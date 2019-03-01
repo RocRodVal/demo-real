@@ -1652,9 +1652,10 @@ class Admin extends MY_Controller
                         }
                     }
                 }else{
-                    $error = "Es necesario seleccionar un dispositivo del almacen";
-
-                    redirect('admin/update_incidencia_materiales/' . $id_pds . '/' . $id_inc . '/2/3/' . $error);
+                    if($this->input->post('dipositivo_almacen_1') == '' && $this->input->post('typedipositivo_almacen_1') <> '') {
+                        $error = "Es necesario seleccionar un dispositivo del almacen";
+                        redirect('admin/update_incidencia_materiales/' . $id_pds . '/' . $id_inc . '/2/3/' . $error);
+                    }
                 }
             }
         }
