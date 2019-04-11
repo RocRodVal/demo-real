@@ -164,7 +164,7 @@ class Incidencia_model extends CI_Model {
 
 
         // ARRAY CON LOS DISTINTOS ACCESOS QUE NO COMPARTEN CAMPOS CON EL INFORME DE ACCESO GLOBAL ADMIN
-        $array_accesos_excluidos = array("master","territorio","tienda");
+        $array_accesos_excluidos = array("master","territorio","tienda","ttpp");
         if(in_array($acceso,$array_accesos_excluidos)){ // En master, excluimos de la exportación los campos...
             // Array de títulos de campo para la exportación XLS/CSV
             $arr_titulos = array('Id incidencia','SFID','Tipologia','Tipo','Dirección','Provincia','Fecha','Elemento','Territorio',
