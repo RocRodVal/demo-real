@@ -2817,7 +2817,7 @@ class Admin extends MY_Controller
             $xcrud_3->table_name('Inventario dispositivos');
             $xcrud_3->relation('client_type_pds', 'client', 'id_client', 'client');
             $xcrud_3->relation('id_pds', 'pds', 'id_pds', 'reference', array('status' => 'Alta'));
-            $xcrud_3->relation('id_displays_pds', 'displays_pds', 'id_displays_pds', 'id_displays_pds');
+            $xcrud_3->relation('id_displays_pds', 'displays_pds', 'id_displays_pds', 'id_displays_pds',array('status' => 'Alta'));
             $xcrud_3->relation('id_display', 'display', 'id_display', 'display', "positions>0");
             $xcrud_3->relation('id_device', 'device', 'id_device', 'device');
 
@@ -2854,6 +2854,7 @@ class Admin extends MY_Controller
             $data['content'] = $xcrud_3->render();
 
             /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+
             $this->data->add($data);
             $data = $this->data->getData();
             /////

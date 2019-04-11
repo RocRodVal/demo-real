@@ -146,7 +146,7 @@ class Incidencia_model extends CI_Model {
         if($material) {
 
             $arr_titulos = array('Id incidencia','SFID','Tipología','Tipo','Dirección','Provincia','Fecha','Mueble','Terminal','Tipo avería',
-                'Texto 1','Estado Sat','Descripcion parada','Tiempo parada','Semanas','Material Dispositivos','Material Alarmas');
+                'Texto 1','Estado Sat','Descripcion parada','Tiempo parada','Tiempo','Semanas','Material Dispositivos','Material Alarmas');
             array_push($excluir,"elemento","Territorio","Fabricante","alarmado","supervisor","tipo_robo","description_2","description_3",
                 "parte_pdf","denuncia","foto_url","foto_url_2","foto_cierre","contacto","phone","email","id_operador",
                 "intervencion","id_tipo_robo","last_updated","Estado PDS","razon_Parada");
@@ -248,7 +248,13 @@ class Incidencia_model extends CI_Model {
             $sql .= ",TIMESTAMPDIFF(MONTH, historico.fecha, now()) as meses ,  
                     TIMESTAMPDIFF(DAY, historico.fecha, now()) as dias, 
                     MOD(TIMESTAMPDIFF(HOUR, historico.fecha, now()), 24) as  horas , 
-                    MOD(TIMESTAMPDIFF(MINUTE, historico.fecha, now()), 60) as minutos  ";
+                    MOD(TIMESTAMPDIFF(MINUTE, historico.fecha, now()), 60) as minutos,
+                    (CASE  
+	                   WHEN TIMESTAMPDIFF(DAY, historico.fecha, now())<3 THEN \"<72H\" 
+                       WHEN TIMESTAMPDIFF(DAY, historico.fecha, now())>=3 and TIMESTAMPDIFF(DAY, historico.fecha, now())<=7 THEN \">72H <1 semana \" 
+                       WHEN TIMESTAMPDIFF(DAY, historico.fecha, now())>7 AND TIMESTAMPDIFF(DAY, historico.fecha, now())<=31 THEN \">1 semana\"
+                       WHEN TIMESTAMPDIFF(DAY, historico.fecha, now())>31 THEN \">1 mes\" 
+                    END) as tiempo,";
         }
         $sql = rtrim($sql,",");
 
@@ -357,7 +363,6 @@ class Incidencia_model extends CI_Model {
         $query = $this->db->query($sql);
 
         $resultado=$query->result();
-
 
         if (is_null($porrazon)) {
             $datos = preparar_array_exportar($resultado, $arr_titulos, $excluir);

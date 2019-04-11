@@ -104,6 +104,7 @@
         $result = $CI->db->select('id_displays_pds')
             ->where("id_display",$postdata->get('id_display'))
             ->where("id_pds",$postdata->get('id_pds'))
+            ->where("status",'Alta')
             ->get('displays_pds')->row_array();
 
         if (!empty($result)) {

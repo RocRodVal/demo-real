@@ -1164,7 +1164,7 @@ class Informe_model extends CI_Model
         $arr_titulos = array('Id incidencia','SFID','Tipo','Subtipo','Segmento','Tipologia','Nombre','Direccion','Provincia','Territorio','Fecha','Elemento',
             'Fabricante','Mueble','Terminal','Posicion','IMEI','Tipo avería','Tipo Robo',
             'Texto 1','Texto 2','Texto 3','Parte PDF','Denuncia','Foto 1','Foto 2','Foto Cierre','Supervisor','Contacto','Teléfono','Email',
-            'Id. Operador','Intervención','Estado','Última modificación','Estado Sat','Estado incidencia');
+            'Id. Operador','Intervención','Estado','Última modificación','Estado Sat','Estado incidencia','Descripcion parada');
         $excluir = array('fecha_cierre', 'fabr');
 
         $sql = 'SELECT incidencias.id_incidencia, pds.reference as `SFID`,pds_tipo.titulo as tipo, 
@@ -1190,7 +1190,8 @@ class Informe_model extends CI_Model
         $sql .= 'incidencias.status as `Estado`,
                  incidencias.last_updated as `Última modificación`,
                  incidencias.status_pds as `Estado PDS`,
-                 type_incidencia.title as `Estado Incidencia`,';
+                 type_incidencia.title as `Estado Incidencia`,
+                 REPLACE(REPLACE(incidencias.descripcion_parada,CHAR(10),CHAR(32)),CHAR(13),CHAR(32)) as descripcion_parada,';
 
         $sql .= implode(",",$aFields);
         $sql = rtrim($sql,",");
