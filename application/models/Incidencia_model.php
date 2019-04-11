@@ -136,7 +136,7 @@ class Incidencia_model extends CI_Model {
             'Fabricante','Mueble','Tipo alarmado','Terminal','Supervisor','Tipo avería','Tipo Robo',
             'Texto 1','Texto 2','Texto 3','Parte PDF','Denuncia','Foto 1','Foto 2','Foto 3','Contacto','Teléfono','Email',
             'Id. Operador','Intervención','Estado','Última modificación','Estado Sat','Razon parada','Descripcion parada');
-        $excluir = array('fecha_cierre','fabr','id_type_incidencia','id_tipo_robo',"tiempo_parada","meses","dias","horas","minutos");
+        $excluir = array('fecha_cierre','fabr','id_type_incidencia','id_tipo_robo',"tiempo_parada","meses","dias","horas","minutos","tiempo");
 
         if($conMaterial=="conMaterial") {
             $material=true;
@@ -150,7 +150,7 @@ class Incidencia_model extends CI_Model {
             array_push($excluir,"elemento","Territorio","Fabricante","alarmado","supervisor","tipo_robo","description_2","description_3",
                 "parte_pdf","denuncia","foto_url","foto_url_2","foto_cierre","contacto","phone","email","id_operador",
                 "intervencion","id_tipo_robo","last_updated","Estado PDS","razon_Parada");
-            $excluir = array_diff($excluir, array('tiempo_parada'));
+            $excluir = array_diff($excluir, array('tiempo_parada','tiempo'));
         }else {//ROBO
 
             if($porrazon=='robo') {
@@ -158,7 +158,7 @@ class Incidencia_model extends CI_Model {
                     'Texto 1', 'Estado Sat', 'Unidades', 'Descripcion parada','Tipología robo');
                 array_push($excluir, "elemento", "Territorio", "Fabricante", "alarmado", "supervisor", "tipo_robo", "description_2", "description_3",
                     "parte_pdf", "denuncia", "foto_url", "foto_url_2", "foto_cierre", "contacto", "phone", "email", "id_operador",
-                    "intervencion", "id_tipo_robo", "last_updated", "Estado PDS");
+                    "intervencion", "id_tipo_robo", "last_updated", "Estado PDS","tiempo");
             }
         }
 
