@@ -136,7 +136,7 @@ class Incidencia_model extends CI_Model {
             'Fabricante','Mueble','Tipo alarmado','Terminal','Supervisor','Tipo avería','Tipo Robo',
             'Texto 1','Texto 2','Texto 3','Parte PDF','Denuncia','Foto 1','Foto 2','Foto 3','Contacto','Teléfono','Email',
             'Id. Operador','Intervención','Estado','Última modificación','Estado Sat','Razon parada','Descripcion parada');
-        $excluir = array('fecha_cierre','fabr','id_type_incidencia','id_tipo_robo',"tiempo_parada","meses","dias","horas","minutos");
+        $excluir = array('fecha_cierre','fabr','id_type_incidencia','id_tipo_robo',"tiempo_parada","meses","dias","horas","minutos","tiempo");
 
         if($conMaterial=="conMaterial") {
             $material=true;
@@ -146,11 +146,11 @@ class Incidencia_model extends CI_Model {
         if($material) {
 
             $arr_titulos = array('Id incidencia','SFID','Tipología','Tipo','Dirección','Provincia','Fecha','Mueble','Terminal','Tipo avería',
-                'Texto 1','Estado Sat','Descripcion parada','Tiempo parada','Semanas','Material Dispositivos','Material Alarmas');
+                'Texto 1','Estado Sat','Descripcion parada','Tiempo parada','Tiempo','Semanas','Material Dispositivos','Material Alarmas');
             array_push($excluir,"elemento","Territorio","Fabricante","alarmado","supervisor","tipo_robo","description_2","description_3",
                 "parte_pdf","denuncia","foto_url","foto_url_2","foto_cierre","contacto","phone","email","id_operador",
                 "intervencion","id_tipo_robo","last_updated","Estado PDS","razon_Parada");
-            $excluir = array_diff($excluir, array('tiempo_parada'));
+            $excluir = array_diff($excluir, array('tiempo_parada','tiempo'));
         }else {//ROBO
 
             if($porrazon=='robo') {
@@ -158,13 +158,13 @@ class Incidencia_model extends CI_Model {
                     'Texto 1', 'Estado Sat', 'Unidades', 'Descripcion parada','Tipología robo');
                 array_push($excluir, "elemento", "Territorio", "Fabricante", "alarmado", "supervisor", "tipo_robo", "description_2", "description_3",
                     "parte_pdf", "denuncia", "foto_url", "foto_url_2", "foto_cierre", "contacto", "phone", "email", "id_operador",
-                    "intervencion", "id_tipo_robo", "last_updated", "Estado PDS");
+                    "intervencion", "id_tipo_robo", "last_updated", "Estado PDS","tiempo");
             }
         }
 
 
         // ARRAY CON LOS DISTINTOS ACCESOS QUE NO COMPARTEN CAMPOS CON EL INFORME DE ACCESO GLOBAL ADMIN
-        $array_accesos_excluidos = array("master","territorio","tienda");
+        $array_accesos_excluidos = array("master","territorio","tienda","ttpp");
         if(in_array($acceso,$array_accesos_excluidos)){ // En master, excluimos de la exportación los campos...
             // Array de títulos de campo para la exportación XLS/CSV
             $arr_titulos = array('Id incidencia','SFID','Tipologia','Tipo','Dirección','Provincia','Fecha','Elemento','Territorio',
@@ -248,7 +248,13 @@ class Incidencia_model extends CI_Model {
             $sql .= ",TIMESTAMPDIFF(MONTH, historico.fecha, now()) as meses ,  
                     TIMESTAMPDIFF(DAY, historico.fecha, now()) as dias, 
                     MOD(TIMESTAMPDIFF(HOUR, historico.fecha, now()), 24) as  horas , 
-                    MOD(TIMESTAMPDIFF(MINUTE, historico.fecha, now()), 60) as minutos  ";
+                    MOD(TIMESTAMPDIFF(MINUTE, historico.fecha, now()), 60) as minutos,
+                    (CASE  
+	                   WHEN TIMESTAMPDIFF(DAY, historico.fecha, now())<3 THEN \"<72H\" 
+                       WHEN TIMESTAMPDIFF(DAY, historico.fecha, now())>=3 and TIMESTAMPDIFF(DAY, historico.fecha, now())<=7 THEN \">72H <1 semana \" 
+                       WHEN TIMESTAMPDIFF(DAY, historico.fecha, now())>7 AND TIMESTAMPDIFF(DAY, historico.fecha, now())<=31 THEN \">1 semana\"
+                       WHEN TIMESTAMPDIFF(DAY, historico.fecha, now())>31 THEN \">1 mes\" 
+                    END) as tiempo,";
         }
         $sql = rtrim($sql,",");
 
@@ -357,7 +363,6 @@ class Incidencia_model extends CI_Model {
         $query = $this->db->query($sql);
 
         $resultado=$query->result();
-
 
         if (is_null($porrazon)) {
             $datos = preparar_array_exportar($resultado, $arr_titulos, $excluir);
