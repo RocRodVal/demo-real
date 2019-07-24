@@ -6018,13 +6018,21 @@ class Admin extends MY_Controller
             foreach($incidencias_resueltas as $key=>$valor){
                 $resultados_7[$key] = new StdClass();
 
-                $num =  $valor->cantidad;
+                $num_totales = $valor_resultados_1[$key];
                 $denom = $intervenciones_anio[$key]->cantidad;
+
+                $num_finalizadas = $incidencias_estado["Finalizada"][$key];
 
                 if($denom == 0)
                     $resultados_7[$key]->cantidad = 0;
-                else
-                    $resultados_7[$key]->cantidad = number_format(round($num / $denom, 2), 2, ",", ".");
+                else {
+                    $media_finalizadas = number_format(round($num_finalizadas / $denom, 2), 2, ",", ".");
+                    $media_totales = number_format(round($num_totales / $denom, 2), 2, ",", ".");
+                    if($media_finalizadas>$media_totales)
+                        $resultados_7[$key]->cantidad = $media_finalizadas;
+                    else
+                        $resultados_7[$key]->cantidad = $media_totales;
+                }
 
                 $total_num +=  $valor->cantidad;
                 $total_denom += $intervenciones_anio[$key]->cantidad;
