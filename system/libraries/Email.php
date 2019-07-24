@@ -90,7 +90,7 @@ class CI_Email {
 	 *
 	 * @var	string
 	 */
-	public $smtp_pass	= '<3mP5Wbh';
+	public $smtp_pass	= 'Altabox1';
 
 	/**
 	 * SMTP Server port
