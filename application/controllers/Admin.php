@@ -630,7 +630,7 @@ class Admin extends MY_Controller
                         "locationSegment"   =>array("name"=>$pds['segmento']),
                         "locationTypology"  =>array("name"=>$pds['tipologia']),
                         "locationType"      =>array("name"=>$pds['tipo']),
-                        "company"           =>array("id"=>2),
+                        "company"           =>array("id"=>85),
                         "code"              =>  $sfid_new,
                         "province"          =>  $pds['province'],
                         "city"          =>  $pds['city'],
