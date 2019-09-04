@@ -43,7 +43,8 @@ $config['base_url'] = 'http://demoreal.pre.altabox.net/orange/';
  */
 $config['allowed_origins'] = array ('localhost', 'postman.pre.altabox.net', 'demoreal.pre.altabox.net', 'realdooh.pre.altabox.net');
 
-$config['realdooh.api.url'] = 'http://realdooh.pre.altabox.net:8080/rdorangeapi/api/v1';
+//$config['realdooh.api.url'] = 'http://realdooh.pre.altabox.net:8080/rdorangeapi/api/v1';
+$config['realdooh.api.url'] = 'https://altabox.realdooh.com/forgeapi/api/v1';
 
 $config['realdooh.api'] = array(
     'active' => true,
