@@ -2983,13 +2983,17 @@ class Tienda_model extends CI_Model {
 
     public function actualizar_devices_almacen($id_inc)
     {
-        $sql="SELECT id_devices_almacen FROM material_incidencias WHERE id_incidencia=$id_inc AND id_devices_almacen IS NOT NULL AND status='Reservado'";
+        $sql="SELECT id_devices_almacen FROM material_incidencias WHERE id_incidencia=$id_inc AND id_devices_almacen IS NOT NULL";
         $material_incidencia=$this->db->query($sql)->result();
         if(!empty($material_incidencia)) {
             foreach ($material_incidencia as $m) {
-                $sql = "UPDATE devices_almacen SET status='Transito' WHERE id_devices_almacen =$m->id_devices_almacen";
-                //echo $sql;
-                $this->db->query($sql);
+                $sql = "SELECT * FROM devices_almacen WHERE status='Reservado' AND id_devices_almacen =$m->id_devices_almacen";
+                $device_alamcen=$this->db->query($sql)->row();
+                if(!empty($device_alamcen)) {
+                    $sql = "UPDATE devices_almacen SET status='Transito' WHERE id_devices_almacen =".$device_alamcen["id_devices_almacen"];
+                    //echo $sql;
+                    $this->db->query($sql);
+                }
             }
         }
     }
