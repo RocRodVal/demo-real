@@ -2155,7 +2155,7 @@ class Tienda_model extends CI_Model {
 		$this->db->update('incidencias');
 	}
 
-    public function incidencia_update_device_pds($id_devices_pds,$status,$id_incidencia = NULL)
+    public function incidencia_update_device_pds($id_devices_pds,$status,&$error,$id_incidencia = NULL)
     {
 
         $ahora = date("Y-m-d H:i:s");
@@ -2547,74 +2547,85 @@ class Tienda_model extends CI_Model {
                 $sql = "SELECT id_devices_almacen,id_material_incidencias,cantidad FROM material_incidencias WHERE id_incidencia=$id_incidencia AND id_alarm IS NULL";
                 $material=$this->db->query($sql);
 
-                if ($material->num_rows() == 1) {
+                $encontrado = false;
+                /*Si por lo que sea tenemos varios registros de material de incidencias tenemos que buscar el que realmente sea un dispositivo del almacen y no un modelo de dispositivo*/
+                foreach ($material->result_array() as $material) {
 
-                    $sql = "SELECT * FROM devices_almacen WHERE id_devices_almacen = (SELECT id_devices_almacen FROM material_incidencias WHERE id_incidencia=$id_incidencia AND id_alarm IS NULL)";
+                    $sql = "SELECT * FROM devices_almacen WHERE id_devices_almacen = " . $material["id_devices_almacen"];
                     $device_almacen = $this->db->query($sql)->row();
-                    $result=$material->row();
+                    if (!empty($device_almacen)) {
 
-                    /*Insertar en el historico del almacen el estado del dispositivo*/
-                    $elemento = array(
-                        'id_material_incidencia' => $result->id_material_incidencias,
-                        'id_alarm' => NULL,
-                        'id_device'=>$device_almacen->id_device,
-                        'id_devices_almacen' => $device_almacen->id_devices_almacen,
-                        'id_incidencia' => $id_incidencia,
-                        'id_client' => NULL,
-                        'fecha' => date('Y-m-d H:i:s'),
-                        'unidades' => $result->cantidad*(-1),
-                        'procesado' => 1,
-                        'status'    => 'Baja'
-                    );
-                   // $this->db->insert('historico_io',$elemento);
-                    $this->alta_historicoIo($elemento);
+                        $encontrado = true;
+                        //$sql = "SELECT * FROM devices_almacen WHERE id_devices_almacen = $device_almacen-> (SELECT id_devices_almacen FROM material_incidencias WHERE id_incidencia=$id_incidencia AND id_alarm IS NULL)";
+                        //$device_almacen = $this->db->query($sql)->row();
+                       // $result = $material->row();
 
-                    $sql = "UPDATE devices_almacen SET status='Baja' WHERE id_devices_almacen =" . $device_almacen->id_devices_almacen;
-                    $this->db->query($sql);
+                        /*Insertar en el historico del almacen el estado del dispositivo*/
+                        $elemento = array(
+                            'id_material_incidencia' => $material["id_material_incidencias"],
+                            'id_alarm' => NULL,
+                            'id_device' => $device_almacen->id_device,
+                            'id_devices_almacen' => $device_almacen->id_devices_almacen,
+                            'id_incidencia' => $id_incidencia,
+                            'id_client' => NULL,
+                            'fecha' => date('Y-m-d H:i:s'),
+                            'unidades' => $material["cantidad"] * (-1),
+                            'procesado' => 1,
+                            'status' => 'Baja'
+                        );
+                        // $this->db->insert('historico_io',$elemento);
+                        $this->alta_historicoIo($elemento);
 
-
-                    /* poner de baja la posicion que origino la incidencia*/
-                    if($device_pds->status!='Baja') {
-                        $sql = "UPDATE devices_pds SET status='RMA' WHERE id_devices_pds =" . $device_pds->id_devices_pds;
+                        $sql = "UPDATE devices_almacen SET status='Baja' WHERE id_devices_almacen =" . $device_almacen->id_devices_almacen;
                         $this->db->query($sql);
 
-                        /*Insertamos el cambio de estado en el historico*/
+
+                        /* poner de baja la posicion que origino la incidencia*/
+                        if ($device_pds->status != 'Baja') {
+                            $sql = "UPDATE devices_pds SET status='RMA' WHERE id_devices_pds =" . $device_pds->id_devices_pds;
+                            $this->db->query($sql);
+
+                            /*Insertamos el cambio de estado en el historico*/
+                            $elemento = array(
+                                'id_devices_pds' => $device_pds->id_devices_pds,
+                                'fecha' => date('Y-m-d H:i:s'),
+                                'status' => 'RMA',
+                                'motivo' => INCIDENCIA_TERMINALESSUSTITUIDOS
+                            );
+                            $this->insert_historico_devicesPDS($elemento);
+                        }
+
+                        /* Insertar el dispositivo instalado en la posición del mueble */
+                        $data = array(
+                            'client_type_pds' => $device_pds->client_type_pds,
+                            'id_pds' => $device_pds->id_pds,
+                            'id_displays_pds' => $device_pds->id_displays_pds,
+                            'id_display' => $device_pds->id_display,
+                            'alta' => $ahora,
+                            'position' => $device_pds->position,
+                            'id_device' => $device_almacen->id_device,
+                            'IMEI' => $device_almacen->IMEI,
+                            'mac' => $device_almacen->mac,
+                            'serial' => $device_almacen->serial,
+                            'barcode' => $device_almacen->barcode,
+                            'status' => 1
+                        );
+                        $this->db->insert('devices_pds', $data);
+
+
+                        /*Insertamos el alta del nuevo dispositivo en tienda*/
                         $elemento = array(
-                            'id_devices_pds' => $device_pds->id_devices_pds,
+                            'id_devices_pds' => $this->db->insert_id(),
                             'fecha' => date('Y-m-d H:i:s'),
-                            'status' => 'RMA',
+                            'status' => 'Alta',
                             'motivo' => INCIDENCIA_TERMINALESSUSTITUIDOS
                         );
                         $this->insert_historico_devicesPDS($elemento);
                     }
-
-                    /* Insertar el dispositivo instalado en la posición del mueble */
-                    $data = array(
-                        'client_type_pds' => $device_pds->client_type_pds,
-                        'id_pds' => $device_pds->id_pds,
-                        'id_displays_pds' => $device_pds->id_displays_pds,
-                        'id_display' => $device_pds->id_display,
-                        'alta' => $ahora,
-                        'position' => $device_pds->position,
-                        'id_device' => $device_almacen->id_device,
-                        'IMEI' => $device_almacen->IMEI,
-                        'mac' => $device_almacen->mac,
-                        'serial' => $device_almacen->serial,
-                        'barcode' => $device_almacen->barcode,
-                        'status' => 1
-                    );
-                    $this->db->insert('devices_pds', $data);
-
-
-                    /*Insertamos el alta del nuevo dispositivo en tienda*/
-                    $elemento = array(
-                        'id_devices_pds' => $this->db->insert_id(),
-                        'fecha' => date('Y-m-d H:i:s'),
-                        'status' => 'Alta',
-                        'motivo' => INCIDENCIA_TERMINALESSUSTITUIDOS
-                    );
-                    $this->insert_historico_devicesPDS($elemento);
                 }
+                if(!$encontrado)
+                    $error = "No se han podido sustituir los terminales";
+
                 break;
 
             /* se sustituyen los terminales implicados en la incidencia siendo necesario enviar a almacen
@@ -2631,51 +2642,65 @@ class Tienda_model extends CI_Model {
                  */
                 $sql = "SELECT * FROM material_incidencias WHERE id_incidencia=$id_incidencia AND id_alarm IS NULL";
                 $material=$this->db->query($sql);
-                if ($material->num_rows() == 1) {
 
-                    $sql = "SELECT * FROM devices_almacen WHERE id_devices_almacen = (SELECT id_devices_almacen FROM material_incidencias WHERE id_incidencia=$id_incidencia AND id_alarm IS NULL)";
+
+                $encontrado = false;
+                /*Si por lo que sea tenemos varios registros de material de incidencias tenemos que buscar el que realmente sea un dispositivo del almacen y no un modelo de dispositivo*/
+                foreach ($material->result_array() as $material) {
+
+                    $sql = "SELECT * FROM devices_almacen WHERE id_devices_almacen = " . $material["id_devices_almacen"];
                     $device_almacen = $this->db->query($sql)->row();
-                    $result=$material->row();
+                    if (!empty($device_almacen)) {
 
-                    /*Insertar en el historico del almacen el estado del dispositivo*/
-                    $elemento = array(
-                        'id_material_incidencia' => $result->id_material_incidencias,
-                        'id_alarm' => NULL,
-                        'id_device'=>$device_almacen->id_device,
-                        'id_devices_almacen' => $device_almacen->id_devices_almacen,
-                        'id_incidencia' => $id_incidencia,
-                        'id_client' => NULL,
-                        'fecha' => date('Y-m-d H:i:s'),
-                        'unidades' => $result->cantidad*(-1),
-                        'procesado' => 1,
-                        'status'    => 'Baja'
-                    );
-                    //$this->db->insert('historico_io',$elemento);
-                    $this->alta_historicoIo($elemento);
+                        $encontrado = true;
+                        //if ($material->num_rows() == 1) {
 
-                    $sql = "UPDATE devices_almacen SET status='Baja' WHERE id_devices_almacen =" . $device_almacen->id_devices_almacen;
-                    $this->db->query($sql);
-                    /* poner como RMA la posicion que origino la incidencia*/
-                    $sql = "UPDATE devices_pds SET status='RMA' WHERE id_devices_pds =" . $device_pds->id_devices_pds;
-                    $this->db->query($sql);
+                        // $sql = "SELECT * FROM devices_almacen WHERE id_devices_almacen = (SELECT id_devices_almacen FROM material_incidencias WHERE id_incidencia=$id_incidencia AND id_alarm IS NULL)";
+                        //$device_almacen = $this->db->query($sql)->row();
+                        //$result=$material->row();
 
-                    /* Insertar el dispositivo instalado en la posición del mueble */
-                    $data = array(
-                        'client_type_pds' => $device_pds->client_type_pds,
-                        'id_pds' => $device_pds->id_pds,
-                        'id_displays_pds' => $device_pds->id_displays_pds,
-                        'id_display' => $device_pds->id_display,
-                        'alta' => $ahora,
-                        'position' => $device_pds->position,
-                        'id_device' => $device_almacen->id_device,
-                        'IMEI' => $device_almacen->IMEI,
-                        'mac' => $device_almacen->mac,
-                        'serial' => $device_almacen->serial,
-                        'barcode' => $device_almacen->barcode,
-                        'status' => 1
-                    );
-                    $this->db->insert('devices_pds', $data);
+                        /*Insertar en el historico del almacen el estado del dispositivo*/
+                        $elemento = array(
+                            'id_material_incidencia' => $material["id_material_incidencias"],
+                            'id_alarm' => NULL,
+                            'id_device' => $device_almacen->id_device,
+                            'id_devices_almacen' => $device_almacen->id_devices_almacen,
+                            'id_incidencia' => $id_incidencia,
+                            'id_client' => NULL,
+                            'fecha' => date('Y-m-d H:i:s'),
+                            'unidades' => $material["cantidad"] * (-1),
+                            'procesado' => 1,
+                            'status' => 'Baja'
+                        );
+                        //$this->db->insert('historico_io',$elemento);
+                        $this->alta_historicoIo($elemento);
+
+                        $sql = "UPDATE devices_almacen SET status='Baja' WHERE id_devices_almacen =" . $device_almacen->id_devices_almacen;
+                        $this->db->query($sql);
+                        /* poner como RMA la posicion que origino la incidencia*/
+                        $sql = "UPDATE devices_pds SET status='RMA' WHERE id_devices_pds =" . $device_pds->id_devices_pds;
+                        $this->db->query($sql);
+
+                        /* Insertar el dispositivo instalado en la posición del mueble */
+                        $data = array(
+                            'client_type_pds' => $device_pds->client_type_pds,
+                            'id_pds' => $device_pds->id_pds,
+                            'id_displays_pds' => $device_pds->id_displays_pds,
+                            'id_display' => $device_pds->id_display,
+                            'alta' => $ahora,
+                            'position' => $device_pds->position,
+                            'id_device' => $device_almacen->id_device,
+                            'IMEI' => $device_almacen->IMEI,
+                            'mac' => $device_almacen->mac,
+                            'serial' => $device_almacen->serial,
+                            'barcode' => $device_almacen->barcode,
+                            'status' => 1
+                        );
+                        $this->db->insert('devices_pds', $data);
+                    }
                 }
+                if(!$encontrado)
+                    $error = "No se han podido sustituir los terminales";
                 break;
 
             default:

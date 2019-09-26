@@ -11,8 +11,10 @@
                     Tel. <?php echo $phone_pds ?>
                     <?php  } ?>
                 </div>
-                <?php if (!empty($recogida)) { ?>
-                    <a href="<?=site_url('inventario/dispositivos_recogida') ?>" class="btn btn-danger right">Volver</a>
+                <?php if (!empty($error)) {
+
+                    ?>
+                    <a href="<?=site_url('admin/operar_incidencia/'.$id_pds_url.'/'.$id_inc_url) ?>" class="btn btn-danger right">Volver</a>
                     <?php
                 }else { ?>
                     <a href="<?=site_url('admin/estado_incidencias/'. ((($status_pds !="Resuelta" ) &&
@@ -24,10 +26,18 @@
         </div>
     </div>
 
-
+    <?php
+    if (!empty($error)) {
+        echo '<div class="col-lg-7 labelText red">'.($error).'</div>';
+    }else{
+    ?>
     <div class="row">
+
         <div class="col-lg-6 col-md-6">
+
             <div class="panel panel-default">
+
+
                 <div class="panel-heading">
                     Cambiar el estado de la incidencia
                 </div>
@@ -161,8 +171,7 @@
                             if ($incidencia['tipo_averia'] == 'Robo') {
                                 /*Si la incidencia es un robo puede ser necesario que vuelva el terminal que lo genero com RMA*/
                                 ?>
-                                <form
-                                    action="<?= site_url('admin/update_incidencia/' . $id_pds_url . '/' . $id_inc_url . '/4/10') ?>"
+                                <form action="<?= site_url('admin/update_incidencia/' . $id_pds_url . '/' . $id_inc_url . '/4/10') ?>"
                                     method="post">
                                     <div class="col-lg-2 labelBtn grey">
                                         <input type="hidden" value="si" id="sustituido"/>
@@ -172,8 +181,8 @@
                                             || (is_null($incidencia['id_devices_pds'])) || ($status_device_incidencia == 'NoSustituir')
                                         ) {
                                             echo 'disabled';
-                                        } ?> />
-
+                                        }
+                                       ?> />
                                     </div>
                                 </form>
 
@@ -268,6 +277,7 @@
                         </div>                             
                     </div>
                 </div>
+
             </div>
             <!--Agregar el parte del tecnico una vez resuelta la incidencia-->
             <div class="row" id="parte" <?php if ($incidencia['status']!=='Resuelta') {
@@ -724,6 +734,7 @@
             </div>                       
         </div>
     </div>
+    <?php } ?>
 </div>
 </div>
 </div>

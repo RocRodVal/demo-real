@@ -673,7 +673,8 @@ class Admin extends MY_Controller
         if ($this->auth->is_auth()) {
             $id_pds = $this->uri->segment(3);
             $id_inc = $this->uri->segment(4);
-            $recogida = $this->uri->segment(5)? $this->uri->segment(5):'';
+            //$recogida = $this->uri->segment(5)? $this->uri->segment(5):'';
+            $error = $this->uri->segment(5)? urldecode($this->uri->segment(5)):'';
 
             $xcrud = xcrud_get_instance();
             $this->load->model(array('chat_model', 'intervencion_model', 'tienda_model', 'sfid_model'));
@@ -693,7 +694,8 @@ class Admin extends MY_Controller
 
             $data['id_pds_url'] = $id_pds;
             $data['id_inc_url'] = $id_inc;
-            $data['recogida'] = $recogida;
+           // $data['recogida'] = $recogida;
+            $data['error'] = $error;
 
             $incidencia = $this->tienda_model->get_incidencia($id_inc);
 
@@ -1231,15 +1233,11 @@ class Admin extends MY_Controller
             $data['address'] = $sfid['address'];
             $data['zip'] = $sfid['zip'];
             $data['city'] = $sfid['city'];
+            $error="";
+            $data['error']=$error;
 
             $data['id_pds_ulr'] = $id_pds;
             $data['id_inc_ulr'] = $id_inc;
-
-            if (($status != 10) || ($status != 11)) {
-                if ($status_ext !== "ver") {
-                    $this->tienda_model->incidencia_update($id_inc, $status_pds, $status);
-                }
-            }
 
             $incidencia = $this->tienda_model->get_incidencia($id_inc);
 
@@ -1257,7 +1255,7 @@ class Admin extends MY_Controller
                 //////////////////////////////////////////////////////////////////////////////////
 //print_r($response);exit;
                 //if ($incidencia['fail_device'] == 1) {
-                    $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'], 2);
+                    $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'], 2,$error);
                 //}
             }
 
@@ -1276,7 +1274,7 @@ class Admin extends MY_Controller
             if ($status == 9) {
 
                 if (!is_null($incidencia['id_devices_pds'])) {
-                    $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'], 3, $id_inc);
+                    $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'], 3, $error,$id_inc);
                 }
                 //////////////////////////////////////////////////////////////////////////////////
                 //                                                                              //
@@ -1310,7 +1308,7 @@ class Admin extends MY_Controller
                 $this->intervencion_model->change_status_intervencion($intervencion, "Cerrada");
 
                 // if ($incidencia['tipo_averia'] == "Averia") {
-                $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'], $status, $id_inc);
+                $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'], $status,$error, $id_inc);
                 //}
 
                 //////////////////////////////////////////////////////////////////////////////////
@@ -1332,13 +1330,13 @@ class Admin extends MY_Controller
              * Botón Recogida de material : pone en transito a almacen el dispositivo que ha generado la incidencia
              */
             if ($status == 7) {
-                $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'], $status, $id_inc);
+                $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'], $status,$error, $id_inc);
             }
             /**
              * CIERRE FORZOSO
              */
             if (($status == 8) AND ($status_ext == 'ext')) {
-                $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'], 8, $id_inc);
+                $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'], 8,$error, $id_inc);
                 $this->tienda_model->incidencia_update_cierre($id_inc, $fecha_cierre);
 
                 //////////////////////////////////////////////////////////////////////////////////
@@ -1357,7 +1355,7 @@ class Admin extends MY_Controller
 
                     $disp = $this->tienda_model->get_devices_incidencia($incidencia['id_incidencia']);
                     if ($disp['dispositivos'] > 0) {
-                        $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'], 9, $id_inc);
+                        $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'], 9, $error,$id_inc);
                     }
                     //}
                     //$this->tienda_model->incidencia_update_cierre($id_inc, $fecha_cierre);
@@ -1367,8 +1365,14 @@ class Admin extends MY_Controller
              * Botón Sustituir terminales : Pone el terminal enviado en la posicioin del mueble
              */
             if ($status == 10) {
+
                 if (!is_null($incidencia['id_devices_pds'])) {
-                    $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'], $status, $id_inc);
+                    $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'], $status, $error, $id_inc);
+
+                    if(!empty($error)){
+
+                        redirect('admin/operar_incidencia/' . $id_pds . '/' . $id_inc.'/'.$error, 'refresh');
+                    }
                 }
             }
             /*
@@ -1376,7 +1380,7 @@ class Admin extends MY_Controller
              */
             if ($status == 11) {
                 if (!is_null($incidencia['id_devices_pds'])) {
-                    $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'], $status, $id_inc);
+                    $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'], $status, $error,$id_inc);
                 }
 
             }
@@ -1394,6 +1398,9 @@ class Admin extends MY_Controller
             );
 
             $this->tienda_model->historico($data);
+
+            $this->session->set_flashdata("error",$error);
+            $data['error'] = $error;
 
 
             /**
@@ -1427,6 +1434,13 @@ class Admin extends MY_Controller
                     $this->tienda_model->procesar_historico_incidencia($id_inc);
                     $this->tienda_model->actualizar_devices_almacen($id_inc);
 
+                    if (($status != 10) || ($status != 11)) {
+                        if ($status_ext !== "ver") {
+                            //echo $status." ".$status_ext;
+                            //exit;
+                            $this->tienda_model->incidencia_update($id_inc, $status_pds, $status);
+                        }
+                    }
 
                     //////////////////////////////////////////////////////////////////////////////////
                     //             Comunicación  con Realdooh VU: Cambio estado EN VISITA           //
@@ -1444,8 +1458,17 @@ class Admin extends MY_Controller
                     redirect('admin/imprimir_incidencia/' . $id_pds . '/' . $id_inc . '/' . $envio_mail, 'refresh');
                 }
             } else {
+                if (($status != 10) || ($status != 11)) {
+                    if ($status_ext !== "ver") {
+                        //echo $status." ".$status_ext;
+                        //exit;
+                        $this->tienda_model->incidencia_update($id_inc, $status_pds, $status);
+                    }
+                }
                 redirect('admin/operar_incidencia/' . $id_pds . '/' . $id_inc, 'refresh');
             }
+
+
         }
     }
 
