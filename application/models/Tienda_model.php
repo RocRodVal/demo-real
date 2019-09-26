@@ -2551,7 +2551,7 @@ class Tienda_model extends CI_Model {
                 /*Si por lo que sea tenemos varios registros de material de incidencias tenemos que buscar el que realmente sea un dispositivo del almacen y no un modelo de dispositivo*/
                 foreach ($material->result_array() as $material) {
 
-                    $sql = "SELECT * FROM devices_almacen WHERE id_devices_almacen = " . $material["id_devices_almacen"] ." AND status='Reservado'";
+                    $sql = "SELECT * FROM devices_almacen WHERE id_devices_almacen = " . $material["id_devices_almacen"] ." AND status='Transito'";
                     $device_almacen = $this->db->query($sql)->row();
                     if (!empty($device_almacen)) {
 
@@ -2648,7 +2648,7 @@ class Tienda_model extends CI_Model {
                 /*Si por lo que sea tenemos varios registros de material de incidencias tenemos que buscar el que realmente sea un dispositivo del almacen y no un modelo de dispositivo*/
                 foreach ($material->result_array() as $material) {
 
-                    $sql = "SELECT * FROM devices_almacen WHERE id_devices_almacen = " . $material["id_devices_almacen"];
+                    $sql = "SELECT * FROM devices_almacen WHERE id_devices_almacen = " . $material["id_devices_almacen"] ." AND status='Transito'";
                     $device_almacen = $this->db->query($sql)->row();
                     if (!empty($device_almacen)) {
 
