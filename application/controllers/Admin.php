@@ -675,6 +675,8 @@ class Admin extends MY_Controller
             $id_inc = $this->uri->segment(4);
             //$recogida = $this->uri->segment(5)? $this->uri->segment(5):'';
             $error = $this->uri->segment(5)? urldecode($this->uri->segment(5)):'';
+            if($error =='device')
+                $error="";
 
             $xcrud = xcrud_get_instance();
             $this->load->model(array('chat_model', 'intervencion_model', 'tienda_model', 'sfid_model'));
@@ -773,7 +775,7 @@ class Admin extends MY_Controller
                 $almacen = false;
                 //echo "incidencia por falta de material";
             }
-            $material_dispositivos = $this->tienda_model->get_material_dispositivos($incidencia['id_incidencia'],$almacen);
+            $material_dispositivos = $this->tienda_model->get_material_dispositivos($incidencia,$almacen);
             $data['material_dispositivos'] = $material_dispositivos;
 
             $material_alarmas = $this->tienda_model->get_material_alarmas($incidencia['id_incidencia']);
@@ -907,7 +909,7 @@ class Admin extends MY_Controller
             $data['incidencia'] = $incidencia;
 
 
-            $material_dispositivos = $this->tienda_model->get_material_dispositivos($incidencia['id_incidencia']);
+            $material_dispositivos = $this->tienda_model->get_material_dispositivos($incidencia);
             $data['material_dispositivos'] = $material_dispositivos;
 
             $material_alarmas = $this->tienda_model->get_material_alarmas($incidencia['id_incidencia']);
@@ -2073,7 +2075,7 @@ class Admin extends MY_Controller
 
             $xcrud = xcrud_get_instance();
             $this->load->model(array('intervencion_model', 'tienda_model', 'sfid_model','incidencia_model'));
-            $sfid = $this->tienda_model->get_pds($id_pds);
+            //$sfid = $this->tienda_model->get_pds($id_pds);
 
             $type_incidencia = $this->tienda_model->get_type_incidencia($id_inc);
             $almacen=true;
