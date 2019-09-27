@@ -37,7 +37,7 @@ $config['realdooh.api'] = array(
     'active' => FALSE,
     'changeStatusUrl'       => $config['realdooh.api.url']. '/demoreal/incident/{drId}',
     'createIncidenceUrl'    => $config['realdooh.api.url'].'/demoreal/incident/{drId}/asset/{assetDrId}/user/{userSFID}',
-    'createPdsUrl'          => $config['realdooh.api.url'].'/location/demoreal?idOUParent=1',
+    'createPdsUrl'          => $config['realdooh.api.url'].'/location/demoreal?idOUParent=2673',
     'updatePdsUrl'          => $config['realdooh.api.url'].'/location/demoreal/{sfid}',
     'addAssetsPdsUrl'       => $config['realdooh.api.url'].'/massive/asset',
     'updateAssetTypeUrl'    => $config['realdooh.api.url'].'/assettype/demoreal'

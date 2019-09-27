@@ -374,15 +374,13 @@ class Incidencia_model extends CI_Model {
                 $linea = 0;
                 $anterior = 0;
                 foreach ($resultado as $key => $campos) {
-
+                    $incidencia = $this->tienda_model->get_incidencia($campos->id_incidencia);
+                    $materialD = $this->tienda_model->get_material_dispositivos($incidencia, true);
+                    $materialA = $this->tienda_model->get_material_alarmas($campos->id_incidencia);
                     if (is_null($campos->tipo_robo)) {
-                        $materialD = $this->tienda_model->get_material_dispositivos($campos->id_incidencia, true);
-                        $materialA = $this->tienda_model->get_material_alarmas($campos->id_incidencia);
                         $titulo = "Robos sin tipo de robo";
                     } else {
                         $titulo = $campos->tipo_robo;
-                        $materialA = $this->tienda_model->get_material_alarmas($campos->id_incidencia);
-                        $materialD = $this->tienda_model->get_material_dispositivos($campos->id_incidencia, true);
                     }
 
                     if ($key == 0) {
@@ -455,18 +453,18 @@ class Incidencia_model extends CI_Model {
                 $linea = 0;
                 $anterior = 0;
                 foreach ($resultado as $key => $campos) {
-
+                    $incidencia = $this->tienda_model->get_incidencia($campos->id_incidencia);
                     if (is_null($campos->razon_Parada)) {
-                        $materialD = $this->tienda_model->get_material_dispositivos($campos->id_incidencia, true);
+                        $materialD = $this->tienda_model->get_material_dispositivos($incidencia, true);
                         $materialA = $this->tienda_model->get_material_alarmas($campos->id_incidencia);
                         $titulo = "Incidencias sin razon de parada";
                     } else {
                         $titulo = $campos->razon_Parada;
                         $materialA = $this->tienda_model->get_material_alarmas($campos->id_incidencia);
                         if (strtolower($titulo) == strtolower(RAZON_PARADA)) {
-                            $materialD = $this->tienda_model->get_material_dispositivos($campos->id_incidencia, false);
+                            $materialD = $this->tienda_model->get_material_dispositivos($incidencia, false);
                         } else {
-                            $materialD = $this->tienda_model->get_material_dispositivos($campos->id_incidencia, true);
+                            $materialD = $this->tienda_model->get_material_dispositivos($incidencia, true);
                         }
                     }
                     $textoSemanas="";
@@ -667,10 +665,14 @@ class Incidencia_model extends CI_Model {
     /*Se desaigna el material de una incidena*/
     function desasignar_material($id_inc,$tipo_dispositivo = "todo",$almacen=true,$id_pds = NULL,$id_material_incidencia = NULL)
     {
+
         // TERMINAL
         if($tipo_dispositivo==="device" || $tipo_dispositivo==="todo")
         {
-            $material_dispositivos = $this->tienda_model->get_material_dispositivos($id_inc,$almacen);
+            $incidencia = $this->tienda_model->get_incidencia($id_inc);
+
+            $material_dispositivos = $this->tienda_model->get_material_dispositivos($incidencia,$almacen);
+
             if (!empty($material_dispositivos)) {
 
                 foreach ($material_dispositivos as $material) {
@@ -686,6 +688,7 @@ class Incidencia_model extends CI_Model {
                         // Desvincular el dispositivo del material de la incidencia.
                         $id_material_incidencias = $material->id_material_incidencias;
                         $sql = "DELETE FROM material_incidencias WHERE id_material_incidencias = '$id_material_incidencias' ";
+
                         $this->db->query($sql);
 
                         if($almacen)

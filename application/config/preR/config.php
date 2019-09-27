@@ -43,13 +43,14 @@ $config['base_url'] = 'http://demoreal.pre.altabox.net/orange/';
  */
 $config['allowed_origins'] = array ('localhost', 'postman.pre.altabox.net', 'demoreal.pre.altabox.net', 'realdooh.pre.altabox.net');
 
-$config['realdooh.api.url'] = 'http://realdooh.pre.altabox.net:8080/rdorangeapi/api/v1';
+//$config['realdooh.api.url'] = 'http://realdooh.pre.altabox.net:8080/rdorangeapi/api/v1';
+$config['realdooh.api.url'] = 'https://altabox.realdooh.com/forgeapi/api/v1';
 
 $config['realdooh.api'] = array(
     'active' => true,
     'changeStatusUrl' => $config['realdooh.api.url']. '/demoreal/incident/{drId}',
     'createIncidenceUrl' => $config['realdooh.api.url'].'/demoreal/incident/{drId}/asset/{assetDrId}/user/{userSFID}/origin/{origin}',
-    'createPdsUrl'          => $config['realdooh.api.url'].'/location/demoreal?idOUParent=1',
+    'createPdsUrl'          => $config['realdooh.api.url'].'/location/demoreal?idOUParent=2673',
     'updatePdsUrl'          => $config['realdooh.api.url'].'/location/demoreal/{sfid}',
     'addAssetsPdsUrl'       => $config['realdooh.api.url'].'/massive/asset',
     'updateAssetTypeUrl'    => $config['realdooh.api.url'].'/assettype/demoreal',
