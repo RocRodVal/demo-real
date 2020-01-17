@@ -675,7 +675,7 @@ class Admin extends MY_Controller
             $id_inc = $this->uri->segment(4);
             //$recogida = $this->uri->segment(5)? $this->uri->segment(5):'';
             $error = $this->uri->segment(5)? urldecode($this->uri->segment(5)):'';
-            if($error =='device')
+            if($error =='device' || $error =='alarm' )
                 $error="";
 
             $xcrud = xcrud_get_instance();
@@ -927,6 +927,7 @@ class Admin extends MY_Controller
 
             // Salida PDF
             $html = $this->load->view('backend/imprimir_incidencia', $data, true);
+
             $filename_pdf = 'intervencion-'.$incidencia['intervencion'].'_incidencia-'.$incidencia['id_incidencia'];
             $created_pdf = pdf_create($html, $filename_pdf,FALSE);
 
