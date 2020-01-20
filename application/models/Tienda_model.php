@@ -2192,7 +2192,8 @@ class Tienda_model extends CI_Model {
                     ->where('id_devices_pds', $id_devices_pds)
                     ->get('devices_pds');
                 $device_pds = $query->row();
-                if($device_pds->status !='Baja') {
+
+                if(isset($devices_pds) && $device_pds->status !='Baja') {
                     $this->db->set('status', $status, FALSE);
                     $this->db->where('id_devices_pds', $id_devices_pds);
                     $this->db->update('devices_pds');
