@@ -694,7 +694,8 @@ class Tienda extends MY_Controller {
                 if ($incidencia['add']) {
                     //ponemos la posicion afectada como incidencia
                     $inc = $this->tienda_model->get_incidencia($incidencia['id']);
-                    $this->tienda_model->incidencia_update_device_pds($inc['id_devices_pds'], 2);
+                    $error="";
+                    $this->tienda_model->incidencia_update_device_pds($inc['id_devices_pds'], 2,$error);
                     // Envío de mail sólo en produccion
                     if (ENVIRONMENT === 'production') {
 

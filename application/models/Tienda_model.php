@@ -2184,7 +2184,10 @@ class Tienda_model extends CI_Model {
         $ahora = date("Y-m-d H:i:s");
         /*
          * Cuando se resuelve la incidencia
-         *///echo "Estado ".$status;
+         *
+         *
+         */
+        //echo "Estado ".$status;exit;
         switch ($status) {
 
             case ($status == 2): /*Cuando se revisa la incidenica*/
@@ -2193,10 +2196,19 @@ class Tienda_model extends CI_Model {
                     ->get('devices_pds');
                 $device_pds = $query->row();
 
-                if(isset($devices_pds) && $device_pds->status !='Baja') {
+                if(isset($device_pds) && $device_pds->status !='Baja' && $device_pds->status !='Incidencia') {
                     $this->db->set('status', $status, FALSE);
                     $this->db->where('id_devices_pds', $id_devices_pds);
                     $this->db->update('devices_pds');
+
+                    /*Insertamos que el dispositivo esta en incidencia*/
+                    $elemento = array(
+                        'id_devices_pds' => $id_devices_pds,
+                        'fecha' => date('Y-m-d H:i:s'),
+                        'status' => 'Incidencia',
+                        'motivo' => INCIDENCIA_ALTA
+                    );
+                    $this->insert_historico_devicesPDS($elemento);
                 }
 
                 break;
