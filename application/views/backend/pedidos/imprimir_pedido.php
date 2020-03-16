@@ -15,7 +15,7 @@
 
 <table width="100%">
 <tr>
-	<td width="20%"><img src="<?=site_url('assets/images/logo-focus_white.png')?>" width="200" height="24" /></td>
+	<td width="20%"><img src="<?=site_url('assets/images/logo.png')?>" width="200" height="24" /></td>
 	<td width="80%" align="right">
 		<h1 style="font-family: 'Helvetica'"><?php echo $title ?></h1>
 		<p style="font-family: 'Helvetica'">
