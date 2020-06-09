@@ -255,6 +255,7 @@ class Tienda extends MY_Controller {
 			$this->load->model('sfid_model');
 
             $origin = $this->uri->segment(4);
+
             /*Si en la url nos llega el texto clementine despues del codigo del mueble entonces anotamos que la incidencia
             se crea desde clementine*/
             if(!empty($origin) && $origin=='clementine'){
@@ -361,16 +362,29 @@ class Tienda extends MY_Controller {
 			$xcrud = xcrud_get_instance();
 			$this->load->model('sfid_model');
 
+            $session =$this->session->userdata('origin');
             $origin = $this->uri->segment(4);
+            if(empty($session)) {
+                if (!empty($origin) && $origin == 'clementine') {
+                    $this->session->set_userdata("origin", 1);
+                } else {
+                    if (!empty($origin)) {
+
+                        $this->session->set_userdata("origin", 0);
+                    }
+                }
+            }
+
             /*Si en la url nos llega el texto clementine despues del codigo del mueble entonces anotamos que la incidencia
             se crea desde clementine*/
-            if(!empty($origin) && $origin=='clementine'){
+            /*if(!empty($origin) && $origin=='clementine'){
                 $this->session->set_userdata("origin",1);
             }
             else {
                 $this->session->set_userdata("origin",0);
             }
 
+print_r($this->session->userdata);exit;*/
 			$sfid = $this->sfid_model->get_pds($data['id_pds']);
 	
 			$data['id_pds']     = $sfid['id_pds'];
@@ -593,7 +607,7 @@ class Tienda extends MY_Controller {
             $messageI="";
             $message="";
             $origin = $this->session->userdata('origin');
-
+//echo $origin; exit;
             if($form_tipo_averia==1) {
                 $config['upload_path'] = dirname($_SERVER["SCRIPT_FILENAME"]) . '/uploads/denuncias/';
                 $config['upload_url'] = base_url() . '/uploads/denuncias/';
@@ -819,7 +833,7 @@ class Tienda extends MY_Controller {
                     'password' => PASSTIENDA                                                  //
                 ));
 
-               // print_r($response); exit;
+                //print_r($response); exit;
                 //
                 //
                 //                                                                             //
