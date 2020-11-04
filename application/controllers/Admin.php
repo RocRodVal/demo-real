@@ -675,7 +675,7 @@ class Admin extends MY_Controller
             $id_inc = $this->uri->segment(4);
             //$recogida = $this->uri->segment(5)? $this->uri->segment(5):'';
             $error = $this->uri->segment(5)? urldecode($this->uri->segment(5)):'';
-            if($error =='device' || $error =='alarm' )
+            if($error =='device' || $error =='alarm' || $error=='recogida')
                 $error="";
 
             $xcrud = xcrud_get_instance();

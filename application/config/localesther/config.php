@@ -41,9 +41,9 @@ $config['base_url'] = 'http://demoreal.focusonemotions.com/orange/';
 /**
  * REALDOOH API, TEMPORARY ACTIVATION
  */
-$config['allowed_origins'] = array ('localhost', 'demoreal.focusonemotions.com', 'realdooh.pre.altabox.net/clementine');
+$config['allowed_origins'] = array ('localhost', 'demoreal.focusonemotions.com', 'realdooh.pre.altabox.net/clementine','192.168.0.11');
 
-$config['realdooh.api.url'] = 'http://realdooh.pre.altabox.net:8080/rdorangeapi/api/v1';
+$config['realdooh.api.url'] = 'http://192.168.0.10:4102/api/v1';
 //$config['realdooh.api.url'] = 'http://78.46.139.41:8080/rdorangeapi/api/v1';
 
 $config['realdooh.api'] = array (

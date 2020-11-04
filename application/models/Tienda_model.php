@@ -1126,6 +1126,7 @@ class Tienda_model extends CI_Model {
 
             foreach ($resultado as $intervencion) {
 
+
                 if (!isset($intervencion->incidencias)) {
                     if (array_key_exists($intervencion->visita, $facturacion)) {
                         $intervencion->incidencias = $facturacion[$intervencion->visita]->incidencias;
@@ -1656,6 +1657,92 @@ class Tienda_model extends CI_Model {
         return $this->db->query($sql)->num_rows();
     }
 
+    /* dispositivos que no han llegado al almacen tras la resolucion de la incidencia bien sea porque se asignaron y no se usaron
+   o porque genero la incidencia y no se ha enviado a almacen*/
+    public function get_devices_recogida_exportar($page = 1, $cfg_pagination = NULL) {
+
+        $this->load->dbutil();
+        $this->load->helper('file');
+        $this->load->helper('csv');
+        $this->load->helper('my_string');
+
+        $this->load->helper('download');
+        $this->load->model(array("contact_model","client_model"));
+
+        $limit='';
+        if(!empty($cfg_pagination)) {
+            if ($page==1) {
+                $limit=" LIMIT ".$page  *$cfg_pagination['per_page'];
+            } else {
+                if($page>1){
+                    $limit=" LIMIT ".($page-1) *$cfg_pagination['per_page'].",".  $cfg_pagination['per_page'];
+                }
+            }
+        }
+        /* Terminales que asignaron a la incidencia pero no se usaron*/
+        $sql="SELECT m.id_incidencia,p.reference, p.commercial as nombre,p.city as ciudad,pr.province as provincia,
+              c.contact as instalador,
+              d.device as dispositivo ,
+              CASE
+                WHEN a.IMEI = '' THEN ' '
+                WHEN a.IMEI is null THEN ' '
+                ELSE a.IMEI
+              END IMEI,
+              'Se asigno pero no se uso' as descripcion
+              FROM material_incidencias m
+              INNER JOIN devices_almacen a ON a.id_devices_almacen=m.id_devices_almacen AND a.status='Transito'
+              INNER JOIN incidencias i ON i.id_incidencia=m.id_incidencia AND i.status='Pendiente recogida'
+              INNER JOIN intervenciones_incidencias ii ON ii.id_incidencia = i.id_incidencia
+              INNER JOIN intervenciones inter on inter.id_intervencion = ii.id_intervencion
+              INNER JOIN contact c ON c.id_contact = inter.id_operador
+              INNER JOIN device d ON d.id_device=a.id_device
+              INNER JOIN pds p ON p.id_pds = i.id_pds
+              INNER JOIN province pr ON pr.id_province = p.province
+              UNION
+              SELECT i.id_incidencia,p.reference,p.commercial as nombre,p.city as ciudad,pr.province as provincia,
+              c.contact as instalador,
+              d.device as dispositivo,
+              CASE
+                WHEN a.IMEI = '' THEN ' '
+                WHEN a.IMEI is null THEN ' '
+                ELSE a.IMEI
+              END IMEI,
+              'genero la incidencia' as descripcion
+              FROM devices_almacen a
+              INNER JOIN incidencias i ON i.id_incidencia = a.id_incidencia AND a.status='Transito' AND i.status='Pendiente recogida'
+               INNER JOIN intervenciones_incidencias ii ON ii.id_incidencia = i.id_incidencia
+              INNER JOIN intervenciones inter on inter.id_intervencion = ii.id_intervencion
+              INNER JOIN contact c ON c.id_contact = inter.id_operador
+              INNER JOIN pds p ON p.id_pds = i.id_pds
+               INNER JOIN province pr ON pr.id_province = p.province
+              INNER JOIN device d ON d.id_device=a.id_device ".$limit;
+
+        $result = $this->db->query($sql)->result();
+
+        $arr_titulos = array('id_incidencia','SFID','Nombre tienda','Ciudad','Provincia','Instalador','Dispositivo','IMEI','Causa');
+        $excluir = array();
+
+        $data = preparar_array_exportar($result,$arr_titulos,$excluir);
+
+        //print_r($this->db->last_query());
+
+        // GENERAR NOMBRE DE FICHERO
+        $filename["dueno"] = "duenio";                   // Campo a sanear
+        $filename["instalador"]  = "instalador";  // Campo a sanear
+
+
+
+        foreach($filename as $key=>$f_name)
+        {
+            $filename[$key] = str_sanitize($f_name);
+        }
+
+
+        $str_filename = implode("___",$filename);
+
+        exportar_fichero("csv",$data,'Dispositivos-'.$str_filename);
+
+    }
     public function get_devices_almacen_exportar() {
 
         $query = $this->db->select('device.device, COUNT(devices_almacen.id_device) AS unidades')
