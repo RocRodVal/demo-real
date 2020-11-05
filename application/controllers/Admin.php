@@ -2857,6 +2857,15 @@ class Admin extends MY_Controller
             $lista_incidencias->unset_edit();
             $lista_incidencias->unset_print();
 
+            $historico=$xcrud_3->nested_table('historico_list','id_devices_pds','historico_devicesPDS','id_devices_pds');
+            $historico->columns('id_devices_pds,fecha,status,motivo');
+            $historico->fields('id_devices_pds,fecha,status,motivo');
+            $historico->label('status','Estado')->label('id_devices_pds','REF');
+            $historico->unset_add();
+            $historico->unset_remove();
+            $historico->unset_edit();
+            $historico->unset_print();
+
             $xcrud_3->label('client_type_pds', 'Cliente')->label('id_devices_pds', 'REF.')->label('id_pds', 'SFID')->label('id_displays_pds', 'Cod. mueble')->
             label('id_display', 'Mueble')->label('alta', 'Fecha de alta')->label('position', 'Posición')->label('id_device', 'Dispositivo')->
             label('IMEI', 'IMEI')->label('serial', 'S/N')->label('serial', 'Nº de serie')->label('barcode', 'Código de barras')->label('id_incidencia', 'Incidencias')

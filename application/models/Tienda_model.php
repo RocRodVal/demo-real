@@ -1727,7 +1727,7 @@ class Tienda_model extends CI_Model {
         //print_r($this->db->last_query());
 
         // GENERAR NOMBRE DE FICHERO
-        $filename["dueno"] = "duenio";                   // Campo a sanear
+        //$filename["dueno"] = "duenio";                   // Campo a sanear
         $filename["instalador"]  = "instalador";  // Campo a sanear
 
 
@@ -1740,7 +1740,7 @@ class Tienda_model extends CI_Model {
 
         $str_filename = implode("___",$filename);
 
-        exportar_fichero("csv",$data,'Dispositivos-'.$str_filename);
+        exportar_fichero("xlsx",$data,'Dispositivos_PendientesRecogida_'.$str_filename."_".date('Y-m-d'));
 
     }
     public function get_devices_almacen_exportar() {
