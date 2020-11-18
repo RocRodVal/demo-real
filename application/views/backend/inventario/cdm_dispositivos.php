@@ -340,7 +340,9 @@
             } else {
                 ?>
 
-                <h1 class="page-header">Disposivos pendientes de recoger</h1>
+                <h1 class="page-header">Disposivos pendientes de recoger
+                    [descargar <a href="<?=site_url('inventario/exportar_dispositivos');?>">Exportar Excel</a>]</h1>
+
                 <?php
                 if($show_paginator) { ?>
                 <div class="pagination">

@@ -675,7 +675,7 @@ class Admin extends MY_Controller
             $id_inc = $this->uri->segment(4);
             //$recogida = $this->uri->segment(5)? $this->uri->segment(5):'';
             $error = $this->uri->segment(5)? urldecode($this->uri->segment(5)):'';
-            if($error =='device' || $error =='alarm' )
+            if($error =='device' || $error =='alarm' || $error=='recogida')
                 $error="";
 
             $xcrud = xcrud_get_instance();
@@ -2491,9 +2491,10 @@ class Admin extends MY_Controller
         $xcrud_3->relation('brand_device', 'brand_device', 'id_brand_device', 'brand');
         $xcrud_3->change_type('picture_url', 'image');
         $xcrud_3->modal('picture_url');
-        $xcrud_3->label('id_device', 'Identificador')->label('brand_device', 'Fabricante')->label('type_device', 'Tipo')->label('device', 'Modelo')->label('brand_name', 'Modelo fabricante')->label('picture_url', 'Foto')->label('description', 'Comentarios')->label('status', 'Estado');
-        $xcrud_3->columns('id_device,brand_device,type_device,device,picture_url,brand_name,status');
-        $xcrud_3->fields('brand_device,type_device,device,brand_name,picture_url,description,status');
+        $xcrud_3->label('id_device', 'Identificador')->label('brand_device', 'Fabricante')->label('type_device', 'Tipo')->label('device', 'Modelo')->label('brand_name', 'Modelo fabricante')->label('picture_url', 'Foto')->label('description', 'Comentarios')
+            ->label('status', 'Estado')->label('carga','Tipo de carga');
+        $xcrud_3->columns('id_device,brand_device,type_device,device,picture_url,brand_name,status, carga');
+        $xcrud_3->fields('brand_device,type_device,device,brand_name,picture_url,description,status, carga');
         $xcrud_3->unset_remove();// Ocultar el botón de borrar para evitar borrados accidentales mientras no existan constraints en BD:
 
         $data['title'] = 'Dispositivos';
@@ -2536,9 +2537,10 @@ class Admin extends MY_Controller
         $xcrud_4->relation('client_panelado', 'client', 'id_client', 'client');
         $xcrud_4->relation('id_display', 'display', 'id_display', 'display');
         $xcrud_4->relation('id_device', 'device', 'id_device', 'device');
-        $xcrud_4->label('id_devices_display', 'Identificador')->label('client_panelado', 'Cliente')->label('id_panelado', 'REF.')->label('id_display', 'Mueble')->label('id_device', 'Dispositivo')->label('position', 'Posición')->label('description', 'Comentarios')->label('status', 'Estado');
-        $xcrud_4->columns('id_devices_display,client_panelado,id_display,id_device,position,status');
-        $xcrud_4->fields('client_panelado,id_display,id_device,position,description,status');
+        $xcrud_4->label('id_devices_display', 'Identificador')->label('client_panelado', 'Cliente')->label('id_panelado', 'REF.')->label('id_display', 'Mueble')->label('id_device', 'Dispositivo')
+            ->label('position', 'Posición')->label('description', 'Comentarios')->label('status', 'Estado')->label('display'.'Display');
+        $xcrud_4->columns('id_devices_display,client_panelado,id_display,id_device,position,status,display');
+        $xcrud_4->fields('client_panelado,id_display,id_device,position,description,status,display');
         $xcrud_4->unset_remove();
 
         $xcrud_3 = xcrud_get_instance();
@@ -2856,6 +2858,15 @@ class Admin extends MY_Controller
             $lista_incidencias->unset_remove();
             $lista_incidencias->unset_edit();
             $lista_incidencias->unset_print();
+
+            $historico=$xcrud_3->nested_table('historico_list','id_devices_pds','historico_devicesPDS','id_devices_pds');
+            $historico->columns('id_devices_pds,fecha,status,motivo');
+            $historico->fields('id_devices_pds,fecha,status,motivo');
+            $historico->label('status','Estado')->label('id_devices_pds','REF');
+            $historico->unset_add();
+            $historico->unset_remove();
+            $historico->unset_edit();
+            $historico->unset_print();
 
             $xcrud_3->label('client_type_pds', 'Cliente')->label('id_devices_pds', 'REF.')->label('id_pds', 'SFID')->label('id_displays_pds', 'Cod. mueble')->
             label('id_display', 'Mueble')->label('alta', 'Fecha de alta')->label('position', 'Posición')->label('id_device', 'Dispositivo')->
