@@ -20,6 +20,10 @@
                                     <?php
                                     foreach($devices as $device)
                                     {
+
+                                        if ($device->display==true) {?>
+                                            <p style = "box-shadow: 1px 1px 10px #ef0005	">
+                                      <?php  }
                                         ?>
                                         <a class="list-group-item" href="<?=site_url($controlador.'/informe_visual_ficha_terminal/'.
                                             $id_pds_url.'/'.$id_dis_url.'/'.$device->id_devices_pds)?>">
@@ -33,6 +37,11 @@
                                             }
                                             ?>
                                         </a>
+                                        <?php
+                                        if ($device->display==true) {?>
+                                        </p>
+                                       <?php  }
+                                        ?>
                                     <?php
                                     }
                                     ?>

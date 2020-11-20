@@ -5,7 +5,7 @@
             {	
             ?>
             <div class="row">
-				<div class="col-lg-6">
+				<div class="col-lg-12">
                     <h2><?=$subtitle?></h2>
  					<?php
                     if ((empty($displays)) || (empty($devices))){
@@ -18,12 +18,21 @@
                         <div class="panel-body">
 							<div class="row">
 								<div class="col-lg-8">
-									<div class="list-group">
+									<div class="list-group" >
 										<?php
 										foreach($devices as $device)
 										{
 										?>
-										<p><?php echo $device->position.'. '.$device->device ?></p>
+										<?php
+											if ($device->display==true) { ?>
+<!--											 <p style="border: ridge #ef0005 2px;">-->
+											 <p style = "box-shadow: 1px 1px 10px #ef0005	">
+											<?php }
+
+											else { ?> <p><?php }
+											echo "  ".$device->position.'. '.$device->device;
+											 ?>
+										</p>
 										<?php
 										}
 										?>

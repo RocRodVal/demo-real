@@ -22,11 +22,18 @@
                             <?php
                             foreach($devices as $device)
                             {
+                                if ($device->display==true) {?>
+                                <p style = "box-shadow: 1px 1px 10px #ef0005	">
+                               <?php }
                                 ?>
                                 <a class="list-group-item" href="<?=site_url($controlador.'/informe_visual_terminal/'.$id_display.'/'.$device->id_device)?>">
                                     <?php echo $device->position.'. '.$device->device ?>
                                 </a>
-                            <?php
+                                <?php
+                                if ($device->display==true) {?>
+                                </p>
+                               <?php }
+
                             }
                             ?>
                         </div>

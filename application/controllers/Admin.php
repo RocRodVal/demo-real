@@ -77,7 +77,11 @@ class Admin extends MY_Controller
                 'id_subtipo'=>'',
                 'id_segmento'=>'',
                 'id_tipologia'=>'',
-                'id_tipo_incidencia'=>''
+                'id_tipo_incidencia'=>'',
+
+                'id_tipoN'=>'',
+                'id_subtipoN'=>'',
+                'id_tipologiaN'=>'',
             );
 
             /* BORRAR BUSQUEDA */
@@ -189,6 +193,11 @@ class Admin extends MY_Controller
             $data["subtipos"] = $this->categoria_model->get_subtipos_pds();
             $data["segmentos"] = $this->categoria_model->get_segmentos_pds();
             $data["tipologias"] = $this->categoria_model->get_tipologias_pds();
+
+            /* SELECTORES CATEGORIA NUEVA PDS */
+            $data["tiposN"] = $this->categoria_model->get_tipos_pds();
+            $data["subtiposN"] = $this->categoria_model->get_subtipos_pds();
+            $data["tipologiasN"] = $this->categoria_model->get_tipologias_pds();
 
             /* SELECTOR DEL TIPO DE INCIDENCIA*/
             $data['tipos_incidencia'] = $this->tienda_model->get_tipos_incidencia();
@@ -2484,23 +2493,35 @@ class Admin extends MY_Controller
         $xcrud_2->start_minimized(true);
         $xcrud_2->unset_remove(); // Ocultar el botón de borrar para evitar borrados accidentales mientras no existan constraints en BD:
 
+        $xcrud_4 = xcrud_get_instance();
+        $xcrud_4->table('type_deviceCarga');
+        $xcrud_4->table_name('Tipo de carga');
+        $xcrud_4->label('id_type_deviceCarga', 'Identificador')->label('type', 'Tipo');
+        $xcrud_4->columns('id_type_deviceCarga,type');
+        $xcrud_4->fields('type');
+        $xcrud_4->start_minimized(true);
+        $xcrud_4->unset_remove(); // Ocultar el botón de borrar para evitar borrados accidentales mientras no existan constraints en BD:
+
         $xcrud_3 = xcrud_get_instance();
         $xcrud_3->table('device');
         $xcrud_3->table_name('Modelo');
         $xcrud_3->relation('type_device', 'type_device', 'id_type_device', 'type');
+        $xcrud_3->relation('idTypeCarga', 'type_deviceCarga', 'id_type_deviceCarga', 'type');
         $xcrud_3->relation('brand_device', 'brand_device', 'id_brand_device', 'brand');
         $xcrud_3->change_type('picture_url', 'image');
         $xcrud_3->modal('picture_url');
         $xcrud_3->label('id_device', 'Identificador')->label('brand_device', 'Fabricante')->label('type_device', 'Tipo')->label('device', 'Modelo')->label('brand_name', 'Modelo fabricante')->label('picture_url', 'Foto')->label('description', 'Comentarios')
-            ->label('status', 'Estado')->label('carga','Tipo de carga');
-        $xcrud_3->columns('id_device,brand_device,type_device,device,picture_url,brand_name,status, carga');
-        $xcrud_3->fields('brand_device,type_device,device,brand_name,picture_url,description,status, carga');
+            ->label('status', 'Estado')->label('idTypeCarga','Tipo de carga');
+        $xcrud_3->columns('id_device,brand_device,type_device,device,picture_url,brand_name,status, idTypeCarga');
+        $xcrud_3->fields('brand_device,type_device,device,brand_name,picture_url,description,status, idTypeCarga');
         $xcrud_3->unset_remove();// Ocultar el botón de borrar para evitar borrados accidentales mientras no existan constraints en BD:
 
         $data['title'] = 'Dispositivos';
         $data['content'] = $xcrud_1->render();
         $data['content'] = $data['content'] . $xcrud_2->render();
+        $data['content'] = $data['content'] . $xcrud_4->render();
         $data['content'] = $data['content'] . $xcrud_3->render();
+
 
 
         /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
@@ -2530,6 +2551,30 @@ class Admin extends MY_Controller
         $xcrud_2->columns('id,client,id_tipo,id_subtipo,id_segmento,id_tipologia,id_display,position,status');
         $xcrud_2->fields('client,id_tipo,id_subtipo,id_segmento,id_tipologia,id_display,position,status');
         $xcrud_2->unset_remove();
+
+        /*Mostramos los dispositivos del mueble*/
+        $devices=$xcrud_2->nested_table('devices_list','id_display','devices_display','id_display');
+        $devices->relation('id_device', 'device','id_device','device');
+        $devices->relation('id_display', 'display','id_display','display');
+        $devices->where('devices_display.status','Alta');
+        $devices->columns('id_display,id_device,position,display');
+        $devices->fields('display,device,position,display');
+        $devices->order_by('position');
+        $devices->unset_add();
+        $devices->unset_remove();
+        $devices->unset_csv();
+        $devices->unset_edit();
+        $devices->unset_print();
+
+        /*Mostramos los displays del mueble*/
+        $displays_display=$xcrud_2->nested_table('displays_list','id_display','displays_display','id_display');
+        $displays_display->relation('id_muebledisplay', 'mueble_display','id_muebledisplay','name');
+        $displays_display->where('displays_display.status','Alta');
+        $displays_display->columns('id_display,id_muebledisplay,status');
+        $displays_display->fields('display,id_muebledisplay,status');
+        $displays_display->unset_csv();
+        $displays_display->unset_edit();
+        $displays_display->unset_print();
 
         $xcrud_4 = xcrud_get_instance();
         $xcrud_4->table('devices_display');
@@ -2563,6 +2608,37 @@ class Admin extends MY_Controller
         $data['content'] =  $xcrud_2->render();
         $data['content'] = $data['content'] . $xcrud_4->render();
         $data['content'] = $data['content'] . $xcrud_3->render();
+
+
+        /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+        $this->data->add($data);
+        $data = $this->data->getData();
+        /////
+        $this->load->view('backend/header', $data);
+        $this->load->view('backend/navbar', $data);
+        $this->load->view('backend/content', $data);
+        $this->load->view('backend/footer');
+    }
+
+    public function displays()
+    {
+        $xcrud = xcrud_get_instance();
+        $xcrud->table('mueble_display');
+        $xcrud->table_name('Displays');
+        $xcrud->relation('client_display', 'client', 'id_client', 'client');
+        $xcrud->change_type('picture_url', 'image');
+        $xcrud->modal('picture_url');
+        $xcrud->label('id_muebledisplay', 'Identificador')->label('client_display', 'Cliente')->label('name', 'Nombre')->label('picture_url', 'Foto')->label('description', 'Comentarios')->label('positions', 'Posiciones')->label('status', 'Estado');
+        $xcrud->columns('id_muebledisplay,client_display,name,picture_url,positions,status');
+        $xcrud->fields('client_display,name,picture_url,positions,status,description');
+        $xcrud->unset_remove();
+        //$xcrud->after_insert("create_modeloMueble_realdooh","../libraries/Functions.php");
+        //$xcrud->before_update("update_modeloMueble_realdooh","../libraries/Functions.php");
+
+
+        $data['title'] = 'Displays ';
+
+        $data['content'] =  $xcrud->render();
 
 
         /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
@@ -2648,6 +2724,68 @@ class Admin extends MY_Controller
         $this->load->view('backend/footer');
     }
 
+    public function puntos_de_ventaN()
+    {
+
+        $xcrud_2 = xcrud_get_instance();
+        $xcrud_2->table('pds');
+        $xcrud_2->table_name('Tienda');
+        $xcrud_2->relation('client_pds', 'client', 'id_client', 'client');
+        //$xcrud_2->relation('type_pds', 'type_pds', 'id_type_pds', 'pds');
+        $xcrud_2->relation('territory', 'territory', 'id_territory', 'territory');
+        //$xcrud_2->relation('panelado_pds', 'panelado', 'id_panelado', 'panelado_abx');
+        $xcrud_2->relation('type_via', 'type_via', 'id_type_via', 'via');
+        $xcrud_2->relation('province', 'province', 'id_province', 'province');
+        $xcrud_2->relation('county', 'county', 'id_county', 'county');
+        $xcrud_2->relation('contact_contact_person', 'contact', 'id_contact', 'contact');
+        $xcrud_2->relation('contact_in_charge', 'contact', 'id_contact', 'contact');
+        $xcrud_2->relation('contact_supervisor', 'contact', 'id_contact', 'contact');
+        $xcrud_2->relation('id_tipoN', 'pds_tipo','id','titulo');
+        $xcrud_2->relation('id_subtipoN', 'pds_subtipo', 'id', 'titulo','','titulo');
+        $xcrud_2->relation('id_tipologiaN', 'pds_tipologia','id', 'titulo','','titulo');
+        $xcrud_2->relation('id_supervisor', 'pds_supervisor','id', 'titulo','','titulo');
+        $xcrud_2->change_type('picture_url', 'image');
+        $xcrud_2->modal('picture_url');
+        $xcrud_2->readonly('openingDate,createdDate,status,reference','edit');
+        $xcrud_2->disabled('openingDate','create');
+        $xcrud_2->pass_default('createdDate',date("Y-m-d H:i:s"));
+        //$xcrud_2->sum('m2_total', 'm2_fo', 'm2_bo');
+        $xcrud_2->label('id_pds', 'Identificador')->label('client_pds', 'Cliente')->label('reference', 'SFID')
+            ->label('codigoSAT', 'Codigo SAT')->label('id_tipoN', 'TipoN PDS')->label('createdDate','Fecha de alta')
+            ->label('openingDate','Fecha de apertura')
+            ->label('id_subtipoN', 'SubtipoN PDS')->label('id_tipologiaN', 'TipologíaN PDS')
+            ->label('territory', 'Territorio')->label('commercial', 'Nombre comercial')->label('cif', 'CIF')->label('picture_url', 'Foto')->label('type_via', 'Tipo vía')
+            ->label('address', 'Dirección')->label('zip', 'C.P.')->label('city', 'Ciudad')->label('province', 'Provincia')
+            ->label('county', 'CC.AA.')->label('schedule', 'Horario')->label('phone', 'Teléfono')->label('mobile', 'Móvil')
+            ->label('email', 'Email')->label('contact_contact_person', 'Contacto')->label('contact_in_charge', 'Encargado')
+            ->label('id_supervisor', 'Supervisor')->label('status', 'Estado');
+
+        $xcrud_2->columns('id_pds,client_pds,reference,codigoSAT,id_tipoN,id_subtipoN,id_tipologiaN,commercial,territory,status');
+        $xcrud_2->fields('client_pds,reference,codigoSAT,createdDate,openingDate,id_tipoN,id_subtipoN,id_tipologiaN,commercial,cif,territory,picture_url,type_via,address,zip,city,province,county,territory,schedule,phone,mobile,email,contact_contact_person,contact_in_charge,id_supervisor,status');
+
+        $xcrud_2->validation_required('reference');
+        $xcrud_2->validation_required('province');
+        $xcrud_2->validation_required('territory');
+        $xcrud_2->after_insert("create_pds_realdooh","../libraries/Functions.php");
+        $xcrud_2->after_update("update_pds_realdooh","../libraries/Functions.php");
+        // Ocultar el botón de borrar para evitar borrados accidentales mientras no existan constraints en BD:
+        $xcrud_2->unset_remove();
+        $xcrud_2->order_by(array("status"=>'asc',"id_tipoN"=>"desc","id_subtipoN"=>"asc","id_tipologiaN"=>"asc"));
+        $data['title'] = 'Puntos de venta Nuevo';
+
+        $data['content'] = $xcrud_2->render();
+
+        /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+        $this->data->add($data);
+        $data = $this->data->getData();
+
+        /////
+        $this->load->view('backend/header', $data);
+        $this->load->view('backend/navbar', $data);
+        $this->load->view('backend/content', $data);
+        $this->load->view('backend/footer');
+    }
+
     public function categorias_pdv()
     {
         $xcrud_1 = xcrud_get_instance();
@@ -2678,20 +2816,20 @@ class Admin extends MY_Controller
         $xcrud_3->columns('id,id_tipo,titulo,Tipologías');
 
         /*Agregando el campo orden */
-        $xcrud_4 = xcrud_get_instance();
+      /*  $xcrud_4 = xcrud_get_instance();
         $xcrud_4->table('pds_segmento');
         $xcrud_4->table_name('Definir Segmentos de PDS');
         $xcrud_4->order_by('orden','asc');
         $xcrud_4->label('id', 'Id.')->label('titulo', 'Título')->label('orden', 'Orden');
         $xcrud_4->columns('id,titulo,orden');
         $xcrud_4->columns('titulo');
-        $xcrud_4->columns('orden');
+        $xcrud_4->columns('orden');*/
 
         $data['title'] = 'Categorización de PDS: Tipo, Subtipo, Segmento, Tipología';
         $data['content'] = $xcrud_1->render();
         $data['content'] .= $xcrud_2->render();
         $data['content'] .= $xcrud_3->render();
-        $data['content'] .= $xcrud_4->render();
+        //$data['content'] .= $xcrud_4->render();
 
 
         /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
@@ -5135,12 +5273,12 @@ class Admin extends MY_Controller
 
 
             $device = $this->tienda_model->get_device($id_device);
-
             $data['id_device'] = $device['id_device'];
             $data['device'] = $device['device'];
             $data['brand_name'] = $device['brand_name'];
             $data['description'] = $device['description'];
             $data['picture_url_dev'] = $device['picture_url'];
+            //$data['display'] = $device['display'];
 
 
             // Inicialización de campos-categoría

@@ -18,9 +18,9 @@
                                         <p><strong><?php echo $device ?></strong></p>
                                         <h3>Datos teléfono</h3>
                                         <p>
-	                                        Modelo: <?php echo $device ?><br />
-	                                        Modelo de marca: <?php echo $brand_name ?><br />
-	                                        Descripción: <?php echo $description ?><br />
+	                                        <strong>Modelo: </strong><?php echo $device ?><br />
+	                                        <strong>Modelo de marca: </strong><?php echo $brand_name ?><br />
+	                                        <strong>Descripción: </strong><?php echo $description ?><br />
                                         </p>
                                     </td>
                                     <?php
