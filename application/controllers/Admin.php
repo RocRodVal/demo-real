@@ -679,6 +679,7 @@ class Admin extends MY_Controller
 
     public function operar_incidencia()
     {
+        
         if ($this->auth->is_auth()) {
             $id_pds = $this->uri->segment(3);
             $id_inc = $this->uri->segment(4);
@@ -1049,6 +1050,7 @@ class Admin extends MY_Controller
 
     public function insert_chat()
     {
+        //echo "hola";exit;
         if ($this->auth->is_auth()) {
             $id_pds = $this->uri->segment(3);
             $id_inc = $this->uri->segment(4);
@@ -1107,7 +1109,8 @@ class Admin extends MY_Controller
                 );
 
                 $chat = $this->chat_model->insert_chat_incidencia($data);
-
+                //echo 'admin/operar_incidencia/' . $id_pds . '/' . $id_inc;
+//print_r($chat);exit;
                 if ($chat['add']) {
                     redirect('admin/operar_incidencia/' . $id_pds . '/' . $id_inc);
                 }
@@ -2571,7 +2574,7 @@ class Admin extends MY_Controller
         $displays_display->relation('id_muebledisplay', 'mueble_display','id_muebledisplay','name');
         $displays_display->where('displays_display.status','Alta');
         $displays_display->columns('id_display,id_muebledisplay,status');
-        $displays_display->fields('display,id_muebledisplay,status');
+        $displays_display->fields('id_display,id_muebledisplay,status');
         $displays_display->unset_csv();
         $displays_display->unset_edit();
         $displays_display->unset_print();
@@ -2601,6 +2604,30 @@ class Admin extends MY_Controller
         $xcrud_3->unset_remove();
         $xcrud_3->after_insert("create_modeloMueble_realdooh","../libraries/Functions.php");
         $xcrud_3->before_update("update_modeloMueble_realdooh","../libraries/Functions.php");
+
+        /*Mostramos los dispositivos del mueble*/
+        $devices=$xcrud_3->nested_table('devices_list','id_display','devices_display','id_display');
+        $devices->relation('id_device', 'device','id_device','device');
+        $devices->relation('id_display', 'display','id_display','display');
+        $devices->where('devices_display.status','Alta');
+        $devices->columns('id_display,id_device,position,display');
+        $devices->fields('display,device,position,display');
+        $devices->order_by('position');
+        $devices->unset_add();
+        $devices->unset_remove();
+        $devices->unset_csv();
+        $devices->unset_edit();
+        $devices->unset_print();
+
+        /*Mostramos los displays del mueble*/
+        $displays_display=$xcrud_3->nested_table('displays_list','id_display','displays_display','id_display');
+        $displays_display->relation('id_muebledisplay', 'mueble_display','id_muebledisplay','name');
+        $displays_display->where('displays_display.status','Alta');
+        $displays_display->columns('id_display,id_muebledisplay,status');
+        $displays_display->fields('id_display,id_muebledisplay,status');
+        $displays_display->unset_csv();
+        $displays_display->unset_edit();
+        $displays_display->unset_print();
 
 
         $data['title'] = 'Muebles';
@@ -4667,6 +4694,7 @@ class Admin extends MY_Controller
 
                         $arr_displays_pds = $this->sfid_model->get_id_displays_pds($id_pds,$mueble_plano);
 
+
                         $displays = array();
                         $data['display'] = "";
 
@@ -4675,13 +4703,14 @@ class Admin extends MY_Controller
 
                             $displays = $this->sfid_model->get_devices_displays_pds($id_displays_pds);
                             $data["id_dis_url"] = $id_displays_pds;
-
+//print_r($displays);exit;
                             foreach ($displays as $key => $display) {
                                 $num_devices = $this->tienda_model->count_devices_display($display->id_display);
                                 $display->devices_count = $num_devices;
                             }
 
                             $devices = $this->sfid_model->get_devices_displays_pds($id_displays_pds);
+                           // print_r($devices);exit;
                             $data['devices'] = $devices;
                             $data['displays'] = $displays;
                         }
@@ -6561,6 +6590,8 @@ class Admin extends MY_Controller
 
         $sfid = $this->tienda_model->get_pds($id_pds);
 
+        $pedidoAntes = $this->pedido_model->get_pedido($id_pedido,$id_pds);
+
         $data['id_pds'] = 'ABX/PDS-' . $sfid['id_pds'];
         $data['commercial'] = $sfid['commercial'];
         $data['territory'] = $sfid['territory'];
@@ -6588,12 +6619,17 @@ class Admin extends MY_Controller
             $this->pedido_model->pedido_update_cierre($id_pedido, $fecha_cierre);
         }
 
+        if($status == 7 && $pedidoAntes->status!='Pendiente de material'){
+            $this->pedido_model->sumar_stock_alarmas($id_pedido, $id_pds);
+        }
+
         /**
          * CIERRE FORZOSO
          */
         if ($status == 8)
         {
             $this->pedido_model->pedido_update_cierre($id_pedido, $fecha_cierre);
+            $this->pedido_model->sumar_stock_alarmas($id_pedido, $id_pds);
             //Le ponemos estado Finalizado
             $this->pedido_model->pedido_update($id_pedido, 6);
         }

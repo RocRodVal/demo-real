@@ -48,7 +48,7 @@ $config['allowed_origins'] = array ('localhost', 'demoreal.focusonemotions.com',
 $config['realdooh.api.url'] = 'https://altabox.realdooh.com/forgeapi/api/v1';
 
 $config['realdooh.api'] = array(
-    'active' => TRUE,
+    'active' => true,
     'changeStatusUrl' => $config['realdooh.api.url']. '/demoreal/incident/{drId}',
     'createIncidenceUrl' => $config['realdooh.api.url'].'/demoreal/incident/{drId}/asset/{assetDrId}/user/{userSFID}/origin/{origin}',
     'createPdsUrl'          => $config['realdooh.api.url'].'/location/demoreal?idOUParent=2673',
@@ -256,7 +256,7 @@ $config['allow_get_array'] = TRUE;
 | your log files will fill up very fast.
 |
 */
-$config['log_threshold'] = 0;
+$config['log_threshold'] = 1;
 
 /*
 |--------------------------------------------------------------------------

@@ -144,7 +144,7 @@ function alta_incidencia_realdooh($params, $auth) {
     if($cfg['active']) {
         $service = $cfg['createIncidenceUrl'];
         $response = rest_post($service, $params, $auth);
-
+       // log_message('error', $cfg['createIncidenceUrl']." - ".print_r($response,true));
         return $response;
     }
 }
@@ -162,6 +162,7 @@ function set_estado_incidencia_realdooh($params, $auth, $postParams = '') {
     if($cfg['active']) {
         $service = $cfg['changeStatusUrl'];
         $response = rest_put($service, $params, $auth, $postParams);
+        //log_message('error', $cfg['changeStatusUrl']." - ".print_r($response,true));
         return $response;
 
     }
@@ -180,6 +181,7 @@ function alta_pds_realdooh($auth, $params='',$postParams = '') {
     if($cfg['active']) {
         $service = $cfg['createPdsUrl'];
         $response = rest_post($service, $params, $auth,$postParams);
+        //log_message('error', $cfg['createIncidenceUrl']." - ".print_r($response,true));
         return $response;
 
     }
@@ -198,6 +200,7 @@ function set_pds_realdooh($auth, $params='',$postParams = '') {
     if($cfg['active']) {
         $service = $cfg['updatePdsUrl'];
         $response = rest_put_json($service, $params, $auth,$postParams);
+        //log_message('error', $cfg['updatePdsUrl']." - ".print_r($response,true));
         return $response;
 
     }
@@ -216,6 +219,7 @@ function alta_modeloMueble_realdooh($auth, $params='',$postParams = '') {
     if($cfg['active']) {
         $service = $cfg['updateAssetTypeUrl'];
         $response = rest_post($service, $params, $auth,$postParams);
+       // log_message('error', $cfg['updateAssetTypeUrl']." - ". print_r($response,true));
         return $response;
 
     }
@@ -235,6 +239,7 @@ function set_modeloMueble_realdooh($auth, $params='',$postParams = '') {
         $service = $cfg['updateAssetTypeUrl'];
 
         $response = rest_put_json($service, $params, $auth,$postParams);
+      //  log_message('error', $cfg['updateAssetTypeUrl']." - ".print_r($response,true));
         return $response;
 
     }
@@ -253,6 +258,7 @@ function set_assets_pds_realdooh($auth, $params='',$postParams = '') {
     if($cfg['active']) {
         $service = $cfg['addAssetsPdsUrl'];
         $response = rest_post($service, $params, $auth,$postParams);
+        //log_message('error', $cfg['addAssetsPdsUrl']." - ".print_r($response,true));
         return $response;
 
     }
@@ -271,6 +277,7 @@ function delete_pds_realdooh($auth, $params='',$postParams = '') {
     if($cfg['active']) {
         $service = $cfg['updatePdsUrl'];
         $response = rest_delete($service, $params, $auth,$postParams);
+      //  log_message('error', $cfg['updatePdsUrl']." - ".print_r($response,true));
         return $response;
 
     }
@@ -290,6 +297,7 @@ function delete_assets_pds_realdooh($auth, $params='',$postParams = '') {
         $service = $cfg['deleteAssetsUrl'];
 
         $response = rest_post($service, $params, $auth,$postParams);
+        //log_message('error',$cfg['deleteAssetsUrl']." - ". print_r($response,true));
         return $response;
 
     }
@@ -311,6 +319,7 @@ function cancel_incidents($auth,$params='',$postParams = '') {
         //echo $service."<br><br>";
         //print_r($postParams);
         $response = rest_post($service, array(), $auth,$postParams);
+        //log_message('error',$cfg['cancelIncidentsUrl']." - ". print_r($response,true));
         return $response;
 
     }
@@ -340,6 +349,9 @@ function rest_post ($url, $urlParams = array(), $auth = array(), $queryParams= '
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
     $server_output = curl_exec ($ch);
+    log_message('error', $url." - ".print_r(curl_getinfo($ch),true));
+    log_message('error', print_r($server_output,true));
+
     curl_close ($ch);
 
     return $server_output;
@@ -371,6 +383,9 @@ function rest_put ($url, $urlParams, $auth, $queryParams = '') {
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
     $server_output = curl_exec ($ch);
+    log_message('error', $url." - ".print_r(curl_getinfo($ch),true));
+    log_message('error', print_r($server_output,true));
+
     curl_close ($ch);
 
     return $server_output;
@@ -400,6 +415,9 @@ function rest_put_json ($url, $urlParams, $auth, $queryParams = '') {
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
     $server_output = curl_exec ($ch);
+    log_message('error', $url." - ".print_r(curl_getinfo($ch),true));
+    log_message('error', print_r($server_output,true));
+
     curl_close ($ch);
 
     return $server_output;
@@ -431,6 +449,8 @@ function rest_delete ($url, $urlParams = array(), $auth = array(), $queryParams=
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
     $server_output = curl_exec ($ch);
+    log_message('error', $url." - ".print_r(curl_getinfo($ch),true));
+    log_message('error', print_r($server_output,true));
 
     //$api_response_info = curl_getinfo($ch);
     //print_r($api_response_info); exit;
@@ -450,6 +470,9 @@ function file_get_contents_curl($url) {
         curl_setopt($fc, CURLOPT_SSL_VERIFYPEER,FALSE);
         curl_setopt($fc, CURLOPT_TIMEOUT,30);
         $res = curl_exec($fc);
+        log_message('error', $url." - ".print_r(curl_getinfo($fc),true));
+        log_message('error', print_r($res,true));
+
         curl_close($fc);
     }
     else $res = file_get_contents($url);

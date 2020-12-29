@@ -260,6 +260,22 @@ class Pedido_model extends CI_Model {
         }
     }
 
+     /*
+     * Sumar las unidades de las alarmas
+     */
+    public function sumar_stock_alarmas($id_pedido,$id_pds)
+    {
+        $detalle=$this->get_detalle($id_pedido,$id_pds);
+        foreach($detalle as $d) {
+            
+            $this->db->set('units', 'units + ' . $d->cantidad, FALSE);
+            $this->db->where('id_alarm', $d->id_alarm);
+
+            $this->db->update('alarm');
+        }
+    }
+
+
     /**
      *  Devuelve conjunto de registros de incidencias abiertas, para generar CSV
      *  filtradas si procede

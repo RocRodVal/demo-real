@@ -186,17 +186,17 @@ class Sfid_model extends CI_Model {
 
 		if($id_displays_pds != FALSE) 
 		{
-			$query = $this->db->select('devices_pds.*,devices_pds.status as estado, device.*, devices_pds.id_devices_pds,devices_display.display')
+			$query = $this->db->select('distinct(devices_pds.id_devices_pds),devices_pds.*,devices_pds.status as estado, device.*, devices_display.display')
 				->join('device','devices_pds.id_device = device.id_device')
 				->join('devices_display','devices_pds.id_display = devices_display.id_display')
 				->where('devices_pds.id_displays_pds',$id_displays_pds)
-				->where('devices_display.id_device = devices_pds.id_device')
+				//->where('devices_display.id_device = devices_pds.id_device')
 				->where('devices_pds.status != "SAT"')
 				->where('devices_pds.status != "Baja"')
                 ->where('devices_pds.status != "RMA"')
 				->order_by('devices_pds.position')
 				->get('devices_pds');
-            //echo $this->db->last_query(); exit;
+           // echo $this->db->last_query(); exit;
 			return $query->result();
 		}
 		else 
