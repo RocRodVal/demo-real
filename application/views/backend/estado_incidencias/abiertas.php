@@ -71,42 +71,6 @@
                                 </select>
                             </div>
 
-                            <div class="col-lg-3">
-                                <label for="id_tipoN">TipoN PDS: </label>
-                                <select name="id_tipoN" id="id_tipoN" class="form-control input-sm">
-                                    <option value="" <?php echo ($id_tipoN==="") ? 'selected="selected"' : ''?>>Cualquiera...</option>
-                                    <?php foreach($tiposN as $pds_tipoN){
-                                        echo '<option value="'.$pds_tipoN["id"].'"
-                                                    '.(($id_tipoN == $pds_tipoN["id"]) ?  ' selected="selected" ' : '' ).'
-                                                >'.$pds_tipoN["titulo"].'</option>';
-                                    }?>
-                                </select>
-                            </div>
-
-                            <div class="col-lg-3">
-                                <label for="id_subtipoN">SubtipoN PDS: </label>
-                                <select name="id_subtipoN" id="id_subtipoN" class="form-control input-sm">
-                                    <option value="" <?php echo ($id_subtipoN==="") ? 'selected="selected"' : ''?>>Cualquiera...</option>
-                                    <?php foreach($subtiposN as $pds_subtipoN){
-                                        echo '<option value="'.$pds_subtipoN["id"].'"
-                                                    '.(($id_subtipoN == $pds_subtipoN["id"]) ?  ' selected="selected" ' : '' ).'
-                                                >'.$pds_subtipoN["titulo"].'</option>';
-                                    }?>
-                                </select>
-                            </div>
-
-                            <div class="col-lg-3">
-                                <label for="id_tipologiaN">TipologíasN PDS: </label>
-                                <select name="id_tipologiaN" id=id_tipologiaN" class="form-control input-sm">
-                                    <option value="" <?php echo ($id_tipologiaN==="") ? 'selected="selected"' : ''?>>Cualquiera...</option>
-                                    <?php foreach($tipologiasN as $tipologiaN){
-                                        echo '<option value="'.$tipologiaN["id"].'"
-                                                    '.(($id_tipologiaN == $tipologiaN["id"]) ?  ' selected="selected" ' : '' ).'
-                                                >'.$tipologiaN["titulo"].'</option>';
-                                    }?>
-                                </select>
-                            </div>
-
                             <div class="clearfix"></div>
 
                             <div class="col-lg-3">

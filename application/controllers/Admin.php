@@ -79,9 +79,6 @@ class Admin extends MY_Controller
                 'id_tipologia'=>'',
                 'id_tipo_incidencia'=>'',
 
-                'id_tipoN'=>'',
-                'id_subtipoN'=>'',
-                'id_tipologiaN'=>'',
             );
 
             /* BORRAR BUSQUEDA */
@@ -2767,9 +2764,6 @@ class Admin extends MY_Controller
         $xcrud_2->relation('contact_contact_person', 'contact', 'id_contact', 'contact');
         $xcrud_2->relation('contact_in_charge', 'contact', 'id_contact', 'contact');
         $xcrud_2->relation('contact_supervisor', 'contact', 'id_contact', 'contact');
-        $xcrud_2->relation('id_tipoN', 'pds_tipo','id','titulo');
-        $xcrud_2->relation('id_subtipoN', 'pds_subtipo', 'id', 'titulo','','titulo');
-        $xcrud_2->relation('id_tipologiaN', 'pds_tipologia','id', 'titulo','','titulo');
         $xcrud_2->relation('id_supervisor', 'pds_supervisor','id', 'titulo','','titulo');
         $xcrud_2->change_type('picture_url', 'image');
         $xcrud_2->modal('picture_url');
@@ -2778,17 +2772,15 @@ class Admin extends MY_Controller
         $xcrud_2->pass_default('createdDate',date("Y-m-d H:i:s"));
         //$xcrud_2->sum('m2_total', 'm2_fo', 'm2_bo');
         $xcrud_2->label('id_pds', 'Identificador')->label('client_pds', 'Cliente')->label('reference', 'SFID')
-            ->label('codigoSAT', 'Codigo SAT')->label('id_tipoN', 'TipoN PDS')->label('createdDate','Fecha de alta')
-            ->label('openingDate','Fecha de apertura')
-            ->label('id_subtipoN', 'SubtipoN PDS')->label('id_tipologiaN', 'TipologíaN PDS')
+            ->label('codigoSAT', 'Codigo SAT')->label('createdDate','Fecha de alta')->label('openingDate','Fecha de apertura')
             ->label('territory', 'Territorio')->label('commercial', 'Nombre comercial')->label('cif', 'CIF')->label('picture_url', 'Foto')->label('type_via', 'Tipo vía')
             ->label('address', 'Dirección')->label('zip', 'C.P.')->label('city', 'Ciudad')->label('province', 'Provincia')
             ->label('county', 'CC.AA.')->label('schedule', 'Horario')->label('phone', 'Teléfono')->label('mobile', 'Móvil')
             ->label('email', 'Email')->label('contact_contact_person', 'Contacto')->label('contact_in_charge', 'Encargado')
             ->label('id_supervisor', 'Supervisor')->label('status', 'Estado');
 
-        $xcrud_2->columns('id_pds,client_pds,reference,codigoSAT,id_tipoN,id_subtipoN,id_tipologiaN,commercial,territory,status');
-        $xcrud_2->fields('client_pds,reference,codigoSAT,createdDate,openingDate,id_tipoN,id_subtipoN,id_tipologiaN,commercial,cif,territory,picture_url,type_via,address,zip,city,province,county,territory,schedule,phone,mobile,email,contact_contact_person,contact_in_charge,id_supervisor,status');
+        $xcrud_2->columns('id_pds,client_pds,reference,codigoSAT,commercial,territory,status');
+        $xcrud_2->fields('client_pds,reference,codigoSAT,createdDate,openingDate,commercial,cif,territory,picture_url,type_via,address,zip,city,province,county,territory,schedule,phone,mobile,email,contact_contact_person,contact_in_charge,id_supervisor,status');
 
         $xcrud_2->validation_required('reference');
         $xcrud_2->validation_required('province');
@@ -2797,7 +2789,7 @@ class Admin extends MY_Controller
         $xcrud_2->after_update("update_pds_realdooh","../libraries/Functions.php");
         // Ocultar el botón de borrar para evitar borrados accidentales mientras no existan constraints en BD:
         $xcrud_2->unset_remove();
-        $xcrud_2->order_by(array("status"=>'asc',"id_tipoN"=>"desc","id_subtipoN"=>"asc","id_tipologiaN"=>"asc"));
+        $xcrud_2->order_by(array("status"=>'asc',"id_tipo"=>"desc","id_subtipo"=>"asc","id_tipologia"=>"asc"));
         $data['title'] = 'Puntos de venta Nuevo';
 
         $data['content'] = $xcrud_2->render();
@@ -2843,20 +2835,20 @@ class Admin extends MY_Controller
         $xcrud_3->columns('id,id_tipo,titulo,Tipologías');
 
         /*Agregando el campo orden */
-      /*  $xcrud_4 = xcrud_get_instance();
+        $xcrud_4 = xcrud_get_instance();
         $xcrud_4->table('pds_segmento');
         $xcrud_4->table_name('Definir Segmentos de PDS');
         $xcrud_4->order_by('orden','asc');
         $xcrud_4->label('id', 'Id.')->label('titulo', 'Título')->label('orden', 'Orden');
         $xcrud_4->columns('id,titulo,orden');
         $xcrud_4->columns('titulo');
-        $xcrud_4->columns('orden');*/
+        $xcrud_4->columns('orden');
 
         $data['title'] = 'Categorización de PDS: Tipo, Subtipo, Segmento, Tipología';
         $data['content'] = $xcrud_1->render();
         $data['content'] .= $xcrud_2->render();
         $data['content'] .= $xcrud_3->render();
-        //$data['content'] .= $xcrud_4->render();
+        $data['content'] .= $xcrud_4->render();
 
 
         /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
