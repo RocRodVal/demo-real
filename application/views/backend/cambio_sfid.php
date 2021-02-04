@@ -49,10 +49,10 @@
                                             <th>Ref.</th>
                                             <th>SFID actual</th>
                                             <th>SFID nuevo.</th>
-                                            <th>Tipo</th>
-                                            <th>Subtipo</th>
-                                            <th>Segmento</th>
+                                            <th>Canal</th>
                                             <th>Tipología</th>
+                                            <th>Concepto</th>
+                                            <th>Categorización</th>
 
                                             <th>Nombre comercial</th>
                                             <th>Territorio</th>

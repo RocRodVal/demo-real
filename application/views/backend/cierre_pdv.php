@@ -87,10 +87,10 @@
                                         <tr>
                                             <th>Ref.</th>
                                             <th>SFID</th>
-                                            <th>Tipo</th>
-                                            <th>Subtipo</th>
-                                            <th>Segmento</th>
+                                            <th>Canal</th>
                                             <th>Tipología</th>
+                                            <th>Concepto</th>
+                                            <th>Categorización</th>
                                             <th>Nombre comercial</th>
                                             <th>Territorio</th>
                                             <th>Operaciones</th>

@@ -69,7 +69,7 @@
                             </ul>
                         </li>
                         <?php
-                        $maestros = array('clientes','contactos','alarmas','dispositivos','muebles','displays','puntos_de_venta','puntos_de_ventaN','categorias_pdv','razones_parada','soluciones_ejecutadas',
+                        $maestros = array('clientes','contactos','alarmas','dispositivos','muebles','displays','puntos_de_venta','categorias_pdv','razones_parada','soluciones_ejecutadas',
                             'tipos_alarmado','tipos_robo');
                       ?>
                         <li <?=(in_array($this->uri->segment(2), $maestros))?'class="active"':''?>>
@@ -82,7 +82,6 @@
                                 <li><a <?=($this->uri->segment(2)==='muebles')?'class="active"':''?> href="<?=site_url($acceso.'/muebles')?>"> Muebles &raquo;</a></li>
                                 <li><a <?=($this->uri->segment(2)==='displays')?'class="active"':''?> href="<?=site_url($acceso.'/displays')?>"> Displays &raquo;</a></li>
                                 <li><a <?=($this->uri->segment(2)==='puntos_de_venta')?'class="active"':''?> href="<?=site_url($acceso.'/puntos_de_venta')?>"> Puntos de venta &raquo;</a></li>
-                                <li><a <?=($this->uri->segment(2)==='puntos_de_ventaN')?'class="active"':''?> href="<?=site_url($acceso.'/puntos_de_ventaN')?>"> Puntos de venta N&raquo;</a></li>
                                 <li><a <?=($this->uri->segment(2)==='categorias_pdv')?'class="active"':''?> href="<?=site_url($acceso.'/categorias_pdv')?>"> Categorías PdV &raquo;</a></li>
                                 <li><a <?=($this->uri->segment(2)==='razones_parada')?'class="active"':''?> href="<?=site_url($acceso.'/razones_parada')?>"> Razones de parada &raquo;</a></li>
                                 <li><a <?=($this->uri->segment(2)==='soluciones_ejecutadas')?'class="active"':''?> href="<?=site_url($acceso.'/soluciones_ejecutadas')?>"> Soluciones ejecutadas &raquo;</a></li>

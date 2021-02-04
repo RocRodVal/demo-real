@@ -15,7 +15,7 @@
                             <form action="<?=base_url($controlador)?>/estado_incidencias/cerradas" method="post" class="filtros form-mini autosubmit col-lg-12">
 
                                 <div class="col-lg-3">
-                                    <label for="id_tipo">Tipo PDS: </label>
+                                    <label for="id_tipo">Canal PDS: </label>
                                     <select name="id_tipo" id="id_tipo" class="form-control input-sm">
                                         <option value="" <?php echo ($id_tipo==="") ? 'selected="selected"' : ''?>>Cualquiera...</option>
                                         <?php foreach($tipos as $tipo){
@@ -27,7 +27,7 @@
                                 </div>
 
                                 <div class="col-lg-3">
-                                    <label for="id_subtipo">Subtipo PDS: </label>
+                                    <label for="id_subtipo">Tipología PDS: </label>
                                     <select name="id_subtipo" id="id_subtipo" class="form-control input-sm">
                                         <option value="" <?php echo ($id_subtipo==="") ? 'selected="selected"' : ''?>>Cualquiera...</option>
                                         <?php foreach($subtipos as $tipo){
@@ -39,7 +39,7 @@
                                 </div>
 
                                 <div class="col-lg-3">
-                                    <label for="id_segmento">Segmento PDS: </label>
+                                    <label for="id_segmento">Concepto PDS: </label>
                                     <select name="id_segmento" id=id_segmento" class="form-control input-sm">
                                         <option value="" <?php echo ($id_segmento==="") ? 'selected="selected"' : ''?>>Cualquiera...</option>
                                         <?php foreach($segmentos as $segmento){
@@ -51,7 +51,7 @@
                                 </div>
 
                                 <div class="col-lg-3">
-                                    <label for="id_tipologia">Tipologías PDS: </label>
+                                    <label for="id_tipologia">Categorización PDS: </label>
                                     <select name="id_tipologia" id=id_tipologia" class="form-control input-sm">
                                         <option value="" <?php echo ($id_tipologia==="") ? 'selected="selected"' : ''?>>Cualquiera...</option>
                                         <?php foreach($tipologias as $tipo){

@@ -23,8 +23,8 @@
                 <input type="hidden" name="generar_informe" value="si">
                 <div class="col-sm-12">
                     <div class="form-group">
-                        <label for="id_tipo">Tipo</label>
-                        <select id="id_tipo" name="id_tipo" class="form-control" onchange="anadir_filtro(this);"><option value="">Tipo...</option>
+                        <label for="id_tipo">Canal</label>
+                        <select id="id_tipo" name="id_tipo" class="form-control" onchange="anadir_filtro(this);"><option value="">Canal...</option>
                             <?php foreach($pds_tipos as $tipo)
                             {
                                 echo '<option value="'.$tipo["id"].'">'.$tipo["titulo"].'</option>';
@@ -43,8 +43,8 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="id_subtipo">Subtipo</label>
-                        <select id="id_subtipo" name="id_subtipo" class="form-control" onchange="anadir_filtro(this);"><option value="">Subtipo...</option>
+                        <label for="id_subtipo">Tipología</label>
+                        <select id="id_subtipo" name="id_subtipo" class="form-control" onchange="anadir_filtro(this);"><option value="">Tipología...</option>
                             <?php foreach($pds_subtipos as $subtipo)
                             {
                                 echo '<option value="'.$subtipo["id"].'">'.$subtipo["titulo"].'</option>';
@@ -64,8 +64,8 @@
 
 
                     <div class="form-group">
-                        <label for="id_segmento">Segmento</label>
-                        <select id="id_segmento" name="id_segmento" class="form-control" onchange="anadir_filtro(this);"><option value="">Segmento...</option>
+                        <label for="id_segmento">Concepto</label>
+                        <select id="id_segmento" name="id_segmento" class="form-control" onchange="anadir_filtro(this);"><option value="">Concepto...</option>
                             <?php foreach($pds_segmentos as $segmento)
                             {
                                 echo '<option value="'.$segmento["id"].'">'.$segmento["titulo"].'</option>';
@@ -85,8 +85,8 @@
 
 
                     <div class="form-group">
-                        <label for="id_tipologia">Tipología</label>
-                        <select id="id_tipologia" name="id_tipologia" class="form-control" onchange="anadir_filtro(this);"><option value="">Tipología...</option>
+                        <label for="id_tipologia">Categorización</label>
+                        <select id="id_tipologia" name="id_tipologia" class="form-control" onchange="anadir_filtro(this);"><option value="">Categorización...</option>
                             <?php foreach($pds_tipologias as $tipologia)
                             {
                                 echo '<option value="'.$tipologia["id"].'">'.$tipologia["titulo"].'</option>';

@@ -2546,8 +2546,9 @@ class Admin extends MY_Controller
         $xcrud_2->relation('id_segmento', 'pds_segmento','id', 'titulo');
         $xcrud_2->relation('id_tipologia', 'pds_tipologia','id', 'titulo');
         $xcrud_2->relation('id_display', 'display', 'id_display', 'display','');
-        $xcrud_2->label('id', 'Identificador')->label('client', 'Cliente')->label('id_display', 'Modelo')->label('id_tipo', 'Tipo PDS')
-            ->label('id_subtipo', 'Subtipo PDS')->label('id_segmento', 'Segmento PDS')->label('id_tipologia', 'Tipología PDS')->label('position', 'Posición')->label('description', 'Comentarios')->label('status', 'Estado');
+        $xcrud_2->where('displays_categoria.id_display!=',0);
+        $xcrud_2->label('id', 'Identificador')->label('client', 'Cliente')->label('id_display', 'Modelo')->label('id_tipo', 'Canal PDS')
+            ->label('id_subtipo', 'Tipología PDS')->label('id_segmento', 'Concepto PDS')->label('id_tipologia', 'Categorización PDS')->label('position', 'Posición')->label('description', 'Comentarios')->label('status', 'Estado');
         $xcrud_2->columns('id,client,id_tipo,id_subtipo,id_segmento,id_tipologia,id_display,position,status');
         $xcrud_2->fields('client,id_tipo,id_subtipo,id_segmento,id_tipologia,id_display,position,status');
         $xcrud_2->unset_remove();
@@ -2582,6 +2583,8 @@ class Admin extends MY_Controller
         $xcrud_4->relation('client_panelado', 'client', 'id_client', 'client');
         $xcrud_4->relation('id_display', 'display', 'id_display', 'display');
         $xcrud_4->relation('id_device', 'device', 'id_device', 'device');
+        $xcrud_4->where('devices_display.id_display in  (select id_display from display)');
+        $xcrud_4->where('devices_display.status','Alta');
         $xcrud_4->label('id_devices_display', 'Identificador')->label('client_panelado', 'Cliente')->label('id_panelado', 'REF.')->label('id_display', 'Mueble')->label('id_device', 'Dispositivo')
             ->label('position', 'Posición')->label('description', 'Comentarios')->label('status', 'Estado')->label('display'.'Display');
         $xcrud_4->columns('id_devices_display,client_panelado,id_display,id_device,position,status,display');
@@ -2712,9 +2715,9 @@ class Admin extends MY_Controller
         $xcrud_2->pass_default('createdDate',date("Y-m-d H:i:s"));
         //$xcrud_2->sum('m2_total', 'm2_fo', 'm2_bo');
         $xcrud_2->label('id_pds', 'Identificador')->label('client_pds', 'Cliente')->label('reference', 'SFID')
-            ->label('codigoSAT', 'Codigo SAT')->label('id_tipo', 'Tipo PDS')->label('createdDate','Fecha de alta')
+            ->label('codigoSAT', 'Codigo SAT')->label('id_tipo', 'Canal PDS')->label('createdDate','Fecha de alta')
             ->label('openingDate','Fecha de apertura')
-            ->label('id_subtipo', 'Subtipo PDS')->label('id_segmento', 'Segmento PDS')->label('id_tipologia', 'Tipología PDS')
+            ->label('id_subtipo', 'Tipología PDS')->label('id_segmento', 'Concepto PDS')->label('id_tipologia', 'Categoriazación PDS')
             ->label('territory', 'Territorio')->label('commercial', 'Nombre comercial')->label('cif', 'CIF')->label('picture_url', 'Foto')->label('type_via', 'Tipo vía')
             ->label('address', 'Dirección')->label('zip', 'C.P.')->label('city', 'Ciudad')->label('province', 'Provincia')
             ->label('county', 'CC.AA.')->label('schedule', 'Horario')->label('phone', 'Teléfono')->label('mobile', 'Móvil')
@@ -2809,7 +2812,7 @@ class Admin extends MY_Controller
     {
         $xcrud_1 = xcrud_get_instance();
         $xcrud_1->table('pds_tipo');
-        $xcrud_1->table_name('Definir Tipos de PDS');
+        $xcrud_1->table_name('Definir Canales de PDS');
         $xcrud_1->label('id', 'Id.')->label('titulo', 'Título')->label('abreviatura','Abreviatura');
         $xcrud_1->columns('id,titulo,abreviatura');
         $xcrud_1->fields('titulo,abreviatura');
@@ -2817,7 +2820,7 @@ class Admin extends MY_Controller
       /* Agregando el campo orden*/
         $xcrud_2 = xcrud_get_instance();
         $xcrud_2->table('pds_tipologia');
-        $xcrud_2->table_name('Definir Tipologías de PDS');
+        $xcrud_2->table_name('Definir Categorizaciones de PDS');
         $xcrud_2->order_by('orden','asc');
         $xcrud_2->label('id', 'Id.')->label('titulo', 'Título')->label('orden', 'Orden');
         $xcrud_2->columns('id,titulo,orden');
@@ -2826,25 +2829,25 @@ class Admin extends MY_Controller
 
         $xcrud_3 = xcrud_get_instance();
         $xcrud_3->table('pds_subtipo');
-        $xcrud_3->table_name('Definir Subtipos de PDS y sus tipologías relacionadas');
+        $xcrud_3->table_name('Definir Tipologías de PDS y sus categorizaciones relacionadas');
         $xcrud_3->relation('id_tipo', 'pds_tipo', 'id', 'titulo');
-        $xcrud_3->fk_relation('Tipologías','id','pds_subtipo_tipologia','id_subtipo','id_tipologia','pds_tipologia','id','titulo');
-        $xcrud_3->label('id', 'Id.')->label('titulo', 'Título')->label('id_tipo','Tipo');
+        $xcrud_3->fk_relation('Categorizaciones','id','pds_subtipo_tipologia','id_subtipo','id_tipologia','pds_tipologia','id','titulo','','pds_tipologia.titulo');
+        $xcrud_3->label('id', 'Id.')->label('titulo', 'Título')->label('id_tipo','Canal');
         $xcrud_3->order_by('id_tipo','asc');
         $xcrud_3->columns('id,id_tipo,titulo');
-        $xcrud_3->columns('id,id_tipo,titulo,Tipologías');
+        $xcrud_3->columns('id,id_tipo,titulo,titulo');
 
         /*Agregando el campo orden */
         $xcrud_4 = xcrud_get_instance();
         $xcrud_4->table('pds_segmento');
-        $xcrud_4->table_name('Definir Segmentos de PDS');
+        $xcrud_4->table_name('Definir Conceptos de PDS');
         $xcrud_4->order_by('orden','asc');
         $xcrud_4->label('id', 'Id.')->label('titulo', 'Título')->label('orden', 'Orden');
         $xcrud_4->columns('id,titulo,orden');
         $xcrud_4->columns('titulo');
         $xcrud_4->columns('orden');
 
-        $data['title'] = 'Categorización de PDS: Tipo, Subtipo, Segmento, Tipología';
+        $data['title'] = 'Categorización de PDS: Canal, Tipología, Concepto, Categorización';
         $data['content'] = $xcrud_1->render();
         $data['content'] .= $xcrud_2->render();
         $data['content'] .= $xcrud_3->render();
@@ -4463,7 +4466,7 @@ class Admin extends MY_Controller
                 $data["controlador"] = $controlador_origen;
 
                 $campos_sess_informe = array();
-                // TIPO TIENDA
+                // CALA = TIPO TIENDA
                 $id_tipo = array();
                 $campos_sess_informe["id_tipo"] = NULL;
                 if (is_array($this->input->post("id_tipo_multi"))) {
@@ -4471,7 +4474,7 @@ class Admin extends MY_Controller
                     $campos_sess_informe["id_tipo"] = $id_tipo;
                 }
 
-                // SUBTIPO TIENDA
+                // TIPOLOGIA = SUBTIPO TIENDA
                 $id_subtipo = array();
                 $campos_sess_informe["id_subtipo"] = NULL;
                 if (is_array($this->input->post("id_subtipo_multi"))) {
@@ -4479,7 +4482,7 @@ class Admin extends MY_Controller
                     $campos_sess_informe["id_subtipo"] = $id_subtipo;
                 }
 
-                // SEGMENTO TIENDA
+                // CONCEPTO = SEGMENTO TIENDA
                 $id_segmento = array();
                 $campos_sess_informe["id_segmento"] = NULL;
                 if (is_array($this->input->post("id_segmento_multi"))) {
@@ -4487,7 +4490,7 @@ class Admin extends MY_Controller
                     $campos_sess_informe["id_segmento"] = $id_segmento;
                 }
 
-                // TIPOLOGIA TIENDA
+                // CATEGORIZACION = TIPOLOGIA TIENDA
                 $id_tipologia = array();
                 $campos_sess_informe["id_tipologia"] = NULL;
                 if (is_array($this->input->post("id_tipologia_multi"))) {
@@ -6833,6 +6836,8 @@ class Admin extends MY_Controller
         if ($this->auth->is_auth()) {
             $xcrud = xcrud_get_instance();
             $data['sfid'] = $this->session->userdata('sfid');
+            $formato =  $this->uri->segment(4);
+            //echo $formato; exit;
             $id_pds=null;
 
             $this->load->model(array('pedido_model'));
@@ -6853,7 +6858,7 @@ class Admin extends MY_Controller
             // Obtener el campo a ordenar, primero de Session y despues del post, si procede..
             $array_orden = $this->get_orden();
 
-            $this->pedido_model->exportar_pedidos( $id_pds,$array_orden, $array_sesion, $tipo);
+            $this->pedido_model->exportar_pedidos( $id_pds,$array_orden, $array_sesion, $tipo,$formato);
 
 
         } else {

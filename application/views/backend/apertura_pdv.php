@@ -7,7 +7,7 @@
             </div>
             <div class="row">
                 <div class="col-lg-12">
-                    <p>Antes de proceder al añadido automático de muebles y dispositivos se ha tener creado el PdS en la zona de maestros con todos los datos y categorización correcta (Tipo, Subtipo, Segmento y Tipología).</p>
+                    <p>Antes de proceder al añadido automático de muebles y dispositivos se ha tener creado el PdS en la zona de maestros con todos los datos y categorización correcta (Canal, Tipología, Concepto y Categorización).</p>
                     <p>&nbsp;</p>
                 </div>
             </div>            
@@ -78,10 +78,10 @@
                                         <tr>
                                             <th>Ref.</th>
                                             <th>SFID</th>
-                                            <th>Tipo</th>
-                                            <th>Subtipo</th>
-                                            <th>Segmento</th>
+                                            <th>Canal</th>
                                             <th>Tipología</th>
+                                            <th>Concepto</th>
+                                            <th>Categorización</th>
 
                                             <th>Nombre comercial</th>
                                             <th>Territorio</th>

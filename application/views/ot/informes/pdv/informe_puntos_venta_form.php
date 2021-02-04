@@ -23,7 +23,7 @@
                 <input type="hidden" name="generar_informe" value="si">
                 <div class="col-sm-12">
                     <div class="form-group">
-                        <label for="id_tipo">Tipo</label>
+                        <label for="id_tipo">Canal</label>
                         <select id="id_tipo" name="id_tipo" class="form-control" onchange="anadir_filtro(this);"><option value="">Tipo...</option>
                             <?php foreach($pds_tipos as $tipo)
                             {
@@ -40,7 +40,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="id_subtipo">Subtipo</label>
+                        <label for="id_subtipo">Tipología</label>
                         <select id="id_subtipo" name="id_subtipo" class="form-control" onchange="anadir_filtro(this);"><option value="">Subtipo...</option>
                             <?php foreach($pds_subtipos as $subtipo)
                             {
@@ -58,7 +58,7 @@
 
 
                     <div class="form-group">
-                        <label for="id_segmento">Segmento</label>
+                        <label for="id_segmento">Concepto</label>
                         <select id="id_segmento" name="id_segmento" class="form-control" onchange="anadir_filtro(this);"><option value="">Segmento...</option>
                             <?php foreach($pds_segmentos as $segmento)
                             {
@@ -76,7 +76,7 @@
 
 
                     <div class="form-group">
-                        <label for="id_tipologia">Tipología</label>
+                        <label for="id_tipologia">Categorización</label>
                         <select id="id_tipologia" name="id_tipologia" class="form-control" onchange="anadir_filtro(this);"><option value="">Tipología...</option>
                             <?php foreach($pds_tipologias as $tipologia)
                             {

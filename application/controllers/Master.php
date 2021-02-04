@@ -1833,7 +1833,7 @@ public function inventarios_planogramas()
                 $data["controlador"] = $controlador_origen;
 
                 $campos_sess_informe = array();
-                // TIPO TIENDA
+                // CANAL = TIPO TIENDA
                 $id_tipo = array();
                 $campos_sess_informe["id_tipo"] = NULL;
                 if (is_array($this->input->post("id_tipo_multi"))) {
@@ -1841,7 +1841,7 @@ public function inventarios_planogramas()
                     $campos_sess_informe["id_tipo"] = $id_tipo;
                 }
 
-                // SUBTIPO TIENDA
+                //TIPOLOGIA =  SUBTIPO TIENDA
                 $id_subtipo = array();
                 $campos_sess_informe["id_subtipo"] = NULL;
                 if (is_array($this->input->post("id_subtipo_multi"))) {
@@ -1849,7 +1849,7 @@ public function inventarios_planogramas()
                     $campos_sess_informe["id_subtipo"] = $id_subtipo;
                 }
 
-                // SEGMENTO TIENDA
+                // CONCEPTO = SEGMENTO TIENDA
                 $id_segmento = array();
                 $campos_sess_informe["id_segmento"] = NULL;
                 if (is_array($this->input->post("id_segmento_multi"))) {
@@ -1857,7 +1857,7 @@ public function inventarios_planogramas()
                     $campos_sess_informe["id_segmento"] = $id_segmento;
                 }
 
-                // TIPOLOGIA TIENDA
+                // CATEGORIZACION = TIPOLOGIA TIENDA
                 $id_tipologia = array();
                 $campos_sess_informe["id_tipologia"] = NULL;
                 if (is_array($this->input->post("id_tipologia_multi"))) {

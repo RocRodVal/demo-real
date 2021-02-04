@@ -53,7 +53,9 @@ class Categoria_Model extends CI_Model
         {
             $query = $this->db->where("id",$id_subtipo);
         }
+        $query = $this->db->order_by('pds_subtipo.titulo');
         $query = $this->db->get('pds_subtipo');
+        
 
         return $query->result_array();
     }
@@ -65,7 +67,8 @@ class Categoria_Model extends CI_Model
      */
     public function get_segmentos_pds($id_segmento=NULL)
     {
-        $query = $this->db->select('*')->get('pds_segmento');
+        $query = $this->db->select('*')->order_by('titulo')->get('pds_segmento');
+
         return $query->result_array();
     }
     /**
@@ -108,6 +111,7 @@ class Categoria_Model extends CI_Model
             {
                 $query = $this->db->where('id= '.$id_tipologia);
             }
+            $query = $this->db->order_by('pds_tipologia.titulo');
             $query = $this->db->get('pds_tipologia');
         }
         else
