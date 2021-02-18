@@ -2484,12 +2484,13 @@ class Admin extends MY_Controller
         $xcrud_3->table_name('Modelo');
         $xcrud_3->relation('type_device', 'type_device', 'id_type_device', 'type');
         $xcrud_3->relation('brand_device', 'brand_device', 'id_brand_device', 'brand');
+        $xcrud_3->relation('type_carga', 'type_carga', 'id_type_carga', 'type');
         $xcrud_3->change_type('picture_url', 'image');
         $xcrud_3->modal('picture_url');
         $xcrud_3->label('id_device', 'Identificador')->label('brand_device', 'Fabricante')->label('type_device', 'Tipo')->label('device', 'Modelo')->label('brand_name', 'Modelo fabricante')->label('picture_url', 'Foto')->label('description', 'Comentarios')
-            ->label('status', 'Estado')->label('carga','Tipo de carga');
-        $xcrud_3->columns('id_device,brand_device,type_device,device,picture_url,brand_name,status, carga');
-        $xcrud_3->fields('brand_device,type_device,device,brand_name,picture_url,description,status, carga');
+            ->label('status', 'Estado')->label('type_carga','Tipo de carga');
+        $xcrud_3->columns('id_device,brand_device,type_device,device,picture_url,brand_name,status, type_carga');
+        $xcrud_3->fields('brand_device,type_device,device,brand_name,picture_url,description,status, type_carga');
         $xcrud_3->unset_remove();// Ocultar el botón de borrar para evitar borrados accidentales mientras no existan constraints en BD:
 
         $data['title'] = 'Dispositivos';
