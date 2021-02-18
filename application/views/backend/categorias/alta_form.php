@@ -23,7 +23,7 @@ $tipo = $ci->categoria_model->get_pds_tipo($this->result_row->id_tipo); // Tipo 
     <div class="xcrud-view">
         <div class="form-horizontal">
             <div class="form-group">
-                <label class="control-label col-sm-3">Tipo PDS*</label>
+                <label class="control-label col-sm-3">Canal PDS*</label>
                 <div class="col-sm-4">
 
 
@@ -40,7 +40,7 @@ $tipo = $ci->categoria_model->get_pds_tipo($this->result_row->id_tipo); // Tipo 
             </div>
 
             <div class="form-group">
-                <label class="control-label col-sm-3">Subtipo PDS*</label>
+                <label class="control-label col-sm-3">Tipología PDS*</label>
                 <div class="col-sm-4">
                     <?php // MOSTRAR SUBTIPOS?>
                     <select name="id_subtipo" id="id_subtipo"
@@ -51,7 +51,7 @@ $tipo = $ci->categoria_model->get_pds_tipo($this->result_row->id_tipo); // Tipo 
             </div>
 
             <div class="form-group">
-                <label class="control-label col-sm-3">Segmento PDS*</label>
+                <label class="control-label col-sm-3">Concepto PDS*</label>
                 <div class="col-sm-4">
                     <?php // MOSTRAR SEGMENTOS
                     $segmentos = $ci->categoria_model->get_segmentos_pds(); ?>
@@ -69,7 +69,7 @@ $tipo = $ci->categoria_model->get_pds_tipo($this->result_row->id_tipo); // Tipo 
 
 
             <div class="form-group">
-                <label class="control-label col-sm-3">Tipología PDS*</label>
+                <label class="control-label col-sm-3">Categorización PDS*</label>
                 <div class="col-sm-4">
                     <?php // MOSTRAR TIPOLOGIAS ?>
 

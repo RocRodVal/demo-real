@@ -199,7 +199,7 @@ class Informe extends CI_Controller {
 
         $subtipos = $this->categoria_model->get_subtipos_pds($id_tipo);
 
-        $resp = '<option value="" selected="selected">Escoge el subtipo...</option>';
+        $resp = '<option value="" selected="selected">Escoge la tipología...</option>';
         foreach($subtipos as $subtipo){
             $s_selected = (!is_null($id_subtipo) && $id_subtipo == $subtipo["id"]) ? ' selected="selected" ' : '';
             $resp .= '<option value="'.$subtipo["id"].'" '.$s_selected.'>'.$subtipo["titulo"].'</option>';
@@ -219,7 +219,7 @@ class Informe extends CI_Controller {
 
         $tipologias = $this->categoria_model->get_tipologias_pds($id_tipologia,$id_subtipo);
         
-        $resp = '<option value="" selected="selected">Escoge la tipología...</option>';
+        $resp = '<option value="" selected="selected">Escoge la categorización...</option>';
         foreach($tipologias as $tipologia){
             $s_selected = (!is_null($id_tipologia) && $id_tipologia == $tipologia["id_tipologia"]) ? ' selected="selected" ' : '';
             $resp .= '<option value="'.$tipologia["id_tipologia"].'" '.$s_selected.'>'.$tipologia["titulo"].'</option>';

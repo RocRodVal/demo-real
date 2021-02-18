@@ -52,8 +52,8 @@
                 <?php } else { ?>
                 <table cellpadding="0" cellspacing="0" class="table table-striped table-bordered ">
                     <tr>
-                        <th>Tipo de tienda</th>
-                        <th>Tipología</th>
+                        <th>Canal de tienda</th>
+                        <th>Categorización</th>
                         <th>Mueble</th>
                         <th class="pdvs">Nº tiendas / Mueble</th>
                     </tr>
