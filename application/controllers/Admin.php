@@ -2533,9 +2533,9 @@ class Admin extends MY_Controller
         $xcrud_4->relation('id_display', 'display', 'id_display', 'display');
         $xcrud_4->relation('id_device', 'device', 'id_device', 'device');
         $xcrud_4->label('id_devices_display', 'Identificador')->label('client_panelado', 'Cliente')->label('id_panelado', 'REF.')->label('id_display', 'Mueble')->label('id_device', 'Dispositivo')
-            ->label('position', 'Posición')->label('description', 'Comentarios')->label('status', 'Estado')->label('display'.'Display');
-        $xcrud_4->columns('id_devices_display,client_panelado,id_display,id_device,position,status,display');
-        $xcrud_4->fields('client_panelado,id_display,id_device,position,description,status,display');
+            ->label('position', 'Posición')->label('description', 'Comentarios')->label('status', 'Estado');
+        $xcrud_4->columns('id_devices_display,client_panelado,id_display,id_device,position,status');
+        $xcrud_4->fields('client_panelado,id_display,id_device,position,description,status');
         $xcrud_4->unset_remove();
 
         $xcrud_3 = xcrud_get_instance();
@@ -2543,11 +2543,11 @@ class Admin extends MY_Controller
         $xcrud_3->table_name('Modelo');
         $xcrud_3->relation('client_display', 'client', 'id_client', 'client');
         $xcrud_3->change_type('picture_url', 'image');
-        $xcrud_3->change_type('canvas_url', 'file');
+        //$xcrud_3->change_type('canvas_url', 'file');
         $xcrud_3->modal('picture_url');
-        $xcrud_3->label('id_display', 'Identificador')->label('client_display', 'Cliente')->label('display', 'Modelo')->label('picture_url', 'Foto')->label('canvas_url', 'SVG')->label('description', 'Comentarios')->label('positions', 'Posiciones')->label('status', 'Estado');
+        $xcrud_3->label('id_display', 'Identificador')->label('client_display', 'Cliente')->label('display', 'Modelo')->label('picture_url', 'Foto')->label('description', 'Comentarios')->label('positions', 'Posiciones')->label('status', 'Estado');
         $xcrud_3->columns('id_display,client_display,display,picture_url,positions,status');
-        $xcrud_3->fields('client_display,display,picture_url,canvas_url,description,positions,status');
+        $xcrud_3->fields('client_display,display,picture_url,description,positions,status');
         $xcrud_3->unset_remove();
         $xcrud_3->after_insert("create_modeloMueble_realdooh","../libraries/Functions.php");
         $xcrud_3->before_update("update_modeloMueble_realdooh","../libraries/Functions.php");
@@ -2557,8 +2557,8 @@ class Admin extends MY_Controller
         $devices->relation('id_device', 'device','id_device','device');
         $devices->relation('id_display', 'display','id_display','display');
         $devices->where('devices_display.status','Alta');
-        $devices->columns('id_display,id_device,position,display');
-        $devices->fields('display,device,position,display');
+        $devices->columns('id_display,id_device,position');
+        $devices->fields('display,device,position');
         $devices->order_by('position');
         $devices->unset_add();
         $devices->unset_remove();
@@ -2681,11 +2681,11 @@ class Admin extends MY_Controller
         $xcrud_3->table('pds_subtipo');
         $xcrud_3->table_name('Definir Tipologías de PDS y sus categorizaciones relacionadas');
         $xcrud_3->relation('id_tipo', 'pds_tipo', 'id', 'titulo');
-        $xcrud_3->fk_relation('Tipologías','id','pds_subtipo_tipologia','id_subtipo','id_tipologia','pds_tipologia','id','titulo');
+        $xcrud_3->fk_relation('Categorizaciones','id','pds_subtipo_tipologia','id_subtipo','id_tipologia','pds_tipologia','id','titulo');
         $xcrud_3->label('id', 'Id.')->label('titulo', 'Título')->label('id_tipo','Tipo');
         $xcrud_3->order_by('id_tipo','asc');
         $xcrud_3->columns('id,id_tipo,titulo');
-        $xcrud_3->columns('id,id_tipo,titulo,Tipologías');
+        $xcrud_3->columns('id,id_tipo,titulo,Categorizaciones');
 
         /*Agregando el campo orden */
         $xcrud_4 = xcrud_get_instance();
