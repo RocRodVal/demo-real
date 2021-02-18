@@ -579,9 +579,11 @@ print_r($this->session->userdata);exit;*/
             $chat = $this->chat_model->insert_chat($data,$tabla);
 
             if ($chat['add']) {
-                redirect('tienda/detalle_'.$tabla.'/' . $id.'/'.$data['id_pds']);
+                //redirect('tienda/detalle_'.$tabla.'/' . $id.'/'.$data['id_pds']);
+                redirect('tienda/detalle_'.$tabla.'/' . $id);
             }else{
-                redirect('tienda/detalle_'.$tabla.'/' . $id.'/'.$data['id_pds']);
+               // redirect('tienda/detalle_'.$tabla.'/' . $id.'/'.$data['id_pds']);
+               redirect('tienda/detalle_'.$tabla.'/' . $id);
             }
         }else{
             redirect('tienda','refresh');

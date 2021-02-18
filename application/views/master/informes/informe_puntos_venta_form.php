@@ -23,8 +23,8 @@
                 <input type="hidden" name="generar_informe" value="si">
                 <div class="col-sm-12">
                     <div class="form-group">
-                        <label for="tipo_tienda">Tipo de tienda</label>
-                        <select id="tipo_tienda" name="tipo_tienda" class="form-control" onchange="anadir_filtro(this);"><option value="">Escoge el tipo de tienda...</option>
+                        <label for="tipo_tienda">Canal de tienda</label>
+                        <select id="tipo_tienda" name="tipo_tienda" class="form-control" onchange="anadir_filtro(this);"><option value="">Escoge el canal de tienda...</option>
 
                             <?php foreach($tipos_tienda as $tipo)
                             {

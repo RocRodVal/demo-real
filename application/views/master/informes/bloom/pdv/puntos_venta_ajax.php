@@ -45,12 +45,10 @@ if (!$generado)
             <thead>
             <tr>
                 <th>SFID</th>
-                <th>Tipo</th>
-                <th>Subtipo</th>
-                <th>Segmento</th>
+                <th>Canal</th>
                 <th>Tipología</th>
-
-
+                <th>Concepto</th>
+                <th>Categoriación</th>
                 <th>Territorio</th>
                 <th>Nombre</th>
                 <th>Dirección</th>

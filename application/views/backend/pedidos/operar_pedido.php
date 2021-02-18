@@ -70,7 +70,7 @@
                                 echo 'disabled';
                             } ?>>Procesar</a>
                             <a href="<?= site_url('admin/update_pedido/' .$id_pedido_url . '/' .  $id_pds_url . '/7') ?>"
-                               classBtn="status_1/2" class="btn btn-danger" <?php if ($pedido->status != 'Nuevo') {
+                               classBtn="status_1/2" class="btn btn-danger" <?php if(($pedido->status != 'Nuevo')   && ($pedido->status != 'Pendiente material')){
                                 echo 'disabled';
                             } ?>>Cancelar</a>
                             <span class="fecha_status"><?=$historico_proceso?></span>
@@ -92,7 +92,8 @@
                             <div class="col-lg-7 labelText white">Imprimir albaran</div>
                             <div class="col-lg-5 labelBtn white">
                                 <a href="<?= site_url('admin/imprimir_pedido/' . $id_pedido_url . '/' . $id_pds_url ) ?>"
-                                   classBtn="status" class="btn btn-success" <?php if (($pedido->status=='Nuevo') || ($pedido->status=='En proceso') ||($pedido->status=='Pendiente material')) {
+                                   classBtn="status" class="btn btn-success" <?php if (($pedido->status=='Nuevo') || ($pedido->status=='En proceso') 
+                                   ||($pedido->status=='Pendiente material') || ($pedido->status=='Cancelado') || ($pedido->status=='Finalizado')) {
                                     echo 'disabled';
                                 } ?>>Imprimir</a>
                             </div>
