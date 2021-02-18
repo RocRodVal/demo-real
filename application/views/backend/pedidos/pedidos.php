@@ -2,7 +2,20 @@
     <div id="page-wrapper">
         <div id="pedidos_abiertos">
             <div class="col-lg-12">
-                <h1 class="page-header"><?php echo $title ?></h1>
+                <!--<h1 class="page-header"><?php echo $title ?></h1>-->
+                <?php
+                        $data['mensajes_nuevos'] = $mensajes_nuevos;
+                        $data['tipo'] = $tipo;
+                    ?>
+                    <h1 class="page-header"><?php echo $title ?> <?php $this->load->view("backend/pedidos/mensajes_chat",$data) ?>
+
+                    <?php
+                if (($tipo=='abiertos') && $mensajes_nuevosC>0){
+                    $data['mensajes_nuevosC'] = $mensajes_nuevosC;
+                    $data['tipoC'] = 'finalizados';
+                     $this->load->view("backend/pedidos/mensajes_chat",$data);
+                }  ?>
+                </h1>
             </div>
        </div>
 
@@ -10,6 +23,7 @@
         <div class="row" >
             <div class="col-lg-12">
                 <div class="filtro">
+                
                     <form action="<?=base_url()?>admin/pedidos/<?=$tipo?>" method="post" class="filtros form-mini autosubmit col-lg-12">
 
                         <div class="col-lg-4">
@@ -24,13 +38,11 @@
                             <div class="form-group">
                                 <input type="hidden" name="do_busqueda" value="si">
                                 <input type="submit" value="Buscar" id="submit_button" class="form-control input-sm">
+                                <a href="<?=base_url()?>admin/pedidos/<?=$tipo?>/borrar_busqueda" class="reiniciar_busquedaP form-control input-sm">Reiniciar</a>
                             </div>
+                            
                         </div>
-                            <div class="col-lg-2">
-                                <div class="form-group">
-                                    <a href="<?=base_url()?>admin/pedidos/<?=$tipo?>/borrar_busqueda" class="reiniciar_busquedaP form-control input-sm">Reiniciar</a>
-                                </div>
-                            </div>
+                            
                         <div class="clearfix"></div>
 
                     </form>
@@ -68,7 +80,7 @@
                                 <th class="sorting" data-rel="pedidos.id" data-order="">Ref.</th>
                                 <th class="">Fecha de alta</th>
                                 <th class="sorting" data-rel="pds.reference" data-order="">SFID</th>
-                                <th class=""">Tienda</th>
+                                <th class="">Tienda</th>
                                 <th class="">Territorio</th>
                                 <th class="">Estado</th>
                                 <th class="sorting" data-rel="nuevos" data-order="desc">Chat offline</th>

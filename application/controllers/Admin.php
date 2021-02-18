@@ -108,13 +108,8 @@ class Admin extends MY_Controller
 
 
             // viene del form de ordenacion
-            //$do_orden = $this->input->post('ordenar');
-            //print_r($this->input->post('form'));
-            //if($do_orden==='true') {
+            
             $array_orden = $this->set_orden($this->input->post('form'));
-            //}else {
-
-            //}
 
             // Obtener el campo a ordenar, primero de Session y despues del post, si procede..
             $array_orden = $this->get_orden();
@@ -6238,15 +6233,16 @@ class Admin extends MY_Controller
     /*** Tabla de pedidos segun el tipo  */
     public function pedidos($tipo="abiertos")
     {
+        
         if ($this->auth->is_auth()) {
 
             $xcrud = xcrud_get_instance();
 
-            $this->load->model(array('pedido_model', 'tienda_model', 'sfid_model'));
+            $this->load->model(array('pedido_model', 'tienda_model', 'sfid_model','chat_model'));
             $this->load->library('app/paginationlib');
 
             // Comprobar si existe el segmento PAGE en la URI, si no inicializar a 1..
-            $get_page = $this->uri->segment(5); echo ($this->uri->segment(6));
+            $get_page = $this->uri->segment(5); 
             if( $this->uri->segment(4) == "page") {
                 $page = ( ! empty($get_page) ) ? $get_page : 1 ;
                 $segment = 5;
@@ -6272,6 +6268,7 @@ class Admin extends MY_Controller
                 $this->delete_filtros($array_filtros);
                 redirect(site_url("/admin/pedidos/".$tipo),'refresh');
             }
+
             // Consultar a la session si ya se ha buscado algo y guardado allí.
             $array_sesion = $this->get_filtros($array_filtros);
             // Buscar en el POST si hay busqueda, y si la hay usarla y guardarla además en sesion
@@ -6284,15 +6281,17 @@ class Admin extends MY_Controller
             }
 
             // viene del form de ordenacion
-            $do_orden = $this->input->post('ordenar');
+          /*  $do_orden = $this->input->post('ordenar');
             if($do_orden==='true') {
                 $array_orden = $this->set_orden($this->input->post('form'));
-            }
+            }*/
 
 
             // Obtener el campo a ordenar, primero de Session y despues del post, si procede..
+           // print_r($this->input->post('form'));
+            $array_orden = $this->set_orden($this->input->post('form'));
             $array_orden = $this->get_orden();
-            //print_r($array_orden); exit;
+            //print_r($array_orden); 
             if(count($array_orden) > 0) {
                 foreach ($array_orden as $key => $value) {
                     $data["campo_orden"] = $key;
@@ -6327,11 +6326,16 @@ class Admin extends MY_Controller
             $data['n_final'] = $bounds["n_final"];
             $data["pagination_helper"]   = $this->pagination;
 
+         
             $pedidos = $this->pedido_model->get_pedidos($page,$cfg_pagination,$array_orden,$tipo,0,$array_sesion);
 
             foreach ($pedidos as $pedido)
                 $pedido->nuevos  = $this->chat_model->contar_nuevos($pedido->id,$pedido->reference,"pedidos");
 
+            $data['mensajes_nuevos'] = $this->chat_model->existen_mensajes_nuevos_pedidos($tipo);
+            if($tipo=='abiertos') {
+                $data['mensajes_nuevosC'] = $this->chat_model->existen_mensajes_nuevos_pedidos('finalizados');
+            }
             $data['pedidos'] = $pedidos;
             $data['tipo'] = $tipo;
 

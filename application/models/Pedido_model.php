@@ -169,27 +169,35 @@ class Pedido_model extends CI_Model {
             ->join('pds','pedidos.id_pds = pds.id_pds','left outer')
             ->join('province','pds.province= province.id_province','left')
             ->join('territory','territory.id_territory=pds.territory','left outer');
+        /*Pedidos de una tienda concreta*/
         if ($id_pds!=0) {
             $this->db->where('pedidos.id_pds', $id_pds);
         }
 
 
         /** Aplicar filtros desde el array, de manera manual **/
-        if(isset($filtros["id_pedido"])    && !empty($filtros["id_pedido"]))      $this->db->where('pedidos.id',$filtros['id_pedido']);
-        if(isset($filtros["reference"])    && !empty($filtros["reference"]))      $this->db->where('reference',$filtros['reference']);
+        if(isset($filtros["id_pedido"]) && !empty($filtros["id_pedido"])) 
+             $this->db->where('pedidos.id',$filtros['id_pedido']);
+        if(isset($filtros["reference"]) && !empty($filtros["reference"]))      
+            $this->db->where('reference',$filtros['reference']);
 
         /* Obtenemos la condición por tipo de pedido */
         $this->db->where($this->get_condition_pedidos($tipo));
 
         $campo_orden = $orden = NULL;
-
+        if(count($array_orden) > 0) {
+            foreach ($array_orden as $key=>$value){
+                $campo_orden = $key;
+                $orden = $value;
+            }
+        }
         if(!is_null($campo_orden) && !empty($campo_orden) && !is_null($orden) && !empty($orden)) {
             $s_orden = $campo_orden. " ".$orden;
             $this->db->order_by($s_orden);
         }else{
             $this->db->order_by('fecha DESC');
         }
-
+        //echo $campo_orden." ". $orden;
         $query =   $this->db->get('pedidos',$cfg_pagination['per_page'], ($page-1) * $cfg_pagination['per_page']);
 //echo $this->db->last_query();exit;
         return $query->result();
@@ -276,7 +284,7 @@ class Pedido_model extends CI_Model {
     }
 
     /**
-     *  Devuelve conjunto de registros de pedios abiertas, para generar CSV
+     *  Devuelve conjunto de registros de pedidos abiertos, para generar CSV
      *  filtradas si procede
      *
      * */
