@@ -9,21 +9,6 @@ class Pedido_model extends CI_Model {
 	}
 
 
-	/*public function get_pds($id) {
-		if($id != FALSE) {
-			$query = $this->db->select('pds.*,territory.territory')
-			->join('territory','pds.territory = territory.id_territory')
-			->where('pds.id_pds',$id)
-			->get('pds');
-	
-			return $query->row_array();
-		}
-		else {
-			return FALSE;
-		}
-	}*/
-
-
     /**
      * Función que devuelve la condición a usar en un where para determinar si el pedido/s son abiertos o cerrados
      * según el estado status
@@ -61,8 +46,12 @@ class Pedido_model extends CI_Model {
             $this->db->where('pedidos.id_pds', $id_pds);
         }
         /** Aplicar filtros desde el array, de manera manual **/
-        if(isset($filtros["id_pedido"])    && !empty($filtros["id_pedido"]))      $this->db->where('pedidos.id',$filtros['id_pedido']);
-        if(isset($filtros["reference"])    && !empty($filtros["reference"]))      $this->db->where('reference',$filtros['reference']);
+        if(isset($filtros["id_pedido"]) && !empty($filtros["id_pedido"]))      
+            $this->db->where('pedidos.id',$filtros['id_pedido']);
+        if(isset($filtros["reference"]) && !empty($filtros["reference"]))      
+            $this->db->where('reference',$filtros['reference']);
+        if(isset($filtros["status"]) && !empty($filtros["status"]))          
+            $this->db->where('pedidos.status',$filtros['status']);
         /**
          * Determinado el tipo por parámetro añadir distinción de tipo: abiertos o cerrados.
          */
@@ -94,7 +83,6 @@ class Pedido_model extends CI_Model {
         if ($id_pds!=0) {
             $this->db->where('pedidos.id_pds', $id_pds);
         }
-
 
 
         /** Aplicar filtros desde el array, de manera manual **/
@@ -180,7 +168,9 @@ class Pedido_model extends CI_Model {
              $this->db->where('pedidos.id',$filtros['id_pedido']);
         if(isset($filtros["reference"]) && !empty($filtros["reference"]))      
             $this->db->where('reference',$filtros['reference']);
-
+        if(isset($filtros["status"]) && !empty($filtros["status"]))          
+            $this->db->where('pedidos.status',$filtros['status']);
+            
         /* Obtenemos la condición por tipo de pedido */
         $this->db->where($this->get_condition_pedidos($tipo));
 

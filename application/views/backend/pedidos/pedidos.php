@@ -26,14 +26,32 @@
                 
                     <form action="<?=base_url()?>admin/pedidos/<?=$tipo?>" method="post" class="filtros form-mini autosubmit col-lg-12">
 
-                        <div class="col-lg-4">
+                        <div class="col-lg-3">
                             <label for="id_pedido">Pedido: </label>
                             <input type="text" name="id_pedido" id="id_pedido" class="form-control input-sm" placeholder="Id. pedido" <?php echo (!empty($id_pedido)) ? ' value="'.$id_pedido.'" ' : ''?> />
                         </div>
-                        <div class="col-lg-4">
+                        <div class="col-lg-3">
                             <label for="reference">SFID: </label>
                             <input type="text" name="reference" id="reference" class="form-control input-sm" placeholder="SFID" <?php echo (!empty($reference)) ? ' value="'.$reference.'" ' : ''?> />
                         </div>
+                        <div class="col-lg-2">
+                                <label for="status">Estado: </label>
+                                <select name="status" id="status" class="form-control input-sm">
+                                    <option value="" <?php echo ($status==="") ? 'selected="selected"' : ''?>>Cualquier estado</option>
+                            <?php if($tipo=='abiertos'){ ?>
+                                    <option value="En proceso" <?php echo ($status==="En proceso") ? 'selected="selected"' : ''?>>En proceso</option>
+                                    <option value="Enviado" <?php echo ($status==="Enviado") ? 'selected="selected"' : ''?>>Enviado</option>
+                                    <option value="Nuevo" <?php echo ($status==="Nuevo") ? 'selected="selected"' : ''?>>Nuevo</option>
+                                    <option value="Pendiente material" <?php echo ($status==="Pendiente material") ? 'selected="selected"' : ''?>>Pendiente material</option>
+                            <?php }else{ ?>
+                                
+                                    <option value="Cancelado" <?php echo ($status==="Cancelado") ? 'selected="selected"' : ''?>>Cancelado</option>
+                                    <option value="Recibido" <?php echo ($status==="Recibido") ? 'selected="selected"' : ''?>>	Recibido</option>
+                                    <option value="Finalizado" <?php echo ($status==="Finalizado") ? 'selected="selected"' : ''?>>Finalizado</option>
+                                
+                            <?php } ?>
+                                </select>
+                            </div>
                         <div class="col-lg-2">
                             <div class="form-group">
                                 <input type="hidden" name="do_busqueda" value="si">
