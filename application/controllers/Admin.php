@@ -2509,6 +2509,33 @@ class Admin extends MY_Controller
         $this->load->view('backend/footer');
     }
 
+     /*Lista los tipos de carga que despues se asignaran a los dispositivos*/
+     public function tipos_carga()
+     {
+         $xcrud = xcrud_get_instance();
+         $xcrud->table('type_carga');
+         $xcrud->table_name('Tipos de carga');
+         $xcrud->label('id_type_carga','Identificador')->label('type', 'Título');
+         $xcrud->columns('id_type_carga,type');
+         $xcrud->fields('type');
+         $xcrud->order_by('id_type_carga');
+ 
+         // Ocultar el botón de borrar para evitar borrados accidentales mientras no existan constraints en BD:
+         $xcrud->unset_remove();
+ 
+         $data['title'] = 'Tipos de carga';
+         $data['content'] = $xcrud->render();
+ 
+         /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+         $this->data->add($data);
+         $data = $this->data->getData();
+         /////
+         $this->load->view('backend/header', $data);
+         $this->load->view('backend/navbar', $data);
+         $this->load->view('backend/content', $data);
+         $this->load->view('backend/footer');
+     }
+
     public function muebles()
     {
         // Ocultar el botón de borrar para evitar borrados accidentales mientras no existan constraints en BD:

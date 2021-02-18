@@ -70,7 +70,7 @@
                         </li>
                         <?php
                         $maestros = array('clientes','contactos','alarmas','dispositivos','muebles','puntos_de_venta','categorias_pdv','razones_parada','soluciones_ejecutadas',
-                            'tipos_alarmado','tipos_robo');
+                            'tipos_alarmado','tipos_robo','tipos_carga');
                       ?>
                         <li <?=(in_array($this->uri->segment(2), $maestros))?'class="active"':''?>>
                             <a href="#"><i class="fa fa-sitemap fa-fw"></i> Maestros<span class="fa arrow"></span></a>
@@ -79,6 +79,7 @@
                                 <li><a <?=($this->uri->segment(2)==='contactos')?'class="active"':''?> href="<?=site_url($acceso.'/contactos')?>"> Contactos &raquo;</a></li>        
                                 <li><a <?=($this->uri->segment(2)==='alarmas')?'class="active"':''?> href="<?=site_url($acceso.'/alarmas')?>"> Alarmas &raquo;</a></li>
                                 <li><a <?=($this->uri->segment(2)==='dispositivos')?'class="active"':''?> href="<?=site_url($acceso.'/dispositivos')?>"> Dispositivos &raquo;</a></li>
+                                <li><a <?=($this->uri->segment(2)==='tipos_carga')?'class="active"':''?> href="<?=site_url($acceso.'/tipos_carga')?>"> Tipos de carga &raquo;</a></li>
                                 <li><a <?=($this->uri->segment(2)==='muebles')?'class="active"':''?> href="<?=site_url($acceso.'/muebles')?>"> Muebles &raquo;</a></li>
                                 <li><a <?=($this->uri->segment(2)==='puntos_de_venta')?'class="active"':''?> href="<?=site_url($acceso.'/puntos_de_venta')?>"> Puntos de venta &raquo;</a></li>
                                 <li><a <?=($this->uri->segment(2)==='categorias_pdv')?'class="active"':''?> href="<?=site_url($acceso.'/categorias_pdv')?>"> Categorías PdV &raquo;</a></li>
