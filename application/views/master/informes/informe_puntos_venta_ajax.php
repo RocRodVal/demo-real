@@ -42,7 +42,7 @@ if (!$generado)
             <thead>
             <tr>
                 <th>SFID</th>
-                <th width="200">Tipo</th>
+                <th width="200">Canal</th>
 
                 <th>Panelado</th>
                 <th>Territorio</th>

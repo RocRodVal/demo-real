@@ -24,7 +24,7 @@ nav.a, nav.a:hover, nav.a:focus, nav.a:active{
 }
 
 nav.navbar.navbar-default.navbar-static-top, .navbar-default.sidebar, div#wrapper {
-    background: url('/orange/assets/images/bg.png');
+    background: url('/orange/assets/images/bg.png') !important;
 }
 .navbar-default {
     background-color: #f8f8f8;
@@ -77,7 +77,7 @@ Estilos de los paneles
 }
 
 #dropdownInfoTienda{
-    background: url('/orange/assets/images/bg.png');
+    background: url('/orange/assets/images/bg.png') !important;
     border: 0px;
     color: #f60;
     min-height:50px;

@@ -204,6 +204,29 @@ class Chat_model extends CI_Model {
         }
     }
 
+    public function existen_mensajes_nuevos_pedidos($tipo) {
+        $this->load->model('pedido_model');
+
+        $query = $this->db->select('COUNT(*) AS nuevos')
+            ->join('agent','agent.sfid=pedidos_chat.agent')
+            ->join('pedidos','pedidos_chat.id_pedido=pedidos.id')
+            ->where('pedidos_chat.status','Nuevo')
+            ->where($this->pedido_model->get_condition_pedidos($tipo));
+
+        $tipo_agente = $this->get_agentes_excluidos();
+        if(is_array($tipo_agente) && !empty($tipo_agente))
+        {
+            $query->where_not_in('agent.type',$tipo_agente);
+        }
+        $query = $this->db->get('pedidos_chat');
+        $resultado =$query->row_array();
+
+        if(!is_array($tipo_agente) || empty($tipo_agente)) $res = 0;
+        else $res =  $resultado['nuevos'];
+
+        return $res;
+    }
+
 }
 
 ?>

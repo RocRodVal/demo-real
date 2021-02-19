@@ -953,6 +953,7 @@ class Inventario extends CI_Controller {
 
             $data['devices_recogida'] = $this->tienda_model->get_devices_recogida($page, $cfg_pagination);
 
+
             $data['title']   = 'Dispositivos';
             $data['opcion'] =7;
 
@@ -970,7 +971,25 @@ class Inventario extends CI_Controller {
             redirect('admin','refresh');
         }
     }
+	/*Exportar el listado de los dispositivos que están pendientes de que lleguen a almacen tras la resolucion de una incidencia*/
+	public function exportar_dispositivos()
+	{
+		if($this->auth->is_auth())
+		{
+			$xcrud = xcrud_get_instance();
+			$this->load->model('tienda_model');
 
+
+			$data['devices_recogida'] = $this->tienda_model->get_devices_recogida_exportar();
+
+
+
+		}
+		else
+		{
+			redirect('admin','refresh');
+		}
+	}
 
     /*Opcion del menu Almacen / Dispositivos /En tienda*/
     public function dispositivos_tiendas()
@@ -1014,15 +1033,7 @@ class Inventario extends CI_Controller {
             $xcrud = xcrud_get_instance();
             $this->load->model('tienda_model');
 
-            //$data['stocks']          = $this->tienda_model->get_stock();
-            //$data['stocks']          = $this->tienda_model->get_stock_cruzado();
-            //print_r($data['stocks']); exit;
-            //$data['stocks_dispositivos']  = $this->tienda_model->get_cdm_dispositivos();
-
-            //$data['alarms_almacen']  = $this->tienda_model->get_alarms_almacen_reserva();
-            //$data['devices_almacen'] = $this->tienda_model->get_devices_almacen();
             $data['displays_pds']    = $this->tienda_model->get_displays_total();
-            //$data['devices_pds']     = $this->tienda_model->get_devices_total();
 
             $data['title']   = 'Muebles';
             $data['opcion'] = 5;

@@ -15,7 +15,7 @@
             <?php }?>
 
             <?php if($error_panelado) {?>
-                <p class="message error"><i class="glyphicon glyphicon-remove"></i> Debes escoger la categoría de tienda completa (Tipo, Subtipo, Segmento y Tipología) o bien indicar un SFID para poder mostrar sus muebles.</p>
+                <p class="message error"><i class="glyphicon glyphicon-remove"></i> Debes escoger la categoría de tienda completa (canal, Tipología, Concepto y Categrización) o bien indicar un SFID para poder mostrar sus muebles.</p>
             <?php } ?>
         </div>
         <!-- /#page-wrapper -->

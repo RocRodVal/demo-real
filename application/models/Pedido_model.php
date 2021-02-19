@@ -9,21 +9,6 @@ class Pedido_model extends CI_Model {
 	}
 
 
-	/*public function get_pds($id) {
-		if($id != FALSE) {
-			$query = $this->db->select('pds.*,territory.territory')
-			->join('territory','pds.territory = territory.id_territory')
-			->where('pds.id_pds',$id)
-			->get('pds');
-	
-			return $query->row_array();
-		}
-		else {
-			return FALSE;
-		}
-	}*/
-
-
     /**
      * Función que devuelve la condición a usar en un where para determinar si el pedido/s son abiertos o cerrados
      * según el estado status
@@ -61,8 +46,12 @@ class Pedido_model extends CI_Model {
             $this->db->where('pedidos.id_pds', $id_pds);
         }
         /** Aplicar filtros desde el array, de manera manual **/
-        if(isset($filtros["id_pedido"])    && !empty($filtros["id_pedido"]))      $this->db->where('pedidos.id',$filtros['id_pedido']);
-        if(isset($filtros["reference"])    && !empty($filtros["reference"]))      $this->db->where('reference',$filtros['reference']);
+        if(isset($filtros["id_pedido"]) && !empty($filtros["id_pedido"]))      
+            $this->db->where('pedidos.id',$filtros['id_pedido']);
+        if(isset($filtros["reference"]) && !empty($filtros["reference"]))      
+            $this->db->where('reference',$filtros['reference']);
+        if(isset($filtros["status"]) && !empty($filtros["status"]))          
+            $this->db->where('pedidos.status',$filtros['status']);
         /**
          * Determinado el tipo por parámetro añadir distinción de tipo: abiertos o cerrados.
          */
@@ -94,7 +83,6 @@ class Pedido_model extends CI_Model {
         if ($id_pds!=0) {
             $this->db->where('pedidos.id_pds', $id_pds);
         }
-
 
 
         /** Aplicar filtros desde el array, de manera manual **/
@@ -169,27 +157,37 @@ class Pedido_model extends CI_Model {
             ->join('pds','pedidos.id_pds = pds.id_pds','left outer')
             ->join('province','pds.province= province.id_province','left')
             ->join('territory','territory.id_territory=pds.territory','left outer');
+        /*Pedidos de una tienda concreta*/
         if ($id_pds!=0) {
             $this->db->where('pedidos.id_pds', $id_pds);
         }
 
 
         /** Aplicar filtros desde el array, de manera manual **/
-        if(isset($filtros["id_pedido"])    && !empty($filtros["id_pedido"]))      $this->db->where('pedidos.id',$filtros['id_pedido']);
-        if(isset($filtros["reference"])    && !empty($filtros["reference"]))      $this->db->where('reference',$filtros['reference']);
-
+        if(isset($filtros["id_pedido"]) && !empty($filtros["id_pedido"])) 
+             $this->db->where('pedidos.id',$filtros['id_pedido']);
+        if(isset($filtros["reference"]) && !empty($filtros["reference"]))      
+            $this->db->where('reference',$filtros['reference']);
+        if(isset($filtros["status"]) && !empty($filtros["status"]))          
+            $this->db->where('pedidos.status',$filtros['status']);
+            
         /* Obtenemos la condición por tipo de pedido */
         $this->db->where($this->get_condition_pedidos($tipo));
 
         $campo_orden = $orden = NULL;
-
+        if(count($array_orden) > 0) {
+            foreach ($array_orden as $key=>$value){
+                $campo_orden = $key;
+                $orden = $value;
+            }
+        }
         if(!is_null($campo_orden) && !empty($campo_orden) && !is_null($orden) && !empty($orden)) {
             $s_orden = $campo_orden. " ".$orden;
             $this->db->order_by($s_orden);
         }else{
             $this->db->order_by('fecha DESC');
         }
-
+        //echo $campo_orden." ". $orden;
         $query =   $this->db->get('pedidos',$cfg_pagination['per_page'], ($page-1) * $cfg_pagination['per_page']);
 //echo $this->db->last_query();exit;
         return $query->result();
@@ -260,8 +258,23 @@ class Pedido_model extends CI_Model {
         }
     }
 
+      /*
+     * Sumar las unidades de las alarmas
+     */
+    public function sumar_stock_alarmas($id_pedido,$id_pds)
+    {
+        $detalle=$this->get_detalle($id_pedido,$id_pds);
+        foreach($detalle as $d) {
+            
+            $this->db->set('units', 'units + ' . $d->cantidad, FALSE);
+            $this->db->where('id_alarm', $d->id_alarm);
+
+            $this->db->update('alarm');
+        }
+    }
+
     /**
-     *  Devuelve conjunto de registros de incidencias abiertas, para generar CSV
+     *  Devuelve conjunto de registros de pedidos abiertos, para generar CSV
      *  filtradas si procede
      *
      * */

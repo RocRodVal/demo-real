@@ -108,13 +108,8 @@ class Admin extends MY_Controller
 
 
             // viene del form de ordenacion
-            //$do_orden = $this->input->post('ordenar');
-            //print_r($this->input->post('form'));
-            //if($do_orden==='true') {
+            
             $array_orden = $this->set_orden($this->input->post('form'));
-            //}else {
-
-            //}
 
             // Obtener el campo a ordenar, primero de Session y despues del post, si procede..
             $array_orden = $this->get_orden();
@@ -675,7 +670,7 @@ class Admin extends MY_Controller
             $id_inc = $this->uri->segment(4);
             //$recogida = $this->uri->segment(5)? $this->uri->segment(5):'';
             $error = $this->uri->segment(5)? urldecode($this->uri->segment(5)):'';
-            if($error =='device' || $error =='alarm' )
+            if($error =='device' || $error =='alarm' || $error=='recogida')
                 $error="";
 
             $xcrud = xcrud_get_instance();
@@ -2484,21 +2479,34 @@ class Admin extends MY_Controller
         $xcrud_2->start_minimized(true);
         $xcrud_2->unset_remove(); // Ocultar el botón de borrar para evitar borrados accidentales mientras no existan constraints en BD:
 
+        $xcrud_4 = xcrud_get_instance();
+        $xcrud_4->table('type_carga');
+        $xcrud_4->table_name('Tipo de carga');
+        $xcrud_4->label('id_type_carga', 'Identificador')->label('type', 'Tipo');
+        $xcrud_4->columns('id_type_carga,type');
+        $xcrud_4->fields('type');
+        $xcrud_4->start_minimized(true);
+        $xcrud_4->unset_remove(); // Ocultar el botón de borrar para evitar borrados accidentales mientras no existan constraints en BD:
+
+
         $xcrud_3 = xcrud_get_instance();
         $xcrud_3->table('device');
         $xcrud_3->table_name('Modelo');
         $xcrud_3->relation('type_device', 'type_device', 'id_type_device', 'type');
         $xcrud_3->relation('brand_device', 'brand_device', 'id_brand_device', 'brand');
+        $xcrud_3->relation('type_carga', 'type_carga', 'id_type_carga', 'type');
         $xcrud_3->change_type('picture_url', 'image');
         $xcrud_3->modal('picture_url');
-        $xcrud_3->label('id_device', 'Identificador')->label('brand_device', 'Fabricante')->label('type_device', 'Tipo')->label('device', 'Modelo')->label('brand_name', 'Modelo fabricante')->label('picture_url', 'Foto')->label('description', 'Comentarios')->label('status', 'Estado');
-        $xcrud_3->columns('id_device,brand_device,type_device,device,picture_url,brand_name,status');
-        $xcrud_3->fields('brand_device,type_device,device,brand_name,picture_url,description,status');
+        $xcrud_3->label('id_device', 'Identificador')->label('brand_device', 'Fabricante')->label('type_device', 'Tipo')->label('device', 'Modelo')->label('brand_name', 'Modelo fabricante')->label('picture_url', 'Foto')->label('description', 'Comentarios')
+            ->label('status', 'Estado')->label('type_carga','Tipo de carga');
+        $xcrud_3->columns('id_device,brand_device,type_device,device,picture_url,brand_name,status, type_carga');
+        $xcrud_3->fields('brand_device,type_device,device,brand_name,picture_url,description,status, type_carga');
         $xcrud_3->unset_remove();// Ocultar el botón de borrar para evitar borrados accidentales mientras no existan constraints en BD:
 
         $data['title'] = 'Dispositivos';
         $data['content'] = $xcrud_1->render();
         $data['content'] = $data['content'] . $xcrud_2->render();
+        $data['content'] = $data['content'] . $xcrud_4->render();
         $data['content'] = $data['content'] . $xcrud_3->render();
 
 
@@ -2512,6 +2520,33 @@ class Admin extends MY_Controller
         $this->load->view('backend/footer');
     }
 
+     /*Lista los tipos de carga que despues se asignaran a los dispositivos*/
+     public function tipos_carga()
+     {
+         $xcrud = xcrud_get_instance();
+         $xcrud->table('type_carga');
+         $xcrud->table_name('Tipos de carga');
+         $xcrud->label('id_type_carga','Identificador')->label('type', 'Título');
+         $xcrud->columns('id_type_carga,type');
+         $xcrud->fields('type');
+         $xcrud->order_by('id_type_carga');
+ 
+         // Ocultar el botón de borrar para evitar borrados accidentales mientras no existan constraints en BD:
+         $xcrud->unset_remove();
+ 
+         $data['title'] = 'Tipos de carga';
+         $data['content'] = $xcrud->render();
+ 
+         /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+         $this->data->add($data);
+         $data = $this->data->getData();
+         /////
+         $this->load->view('backend/header', $data);
+         $this->load->view('backend/navbar', $data);
+         $this->load->view('backend/content', $data);
+         $this->load->view('backend/footer');
+     }
+
     public function muebles()
     {
         // Ocultar el botón de borrar para evitar borrados accidentales mientras no existan constraints en BD:
@@ -2524,8 +2559,8 @@ class Admin extends MY_Controller
         $xcrud_2->relation('id_segmento', 'pds_segmento','id', 'titulo');
         $xcrud_2->relation('id_tipologia', 'pds_tipologia','id', 'titulo');
         $xcrud_2->relation('id_display', 'display', 'id_display', 'display','');
-        $xcrud_2->label('id', 'Identificador')->label('client', 'Cliente')->label('id_display', 'Modelo')->label('id_tipo', 'Tipo PDS')
-            ->label('id_subtipo', 'Subtipo PDS')->label('id_segmento', 'Segmento PDS')->label('id_tipologia', 'Tipología PDS')->label('position', 'Posición')->label('description', 'Comentarios')->label('status', 'Estado');
+        $xcrud_2->label('id', 'Identificador')->label('client', 'Cliente')->label('id_display', 'Modelo')->label('id_tipo', 'Canal PDS')
+            ->label('id_subtipo', 'Tipología PDS')->label('id_segmento', 'Concepto PDS')->label('id_tipologia', 'Categorización PDS')->label('position', 'Posición')->label('description', 'Comentarios')->label('status', 'Estado');
         $xcrud_2->columns('id,client,id_tipo,id_subtipo,id_segmento,id_tipologia,id_display,position,status');
         $xcrud_2->fields('client,id_tipo,id_subtipo,id_segmento,id_tipologia,id_display,position,status');
         $xcrud_2->unset_remove();
@@ -2536,7 +2571,8 @@ class Admin extends MY_Controller
         $xcrud_4->relation('client_panelado', 'client', 'id_client', 'client');
         $xcrud_4->relation('id_display', 'display', 'id_display', 'display');
         $xcrud_4->relation('id_device', 'device', 'id_device', 'device');
-        $xcrud_4->label('id_devices_display', 'Identificador')->label('client_panelado', 'Cliente')->label('id_panelado', 'REF.')->label('id_display', 'Mueble')->label('id_device', 'Dispositivo')->label('position', 'Posición')->label('description', 'Comentarios')->label('status', 'Estado');
+        $xcrud_4->label('id_devices_display', 'Identificador')->label('client_panelado', 'Cliente')->label('id_panelado', 'REF.')->label('id_display', 'Mueble')->label('id_device', 'Dispositivo')
+            ->label('position', 'Posición')->label('description', 'Comentarios')->label('status', 'Estado');
         $xcrud_4->columns('id_devices_display,client_panelado,id_display,id_device,position,status');
         $xcrud_4->fields('client_panelado,id_display,id_device,position,description,status');
         $xcrud_4->unset_remove();
@@ -2546,14 +2582,29 @@ class Admin extends MY_Controller
         $xcrud_3->table_name('Modelo');
         $xcrud_3->relation('client_display', 'client', 'id_client', 'client');
         $xcrud_3->change_type('picture_url', 'image');
-        $xcrud_3->change_type('canvas_url', 'file');
+        //$xcrud_3->change_type('canvas_url', 'file');
         $xcrud_3->modal('picture_url');
-        $xcrud_3->label('id_display', 'Identificador')->label('client_display', 'Cliente')->label('display', 'Modelo')->label('picture_url', 'Foto')->label('canvas_url', 'SVG')->label('description', 'Comentarios')->label('positions', 'Posiciones')->label('status', 'Estado');
+        $xcrud_3->label('id_display', 'Identificador')->label('client_display', 'Cliente')->label('display', 'Modelo')->label('picture_url', 'Foto')->label('description', 'Comentarios')->label('positions', 'Posiciones')->label('status', 'Estado');
         $xcrud_3->columns('id_display,client_display,display,picture_url,positions,status');
-        $xcrud_3->fields('client_display,display,picture_url,canvas_url,description,positions,status');
+        $xcrud_3->fields('client_display,display,picture_url,description,positions,status');
         $xcrud_3->unset_remove();
         $xcrud_3->after_insert("create_modeloMueble_realdooh","../libraries/Functions.php");
         $xcrud_3->before_update("update_modeloMueble_realdooh","../libraries/Functions.php");
+
+        /*Mostramos los dispositivos del mueble*/
+        $devices=$xcrud_3->nested_table('devices_list','id_display','devices_display','id_display');
+        $devices->relation('id_device', 'device','id_device','device');
+        $devices->relation('id_display', 'display','id_display','display');
+        $devices->where('devices_display.status','Alta');
+        $devices->columns('id_display,id_device,position');
+        $devices->fields('display,device,position');
+        $devices->order_by('position');
+        $devices->unset_add();
+        $devices->unset_remove();
+        $devices->unset_csv();
+        $devices->unset_edit();
+        $devices->unset_print();
+
 
 
         $data['title'] = 'Muebles';
@@ -2610,9 +2661,9 @@ class Admin extends MY_Controller
         $xcrud_2->pass_default('createdDate',date("Y-m-d H:i:s"));
         //$xcrud_2->sum('m2_total', 'm2_fo', 'm2_bo');
         $xcrud_2->label('id_pds', 'Identificador')->label('client_pds', 'Cliente')->label('reference', 'SFID')
-            ->label('codigoSAT', 'Codigo SAT')->label('id_tipo', 'Tipo PDS')->label('createdDate','Fecha de alta')
+            ->label('codigoSAT', 'Codigo SAT')->label('id_tipo', 'Canal PDS')->label('createdDate','Fecha de alta')
             ->label('openingDate','Fecha de apertura')
-            ->label('id_subtipo', 'Subtipo PDS')->label('id_segmento', 'Segmento PDS')->label('id_tipologia', 'Tipología PDS')
+            ->label('id_subtipo', 'Tipología PDS')->label('id_segmento', 'Concepto PDS')->label('id_tipologia', 'Categorizacion PDS')
             ->label('territory', 'Territorio')->label('commercial', 'Nombre comercial')->label('cif', 'CIF')->label('picture_url', 'Foto')->label('type_via', 'Tipo vía')
             ->label('address', 'Dirección')->label('zip', 'C.P.')->label('city', 'Ciudad')->label('province', 'Provincia')
             ->label('county', 'CC.AA.')->label('schedule', 'Horario')->label('phone', 'Teléfono')->label('mobile', 'Móvil')
@@ -2650,7 +2701,7 @@ class Admin extends MY_Controller
     {
         $xcrud_1 = xcrud_get_instance();
         $xcrud_1->table('pds_tipo');
-        $xcrud_1->table_name('Definir Tipos de PDS');
+        $xcrud_1->table_name('Definir Canales de PDS');
         $xcrud_1->label('id', 'Id.')->label('titulo', 'Título')->label('abreviatura','Abreviatura');
         $xcrud_1->columns('id,titulo,abreviatura');
         $xcrud_1->fields('titulo,abreviatura');
@@ -2658,7 +2709,7 @@ class Admin extends MY_Controller
       /* Agregando el campo orden*/
         $xcrud_2 = xcrud_get_instance();
         $xcrud_2->table('pds_tipologia');
-        $xcrud_2->table_name('Definir Tipologías de PDS');
+        $xcrud_2->table_name('Definir Categorizaciones de PDS');
         $xcrud_2->order_by('orden','asc');
         $xcrud_2->label('id', 'Id.')->label('titulo', 'Título')->label('orden', 'Orden');
         $xcrud_2->columns('id,titulo,orden');
@@ -2667,25 +2718,25 @@ class Admin extends MY_Controller
 
         $xcrud_3 = xcrud_get_instance();
         $xcrud_3->table('pds_subtipo');
-        $xcrud_3->table_name('Definir Subtipos de PDS y sus tipologías relacionadas');
+        $xcrud_3->table_name('Definir Tipologías de PDS y sus categorizaciones relacionadas');
         $xcrud_3->relation('id_tipo', 'pds_tipo', 'id', 'titulo');
-        $xcrud_3->fk_relation('Tipologías','id','pds_subtipo_tipologia','id_subtipo','id_tipologia','pds_tipologia','id','titulo');
+        $xcrud_3->fk_relation('Categorizaciones','id','pds_subtipo_tipologia','id_subtipo','id_tipologia','pds_tipologia','id','titulo');
         $xcrud_3->label('id', 'Id.')->label('titulo', 'Título')->label('id_tipo','Tipo');
         $xcrud_3->order_by('id_tipo','asc');
         $xcrud_3->columns('id,id_tipo,titulo');
-        $xcrud_3->columns('id,id_tipo,titulo,Tipologías');
+        $xcrud_3->columns('id,id_tipo,titulo,Categorizaciones');
 
         /*Agregando el campo orden */
         $xcrud_4 = xcrud_get_instance();
         $xcrud_4->table('pds_segmento');
-        $xcrud_4->table_name('Definir Segmentos de PDS');
+        $xcrud_4->table_name('Definir Conceptos de PDS');
         $xcrud_4->order_by('orden','asc');
         $xcrud_4->label('id', 'Id.')->label('titulo', 'Título')->label('orden', 'Orden');
         $xcrud_4->columns('id,titulo,orden');
         $xcrud_4->columns('titulo');
         $xcrud_4->columns('orden');
 
-        $data['title'] = 'Categorización de PDS: Tipo, Subtipo, Segmento, Tipología';
+        $data['title'] = 'Categorización de PDS: Canal, Tipología, Concepto, Categorización';
         $data['content'] = $xcrud_1->render();
         $data['content'] .= $xcrud_2->render();
         $data['content'] .= $xcrud_3->render();
@@ -2856,6 +2907,15 @@ class Admin extends MY_Controller
             $lista_incidencias->unset_remove();
             $lista_incidencias->unset_edit();
             $lista_incidencias->unset_print();
+
+            $historico=$xcrud_3->nested_table('historico_list','id_devices_pds','historico_devicesPDS','id_devices_pds');
+            $historico->columns('id_devices_pds,fecha,status,motivo');
+            $historico->fields('id_devices_pds,fecha,status,motivo');
+            $historico->label('status','Estado')->label('id_devices_pds','REF');
+            $historico->unset_add();
+            $historico->unset_remove();
+            $historico->unset_edit();
+            $historico->unset_print();
 
             $xcrud_3->label('client_type_pds', 'Cliente')->label('id_devices_pds', 'REF.')->label('id_pds', 'SFID')->label('id_displays_pds', 'Cod. mueble')->
             label('id_display', 'Mueble')->label('alta', 'Fecha de alta')->label('position', 'Posición')->label('id_device', 'Dispositivo')->
@@ -4295,7 +4355,7 @@ class Admin extends MY_Controller
                 $data["controlador"] = $controlador_origen;
 
                 $campos_sess_informe = array();
-                // TIPO TIENDA
+                // CANAL - TIPO TIENDA
                 $id_tipo = array();
                 $campos_sess_informe["id_tipo"] = NULL;
                 if (is_array($this->input->post("id_tipo_multi"))) {
@@ -4303,7 +4363,7 @@ class Admin extends MY_Controller
                     $campos_sess_informe["id_tipo"] = $id_tipo;
                 }
 
-                // SUBTIPO TIENDA
+                // TIPOLOGIA - SUBTIPO TIENDA
                 $id_subtipo = array();
                 $campos_sess_informe["id_subtipo"] = NULL;
                 if (is_array($this->input->post("id_subtipo_multi"))) {
@@ -4311,7 +4371,7 @@ class Admin extends MY_Controller
                     $campos_sess_informe["id_subtipo"] = $id_subtipo;
                 }
 
-                // SEGMENTO TIENDA
+                // CONCEPTO - SEGMENTO TIENDA
                 $id_segmento = array();
                 $campos_sess_informe["id_segmento"] = NULL;
                 if (is_array($this->input->post("id_segmento_multi"))) {
@@ -4319,7 +4379,7 @@ class Admin extends MY_Controller
                     $campos_sess_informe["id_segmento"] = $id_segmento;
                 }
 
-                // TIPOLOGIA TIENDA
+                //CATEGORIZACIÓN - TIPOLOGIA TIENDA
                 $id_tipologia = array();
                 $campos_sess_informe["id_tipologia"] = NULL;
                 if (is_array($this->input->post("id_tipologia_multi"))) {
@@ -6212,15 +6272,16 @@ class Admin extends MY_Controller
     /*** Tabla de pedidos segun el tipo  */
     public function pedidos($tipo="abiertos")
     {
+        
         if ($this->auth->is_auth()) {
 
             $xcrud = xcrud_get_instance();
 
-            $this->load->model(array('pedido_model', 'tienda_model', 'sfid_model'));
+            $this->load->model(array('pedido_model', 'tienda_model', 'sfid_model','chat_model'));
             $this->load->library('app/paginationlib');
 
             // Comprobar si existe el segmento PAGE en la URI, si no inicializar a 1..
-            $get_page = $this->uri->segment(5); echo ($this->uri->segment(6));
+            $get_page = $this->uri->segment(5); 
             if( $this->uri->segment(4) == "page") {
                 $page = ( ! empty($get_page) ) ? $get_page : 1 ;
                 $segment = 5;
@@ -6246,6 +6307,7 @@ class Admin extends MY_Controller
                 $this->delete_filtros($array_filtros);
                 redirect(site_url("/admin/pedidos/".$tipo),'refresh');
             }
+
             // Consultar a la session si ya se ha buscado algo y guardado allí.
             $array_sesion = $this->get_filtros($array_filtros);
             // Buscar en el POST si hay busqueda, y si la hay usarla y guardarla además en sesion
@@ -6258,15 +6320,17 @@ class Admin extends MY_Controller
             }
 
             // viene del form de ordenacion
-            $do_orden = $this->input->post('ordenar');
+          /*  $do_orden = $this->input->post('ordenar');
             if($do_orden==='true') {
                 $array_orden = $this->set_orden($this->input->post('form'));
-            }
+            }*/
 
 
             // Obtener el campo a ordenar, primero de Session y despues del post, si procede..
+           // print_r($this->input->post('form'));
+            $array_orden = $this->set_orden($this->input->post('form'));
             $array_orden = $this->get_orden();
-            //print_r($array_orden); exit;
+            //print_r($array_orden); 
             if(count($array_orden) > 0) {
                 foreach ($array_orden as $key => $value) {
                     $data["campo_orden"] = $key;
@@ -6301,11 +6365,16 @@ class Admin extends MY_Controller
             $data['n_final'] = $bounds["n_final"];
             $data["pagination_helper"]   = $this->pagination;
 
+         
             $pedidos = $this->pedido_model->get_pedidos($page,$cfg_pagination,$array_orden,$tipo,0,$array_sesion);
 
             foreach ($pedidos as $pedido)
                 $pedido->nuevos  = $this->chat_model->contar_nuevos($pedido->id,$pedido->reference,"pedidos");
 
+            $data['mensajes_nuevos'] = $this->chat_model->existen_mensajes_nuevos_pedidos($tipo);
+            if($tipo=='abiertos') {
+                $data['mensajes_nuevosC'] = $this->chat_model->existen_mensajes_nuevos_pedidos('finalizados');
+            }
             $data['pedidos'] = $pedidos;
             $data['tipo'] = $tipo;
 
@@ -6412,6 +6481,8 @@ class Admin extends MY_Controller
 
         $sfid = $this->tienda_model->get_pds($id_pds);
 
+        $pedidoAntes = $this->pedido_model->get_pedido($id_pedido,$id_pds);
+
         $data['id_pds'] = 'ABX/PDS-' . $sfid['id_pds'];
         $data['commercial'] = $sfid['commercial'];
         $data['territory'] = $sfid['territory'];
@@ -6426,6 +6497,7 @@ class Admin extends MY_Controller
         $this->pedido_model->pedido_update($id_pedido, $status);
 
         $pedido = $this->pedido_model->get_pedido($id_pedido,$id_pds);
+    
 
         $fecha_cierre = $this->input->post('fecha_cierre');
         if(empty($fecha_cierre)) { $fecha_cierre = date('Y-m-d H:i:s'); }
@@ -6438,6 +6510,12 @@ class Admin extends MY_Controller
         {
             $this->pedido_model->pedido_update_cierre($id_pedido, $fecha_cierre);
         }
+        
+        if($status == 7 && $pedidoAntes->status!=='Pendiente material'){
+            
+            $this->pedido_model->sumar_stock_alarmas($id_pedido, $id_pds);
+        }
+
 
         /**
          * CIERRE FORZOSO
@@ -6445,6 +6523,8 @@ class Admin extends MY_Controller
         if ($status == 8)
         {
             $this->pedido_model->pedido_update_cierre($id_pedido, $fecha_cierre);
+            if($pedidoAntes->status!=='Pendiente material')
+                $this->pedido_model->sumar_stock_alarmas($id_pedido, $id_pds);
             //Le ponemos estado Finalizado
             $this->pedido_model->pedido_update($id_pedido, 6);
         }
@@ -6536,7 +6616,7 @@ class Admin extends MY_Controller
 
             $pedido = $this->pedido_model->get_pedido($id_pedido,$id_pds);
 
-
+            
 
             $historico_material_enproceso = $this->tienda_model->historico_fecha($id_pedido,'En proceso',$tabla);
 
@@ -6656,6 +6736,7 @@ class Admin extends MY_Controller
         if ($this->auth->is_auth()) {
             $xcrud = xcrud_get_instance();
             $data['sfid'] = $this->session->userdata('sfid');
+            $formato =  $this->uri->segment(4);
             $id_pds=null;
 
             $this->load->model(array('pedido_model'));
@@ -6676,7 +6757,7 @@ class Admin extends MY_Controller
             // Obtener el campo a ordenar, primero de Session y despues del post, si procede..
             $array_orden = $this->get_orden();
 
-            $this->pedido_model->exportar_pedidos( $id_pds,$array_orden, $array_sesion, $tipo);
+            $this->pedido_model->exportar_pedidos( $id_pds,$array_orden, $array_sesion, $tipo,$formato);
 
 
         } else {

@@ -340,6 +340,10 @@ function rest_post ($url, $urlParams = array(), $auth = array(), $queryParams= '
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
     $server_output = curl_exec ($ch);
+    log_message('error', $url." - ".print_r(curl_getinfo($ch),true));
+    log_message('error',"Parametros enviados - ".print_r($queryParams,true));
+    log_message('error',"Resultado - ". print_r($server_output,true));
+
     curl_close ($ch);
 
     return $server_output;
@@ -371,6 +375,10 @@ function rest_put ($url, $urlParams, $auth, $queryParams = '') {
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
     $server_output = curl_exec ($ch);
+    log_message('error', $url." - ".print_r(curl_getinfo($ch),true));
+    log_message('error',"Parametros enviados - ".print_r($queryParams,true));
+    log_message('error', "Resultado - ".print_r($server_output,true));
+
     curl_close ($ch);
 
     return $server_output;
@@ -400,6 +408,10 @@ function rest_put_json ($url, $urlParams, $auth, $queryParams = '') {
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
     $server_output = curl_exec ($ch);
+    log_message('error', $url." - ".print_r(curl_getinfo($ch),true));
+    log_message('error',"Parametros enviados - ".print_r($queryParams,true));
+    log_message('error', "Resultado - ".print_r($server_output,true));
+
     curl_close ($ch);
 
     return $server_output;
@@ -431,6 +443,9 @@ function rest_delete ($url, $urlParams = array(), $auth = array(), $queryParams=
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
     $server_output = curl_exec ($ch);
+    log_message('error', $url." - ".print_r(curl_getinfo($ch),true));
+    log_message('error',"Parametros enviados - ".print_r($queryParams,true));
+    log_message('error', "Resultado - ".print_r($server_output,true));
 
     //$api_response_info = curl_getinfo($ch);
     //print_r($api_response_info); exit;
@@ -450,6 +465,9 @@ function file_get_contents_curl($url) {
         curl_setopt($fc, CURLOPT_SSL_VERIFYPEER,FALSE);
         curl_setopt($fc, CURLOPT_TIMEOUT,30);
         $res = curl_exec($fc);
+        log_message('error', $url." - ".print_r(curl_getinfo($fc),true));
+        log_message('error', print_r($res,true));
+
         curl_close($fc);
     }
     else $res = file_get_contents($url);

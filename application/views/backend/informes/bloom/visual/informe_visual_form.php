@@ -13,12 +13,12 @@
                         <form action="<?=site_url($controlador.'/informe_visual');?>" method="post" class="form-inline filtros form-mini">
                             <div class="col-sm-12">
                                 <div class="form-group">
-                                    <label for="id_tipo_visual">Tipo de tienda</label>
+                                    <label for="id_tipo_visual">Canal de tienda</label>
                                     <?php
                                         $url_ajax_subtipos = site_url().'informe/subtipos_tienda/';
                                     ?>
                                     <select id="id_tipo_visual" name="id_tipo_visual" class="form-control" onchange="cargar_subselect('id_tipo_visual','id_subtipo_visual',false,'<?=$url_ajax_subtipos?>',function(){});">
-                                        <option value="">Escoge el tipo...</option>
+                                        <option value="">Escoge el canal...</option>
                                         <?php
                                         foreach($tipos as $tipo)
                                         {
@@ -33,13 +33,13 @@
                                 <div class="form-group">
 
                                     <input type="hidden" name="id_subtipo_visual_val" id="id_subtipo_visual_val" value="<?php ?>">
-                                    <label for="id_subtipo_visual">Subtipo</label>
+                                    <label for="id_subtipo_visual">Tipología</label>
                                     <?php
                                          $url_ajax_tipologias = base_url()."informe/tipologias_tienda/";
                                     ?>
                                     <select id="id_subtipo_visual" name="id_subtipo_visual" class="form-control"
                                             onchange="cargar_subselect('id_subtipo_visual','id_tipologia_visual','<?=$id_tipologia_visual?>','<?=$url_ajax_tipologias?>',function(){});">
-                                            <option value="">Escoge un Tipo de tienda...</option>
+                                            <option value="">Escoge un Canal de tienda...</option>
                                     </select>
 
 
@@ -47,9 +47,9 @@
 
                                 <div class="form-group">
                                     <input type="hidden" name="id_segmento_visual_val" id="id_segmento_visual_val" value="<?php ?>">
-                                    <label for="id_segmento_visual">Segmento</label>
+                                    <label for="id_segmento_visual">Concepto</label>
                                     <select id="id_segmento_visual" name="id_segmento_visual" class="form-control">
-                                        <option value="">Escoge el segmento...</option>
+                                        <option value="">Escoge el concepto...</option>
                                         <?php
                                         foreach($segmentos as $seg)
                                         {
@@ -62,11 +62,11 @@
 
                                 <div class="form-group">
                                     <input type="hidden" name="id_tipologia_visual_val" id="id_tipologia_visual_val" value="<?php ?>">
-                                    <label for="id_tipologia_visual">Tipología</label>
+                                    <label for="id_tipologia_visual">Categorización</label>
 
                                         <select id="id_tipologia_visual" name="id_tipologia_visual" class="form-control"
                                             >
-                                        <option value="">Escoge Tipo y subtipo de tienda...</option>
+                                        <option value="">Escoge Canal y tipología de tienda...</option>
                                     </select>
                                 </div>
 

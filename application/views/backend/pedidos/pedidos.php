@@ -2,7 +2,20 @@
     <div id="page-wrapper">
         <div id="pedidos_abiertos">
             <div class="col-lg-12">
-                <h1 class="page-header"><?php echo $title ?></h1>
+                <!--<h1 class="page-header"><?php echo $title ?></h1>-->
+                <?php
+                        $data['mensajes_nuevos'] = $mensajes_nuevos;
+                        $data['tipo'] = $tipo;
+                    ?>
+                    <h1 class="page-header"><?php echo $title ?> <?php $this->load->view("backend/pedidos/mensajes_chat",$data) ?>
+
+                    <?php
+                if (($tipo=='abiertos') && $mensajes_nuevosC>0){
+                    $data['mensajes_nuevosC'] = $mensajes_nuevosC;
+                    $data['tipoC'] = 'finalizados';
+                     $this->load->view("backend/pedidos/mensajes_chat",$data);
+                }  ?>
+                </h1>
             </div>
        </div>
 
@@ -10,27 +23,44 @@
         <div class="row" >
             <div class="col-lg-12">
                 <div class="filtro">
+                
                     <form action="<?=base_url()?>admin/pedidos/<?=$tipo?>" method="post" class="filtros form-mini autosubmit col-lg-12">
 
-                        <div class="col-lg-4">
+                        <div class="col-lg-3">
                             <label for="id_pedido">Pedido: </label>
                             <input type="text" name="id_pedido" id="id_pedido" class="form-control input-sm" placeholder="Id. pedido" <?php echo (!empty($id_pedido)) ? ' value="'.$id_pedido.'" ' : ''?> />
                         </div>
-                        <div class="col-lg-4">
+                        <div class="col-lg-3">
                             <label for="reference">SFID: </label>
                             <input type="text" name="reference" id="reference" class="form-control input-sm" placeholder="SFID" <?php echo (!empty($reference)) ? ' value="'.$reference.'" ' : ''?> />
                         </div>
                         <div class="col-lg-2">
+                                <label for="status">Estado: </label>
+                                <select name="status" id="status" class="form-control input-sm">
+                                    <option value="" <?php echo ($status==="") ? 'selected="selected"' : ''?>>Cualquier estado</option>
+                            <?php if($tipo=='abiertos'){ ?>
+                                    <option value="En proceso" <?php echo ($status==="En proceso") ? 'selected="selected"' : ''?>>En proceso</option>
+                                    <option value="Enviado" <?php echo ($status==="Enviado") ? 'selected="selected"' : ''?>>Enviado</option>
+                                    <option value="Nuevo" <?php echo ($status==="Nuevo") ? 'selected="selected"' : ''?>>Nuevo</option>
+                                    <option value="Pendiente material" <?php echo ($status==="Pendiente material") ? 'selected="selected"' : ''?>>Pendiente material</option>
+                            <?php }else{ ?>
+                                
+                                    <option value="Cancelado" <?php echo ($status==="Cancelado") ? 'selected="selected"' : ''?>>Cancelado</option>
+                                    <option value="Recibido" <?php echo ($status==="Recibido") ? 'selected="selected"' : ''?>>	Recibido</option>
+                                    <option value="Finalizado" <?php echo ($status==="Finalizado") ? 'selected="selected"' : ''?>>Finalizado</option>
+                                
+                            <?php } ?>
+                                </select>
+                            </div>
+                        <div class="col-lg-2">
                             <div class="form-group">
                                 <input type="hidden" name="do_busqueda" value="si">
                                 <input type="submit" value="Buscar" id="submit_button" class="form-control input-sm">
+                                <a href="<?=base_url()?>admin/pedidos/<?=$tipo?>/borrar_busqueda" class="reiniciar_busquedaP form-control input-sm">Reiniciar</a>
                             </div>
+                            
                         </div>
-                            <div class="col-lg-2">
-                                <div class="form-group">
-                                    <a href="<?=base_url()?>admin/pedidos/<?=$tipo?>/borrar_busqueda" class="reiniciar_busquedaP form-control input-sm">Reiniciar</a>
-                                </div>
-                            </div>
+                            
                         <div class="clearfix"></div>
 
                     </form>
@@ -68,7 +98,7 @@
                                 <th class="sorting" data-rel="pedidos.id" data-order="">Ref.</th>
                                 <th class="">Fecha de alta</th>
                                 <th class="sorting" data-rel="pds.reference" data-order="">SFID</th>
-                                <th class=""">Tienda</th>
+                                <th class="">Tienda</th>
                                 <th class="">Territorio</th>
                                 <th class="">Estado</th>
                                 <th class="sorting" data-rel="nuevos" data-order="desc">Chat offline</th>
