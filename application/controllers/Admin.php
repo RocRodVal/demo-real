@@ -6523,8 +6523,7 @@ class Admin extends MY_Controller
         if ($status == 8)
         {
             $this->pedido_model->pedido_update_cierre($id_pedido, $fecha_cierre);
-            if($pedidoAntes->status!=='Pendiente material')
-                $this->pedido_model->sumar_stock_alarmas($id_pedido, $id_pds);
+            $this->pedido_model->sumar_stock_alarmas($id_pedido, $id_pds);
             //Le ponemos estado Finalizado
             $this->pedido_model->pedido_update($id_pedido, 6);
         }
