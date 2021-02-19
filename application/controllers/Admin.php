@@ -2479,6 +2479,16 @@ class Admin extends MY_Controller
         $xcrud_2->start_minimized(true);
         $xcrud_2->unset_remove(); // Ocultar el botón de borrar para evitar borrados accidentales mientras no existan constraints en BD:
 
+        $xcrud_4 = xcrud_get_instance();
+        $xcrud_4->table('type_carga');
+        $xcrud_4->table_name('Tipo de carga');
+        $xcrud_4->label('id_type_carga', 'Identificador')->label('type', 'Tipo');
+        $xcrud_4->columns('id_type_carga,type');
+        $xcrud_4->fields('type');
+        $xcrud_4->start_minimized(true);
+        $xcrud_4->unset_remove(); // Ocultar el botón de borrar para evitar borrados accidentales mientras no existan constraints en BD:
+
+
         $xcrud_3 = xcrud_get_instance();
         $xcrud_3->table('device');
         $xcrud_3->table_name('Modelo');
@@ -2496,6 +2506,7 @@ class Admin extends MY_Controller
         $data['title'] = 'Dispositivos';
         $data['content'] = $xcrud_1->render();
         $data['content'] = $data['content'] . $xcrud_2->render();
+        $data['content'] = $data['content'] . $xcrud_4->render();
         $data['content'] = $data['content'] . $xcrud_3->render();
 
 
@@ -6486,6 +6497,7 @@ class Admin extends MY_Controller
         $this->pedido_model->pedido_update($id_pedido, $status);
 
         $pedido = $this->pedido_model->get_pedido($id_pedido,$id_pds);
+    
 
         $fecha_cierre = $this->input->post('fecha_cierre');
         if(empty($fecha_cierre)) { $fecha_cierre = date('Y-m-d H:i:s'); }
@@ -6498,7 +6510,9 @@ class Admin extends MY_Controller
         {
             $this->pedido_model->pedido_update_cierre($id_pedido, $fecha_cierre);
         }
-        if($status == 7 && $pedidoAntes->status!='Pendiente de material'){
+        
+        if($status == 7 && $pedidoAntes->status!=='Pendiente material'){
+            
             $this->pedido_model->sumar_stock_alarmas($id_pedido, $id_pds);
         }
 
@@ -6509,7 +6523,8 @@ class Admin extends MY_Controller
         if ($status == 8)
         {
             $this->pedido_model->pedido_update_cierre($id_pedido, $fecha_cierre);
-            $this->pedido_model->sumar_stock_alarmas($id_pedido, $id_pds);
+            if($pedidoAntes->status!=='Pendiente material')
+                $this->pedido_model->sumar_stock_alarmas($id_pedido, $id_pds);
             //Le ponemos estado Finalizado
             $this->pedido_model->pedido_update($id_pedido, 6);
         }
