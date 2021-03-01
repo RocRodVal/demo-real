@@ -4,6 +4,7 @@ define('PASSTIENDA','clementine');
 define('APERTURA','Apertura tienda');
 define('CAMBIO_MANUAL','Cambio manual');
 define('ALTA_MANUAL','Alta manual');
+define('BAJA_MUEBLE_MANUAL','Baja mueble manual');
 define('ACTUALIZACION_MASIVA','Actualizacion masiva');
 define('CIERRE_TIENDA','Cierre tienda');
 define('INCIDENCIA_ALTA','Alta incidencia');

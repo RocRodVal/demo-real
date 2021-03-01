@@ -4,6 +4,7 @@ define('PASSTIENDA','clementine');
 define('APERTURA','Apertura tienda');
 define('CAMBIO_MANUAL','Cambio manual');
 define('ALTA_MANUAL','Alta manual');
+define('BAJA_MUEBLE_MANUAL','Baja mueble manual');
 define('ACTUALIZACION_MASIVA','Actualizacion masiva');
 define('CIERRE_TIENDA','Cierre tienda');
 define('INCIDENCIA_ALTA','Alta incidencia');
@@ -41,13 +42,14 @@ $config['base_url'] = 'http://demoreal.focusonemotions.com/orange/';
 /**
  * REALDOOH API, TEMPORARY ACTIVATION
  */
-$config['allowed_origins'] = array ('localhost', 'demoreal.focusonemotions.com', 'realdooh.pre.altabox.net/clementine');
+$config['allowed_origins'] = array ('localhost', 'demoreal.focusonemotions.com', 'realdooh.pre.altabox.net/clementine','192.168.0.11');
 
-$config['realdooh.api.url'] = 'http://realdooh.pre.altabox.net:8080/rdorangeapi/api/v1';
+//$config['realdooh.api.url'] = 'http://dev.realdooh.com:8080/forgeapi/api/v1';
+$config['realdooh.api.url'] = 'http://192.168.0.14:4102/api/v1';
 //$config['realdooh.api.url'] = 'http://78.46.139.41:8080/rdorangeapi/api/v1';
 
 $config['realdooh.api'] = array (
-    'active' => true,
+    'active' => false,
     'changeStatusUrl'       => $config['realdooh.api.url'].'/demoreal/incident/{drId}',
     'createIncidenceUrl'    => $config['realdooh.api.url'].'/demoreal/incident/{drId}/asset/{assetDrId}/user/{userSFID}/origin/{origin}',
     'createPdsUrl'          => $config['realdooh.api.url'].'/location/demoreal?idOUParent=2673',
@@ -257,7 +259,7 @@ $config['allow_get_array'] = TRUE;
 | your log files will fill up very fast.
 |
 */
-$config['log_threshold'] = 0;
+$config['log_threshold'] = 1;
 
 /*
 |--------------------------------------------------------------------------

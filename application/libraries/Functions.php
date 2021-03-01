@@ -397,25 +397,26 @@
                 "demoReal"       =>  $postdata->get('positions')>0 ? true : false,
                 "name"           =>  $postdata->get("display")
             );
-        }
-        //print_r($asset_realdooh);exit;
-        $json = json_encode($asset_realdooh);
-        //////////////////////////////////////////////////////////////////////////////////
-        //                                                                              //
-        //             Comunicación  con Realdooh VU: CREAR tienda                      //
-        //                                                                              //
-        //////////////////////////////////////////////////////////////////////////////////
-        //                                                                              //
-        //idOUParent es 2 en PRE pero en produccion será 1
-        $resultado=alta_modeloMueble_realdooh(array(                                             //
-            'user'=> 'altabox',
-            'password' => 'realboxdemo'
-        ), array(),$json);                                                //
-        //
-        //                                                                              //
-        //////////////////////////////////////////////////////////////////////////////////
+        
+            //print_r($asset_realdooh);exit;
+            $json = json_encode($asset_realdooh);
+            //////////////////////////////////////////////////////////////////////////////////
+            //                                                                              //
+            //             Comunicación  con Realdooh VU: CREAR tienda                      //
+            //                                                                              //
+            //////////////////////////////////////////////////////////////////////////////////
+            //                                                                              //
+            //idOUParent es 2 en PRE pero en produccion será 1
+            $resultado=alta_modeloMueble_realdooh(array(                                             //
+                'user'=> 'altabox',
+                'password' => 'realboxdemo'
+            ), array(),$json);                                                //
+            //
+            //                                                                              //
+            //////////////////////////////////////////////////////////////////////////////////
 
-       // print_r($resultado);
+        // print_r($resultado);
+        }
 
     }
 
@@ -454,10 +455,10 @@
         //////////////////////////////////////////////////////////////////////////////////
         //                                                                              //
         //idOUParent es 2 en PRE pero en produccion será 1
-        $resultado=set_modeloMueble_realdooh(array(                                             //
+        $resultado=set_modeloMueble_realdooh(array(                                     //
             'user'=> 'altabox',
             'password' => 'realboxdemo'
-        ), "drId=".$datosAntes['id_display'],$json);                                                //
+        ), "drId=".$datosAntes['id_display'],$json);                                    //
         //
         //                                                                              //
         //////////////////////////////////////////////////////////////////////////////////
@@ -485,4 +486,59 @@
     */
     function inventario_dispositivosMueble($postada,$xcrud){
 
+        $CI =& get_instance();
+        if($postada->get('status')=='Baja'){
+        
+            $asset = array("drId" => $xcrud);
+
+            $assets=array("assets"=> array());
+            array_push($assets['assets'], $asset);
+            
+            //////////////////////////////////////////////////////////////////////////////////
+            //                                                                              //
+            //             Comunicación  con Realdooh VU: BORRAR MUEBLE DE TIENDA           //
+            //                                                                              //
+            //////////////////////////////////////////////////////////////////////////////////
+            //                                                                              //
+            //idOUParent es 2 en PRE pero en produccion será 1
+            $resultado = delete_assets_pds_realdooh(array(                                  //
+                'user'=> 'altabox',                                                         //
+                'password' => 'realboxdemo'                                                 //
+            ), array(),json_encode($assets));                                               //
+            //                                                                              //
+            //////////////////////////////////////////////////////////////////////////////////
+
+            //print_r($resultado);exit;
+                
+            //Si se ha dado de baja el mueble habra que dar de baja también los terminales de ese mueble
+            $result = $CI->db->select('*')
+            ->where("id_displays_pds",$xcrud)
+            ->get('devices_pds')->result();
+
+            foreach($result as $device){
+                $device->status='Baja';
+                //$CI->db->update('devices_pds',$device); 
+                
+                /*$elemento = array(
+                    'id_displays_pds' => $result['id_displays_pds'],
+                    'id_display'      => $postdata->get('id_display')
+                );*/
+                $CI->db->where('id_devices_pds',$device->id_devices_pds)
+                    ->set('status','Baja')
+                    ->update('devices_pds');
+
+
+                $elemento = array(
+                    'id_devices_pds' => $device->id_devices_pds,
+                    'fecha' => date('Y-m-d H:i:s'),
+                    'status' => 'Baja',
+                    'motivo' => BAJA_MUEBLE_MANUAL
+                );
+                $CI->db->insert('historico_devicesPDS',$elemento);   
+            }
+            
+            
+
+        }
+    
     }

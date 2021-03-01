@@ -2563,6 +2563,7 @@ class Admin extends MY_Controller
             ->label('id_subtipo', 'Tipología PDS')->label('id_segmento', 'Concepto PDS')->label('id_tipologia', 'Categorización PDS')->label('position', 'Posición')->label('description', 'Comentarios')->label('status', 'Estado');
         $xcrud_2->columns('id,client,id_tipo,id_subtipo,id_segmento,id_tipologia,id_display,position,status');
         $xcrud_2->fields('client,id_tipo,id_subtipo,id_segmento,id_tipologia,id_display,position,status');
+        //$xcrud_2->search_columns('id_tipo,id_subtipo,id_segmento,id_tipologia,id_display');
         $xcrud_2->unset_remove();
 
         $xcrud_4 = xcrud_get_instance();
@@ -2865,7 +2866,7 @@ class Admin extends MY_Controller
             $xcrud_1->unset_remove();
             $xcrud_1->start_minimized(false);
             $xcrud_1->after_update("inventario_dispositivosMueble", "../libraries/Functions.php");
-
+            //$xcrud_2->after_update("update_pds_realdooh","../libraries/Functions.php");
 
             $data['title'] = 'Inventarios tiendas';
             $data['content'] = $xcrud_1->render();
@@ -6523,8 +6524,7 @@ class Admin extends MY_Controller
         if ($status == 8)
         {
             $this->pedido_model->pedido_update_cierre($id_pedido, $fecha_cierre);
-            if($pedidoAntes->status!=='Pendiente material')
-                $this->pedido_model->sumar_stock_alarmas($id_pedido, $id_pds);
+            $this->pedido_model->sumar_stock_alarmas($id_pedido, $id_pds);
             //Le ponemos estado Finalizado
             $this->pedido_model->pedido_update($id_pedido, 6);
         }
