@@ -110,7 +110,7 @@ class Chat_model extends CI_Model {
         }
     }
 
-    public function contar_nuevos_old($id_incidencia,$agent) {
+   /* public function contar_nuevos_old($id_incidencia,$agent) {
 		if($id_incidencia != FALSE)
 		{
 			$query = $this->db->select('COUNT(*) AS nuevos')
@@ -128,7 +128,7 @@ class Chat_model extends CI_Model {
 		}else{
 			return FALSE;
 		}
-	}
+	}*/
 
     public function marcar_leido($id,$agent,$tabla='incidencias')
     {
@@ -149,14 +149,14 @@ class Chat_model extends CI_Model {
         //echo $this->db->last_query(); exit;
     }
 	
-	public function marcar_leido_old($id_incidencia,$agent)
+/*	public function marcar_leido_old($id_incidencia,$agent)
 	{
 		$this->db->set('status', 2, FALSE);
 		$this->db->where('id_incidencia',$id_incidencia);
 		$this->db->where('agent',$agent);
 		$this->db->where('status !=','Privado');
 		$this->db->update('chat');
-	}	
+	}	*/
 	
 	
 	public function insert_chat_incidencia($data)

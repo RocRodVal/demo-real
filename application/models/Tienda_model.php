@@ -1492,6 +1492,18 @@ class Tienda_model extends CI_Model {
         return $query->result();
     }
 
+    public function get_mueblesdisplay_demoreal() {
+
+
+        $query = $this->db->query('
+                    SELECT *
+                    FROM mueble_display md
+                    WHERE positions > 0 AND status="Alta" ORDER BY name');
+
+
+        return $query->result();
+    }
+
     public function get_devices_demoreal() {
         $query = $this->db->query('
                     SELECT *

@@ -60,7 +60,7 @@ class Informe_model extends CI_Model
 
     }
 
-    public function get_sql_informe_pdv_OLD($data,$limit=NULL)
+   /* public function get_sql_informe_pdv_OLD($data,$limit=NULL)
     {
         $tipo_tienda = (isset($data["tipo_tienda"]) && !empty($data["tipo_tienda"])) ? $data["tipo_tienda"] : NULL;
         $panelado = (isset($data["panelado"])  && !empty($data["panelado"])) ? $data["panelado"] : NULL;
@@ -80,7 +80,7 @@ class Informe_model extends CI_Model
                         pds.territory as territory, territory.territory as territorio, pds.panelado_pds as panelado_pds, commercial, pds.type_via as type_via, type_via.via as tipo_via,
                         address, zip, city")*/
 
-        $aQuery = array();
+     /*   $aQuery = array();
 
         $aQuery["fields"] = array(
                     "pds.reference as reference",
@@ -110,6 +110,8 @@ class Informe_model extends CI_Model
             $aQuery["joins"]["display"]  = "display.id_display = displays_pds.id_display";
         }
 
+       
+
         if(!is_null($id_device) || !is_null($brand_device)){
             $aQuery["joins"]["devices_pds"]  = "devices_pds.id_pds=pds.id_pds";
             $aQuery["joins"]["device"]  = "device.id_device=devices_pds.id_device";
@@ -119,6 +121,7 @@ class Informe_model extends CI_Model
         if(!is_null($tipo_tienda))  $aQuery["where_in"]["pds.type_pds"] = $tipo_tienda;
         if(!is_null($panelado))     $aQuery["where_in"]["pds.panelado_pds"] = $panelado;
         if(!is_null($id_display))   $aQuery["where_in"]["displays_pds.id_display"] = $id_display;
+        if(!is_null($id_muebledisplay))   $aQuery["where_in"]["devices_pds.id_muebledisplay"] = $id_muebledisplay;
         if(!is_null($id_device))    $aQuery["where_in"]["devices_pds.id_device"] = $id_device;
         if(!is_null($territory))    $aQuery["where_in"]["pds.territory"] = $territory;
         if(!is_null($brand_device)) $aQuery["where_in"]["device.brand_device"] = $brand_device;
@@ -140,9 +143,9 @@ class Informe_model extends CI_Model
         }
 
 
-
+//echo $aQuery; exit;
         return $aQuery;
-    }
+    }*/
 
 
 
@@ -158,6 +161,8 @@ class Informe_model extends CI_Model
         $territory = (isset($data["territory"])  && !empty($data["territory"])) ? $data["territory"] : NULL;
 
         $id_display = (isset($data["id_display"])  && !empty($data["id_display"])) ? $data["id_display"] : NULL;
+
+        $id_muebledisplay = (isset($data["id_muebledisplay"])  && !empty($data["id_muebledisplay"])) ? $data["id_muebledisplay"] : NULL;
 
         $id_device = (isset($data["id_device"])  && !empty($data["id_device"])) ? $data["id_device"] : NULL;
         $brand_device = (isset($data["brand_device"])  && !empty($data["brand_device"])) ? $data["brand_device"] : NULL;
@@ -176,13 +181,13 @@ class Informe_model extends CI_Model
         $aQuery = array();
 
         $aQuery["fields"] = array(
-            "pds.reference as reference",
+            "distinct(pds.reference) as reference",
             "pds.codigoSAT as codigoSAT",
 
-            "pds_tipo.titulo as tipo",
-            "pds_subtipo.titulo as subtipo",
-            "pds_segmento.titulo as segmento",
-            "pds_tipologia.titulo as tipologia",
+            "pds_tipo.titulo as canal",
+            "pds_subtipo.titulo as tipologia",
+            "pds_segmento.titulo as concepto",
+            "pds_tipologia.titulo as categorizacion",
 
             "pds.territory as territory",
             "territory.territory as territorio",
@@ -215,6 +220,16 @@ class Informe_model extends CI_Model
            // $aQuery["where"]["displays_pds.id_display"] = "devices_pds.id_display";
         }
 
+        if(!is_null($id_muebledisplay)){
+            $aQuery["joins"]["devices_pds"]  = "devices_pds.id_pds = pds.id_pds";
+            $aQuery["joins"]["mueble_display"]  = "mueble_display.id_muebledisplay = devices_pds.id_muebledisplay";
+            //$aQuery["joins"]["device"]  = "devices_pds.id_device = device.id_device";
+            $aQuery["where"]["devices_pds.status"] = "Alta";
+            //$aQuery["fields"].add["disctint id_muebledislplay"];
+           // $aQuery["joins"]["devices_display"]  = "devices_display.id_muebledisplay = displays_pds.id_display";
+        }
+       
+
         if(!is_null($id_device) || !is_null($brand_device)){
             $aQuery["joins"]["devices_pds"]  = "devices_pds.id_pds=pds.id_pds";
             $aQuery["joins"]["device"]  = "device.id_device=devices_pds.id_device";
@@ -234,6 +249,9 @@ class Informe_model extends CI_Model
             if (!is_null($id_device)) {
                 $aQuery["where_in"]["devices_pds.id_display"] = $id_display;
             }
+        }
+        if(!is_null($id_muebledisplay)) {
+            $aQuery["where_in"]["devices_pds.id_muebledisplay"] = $id_muebledisplay;
         }
         if(!is_null($id_device))    $aQuery["where_in"]["devices_pds.id_device"] = $id_device;
         if(!is_null($territory))    $aQuery["where_in"]["pds.territory"] = $territory;
@@ -263,7 +281,7 @@ class Informe_model extends CI_Model
     }
 
 
-    public function get_informe_pdv_OLD($data,$ci_pagination=NULL)
+   /* public function get_informe_pdv_OLD($data,$ci_pagination=NULL)
     {
         $limit = NULL;
         if(count($data) > $ci_pagination["per_page"])
@@ -277,7 +295,7 @@ class Informe_model extends CI_Model
         $query = $this->get_active_record_result($aQuery);
 
         return $query;
-    }
+    }*/
 
 
     public function get_informe_pdv($data,$ci_pagination=NULL)
@@ -292,18 +310,18 @@ class Informe_model extends CI_Model
         if(empty($aQuery)) return NULL;
 
         $query = $this->get_active_record_result($aQuery);
-
+//echo $this->db->last_query(); exit;
         return $query;
     }
 
 
 
-    public function get_informe_pdv_quantity_OLD($data)
+    /*public function get_informe_pdv_quantity_OLD($data)
     {
         $query = $this->get_sql_informe_pdv($data);
         if($query === NULL) return 0;
         return count($query->result());
-    }
+    }*/
 
 
     public function get_informe_pdv_quantity($data)
@@ -347,10 +365,10 @@ class Informe_model extends CI_Model
 
         // Array de títulos y exclusiones de campo para la exportación XLS/CSV
         if(!empty($controlador)) {
-            $arr_titulos = array('SFID', 'Codigo SAT', 'Tipo', 'Subtipo', 'Segmento', 'Tipología', 'Territorio', 'Nombre', 'Tipo Vía', 'Dirección', 'CP', 'Localidad', 'Provincia');
+            $arr_titulos = array('SFID', 'Codigo SAT', 'Canal', 'Tipología', 'Concepto', 'Categorización', 'Territorio', 'Nombre', 'Tipo Vía', 'Dirección', 'CP', 'Localidad', 'Provincia');
             $excluir = array('territory','panelado_pds','type_via','');
         }else {
-            $arr_titulos = array('SFID', 'Tipo', 'Subtipo', 'Segmento', 'Tipología', 'Territorio', 'Nombre', 'Tipo Vía', 'Dirección', 'CP', 'Localidad', 'Provincia');
+            $arr_titulos = array('SFID', 'Canal', 'Tipología', 'Concepto', 'Tipología', 'Categorización', 'Nombre', 'Tipo Vía', 'Dirección', 'CP', 'Localidad', 'Provincia');
             $excluir = array('codigoSAT','territory','panelado_pds','type_via','');
         }
 
@@ -486,7 +504,7 @@ class Informe_model extends CI_Model
         return $rango_meses;
     }
 
-    public function get_rango_meses_old($anio=NULL,$tipo="incidencias")
+   /* public function get_rango_meses_old($anio=NULL,$tipo="incidencias")
     {
         if(is_null($anio)) $anio = date("Y");
         if($tipo=="incidencias") {
@@ -497,7 +515,7 @@ class Informe_model extends CI_Model
 
         $this->setRangoMeses($rango_meses);
         return $rango_meses;
-    }
+    }*/
 
     public function get_meses_columna($min = 1,$max = 12)
     {
@@ -606,7 +624,7 @@ class Informe_model extends CI_Model
      * @param null $array_incidencias
      * @return array
      */
-    public function get_array_incidencias_totales_old($array_incidencias = NULL)
+/*    public function get_array_incidencias_totales_old($array_incidencias = NULL)
     {
         $data_inc = array();
         if(!is_null($array_incidencias))
@@ -617,7 +635,7 @@ class Informe_model extends CI_Model
             }
         }
         return $data_inc;
-    }
+    }*/
 
     public function get_medias($array_num=NULL, $array_denom=NULL, $rango_meses = NULL)
     {
