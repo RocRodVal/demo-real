@@ -20,11 +20,23 @@ class User_model extends CI_Model {
 		    ->get('agent');
 
         /*Agregado para comprobar si la tienda es MAIN SMARTSTORE*/
-        $query2 = $this->db->select('*')
+        /*$query2 = $this->db->select('*')
             ->where('reference',$sfid)
             ->where('id_segmento',20)
-            ->get('pds');
-			
+            ->get('pds');*/
+		
+        /*Agregado para comprobar si la tienda tiene la tipologia (subtipo) SMARTSTORE / EVOLUCION NEXT*/
+       /* $query2 = $this->db->select('*')
+            ->where('reference',$sfid)
+            ->where('id_subtipo',20)
+            ->or_where('id_subtipo',29)
+            ->or_where('id_subtipo',26)
+            ->or_where('id_subtipo',25)
+            ->get('pds');*/
+        $sql = "SELECT * FROM pds WHERE reference ='".$sfid."' AND id_subtipo IN (".SMARTSTORE1.",".SMARTSTORE2.",".SMARTSTORE3.",".EVOLUCIONNEXT.") ";
+        $query2 = $this->db->query($sql);
+        //echo $sql; exit;    
+            //echo $this->db->last_query(); exit;
 		if($query->num_rows()==1)
 		{
 			$row = $query->row();
@@ -169,15 +181,27 @@ class User_model extends CI_Model {
 
 
     /**
-     * Agregado para comprobar si la tienda es MAIN SMARTSTORE y puede hacer pedidos
+     * Agregado para comprobar si la tienda tiene la tipología (subtipo) SMARTSTORE / EVOLUCIN NEXT  y puede hacer pedidos
      */
     function hook_hacepedidos($sfid, $data){
         $data['hacePedidos']=FALSE;
 
-        $query2 = $this->db->select('*')
+        /*$query2 = $this->db->select('*')
             ->where('reference',$sfid)
             ->where('id_segmento',20)
-            ->get('pds');
+            ->get('pds');*/
+        
+       /* $query2 = $this->db->select('*')
+            ->where('reference',$sfid)
+            ->where('id_subtipo',20)
+            ->or_where('id_subtipo',25)
+            ->or_where('id_subtipo',26)
+            ->or_where('id_subtipo',29)
+            ->get('pds');*/
+
+        $sql = "SELECT * FROM pds WHERE reference ='".$sfid."' AND id_subtipo IN (".SMARTSTORE1.",".SMARTSTORE2.",".SMARTSTORE3.",".EVOLUCIONNEXT.") ";
+        $query2 = $this->db->query($sql);
+       // echo $sql; exit;
         if($query2->num_rows()==1) {
             $data['hacePedidos']=TRUE;
         }

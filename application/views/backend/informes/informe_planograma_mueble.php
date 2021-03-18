@@ -22,9 +22,19 @@
 										<?php
 										foreach($devices as $device)
 										{
+											//print_r($device);exit;
+											if ($device->isDisplay==true) {?>
+												<p style = "box-shadow: 1px 1px 10px #ef0005	">
+												<?php } else{
 										?>
-										<p><?php echo $device->position.'. '.$device->device ?></p>
-										<?php
+										<p> <?php } ?>
+											<?php echo $device->position.'. '.$device->device ?></p>
+										
+										
+										
+										<?php 
+										
+										
 										}
 										?>
 									</div>

@@ -2498,9 +2498,9 @@ class Admin extends MY_Controller
         $xcrud_3->change_type('picture_url', 'image');
         $xcrud_3->modal('picture_url');
         $xcrud_3->label('id_device', 'Identificador')->label('brand_device', 'Fabricante')->label('type_device', 'Tipo')->label('device', 'Modelo')->label('brand_name', 'Modelo fabricante')->label('picture_url', 'Foto')->label('description', 'Comentarios')
-            ->label('status', 'Estado')->label('type_carga','Tipo de carga');
-        $xcrud_3->columns('id_device,brand_device,type_device,device,picture_url,brand_name,status, type_carga');
-        $xcrud_3->fields('brand_device,type_device,device,brand_name,picture_url,description,status, type_carga');
+            ->label('status', 'Estado')->label('type_carga','Tipo de carga')->label('obsoleto','Es obsoleto');
+        $xcrud_3->columns('id_device,brand_device,type_device,device,picture_url,brand_name,type_carga,obsoleto,status');
+        $xcrud_3->fields('brand_device,type_device,device,brand_name,picture_url,description,type_carga,obsoleto,status');
         $xcrud_3->unset_remove();// Ocultar el botón de borrar para evitar borrados accidentales mientras no existan constraints en BD:
 
         $data['title'] = 'Dispositivos';
@@ -2563,6 +2563,8 @@ class Admin extends MY_Controller
             ->label('id_subtipo', 'Tipología PDS')->label('id_segmento', 'Concepto PDS')->label('id_tipologia', 'Categorización PDS')->label('position', 'Posición')->label('description', 'Comentarios')->label('status', 'Estado');
         $xcrud_2->columns('id,client,id_tipo,id_subtipo,id_segmento,id_tipologia,id_display,position,status');
         $xcrud_2->fields('client,id_tipo,id_subtipo,id_segmento,id_tipologia,id_display,position,status');
+        //$xcrud_2->search_columns('id_tipo,id_subtipo,id_segmento,id_tipologia','id_display');
+        //$xcrud_2->search_columns('id_tipo,id_subtipo,id_segmento,id_tipologia,id_display');
         $xcrud_2->unset_remove();
 
         $xcrud_4 = xcrud_get_instance();
@@ -2571,10 +2573,11 @@ class Admin extends MY_Controller
         $xcrud_4->relation('client_panelado', 'client', 'id_client', 'client');
         $xcrud_4->relation('id_display', 'display', 'id_display', 'display');
         $xcrud_4->relation('id_device', 'device', 'id_device', 'device');
+        $xcrud_4->relation('id_muebledisplay', 'mueble_display', 'id_muebledisplay', 'name');
         $xcrud_4->label('id_devices_display', 'Identificador')->label('client_panelado', 'Cliente')->label('id_panelado', 'REF.')->label('id_display', 'Mueble')->label('id_device', 'Dispositivo')
-            ->label('position', 'Posición')->label('description', 'Comentarios')->label('status', 'Estado');
-        $xcrud_4->columns('id_devices_display,client_panelado,id_display,id_device,position,status');
-        $xcrud_4->fields('client_panelado,id_display,id_device,position,description,status');
+            ->label('position', 'Posición')->label('description', 'Comentarios')->label('status', 'Estado')->label('isDisplay','Display')->label('id_muebledisplay','Mueble display');
+        $xcrud_4->columns('id_devices_display,client_panelado,id_display,id_device,position,isDisplay,id_muebledisplay,status');
+        $xcrud_4->fields('client_panelado,id_display,id_device,position,description,isDisplay,id_muebledisplay,status');
         $xcrud_4->unset_remove();
 
         $xcrud_3 = xcrud_get_instance();
@@ -2623,6 +2626,39 @@ class Admin extends MY_Controller
         $this->load->view('backend/content', $data);
         $this->load->view('backend/footer');
     }
+
+    public function displays()
+    {
+        $xcrud = xcrud_get_instance();
+        $xcrud->table('mueble_display');
+        $xcrud->table_name('displays');
+        $xcrud->relation('client_display', 'client', 'id_client', 'client');
+        $xcrud->change_type('picture_url', 'image');
+        $xcrud->modal('picture_url');
+        $xcrud->label('id_muebledisplay', 'Identificador')->label('client_display', 'Cliente')->label('name', 'Nombre')->label('picture_url', 'Foto')->label('description', 'Comentarios')->label('positions', 'Posiciones')->label('status', 'Estado');
+        $xcrud->columns('id_muebledisplay,client_display,name,picture_url,positions,status');
+        $xcrud->fields('client_display,name,picture_url,positions,status,description');
+        $xcrud->unset_remove();
+        
+        //$xcrud->after_insert("create_modeloMueble_realdooh","../libraries/Functions.php");
+        //$xcrud->before_update("update_modeloMueble_realdooh","../libraries/Functions.php");
+
+
+        $data['title'] = 'Displays ';
+
+        $data['content'] =  $xcrud->render();
+
+
+        /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
+        $this->data->add($data);
+        $data = $this->data->getData();
+        /////
+        $this->load->view('backend/header', $data);
+        $this->load->view('backend/navbar', $data);
+        $this->load->view('backend/content', $data);
+        $this->load->view('backend/footer');
+    }
+
 
     public function puntos_de_venta()
     {
@@ -2865,7 +2901,7 @@ class Admin extends MY_Controller
             $xcrud_1->unset_remove();
             $xcrud_1->start_minimized(false);
             $xcrud_1->after_update("inventario_dispositivosMueble", "../libraries/Functions.php");
-
+            //$xcrud_2->after_update("update_pds_realdooh","../libraries/Functions.php");
 
             $data['title'] = 'Inventarios tiendas';
             $data['content'] = $xcrud_1->render();
@@ -2897,6 +2933,7 @@ class Admin extends MY_Controller
             $xcrud_3->relation('id_displays_pds', 'displays_pds', 'id_displays_pds', 'id_displays_pds',array('status' => 'Alta'));
             $xcrud_3->relation('id_display', 'display', 'id_display', 'display', "positions>0");
             $xcrud_3->relation('id_device', 'device', 'id_device', 'device');
+            $xcrud_3->relation('id_muebledisplay', 'mueble_display', 'id_muebledisplay', 'name');
 
             $lista_incidencias=$xcrud_3->nested_table('incidencias_list','id_devices_pds','incidencias','id_devices_pds');
             $lista_incidencias->column_callback('id_incidencia','enlace_idincidencia','../libraries/Functions.php');
@@ -2920,9 +2957,9 @@ class Admin extends MY_Controller
             $xcrud_3->label('client_type_pds', 'Cliente')->label('id_devices_pds', 'REF.')->label('id_pds', 'SFID')->label('id_displays_pds', 'Cod. mueble')->
             label('id_display', 'Mueble')->label('alta', 'Fecha de alta')->label('position', 'Posición')->label('id_device', 'Dispositivo')->
             label('IMEI', 'IMEI')->label('serial', 'S/N')->label('serial', 'Nº de serie')->label('barcode', 'Código de barras')->label('id_incidencia', 'Incidencias')
-                ->label('description', 'Comentarios')->label('status', 'Estado');
-            $xcrud_3->columns('client_type_pds,id_devices_pds,id_pds,id_displays_pds,id_display,id_device,position,IMEI,serial,status');
-            $xcrud_3->fields('client_type_pds,id_devices_pds,id_pds,id_display,alta,id_device,position,serial,IMEI,serial,barcode,description,status');
+                ->label('description', 'Comentarios')->label('id_muebledisplay','Display')->label('status', 'Estado');
+            $xcrud_3->columns('client_type_pds,id_devices_pds,id_pds,id_displays_pds,id_display,id_device,position,IMEI,serial,id_muebledisplay,status');
+            $xcrud_3->fields('client_type_pds,id_devices_pds,id_pds,id_display,alta,id_device,position,serial,IMEI,serial,barcode,description,id_muebledisplay,status');
 
             $xcrud_3->where('status', array('Alta', 'Incidencia', 'Baja', 'RMA'));
             $xcrud_3->pass_default('alta',date("Y-m-d H:i:s"));
@@ -3107,7 +3144,7 @@ class Admin extends MY_Controller
         return $data;
     }
 
-    public function get_inventarios($pds){
+  /*  public function get_inventarios($pds){
 
         if(!empty($pds)) {
             $xcrud = xcrud_get_instance();
@@ -3147,7 +3184,7 @@ class Admin extends MY_Controller
 
         }
 
-    }
+    }*/
 
   /*Funcion que ya no se usa
    public function inventarios_panelados()
@@ -4284,6 +4321,8 @@ class Admin extends MY_Controller
 
             $data["muebles"] = $this->tienda_model->get_displays_demoreal();
 
+            $data["mueblesdisplay"] = $this->tienda_model->get_mueblesdisplay_demoreal();
+
             $data["pds_tipos"] = $this->categoria_model->get_tipos_pds();
             $data["pds_subtipos"] = $this->categoria_model->get_subtipos_pds();
             $data["pds_segmentos"] = $this->categoria_model->get_segmentos_pds();
@@ -4330,6 +4369,7 @@ class Admin extends MY_Controller
                 "id_tipologia" => '',
                 "id_display" => '',
                 "id_device" => '',
+                "id_muebledisplay" => '',
                 "territory" => '',
                 "brand_device" => '',
                 "codigoSAT" =>''
@@ -4394,6 +4434,13 @@ class Admin extends MY_Controller
                     foreach ($this->input->post("id_display_multi") as $tt) $id_display[] = $tt;
                     $campos_sess_informe["id_display"] = $id_display;
                 }
+                 // MUEBLE DISPLAY
+                 $id_muebledisplay = array();
+                 $campos_sess_informe["id_muebledisplay"] = NULL;
+                 if (is_array($this->input->post("id_muebledisplay_multi"))) {
+                     foreach ($this->input->post("id_muebledisplay_multi") as $tt) $id_muebledisplay[] = $tt;
+                     $campos_sess_informe["id_muebledisplay"] = $id_muebledisplay;
+                 }
                 // DEVICE
                 $id_device = array();
                 $campos_sess_informe["id_device"] = NULL;
@@ -4439,6 +4486,7 @@ class Admin extends MY_Controller
 
 
                 $data["id_display"] = $id_display;
+                $data["id_muebledisplay"] = $id_muebledisplay;
                 $data["id_device"] = $id_device;
                 $data["territory"] = $territory;
                 $data["brand_device"] = $brand_device;
@@ -6523,8 +6571,7 @@ class Admin extends MY_Controller
         if ($status == 8)
         {
             $this->pedido_model->pedido_update_cierre($id_pedido, $fecha_cierre);
-            if($pedidoAntes->status!=='Pendiente material')
-                $this->pedido_model->sumar_stock_alarmas($id_pedido, $id_pds);
+            $this->pedido_model->sumar_stock_alarmas($id_pedido, $id_pds);
             //Le ponemos estado Finalizado
             $this->pedido_model->pedido_update($id_pedido, 6);
         }

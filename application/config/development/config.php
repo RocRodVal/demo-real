@@ -4,6 +4,7 @@ define('PASSTIENDA','clementine');
 define('APERTURA','Apertura tienda');
 define('CAMBIO_MANUAL','Cambio manual');
 define('ALTA_MANUAL','Alta manual');
+define('BAJA_MUEBLE_MANUAL','Baja mueble manual');
 define('ACTUALIZACION_MASIVA','Actualizacion masiva');
 define('CIERRE_TIENDA','Cierre tienda');
 define('INCIDENCIA_ALTA','Alta incidencia');
@@ -13,6 +14,10 @@ define('INCIDENCIA_CIERREFORZOSO','Incidencia Cierre forzoso');
 define('INCIDENCIA_TERMINALESSUSTITUIDOS','Incidencia Terminales sustituidos');
 define('ADDMUEBLE','Agregar mueble a tienda');
 define('REMOVEMUEBLE','Eliminar mueble a tienda');
+define('SMARTSTORE1',20);
+define('SMARTSTORE2',26);
+define('SMARTSTORE3',29);
+define('EVOLUCIONNEXT',25);
 /*
 |--------------------------------------------------------------------------
 | Base Site URL
