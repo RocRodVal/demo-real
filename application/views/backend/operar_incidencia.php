@@ -451,6 +451,7 @@
                         </tr>
                         <?php
 
+                            $position = 0;
                             if ($incidencia['device']['status']=='Baja') {
                                 $dispositivo = 'Retirado => '.$incidencia['device']['device'];
                                 if (!empty($incidencia['device']['IMEI'])) {
@@ -459,6 +460,7 @@
                             }
                             else {
                                 $dispositivo = $incidencia['device']['device'];
+                                $position = $incidencia['device']['position'];
                                 if (!empty($incidencia['device']['IMEI'])) {
                                     $dispositivo .= " - " . $incidencia['device']['IMEI'];
                                 }
@@ -476,6 +478,11 @@
                         <tr>
                             <th>Dispositivo: </th> <td><?php echo $dispositivo ?></td>
                         </tr>
+                        <?php if ($position!=0) {?>
+                        <tr>
+                            <th>Posicion: </th> <td><?php echo $position ?></td>
+                        </tr>
+                        <?php } ?>
 
                         <tr>
                             <td colspan="2"><h3>Tipo de incidencia / Elemento afectado</h3></td>

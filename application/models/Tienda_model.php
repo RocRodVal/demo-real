@@ -1492,6 +1492,18 @@ class Tienda_model extends CI_Model {
         return $query->result();
     }
 
+    public function get_mueblesdisplay_demoreal() {
+
+
+        $query = $this->db->query('
+                    SELECT *
+                    FROM mueble_display md
+                    WHERE positions > 0 AND status="Alta" ORDER BY name');
+
+
+        return $query->result();
+    }
+
     public function get_devices_demoreal() {
         $query = $this->db->query('
                     SELECT *
@@ -3093,9 +3105,12 @@ class Tienda_model extends CI_Model {
                     $fecha = date('Y-m-d H:i:s');
                     $position = $terminal->position;
                     $id_device = $terminal->id_device;
-                    $SQL = " INSERT INTO devices_pds(client_type_pds,id_pds, id_displays_pds, id_display, alta,position, id_device, status)
+                    $id_muebledisplay = 0;
+                    if($terminal->isDisplay)
+                        $id_muebledisplay = $terminal->id_muebledisplay;
+                    $SQL = " INSERT INTO devices_pds(client_type_pds,id_pds, id_displays_pds, id_display, alta,position, id_device,id_muebledisplay, status)
                                             VALUES(".$client_type_pds.",".$id_pds.",".$id_displays_pds.",".$id_display.",'".
-                        $fecha."',".$position.",".$id_device.",'Alta'); ";
+                        $fecha."',".$position.",".$id_device.",".$id_muebledisplay.",'Alta'); ";
                     $this->db->query($SQL);
 
                     /*Insertar en el historico de tienda el estado del dispositivo*/

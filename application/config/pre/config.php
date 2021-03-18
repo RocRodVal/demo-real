@@ -13,6 +13,10 @@ define('INCIDENCIA_CIERREFORZOSO','Incidencia Cierre forzoso');
 define('INCIDENCIA_TERMINALESSUSTITUIDOS','Incidencia Terminales sustituidos');
 define('ADDMUEBLE','Agregar mueble a tienda');
 define('REMOVEMUEBLE','Eliminar mueble a tienda');
+define('SMARTSTORE1',20);
+define('SMARTSTORE2',26);
+define('SMARTSTORE3',29);
+define('EVOLUCIONNEXT',25);
 /*
 |--------------------------------------------------------------------------
 | Base Site URL
