@@ -32,7 +32,7 @@
                                             <?php
                                             }
                                             
-                                             if ($device->id_muebledisplay !== 0 && $device->id_muebledisplay!=null)
+                                             if ($device->id_muebledisplay != 0 && $device->id_muebledisplay!=null)
                                             {
                                                 ?>
                                                 <i class="fa fa-spin fa-star-half-o" style="color:orange"></i>

@@ -1352,7 +1352,9 @@ class Admin extends MY_Controller
                 if ($status == 8) {
 
                     $disp = $this->tienda_model->get_devices_incidencia($incidencia['id_incidencia']);
+                    //print_r($disp);exit;
                     if ($disp['dispositivos'] > 0) {
+                        
                         $this->tienda_model->incidencia_update_device_pds($incidencia['id_devices_pds'], 9, $error,$id_inc);
                     }
                     //}
@@ -2578,6 +2580,7 @@ class Admin extends MY_Controller
             ->label('position', 'Posición')->label('description', 'Comentarios')->label('status', 'Estado')->label('isDisplay','Display')->label('id_muebledisplay','Mueble display');
         $xcrud_4->columns('id_devices_display,client_panelado,id_display,id_device,position,isDisplay,id_muebledisplay,status');
         $xcrud_4->fields('client_panelado,id_display,id_device,position,description,isDisplay,id_muebledisplay,status');
+        $xcrud_4->show_primary_ai_column(true);
         $xcrud_4->unset_remove();
 
         $xcrud_3 = xcrud_get_instance();
@@ -3144,7 +3147,8 @@ class Admin extends MY_Controller
         return $data;
     }
 
-  /*  public function get_inventarios($pds){
+    /*Funcion usada previamente al cierre de una tienda*/
+    public function get_inventarios($pds){
 
         if(!empty($pds)) {
             $xcrud = xcrud_get_instance();
@@ -3184,7 +3188,7 @@ class Admin extends MY_Controller
 
         }
 
-    }*/
+    }
 
   /*Funcion que ya no se usa
    public function inventarios_panelados()
