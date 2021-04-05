@@ -59,10 +59,10 @@ if (!$generado)
                 <tr>
                     <td><?=$resultado->reference?></td>
 
-                    <td><?=$resultado->tipo?></td>
-                    <td><?=$resultado->subtipo?></td>
-                    <td><?=$resultado->segmento?></td>
+                    <td><?=$resultado->canal?></td>
                     <td><?=$resultado->tipologia?></td>
+                    <td><?=$resultado->concepto?></td>
+                    <td><?=$resultado->categorizacion?></td>
 
                     <td><?=$resultado->territorio?></td>
                     <td><?=$resultado->commercial?></td>
