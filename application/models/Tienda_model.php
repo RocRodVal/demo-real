@@ -3105,7 +3105,7 @@ class Tienda_model extends CI_Model {
                     $fecha = date('Y-m-d H:i:s');
                     $position = $terminal->position;
                     $id_device = $terminal->id_device;
-                    $id_muebledisplay = 0;
+                    $id_muebledisplay = null;
                     if($terminal->isDisplay)
                         $id_muebledisplay = $terminal->id_muebledisplay;
                     $SQL = " INSERT INTO devices_pds(client_type_pds,id_pds, id_displays_pds, id_display, alta,position, id_device,id_muebledisplay, status)
