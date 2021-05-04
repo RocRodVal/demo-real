@@ -1758,6 +1758,7 @@ public function inventarios_planogramas()
             $data["panelados"] = $this->tienda_model->get_panelados_maestros();*/
             // COMENTADO SELECT DEMOREAL $muebles = $this->tienda_model->get_displays_demoreal();
             $data["muebles"] = $this->tienda_model->get_displays_demoreal();
+            $data["mueblesdisplay"] = $this->tienda_model->get_mueblesdisplay_demoreal();
             // COMENTADO SELECT DEMOREAL $terminales = $this->tienda_model->get_devices_demoreal();
             //$data["terminales"] = $this->tienda_model->get_devices();
 
@@ -1872,6 +1873,13 @@ public function inventarios_planogramas()
                     foreach ($this->input->post("id_display_multi") as $tt) $id_display[] = $tt;
                     $campos_sess_informe["id_display"] = $id_display;
                 }
+                  // MUEBLE DISPLAY
+                  $id_muebledisplay = array();
+                  $campos_sess_informe["id_muebledisplay"] = NULL;
+                  if (is_array($this->input->post("id_muebledisplay_multi"))) {
+                      foreach ($this->input->post("id_muebledisplay_multi") as $tt) $id_muebledisplay[] = $tt;
+                      $campos_sess_informe["id_muebledisplay"] = $id_muebledisplay;
+                  }
                 // DEVICE
                 $id_device = array();
                 $campos_sess_informe["id_device"] = NULL;

@@ -25,7 +25,7 @@
                                             $id_pds_url.'/'.$id_dis_url.'/'.$device->id_devices_pds)?>">
                                             <?php echo $device->position.'. '.$device->device ?>
                                             <?php
-                                            if ($device->estado == 'Incidencia')
+                                            if ($device->status == 'Incidencia')
                                             {
                                                 ?>
                                                 <i class="fa fa-exclamation-triangle red"></i>
@@ -35,7 +35,7 @@
                                              if ($device->id_muebledisplay != 0 && $device->id_muebledisplay!=null)
                                             {
                                                 ?>
-                                                <i class="fa fa-spin fa-star-half-o" style="color:orange"></i>
+                                                <i class="fa fa-spin fa-star-half-o" style="color:orange"></i> - <?=$device->muebledisplayname;?>
                                             <?php 
                                             }
                                             ?>

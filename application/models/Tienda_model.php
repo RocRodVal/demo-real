@@ -761,7 +761,7 @@ class Tienda_model extends CI_Model {
 
                     if(!is_null($status))
                     {
-                        $query = $this->db->where('status',$status);
+                        $query = $this->db->where('pds.status',$status);
                     }
             $query = $this->db->get('pds');
 
@@ -2031,13 +2031,14 @@ class Tienda_model extends CI_Model {
 	
 	public function get_devices_display($id) {
 		if($id != FALSE) {
-			$query = $this->db->select('devices_display.*,device.*')
+			$query = $this->db->select('devices_display.*,device.*,mueble_display.name as muebledisplayname')
 			->join('device','devices_display.id_device = device.id_device')
+            ->join('mueble_display','mueble_display.id_muebledisplay = devices_display.id_muebledisplay','left')
 			->where('devices_display.id_display',$id)
-                ->where('devices_display.status','Alta')
+            ->where('devices_display.status','Alta')
 			->order_by('position')
 			->get('devices_display');
-				
+			//echo $this->db->last_query();exit;
 			return $query->result();
 		}
 		else {
@@ -2798,9 +2799,10 @@ class Tienda_model extends CI_Model {
                 foreach ($material->result_array() as $material) {
 
                     $sql = "SELECT * FROM devices_almacen WHERE id_devices_almacen = " . $material["id_devices_almacen"] ." AND status='Transito'";
+//                    echo $sql; exit;
                     $device_almacen = $this->db->query($sql)->row();
                     if (!empty($device_almacen)) {
-
+                        //echo "EN EL IF"; exit;
                         $encontrado = true;
                         //if ($material->num_rows() == 1) {
 
@@ -2822,13 +2824,29 @@ class Tienda_model extends CI_Model {
                             'status' => 'Baja'
                         );
                         //$this->db->insert('historico_io',$elemento);
+
+                        //print_r($elemento);exit;
                         $this->alta_historicoIo($elemento);
 
                         $sql = "UPDATE devices_almacen SET status='Baja' WHERE id_devices_almacen =" . $device_almacen->id_devices_almacen;
                         $this->db->query($sql);
                         /* poner como RMA la posicion que origino la incidencia*/
-                        $sql = "UPDATE devices_pds SET status='RMA' WHERE id_devices_pds =" . $device_pds->id_devices_pds;
-                        $this->db->query($sql);
+                        /* poner de baja la posicion que origino la incidencia*/
+                        if ($device_pds->status != 'Baja') {
+                            $sql = "UPDATE devices_pds SET status='RMA' WHERE id_devices_pds =" . $device_pds->id_devices_pds;
+                            $this->db->query($sql);
+
+                            /*Insertamos el cambio de estado en el historico*/
+                            $elemento = array(
+                                'id_devices_pds' => $device_pds->id_devices_pds,
+                                'fecha' => date('Y-m-d H:i:s'),
+                                'status' => 'RMA',
+                                'motivo' => INCIDENCIA_TERMINALESSUSTITUIDOSRMA
+                            );
+                            $this->insert_historico_devicesPDS($elemento);
+                        }
+                        /*$sql = "UPDATE devices_pds SET status='RMA' WHERE id_devices_pds =" . $device_pds->id_devices_pds;
+                        $this->db->query($sql);*/
 
                         /* Insertar el dispositivo instalado en la posición del mueble */
                         $data = array(
@@ -2846,6 +2864,15 @@ class Tienda_model extends CI_Model {
                             'status' => 1
                         );
                         $this->db->insert('devices_pds', $data);
+
+                        /*Insertamos el alta del nuevo dispositivo en tienda*/
+                        $elemento = array(
+                            'id_devices_pds' => $this->db->insert_id(),
+                            'fecha' => date('Y-m-d H:i:s'),
+                            'status' => 'Alta',
+                            'motivo' => INCIDENCIA_TERMINALESSUSTITUIDOSRMA
+                        );
+                        $this->insert_historico_devicesPDS($elemento);
                     }
                 }
                 if(!$encontrado)
@@ -3161,6 +3188,7 @@ class Tienda_model extends CI_Model {
         else {
             $this->db->insert('historico_io', $elemento);
         }
+        //echo $this->db->last_query();exit;
     }
 
     /*insertamos un device en almacen*/

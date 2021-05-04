@@ -22,16 +22,25 @@
 										<?php
 										foreach($devices as $device)
 										{
-											//print_r($device);exit;
-											if ($device->isDisplay==true) {?>
-												<p style = "box-shadow: 1px 1px 10px #ef0005	">
-												<?php } else{
+											//print_r($device);
+											
 										?>
-										<p> <?php } ?>
-											<?php echo $device->position.'. '.$device->device ?></p>
+										<p><?php echo $device->position.'. '.$device->device ?>
 										
-										
-										
+										<?php
+										 if ($device->status == 'Incidencia')
+										 {
+											 ?>
+											 <i class="fa fa-exclamation-triangle red"></i>
+										 <?php
+										 }
+											if ($device->id_muebledisplay != 0 && $device->id_muebledisplay!=null)
+                                            {
+                                                ?>
+                                                <i class="fa fa-spin fa-star-half-o" style="color:orange"></i> - <?=$device->muebledisplayname;?>
+                                            <?php 
+                                            }
+                                            ?></p>
 										<?php 
 										
 										
