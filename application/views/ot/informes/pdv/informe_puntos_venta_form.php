@@ -111,7 +111,28 @@
                         </div>
 
                     </div>
+                    <div class="form-group">
+                        <label for="id_muebledisplay">Muebles display</label>
+                        <select id="id_muebledisplay" name="id_muebledisplay" class="form-control" onchange="anadir_filtro(this);"><option value="">Cualquiera...</option>
 
+                            <?php foreach($mueblesdisplay as $muebledisplay)
+                            {
+                                echo '<option value="'.$muebledisplay->id_muebledisplay.'">'.$muebledisplay->name.'</option>';
+                            }
+                            ?>
+                        </select>
+
+                        <div id="multifiltro_id_muebledisplay" class="multifiltro">
+                            <input name="id_muebledisplay_next" id="id_muebledisplay_next" type="hidden" value="0">
+                            <div id="multi_id_muebledisplay">
+                                <?php /*<div class="linea">
+                                    <label class="auto"></label> <input type="hidden" name="panelado_1" value="1">
+                                    <a href="#" onclick="eliminar_filtro();"><i class="glyphicon glyphicon-remove"></i></a>
+                                </div>*/?>
+                            </div>
+                        </div>
+
+                    </div>
                     <div class="form-group">
                         <label for="id_device">Terminal</label>
                         <select id="id_device" name="id_device" class="form-control" onchange="anadir_filtro(this);">

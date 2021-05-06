@@ -23,8 +23,22 @@
 										foreach($devices as $device)
 										{
 										?>
-										<p><?php echo $device->position.'. '.$device->device ?></p>
+										<p><?php echo $device->position.'. '.$device->device ?>
 										<?php
+										
+										?>
+										<?php
+
+											if ($device->id_muebledisplay != 0 && $device->id_muebledisplay!=null)
+                                            {
+                                                ?>
+                                                <i class="fa fa-spin fa-star-half-o" style="color:orange"></i> - <?=$device->muebledisplayname;?>
+                                            <?php 
+                                            }
+                                            ?></p>
+										<?php 
+										
+										
 										}
 										?>
 									</div>

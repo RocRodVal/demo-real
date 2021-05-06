@@ -309,6 +309,7 @@ class Ot extends MY_Controller {
             $data["resultados"] = $resultados;
 
             $data["muebles"] = $this->tienda_model->get_displays_demoreal();
+            $data["mueblesdisplay"] = $this->tienda_model->get_mueblesdisplay_demoreal();
 
             $data["pds_tipos"] = $this->categoria_model->get_tipos_pds();
             $data["pds_subtipos"] = $this->categoria_model->get_subtipos_pds();
@@ -355,6 +356,7 @@ class Ot extends MY_Controller {
                 "id_segmento" => '',
                 "id_tipologia" => '',
                 "id_display" => '',
+                "id_muebledisplay" => '',
                 "id_device" => '',
                 "territory" => '',
                 "brand_device" => ''
@@ -419,6 +421,13 @@ class Ot extends MY_Controller {
                     foreach ($this->input->post("id_display_multi") as $tt) $id_display[] = $tt;
                     $campos_sess_informe["id_display"] = $id_display;
                 }
+                  // MUEBLE DISPLAY
+                  $id_muebledisplay = array();
+                  $campos_sess_informe["id_muebledisplay"] = NULL;
+                  if (is_array($this->input->post("id_muebledisplay_multi"))) {
+                      foreach ($this->input->post("id_muebledisplay_multi") as $tt) $id_muebledisplay[] = $tt;
+                      $campos_sess_informe["id_muebledisplay"] = $id_muebledisplay;
+                  }
                 // DEVICE
                 $id_device = array();
                 $campos_sess_informe["id_device"] = NULL;

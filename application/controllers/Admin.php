@@ -1362,7 +1362,7 @@ class Admin extends MY_Controller
                 }
             }
             /**
-             * Botón Sustituir terminales : Pone el terminal enviado en la posicioin del mueble
+             * Botón Sustituir terminales : Pone el terminal enviado en la posicion del mueble
              */
             if ($status == 10) {
 
@@ -1385,7 +1385,7 @@ class Admin extends MY_Controller
 
             }
             /**
-             * Guardar incidcencia en el histórico
+             * Guardar incidencia en el histórico
              */
             $data = array(
                 'fecha' => date('Y-m-d H:i:s'),
@@ -4646,7 +4646,7 @@ class Admin extends MY_Controller
                         if(!empty($arr_displays_pds)) {
                             $id_displays_pds = $arr_displays_pds[0]->id_displays_pds;
 
-                            $displays = $this->sfid_model->get_devices_displays_pds($id_displays_pds);
+                            //$displays = $this->sfid_model->get_devices_displays_pds($id_displays_pds);
                             $data["id_dis_url"] = $id_displays_pds;
 
                             foreach ($displays as $key => $display) {
@@ -4656,7 +4656,8 @@ class Admin extends MY_Controller
 
                             $devices = $this->sfid_model->get_devices_displays_pds($id_displays_pds);
                             $data['devices'] = $devices;
-                            $data['displays'] = $displays;
+                            $data['displays'] = null;
+                            //$data['displays'] = $displays;
                         }
                     }
 
@@ -5193,9 +5194,9 @@ class Admin extends MY_Controller
              
             
             /** COMENTADO SELECT DEMOREAL $data["tipos_tienda"] = $this->sfid_model->get_types_pds_demoreal(); */
-            $data["tipos"] = $this->categoria_model->get_tipos_pds();
+            $data["tipos"] = $this->categoria_model->get_tipos_pds_alta();
             $data["subtipos"] = array();
-            $data["segmentos"] = $this->categoria_model->get_segmentos_pds($id_segmento_visual);
+            $data["segmentos"] = $this->categoria_model->get_segmentos_pds_alta($id_segmento_visual);
             $data["tipologias"] = array();
 
         

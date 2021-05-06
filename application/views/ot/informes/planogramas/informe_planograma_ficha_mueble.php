@@ -32,8 +32,17 @@
 											if ($device->estado == 'Incidencia')
 											{
 											?>
-											<i class="fa fa-exclamation-triangle"></i>
+											<i class="fa fa-exclamation-triangle" style="color:red"></i>
 											<?php
+											}
+											?>
+											 <?php
+										 
+											if ($device->id_muebledisplay != 0 && $device->id_muebledisplay!=null)
+											{
+												?>
+												<i class="fa fa-spin fa-star-half-o" style="color:orange"></i> - <?=$device->muebledisplayname;?>
+											<?php 
 											}
 											?>
 										</a>

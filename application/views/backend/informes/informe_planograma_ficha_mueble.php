@@ -29,10 +29,11 @@
 											$id_pds_url.'/'.$id_dis_url.'/'.$device->id_devices_pds)?>">
 											<?php echo $device->position.'. '.$device->device ?>
 											<?php
-											if ($device->status == 'Incidencia')
+											//print_r($device);exit;
+											if ($device->estado == 'Incidencia')
 											{
 											?>
-											<i class="fa fa-exclamation-triangle"></i>
+											<i class="fa fa-exclamation-triangle" style="color:red"></i>
 											<?php
 											}
 											

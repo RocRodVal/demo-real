@@ -28,10 +28,11 @@
 										<p><?php echo $device->position.'. '.$device->device ?>
 										
 										<?php
-										 if ($device->status == 'Incidencia')
+										//print_r($device);exit;
+										 if ($device->estado == 'Incidencia')
 										 {
 											 ?>
-											 <i class="fa fa-exclamation-triangle red"></i>
+											 <i class="fa fa-exclamation-triangle " style="color:red"></i>
 										 <?php
 										 }
 											if ($device->id_muebledisplay != 0 && $device->id_muebledisplay!=null)
