@@ -5,7 +5,7 @@
             {	
             ?>
             <div class="row">
-				<div class="col-lg-6">
+				<div class="col-lg-10">
                     <h2><?=$subtitle?></h2>
  					<?php
                     if ((empty($displays)) || (empty($devices))){
@@ -17,7 +17,7 @@
  					<div class="panel panel-default">
                         <div class="panel-body">
 							<div class="row">
-								<div class="col-lg-8">
+								<div class="col-lg-7">
 									<div class="list-group">
 										<?php
 										foreach($devices as $device)
@@ -29,12 +29,9 @@
 										
 										<?php
 										//print_r($device);exit;
-										 if ($device->estado == 'Incidencia')
-										 {
-											 ?>
-											 <i class="fa fa-exclamation-triangle " style="color:red"></i>
-										 <?php
-										 }
+										 
+										 
+										 
 											if ($device->id_muebledisplay != 0 && $device->id_muebledisplay!=null)
                                             {
                                                 ?>
@@ -54,7 +51,7 @@
 									if ($picture_url != '')
 									{
 									?>
-									<img src="<?=site_url('application/uploads/'.$picture_url.'')?>" title="<?php echo strtoupper($display_name) ?>" style='width:100%'; />
+									<img src="<?=site_url('application/uploads/'.$picture_url.'')?>" title="<?php echo strtoupper($display_name) ?>"  />
 									<?php
 									}
 									else
