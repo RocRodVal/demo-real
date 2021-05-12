@@ -1638,13 +1638,29 @@ class Admin extends MY_Controller
         }else {
             $imei = $this->input->post('imei_1');
             if (empty($imei)) {
+                //echo "IF";
                 $resultado = $this->tienda_model->search_dispositivo_id($this->input->post('dipositivo_almacen_1'));
+            }else{
+                $resultado = $this->tienda_model->search_dispositivo_alta($imei);
             }
+            //print_r($resultado);exit;
             if (!empty($resultado)) {
-                foreach ($resultado as $r) {
-                    $imei = $r->IMEI;
+                if(count($resultado)>1){
+                    $error="Existen varios dispositivos en el almacen con el mismo IMEI - ".$imei;
+                    redirect('admin/update_incidencia_materiales/' . $id_pds . '/' . $id_inc . '/2/3/' . $error);
+                }else{
+                   foreach ($resultado as $r) {
+                        $imei = $r->IMEI;
+                    }
+                }
+            }else{
+                $resultado = $this->tienda_model->search_dispositivo($imei);
+                if(!empty($resultado)){
+                    $error="El IMEI ".$imei." ya existe en el almacén pero no se puede asignar ";
+                    redirect('admin/update_incidencia_materiales/' . $id_pds . '/' . $id_inc . '/2/3/' . $error);
                 }
             }
+            //echo $imei; exit;
             if (empty($imei) && ($this->input->post('units_dipositivo_almacen_1') <> '')) {
                 $error = "El IMEI no puede estar vacio";
 
@@ -1676,8 +1692,54 @@ class Admin extends MY_Controller
                     }
                 }else{
                     if($this->input->post('dipositivo_almacen_1') == '' && $this->input->post('typedipositivo_almacen_1') <> '') {
-                        $error = "Es necesario seleccionar un dispositivo del almacen";
-                        redirect('admin/update_incidencia_materiales/' . $id_pds . '/' . $id_inc . '/2/3/' . $error);
+                        if(!empty($imei)){
+                           $id_devices_almacen = $this->tienda_model->update_dispositivos_type($this->input->post('typedipositivo_almacen_1'), $imei, $this->input->post('mac_1'),
+                                $this->input->post('serial_1'), $this->input->post('barcode_1'));
+                            if(!empty($id_devices_almacen) && $id_devices_almacen!=null){
+                                $dipositivo_almacen_1 = array(
+                                    'fecha' => date('Y-m-d H:i:s'),
+                                    'id_incidencia' => $id_inc,
+                                    'id_pds' => $id_pds,
+                                    'id_alarm' => NULL,
+                                    'id_devices_almacen' => $id_devices_almacen,
+                                    'cantidad' => 1
+                                );
+                                $this->tienda_model->reservar_dispositivos($id_devices_almacen, 2, $id_inc);
+                                $this->tienda_model->incidencia_update_material($dipositivo_almacen_1, true);
+                            }else{
+                                $error = "No hay ningun dispositivo en alta sin IMEI del modelo ".$this->input->post('typedipositivo_almacen_1');
+                                redirect('admin/update_incidencia_materiales/' . $id_pds . '/' . $id_inc . '/2/3/' . $error);
+                            }
+                        }else{
+
+                            $error = "Es necesario seleccionar un dispositivo del almacen";
+                            redirect('admin/update_incidencia_materiales/' . $id_pds . '/' . $id_inc . '/2/3/' . $error);
+                        }
+                    }else{
+                        if (!empty($resultado)) {
+                           // $this->tienda_model->update_dispositivos($resultado->id_devices_almacen,$imei,$resultado->mac,$resultado->serial, $resultado->mac);
+    
+                            //if ($this->input->post('units_dipositivo_almacen_1') <> '') {
+                                $dipositivo_almacen_1 = array(
+                                    'fecha' => date('Y-m-d H:i:s'),
+                                    'id_incidencia' => $id_inc,
+                                    'id_pds' => $id_pds,
+                                    'id_alarm' => NULL,
+                                    'id_devices_almacen' => $resultado[0]->id_devices_almacen,
+                                    'cantidad' => 1
+                                );
+                                $this->tienda_model->reservar_dispositivos($resultado[0]->id_devices_almacen, 2, $id_inc);
+                                $this->tienda_model->incidencia_update_material($dipositivo_almacen_1, true);
+                                //echo "ENCONTRADO EL IMEI en el almacen";exit;
+                           // }
+                        }else{
+                            if(empty($resultado)){
+                                //El IMEI indicado no esta dado de alta en el almacen
+                               // $this->tienda_model->asignarImei_dispositivo_almacen($imei, $id_inc);
+                               $error =  "EL IMEI ".$imei." no esta dado de alta en el almacen debes indicar el modelo"; 
+                               redirect('admin/update_incidencia_materiales/' . $id_pds . '/' . $id_inc . '/2/3/' . $error);
+                            }
+                        }
                     }
                 }
             }

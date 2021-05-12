@@ -806,6 +806,22 @@ class Tienda_model extends CI_Model {
 			return FALSE;
 		}
 	}
+     /*Busca un dispositivo por IMEI/SN/MAC/BARCODE en el almacen en alta*/
+     public function search_dispositivo_alta($codigo) {
+		if($codigo != FALSE) {
+			$query = $this->db->select('devices_almacen.*')
+			//->where('devices_almacen.status','En stock')
+			->where("(devices_almacen.IMEI LIKE '%{$codigo}%' OR devices_almacen.mac LIKE '%{$codigo}%' 
+			OR devices_almacen.serial LIKE '%{$codigo}%' OR devices_almacen.barcode LIKE '%{$codigo}%') 
+            AND status='En stock' ")
+			->get('devices_almacen');
+	
+			return $query->result();
+		}
+		else {
+			return FALSE;
+		}
+	}
 
     /*Busca un dispositivo por id en el almacen*/
 	public function search_dispositivo_id($id) {
@@ -1928,7 +1944,47 @@ class Tienda_model extends CI_Model {
 		        ->where('id_devices_almacen',$id)
 		        ->update('devices_almacen');
 	}	
+    /*Asignamos el imei a un tipo de dispositivo*/
+    public function update_dispositivos_type($type,$imei,$mac,$serial,$barcode)
+	{
+        $query =$this->db->select('id_devices_almacen')
+		        ->where('id_device',$type)
+                ->where('(IMEI is null OR IMEI =\'\')')
+                ->where('status', 'En stock')
+		        ->get('devices_almacen');
+                //echo $this->db->last_query();exit;
+        //print_r();exit;
+        $resultado = $query->result();
+        if(!empty($resultado)){
+            //echo "HOLA ".count($resultado); exit;
+            $id = $resultado[0]->id_devices_almacen;
+		    $this->db->set('IMEI',$imei)
+		        ->set('mac',$mac)
+		        ->set('serial',$serial)
+		        ->set('barcode',$barcode)
+                ->set('id_incidencia',null)
+		        ->where('id_devices_almacen',$id)
+		        ->update('devices_almacen');
+                return $id;
+        }else 
+            return null;
+	}
 
+    /*Asignar el imei a un dispositivo del almacen*/
+   /* public function asignarImei_dispositivo_almacen($imei,$id_incidencia)
+	{
+        $query = $this->db->select("id_device")
+        //->where('id_inci', $status)
+        ->join('incidencias','incidencias.id_devices_pds = devices_pds.id_devices_pds')
+        ->where('incidencias.id_incidencia',$id_incidencia)
+        ->get('devices_pds');
+print_r($query->result());exit;
+		$this->db->set('imei',$imei, FALSE)
+                ->set('id_incidencia',$id_incidencia)
+		        ->where('id_devices_almacen',$id)
+		        ->update('devices_almacen');
+
+	}*/
 	public function get_devices_almacen_reserva() {
 	
 		$query = $this->db->select('devices_almacen.*, device.*')
@@ -2225,16 +2281,18 @@ class Tienda_model extends CI_Model {
     public function historico_fecha($id,$status,$tabla=null) {
         if($id != FALSE) {
             if($tabla=="pedidos") {
-                $query = $this->db->select('pedidos_historico.fecha')
+                $query = $this->db->select('max(pedidos_historico.fecha) as fecha')
                     ->where('pedidos_historico.id_pedido', $id)
                     ->where('pedidos_historico.status', $status)
                     ->get('pedidos_historico');
             }else {
-                $query = $this->db->select('historico.fecha')
+                $query = $this->db->select('max(historico.fecha) as fecha')
                     ->where('historico.id_incidencia', $id)
                     ->where('historico.status', $status)
                     ->get('historico');
+                    
             }
+          //  echo $this->db->last_query();exit;
             return $query->row_array();
         }
         else {
