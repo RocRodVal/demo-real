@@ -47,11 +47,7 @@
                                                 'informe_pdv',
                                                 'informe_planogramas',
                                                     'informe_planograma_mueble_pds',
-                                                    'informe_planograma_terminal',
-                                                'informe_visual',
-                                                    'informe_visual_mueble_sfid',
-                                                    'informe_visual_terminal',
-                                                    'informe_visual_ficha_terminal'); ?>
+                                                    'informe_planograma_terminal'); ?>
 
                         <li <?=(in_array($this->uri->segment(2), $inf))?'class="active"':''?>>
                             <a href="#"><i class="fa fa-sitemap fa-file"></i> Informes <span class="fa arrow"></span></a>

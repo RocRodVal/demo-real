@@ -110,6 +110,7 @@
                                                     'informe_visual_mueble_sfid',
                                                     'informe_visual_terminal',
                                                     'informe_visual_ficha_terminal',
+                                                    'informe_visual_mueble',
                                                 'tiendas_tipologia',
                                                 'tiendas_fabricante');
                                               //  'informe_sistemas_seguridad'); ?>
@@ -125,7 +126,7 @@
                                 <li><a <?=(
                                         in_array($this->uri->segment(2),
                                             array('informe_visual',
-                                                'informe_visual_mueble_sfid',
+                                                'informe_visual_mueble_sfid','informe_visual_mueble',
                                                 'informe_visual_terminal',
                                                 'informe_visual_ficha_terminal')))?'class="active"':''?> href="<?=site_url($controlador.'/informe_visual')?>"> Visual &raquo;</a></li>
 
