@@ -579,7 +579,7 @@ class Ot extends MY_Controller {
                     $data['picture_url'] = $display_maestro["picture_url"];
 
 
-                    $tiendas = $this->tienda_model->search_pds($sfid_plano);
+                    $tiendas = $this->tienda_model->search_pds($sfid_plano,"Alta");
                     if (!empty($tiendas) && count($tiendas) == 1) {
 
                         $tienda = NULL;
@@ -636,7 +636,7 @@ class Ot extends MY_Controller {
                     /*
                      *  Panelado de la tienda
                      */
-                    $tiendas = $this->tienda_model->search_pds($sfid_plano);
+                    $tiendas = $this->tienda_model->search_pds($sfid_plano,"Alta");
 
 
 

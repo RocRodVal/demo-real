@@ -5,7 +5,7 @@
             {	
             ?>
             <div class="row">
-				<div class="col-lg-8">
+				<div class="col-lg-8y">
                     <h2><?=$subtitle?></h2>
  					<?php
                     if ((empty($displays)) || (empty($devices))){
