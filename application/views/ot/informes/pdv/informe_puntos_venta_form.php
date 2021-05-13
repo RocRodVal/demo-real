@@ -23,8 +23,11 @@
                 <input type="hidden" name="generar_informe" value="si">
                 <div class="col-sm-12">
                     <div class="form-group">
+                        <?php
+                            $url_ajax_subtipos = site_url().'informe/subtipos_tienda/';
+                        ?>
                         <label for="id_tipo">Canal</label>
-                        <select id="id_tipo" name="id_tipo" class="form-control" onchange="anadir_filtro(this);"><option value="">Canal...</option>
+                        <select id="id_tipo" name="id_tipo" class="form-control" onchange="subselect_informe_pdv(this,'id_tipo','id_subtipo',false,'<?=$url_ajax_subtipos?>',function(){});"><option value="">Canal...</option>
                             <?php foreach($pds_tipos as $tipo)
                             {
                                 echo '<option value="'.$tipo["id"].'">'.$tipo["titulo"].'</option>';
@@ -41,7 +44,10 @@
 
                     <div class="form-group">
                         <label for="id_subtipo">Tipología</label>
-                        <select id="id_subtipo" name="id_subtipo" class="form-control" onchange="anadir_filtro(this);"><option value="">Tipología...</option>
+                        <?php
+                            $url_ajax_tipologias = base_url()."informe/tipologias_tienda/";
+                        ?>
+                        <select id="id_subtipo" name="id_subtipo" class="form-control" onchange="subselect_informe_pdv(this,'id_subtipo','id_tipologia','<?=$id_tipologia?>','<?=$url_ajax_tipologias?>',function(){});"><option value="">Tipología...</option>
                             <?php foreach($pds_subtipos as $subtipo)
                             {
                                 echo '<option value="'.$subtipo["id"].'">'.$subtipo["titulo"].'</option>';
@@ -58,7 +64,7 @@
 
 
                     <div class="form-group">
-                        <label for="id_segmento">Concept</label>
+                        <label for="id_segmento">Concepto</label>
                         <select id="id_segmento" name="id_segmento" class="form-control" onchange="anadir_filtro(this);"><option value="">Concept...</option>
                             <?php foreach($pds_segmentos as $segmento)
                             {

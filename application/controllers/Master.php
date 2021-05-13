@@ -1762,12 +1762,12 @@ public function inventarios_planogramas()
             // COMENTADO SELECT DEMOREAL $terminales = $this->tienda_model->get_devices_demoreal();
             //$data["terminales"] = $this->tienda_model->get_devices();
 
-            $data["pds_tipos"] = $this->categoria_model->get_tipos_pds();
-            $data["pds_subtipos"] = $this->categoria_model->get_subtipos_pds();
-            $data["pds_segmentos"] = $this->categoria_model->get_segmentos_pds();
-            $data["pds_tipologias"] = $this->categoria_model->get_tipologias_pds();
+            $data["pds_tipos"] = $this->categoria_model->get_tipos_pds_alta();
+            $data["pds_subtipos"] = $this->categoria_model->get_subtipos_pds_alta();
+            $data["pds_segmentos"] = $this->categoria_model->get_segmentos_pds_alta();
+            $data["pds_tipologias"] = $this->categoria_model->get_tipologias_pds_alta();
 
-
+//exit;
             $data["terminales"] = $this->tienda_model->get_devices_demoreal();
             /* LISTADO DE TERRITORIOS PARA EL SELECT */
             $data["territorios"] = $this->tienda_model->get_territorios();
@@ -1775,6 +1775,15 @@ public function inventarios_planogramas()
             $data["fabricantes"] = $this->tienda_model->get_fabricantes();
 
 
+            $id_tipo = NULL;
+            $id_subtipo = NULL;
+            $id_segmento = NULL;
+            $id_tipologia = NULL;
+            $data["id_tipo"] = $id_tipo;
+            $data["id_subtipo"] = $id_subtipo;
+            $data["id_segmento"] = $id_segmento;
+            $data["id_tipologia"] = $id_tipologia;
+            
             /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
             $this->data->add($data);
             $data = $this->data->getData();

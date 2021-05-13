@@ -229,18 +229,19 @@ class Categoria_Model extends CI_Model
             }
             else
             {
-                $query = $this->db->where('id= '.$id_tipologia);
+                $query = $this->db->where('id', $id_tipologia);
             }
-            $query = $this->db->where('pds_tipologia= Alta');
+            $query = $this->db->where('pds_tipologia.status','Alta');
             $query = $this->db->order_by('pds_tipologia.titulo');
             $query = $this->db->get('pds_tipologia');
+            //echo $this->db->last_query();exit;
         }
         else
         {
             $query = $this->db->select('*')
                 ->join('pds_subtipo_tipologia','pds_subtipo_tipologia.id_tipologia = pds_tipologia.id')
                 ->where('pds_subtipo_tipologia.id_subtipo = '.$id_subtipo)
-                ->where('pds_tipologia= Alta')
+                ->where('pds_tipologia.status','Alta')
                 ->get('pds_tipologia');
         }
         return $query->result_array();
