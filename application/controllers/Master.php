@@ -1783,7 +1783,7 @@ public function inventarios_planogramas()
             $data["id_subtipo"] = $id_subtipo;
             $data["id_segmento"] = $id_segmento;
             $data["id_tipologia"] = $id_tipologia;
-            
+
             /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
             $this->data->add($data);
             $data = $this->data->getData();
@@ -2507,9 +2507,9 @@ public function inventarios_planogramas()
             $data["muebles"] = $muebles;
 
             /** COMENTADO SELECT DEMOREAL $data["tipos_tienda"] = $this->sfid_model->get_types_pds_demoreal(); */
-            $data["tipos"] = $this->categoria_model->get_tipos_pds();
+            $data["tipos"] = $this->categoria_model->get_tipos_pds_alta();
             $data["subtipos"] = array();
-            $data["segmentos"] = $this->categoria_model->get_segmentos_pds($id_segmento_visual);
+            $data["segmentos"] = $this->categoria_model->get_segmentos_pds_alta($id_segmento_visual);
             $data["tipologias"] = array();
 
 
