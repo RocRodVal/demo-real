@@ -12,6 +12,7 @@ define('INCIDENCIA_CANCELADA','Incidencia cancelada');
 define('INCIDENCIA_RESUELTA','Incidencia resuelta');
 define('INCIDENCIA_CIERREFORZOSO','Incidencia Cierre forzoso');
 define('INCIDENCIA_TERMINALESSUSTITUIDOS','Incidencia Terminales sustituidos');
+define('INCIDENCIA_TERMINALESSUSTITUIDOSRMA','Incidencia Terminales sustituidos RMA');
 define('ADDMUEBLE','Agregar mueble a tienda');
 define('REMOVEMUEBLE','Eliminar mueble a tienda');
 define('SMARTSTORE1',20);

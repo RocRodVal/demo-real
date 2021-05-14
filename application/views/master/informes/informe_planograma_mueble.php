@@ -5,7 +5,7 @@
             {	
             ?>
             <div class="row">
-				<div class="col-lg-6">
+				<div class="col-lg-8y">
                     <h2><?=$subtitle?></h2>
  					<?php
                     if ((empty($displays)) || (empty($devices))){
@@ -23,8 +23,22 @@
 										foreach($devices as $device)
 										{
 										?>
-										<p><?php echo $device->position.'. '.$device->device ?></p>
+										<p><?php echo $device->position.'. '.$device->device ?>
 										<?php
+										
+										?>
+										<?php
+
+											if ($device->id_muebledisplay != 0 && $device->id_muebledisplay!=null)
+                                            {
+                                                ?>
+                                                <i class="fa fa-spin fa-star-half-o" style="color:orange"></i> - <?=$device->muebledisplayname;?>
+                                            <?php 
+                                            }
+                                            ?></p>
+										<?php 
+										
+										
 										}
 										?>
 									</div>

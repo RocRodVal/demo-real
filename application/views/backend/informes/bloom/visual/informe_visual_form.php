@@ -96,11 +96,6 @@
             </div>
 
 
-            <?php
-
-             
-            ?>
-
             <script>
                 // Cargar los selects con valor al recargar la pagina.
                 $(document).ready(function(){

@@ -32,7 +32,7 @@
 											{
 										?>
 											<a class="list-group-item" href="#">
-												<?php echo $device->position.'. '.$device->device ?> <i class="fa fa-exclamation-triangle"></i>
+												<?php echo $device->position.'. '.$device->device ?> <i class="fa fa-exclamation-triangle" style="color:red"></i>
 											</a>
 											<?php
 											}

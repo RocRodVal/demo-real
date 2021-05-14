@@ -1362,7 +1362,7 @@ class Admin extends MY_Controller
                 }
             }
             /**
-             * Botón Sustituir terminales : Pone el terminal enviado en la posicioin del mueble
+             * Botón Sustituir terminales : Pone el terminal enviado en la posicion del mueble
              */
             if ($status == 10) {
 
@@ -1385,7 +1385,7 @@ class Admin extends MY_Controller
 
             }
             /**
-             * Guardar incidcencia en el histórico
+             * Guardar incidencia en el histórico
              */
             $data = array(
                 'fecha' => date('Y-m-d H:i:s'),
@@ -1638,13 +1638,29 @@ class Admin extends MY_Controller
         }else {
             $imei = $this->input->post('imei_1');
             if (empty($imei)) {
+                //echo "IF";
                 $resultado = $this->tienda_model->search_dispositivo_id($this->input->post('dipositivo_almacen_1'));
+            }else{
+                $resultado = $this->tienda_model->search_dispositivo_alta($imei);
             }
+            //print_r($resultado);exit;
             if (!empty($resultado)) {
-                foreach ($resultado as $r) {
-                    $imei = $r->IMEI;
+                if(count($resultado)>1){
+                    $error="Existen varios dispositivos en el almacen con el mismo IMEI - ".$imei;
+                    redirect('admin/update_incidencia_materiales/' . $id_pds . '/' . $id_inc . '/2/3/' . $error);
+                }else{
+                   foreach ($resultado as $r) {
+                        $imei = $r->IMEI;
+                    }
+                }
+            }else{
+                $resultado = $this->tienda_model->search_dispositivo($imei);
+                if(!empty($resultado)){
+                    $error="El IMEI ".$imei." ya existe en el almacén pero no se puede asignar ";
+                    redirect('admin/update_incidencia_materiales/' . $id_pds . '/' . $id_inc . '/2/3/' . $error);
                 }
             }
+            //echo $imei; exit;
             if (empty($imei) && ($this->input->post('units_dipositivo_almacen_1') <> '')) {
                 $error = "El IMEI no puede estar vacio";
 
@@ -1676,8 +1692,54 @@ class Admin extends MY_Controller
                     }
                 }else{
                     if($this->input->post('dipositivo_almacen_1') == '' && $this->input->post('typedipositivo_almacen_1') <> '') {
-                        $error = "Es necesario seleccionar un dispositivo del almacen";
-                        redirect('admin/update_incidencia_materiales/' . $id_pds . '/' . $id_inc . '/2/3/' . $error);
+                        if(!empty($imei)){
+                           $id_devices_almacen = $this->tienda_model->update_dispositivos_type($this->input->post('typedipositivo_almacen_1'), $imei, $this->input->post('mac_1'),
+                                $this->input->post('serial_1'), $this->input->post('barcode_1'));
+                            if(!empty($id_devices_almacen) && $id_devices_almacen!=null){
+                                $dipositivo_almacen_1 = array(
+                                    'fecha' => date('Y-m-d H:i:s'),
+                                    'id_incidencia' => $id_inc,
+                                    'id_pds' => $id_pds,
+                                    'id_alarm' => NULL,
+                                    'id_devices_almacen' => $id_devices_almacen,
+                                    'cantidad' => 1
+                                );
+                                $this->tienda_model->reservar_dispositivos($id_devices_almacen, 2, $id_inc);
+                                $this->tienda_model->incidencia_update_material($dipositivo_almacen_1, true);
+                            }else{
+                                $error = "No hay ningun dispositivo en alta sin IMEI del modelo ".$this->input->post('typedipositivo_almacen_1');
+                                redirect('admin/update_incidencia_materiales/' . $id_pds . '/' . $id_inc . '/2/3/' . $error);
+                            }
+                        }else{
+
+                            $error = "Es necesario seleccionar un dispositivo del almacen";
+                            redirect('admin/update_incidencia_materiales/' . $id_pds . '/' . $id_inc . '/2/3/' . $error);
+                        }
+                    }else{
+                        if (!empty($resultado)) {
+                           // $this->tienda_model->update_dispositivos($resultado->id_devices_almacen,$imei,$resultado->mac,$resultado->serial, $resultado->mac);
+    
+                            //if ($this->input->post('units_dipositivo_almacen_1') <> '') {
+                                $dipositivo_almacen_1 = array(
+                                    'fecha' => date('Y-m-d H:i:s'),
+                                    'id_incidencia' => $id_inc,
+                                    'id_pds' => $id_pds,
+                                    'id_alarm' => NULL,
+                                    'id_devices_almacen' => $resultado[0]->id_devices_almacen,
+                                    'cantidad' => 1
+                                );
+                                $this->tienda_model->reservar_dispositivos($resultado[0]->id_devices_almacen, 2, $id_inc);
+                                $this->tienda_model->incidencia_update_material($dipositivo_almacen_1, true);
+                                //echo "ENCONTRADO EL IMEI en el almacen";exit;
+                           // }
+                        }else{
+                            if(empty($resultado)){
+                                //El IMEI indicado no esta dado de alta en el almacen
+                               // $this->tienda_model->asignarImei_dispositivo_almacen($imei, $id_inc);
+                               $error =  "EL IMEI ".$imei." no esta dado de alta en el almacen debes indicar el modelo"; 
+                               redirect('admin/update_incidencia_materiales/' . $id_pds . '/' . $id_inc . '/2/3/' . $error);
+                            }
+                        }
                     }
                 }
             }
@@ -2562,7 +2624,8 @@ class Admin extends MY_Controller
         $xcrud_2->relation('id_tipologia', 'pds_tipologia','id', 'titulo');
         $xcrud_2->relation('id_display', 'display', 'id_display', 'display','');
         $xcrud_2->label('id', 'Identificador')->label('client', 'Cliente')->label('id_display', 'Modelo')->label('id_tipo', 'Canal PDS')
-            ->label('id_subtipo', 'Tipología PDS')->label('id_segmento', 'Concepto PDS')->label('id_tipologia', 'Categorización PDS')->label('position', 'Posición')->label('description', 'Comentarios')->label('status', 'Estado');
+            ->label('id_subtipo', 'Tipología PDS')->label('id_segmento', 'Concepto PDS')->label('id_tipologia', 'Categorización PDS')->label('position', 'Posición')
+            ->label('description', 'Comentarios')->label('status', 'Estado');
         $xcrud_2->columns('id,client,id_tipo,id_subtipo,id_segmento,id_tipologia,id_display,position,status');
         $xcrud_2->fields('client,id_tipo,id_subtipo,id_segmento,id_tipologia,id_display,position,status');
         //$xcrud_2->search_columns('id_tipo,id_subtipo,id_segmento,id_tipologia','id_display');
@@ -2590,9 +2653,11 @@ class Admin extends MY_Controller
         $xcrud_3->change_type('picture_url', 'image');
         //$xcrud_3->change_type('canvas_url', 'file');
         $xcrud_3->modal('picture_url');
-        $xcrud_3->label('id_display', 'Identificador')->label('client_display', 'Cliente')->label('display', 'Modelo')->label('picture_url', 'Foto')->label('description', 'Comentarios')->label('positions', 'Posiciones')->label('status', 'Estado');
-        $xcrud_3->columns('id_display,client_display,display,picture_url,positions,status');
-        $xcrud_3->fields('client_display,display,picture_url,description,positions,status');
+        $xcrud_3->label('id_display', 'Identificador')->label('client_display', 'Cliente')->label('display', 'Modelo')->label('picture_url', 'Foto')
+                ->label('description', 'Comentarios')->label('positions', 'Posiciones')->label('status', 'Estado')->label('maquetas_display','Tiene maquetas')
+                ->label('cos_display','Tiene objetos conectados');
+        $xcrud_3->columns('id_display,client_display,display,picture_url,positions,status,maquetas_display,cos_display');
+        $xcrud_3->fields('client_display,display,picture_url,description,positions,status,maquetas_display,cos_display');
         $xcrud_3->unset_remove();
         $xcrud_3->after_insert("create_modeloMueble_realdooh","../libraries/Functions.php");
         $xcrud_3->before_update("update_modeloMueble_realdooh","../libraries/Functions.php");
@@ -2741,37 +2806,37 @@ class Admin extends MY_Controller
         $xcrud_1 = xcrud_get_instance();
         $xcrud_1->table('pds_tipo');
         $xcrud_1->table_name('Definir Canales de PDS');
-        $xcrud_1->label('id', 'Id.')->label('titulo', 'Título')->label('abreviatura','Abreviatura');
-        $xcrud_1->columns('id,titulo,abreviatura');
-        $xcrud_1->fields('titulo,abreviatura');
+        $xcrud_1->label('id', 'Id.')->label('titulo', 'Título')->label('abreviatura','Abreviatura')->label('status','Estado');
+        $xcrud_1->columns('id,titulo,abreviatura,status');
+        $xcrud_1->fields('titulo,abreviatura,status');
 
       /* Agregando el campo orden*/
         $xcrud_2 = xcrud_get_instance();
         $xcrud_2->table('pds_tipologia');
         $xcrud_2->table_name('Definir Categorizaciones de PDS');
         $xcrud_2->order_by('orden','asc');
-        $xcrud_2->label('id', 'Id.')->label('titulo', 'Título')->label('orden', 'Orden');
-        $xcrud_2->columns('id,titulo,orden');
-        $xcrud_2->columns('titulo');
-        $xcrud_2->columns('orden');
+        $xcrud_2->label('id', 'Id.')->label('titulo', 'Título')->label('orden', 'Orden')->label('status','Estado');
+        $xcrud_2->columns('id,titulo,orden,status');
+        //$xcrud_2->columns('titulo');
+        //$xcrud_2->columns('orden');
 
         $xcrud_3 = xcrud_get_instance();
         $xcrud_3->table('pds_subtipo');
         $xcrud_3->table_name('Definir Tipologías de PDS y sus categorizaciones relacionadas');
         $xcrud_3->relation('id_tipo', 'pds_tipo', 'id', 'titulo');
         $xcrud_3->fk_relation('Categorizaciones','id','pds_subtipo_tipologia','id_subtipo','id_tipologia','pds_tipologia','id','titulo');
-        $xcrud_3->label('id', 'Id.')->label('titulo', 'Título')->label('id_tipo','Tipo');
+        $xcrud_3->label('id', 'Id.')->label('titulo', 'Título')->label('id_tipo','Tipo')->label('status','Estado');
         $xcrud_3->order_by('id_tipo','asc');
-        $xcrud_3->columns('id,id_tipo,titulo');
-        $xcrud_3->columns('id,id_tipo,titulo,Categorizaciones');
+        $xcrud_3->columns('id,id_tipo,titulo,status,Categorizaciones');
+        //$xcrud_3->columns('id,id_tipo,titulo,Categorizaciones');
 
         /*Agregando el campo orden */
         $xcrud_4 = xcrud_get_instance();
         $xcrud_4->table('pds_segmento');
         $xcrud_4->table_name('Definir Conceptos de PDS');
         $xcrud_4->order_by('orden','asc');
-        $xcrud_4->label('id', 'Id.')->label('titulo', 'Título')->label('orden', 'Orden');
-        $xcrud_4->columns('id,titulo,orden');
+        $xcrud_4->label('id', 'Id.')->label('titulo', 'Título')->label('orden', 'Orden')->label('status','Estado');
+        $xcrud_4->columns('id,titulo,orden,status');
         $xcrud_4->columns('titulo');
         $xcrud_4->columns('orden');
 
@@ -4316,27 +4381,34 @@ class Admin extends MY_Controller
             $resultados = array();
 
             $codigoSAT = "";
-
             $data["codigoSAT"] = $codigoSAT;
-
             $data["generado"] = FALSE;
-
             $data["resultados"] = $resultados;
 
             $data["muebles"] = $this->tienda_model->get_displays_demoreal();
 
             $data["mueblesdisplay"] = $this->tienda_model->get_mueblesdisplay_demoreal();
 
-            $data["pds_tipos"] = $this->categoria_model->get_tipos_pds();
-            $data["pds_subtipos"] = $this->categoria_model->get_subtipos_pds();
-            $data["pds_segmentos"] = $this->categoria_model->get_segmentos_pds();
-            $data["pds_tipologias"] = $this->categoria_model->get_tipologias();
+            $data["pds_tipos"] = $this->categoria_model->get_tipos_pds_alta();
+            $data["pds_subtipos"] = $this->categoria_model->get_subtipos_pds_alta();
+            $data["pds_segmentos"] = $this->categoria_model->get_segmentos_pds_alta();
+            $data["pds_tipologias"] = $this->categoria_model->get_tipologias_alta();
+            //print_r($data["pds_tipologias"] );exit;
 
             $data["terminales"] = $this->tienda_model->get_devices_demoreal();
             /* LISTADO DE TERRITORIOS PARA EL SELECT */
             $data["territorios"] = $this->tienda_model->get_territorios();
             /* LISTADO DE FABRICANTES PARA EL SELECT */
             $data["fabricantes"] = $this->tienda_model->get_fabricantes();
+
+            $id_tipo = NULL;
+            $id_subtipo = NULL;
+            $id_segmento = NULL;
+            $id_tipologia = NULL;
+            $data["id_tipo"] = $id_tipo;
+            $data["id_subtipo"] = $id_subtipo;
+            $data["id_segmento"] = $id_segmento;
+            $data["id_tipologia"] = $id_tipologia;
 
             /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
             $this->data->add($data);
@@ -4636,7 +4708,7 @@ class Admin extends MY_Controller
                         if(!empty($arr_displays_pds)) {
                             $id_displays_pds = $arr_displays_pds[0]->id_displays_pds;
 
-                            $displays = $this->sfid_model->get_devices_displays_pds($id_displays_pds);
+                            //$displays = $this->sfid_model->get_devices_displays_pds($id_displays_pds);
                             $data["id_dis_url"] = $id_displays_pds;
 
                             foreach ($displays as $key => $display) {
@@ -4646,7 +4718,8 @@ class Admin extends MY_Controller
 
                             $devices = $this->sfid_model->get_devices_displays_pds($id_displays_pds);
                             $data['devices'] = $devices;
-                            $data['displays'] = $displays;
+                            $data['displays'] = null;
+                            //$data['displays'] = $displays;
                         }
                     }
 
@@ -5004,9 +5077,9 @@ class Admin extends MY_Controller
             $data["muebles"] = $muebles;
 
             /** COMENTADO SELECT DEMOREAL $data["tipos_tienda"] = $this->sfid_model->get_types_pds_demoreal(); */
-            $data["tipos"] = $this->categoria_model->get_tipos_pds();
+            $data["tipos"] = $this->categoria_model->get_tipos_pds_alta();
             $data["subtipos"] = array();
-            $data["segmentos"] = $this->categoria_model->get_segmentos_pds($id_segmento_visual);
+            $data["segmentos"] = $this->categoria_model->get_segmentos_pds_alta($id_segmento_visual);
             $data["tipologias"] = array();
 
             $data["subtitle"] = "";
@@ -5183,9 +5256,9 @@ class Admin extends MY_Controller
              
             
             /** COMENTADO SELECT DEMOREAL $data["tipos_tienda"] = $this->sfid_model->get_types_pds_demoreal(); */
-            $data["tipos"] = $this->categoria_model->get_tipos_pds();
+            $data["tipos"] = $this->categoria_model->get_tipos_pds_alta();
             $data["subtipos"] = array();
-            $data["segmentos"] = $this->categoria_model->get_segmentos_pds($id_segmento_visual);
+            $data["segmentos"] = $this->categoria_model->get_segmentos_pds_alta($id_segmento_visual);
             $data["tipologias"] = array();
 
         

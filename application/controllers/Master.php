@@ -1758,21 +1758,31 @@ public function inventarios_planogramas()
             $data["panelados"] = $this->tienda_model->get_panelados_maestros();*/
             // COMENTADO SELECT DEMOREAL $muebles = $this->tienda_model->get_displays_demoreal();
             $data["muebles"] = $this->tienda_model->get_displays_demoreal();
+            $data["mueblesdisplay"] = $this->tienda_model->get_mueblesdisplay_demoreal();
             // COMENTADO SELECT DEMOREAL $terminales = $this->tienda_model->get_devices_demoreal();
             //$data["terminales"] = $this->tienda_model->get_devices();
 
-            $data["pds_tipos"] = $this->categoria_model->get_tipos_pds();
-            $data["pds_subtipos"] = $this->categoria_model->get_subtipos_pds();
-            $data["pds_segmentos"] = $this->categoria_model->get_segmentos_pds();
-            $data["pds_tipologias"] = $this->categoria_model->get_tipologias_pds();
+            $data["pds_tipos"] = $this->categoria_model->get_tipos_pds_alta();
+            $data["pds_subtipos"] = $this->categoria_model->get_subtipos_pds_alta();
+            $data["pds_segmentos"] = $this->categoria_model->get_segmentos_pds_alta();
+            $data["pds_tipologias"] = $this->categoria_model->get_tipologias_pds_alta();
 
-
+//exit;
             $data["terminales"] = $this->tienda_model->get_devices_demoreal();
             /* LISTADO DE TERRITORIOS PARA EL SELECT */
             $data["territorios"] = $this->tienda_model->get_territorios();
             /* LISTADO DE FABRICANTES PARA EL SELECT */
             $data["fabricantes"] = $this->tienda_model->get_fabricantes();
 
+
+            $id_tipo = NULL;
+            $id_subtipo = NULL;
+            $id_segmento = NULL;
+            $id_tipologia = NULL;
+            $data["id_tipo"] = $id_tipo;
+            $data["id_subtipo"] = $id_subtipo;
+            $data["id_segmento"] = $id_segmento;
+            $data["id_tipologia"] = $id_tipologia;
 
             /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
             $this->data->add($data);
@@ -1872,6 +1882,13 @@ public function inventarios_planogramas()
                     foreach ($this->input->post("id_display_multi") as $tt) $id_display[] = $tt;
                     $campos_sess_informe["id_display"] = $id_display;
                 }
+                  // MUEBLE DISPLAY
+                  $id_muebledisplay = array();
+                  $campos_sess_informe["id_muebledisplay"] = NULL;
+                  if (is_array($this->input->post("id_muebledisplay_multi"))) {
+                      foreach ($this->input->post("id_muebledisplay_multi") as $tt) $id_muebledisplay[] = $tt;
+                      $campos_sess_informe["id_muebledisplay"] = $id_muebledisplay;
+                  }
                 // DEVICE
                 $id_device = array();
                 $campos_sess_informe["id_device"] = NULL;
@@ -2490,9 +2507,9 @@ public function inventarios_planogramas()
             $data["muebles"] = $muebles;
 
             /** COMENTADO SELECT DEMOREAL $data["tipos_tienda"] = $this->sfid_model->get_types_pds_demoreal(); */
-            $data["tipos"] = $this->categoria_model->get_tipos_pds();
+            $data["tipos"] = $this->categoria_model->get_tipos_pds_alta();
             $data["subtipos"] = array();
-            $data["segmentos"] = $this->categoria_model->get_segmentos_pds($id_segmento_visual);
+            $data["segmentos"] = $this->categoria_model->get_segmentos_pds_alta($id_segmento_visual);
             $data["tipologias"] = array();
 
 

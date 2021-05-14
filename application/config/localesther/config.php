@@ -12,6 +12,7 @@ define('INCIDENCIA_CANCELADA','Incidencia cancelada');
 define('INCIDENCIA_RESUELTA','Incidencia resuelta');
 define('INCIDENCIA_CIERREFORZOSO','Incidencia Cierre forzoso');
 define('INCIDENCIA_TERMINALESSUSTITUIDOS','Incidencia Terminales sustituidos');
+define('INCIDENCIA_TERMINALESSUSTITUIDOSRMA','Incidencia Terminales sustituidos RMA');
 define('ADDMUEBLE','Agregar mueble a tienda');
 define('REMOVEMUEBLE','Eliminar mueble a tienda');
 define('SMARTSTORE1',20);
@@ -46,10 +47,10 @@ $config['base_url'] = 'http://demoreal.focusonemotions.com/orange/';
 /**
  * REALDOOH API, TEMPORARY ACTIVATION
  */
-$config['allowed_origins'] = array ('localhost', 'demoreal.focusonemotions.com', 'realdooh.pre.altabox.net/clementine','192.168.0.11');
+$config['allowed_origins'] = array ('localhost', 'demoreal.focusonemotions.com', 'realdooh.pre.altabox.net/clementine','192.168.0.14');
 
 //$config['realdooh.api.url'] = 'http://dev.realdooh.com:8080/forgeapi/api/v1';
-$config['realdooh.api.url'] = 'http://192.168.0.14:4102/api/v1';
+$config['realdooh.api.url'] = 'http://192.168.0.13:4102/api/v1';
 //$config['realdooh.api.url'] = 'http://78.46.139.41:8080/rdorangeapi/api/v1';
 
 $config['realdooh.api'] = array (
