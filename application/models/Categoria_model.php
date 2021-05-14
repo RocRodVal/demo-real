@@ -35,6 +35,21 @@ class Categoria_Model extends CI_Model
 
         return $query->result_array();
     }
+    public function get_tipos_pds_alta($id_tipo=NULL)
+    {
+
+        $query = $this->db->select('*');
+        $unico = false;
+        if(!empty($id_tipo) && !is_null($id_tipo))
+        {
+            $query = $this->db->where('id',$id_tipo);
+            $unico = true;
+        }
+        $query = $this->db->where('status','Alta');
+        $query = $this->db->get('pds_tipo');
+
+        return $query->result_array();
+    }
     /**
      * Devuelve un array de SUBTIPOS de PDS.
      * Si se le pasa un TIPO, devuelve los SUBTIPOS que le pertenecen.  Y si no, devuelve todos los SUBTIPOS existentes.
@@ -43,7 +58,14 @@ class Categoria_Model extends CI_Model
      */
     public function get_subtipos_pds($id_tipo=NULL,$id_subtipo=NULL)
     {
+        /*select s.id,concat (s.titulo ,' - ',t.titulo ) as titulo from 
+        pds_subtipo s
+        inner join pds_tipo t on t.id = s.id_tipo
+        order by t.titulo,s.titulo
+        */
+        //$query = $this->db->select('pds_subtipo.id,concat(pds_subtipo.titulo ,\' - \',pds_tipo.titulo ) as titulo');
         $query = $this->db->select('*');
+        //$query = $this->db->join("pds_tipo",'pds_subtipo.id_tipo = pds_tipo.id');
         if(!empty($id_tipo))
         {
             $query = $this->db->where('id_tipo',$id_tipo);
@@ -53,9 +75,44 @@ class Categoria_Model extends CI_Model
         {
             $query = $this->db->where("id",$id_subtipo);
         }
+        /* $query = $this->db->join('pds_subtipo_tipologia','pds_subtipo_tipologia.id_tipologia = pds_tipologia.id')*/
+        //$query = $this->db->where('pds_subtipo.status','Alta');
         $query = $this->db->order_by('pds_subtipo.titulo');
         $query = $this->db->get('pds_subtipo');
+//print_r($query->result_array());exit;
+        return $query->result_array();
+    }
 
+     /**
+     * Devuelve un array de SUBTIPOS de PDS.
+     * Si se le pasa un TIPO, devuelve los SUBTIPOS que le pertenecen.  Y si no, devuelve todos los SUBTIPOS existentes.
+     * @param $array_tipos
+     * @return mixed
+     */
+    public function get_subtipos_pds_alta($id_tipo=NULL,$id_subtipo=NULL)
+    {
+        /*select s.id,concat (s.titulo ,' - ',t.titulo ) as titulo from 
+        pds_subtipo s
+        inner join pds_tipo t on t.id = s.id_tipo
+        order by t.titulo,s.titulo
+        */
+        //$query = $this->db->select('pds_subtipo.id,concat(pds_subtipo.titulo ,\' - \',pds_tipo.titulo ) as titulo');
+        $query = $this->db->select('*');
+        //$query = $this->db->join("pds_tipo",'pds_subtipo.id_tipo = pds_tipo.id');
+        if(!empty($id_tipo))
+        {
+            $query = $this->db->where('id_tipo',$id_tipo);
+        }
+
+        if(!empty($id_subtipo))
+        {
+            $query = $this->db->where("id",$id_subtipo);
+        }
+        /* $query = $this->db->join('pds_subtipo_tipologia','pds_subtipo_tipologia.id_tipologia = pds_tipologia.id')*/
+        $query = $this->db->where('pds_subtipo.status','Alta');
+        $query = $this->db->order_by('pds_subtipo.titulo');
+        $query = $this->db->get('pds_subtipo');
+//print_r($query->result_array());exit;
         return $query->result_array();
     }
 
@@ -68,6 +125,16 @@ class Categoria_Model extends CI_Model
     {
        // $query = $this->db->select('*')->get('pds_segmento');
        $query = $this->db->select('*')->order_by('titulo')->get('pds_segmento');
+        return $query->result_array();
+    }
+     /**
+     * Devuelve un array de SEGMENTOS de PDS
+     * @return mixed
+     */
+    public function get_segmentos_pds_alta($id_segmento=NULL)
+    {
+       // $query = $this->db->select('*')->get('pds_segmento');
+       $query = $this->db->select('*')->where('status','Alta')->order_by('titulo')->get('pds_segmento');
         return $query->result_array();
     }
     /**
@@ -97,6 +164,35 @@ class Categoria_Model extends CI_Model
          
         return $query->result_array();
     }
+
+     /**
+     * Devuelve un array de TIPOLOGIAS de PDS
+     * @return mixed
+     */
+    public function get_tipologias_alta($id_tipologia=NULL, $id_subtipo= NULL)
+    {
+        $query = $this->db->select('id_subtipo, id_tipologia as id, pds_tipologia.titulo');
+        if(empty($id_subtipo) && is_null($id_subtipo))
+        {            
+            $query =$this->db->join('pds_subtipo_tipologia','pds_subtipo_tipologia.id_tipologia = pds_tipologia.id');
+        }
+        else
+        {
+            $query = $this->db->select('id_subtipo, id_tipologia as id, pds_tipologia.titulo');
+            $query = $this->db->join('pds_subtipo_tipologia','pds_subtipo_tipologia.id_tipologia = pds_tipologia.id')
+                    ->where('pds_subtipo_tipologia.id_subtipo = '.$id_subtipo);
+        }        
+        if(!empty($id_tipologia) && !is_null($id_tipologia))
+        {
+            $query = $this->db->where('pds_subtipo_tipologia.id_tipologia',$id_tipologia);
+        }
+        $query = $this->db->where('pds_tipologia.status','Alta');
+        $query= $this->db->distinct();
+        $query = $this->db->group_by('id_tipologia');
+        $query = $this->db->get('pds_tipologia');
+         
+        return $query->result_array();
+    }
     
      public function get_tipologias_pds($id_tipologia=NULL, $id_subtipo= NULL)
     {
@@ -118,6 +214,34 @@ class Categoria_Model extends CI_Model
             $query = $this->db->select('*')
                 ->join('pds_subtipo_tipologia','pds_subtipo_tipologia.id_tipologia = pds_tipologia.id')
                 ->where('pds_subtipo_tipologia.id_subtipo = '.$id_subtipo)
+                ->get('pds_tipologia');
+        }
+        return $query->result_array();
+    }
+
+    public function get_tipologias_pds_alta($id_tipologia=NULL, $id_subtipo= NULL)
+    {
+        if(empty($id_subtipo) && is_null($id_subtipo))
+        {
+            if(empty($id_subtipo) && is_null($id_subtipo))
+            {
+                $query = $this->db->select('*');
+            }
+            else
+            {
+                $query = $this->db->where('id', $id_tipologia);
+            }
+            $query = $this->db->where('pds_tipologia.status','Alta');
+            $query = $this->db->order_by('pds_tipologia.titulo');
+            $query = $this->db->get('pds_tipologia');
+            //echo $this->db->last_query();exit;
+        }
+        else
+        {
+            $query = $this->db->select('*')
+                ->join('pds_subtipo_tipologia','pds_subtipo_tipologia.id_tipologia = pds_tipologia.id')
+                ->where('pds_subtipo_tipologia.id_subtipo = '.$id_subtipo)
+                ->where('pds_tipologia.status','Alta')
                 ->get('pds_tipologia');
         }
         return $query->result_array();

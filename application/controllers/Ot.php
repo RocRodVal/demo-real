@@ -309,11 +309,12 @@ class Ot extends MY_Controller {
             $data["resultados"] = $resultados;
 
             $data["muebles"] = $this->tienda_model->get_displays_demoreal();
+            $data["mueblesdisplay"] = $this->tienda_model->get_mueblesdisplay_demoreal();
 
-            $data["pds_tipos"] = $this->categoria_model->get_tipos_pds();
-            $data["pds_subtipos"] = $this->categoria_model->get_subtipos_pds();
-            $data["pds_segmentos"] = $this->categoria_model->get_segmentos_pds();
-            $data["pds_tipologias"] = $this->categoria_model->get_tipologias();
+            $data["pds_tipos"] = $this->categoria_model->get_tipos_pds_alta();
+            $data["pds_subtipos"] = $this->categoria_model->get_subtipos_pds_alta();
+            $data["pds_segmentos"] = $this->categoria_model->get_segmentos_pds_alta();
+            $data["pds_tipologias"] = $this->categoria_model->get_tipologias_alta();
 
             $data["terminales"] = $this->tienda_model->get_devices_demoreal();
             /* LISTADO DE TERRITORIOS PARA EL SELECT */
@@ -321,6 +322,15 @@ class Ot extends MY_Controller {
             /* LISTADO DE FABRICANTES PARA EL SELECT */
             $data["fabricantes"] = $this->tienda_model->get_fabricantes();
 
+            $id_tipo = NULL;
+            $id_subtipo = NULL;
+            $id_segmento = NULL;
+            $id_tipologia = NULL;
+            $data["id_tipo"] = $id_tipo;
+            $data["id_subtipo"] = $id_subtipo;
+            $data["id_segmento"] = $id_segmento;
+            $data["id_tipologia"] = $id_tipologia;
+            
             /// Añadir el array data a la clase Data y devolver la unión de ambos objetos en formato array..
             $this->data->add($data);
             $data = $this->data->getData();
@@ -355,6 +365,7 @@ class Ot extends MY_Controller {
                 "id_segmento" => '',
                 "id_tipologia" => '',
                 "id_display" => '',
+                "id_muebledisplay" => '',
                 "id_device" => '',
                 "territory" => '',
                 "brand_device" => ''
@@ -419,6 +430,13 @@ class Ot extends MY_Controller {
                     foreach ($this->input->post("id_display_multi") as $tt) $id_display[] = $tt;
                     $campos_sess_informe["id_display"] = $id_display;
                 }
+                  // MUEBLE DISPLAY
+                  $id_muebledisplay = array();
+                  $campos_sess_informe["id_muebledisplay"] = NULL;
+                  if (is_array($this->input->post("id_muebledisplay_multi"))) {
+                      foreach ($this->input->post("id_muebledisplay_multi") as $tt) $id_muebledisplay[] = $tt;
+                      $campos_sess_informe["id_muebledisplay"] = $id_muebledisplay;
+                  }
                 // DEVICE
                 $id_device = array();
                 $campos_sess_informe["id_device"] = NULL;
@@ -570,7 +588,7 @@ class Ot extends MY_Controller {
                     $data['picture_url'] = $display_maestro["picture_url"];
 
 
-                    $tiendas = $this->tienda_model->search_pds($sfid_plano);
+                    $tiendas = $this->tienda_model->search_pds($sfid_plano,"Alta");
                     if (!empty($tiendas) && count($tiendas) == 1) {
 
                         $tienda = NULL;
@@ -627,7 +645,7 @@ class Ot extends MY_Controller {
                     /*
                      *  Panelado de la tienda
                      */
-                    $tiendas = $this->tienda_model->search_pds($sfid_plano);
+                    $tiendas = $this->tienda_model->search_pds($sfid_plano,"Alta");
 
 
 

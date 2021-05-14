@@ -452,13 +452,15 @@ class Ttpp extends MY_Controller {
             }
 
             if(!empty($sfid_plano)){
+                $tiendas = $this->tienda_model->search_pds($sfid_plano,"Alta");
                 if(!empty($mueble_plano)){
                    /**  Planograma del mueble para el sfid indicado  */
                     $display_maestro = $this->tienda_model->get_display($mueble_plano);
                     $data['display'] = " - " .$display_maestro["display"];
                     $data['picture_url'] = $display_maestro["picture_url"];
 
-                    $tiendas = $this->tienda_model->search_pds($sfid_plano);
+                    
+
                     if (!empty($tiendas) && count($tiendas) == 1) {
 
                         $tienda = NULL;
@@ -494,6 +496,7 @@ class Ttpp extends MY_Controller {
                             }
 
                             $devices = $this->sfid_model->get_devices_displays_pds($id_displays_pds);
+                            
                             $data['devices'] = $devices;
                             $data['displays'] = $displays;
                         }
@@ -502,7 +505,7 @@ class Ttpp extends MY_Controller {
                     $vista = 1;
                 }else{
                     /**  Panelado de la tienda  */
-                    $tiendas = $this->tienda_model->search_pds($sfid_plano);
+                   // $tiendas = $this->tienda_model->search_pds($sfid_plano,"Alta");
 
                     if (!empty($tiendas) && count($tiendas) == 1) {
                         $tienda = NULL;

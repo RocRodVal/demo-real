@@ -5,7 +5,7 @@
             {	
             ?>
             <div class="row">
-				<div class="col-lg-6">
+				<div class="col-lg-10">
                     <h2><?=$subtitle?></h2>
  					<?php
                     if ((empty($displays)) || (empty($devices))){
@@ -17,21 +17,28 @@
  					<div class="panel panel-default">
                         <div class="panel-body">
 							<div class="row">
-								<div class="col-lg-8">
+								<div class="col-lg-7">
 									<div class="list-group">
 										<?php
 										foreach($devices as $device)
 										{
-											//print_r($device);exit;
-											if ($device->isDisplay==true) {?>
-												<p style = "box-shadow: 1px 1px 10px #ef0005	">
-												<?php } else{
+											//print_r($device);
+											
 										?>
-										<p> <?php } ?>
-											<?php echo $device->position.'. '.$device->device ?></p>
+										<p><?php echo $device->position.'. '.$device->device ?>
 										
-										
-										
+										<?php
+										//print_r($device);exit;
+										 
+										 
+										 
+											if ($device->id_muebledisplay != 0 && $device->id_muebledisplay!=null)
+                                            {
+                                                ?>
+                                                <i class="fa fa-spin fa-star-half-o" style="color:orange"></i> - <?=$device->muebledisplayname;?>
+                                            <?php 
+                                            }
+                                            ?></p>
 										<?php 
 										
 										
@@ -44,7 +51,7 @@
 									if ($picture_url != '')
 									{
 									?>
-									<img src="<?=site_url('application/uploads/'.$picture_url.'')?>" title="<?php echo strtoupper($display_name) ?>" style='width:100%'; />
+									<img src="<?=site_url('application/uploads/'.$picture_url.'')?>" title="<?php echo strtoupper($display_name) ?>"  />
 									<?php
 									}
 									else

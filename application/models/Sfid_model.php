@@ -187,8 +187,9 @@ class Sfid_model extends CI_Model {
 		if($id_displays_pds != FALSE) 
 		{
 			//$query = $this->db->select('distinct(devices_pds.id_devices_pds),devices_pds.*,devices_pds.status as estado, device.*, devices_display.display')
-			$query = $this->db->select('devices_pds.*,devices_pds.status as estado, device.*, devices_pds.id_devices_pds')
+			$query = $this->db->select('devices_pds.*,devices_pds.status as estado, device.*, devices_pds.id_devices_pds,mueble_display.name as muebledisplayname')
 				->join('device','devices_pds.id_device = device.id_device')
+				->join('mueble_display','devices_pds.id_muebledisplay = mueble_display.id_muebledisplay','left')
 				->where('devices_pds.id_displays_pds',$id_displays_pds)
 				->where('devices_pds.status != "SAT"')
 				->where('devices_pds.status != "Baja"')

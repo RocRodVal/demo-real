@@ -25,10 +25,19 @@
                                 ?>
                                 <a class="list-group-item" href="<?=site_url($controlador.'/informe_visual_terminal/'.$id_display.'/'.$device->id_device)?>">
                                     <?php echo $device->position.'. '.$device->device ?>
+                                
+                            <?php    
+                                if ($device->id_muebledisplay != 0 && $device->id_muebledisplay!=null)
+                                {
+                                    ?>
+                                    <i class="fa fa-spin fa-star-half-o" style="color:orange"></i> - <?=$device->muebledisplayname;?>
+                                <?php 
+                                }
+                                ?>
                                 </a>
-                            <?php
-                            }
-                            ?>
+                                    <?php
+                                }
+                                ?>
                         </div>
                     </div>
                     <div class="col-lg-4">

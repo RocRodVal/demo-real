@@ -226,7 +226,7 @@ class Incidencia_model extends CI_Model {
                 incidencias.phone,
                 incidencias.email,
                 incidencias.id_operador,
-                incidencias.intervencion,
+                intervenciones_incidencias.id_intervencion as intervencion,
                 type_incidencia.id_type_incidencia,
                 tipo_robo.id as id_tipo_robo,';
 
