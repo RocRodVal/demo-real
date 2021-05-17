@@ -1656,7 +1656,7 @@ class Admin extends MY_Controller
             }else{
                 $resultado = $this->tienda_model->search_dispositivo($imei);
                 if(!empty($resultado)){
-                    $error="El IMEI ".$imei." ya existe en el almacén pero no se puede asignar ";
+                    $error="El IMEI ".$imei." ya existe en el almacen pero no se puede asignar";
                     redirect('admin/update_incidencia_materiales/' . $id_pds . '/' . $id_inc . '/2/3/' . $error);
                 }
             }
@@ -2059,7 +2059,7 @@ class Admin extends MY_Controller
             $status_pds = $this->uri->segment(5);
             $status = $this->uri->segment(6);
             $error=urldecode($this->uri->segment(7));
-
+echo $error;exit;
             $xcrud = xcrud_get_instance();
             $this->load->model(array('intervencion_model', 'tienda_model', 'sfid_model'));
 
