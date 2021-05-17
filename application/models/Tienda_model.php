@@ -796,8 +796,8 @@ class Tienda_model extends CI_Model {
 		if($codigo != FALSE) {
 			$query = $this->db->select('devices_almacen.*')
 			//->where('devices_almacen.status','En stock')
-			->where("(devices_almacen.IMEI LIKE '%{$codigo}%' OR devices_almacen.mac LIKE '%{$codigo}%' 
-			OR devices_almacen.serial LIKE '%{$codigo}%' OR devices_almacen.barcode LIKE '%{$codigo}%')")
+			->where("(devices_almacen.IMEI LIKE '$codigo' OR devices_almacen.mac LIKE '$codigo' 
+			OR devices_almacen.serial LIKE '$codigo' OR devices_almacen.barcode LIKE '$codigo')")
 			->get('devices_almacen');
 	
 			return $query->result();
@@ -811,8 +811,8 @@ class Tienda_model extends CI_Model {
 		if($codigo != FALSE) {
 			$query = $this->db->select('devices_almacen.*')
 			//->where('devices_almacen.status','En stock')
-			->where("(devices_almacen.IMEI LIKE '%{$codigo}%' OR devices_almacen.mac LIKE '%{$codigo}%' 
-			OR devices_almacen.serial LIKE '%{$codigo}%' OR devices_almacen.barcode LIKE '%{$codigo}%') 
+			->where("(devices_almacen.IMEI LIKE '$codigo' OR devices_almacen.mac LIKE '$codigo' 
+			OR devices_almacen.serial LIKE '$codigo' OR devices_almacen.barcode LIKE '$codigo') 
             AND status='En stock' ")
 			->get('devices_almacen');
 	

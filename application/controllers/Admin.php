@@ -1733,7 +1733,7 @@ class Admin extends MY_Controller
                                 //echo "ENCONTRADO EL IMEI en el almacen";exit;
                            // }
                         }else{
-                            if(empty($resultado)){
+                            if(empty($resultado) && !empty($imei)){
                                 //El IMEI indicado no esta dado de alta en el almacen
                                // $this->tienda_model->asignarImei_dispositivo_almacen($imei, $id_inc);
                                $error =  "EL IMEI ".$imei." no esta dado de alta en el almacen debes indicar el modelo"; 
