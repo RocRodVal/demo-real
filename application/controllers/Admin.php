@@ -2059,7 +2059,7 @@ class Admin extends MY_Controller
             $status_pds = $this->uri->segment(5);
             $status = $this->uri->segment(6);
             $error=urldecode($this->uri->segment(7));
-echo $error;exit;
+//echo $error;exit;
             $xcrud = xcrud_get_instance();
             $this->load->model(array('intervencion_model', 'tienda_model', 'sfid_model'));
 
