@@ -3190,12 +3190,17 @@ print_r($query->result());exit;
                     $fecha = date('Y-m-d H:i:s');
                     $position = $terminal->position;
                     $id_device = $terminal->id_device;
-                    $id_muebledisplay = null;
-                    if($terminal->isDisplay)
+                    $id_muebledisplay = 'NULL';
+                    if($terminal->isDisplay){
+                        //echo "entra en el if";
                         $id_muebledisplay = $terminal->id_muebledisplay;
+                    }
+                        //echo "MNUEBLE DISPLAY ".$id_muebledisplay;
+                    //print_r($terminal);exit;
                     $SQL = " INSERT INTO devices_pds(client_type_pds,id_pds, id_displays_pds, id_display, alta,position, id_device,id_muebledisplay, status)
                                             VALUES(".$client_type_pds.",".$id_pds.",".$id_displays_pds.",".$id_display.",'".
                         $fecha."',".$position.",".$id_device.",".$id_muebledisplay.",'Alta'); ";
+                        //echo $SQL;exit;
                     $this->db->query($SQL);
 
                     /*Insertar en el historico de tienda el estado del dispositivo*/
