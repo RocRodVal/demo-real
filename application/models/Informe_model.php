@@ -224,7 +224,7 @@ class Informe_model extends CI_Model
             $aQuery["joins"]["devices_pds"]  = "devices_pds.id_pds = pds.id_pds";
             $aQuery["joins"]["mueble_display"]  = "mueble_display.id_muebledisplay = devices_pds.id_muebledisplay";
             //$aQuery["joins"]["device"]  = "devices_pds.id_device = device.id_device";
-            $aQuery["where"]["devices_pds.status"] = "Alta";
+           // $aQuery["where"]["devices_pds.status"] = "Baja";
             //$aQuery["fields"].add["disctint id_muebledislplay"];
            // $aQuery["joins"]["devices_display"]  = "devices_display.id_muebledisplay = displays_pds.id_display";
         }
